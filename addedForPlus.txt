@@ -1,0 +1,8 @@
+// added for plus
+// needed pkg for plus
+
+
+yarn add @polkadot/apps-config memoize-one react-window umi-request react-chartjs-2 react-tooltip qrcode.react chart.js babel-plugin-transform-import-meta
+
+yarn add @mui/material @emotion/react @emotion/styled  @mui/icons-material @mui/lab
+yarn add -D @testing-library/react jsdom-worker-fix intersection-observer

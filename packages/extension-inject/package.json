@@ -1,0 +1,34 @@
+{
+  "author": "Jaco Greeff <jacogr@gmail.com>",
+  "bugs": "https://github.com/polkadot-js/extension/issues",
+  "contributors": [],
+  "description": "A generic injector (usable to any extension), that populates the base exposed interfaces to be used by dapps.",
+  "homepage": "https://github.com/polkadot-js/extension/tree/master/packages/extension-inject#readme",
+  "license": "Apache-2.0",
+  "maintainers": [],
+  "name": "@polkadot/extension-inject",
+  "repository": {
+    "directory": "packages/extension-inject",
+    "type": "git",
+    "url": "https://github.com/polkadot-js/extension.git"
+  },
+  "sideEffects": true,
+  "type": "module",
+  "version": "0.44.1",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/runtime": "^7.18.3",
+    "@polkadot/rpc-provider": "^8.7.1",
+    "@polkadot/types": "^8.7.1",
+    "@polkadot/util": "^9.4.1",
+    "@polkadot/util-crypto": "^9.4.1",
+    "@polkadot/x-global": "^9.4.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.188",
+    "@types/firefox-webext-browser": "^94.0.1"
+  },
+  "peerDependencies": {
+    "@polkadot/api": "*"
+  }
+}

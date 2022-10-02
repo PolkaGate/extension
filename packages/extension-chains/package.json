@@ -1,0 +1,33 @@
+{
+  "author": "Jaco Greeff <jacogr@gmail.com>",
+  "bugs": "https://github.com/polkadot-js/extension/issues",
+  "contributors": [],
+  "description": "Definitions for all known chains as exposed by the extension.",
+  "homepage": "https://github.com/polkadot-js/extension/tree/master/packages/extension-chains#readme",
+  "license": "Apache-2.0",
+  "maintainers": [],
+  "name": "@polkadot/extension-chains",
+  "repository": {
+    "directory": "packages/extension-chains",
+    "type": "git",
+    "url": "https://github.com/polkadot-js/extension.git"
+  },
+  "sideEffects": [
+    "./detectPackage.js",
+    "./detectPackage.cjs"
+  ],
+  "type": "module",
+  "version": "0.44.1",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/runtime": "^7.18.3",
+    "@polkadot/extension-inject": "^0.44.1",
+    "@polkadot/networks": "^9.4.1",
+    "@polkadot/util": "^9.4.1",
+    "@polkadot/util-crypto": "^9.4.1"
+  },
+  "peerDependencies": {
+    "@polkadot/api": "*",
+    "@polkadot/types": "*"
+  }
+}
