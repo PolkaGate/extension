@@ -1,29 +1,31 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Theme, ThemeProps } from '../types';
+// import type { Theme, ThemeProps } from '../types';
 
 import { faExpand, faTasks } from '@fortawesome/free-solid-svg-icons';
+import { Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 
 import settings from '@polkadot/ui-settings';
 
 import { ActionContext, ActionText, Checkbox, Dropdown, Menu, MenuDivider, MenuItem, Svg, Switch, themes, ThemeSwitchContext } from '../components';
+import { SwitchModeButton } from '../components/SwitchModeButton ';
 import useIsPopup from '../hooks/useIsPopup';
 import useTranslation from '../hooks/useTranslation';
 import { setNotification, windowOpen } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
-import { SwitchModeButton } from '../components/SwitchModeButton ';
 
 interface Option {
   text: string;
   value: string;
 }
 
-interface Props extends ThemeProps {
+interface Props {
   className?: string;
   reference: React.MutableRefObject<null>;
+  theme: Theme;
 }
 
 const notificationOptions = ['Extension', 'PopUp', 'Window']
@@ -33,12 +35,11 @@ const prefixOptions = settings.availablePrefixes
   .filter(({ value }) => value !== -1)
   .map(({ text, value }): Option => ({ text, value: `${value}` }));
 
-function MenuSettings({ className, reference }: Props): React.ReactElement<Props> {
+function MenuSettings({ className, reference, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
   const [notification, updateNotification] = useState(settings.notification);
-  const themeContext = useContext(ThemeContext as React.Context<Theme>);
   const setTheme = useContext(ThemeSwitchContext);
   const isPopup = useIsPopup();
   const languageOptions = useMemo(() => getLanguageOptions(), []);
@@ -154,6 +155,7 @@ function MenuSettings({ className, reference }: Props): React.ReactElement<Props
           className='checkbox camera'
           label={t<string>('Allow QR Camera Access')}
           onChange={setCamera}
+          theme={theme}
         />
       </MenuItem>
       <MenuDivider />
@@ -180,21 +182,22 @@ function MenuSettings({ className, reference }: Props): React.ReactElement<Props
 }
 
 export default React.memo(styled(MenuSettings)(({ theme }: Props) => `
-  margin-top: 250px;
-  right: 24px;
+  position: absolute;
+  top: 8px;
   user-select: none;
+  background: ${theme.palette.background.default};
 
   .openWindow, .manageWebsiteAccess{
     span {
-      color: ${theme.primary};
-      font-size: ${theme.fontSize};
-      line-height: ${theme.lineHeight};
+      color: ${theme.palette.primary};
+      // font-size: ${theme.fontSize};
+      // line-height: ${theme.lineHeight};
       text-decoration: none;
       vertical-align: middle;
     }
 
     ${Svg} {
-      background: ${theme.primary};
+      background: ${theme.palette.background.default};
       height: 20px;
       top: 4px;
       width: 20px;
@@ -203,7 +206,7 @@ export default React.memo(styled(MenuSettings)(({ theme }: Props) => `
 
   > .setting {
     > .checkbox {
-      color: ${theme.primary};
+      color: ${theme.palette.primary};
       line-height: 20px;
       font-size: 15px;
       margin-bottom: 0;
@@ -213,12 +216,12 @@ export default React.memo(styled(MenuSettings)(({ theme }: Props) => `
       }
 
       label {
-        color: ${theme.primary};
+        color: ${theme.palette.primary};
       }
     }
 
     > .dropdown {
-      background: ${theme.primary};
+      background: ${theme.palette.primary};
       margin-bottom: 0;
       margin-top: 9px;
       margin-right: 0;

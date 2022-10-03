@@ -1,17 +1,15 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ThemeProps } from '../../../../extension-ui/src/types';
-
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext } from '../../../../extension-ui/src/components';
-import PButton from '../../components/PButton';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
+import PButton from '../../components/PButton';
 import HeaderBrand from '../../patials/HeaderBrand';
 
-interface Props extends ThemeProps {
+interface Props {
   className?: string;
 }
 

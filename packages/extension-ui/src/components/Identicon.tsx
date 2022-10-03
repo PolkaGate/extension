@@ -16,36 +16,37 @@ interface Props {
   onCopy?: () => void;
   prefix?: number;
   value?: string | null;
-  size?: number;
+  size: number;
 }
 
-export default function Identicon({ className, iconTheme, onCopy, prefix, size = 58, value }: Props): React.ReactElement<Props> {
+function Identicon({ className, iconTheme, onCopy, prefix, value, size }: Props): React.ReactElement<Props> {
   return (
-    <Icon
-      className='icon'
-      onCopy={onCopy}
-      prefix={prefix}
-      size={size}
-      theme={iconTheme}
-      value={value}
-    />
+    <div className={className}>
+      <Icon
+        className='icon'
+        onCopy={onCopy}
+        prefix={prefix}
+        size={size}
+        theme={iconTheme}
+        value={value}
+      />
+    </div>
   );
 }
 
-// export default styled(Identicon)(({ theme }: ThemeProps) => `
-//   background: rgba(192, 192, 292, 0.25);
-//   border-radius: 50%;
-//   display: flex;
-//   justify-content: center;
+export default styled(Identicon)(({ theme }: ThemeProps) => `
+  background: rgba(192, 192, 292, 0.25);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
 
-//   .container:before {
-//     box-shadow: none;
-//     background: '#F4F5F8';
-//   }
+  .container:before {
+    box-shadow: none;
+  }
 
-//   svg {
-//     circle:first-of-type {
-//       display: none;
-//     }
-//   }
-// `);
+  svg {
+    circle:first-of-type {
+      display: none;
+    }
+  }
+`);

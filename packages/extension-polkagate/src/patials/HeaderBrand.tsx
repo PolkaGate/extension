@@ -97,7 +97,7 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
       </Grid>
       {
         isSettingsOpen && (
-          <MenuSettings reference={setMenuRef} />
+          <MenuSettings theme={theme} reference={setMenuRef} />
         )
       }
     </Container >

@@ -27,10 +27,9 @@ function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text
       disabled={disabled}
       onClick={_onClick}
       sx={{
-        background: 'primary.main',
-        borderColor: 'secondary.light',
+        borderColor: 'secondary.main',
         borderRadius: '5px',
-        color: 'text.primary',
+        color:'text.primary',
         fontSize: '16px',
         fontWeight: 300,
         height: '36px',

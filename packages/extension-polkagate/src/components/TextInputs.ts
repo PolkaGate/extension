@@ -20,7 +20,7 @@ const TextBox = css(({ theme }: Props) => `
   padding: 12px;
   font-weight: 400;
   resize: none;
-  width: 94%;
+  width: 92%;
   margin: 6px auto;
   font-family: ${theme.typography.allVariants.fontFamily};
 `);

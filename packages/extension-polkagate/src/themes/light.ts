@@ -10,11 +10,11 @@ import { baseTheme } from './baseTheme';
 export const lightTheme: ThemeOptions = {
   ...baseTheme,
   palette: {
-    action: { active: '#000' },
-    background: { default: '#E8E0E5', paper: '#fff' },
     mode: 'light',
-    primary: { main: '#000000' },
-    secondary: grey,
-    text: { primary: '#000', secondary: '#99004F' }
+    primary: { main: '#99004F' },
+    secondary: { main: '#99004F', light: '#BA2882' },
+    background: { default: '#E8E0E5', paper: '#fff' },
+    text: { primary: '#000', secondary: '#99004F' },
+    action: { active: '#000' }
   }
 };
