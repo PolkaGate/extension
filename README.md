@@ -1,9 +1,10 @@
+<img src="https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/logo/534b.PNG" data-canonical-src="https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/logo/534b.PNG" width="100" height="100" />
 
-# ![polkadot{.js} plus extension](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/Title.png)
+# PolkaGate
 
 A user-friendly wallet to interact with the Polkadot/Substrate based blockchains through a browser. It allows users to access their Polkadot/Kusama ecosystem account(s), which can also be used to interact with decentralized apps. It is based on polkadot js extension, which injects a [@polkadot/api](https://github.com/polkadot-js/api) signer into a page, along with any associated accounts.
 
-Polkadot js Plus extension not only has all the abilities of the original Polkadot extension, but also many new functionalities as listed below are available, where more features are coming.
+Polkagate extension not only has all the abilities of the original Polkadot extension, but also many new functionalities as listed below are available, where more features are coming.
 
 ## New functionalities
 
@@ -17,7 +18,7 @@ Currently, the following features are available:
   - Governance (vote referendums, second proposals, vote/unvote councils, propose treasury proposals and tips, etc.)
   
 
-# ![polkadot{.js} plus extension intro](packages/extension-plus/docs/intro.png)
+# ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)
 
 ### More photos [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki/How-To's)
 
