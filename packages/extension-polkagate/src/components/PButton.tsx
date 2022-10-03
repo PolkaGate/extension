@@ -13,14 +13,6 @@ interface Props {
 }
 
 function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text }: Props): React.ReactElement<Props> {
-  // Change backGroundColor when button is disable, busy, ...
-  // const [bgc, setBgc] = useState<string>('#BA2882');
-
-  // useEffect(() => {
-  //   if (_variant === 'outlined') {
-  //     setBgc('transparent');
-  //   }
-  // }, [_variant]);
 
   return (
     <Button
@@ -29,7 +21,7 @@ function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text
       sx={{
         borderColor: 'secondary.main',
         borderRadius: '5px',
-        color:'text.primary',
+        color: _variant === 'contained' ? 'text.secondary' : 'text.primary',
         fontSize: '16px',
         fontWeight: 300,
         height: '36px',
