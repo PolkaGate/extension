@@ -10,7 +10,7 @@ import React, { useCallback, useContext } from 'react';
 import { ActionContext } from '../../../../extension-ui/src/components';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import PButton from '../../components/PButton';
-import HeaderBrand from '../../patials/HeaderBrand';
+import HeaderBrand from '../../partials/HeaderBrand';
 
 interface Props extends ThemeProps {
   className?: string;
@@ -47,7 +47,7 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
           sx={{ fontSize: '14px', fontWeight: 300, textAlign: 'center' }}
         >{t<string>('Before we start, just a couple of notes regarding use:')}</Typography>
         <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid #BA2882', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
-          <List sx={{ color: 'text.secondary' }}>
+          <List sx={{ color: 'text.primary' }}>
             <ListItem>
               <ListItemIcon sx={{ color: '#99004F', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
               <ListItemText
@@ -74,7 +74,9 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
         <Typography
           component={'p'}
           sx={{ fontSize: '14px', fontWeight: 300, pl: '25px' }}
-        >{t<string>('... we are not in the information collection business (even anonymized).')}</Typography>
+        >
+          {t<string>('... we are not in the information collection business (even anonymized).')}
+        </Typography>
       </div>
       <PButton
         _mt='55px'

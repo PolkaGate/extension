@@ -7,7 +7,7 @@ import React, { useCallback, useContext } from 'react';
 import { ActionContext } from '../../../../extension-ui/src/components';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import PButton from '../../components/PButton';
-import HeaderBrand from '../../patials/HeaderBrand';
+import HeaderBrand from '../../partials/HeaderBrand';
 
 interface Props {
   className?: string;

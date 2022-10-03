@@ -12,7 +12,7 @@ import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { createAccountSuri, createSeed, validateSeed } from '../../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import PAddress from '../../components/Address';
-import HeaderBrand from '../../patials/HeaderBrand';
+import HeaderBrand from '../../partials/HeaderBrand';
 import Mnemonic from './Mnemonic';
 
 interface Props {
