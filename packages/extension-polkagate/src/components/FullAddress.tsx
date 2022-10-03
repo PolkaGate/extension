@@ -32,8 +32,10 @@ import { showAccount } from '../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { useApi, useEndpoint } from '../hooks';
-import { ShortAddress, ShowBalance } from '.'; // added for Plus
+import Goo from './heyooo/Goo';
 import Icons from './heyooo/Icons';
+import NameIcons from './heyooo/Name&Icons';
+import { ShortAddress, ShowBalance } from '.'; // added for Plus
 
 export interface Props {
   actions?: React.ReactNode;
@@ -254,86 +256,8 @@ export default function PAddress({ actions, address, children, className, genesi
         identiconTheme={theme}
         prefix={prefix}
       />
-      <Grid item pl='8.53px' xs={8}>
-        <Grid container item justifyContent='space-between'>
-          <Grid alignItems='center' container flexWrap='nowrap' item xs={11}>
-            {parentName
-              ? (
-                <>
-                  <div className='banner'>
-                    <FontAwesomeIcon
-                      className='deriveIcon'
-                      icon={faCodeBranch}
-                    />
-                    <div
-                      className='parentName'
-                      data-field='parent'
-                      title={parentNameSuri}
-                    >
-                      {parentNameSuri}
-                    </div>
-                  </div>
-                  <div className='name displaced'>
-                    <Name />
-                  </div>
-                </>
-              )
-              : (
-                <Grid alignItems='center' container item sx={{ width: 'fit-content', maxWidth: '47%' }}>
-                  <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 300, fontSize: '24px', letterSpacing: '-0.015em' }} xs>
-                    <Name />
-                  </Grid>
-                  {judgement &&
-                    <Grid item xs={2.5} pt='10px' >
-                      <CheckIcon sx={{ bgcolor: 'green', color: 'white', borderRadius: '50%', fontSize: 19, p: '3px' }} />
-                    </Grid>
-                  }
-                </Grid>
-              )
-            }
-            <Grid container item xs>
-              <ShortAddress address={formatted || address || t('<unknown>')} addressStyle={{ fontWeight: 300, fontSize: '12px', lineHeight: '0px', letterSpacing: '-0.015em', justifyContent: 'flex-start', pl: '8px' }} charsCount={4} showCopy />
-            </Grid>
-          </Grid>
-          <Grid item xs={1}>
-            {actions && (
-              <>
-                <IconButton
-                  onClick={_onClick}
-                  sx={{ p: 0 }}
-                >
-                  <MoreVertIcon sx={{ fontSize: 30 }} />
-                </IconButton>
-                {showActionsMenu && (
-                  <Menu
-                    className={`movableMenu ${moveMenuUp ? 'isMoved' : ''}`}
-                    reference={actMenuRef}
-                  >
-                    {actions}
-                  </Menu>
-                )}
-              </>
-            )}
-          </Grid>
-        </Grid>
-        {
-          (formatted || address) && showPlus &&
-          <Grid alignItems='center' container item>
-            <Grid item sx={{ fontWeight: 300, fontSize: '20px', letterSpacing: '-0.015em' }} xs>
-              <ShowBalance api={api} balance={balances?.freeBalance?.add(balances?.reservedBalance)} />
-            </Grid>
-            <Grid item xs={1}>
-              <IconButton
-                sx={{ p: 0 }}
-                onClick={goToAccount}
-              >
-                <ArrowForwardIosRoundedIcon sx={{ fontSize: '25px' }} />
-              </IconButton>
-            </Grid>
-          </Grid>
-        }
-      </Grid>
-      {children}
+      <NameIcons address={formatted} name={name || account?.name} toggleVisibility={_toggleVisibility} />
+      <Goo goOnClick={goToAccount} moreOnClick={_onClick} />
     </Grid>
   );
 }

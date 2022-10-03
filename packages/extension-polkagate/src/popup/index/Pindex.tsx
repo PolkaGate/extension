@@ -14,7 +14,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'; // added for plus
 
 import { AccountContext } from '../../../../extension-ui/src/components';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import HeaderBrand from '../../patials/HeaderBrand';
+import HeaderBrand from '../../partials/HeaderBrand';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './PAccountsTree';
 import YouHave from './YouHave';
@@ -76,12 +76,12 @@ export default function PAccounts({ className }: Props): React.ReactElement {
               sx={{
                 backgroundColor: 'background.paper',
                 border: '1px solid',
-                borderColor: 'secondary.main',
+                borderColor: 'secondary.light',
                 borderRadius: '5px',
                 height: '400px',
-                p: 0,
                 m: 'auto',
                 mt: '10px',
+                p: 0,
                 width: '92%'
               }}
             >

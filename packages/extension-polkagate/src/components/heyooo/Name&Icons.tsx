@@ -1,11 +1,9 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { IconTheme } from '@polkadot/react-identicon/types';
-
-import { faCopy, faEye, faEyeSlash, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -13,11 +11,12 @@ import useToast from '../../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 
 interface Props {
-  address: string | null;
-  name: string | null;
+  address: string | undefined | null;
+  name: string | undefined;
+  toggleVisibility: () => void;
 }
 
-export default function Icons({ address, name }: Props): React.ReactElement<Props> {
+export default function NameIcons({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const { show } = useToast();
@@ -28,36 +27,38 @@ export default function Icons({ address, name }: Props): React.ReactElement<Prop
     [show, t]
   );
 
-  const VisibilityHandler = useCallback(() => {
-
-  }, []);
-
   return (
     <Grid
       container
       direction='column'
-      xs={8}
+      xs={7.5}
     >
       <Grid
         container
         direction='row'
         item
       >
-        <Grid item>
+        <Grid
+          item
+          maxWidth='67%'
+        >
           <Typography
             fontSize='28px'
             fontWeight={300}
+            overflow='hidden'
+            textOverflow='ellipsis'
+            whiteSpace='nowrap'
           >
             {name}
           </Typography>
         </Grid>
         <Grid item>
           <IconButton
-            onClick={VisibilityHandler}
-            sx={{ height: '15px', width: '15px' }}
+            onClick={toggleVisibility}
+            sx={{ height: '21px', width: '21px', m: '10px' }}
           >
             <FontAwesomeIcon
-              color={theme.palette.primary.main}
+              color={theme.palette.secondary.light}
               fontSize='20px'
               // icon={toggle ? faEye : faEyeSlash}
               icon={faEye}
@@ -69,10 +70,10 @@ export default function Icons({ address, name }: Props): React.ReactElement<Prop
           <CopyToClipboard text={String(address)}>
             <IconButton
               onClick={_onCopy}
-              sx={{ height: '15px', width: '15px' }}
+              sx={{ height: '21px', width: '21px', m: '10px 0' }}
             >
               <FontAwesomeIcon
-                color={theme.palette.primary.main}
+                color={theme.palette.secondary.light}
                 fontSize='20px'
                 icon={faCopy}
                 title={t('Copy')}
@@ -85,27 +86,21 @@ export default function Icons({ address, name }: Props): React.ReactElement<Prop
         container
         direction='row'
         item
-        justifyContent='center'
       >
-        <Grid item>
-          <IconButton disabled={recoverable} sx={{ width: '15px', height: '15px' }}>
-            <FontAwesomeIcon
-              color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
-              fontSize='12px'
-              icon={faShieldHalved}
-              title={t('Recoverable')}
-            />
-          </IconButton>
+        <Grid
+          fontSize='18px'
+          fontWeight={300}
+          item
+        >
+          {'123.45 kKSM'}
         </Grid>
-        <Grid item>
-          <IconButton disabled={realAccount} sx={{ width: '15px', height: '15px' }}>
-            <FontAwesomeIcon
-              color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
-              fontSize='12px'
-              icon={faSitemap}
-              title={t('Recoverable')}
-            />
-          </IconButton>
+        <Divider sx={{ backgroundColor: 'text.primary', height: 'auto', mx: '5px' }} orientation='vertical' />
+        <Grid
+          fontSize='18px'
+          fontWeight={300}
+          item
+        >
+          {'$456.78 K'}
         </Grid>
       </Grid>
     </Grid>
