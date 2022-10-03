@@ -32,9 +32,9 @@ import { showAccount } from '../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { useApi, useEndpoint } from '../hooks';
-import Goo from './heyooo/Goo';
-import Icons from './heyooo/Icons';
-import NameIcons from './heyooo/Name&Icons';
+import Goo from './AccountFeatures';
+import Icons from './AccountIcons';
+import NameIcons from './AccountDetail';
 import { ShortAddress, ShowBalance } from '.'; // added for Plus
 
 export interface Props {

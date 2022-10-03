@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import Identicon from '../../../../extension-ui/src/components/Identicon';
-import useToast from '../../../../extension-ui/src/hooks/useToast';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
+import Identicon from '../../../extension-ui/src/components/Identicon';
+import useToast from '../../../extension-ui/src/hooks/useToast';
+import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 
 interface Props {
   address: string | null;
@@ -20,7 +20,7 @@ interface Props {
   prefix?: number;
 }
 
-export default function Icons ({ address, identiconTheme, prefix, realAccount = false, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons ({ address, identiconTheme, prefix, realAccount = false, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const { show } = useToast();

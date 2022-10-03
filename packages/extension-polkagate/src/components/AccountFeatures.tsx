@@ -1,18 +1,16 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { IconTheme } from '@polkadot/react-identicon/types';
-
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Grid, IconButton } from '@mui/material';
+import React from 'react';
 
 interface Props {
   moreOnClick: () => void;
   goOnClick: () => void;
 }
 
-export default function Goo({ goOnClick, moreOnClick }: Props): React.ReactElement<Props> {
+export default function AccountFeatures({ goOnClick, moreOnClick }: Props): React.ReactElement<Props> {
   return (
     <Grid
       container
@@ -25,8 +23,8 @@ export default function Goo({ goOnClick, moreOnClick }: Props): React.ReactEleme
         width='fit-content'
       >
         <IconButton
-          sx={{ p: 0 }}
           onClick={moreOnClick}
+          sx={{ p: 0 }}
         >
           <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
         </IconButton>
@@ -34,13 +32,13 @@ export default function Goo({ goOnClick, moreOnClick }: Props): React.ReactEleme
       <Grid
         container
         direction='row'
-        mt='5px'
         item
         justifyContent='center'
+        mt='5px'
       >
         <IconButton
-          sx={{ p: 0 }}
           onClick={goOnClick}
+          sx={{ p: 0 }}
         >
           <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
         </IconButton>

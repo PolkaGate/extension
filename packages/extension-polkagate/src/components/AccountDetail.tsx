@@ -4,11 +4,11 @@
 import { faCopy, faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
-import useToast from '../../../../extension-ui/src/hooks/useToast';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
+import useToast from '../../../extension-ui/src/hooks/useToast';
+import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 
 interface Props {
   address: string | undefined | null;
@@ -16,7 +16,7 @@ interface Props {
   toggleVisibility: () => void;
 }
 
-export default function NameIcons({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail ({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const { show } = useToast();
@@ -55,7 +55,7 @@ export default function NameIcons({ address, name, toggleVisibility }: Props): R
         <Grid item>
           <IconButton
             onClick={toggleVisibility}
-            sx={{ height: '21px', width: '21px', m: '10px' }}
+            sx={{ height: '21px', m: '10px', width: '21px' }}
           >
             <FontAwesomeIcon
               color={theme.palette.secondary.light}
@@ -70,7 +70,7 @@ export default function NameIcons({ address, name, toggleVisibility }: Props): R
           <CopyToClipboard text={String(address)}>
             <IconButton
               onClick={_onCopy}
-              sx={{ height: '21px', width: '21px', m: '10px 0' }}
+              sx={{ height: '21px', m: '10px 0', width: '21px' }}
             >
               <FontAwesomeIcon
                 color={theme.palette.secondary.light}
@@ -94,7 +94,14 @@ export default function NameIcons({ address, name, toggleVisibility }: Props): R
         >
           {'123.45 kKSM'}
         </Grid>
-        <Divider sx={{ backgroundColor: 'text.primary', height: 'auto', mx: '5px' }} orientation='vertical' />
+        <Divider
+          orientation='vertical'
+          sx={{
+            backgroundColor: 'text.primary',
+            height: 'auto',
+            mx: '5px'
+          }}
+        />
         <Grid
           fontSize='18px'
           fontWeight={300}
