@@ -4,7 +4,6 @@
 /* eslint-disable sort-keys */
 
 import { ThemeOptions } from '@mui/material';
-import { blue, grey, red } from '@mui/material/colors';
 
 import { baseTheme } from './baseTheme';
 

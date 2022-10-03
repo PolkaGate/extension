@@ -78,7 +78,7 @@ Once added, you can create an account (via a generated seed) or import via an ex
 
 ## More information 
 
-for more information about the extension and how it worsk, please go to the project [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki) 
+for more information about the extension and how it works, please go to the project [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki) 
 
 <!-- ## To support 
 
