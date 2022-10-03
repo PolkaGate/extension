@@ -13,7 +13,6 @@ import uiSettings from '@polkadot/ui-settings';
 
 import CrowdLoans from '../../../extension-plus/src/Popup/CrowdLoans';// added for plus
 import Governance from '../../../extension-plus/src/Popup/Governance';// added for plus
-import EnDecrypt from '../../../extension-plus/src/Popup/Encryption';// added for plus
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
 import Account from '../../../extension-polkagate/src/popup/account';// added for plus
 import Send from '../../../extension-polkagate/src/popup/send';// added for plus
@@ -154,7 +153,6 @@ export default function Popup(): React.ReactElement {
                           {/* // added for plus */}
                           <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                           <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
-                          <Route path='/endecrypt/:address'>{wrapWithErrorBoundary(<EnDecrypt />, 'encrypt-decrypt')}</Route>
                           <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'socialRecovery')}</Route>
                           <Route path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                           <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

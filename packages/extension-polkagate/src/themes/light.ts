@@ -1,9 +1,9 @@
-// Copyright 2019-2022 @polkagate authors & contributors
+// Copyright 2019-2022 @polkadot/polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
 import { ThemeOptions } from '@mui/material';
-import { blue,grey, red } from '@mui/material/colors';
+import { blue, grey, red } from '@mui/material/colors';
 
 import { baseTheme } from './baseTheme';
 
