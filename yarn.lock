@@ -5235,6 +5235,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@polkadot/polkagate@workspace:packages/extension-polkagate":
+  version: 0.0.0-use.local
+  resolution: "@polkadot/polkagate@workspace:packages/extension-polkagate"
+  languageName: unknown
+  linkType: soft
+
 "@polkadot/react-identicon@npm:^2.4.2-0":
   version: 2.4.2-0
   resolution: "@polkadot/react-identicon@npm:2.4.2-0"
