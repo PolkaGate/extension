@@ -3,12 +3,13 @@
 
 import { faCopy, faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Avatar, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { copy1, eye } from '../assets/icons';
 
 interface Props {
   address: string | undefined | null;
@@ -16,7 +17,7 @@ interface Props {
   toggleVisibility: () => void;
 }
 
-export default function AccountDetail ({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const { show } = useToast();
@@ -40,7 +41,7 @@ export default function AccountDetail ({ address, name, toggleVisibility }: Prop
       >
         <Grid
           item
-          maxWidth='67%'
+          maxWidth='65%'
         >
           <Typography
             fontSize='28px'
@@ -55,14 +56,19 @@ export default function AccountDetail ({ address, name, toggleVisibility }: Prop
         <Grid item>
           <IconButton
             onClick={toggleVisibility}
-            sx={{ height: '21px', m: '10px', width: '21px' }}
+            sx={{ height: '15px', p: 0, mt: '13px', mx: '7px', width: '24px' }}
           >
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               color={theme.palette.secondary.light}
               fontSize='20px'
               // icon={toggle ? faEye : faEyeSlash}
               icon={faEye}
               title={t('Visibilty')}
+            /> */}
+            <Avatar
+              alt={'logo'}
+              src={eye}
+              sx={{ height: '13px', width: '22px', borderRadius: 0, '> img': { objectFit: 'scale-down' } }}
             />
           </IconButton>
         </Grid>
@@ -70,13 +76,18 @@ export default function AccountDetail ({ address, name, toggleVisibility }: Prop
           <CopyToClipboard text={String(address)}>
             <IconButton
               onClick={_onCopy}
-              sx={{ height: '21px', m: '10px 0', width: '21px' }}
+              sx={{ height: '23px', m: '10px 0', width: '25px' }}
             >
-              <FontAwesomeIcon
+              {/* <FontAwesomeIcon
                 color={theme.palette.secondary.light}
                 fontSize='20px'
                 icon={faCopy}
                 title={t('Copy')}
+              /> */}
+              <Avatar
+                alt={'logo'}
+                src={copy1}
+                sx={{ height: '22px', width: '23px', borderRadius: 0, '> img': { objectFit: 'scale-down' } }}
               />
             </IconButton>
           </CopyToClipboard>
