@@ -4,6 +4,7 @@
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
 import { Box, Container, Divider, Grid, InputAdornment, TextField, Typography } from '@mui/material';
+import { borderRadius, borderTop } from '@mui/system';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -16,7 +17,7 @@ import { AccountContext } from '../../../../extension-ui/src/components';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import HeaderBrand from '../../partials/HeaderBrand';
 import AddAccount from '../welcome/AddAccount';
-import AccountsTree from './PAccountsTree';
+import AccountsTree from './AccountsTree';
 import YouHave from './YouHave';
 
 interface Props extends ThemeProps {
@@ -73,17 +74,24 @@ export default function PAccounts({ className }: Props): React.ReactElement {
             </Grid>
             <YouHave />
             <Container
-              sx={{
+              sx={[{
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                  width: 0
+                },
+                '> .tree:last-child': { border: 'none' },
                 backgroundColor: 'background.paper',
-                border: '1px solid',
+                border: '0.5px solid',
                 borderColor: 'secondary.light',
                 borderRadius: '5px',
-                height: '400px',
                 m: 'auto',
+                maxHeight: '430px',
                 mt: '10px',
+                overflowY: 'scroll',
                 p: 0,
+                scrollbarWidth: 'none',
                 width: '92%'
-              }}
+              }]}
             >
               {filteredAccount.map((json, index): React.ReactNode => (
                 <AccountsTree
