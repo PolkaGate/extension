@@ -32,9 +32,9 @@ import { showAccount } from '../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { useApi, useEndpoint } from '../hooks';
-import Goo from './AccountFeatures';
-import Icons from './AccountIcons';
-import NameIcons from './AccountDetail';
+import AccountDetail from './AccountDetail';
+import AccountFeatures from './AccountFeatures';
+import AccountIcons from './AccountIcons';
 import { ShortAddress, ShowBalance } from '.'; // added for Plus
 
 export interface Props {
@@ -250,14 +250,14 @@ export default function PAddress({ actions, address, children, className, genesi
   }, [balances, history, genesisHash, address, formatted, api, identity]);
 
   return (
-    <Grid alignItems='center' container py='12px'>
-      <Icons
+    <Grid alignItems='center' container py='15px'>
+      <AccountIcons
         address={formatted}
         identiconTheme={theme}
         prefix={prefix}
       />
-      <NameIcons address={formatted} name={name || account?.name} toggleVisibility={_toggleVisibility} />
-      <Goo goOnClick={goToAccount} moreOnClick={_onClick} />
+      <AccountDetail address={formatted} name={name || account?.name} toggleVisibility={_toggleVisibility} />
+      <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
     </Grid>
   );
 }
