@@ -14,9 +14,10 @@ interface Props {
   onChange?: (checked: boolean) => void;
   onClick?: () => void;
   theme?: Theme;
+  style?: React.CSSProperties | undefined;
 }
 
-function Checkbox({ checked, className, label, onChange, onClick }: Props): React.ReactElement<Props> {
+function Checkbox({ checked, className, label, onChange, onClick, style }: Props): React.ReactElement<Props> {
   const _onChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => onChange && onChange(event.target.checked),
     [onChange]
@@ -28,7 +29,10 @@ function Checkbox({ checked, className, label, onChange, onClick }: Props): Reac
   );
 
   return (
-    <div className={className}>
+    <div
+      className={className}
+      style={{ margin: '41px auto 10px', ...style }}
+    >
       <label color='text.primary'>
         {label}
         <input
@@ -44,8 +48,6 @@ function Checkbox({ checked, className, label, onChange, onClick }: Props): Reac
 }
 
 export default styled(Checkbox)(({ theme }: Props) => `
-  margin: 41px auto 10px;
-
   label {
     display: block;
     position: relative;
@@ -78,8 +80,8 @@ export default styled(Checkbox)(({ theme }: Props) => `
       &:after {
         content: '';
         display: none;
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
         position: absolute;
         left: 0;
         top: 0;

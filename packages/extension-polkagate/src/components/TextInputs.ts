@@ -6,12 +6,12 @@ import styled, { css } from 'styled-components';
 
 interface Props {
   withError?: boolean;
-  theme?: Theme;
+  theme: Theme;
 }
 const TextBox = css(({ theme }: Props) => `
   background: ${theme.palette.background.paper};
   border-radius: 5px;
-  border: 1px solid #BA2882;
+  border: 1px solid ${theme.palette.secondary.light};
   box-sizing: border-box;
   color: #FF46A0;
   display: block;
@@ -20,8 +20,8 @@ const TextBox = css(({ theme }: Props) => `
   padding: 12px;
   font-weight: 400;
   resize: none;
-  width: 92%;
-  margin: 6px auto;
+  width: 100%;
+  // margin: 6px auto;
   font-family: ${theme.typography.allVariants.fontFamily};
 `);
 

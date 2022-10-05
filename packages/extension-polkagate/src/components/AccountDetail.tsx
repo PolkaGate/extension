@@ -1,15 +1,13 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faCopy, faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Avatar, Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { copy1, eye } from '../assets/icons';
+import { copy1, eye, eyeSlashP } from '../assets/icons';
 
 interface Props {
   address: string | undefined | null;
@@ -17,9 +15,7 @@ interface Props {
   toggleVisibility: () => void;
 }
 
-export default function AccountDetail({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
-
+export default function AccountDetail ({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { show } = useToast();
   const { t } = useTranslation();
 
@@ -56,19 +52,12 @@ export default function AccountDetail({ address, name, toggleVisibility }: Props
         <Grid item>
           <IconButton
             onClick={toggleVisibility}
-            sx={{ height: '15px', p: 0, mt: '13px', mx: '7px', width: '24px' }}
+            sx={{ height: '15px', mt: '13px', mx: '7px', p: 0, width: '24px' }}
           >
-            {/* <FontAwesomeIcon
-              color={theme.palette.secondary.light}
-              fontSize='20px'
-              // icon={toggle ? faEye : faEyeSlash}
-              icon={faEye}
-              title={t('Visibilty')}
-            /> */}
             <Avatar
               alt={'logo'}
               src={eye}
-              sx={{ height: '13px', width: '22px', borderRadius: 0, '> img': { objectFit: 'scale-down' } }}
+              sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, width: '22px' }}
             />
           </IconButton>
         </Grid>
@@ -78,16 +67,10 @@ export default function AccountDetail({ address, name, toggleVisibility }: Props
               onClick={_onCopy}
               sx={{ height: '23px', m: '10px 0', width: '25px' }}
             >
-              {/* <FontAwesomeIcon
-                color={theme.palette.secondary.light}
-                fontSize='20px'
-                icon={faCopy}
-                title={t('Copy')}
-              /> */}
               <Avatar
                 alt={'logo'}
                 src={copy1}
-                sx={{ height: '22px', width: '23px', borderRadius: 0, '> img': { objectFit: 'scale-down' } }}
+                sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, width: '23px' }}
               />
             </IconButton>
           </CopyToClipboard>
@@ -109,8 +92,9 @@ export default function AccountDetail({ address, name, toggleVisibility }: Props
           orientation='vertical'
           sx={{
             backgroundColor: 'text.primary',
-            height: 'auto',
-            mx: '5px'
+            height: '19px',
+            mx: '5px',
+            my: 'auto'
           }}
         />
         <Grid

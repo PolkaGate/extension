@@ -17,7 +17,7 @@ interface Props {
   className?: string;
 }
 
-function MnemonicSeed ({ className, onCopy, seed }: Props): React.ReactElement<Props> {
+function MnemonicSeed({ className, onCopy, seed }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
@@ -27,6 +27,7 @@ function MnemonicSeed ({ className, onCopy, seed }: Props): React.ReactElement<P
         isReadOnly
         label={t<string>('Generated 12-word mnemonic seed:')}
         value={seed}
+        style={{ width: '92%', margin: 'auto' }}
       />
       <div className='buttonsRow'>
         <ActionText

@@ -84,10 +84,8 @@ function InputWithLabel ({ className, defaultValue, disabled, isError, isFocused
 }
 
 export default styled(InputWithLabel)`
-  margin-bottom: 16px;
-
   &.withoutMargin {
-    margin-bottom: 0px;
+    margin: 0;
 
    + .danger {
       margin-top: 6px;

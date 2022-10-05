@@ -17,9 +17,10 @@ interface Props {
   label: string;
   onChange?: (value: string) => void;
   value?: string;
+  style: React.CSSProperties | undefined;
 }
 
-export default function TextAreaWithLabel({ className, isError, isFocused, isReadOnly, label, onChange, rowsCount, value }: Props): React.ReactElement<Props> {
+export default function TextAreaWithLabel({ className, isError, isFocused, isReadOnly, label, onChange, rowsCount, value, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(
@@ -33,6 +34,7 @@ export default function TextAreaWithLabel({ className, isError, isFocused, isRea
     <Label
       className={className}
       label={label}
+      style={style}
     >
       <TextArea
         autoCapitalize='off'
@@ -42,7 +44,7 @@ export default function TextAreaWithLabel({ className, isError, isFocused, isRea
         readOnly={isReadOnly}
         rows={rowsCount || 2}
         spellCheck={false}
-        style={{ height: '88px' }}
+        style={{ height: '88px', margin: 'auto' }}
         theme={theme}
         value={value}
         withError={isError}

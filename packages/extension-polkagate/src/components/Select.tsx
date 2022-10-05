@@ -60,7 +60,7 @@ export default function CustomizedSelect({ defaultValue, label, onChange, option
       <InputLabel
         htmlFor='selectChain'
         variant='standard'
-        sx={{ transformOrigin: 'left bottom', fontWeight: 300, letterSpacing: '-0.015em' }}
+        sx={{ color: 'text.primary', fontSize: '18px', fontWeight: 300, transformOrigin: 'left bottom', fontWeight: 300, letterSpacing: '-0.015em' }}
 
       >
         {label}
@@ -70,12 +70,23 @@ export default function CustomizedSelect({ defaultValue, label, onChange, option
         id='selectChain'
         input={<BootstrapInput />}
         onChange={_onChange}
-        sx={{ width: '100%', height: 31 }}
-      // value={defaultValue}
+        sx={{
+          '> #selectChain': {
+            borderRadius: '5px',
+            borderColor: 'secondary.light',
+            height: '29px',
+            p: 0,
+            pl: '10px',
+            color: '#9A7DB2',
+            lineHeight: '32px',
+            fontSize: '18px',
+            textAlign: 'left'
+          }
+        }}
       >
         {options.map(({ text, value }): React.ReactNode => (
           <MenuItem key={value} sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }} value={value}>
-              {text}
+            {text}
           </MenuItem>
         ))}
       </Select>
