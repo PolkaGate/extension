@@ -5,16 +5,17 @@
 
 import { Avatar, Divider, Grid, IconButton, Input, InputLabel, useTheme } from '@mui/material';
 import React, { useMemo, useState } from 'react';
+
 import settings from '@polkadot/ui-settings';
 
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { externalLink } from '../assets/icons';
+import { ManageAccess, ManageAccessB } from '../assets/icons'
 import Checkbox from '../components/Checkbox';
 import MenuItem from '../components/MenuItem';
 import Select from '../components/Select';
 import Switch from '../components/Switch';
-import { ManageAccess, ManageAccessB } from '../assets/icons'
 
 interface Props {
   className?: string;

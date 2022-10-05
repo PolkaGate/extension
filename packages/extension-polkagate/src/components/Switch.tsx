@@ -1,36 +1,24 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useTheme } from '@emotion/react';
 import { Typography } from '@mui/material';
 import { Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-import { ThemeSwitchContext } from '../../../extension-ui/src/components';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { ColorContext } from './';
 
 interface Props {
   className?: string;
   theme: Theme;
 }
 
-function Switch ({ className }: Props): React.ReactElement<Props> {
+function Switch({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const [isChecked, setChecked] = useState<boolean>(false);
-  const setTheme = useContext(ThemeSwitchContext);
-
-  const _onChangeTheme = useCallback(
-    (checked: boolean): void => setTheme(checked ? 'dark' : 'light'),
-    [setTheme]
-  );
-
-  const _onChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      _onChangeTheme(event.target.checked);
-      setChecked(!isChecked);
-    },
-    [_onChangeTheme, isChecked]
-  );
+  const colorMode = React.useContext(ColorContext);
+  const theme = useTheme();
 
   return (
     <div className={className}>
@@ -43,9 +31,9 @@ function Switch ({ className }: Props): React.ReactElement<Props> {
       </Typography>
       <label>
         <input
-          checked={isChecked}
+          checked={theme.palette.mode === 'dark'}
           className='checkbox'
-          onChange={_onChange}
+          onChange={colorMode.toggleColorMode}
           type='checkbox'
         />
         <span className='slider' />

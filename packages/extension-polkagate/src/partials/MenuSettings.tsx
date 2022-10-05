@@ -50,7 +50,6 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
   const [notification, updateNotification] = useState(settings.notification);
-  const setTheme = useContext(ThemeSwitchContext);
   const isPopup = useIsPopup();
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const onAction = useContext(ActionContext);
@@ -83,15 +82,6 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
       updateNotification(value);
       settings.set({ notification: value });
     }, []
-  );
-
-  const onnn = useCallback(() => {
-    console.log('cliiiiiiiiiiiiiiiiick');
-  }, []);
-
-  const _onChangeTheme = useCallback(
-    (checked: boolean): void => setTheme(checked ? 'dark' : 'light'),
-    [setTheme]
   );
 
   const _onWindowOpen = useCallback(
