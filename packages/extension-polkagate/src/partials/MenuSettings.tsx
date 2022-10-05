@@ -20,6 +20,8 @@ import { setNotification, windowOpen } from '../../../extension-ui/src/messaging
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { addCircle, exportIcon, importIcon, roadBranch, setting } from '../assets/icons';
 import MenuItem from '../components/MenuItem';
+import ImportAccSubMenu from './ImportAccSubMenu';
+import SettingSubMenu from './SettingSubMenu';
 
 interface Option {
   text: string;
@@ -43,6 +45,8 @@ const prefixOptions = settings.availablePrefixes
 
 export default function MenuSettings({ className, isSettingsOpen, reference, setShowSettings, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
+  const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
   const [notification, updateNotification] = useState(settings.notification);
@@ -54,6 +58,16 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
+
+  const toggleImportSubMenu = useCallback(() => {
+    setShowImportSubMenu(!showImportSubMenu);
+    showSettingSubMenu && setShowSettingSubMenu(!showSettingSubMenu);
+  }, [showImportSubMenu, showSettingSubMenu]);
+
+  const toggleSettingSubMenu = useCallback(() => {
+    setShowSettingSubMenu(!showSettingSubMenu);
+    showImportSubMenu && setShowImportSubMenu(!showImportSubMenu);
+  }, [showImportSubMenu, showSettingSubMenu]);
 
   const _onChangePrefix = useCallback(
     (value: string): void => {
@@ -214,47 +228,48 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
       >
         <MenuItem
           Icon={addCircle}
-          hasSubMenu={false}
-          onClick={onnn}
+          // onClick={onnn}
           text='Create new account'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={roadBranch}
-          hasSubMenu={false}
-          onClick={onnn}
+          // onClick={}
           text='Derive from accounts'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={importIcon}
-          hasSubMenu={true}
-          onClick={onnn}
+          onClick={toggleImportSubMenu}
+          showSubMenu={showImportSubMenu}
           text='Import account'
-        />
+        >
+          <ImportAccSubMenu />
+        </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={exportIcon}
-          hasSubMenu={false}
-          onClick={onnn}
+          // onClick={onnn}
           text='Export all accounts'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={setting}
-          hasSubMenu={true}
-          onClick={onnn}
+          onClick={toggleSettingSubMenu}
+          showSubMenu={showSettingSubMenu}
           text='Setting'
-        />
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+        >
+          <SettingSubMenu />
+        </MenuItem>
+        {/* <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} /> */}
       </Grid>
       <IconButton
         onClick={_toggleSettings}
         sx={{
           left: '3%',
+          p: 0,
           position: 'absolute',
-          top: '2%',
-          p: 0
+          top: '2%'
         }}
       >
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
@@ -262,52 +277,3 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
     </Grid>
   );
 }
-
-// export default React.memo(styled(MenuSettings)(({ theme }: Props) => `
-//   position: absolute;
-//   top: 8px;
-//   user-select: none;
-//   background: ${theme.palette.background.default};
-
-//   .openWindow, .manageWebsiteAccess{
-//     span {
-//       color: ${theme.palette.primary};
-//       // font-size: ${theme.fontSize};
-//       // line-height: ${theme.lineHeight};
-//       text-decoration: none;
-//       vertical-align: middle;
-//     }
-
-//     ${Svg} {
-//       background: ${theme.palette.background.default};
-//       height: 20px;
-//       top: 4px;
-//       width: 20px;
-//     }
-//   }
-
-//   > .setting {
-//     > .checkbox {
-//       color: ${theme.palette.primary};
-//       line-height: 20px;
-//       font-size: 15px;
-//       margin-bottom: 0;
-
-//       &.ledger {
-//         margin-top: 0.2rem;
-//       }
-
-//       label {
-//         color: ${theme.palette.primary};
-//       }
-//     }
-
-//     > .dropdown {
-//       background: ${theme.palette.primary};
-//       margin-bottom: 0;
-//       margin-top: 9px;
-//       margin-right: 0;
-//       width: 100%;
-//     }
-//   }
-// `));

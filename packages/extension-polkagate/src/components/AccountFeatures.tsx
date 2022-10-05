@@ -10,7 +10,7 @@ interface Props {
   goOnClick: () => void;
 }
 
-export default function AccountFeatures({ goOnClick, moreOnClick }: Props): React.ReactElement<Props> {
+export default function AccountFeatures ({ goOnClick, moreOnClick }: Props): React.ReactElement<Props> {
   return (
     <Grid
       container
@@ -43,6 +43,6 @@ export default function AccountFeatures({ goOnClick, moreOnClick }: Props): Reac
           <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
         </IconButton>
       </Grid>
-    </Grid >
+    </Grid>
   );
 }

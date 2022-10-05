@@ -49,7 +49,8 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
       }
       <Container sx={{
         background: showBackArrow ? 'transparent' : 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)',
-        borderBottom: '0.5px solid #BA2882',
+        borderBottom: '0.5px solid',
+        borderColor: 'secondary.light',
         lineHeight: 0,
         p: '18px 30px 11px'
       }}
