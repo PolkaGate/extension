@@ -3,15 +3,15 @@
 
 import type { ThemeProps } from '../types';
 
-import { CssBaseline, PaletteMode, useTheme } from '@mui/material';
+import { CssBaseline, PaletteMode } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import { createGlobalStyle } from 'styled-components';
 
+import { ColorContext } from '../../../extension-polkagate/src/components';
 import { darkTheme as dark } from '../../../extension-polkagate/src/themes/dark';
 import { lightTheme as light } from '../../../extension-polkagate/src/themes/light';
-// FIXME We should not import from index when this one is imported there as well
-import { AvailableThemes, ColorContext, chooseTheme, Main, themes, ThemeSwitchContext } from '.';
+import { chooseTheme, Main } from '.';
 
 interface Props {
   children: React.ReactNode;
@@ -35,7 +35,6 @@ function View({ children, className }: Props): React.ReactElement<Props> {
 
   const theme = React.useMemo(
     () => createTheme(mode === 'light' ? light : dark),
-    // () => createTheme(dark),
     [mode]
   );
 

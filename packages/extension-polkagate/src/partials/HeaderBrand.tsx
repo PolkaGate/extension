@@ -44,7 +44,7 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
     <>
       {
         isSettingsOpen && (
-          <MenuSettings theme={theme} reference={setMenuRef} setShowSettings={setShowSettings} isSettingsOpen={isSettingsOpen} />
+          <MenuSettings isSettingsOpen={isSettingsOpen} reference={setMenuRef} setShowSettings={setShowSettings} theme={theme} />
         )
       }
       <Container sx={{

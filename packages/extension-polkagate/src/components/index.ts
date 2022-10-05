@@ -12,3 +12,4 @@ export { default as To } from './To';
 export { default as Button } from './Button';
 export { default as Password } from './Password';
 export { default as Motion } from './Motion';
+export { default as ColorContext } from './ColorContext';
