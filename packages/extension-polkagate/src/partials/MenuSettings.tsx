@@ -32,8 +32,8 @@ interface Props {
   className?: string;
   reference: React.MutableRefObject<null>;
   theme: Theme;
-  setShowSettings: React.Dispatch<React.SetStateAction<boolean>>;
-  isSettingsOpen: boolean;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  isMenuOpen: boolean;
 }
 
 const notificationOptions = ['Extension', 'PopUp', 'Window']
@@ -43,7 +43,7 @@ const prefixOptions = settings.availablePrefixes
   .filter(({ value }) => value !== -1)
   .map(({ text, value }): Option => ({ text, value: `${value}` }));
 
-export default function MenuSettings({ className, isSettingsOpen, reference, setShowSettings, theme }: Props): React.ReactElement<Props> {
+export default function MenuSettings({ className, isMenuOpen, reference, setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
   const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
@@ -103,8 +103,8 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
   );
 
   const _toggleSettings = useCallback(
-    () => setShowSettings((isSettingsOpen) => !isSettingsOpen),
-    [setShowSettings]
+    () => setShowMenu((isMenuOpen) => !isMenuOpen),
+    [setShowMenu]
   );
 
   return (
