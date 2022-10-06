@@ -5,7 +5,7 @@
 
 import { faExpand, faTasks } from '@fortawesome/free-solid-svg-icons';
 import { AddCircle as AddCircleIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton } from '@mui/material';
+import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import styled, { ThemeContext } from 'styled-components';
@@ -110,7 +110,7 @@ export default function MenuSettings({ className, isMenuOpen, reference, setShow
   return (
     <Grid
       alignItems='flex-start'
-      bgcolor='rgba(255, 255, 255, 0.9)'
+      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
       container
       height='600px'
       justifyContent='end'
