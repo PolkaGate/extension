@@ -3,17 +3,14 @@
 
 // import type { Theme, ThemeProps } from '../types';
 
-import { faExpand, faTasks } from '@fortawesome/free-solid-svg-icons';
-import { AddCircle as AddCircleIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import styled, { ThemeContext } from 'styled-components';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, ActionText, Checkbox, Dropdown, Menu, MenuDivider, Svg, Switch, themes, ThemeSwitchContext } from '../../../extension-ui/src/components';
-import { SwitchModeButton } from '../../../extension-ui/src/components/SwitchModeButton ';
+import { ActionContext } from '../../../extension-ui/src/components';
 import useIsPopup from '../../../extension-ui/src/hooks/useIsPopup';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { setNotification, windowOpen } from '../../../extension-ui/src/messaging';
@@ -43,7 +40,7 @@ const prefixOptions = settings.availablePrefixes
   .filter(({ value }) => value !== -1)
   .map(({ text, value }): Option => ({ text, value: `${value}` }));
 
-export default function MenuSettings({ className, isMenuOpen, reference, setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
   const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
@@ -110,7 +107,7 @@ export default function MenuSettings({ className, isMenuOpen, reference, setShow
   return (
     <Grid
       alignItems='flex-start'
-      bgcolor='rgba(255, 255, 255, 0.9)'
+      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
       container
       height='600px'
       justifyContent='end'
@@ -178,3 +175,5 @@ export default function MenuSettings({ className, isMenuOpen, reference, setShow
     </Grid>
   );
 }
+
+export default React.memo(Menu);
