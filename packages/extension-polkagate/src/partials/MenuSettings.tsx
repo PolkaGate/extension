@@ -18,7 +18,7 @@ import useIsPopup from '../../../extension-ui/src/hooks/useIsPopup';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { setNotification, windowOpen } from '../../../extension-ui/src/messaging';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
-import { addCircle, exportIcon, importIcon, roadBranch, setting } from '../assets/icons';
+import { addCircle, addCircleB, exportIcon, exportIconB, importIcon, importIconB, roadBranch, roadBranchB, setting, settingB } from '../assets/icons';
 import MenuItem from '../components/MenuItem';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import SettingSubMenu from './SettingSubMenu';
@@ -108,95 +108,6 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
   );
 
   return (
-    // <Menu
-    //   className={className}
-    //   reference={reference}
-    // >
-    //   <MenuItem
-    //     className='setting'
-    //     title='Theme'
-    //   >
-    //     <SwitchModeButton />
-    //   </MenuItem>
-    //   {/* <MenuItem
-    //     className='setting'
-    //     title='Theme'
-    //   >
-    //     <Switch
-    //       checked={true}//{themeContext.id === themes.dark.id}
-    //       checkedLabel={t<string>('Dark')}
-    //       onChange={_onChangeTheme}
-    //       uncheckedLabel={t<string>('Light')}
-    //     />
-    //   </MenuItem> */}
-    //   <MenuItem
-    //     className='setting'
-    //     title={t<string>('Display address format for')}
-    //   >
-    //     <Dropdown
-    //       className='dropdown'
-    //       label=''
-    //       onChange={_onChangePrefix}
-    //       options={prefixOptions}
-    //       value={`${prefix}`}
-    //     />
-    //   </MenuItem>
-    //   <MenuItem
-    //     className='setting'
-    //     title={t<string>('Language')}
-    //   >
-    //     <Dropdown
-    //       className='dropdown'
-    //       label=''
-    //       onChange={_onChangeLang}
-    //       options={languageOptions}
-    //       value={settings.i18nLang}
-    //     />
-    //   </MenuItem>
-    //   <MenuItem
-    //     className='setting'
-    //     title={t<string>('Notifications')}
-    //   >
-    //     <Dropdown
-    //       className='dropdown'
-    //       label=''
-    //       onChange={_onChangeNotification}
-    //       options={notificationOptions}
-    //       value={notification}
-    //     />
-    //   </MenuItem>
-    //   <MenuItem
-    //     className='setting'
-    //     title={t<string>('External accounts and Access')}
-    //   >
-    //     <Checkbox
-    //       checked={camera}
-    //       className='checkbox camera'
-    //       label={t<string>('Allow QR Camera Access')}
-    //       onChange={setCamera}
-    //       theme={theme}
-    //     />
-    //   </MenuItem>
-    //   <MenuDivider />
-    //   <MenuItem className='setting'>
-    //     <ActionText
-    //       className='manageWebsiteAccess'
-    //       icon={faTasks}
-    //       onClick={_goToAuthList}
-    //       text={t<string>('Manage Website Access')}
-    //     />
-    //   </MenuItem>
-    //   {isPopup && (
-    //     <MenuItem className='setting'>
-    //       <ActionText
-    //         className='openWindow'
-    //         icon={faExpand}
-    //         onClick={_onWindowOpen}
-    //         text={t<string>('Open extension in new window')}
-    //       />
-    //     </MenuItem>
-    //   )}
-    // </Menu>
     <Grid
       alignItems='flex-start'
       bgcolor='rgba(255, 255, 255, 0.9)'
@@ -217,19 +128,19 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
         width='85%'
       >
         <MenuItem
-          Icon={addCircle}
+          Icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
           // onClick={onnn}
           text='Create new account'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={roadBranch}
+          Icon={theme.palette.mode === 'dark' ? roadBranch : roadBranchB}
           // onClick={}
           text='Derive from accounts'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={importIcon}
+          Icon={theme.palette.mode === 'dark' ? importIcon : importIconB}
           onClick={toggleImportSubMenu}
           showSubMenu={showImportSubMenu}
           text='Import account'
@@ -238,13 +149,13 @@ export default function MenuSettings({ className, isSettingsOpen, reference, set
         </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={exportIcon}
+          Icon={theme.palette.mode === 'dark' ? exportIcon : exportIconB}
           // onClick={onnn}
           text='Export all accounts'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={setting}
+          Icon={theme.palette.mode === 'dark' ? setting : settingB}
           onClick={toggleSettingSubMenu}
           showSubMenu={showSettingSubMenu}
           text='Setting'

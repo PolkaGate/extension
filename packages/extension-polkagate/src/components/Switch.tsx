@@ -1,8 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useTheme } from '@emotion/react';
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React from 'react';
 import styled from 'styled-components';
