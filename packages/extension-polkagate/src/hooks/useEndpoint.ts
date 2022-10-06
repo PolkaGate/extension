@@ -1,25 +1,18 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { createWsEndpoints } from '@polkadot/apps-config';
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { DEVELOPEMENT_ENDPOINT, ENVIREONMENT } from '../util/constants';
+import { AccountContext } from '../components/contexts';
 import { SavedMetaData } from '../util/plusTypes';
 
-export function useEndpoint(
-  accounts: AccountJson[] | AccountJson,
-  address: string | null | undefined,
-  chain: Chain | null | undefined): string | undefined {
-    
-  const endpoint = useMemo(() => {
-    if (ENVIREONMENT === 'developement') {
-      return DEVELOPEMENT_ENDPOINT;
-    }
+export function useEndpoint(address: string | null | undefined, chain: Chain | null | undefined): string | undefined {
+  const { accounts } = useContext(AccountContext);
 
+  const endpoint = useMemo(() => {
     const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
     const account = Array.isArray(accounts) ? accounts.find((account) => account.address === address) : accounts;

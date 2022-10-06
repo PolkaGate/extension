@@ -7,7 +7,7 @@ import { Container } from '@mui/material';
 import React from 'react';
 
 // import PAccount from './PAccount';
-import FullAddress from '../../components/FullAddress';
+import AccountPreview from '../../components/AccountPreview';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
@@ -20,7 +20,7 @@ export default function AccountsTree({ parentName, suri, ...account }: Props): R
       disableGutters
       sx={{ borderBottom: '1px solid', borderColor: 'secondary.light' }}
     >
-      <FullAddress
+      <AccountPreview
         {...account}
         parentName={parentName}
         suri={suri}

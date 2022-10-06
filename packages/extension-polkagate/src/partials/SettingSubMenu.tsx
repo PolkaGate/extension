@@ -4,7 +4,7 @@
 // import type { Theme, ThemeProps } from '../types';
 
 import { Avatar, Divider, Grid, IconButton, Input, InputLabel, useTheme } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState , useCallback} from 'react';
 
 import settings from '@polkadot/ui-settings';
 
@@ -16,6 +16,7 @@ import Checkbox from '../components/Checkbox';
 import MenuItem from '../components/MenuItem';
 import Select from '../components/Select';
 import Switch from '../components/Switch';
+import {  windowOpen } from '../messaging';
 
 interface Props {
   className?: string;
@@ -34,6 +35,12 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
     .map(({ text, value }): Option => ({ text, value: `${value}` }));
+
+  const _onWindowOpen = useCallback(
+    (): void => {
+      windowOpen('/').catch(console.error);
+    }, []
+  );
 
   return (
     <>
@@ -72,7 +79,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           >
             <IconButton
               sx={{ height: '35px', width: '35px' }}
-            // onClick={}
+              onClick={_onWindowOpen}
             >
               <Avatar
                 alt={'logo'}
