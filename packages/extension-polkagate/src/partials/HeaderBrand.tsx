@@ -70,7 +70,7 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
               </Link>
               : <Box
                 component='img'
-                src={theme.palette.mode === 'dark' ? logoWhite : logoBlack}
+                src={logoWhite}
                 sx={{ height: 38, width: 38 }}
               />
             }
