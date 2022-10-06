@@ -15,7 +15,7 @@ import { faCodeBranch, faQrcode, faShieldHalved } from '@fortawesome/free-solid-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
-import { Avatar, Grid, IconButton } from '@mui/material';
+import { Avatar, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -102,8 +102,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 const ACCOUNTS_SCREEN_HEIGHT = 550;
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-// added for plus, 'showPlus' as props
-export default function PAddress({ actions, address, children, className, genesisHash, isExternal, isHardware, isHidden, name, parentName, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ actions, address, children, className, genesisHash, isExternal, isHardware, isHidden, name, parentName, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -256,7 +255,7 @@ export default function PAddress({ actions, address, children, className, genesi
         identiconTheme={theme}
         prefix={prefix}
       />
-      <AccountDetail address={formatted} name={name || account?.name} toggleVisibility={_toggleVisibility} />
+      <AccountDetail address={formatted} name={name || account?.name} toggleVisibility={_toggleVisibility} chain={chain} />
       <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
     </Grid>
   );

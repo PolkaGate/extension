@@ -7,7 +7,7 @@ import { Container } from '@mui/material';
 import React from 'react';
 
 // import PAccount from './PAccount';
-import FullAddress from '../../../../extension-polkagate/src/components/FullAddress';
+import FullAddress from '../../../../extension-polkagate/src/components/AccountPreview';
 
 interface Props extends AccountWithChildren {
   parentName?: string;

@@ -74,6 +74,7 @@ export default function PAccounts({ className }: Props): React.ReactElement {
             </Grid>
             <YouHave />
             <Container
+              disableGutters
               sx={[{
                 '&::-webkit-scrollbar': {
                   display: 'none',

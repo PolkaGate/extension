@@ -1,28 +1,94 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Divider, Grid, IconButton, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+
+import { Avatar, Divider, Grid, IconButton, Skeleton, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+
+import { Chain } from '@polkadot/extension-chains/types';
 
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { copy1, eye, eyeSlashP } from '../assets/icons';
+import { copy1, eye } from '../assets/icons';
+import { useApi, useEndpoint } from '../hooks';
+import FormatBalance from './FormatBalance';
 
 interface Props {
   address: string | undefined | null;
   name: string | undefined;
   toggleVisibility: () => void;
+  chain: Chain | null
 }
 
-export default function AccountDetail ({ address, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { show } = useToast();
   const { t } = useTranslation();
+  const endpoint = useEndpoint(address, chain);
+  const api = useApi(endpoint);
+  const [balances, setBalances] = useState<DeriveBalancesAll>();
+
+  console.log('balances:', balances);
+  useEffect(() => {
+    if (!address || !api) {
+      return;
+    }
+
+    // eslint-disable-next-line no-void
+    void api.derive.balances?.all(address).then((b) => {
+      setBalances(b);
+    });
+  }, [api, address]);
 
   const _onCopy = useCallback(
     () => show(t('Copied')),
     [show, t]
   );
+
+  const NoChainAlert = () => (
+    <Typography color='text.primary' variant='caption'>
+      {t('Select a chain to view balance')}
+    </Typography>
+  );
+
+  const Balance = () => (
+    <>
+      {!balances
+        ? <Skeleton height={20} sx={{ bgcolor: 'grey.800', transform: 'none' }} variant='text' width={103} />
+        : <FormatBalance api={api} decimalPoint={2} value={balances?.availableBalance} />
+      }
+    </>
+  );
+
+  const BalanceRow = () => (
+    <>
+      <Grid
+        fontSize='18px'
+        fontWeight={300}
+        item
+      >
+        <Balance />
+      </Grid>
+      <Divider
+        orientation='vertical'
+        sx={{
+          backgroundColor: 'text.primary',
+          height: '19px',
+          mx: '5px',
+          my: 'auto'
+        }}
+      />
+      <Grid
+        fontSize='18px'
+        fontWeight={300}
+        item
+      >
+        {'$456.78 K'}
+      </Grid>
+    </>);
 
   return (
     <Grid
@@ -77,33 +143,14 @@ export default function AccountDetail ({ address, name, toggleVisibility }: Prop
         </Grid>
       </Grid>
       <Grid
+        alignItems='center'
         container
-        direction='row'
         item
       >
-        <Grid
-          fontSize='18px'
-          fontWeight={300}
-          item
-        >
-          {'123.45 kKSM'}
-        </Grid>
-        <Divider
-          orientation='vertical'
-          sx={{
-            backgroundColor: 'text.primary',
-            height: '19px',
-            mx: '5px',
-            my: 'auto'
-          }}
-        />
-        <Grid
-          fontSize='18px'
-          fontWeight={300}
-          item
-        >
-          {'$456.78 K'}
-        </Grid>
+        {!chain
+          ? <NoChainAlert />
+          : <BalanceRow />
+        }
       </Grid>
     </Grid>
   );
