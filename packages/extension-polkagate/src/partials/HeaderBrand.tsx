@@ -20,7 +20,7 @@ interface Props {
 
 function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
-  const [isSettingsOpen, setShowSettings] = useState(false);
+  const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
   const addMenuRef = useRef(null);
   const setIconRef = useRef(null);
@@ -32,19 +32,19 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
   });
 
   useOutsideClick([setIconRef, setMenuRef], (): void => {
-    isSettingsOpen && setShowSettings(!isSettingsOpen);
+    isMenuOpen && setShowMenu(!isMenuOpen);
   });
 
-  const _toggleSettings = useCallback(
-    () => setShowSettings((isSettingsOpen) => !isSettingsOpen),
+  const _handleMenuClick = useCallback(
+    () => setShowMenu((isMenuOpen) => !isMenuOpen),
     []
   );
 
   return (
     <>
       {
-        isSettingsOpen && (
-          <MenuSettings isSettingsOpen={isSettingsOpen} reference={setMenuRef} setShowSettings={setShowSettings} theme={theme} />
+        isMenuOpen && (
+          <MenuSettings isMenuOpen={isMenuOpen} reference={setMenuRef} setShowMenu={setShowMenu} theme={theme} />
         )
       }
       <Container sx={{
@@ -92,13 +92,11 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
               aria-label='menu'
               color='inherit'
               edge='start'
-              onClick={_toggleSettings}
+              onClick={_handleMenuClick}
               size='small'
               sx={{ p: 0 }}
             >
-              {!isSettingsOpen
-                ? <MenuIcon sx={{ color: '#fff', fontSize: 38 }} />
-                : <CloseIcon sx={{ color: '#fff', fontSize: 38 }} />}
+              <MenuIcon sx={{ color: '#fff', fontSize: 38 }} />
             </IconButton>
           </Grid>
         </Grid>
