@@ -9,7 +9,7 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import Link from '../../../extension-ui/src/components/Link';
 import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
-import MenuSettings from './MenuSettings';
+import MenuSettings from './Menu';
 import { logoBlack, logoWhite } from '../assets/logos';
 
 interface Props {
