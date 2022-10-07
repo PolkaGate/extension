@@ -2,17 +2,27 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
-import MenuItem from '../components/MenuItem';
+import { MenuItem } from '../components';
+import { ActionContext } from '../../../extension-ui/src/components';
+import useTranslation from '../hooks/useTranslation';
 
 interface Props {
   className?: string;
 }
 
-export default function ImportAccSubMenu ({ className }: Props): React.ReactElement<Props> {
+export default function ImportAccSubMenu({ className }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
+
+  const _goToRestoreFromJson = useCallback(
+    () => {
+      onAction('/account/restore-json');
+    }, [onAction]
+  );
 
   return (
     <>
@@ -24,33 +34,33 @@ export default function ImportAccSubMenu ({ className }: Props): React.ReactElem
       >
         <MenuItem
           Icon={theme.palette.mode === 'light' ? restoreB : restore}
+          onClick={_goToRestoreFromJson}
           py='4px'
-          text='Restore from JSON file'
-          // onClick={}
+          text={t('Restore from JSON file')}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? keyB : key}
           py='4px'
-          text='Import from Mnemonic'
-          // onClick={}
+          text={t('Import from Mnemonic')}
+        // onClick={}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? qrB : qr}
           py='4px'
           text='Attach external QR-signer '
-          // onClick={ }
+        // onClick={ }
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? connectB : connect}
           py='4px'
           text='Connect ledger device'
-          // onClick={ }
+        // onClick={ }
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
           py='4px'
           text='Add proxied address'
-          // onClick={ }
+        // onClick={ }
         />
       </Grid>
     </>

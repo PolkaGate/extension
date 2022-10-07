@@ -1,8 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
 import { Checkbox, MnemonicSeed, Warning } from '../../../../extension-ui/src/components';
 import useToast from '../../../../extension-ui/src/hooks/useToast';
@@ -43,7 +43,7 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
         seed={seed}
       />
       <Warning>
-        {t<string>('Please write down your wallet’s mnemotic seed and keep it in a safe place. The mnemotic can be used to restore your wallet. Keep it carefully to not lose your assets.')}
+        {t<string>('Please write down your wallet’s mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.')}
       </Warning>
       <Checkbox
         checked={isMnemonicSaved}
