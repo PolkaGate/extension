@@ -3,7 +3,7 @@
 
 import type { ThemeProps } from '../types';
 
-import { CssBaseline, PaletteMode } from '@mui/material';
+import { CssBaseline, PaletteMode, Theme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import { createGlobalStyle } from 'styled-components';
@@ -51,11 +51,14 @@ function View({ children, className }: Props): React.ReactElement<Props> {
   );
 }
 
-const BodyTheme = createGlobalStyle<ThemeProps>`
+const BodyTheme = createGlobalStyle<Theme>`
   body {
-    background-color: ${({ theme }: ThemeProps): string => theme.primary};
+    background-color: ${(props) => props.theme.palette.background.paper};
   }
+div#root{
+  background-color: ${(props) => props.theme.palette.background.default};
 
+}
   html {
     scrollbar-width: none;
 
