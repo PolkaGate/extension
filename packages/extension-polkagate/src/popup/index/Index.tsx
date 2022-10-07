@@ -86,7 +86,7 @@ export default function PAccounts({ className }: Props): React.ReactElement {
                 borderColor: 'secondary.light',
                 borderRadius: '5px',
                 m: 'auto',
-                maxHeight: '430px',
+                maxHeight: `${self.innerHeight - 170}px`,
                 mt: '10px',
                 overflowY: 'scroll',
                 p: 0,
