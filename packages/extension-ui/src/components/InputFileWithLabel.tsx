@@ -12,7 +12,7 @@ import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 import Label from '../../../extension-polkagate/src/components/Label';
 import useTranslation from '../hooks/useTranslation';
 
-function classes (...classNames: (boolean | null | string | undefined)[]): string {
+function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
     .filter((className): boolean => !!className)
     .join(' ');
@@ -44,7 +44,7 @@ const BYTE_STR_0 = '0'.charCodeAt(0);
 const BYTE_STR_X = 'x'.charCodeAt(0);
 const NOOP = (): void => undefined;
 
-function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
+function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   const data = new Uint8Array(result);
 
   // this converts the input (if detected as hex), vai the hex conversion route
@@ -59,7 +59,7 @@ function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   return data;
 }
 
-function InputFile ({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
+function InputFile({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
   const dropRef = createRef<DropzoneRef>();
   const [file, setFile] = useState<FileState | undefined>();
@@ -122,6 +122,7 @@ function InputFile ({ accept, className = '', clearContent, convertHex, isDisabl
   return label
     ? (
       <Label
+        className='{text-align: right}'
         label={label}
       >
         {dropZone}
