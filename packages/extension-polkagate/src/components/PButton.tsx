@@ -10,9 +10,10 @@ interface Props {
   _onClick: React.MouseEventHandler<HTMLButtonElement>;
   _mt: string;
   disabled?: boolean;
+  _fontSize?: string;
 }
 
-function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px', _mt, _onClick, _variant = 'contained', disabled = false, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -24,7 +25,7 @@ function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text
         borderRadius: '5px',
         bottom: !_mt ? '25px' : 0,
         color: theme.palette.mode === 'dark' ? 'text.primary' : _variant === 'contained' ? 'text.secondary' : 'text.primary',
-        fontSize: '16px',
+        fontSize: _fontSize,
         fontWeight: 400,
         height: '36px',
         ml: '6%',
