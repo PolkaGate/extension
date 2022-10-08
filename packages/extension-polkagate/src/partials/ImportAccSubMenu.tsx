@@ -4,9 +4,9 @@
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
+import { ActionContext } from '../../../extension-ui/src/components';
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
 import { MenuItem } from '../components';
-import { ActionContext } from '../../../extension-ui/src/components';
 import useTranslation from '../hooks/useTranslation';
 
 interface Props {
@@ -21,6 +21,12 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
   const _goToRestoreFromJson = useCallback(
     () => {
       onAction('/account/restore-json');
+    }, [onAction]
+  );
+
+  const _goToImportAcc = useCallback(
+    () => {
+      onAction('/account/import-seed');
     }, [onAction]
   );
 
@@ -40,6 +46,7 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? keyB : key}
+          onClick={_goToImportAcc}
           py='4px'
           text={t('Import from Mnemonic')}
         // onClick={}

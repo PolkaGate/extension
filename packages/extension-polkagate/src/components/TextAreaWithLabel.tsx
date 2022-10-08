@@ -17,7 +17,7 @@ interface Props {
   label: string;
   onChange?: (value: string) => void;
   value?: string;
-  style: React.CSSProperties | undefined;
+  style?: React.CSSProperties | undefined;
 }
 
 export default function TextAreaWithLabel({ className, isError, isFocused, isReadOnly, label, onChange, rowsCount, value, style }: Props): React.ReactElement<Props> {

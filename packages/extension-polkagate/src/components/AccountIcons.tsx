@@ -6,12 +6,12 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback } from 'react';
 
 import Identicon from '../../../extension-ui/src/components/Identicon';
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import Add from '../../../extension-ui/src/partials/MenuAdd';
+
 interface Props {
   address: string | null;
   recoverable?: boolean;
@@ -20,17 +20,14 @@ interface Props {
   prefix?: number;
 }
 
-export default function AccountIcons({ address, identiconTheme, prefix, realAccount = false, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons ({ address, identiconTheme, prefix, realAccount = false, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const [showAdd, setShowAdd] = useState(false);
-  const addMenuRef = useRef(null);
   const { show } = useToast();
   const { t } = useTranslation();
 
   const _onCopy = useCallback(
-    // () => show(t('Copied')),
-    () => setShowAdd(true),
-  [show, t]
+    () => show(t('Copied')),
+    [show, t]
   );
 
   return (
@@ -85,9 +82,6 @@ export default function AccountIcons({ address, identiconTheme, prefix, realAcco
           </IconButton>
         </Grid>
       </Grid>
-      {showAdd &&
-        <Add reference={addMenuRef} />
-      }
     </Grid>
   );
 }

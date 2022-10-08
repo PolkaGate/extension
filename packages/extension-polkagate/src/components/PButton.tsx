@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button } from '@mui/material';
+import { Button, useTheme } from '@mui/material';
 import React from 'react';
 
 interface Props {
@@ -13,6 +13,8 @@ interface Props {
 }
 
 function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
   return (
     <Button
       disabled={disabled}
@@ -20,12 +22,14 @@ function PButton({ _mt, _onClick, _variant = 'contained', disabled = false, text
       sx={{
         borderColor: 'secondary.main',
         borderRadius: '5px',
-        color: _variant === 'outlined' ? 'text.secondary' : 'text.primary',
+        bottom: !_mt ? '25px' : 0,
+        color: theme.palette.mode === 'dark' ? 'text.primary' : _variant === 'contained' ? 'text.secondary' : 'text.primary',
         fontSize: '16px',
-        fontWeight: 300,
+        fontWeight: 400,
         height: '36px',
         ml: '6%',
-        mt: _mt,
+        mt: _mt ?? 0,
+        position: !_mt ? 'absolute' : 'inherit',
         textTransform: 'none',
         width: '88%'
       }}

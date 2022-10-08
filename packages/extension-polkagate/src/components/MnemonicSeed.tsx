@@ -17,17 +17,17 @@ interface Props {
   className?: string;
 }
 
-function MnemonicSeed({ className, onCopy, seed }: Props): React.ReactElement<Props> {
+export default function MnemonicSeed({ className, onCopy, seed }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
-    <div className={className}>
+    <div style={{ marginTop: '25px' }}>
       <TextAreaWithLabel
         className='mnemonicDisplay'
         isReadOnly
         label={t<string>('Generated 12-word mnemonic seed:')}
+        style={{ margin: 'auto', width: '92%' }}
         value={seed}
-        style={{ width: '92%', margin: 'auto' }}
       />
       <div className='buttonsRow'>
         <ActionText
@@ -41,29 +41,3 @@ function MnemonicSeed({ className, onCopy, seed }: Props): React.ReactElement<Pr
     </div>
   );
 }
-
-export default (MnemonicSeed);
-// export default styled(MnemonicSeed)(({ theme }: ThemeProps) => `
-//   margin-bottom: 21px;
-
-//   .buttonsRow {
-//     display: flex;
-//     flex-direction: row;
-
-//     .copyBtn {
-//       margin-right: 32px;
-//     }
-//   }
-
-//   .mnemonicDisplay {
-//     textarea {
-//       color: ${theme.primaryColor};
-//       font-size: ${theme.fontSize};
-//       height: unset;
-//       letter-spacing: -0.01em;
-//       line-height: ${theme.lineHeight};
-//       margin-bottom: 10px;
-//       padding: 14px;
-//     }
-//   }
-// `);

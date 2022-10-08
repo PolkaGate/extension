@@ -81,25 +81,13 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
     }, []
   );
 
-  const _onWindowOpen = useCallback(
-    (): void => {
-      windowOpen('/').catch(console.error);
-    }, []
-  );
-
   const _onChangeLang = useCallback(
     (value: string): void => {
       settings.set({ i18nLang: value });
     }, []
   );
 
-  const _goToAuthList = useCallback(
-    () => {
-      onAction('auth-list');
-    }, [onAction]
-  );
-
-  const _goToCreateAccount = useCallback(
+  const _goToCreateAcc = useCallback(
     () => {
       onAction('/account/create');
     }, [onAction]
@@ -132,8 +120,8 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
       >
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
-          onClick={_goToCreateAccount}
           text={t('Create new account')}
+          onClick={_goToCreateAcc}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem

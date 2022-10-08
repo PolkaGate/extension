@@ -4,7 +4,7 @@
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
 import { FiberManualRecord as FiberManualRecordIcon } from '@mui/icons-material';
-import { Box, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext } from '../../../../extension-ui/src/components';
@@ -19,6 +19,7 @@ interface Props extends ThemeProps {
 const Welcome = function ({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const theme = useTheme();
 
   const _onClick = useCallback(
     (): void => {
@@ -36,7 +37,7 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
           component='h2'
           sx={{
             fontSize: '36px',
-            fontWeight: 300,
+            fontWeight: theme.palette.mode === 'dark' ? 300 : 400,
             pb: '20px',
             pt: '25px',
             textAlign: 'center'
@@ -46,24 +47,24 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
           component={'p'}
           sx={{ fontSize: '14px', fontWeight: 300, textAlign: 'center' }}
         >{t<string>('Before we start, just a couple of notes regarding use:')}</Typography>
-        <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid #BA2882', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
+        <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
           <List sx={{ color: 'text.primary' }}>
             <ListItem>
-              <ListItemIcon sx={{ color: '#99004F', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
+              <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
               <ListItemText
                 primary={t<string>('We do not send any clicks, pageviews or events to a central server.')}
                 primaryTypographyProps={{ fontSize: '14px' }}
               />
             </ListItem>
             <ListItem>
-              <ListItemIcon sx={{ color: '#99004F', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
+              <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
               <ListItemText
                 primary={t<string>('We do not use any trackers or analytics.')}
                 primaryTypographyProps={{ fontSize: '14px' }}
               />
             </ListItem>
             <ListItem>
-              <ListItemIcon sx={{ color: '#99004F', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
+              <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}><FiberManualRecordIcon sx={{ width: '9px' }} /></ListItemIcon>
               <ListItemText
                 primary={t<string>("We don't collect keys, addresses or any information - your information never leaves this machine.")}
                 primaryTypographyProps={{ fontSize: '14px' }}
@@ -79,7 +80,6 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
         </Typography>
       </div>
       <PButton
-        _mt='55px'
         _onClick={_onClick}
         _variant={'contained'}
         text={t<string>('Understood, let me continue')}
