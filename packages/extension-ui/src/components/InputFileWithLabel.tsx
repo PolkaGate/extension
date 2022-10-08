@@ -3,16 +3,19 @@
 
 import type { ThemeProps } from '../types';
 
+import { Box, Grid, Typography } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import styled from 'styled-components';
 
 import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
-import Label from '../../../extension-polkagate/src/components/Label';
+import PButton from '../../../extension-polkagate/src/components/PButton';
 import useTranslation from '../hooks/useTranslation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 
-function classes (...classNames: (boolean | null | string | undefined)[]): string {
+function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
     .filter((className): boolean => !!className)
     .join(' ');
@@ -44,7 +47,7 @@ const BYTE_STR_0 = '0'.charCodeAt(0);
 const BYTE_STR_X = 'x'.charCodeAt(0);
 const NOOP = (): void => undefined;
 
-function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
+function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   const data = new Uint8Array(result);
 
   // this converts the input (if detected as hex), vai the hex conversion route
@@ -59,7 +62,7 @@ function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   return data;
 }
 
-function InputFile ({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
+function InputFile({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
   const dropRef = createRef<DropzoneRef>();
   const [file, setFile] = useState<FileState | undefined>();
@@ -100,32 +103,72 @@ function InputFile ({ accept, className = '', clearContent, convertHex, isDisabl
       ref={dropRef}
     >
       {({ getInputProps, getRootProps }): JSX.Element => (
-        <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
-          <input {...getInputProps()} />
-          <em className='label'>
-            {
-              !file || clearContent
-                ? placeholder || t('click to select or drag and drop the file here')
-                : placeholder || t('{{name}} ({{size}} bytes)', {
-                  replace: {
-                    name: file.name,
-                    size: formatNumber(file.size)
-                  }
-                })
-            }
-          </em>
-        </div>
+        <Box
+          border='1px dashed'
+          borderColor='secondary.light'
+          borderRadius='5px'
+          boxSizing='border-box'
+          height='200px'
+          m='10px 15px'
+          sx={{ backgroundColor: 'background.paper' }}
+        >
+          <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
+            <Grid container justifyContent='center' direction='column' alignItems='center'>
+              <Grid item sx={{ width: '60%' }}>
+                <PButton
+                  // _onClick={_onRestore}
+                  // isBusy={isBusy}
+                  _fontSize='18px'
+                  _mt='21px'
+                  _variant='outlined'
+                  // disabled={isFileError || isPasswordError}
+                  text={t<string>('Browse file')}
+                />
+              </Grid>
+              <Grid item mt='11px'>
+                {t('Or')}
+              </Grid>
+              <Grid item mt='13px'>
+                <FontAwesomeIcon
+                  className='copyIcon'
+                  icon={faCloudArrowUp}
+                  // onClick={_onCopy}
+                  size='2x'
+                  title={t('upload JSON')}
+                />
+              </Grid>
+              <input {...getInputProps()} />
+              <Grid item mt='20px' sx={{ fontSize: 18, fontWeight: 300 }}>
+                {
+                  !file || clearContent
+                    ? placeholder || t('drag and drop the file here')
+                    : placeholder || t('{{name}} ({{size}} bytes)', {
+                      replace: {
+                        name: file.name,
+                        size: formatNumber(file.size)
+                      }
+                    })
+                }
+              </Grid>
+            </Grid>
+          </div>
+        </Box>
       )}
     </Dropzone>
   );
 
   return label
     ? (
-      <Label
-        label={label}
-      >
+      <>
+        <Typography
+          fontSize='14px'
+          pt='20px'
+          textAlign='center'
+        >
+          {label}
+        </Typography>
         {dropZone}
-      </Label>
+      </>
     )
     : dropZone;
 }
@@ -138,7 +181,7 @@ export default React.memo(styled(InputFile)(({ isError, theme }: InputFileProps 
   font-size: 1rem;
   margin: 0.25rem 0;
   overflow-wrap: anywhere;
-  padding: 0.5rem 0.75rem;
+  // padding: 10rem 0.75rem;
 
   &:hover {
     cursor: pointer;

@@ -6,15 +6,23 @@ import React, { useCallback, useContext } from 'react';
 
 import { ActionContext } from '../../../extension-ui/src/components';
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
-import MenuItem from '../components/MenuItem';
+import { MenuItem } from '../components';
+import useTranslation from '../hooks/useTranslation';
 
 interface Props {
   className?: string;
 }
 
 export default function ImportAccSubMenu({ className }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
+
+  const _goToRestoreFromJson = useCallback(
+    () => {
+      onAction('/account/restore-json');
+    }, [onAction]
+  );
 
   const _goToImportAcc = useCallback(
     () => {
@@ -32,15 +40,16 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
       >
         <MenuItem
           Icon={theme.palette.mode === 'light' ? restoreB : restore}
+          onClick={_goToRestoreFromJson}
           py='4px'
-          text='Restore from JSON file'
-        // onClick={}
+          text={t('Restore from JSON file')}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? keyB : key}
           onClick={_goToImportAcc}
           py='4px'
-          text='Import from Mnemonic'
+          text={t('Import from Mnemonic')}
+        // onClick={}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? qrB : qr}

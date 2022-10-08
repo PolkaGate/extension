@@ -13,10 +13,10 @@ import settings from '@polkadot/ui-settings';
 import { ActionContext } from '../../../extension-ui/src/components';
 import useIsPopup from '../../../extension-ui/src/hooks/useIsPopup';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { setNotification, windowOpen } from '../../../extension-ui/src/messaging';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { addCircle, addCircleB, exportIcon, exportIconB, importIcon, importIconB, roadBranch, roadBranchB, setting, settingB } from '../assets/icons';
 import MenuItem from '../components/MenuItem';
+import { setNotification, windowOpen } from '../messaging';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 
@@ -120,21 +120,21 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
       >
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
+          text={t('Create new account')}
           onClick={_goToCreateAcc}
-          text='Create new account'
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? roadBranch : roadBranchB}
           // onClick={}
-          text='Derive from accounts'
+          text={t('Derive from accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? importIcon : importIconB}
           onClick={toggleImportSubMenu}
           showSubMenu={showImportSubMenu}
-          text='Import account'
+          text={t('Import account')}
         >
           <ImportAccSubMenu />
         </MenuItem>
@@ -142,14 +142,14 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? exportIcon : exportIconB}
           // onClick={onnn}
-          text='Export all accounts'
+          text={t('Export all accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? setting : settingB}
           onClick={toggleSettingSubMenu}
           showSubMenu={showSettingSubMenu}
-          text='Setting'
+          text={t('Setting')}
         >
           <SettingSubMenu />
         </MenuItem>
