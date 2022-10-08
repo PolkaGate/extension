@@ -3,8 +3,8 @@
 
 import React, { useCallback, useState } from 'react';
 
-import PButton from '../../../extension-polkagate/src/components/PButton';
 import ButtonWithCancel from '../../../extension-polkagate/src/components/ButtonWithCancel';
+import PButton from '../../../extension-polkagate/src/components/PButton';
 import { Name, Password } from '../partials';
 
 interface Props {
@@ -59,15 +59,16 @@ function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, 
         onChange={_onNameChange}
       />
       <Password onChange={_onPasswordChange} />
-      { !withCancel &&
+      {!withCancel &&
         <PButton
+          _mt={mt}
           _onClick={_onCreate}
           _variant='contained'
           disabled={!password || !name}
           text={buttonLabel}
         />
       }
-      { withCancel &&
+      {withCancel &&
         <ButtonWithCancel
           _onClick={_onCreate}
           _onClickCancel={_onBackClick}
