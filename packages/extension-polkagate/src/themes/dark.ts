@@ -18,5 +18,15 @@ export const darkTheme: ThemeOptions = {
     text: { primary: '#FFFFFF', secondary: '#000000' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B' },
     success: { main: '#1F7720' }
+  },
+  components: {
+    MuiSkeleton: {
+      styleOverrides:
+      {
+        root: {
+          backgroundColor: 'grey.800'
+        }
+      }
+    }
   }
 };

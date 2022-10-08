@@ -36,7 +36,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import { BN } from '@polkadot/util';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import { getPriceInUsd } from '../../util/api/getPrice';
+import { getPrice } from '../../util/api/getPrice';
 import { MoreVert as MoreVertIcon, ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
@@ -138,7 +138,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   };
 
   useEffect(() => {
-    chain && getPriceInUsd(chain).then((price) => {
+    chain && getPrice(chain).then((price) => {
       console.log(`${chain?.name}  ${price}`);
       setPrice(price ?? 0);
     });

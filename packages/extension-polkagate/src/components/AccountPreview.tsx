@@ -255,7 +255,7 @@ export default function AccountPreview({ actions, address, children, className, 
         identiconTheme={theme}
         prefix={prefix}
       />
-      <AccountDetail address={formatted} name={name || account?.name} toggleVisibility={_toggleVisibility} chain={chain} />
+      <AccountDetail address={formatted} chain={chain} name={name || account?.name} toggleVisibility={_toggleVisibility} />
       <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
     </Grid>
   );

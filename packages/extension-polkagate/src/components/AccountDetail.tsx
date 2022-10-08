@@ -15,7 +15,9 @@ import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { copy1, eye } from '../assets/icons';
 import { useApi, useEndpoint } from '../hooks';
+import { getPrice } from '../util/api/getPrice';
 import FormatBalance from './FormatBalance';
+import FormatPrice from './FormatPrice';
 
 interface Props {
   address: string | undefined | null;
@@ -30,8 +32,21 @@ export default function AccountDetail({ address, chain, name, toggleVisibility }
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [balances, setBalances] = useState<DeriveBalancesAll>();
+  const [price, setPrice] = useState<number>();
 
-  console.log('balances:', balances);
+  const decimals = api && api.registry.chainDecimals[0];
+
+  useEffect(() => {
+    if (!chain) {
+      return;
+    }
+
+    // eslint-disable-next-line no-void
+    void getPrice(chain).then((p) => {
+      setPrice(p);
+    });
+  }, [chain]);
+
   useEffect(() => {
     if (!address || !api) {
       return;
@@ -57,8 +72,17 @@ export default function AccountDetail({ address, chain, name, toggleVisibility }
   const Balance = () => (
     <>
       {!balances
-        ? <Skeleton height={20} sx={{ bgcolor: 'grey.800', transform: 'none' }} variant='text' width={103} />
-        : <FormatBalance api={api} decimalPoint={2} value={balances?.availableBalance} />
+        ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={103} />
+        : <FormatBalance api={api} decimalPoint={2} value={balances.freeBalance.add(balances.reservedBalance)} />
+      }
+    </>
+  );
+
+  const Price = () => (
+    <>
+      {!price || !balances || !decimals
+        ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={90} />
+        : <FormatPrice amount={balances.freeBalance.add(balances.reservedBalance)} decimals={decimals} price={price} />
       }
     </>
   );
@@ -86,7 +110,7 @@ export default function AccountDetail({ address, chain, name, toggleVisibility }
         fontWeight={300}
         item
       >
-        {'$456.78 K'}
+        <Price />
       </Grid>
     </>);
 
