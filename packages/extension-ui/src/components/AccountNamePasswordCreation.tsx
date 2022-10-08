@@ -61,7 +61,6 @@ function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, 
       <Password onChange={_onPasswordChange} />
       { !withCancel &&
         <PButton
-          _mt='78px'
           _onClick={_onCreate}
           _variant='contained'
           disabled={!password || !name}
@@ -70,7 +69,6 @@ function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, 
       }
       { withCancel &&
         <ButtonWithCancel
-          _mt={mt ?? '59px'}
           _onClick={_onCreate}
           _onClickCancel={_onBackClick}
           disabled={!password || !name}
