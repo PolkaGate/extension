@@ -22,6 +22,11 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
     [onAction]
   );
 
+  const _goToRestoreFromJson = useCallback(
+    () => onAction('/account/restore-json'),
+    [onAction]
+  );
+
   const _goToCreate = useCallback(
     () => onAction('/account/create'),
     [onAction]
@@ -70,7 +75,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
       >{t<string>('Or')}</Typography>
       <PButton
         _mt='0'
-        _onClick={_onClick}
+        _onClick={_goToRestoreFromJson}
         _variant={'outlined'}
         text={t<string>('Restore from JSON file')}
       />

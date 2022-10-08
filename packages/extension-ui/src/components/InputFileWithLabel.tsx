@@ -104,45 +104,52 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
     >
       {({ getInputProps, getRootProps }): JSX.Element => (
         <Box
-          border='1px dashed'
+          border={file ? '1px solid' : '1px dashed'}
           borderColor='secondary.light'
           borderRadius='5px'
           boxSizing='border-box'
-          height='200px'
+          maxHeight='200px'
+          fontSize='16px'
           m='10px 15px'
           sx={{ backgroundColor: 'background.paper' }}
         >
           <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
             <Grid container justifyContent='center' direction='column' alignItems='center'>
-              <Grid item sx={{ width: '60%' }}>
-                <PButton
-                  // _onClick={_onRestore}
-                  // isBusy={isBusy}
-                  _fontSize='18px'
-                  _mt='21px'
-                  _variant='outlined'
-                  // disabled={isFileError || isPasswordError}
-                  text={t<string>('Browse file')}
-                />
-              </Grid>
-              <Grid item mt='11px'>
-                {t('Or')}
-              </Grid>
-              <Grid item mt='13px'>
-                <FontAwesomeIcon
-                  className='copyIcon'
-                  icon={faCloudArrowUp}
-                  // onClick={_onCopy}
-                  size='2x'
-                  title={t('upload JSON')}
-                />
-              </Grid>
+              {!file &&
+                <Grid item sx={{ width: '60%' }}>
+                  <PButton
+                    // _onClick={_onRestore}
+                    // isBusy={isBusy}
+                    _fontSize='18px'
+                    _mt='21px'
+                    _variant='outlined'
+                    // disabled={isFileError || isPasswordError}
+                    text={t<string>('Browse file')}
+                  />
+                </Grid>
+              }
+              {!file &&
+                <Grid item mt='11px'>
+                  {t('Or')}
+                </Grid>
+              }
+              {!file &&
+                <Grid item mt='13px'>
+                  <FontAwesomeIcon
+                    className='copyIcon'
+                    icon={faCloudArrowUp}
+                    // onClick={_onCopy}
+                    size='2x'
+                    title={t('upload JSON')}
+                  />
+                </Grid>
+              }
               <input {...getInputProps()} />
-              <Grid item mt='20px' sx={{ fontSize: 18, fontWeight: 300 }}>
+              <Grid item mt={file ? 0 : '20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
                 {
                   !file || clearContent
-                    ? placeholder || t('drag and drop the file here')
-                    : placeholder || t('{{name}} ({{size}} bytes)', {
+                    ? placeholder || t<string>('drag and drop the file here')
+                    : placeholder || t<string>('{{name}} ({{size}} bytes)', {
                       replace: {
                         name: file.name,
                         size: formatNumber(file.size)
@@ -153,8 +160,9 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
             </Grid>
           </div>
         </Box>
-      )}
-    </Dropzone>
+      )
+      }
+    </Dropzone >
   );
 
   return label
@@ -162,8 +170,11 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
       <>
         <Typography
           fontSize='14px'
+          fontWeight={300}
+          m='auto'
           pt='20px'
-          textAlign='center'
+          textAlign={file ? 'left' : 'center'}
+          width='92%'
         >
           {label}
         </Typography>
@@ -174,14 +185,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
 }
 
 export default React.memo(styled(InputFile)(({ isError, theme }: InputFileProps & ThemeProps) => `
-  border: 1px solid ${isError ? theme.errorBorderColor : theme.inputBorderColor};
-  background: ${theme.inputBackground};
-  border-radius: ${theme.borderRadius};
-  color: ${isError ? theme.errorBorderColor : theme.textColor};
-  font-size: 1rem;
-  margin: 0.25rem 0;
   overflow-wrap: anywhere;
-  // padding: 10rem 0.75rem;
 
   &:hover {
     cursor: pointer;

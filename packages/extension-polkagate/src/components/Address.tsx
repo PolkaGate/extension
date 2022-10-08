@@ -9,7 +9,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Typography } from '@mui/material';
+import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -36,6 +36,7 @@ export interface Props {
   suri?: string;
   toggleActions?: number;
   type?: KeypairType;
+  style?: SxProps<Theme> | undefined;
 }
 
 interface Recoded {
@@ -85,7 +86,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, genesisHash, isExternal, name, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, className, genesisHash, isExternal, name, style, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
@@ -126,13 +127,21 @@ function Address({ address, genesisHash, isExternal, name, type: givenType }: Pr
   return (
     <>
       <Grid
+        className={className}
         container
         direction={'row'}
-        height={'70px'}
         justifyContent={'space-between'}
-        m={'20px auto'}
-        sx={{ backgroundColor: 'background.paper', border: '0.5px solid #BA2882', borderRadius: '5px', p: '14px 8px' }}
-        width={'92%'}
+        sx={{
+          backgroundColor: 'background.paper',
+          border: '0.5px solid',
+          borderColor: 'secondary.light',
+          borderRadius: '5px',
+          height: '70px',
+          m: '20px auto',
+          p: '14px 8px',
+          width: '92%',
+          ...style
+        }}
       >
         <Grid
           item
