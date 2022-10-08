@@ -32,7 +32,7 @@ export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabl
     >
       <Grid
         item
-        xs={6}
+        xs={5.8}
       >
         <Button
           onClick={_onClickCancel}
@@ -52,7 +52,7 @@ export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabl
       </Grid>
       <Grid
         item
-        xs={6}
+        xs={5.8}
       >
         <Button
           disabled={disabled}
