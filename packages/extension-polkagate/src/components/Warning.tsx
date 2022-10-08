@@ -37,11 +37,12 @@ export default React.memo(styled(Warning)<Props>(({ isDanger, theme }: Props) =>
   border-left: ${`0.25rem solid ${theme.iconWarningColor}`};
 
   &.belowInput {
-    font-size: ${theme.labelFontSize};
-    line-height: ${theme.labelLineHeight};
+    font-size: 14px;
 
     &.danger {
-      margin-top: -10px;
+      position: absolute;
+      margin-top:0;
+      margin-left: -15px;
     }
   }
 
@@ -59,6 +60,6 @@ export default React.memo(styled(Warning)<Props>(({ isDanger, theme }: Props) =>
   .warningImage {
     margin: 5px 10px 5px 0;
     color: #FF002B;
-    font-size: 20px
+    font-size: 19px
   }
 `));

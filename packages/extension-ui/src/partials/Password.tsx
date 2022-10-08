@@ -14,7 +14,7 @@ interface Props {
 
 const MIN_LENGTH = 6;
 
-export default function Password ({ isFocussed, onChange }: Props): React.ReactElement<Props> {
+export default function Password({ isFocussed, onChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [pass1, setPass1] = useState<string | null>(null);
   const [pass2, setPass2] = useState<string | null>(null);
@@ -34,21 +34,19 @@ export default function Password ({ isFocussed, onChange }: Props): React.ReactE
         component={InputWithLabel}
         data-input-password
         isFocused={isFocussed}
-        label={t<string>('A new password for this account')}
+        label={t<string>('Password for this account (>5 characters)')}
         onValidatedChange={setPass1}
         type='password'
         validator={isFirstPasswordValid}
       />
-      {pass1 && (
-        <ValidatedInput
-          component={InputWithLabel}
-          data-input-repeat-password
-          label={t<string>('Repeat password for verification')}
-          onValidatedChange={setPass2}
-          type='password'
-          validator={isSecondPasswordValid(pass1)}
-        />
-      )}
+      <ValidatedInput
+        component={InputWithLabel}
+        data-input-repeat-password
+        label={t<string>('Repeat password')}
+        onValidatedChange={setPass2}
+        type='password'
+        validator={pass1 && isSecondPasswordValid(pass1)}
+      />
     </>
   );
 }

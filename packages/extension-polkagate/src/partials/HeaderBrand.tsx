@@ -16,9 +16,10 @@ interface Props {
   showBackArrow?: boolean;
   showSettings?: boolean;
   text?: React.ReactNode;
+  backLink?: string;
 }
 
-function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactElement<Props> {
+function HeaderBrand({ showBackArrow, showSettings, text, backLink = undefined }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -64,9 +65,9 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
             {showBackArrow
               ? <Link
                 className='backlink'
-                to='/'
+                to={backLink ?? '/'}
               >
-                <ArrowBackIosIcon sx={{ color: '#BA2882', fontSize: 25, stroke: '#BA2882', strokeWidth: 1.5 }} />
+                <ArrowBackIosIcon sx={{ color: 'secondary.light', fontSize: 25, stroke: theme.palette.secondary.light, strokeWidth: 1.5 }} />
               </Link>
               : <Box
                 component='img'
@@ -77,7 +78,7 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
           </Grid>
           <Grid item>
             <Typography
-              color='#fff'
+              color={showBackArrow ? 'text.primary' : '#ffffff'}
               sx={{ fontSize: showBackArrow ? '20px' : '30px', letterSpacing: '-0.015em' }}
               variant={showBackArrow ? 'h3' : 'h1'}
             >
@@ -96,7 +97,7 @@ function HeaderBrand({ showBackArrow, showSettings, text }: Props): React.ReactE
               size='small'
               sx={{ p: 0 }}
             >
-              <MenuIcon sx={{ color: '#fff', fontSize: 38 }} />
+              <MenuIcon sx={{ color: showBackArrow ? 'secondary.light' : '#fff', fontSize: 38 }} />
             </IconButton>
           </Grid>
         </Grid>

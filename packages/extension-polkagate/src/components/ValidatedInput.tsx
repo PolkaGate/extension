@@ -26,7 +26,6 @@ function ValidatedInput<T extends Record<string, unknown>> ({ className, compone
   const [validationResult, setValidationResult] = useState<Result<string>>(Result.ok(''));
   const isMounted = useIsMounted();
 
-
   useEffect(() => {
     if (defaultValue) {
       setValue(defaultValue);
@@ -50,14 +49,21 @@ function ValidatedInput<T extends Record<string, unknown>> ({ className, compone
   }, [value, validator, onValidatedChange]);
 
   return (
-    <div className={className}>
+    <div
+      className={className}
+      style={{
+        margin: 'auto',
+        paddingTop: '21px',
+        width: '92%'
+      }}
+    >
       <Input
         {...props as unknown as T}
         isError={Result.isError(validationResult)}
         onChange={setValue}
         value={value}
       />
-      {Result.isError(validationResult) && (
+      {value && Result.isError(validationResult) && (
         <Warning
           isBelowInput
           isDanger

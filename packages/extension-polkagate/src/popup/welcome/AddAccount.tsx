@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext } from '../../../../extension-ui/src/components';
@@ -16,8 +16,19 @@ interface Props {
 function AddAccount({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const theme = useTheme();
   const _onClick = useCallback(
     () => onAction('/account/create'),
+    [onAction]
+  );
+
+  const _goToCreate = useCallback(
+    () => onAction('/account/create'),
+    [onAction]
+  );
+
+  const _goToImport = useCallback(
+    () => onAction('/account/import-seed'),
     [onAction]
   );
 
@@ -32,7 +43,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
           component='p'
           sx={{
             fontSize: '36px',
-            fontWeight: 300,
+            fontWeight: theme.palette.mode === 'dark' ? 300 : 400,
             pb: '20px',
             pt: '25px',
             textAlign: 'center'
@@ -49,7 +60,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
       </div>
       <PButton
         _mt='38px'
-        _onClick={_onClick}
+        _onClick={_goToCreate}
         _variant={'contained'}
         text={t<string>('Create a new account')}
       />
@@ -65,7 +76,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
       />
       <PButton
         _mt='10px'
-        _onClick={_onClick}
+        _onClick={_goToImport}
         _variant={'outlined'}
         text={t<string>('Import from Mnemonic')}
       />
