@@ -10,13 +10,15 @@ import styled from 'styled-components';
 
 import { u8aToString } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Address, InputFileWithLabel, InputWithLabel, Warning } from '../../../../extension-ui/src/components';
+import { AccountContext, ActionContext, InputFileWithLabel, InputWithLabel, Warning } from '../../../../extension-ui/src/components';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import { isKeyringPairs$Json } from '../../../../extension-ui/src/util/typeGuards';
 import PButton from '../../components/PButton';
 import { useTranslation } from '../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import Address from '../../components/Address'
+import { Grid } from '@mui/material';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
@@ -24,11 +26,12 @@ interface Props {
   className?: string;
 }
 
-function RestoreJson({ className }: Props): React.ReactElement {
+export default function RestoreJson({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
+  const [stepOne, setStep] = useState(true);
   const [accountsInfo, setAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
   const [password, setPassword] = useState<string>('');
   const [isFileError, setFileError] = useState(false);
@@ -58,6 +61,7 @@ function RestoreJson({ className }: Props): React.ReactElement {
       try {
         json = JSON.parse(u8aToString(file)) as KeyringPair$Json | KeyringPairs$Json;
         setFile(json);
+        setStep(false);
       } catch (e) {
         console.error(e);
         setFileError(true);
@@ -117,66 +121,115 @@ function RestoreJson({ className }: Props): React.ReactElement {
     <>
       <HeaderBrand
         showBackArrow
-        text={t<string>('Restore from JSON (1/2)')}
+        text={t<string>(`Restore from JSON (${stepOne ? 1 : 2}/2)`)}
       />
-      <div className={className}>
-        {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => (
-          <Address
-            address={address}
-            genesisHash={genesisHash}
-            key={`${index}:${address}`}
-            name={name}
-            type={type}
-          />
-        ))}
-        <InputFileWithLabel
-          accept={acceptedFormats}
-          isError={isFileError}
-          label={t<string>('Upload your file')}
-          onChange={_onChangeFile}
-          withLabel
-        />
-        {isFileError && (
+      {isPasswordError && !stepOne &&
+        <Grid
+          color='red'
+          height='30px'
+          m='auto'
+          pt='5px'
+          width='92%'
+        >
           <Warning
+            isBelowInput
             isDanger
           >
-            {t<string>('Invalid Json file')}
+            {t<string>('You’ve used an incorrect password. Try again.')}
           </Warning>
-        )}
-        {requirePassword && (
-          <div>
-            <InputWithLabel
-              isError={isPasswordError}
-              label={t<string>('Password for this file')}
-              onChange={_onChangePass}
-              type='password'
+        </Grid>
+      }
+      {!stepOne && accountsInfo.length &&
+        <Grid
+          container
+          direction='column'
+          sx={{
+            '&::-webkit-scrollbar': {
+              display: 'none',
+              width: 0
+            },
+            '> .tree:first-child': {
+              borderTopLeftRadius: '5px',
+              borderTopRightRadius: '5px'
+            },
+            '> .tree:last-child': {
+              border: 'none',
+              borderBottomLeftRadius: '5px',
+              borderBottomRightRadius: '5px'
+            },
+            border: '0.5px solid',
+            borderColor: 'secondary.light',
+            borderRadius: '5px',
+            display: 'block',
+            m: '20px auto 0',
+            maxHeight: '150px',
+            overflowY: 'scroll',
+            scrollbarWidth: 'none',
+            width: '92%'
+          }}
+        >
+          {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => (
+            <Address
+              address={address}
+              className='tree'
+              genesisHash={genesisHash}
+              key={`${index}:${address}`}
+              name={name}
+              style={{
+                border: 'none',
+                borderBottom: '1px solid',
+                borderBottomColor: 'secondary.light',
+                borderRadius: 'none',
+                m: 0,
+                width: '100%'
+              }}
+              type={type}
             />
-            {isPasswordError && (
-              <Warning
-                isBelowInput
-                isDanger
-              >
-                {t<string>('Unable to decode using the supplied passphrase')}
-              </Warning>
-            )}
-          </div>
-        )}
-        <PButton
-          _mt={`${window.innerHeight - 370}px`}
-          _onClick={_onRestore}
-          _variant='contained'
-          disabled={!file}
-          text={t<string>('Restore')}
-        />
-      </div>
+          ))}
+        </Grid>
+      }
+      <InputFileWithLabel
+        accept={acceptedFormats}
+        isError={isFileError}
+        label={stepOne ? t<string>('Upload your file') : t<string>('Backup JSON file')}
+        onChange={_onChangeFile}
+        withLabel
+      />
+      {isFileError && (
+        <Warning
+          isDanger
+        >
+          {t<string>('Invalid Json file')}
+        </Warning>
+      )}
+      {requirePassword && (
+        <Grid
+          pt='10px'
+          m='auto'
+          width='92%'
+        >
+          <InputWithLabel
+            isError={isPasswordError}
+            label={t<string>('Password for this file')}
+            onChange={_onChangePass}
+            type='password'
+          />
+          {isPasswordError && (
+            <Warning
+              isBelowInput
+              isDanger
+            >
+              {t<string>('incorrect password')}
+            </Warning>
+          )}
+        </Grid>
+      )}
+      <PButton
+        _onClick={_onRestore}
+        _variant='contained'
+        disabled={stepOne || !password}
+        text={t<string>('Restore')}
+      />
     </>
   );
 }
-
-export default styled(RestoreJson)`
-  margin-bottom: 16px;
-
-  label::after {
-    right: 36px;
-  }
-`;
