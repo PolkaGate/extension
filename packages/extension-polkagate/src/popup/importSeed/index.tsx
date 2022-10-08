@@ -93,7 +93,6 @@ function ImportSeed(): React.ReactElement {
             <AccountNamePasswordCreation
               buttonLabel={t<string>('Add account')}
               isBusy={isBusy}
-              mt='155px'
               onBackClick={_onBackClick}
               onCreate={_onCreate}
               onNameChange={setName}
