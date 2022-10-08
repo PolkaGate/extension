@@ -24,12 +24,15 @@ interface Props extends ThemeProps {
   className?: string;
 }
 
-export default function PAccounts({ className }: Props): React.ReactElement {
+export default function Home({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
   const networkMap = useMemo(() => getNetworkMap(), []);
+  const [totalPrice, setTotalPrice] = useState<any>();
+
+  console.log('totalPrice:', totalPrice);
 
   // added for plus
   useEffect(() => {
@@ -72,7 +75,7 @@ export default function PAccounts({ className }: Props): React.ReactElement {
                 text={t<string>('Polkagate')}
               />
             </Grid>
-            <YouHave />
+            <YouHave totalPrice={totalPrice} />
             <Container
               disableGutters
               sx={[{
@@ -98,6 +101,8 @@ export default function PAccounts({ className }: Props): React.ReactElement {
                 <AccountsTree
                   {...json}
                   key={`${index}:${json.address}`}
+                  setTotalPrice={setTotalPrice}
+                  totalPrice={totalPrice}
                 />
               ))}
             </Container>

@@ -15,7 +15,6 @@ import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { copy1, eye } from '../assets/icons';
 import { useApi, useEndpoint } from '../hooks';
-import { getPrice } from '../util/api/getPrice';
 import FormatBalance from './FormatBalance';
 import FormatPrice from './FormatPrice';
 
@@ -23,40 +22,17 @@ interface Props {
   address: string | undefined | null;
   name: string | undefined;
   toggleVisibility: () => void;
-  chain: Chain | null
+  chain: Chain | null;
+  price: number | undefined;
+  balances: DeriveBalancesAll | undefined
 }
 
-export default function AccountDetail({ address, chain, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, balances, chain, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
   const { show } = useToast();
   const { t } = useTranslation();
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
-  const [balances, setBalances] = useState<DeriveBalancesAll>();
-  const [price, setPrice] = useState<number>();
-
-  const decimals = api && api.registry.chainDecimals[0];
-
-  useEffect(() => {
-    if (!chain) {
-      return;
-    }
-
-    // eslint-disable-next-line no-void
-    void getPrice(chain).then((p) => {
-      setPrice(p);
-    });
-  }, [chain]);
-
-  useEffect(() => {
-    if (!address || !api) {
-      return;
-    }
-
-    // eslint-disable-next-line no-void
-    void api.derive.balances?.all(address).then((b) => {
-      setBalances(b);
-    });
-  }, [api, address]);
+  const decimals = api ? api.registry.chainDecimals[0] : 1;
 
   const _onCopy = useCallback(
     () => show(t('Copied')),
@@ -71,7 +47,7 @@ export default function AccountDetail({ address, chain, name, toggleVisibility }
 
   const Balance = () => (
     <>
-      {!balances
+      {!balances || !api
         ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={103} />
         : <FormatBalance api={api} decimalPoint={2} value={balances.freeBalance.add(balances.reservedBalance)} />
       }
