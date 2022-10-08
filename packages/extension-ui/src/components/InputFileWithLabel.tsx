@@ -3,13 +3,14 @@
 
 import type { ThemeProps } from '../types';
 
+import { Box, Grid, Typography } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import styled from 'styled-components';
 
 import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
-import Label from '../../../extension-polkagate/src/components/Label';
+import PButton from '../../../extension-polkagate/src/components/PButton';
 import useTranslation from '../hooks/useTranslation';
 
 function classes(...classNames: (boolean | null | string | undefined)[]): string {
@@ -100,33 +101,62 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
       ref={dropRef}
     >
       {({ getInputProps, getRootProps }): JSX.Element => (
-        <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
-          <input {...getInputProps()} />
-          <em className='label'>
-            {
-              !file || clearContent
-                ? placeholder || t('click to select or drag and drop the file here')
-                : placeholder || t('{{name}} ({{size}} bytes)', {
-                  replace: {
-                    name: file.name,
-                    size: formatNumber(file.size)
-                  }
-                })
-            }
-          </em>
-        </div>
+        <Box
+          border='1px dashed'
+          borderColor='secondary.light'
+          borderRadius='5px'
+          boxSizing='border-box'
+          height='200px'
+          m='10px 15px'
+          sx={{ backgroundColor: 'background.paper' }}
+        >
+          <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
+            <Grid container justifyContent='center' direction='column' alignItems='center'>
+              <Grid item sx={{ width: '60%' }}>
+                <PButton
+                  // _onClick={_onRestore}
+                  // isBusy={isBusy}
+                  _mt='21px'
+                  _variant='outlined'
+                  // disabled={isFileError || isPasswordError}
+                  text={t<string>('Browse file')}
+                />
+              </Grid>
+              <Grid item mt='11px'>
+                {t('Or')}
+              </Grid>
+              <input {...getInputProps()} />
+              <Grid item mt='20px'>
+                {
+                  !file || clearContent
+                    ? placeholder || t('drag and drop the file here')
+                    : placeholder || t('{{name}} ({{size}} bytes)', {
+                      replace: {
+                        name: file.name,
+                        size: formatNumber(file.size)
+                      }
+                    })
+                }
+              </Grid>
+            </Grid>
+          </div>
+        </Box>
       )}
     </Dropzone>
   );
 
   return label
     ? (
-      <Label
-        className='{text-align: right}'
-        label={label}
-      >
+      <>
+        <Typography
+          fontSize='14px'
+          pt='20px'
+          textAlign='center'
+        >
+          {label}
+        </Typography>
         {dropZone}
-      </Label>
+      </>
     )
     : dropZone;
 }
@@ -139,7 +169,7 @@ export default React.memo(styled(InputFile)(({ isError, theme }: InputFileProps 
   font-size: 1rem;
   margin: 0.25rem 0;
   overflow-wrap: anywhere;
-  padding: 0.5rem 0.75rem;
+  // padding: 10rem 0.75rem;
 
   &:hover {
     cursor: pointer;

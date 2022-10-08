@@ -132,7 +132,7 @@ function RestoreJson({ className }: Props): React.ReactElement {
         <InputFileWithLabel
           accept={acceptedFormats}
           isError={isFileError}
-          label={t<string>('backup file')}
+          label={t<string>('Upload your file')}
           onChange={_onChangeFile}
           withLabel
         />
