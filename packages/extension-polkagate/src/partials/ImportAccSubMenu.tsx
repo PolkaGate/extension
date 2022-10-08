@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 
+import { ActionContext } from '../../../extension-ui/src/components';
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
 import MenuItem from '../components/MenuItem';
 
@@ -11,8 +12,15 @@ interface Props {
   className?: string;
 }
 
-export default function ImportAccSubMenu ({ className }: Props): React.ReactElement<Props> {
+export default function ImportAccSubMenu({ className }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
+
+  const _goToImportAcc = useCallback(
+    () => {
+      onAction('/account/import-seed');
+    }, [onAction]
+  );
 
   return (
     <>
@@ -26,31 +34,31 @@ export default function ImportAccSubMenu ({ className }: Props): React.ReactElem
           Icon={theme.palette.mode === 'light' ? restoreB : restore}
           py='4px'
           text='Restore from JSON file'
-          // onClick={}
+        // onClick={}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? keyB : key}
+          onClick={_goToImportAcc}
           py='4px'
           text='Import from Mnemonic'
-          // onClick={}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? qrB : qr}
           py='4px'
           text='Attach external QR-signer '
-          // onClick={ }
+        // onClick={ }
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? connectB : connect}
           py='4px'
           text='Connect ledger device'
-          // onClick={ }
+        // onClick={ }
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
           py='4px'
           text='Add proxied address'
-          // onClick={ }
+        // onClick={ }
         />
       </Grid>
     </>
