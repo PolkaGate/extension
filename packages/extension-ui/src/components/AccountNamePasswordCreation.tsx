@@ -3,19 +3,22 @@
 
 import React, { useCallback, useState } from 'react';
 
+import PButton from '../../../extension-polkagate/src/components/PButton';
+import ButtonWithCancel from '../../../extension-polkagate/src/components/ButtonWithCancel';
 import { Name, Password } from '../partials';
-import { BackButton, ButtonArea, NextStepButton, VerticalSpace } from '.';
 
 interface Props {
-  buttonLabel?: string;
-  isBusy: boolean;
+  buttonLabel: string;
+  isBusy?: boolean;
   onBackClick?: () => void;
   onCreate: (name: string, password: string) => void | Promise<void | boolean>;
   onNameChange: (name: string) => void;
   onPasswordChange?: (password: string) => void;
+  withCancel?: boolean;
+  mt?: string;
 }
 
-function AccountNamePasswordCreation ({ buttonLabel, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange }: Props): React.ReactElement<Props> {
+function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, mt }: Props): React.ReactElement<Props> {
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -56,20 +59,24 @@ function AccountNamePasswordCreation ({ buttonLabel, isBusy, onBackClick, onCrea
         onChange={_onNameChange}
       />
       <Password onChange={_onPasswordChange} />
-      <VerticalSpace />
-      {onBackClick && buttonLabel && (
-        <ButtonArea>
-          <BackButton onClick={_onBackClick} />
-          <NextStepButton
-            data-button-action='add new root'
-            isBusy={isBusy}
-            isDisabled={!password || !name}
-            onClick={_onCreate}
-          >
-            {buttonLabel}
-          </NextStepButton>
-        </ButtonArea>
-      )}
+      { !withCancel &&
+        <PButton
+          _mt='78px'
+          _onClick={_onCreate}
+          _variant='contained'
+          disabled={!password || !name}
+          text={buttonLabel}
+        />
+      }
+      { withCancel &&
+        <ButtonWithCancel
+          _mt={mt ?? '59px'}
+          _onClick={_onCreate}
+          _onClickCancel={_onBackClick}
+          disabled={!password || !name}
+          text={buttonLabel}
+        />
+      }
     </>
   );
 }

@@ -70,7 +70,7 @@ function InputWithLabel ({ className, defaultValue, disabled, isError, isFocused
         placeholder={placeholder}
         readOnly={isReadOnly}
         spellCheck={false}
-        style={{ padding: 0 }}
+        style={{ padding: 0, paddingLeft: '10px', fontSize: '18px', fontWeight: 300, color: '#9A7DB2' }}
         theme={theme}
         type={type}
         value={value}

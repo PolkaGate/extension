@@ -4,15 +4,19 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionContext, Dropdown, Loading } from '../../../../extension-ui/src/components';
+import { Chain } from '@polkadot/extension-chains/types';
+
+import { ActionContext, Loading } from '../../../../extension-ui/src/components';
 import AccountNamePasswordCreation from '../../../../extension-ui/src/components/AccountNamePasswordCreation';
 import useGenesisHashOptions from '../../../../extension-ui/src/hooks/useGenesisHashOptions';
 import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { createAccountSuri, createSeed, validateSeed } from '../../../../extension-ui/src/messaging';
+import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import PAddress from '../../components/Address';
+import DropdownWithIcon from '../../components/DropdownWithIcon';
 import HeaderBrand from '../../partials/HeaderBrand';
+import getLogo from '../../util/getLogo';
 import Mnemonic from './Mnemonic';
 
 interface Props {
@@ -23,6 +27,7 @@ function CreateAccount ({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
+  const [newChain, setNewChain] = useState<Chain | null>(null);
   const [step, setStep] = useState(1);
   const [address, setAddress] = useState<null | string>(null);
   const [seed, setSeed] = useState<null | string>(null);
@@ -39,7 +44,7 @@ function CreateAccount ({ className }: Props): React.ReactElement {
         setSeed(seed);
       })
       .catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect((): void => {
@@ -87,6 +92,13 @@ function CreateAccount ({ className }: Props): React.ReactElement {
     []
   );
 
+  useEffect(() => {
+    genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
+      console.error(error);
+      setNewChain(null);
+    });
+  }, [genesisHash]);
+
   return (
     <>
       <HeaderBrand
@@ -112,15 +124,16 @@ function CreateAccount ({ className }: Props): React.ReactElement {
             )
             : (
               <>
-                <Dropdown
-                  className={className}
-                  label={t<string>('Network')}
+                <DropdownWithIcon
+                  defaultValue={options[0].text}
+                  icon={getLogo(newChain ?? undefined)}
+                  label={t<string>('Select the chain')}
                   onChange={_onChangeNetwork}
                   options={options}
-                  value={genesisHash}
+                  style={{ margin: 'auto', p: 0, width: '92%' }}
                 />
                 <AccountNamePasswordCreation
-                  buttonLabel={t<string>('Add the account with the generated seed')}
+                  buttonLabel={t<string>('Create account')}
                   isBusy={isBusy}
                   onBackClick={_onPreviousStep}
                   onCreate={_onCreate}

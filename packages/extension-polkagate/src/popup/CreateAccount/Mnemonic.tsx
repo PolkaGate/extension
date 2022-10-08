@@ -1,8 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
 import { Checkbox, MnemonicSeed, Warning } from '../../../../extension-ui/src/components';
 import useToast from '../../../../extension-ui/src/hooks/useToast';
@@ -49,6 +49,7 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
         checked={isMnemonicSaved}
         label={t<string>('I have saved my mnemonic seed safely.')}
         onChange={setIsMnemonicSaved}
+        style={{ marginTop: '55px' }}
         theme={theme}
       />
       <PButton
@@ -56,7 +57,7 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
         _onClick={onNextStep}
         _variant='contained'
         disabled={!isMnemonicSaved}
-        text={t<string>('Create a new account')}
+        text={t<string>('Next')}
       />
     </>
   );

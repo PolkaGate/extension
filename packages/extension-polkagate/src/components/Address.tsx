@@ -129,13 +129,14 @@ function Address({ address, genesisHash, isExternal, name, type: givenType }: Pr
         container
         direction={'row'}
         height={'70px'}
-        justifyContent={'space-around'}
-        m={'30px auto'}
+        justifyContent={'space-between'}
+        m={'20px auto'}
         sx={{ backgroundColor: 'background.paper', border: '0.5px solid #BA2882', borderRadius: '5px', p: '14px 8px' }}
         width={'92%'}
       >
         <Grid
           item
+          xs={1.5}
         >
           <Identicon
             className='identityIcon'
@@ -148,9 +149,10 @@ function Address({ address, genesisHash, isExternal, name, type: givenType }: Pr
           />
         </Grid>
         <Grid
-          contanier
+          container
           direction={'column'}
           item
+          xs={10}
         >
           <Typography
             fontSize={'16px'}
@@ -163,12 +165,14 @@ function Address({ address, genesisHash, isExternal, name, type: givenType }: Pr
             container
             direction={'row'}
             item
+            justifyContent={'space-between'}
           >
             <Grid
               item
               maxWidth={'220px'}
               overflow={'hidden'}
               textOverflow={'ellipsis'}
+              xs={10}
             >
               <Typography
                 fontSize={'10px'}
@@ -182,6 +186,7 @@ function Address({ address, genesisHash, isExternal, name, type: givenType }: Pr
             <Grid
               item
               pl={'5px'}
+              xs={1.5}
             >
               <CopyToClipboard text={(formatted && formatted) || ''}>
                 <FontAwesomeIcon
