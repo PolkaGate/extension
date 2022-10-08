@@ -10,7 +10,7 @@ interface Props {
   text: string;
   _onClick: React.MouseEventHandler<HTMLButtonElement>;
   _onClickCancel?: React.MouseEventHandler<HTMLButtonElement>;
-  _mt: string;
+  _mt?: string;
   disabled?: boolean;
 }
 
@@ -22,7 +22,12 @@ export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabl
       container
       justifyContent='space-between'
       margin='auto'
+      ml='6%'
       mt={_mt}
+      sx={{
+        bottom: _mt ? 0 : '25px',
+        position: _mt ? 'inherit' : 'absolute'
+      }}
       width='88%'
     >
       <Grid
