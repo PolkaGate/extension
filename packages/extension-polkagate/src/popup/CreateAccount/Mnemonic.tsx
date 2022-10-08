@@ -53,7 +53,6 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
         theme={theme}
       />
       <PButton
-        _mt='0'
         _onClick={onNextStep}
         _variant='contained'
         disabled={!isMnemonicSaved}

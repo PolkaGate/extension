@@ -80,7 +80,6 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
         </Typography>
       </div>
       <PButton
-        _mt='55px'
         _onClick={_onClick}
         _variant={'contained'}
         text={t<string>('Understood, let me continue')}
