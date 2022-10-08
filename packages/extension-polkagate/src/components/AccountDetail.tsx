@@ -80,7 +80,7 @@ export default function AccountDetail({ address, chain, name, toggleVisibility }
 
   const Price = () => (
     <>
-      {!price || !balances || !decimals
+      {price === undefined || !balances || !decimals
         ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={90} />
         : <FormatPrice amount={balances.freeBalance.add(balances.reservedBalance)} decimals={decimals} price={price} />
       }
