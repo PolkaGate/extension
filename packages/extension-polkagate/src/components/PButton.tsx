@@ -8,7 +8,7 @@ interface Props {
   text: string;
   _variant?: 'text' | 'contained' | 'outlined';
   _onClick: React.MouseEventHandler<HTMLButtonElement>;
-  _mt: string;
+  _mt?: string;
   disabled?: boolean;
   _fontSize?: string;
 }

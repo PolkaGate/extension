@@ -159,7 +159,6 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
         )}
       </div>
       <PButton
-        _mt={advanced ? '65px' : '120px'}
         _onClick={onNextStep}
         disabled={!address || !!error}
         text={t<string>('Next')}

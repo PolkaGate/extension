@@ -103,9 +103,13 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
       alignItems='flex-start'
       bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
       container
-      height='600px'
+      height='100%'
       justifyContent='end'
-      sx={{ mixBlendMode: 'normal' }}
+      sx={{
+        position: 'absolute',
+        top: 0,
+        mixBlendMode: 'normal'
+      }}
       zIndex={10}
     >
       <Grid
@@ -113,7 +117,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         bgcolor='background.default'
         container
         display='block'
-        height='600px'
+        height='100%'
         item
         p='10px 24px'
         width='85%'
