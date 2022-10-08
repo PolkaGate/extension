@@ -162,11 +162,10 @@ function RestoreJson({ className }: Props): React.ReactElement {
           </div>
         )}
         <PButton
-          _mt='0'
+          _mt={`${window.innerHeight - 370}px`}
           _onClick={_onRestore}
-          // isBusy={isBusy}
           _variant='contained'
-          disabled={isFileError || isPasswordError}
+          disabled={!file}
           text={t<string>('Restore')}
         />
       </div>

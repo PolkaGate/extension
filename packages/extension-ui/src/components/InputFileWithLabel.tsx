@@ -12,6 +12,8 @@ import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
 import PButton from '../../../extension-polkagate/src/components/PButton';
 import useTranslation from '../hooks/useTranslation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
@@ -116,6 +118,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                 <PButton
                   // _onClick={_onRestore}
                   // isBusy={isBusy}
+                  _fontSize='18px'
                   _mt='21px'
                   _variant='outlined'
                   // disabled={isFileError || isPasswordError}
@@ -125,8 +128,17 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
               <Grid item mt='11px'>
                 {t('Or')}
               </Grid>
+              <Grid item mt='13px'>
+                <FontAwesomeIcon
+                  className='copyIcon'
+                  icon={faCloudArrowUp}
+                  // onClick={_onCopy}
+                  size='2x'
+                  title={t('upload JSON')}
+                />
+              </Grid>
               <input {...getInputProps()} />
-              <Grid item mt='20px'>
+              <Grid item mt='20px' sx={{ fontSize: 18, fontWeight: 300 }}>
                 {
                   !file || clearContent
                     ? placeholder || t('drag and drop the file here')
