@@ -6,10 +6,11 @@ import React from 'react';
 import { BN } from '@polkadot/util';
 
 interface Props {
-  amount: BN;
-  price: number,
+  num?: number;
+  amount?: BN;
+  price?: number,
   decimalPoint?: number;
-  decimals: number;
+  decimals?: number;
 }
 
 function nFormatter(num: number, digits: number) {
@@ -35,8 +36,8 @@ function nFormatter(num: number, digits: number) {
   return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
 }
 
-function FormatPrice({ amount, decimalPoint = 2, decimals, price }: Props): React.ReactElement<Props> {
-  const total = (amount.toNumber() * 10 ** -decimals) * price;
+function FormatPrice({ num, amount, decimalPoint = 2, decimals, price }: Props): React.ReactElement<Props> {
+  const total = num ?? (amount.toNumber() * 10 ** -decimals) * price;
 
   return (
     <>
