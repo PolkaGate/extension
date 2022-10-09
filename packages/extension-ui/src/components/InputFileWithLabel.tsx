@@ -36,6 +36,7 @@ export interface InputFileProps {
   placeholder?: React.ReactNode | null;
   withEllipsis?: boolean;
   withLabel?: boolean;
+  reset?: boolean;
 }
 
 interface FileState {
@@ -62,7 +63,7 @@ function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   return data;
 }
 
-function InputFile({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
+function InputFile({ accept, reset, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
   const dropRef = createRef<DropzoneRef>();
   const [file, setFile] = useState<FileState | undefined>();
@@ -115,7 +116,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
         >
           <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
             <Grid container justifyContent='center' direction='column' alignItems='center'>
-              {!file &&
+              {(reset) &&
                 <Grid item sx={{ width: '60%' }}>
                   <PButton
                     // _onClick={_onRestore}
@@ -128,12 +129,12 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                   />
                 </Grid>
               }
-              {!file &&
+              {(reset) &&
                 <Grid item mt='11px'>
                   {t('Or')}
                 </Grid>
               }
-              {!file &&
+              {(reset) &&
                 <Grid item mt='13px'>
                   <FontAwesomeIcon
                     className='copyIcon'
@@ -147,7 +148,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
               <input {...getInputProps()} />
               <Grid item mt={file ? 0 : '20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
                 {
-                  !file || clearContent
+                  clearContent || reset
                     ? placeholder || t<string>('drag and drop the file here')
                     : placeholder || t<string>('{{name}} ({{size}} bytes)', {
                       replace: {
@@ -173,7 +174,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
           fontWeight={300}
           m='auto'
           pt='20px'
-          textAlign={file ? 'left' : 'center'}
+          textAlign={reset ? 'center' : 'left'}
           width='92%'
         >
           {label}

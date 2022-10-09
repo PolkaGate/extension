@@ -1,25 +1,22 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Box, Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import Link from '../../../extension-ui/src/components/Link';
 import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
+import { logoWhite } from '../assets/logos';
 import MenuSettings from './Menu';
-import { logoBlack, logoWhite } from '../assets/logos';
 
 interface Props {
   showBackArrow?: boolean;
   showSettings?: boolean;
   text?: React.ReactNode;
-  backLink?: string;
+  onBackClick?: () => void;
 }
 
-function HeaderBrand({ showBackArrow, showSettings, text, backLink = undefined }: Props): React.ReactElement<Props> {
+function HeaderBrand({ onBackClick, showBackArrow, showSettings, text }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -63,12 +60,16 @@ function HeaderBrand({ showBackArrow, showSettings, text, backLink = undefined }
         >
           <Grid item>
             {showBackArrow
-              ? <Link
-                className='backlink'
-                to={backLink ?? '/'}
-              >
-                <ArrowBackIosIcon sx={{ color: 'secondary.light', fontSize: 25, stroke: theme.palette.secondary.light, strokeWidth: 1.5 }} />
-              </Link>
+              ? <ArrowBackIosIcon
+                onClick={onBackClick}
+                sx={{
+                  color: 'secondary.light',
+                  cursor: 'pointer',
+                  fontSize: 25,
+                  stroke: theme.palette.secondary.light,
+                  strokeWidth: 1.5
+                }}
+              />
               : <Box
                 component='img'
                 src={logoWhite}

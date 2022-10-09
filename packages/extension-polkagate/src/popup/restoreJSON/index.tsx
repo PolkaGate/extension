@@ -5,20 +5,19 @@ import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/backgr
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
 
 import { u8aToString } from '@polkadot/util';
 
 import { AccountContext, ActionContext, InputFileWithLabel, InputWithLabel, Warning } from '../../../../extension-ui/src/components';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import { isKeyringPairs$Json } from '../../../../extension-ui/src/util/typeGuards';
+import Address from '../../components/Address'
 import PButton from '../../components/PButton';
 import { useTranslation } from '../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import Address from '../../components/Address'
-import { Grid } from '@mui/material';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
@@ -117,9 +116,19 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
     [file, onAction, password, requirePassword]
   );
 
+  const _onBackClick = useCallback(() => {
+    if (stepOne) {
+      onAction('/');
+    } else {
+      setFile(undefined);
+      setStep(true);
+    }
+  }, [onAction, stepOne]);
+
   return (
     <>
       <HeaderBrand
+        onBackClick={_onBackClick}
         showBackArrow
         text={t<string>(`Restore from JSON (${stepOne ? 1 : 2}/2)`)}
       />
@@ -193,6 +202,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         isError={isFileError}
         label={stepOne ? t<string>('Upload your file') : t<string>('Backup JSON file')}
         onChange={_onChangeFile}
+        reset={stepOne}
         withLabel
       />
       {isFileError && (
@@ -202,7 +212,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
           {t<string>('Invalid Json file')}
         </Warning>
       )}
-      {requirePassword && (
+      {requirePassword && !stepOne && (
         <Grid
           pt='10px'
           m='auto'
