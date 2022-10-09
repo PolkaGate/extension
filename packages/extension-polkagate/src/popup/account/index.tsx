@@ -8,42 +8,41 @@
  * this component opens social recovery index page to choose between configuring your account and rescuing other account
  * */
 
-import type { ThemeProps } from '../../../../extension-ui/src/types';
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { SettingsStruct } from '@polkadot/ui-settings/types';
+import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { ThemeProps } from '../../../../extension-ui/src/types';
 
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Identicon } from '@polkadot/extension-ui/components';
 import useGenesisHashOptions from '@polkadot/extension-ui/hooks/useGenesisHashOptions';
+import { BN } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, SettingsContext, ActionContext } from '../../../../extension-ui/src/components/contexts';
+import { prepareMetaData } from '../../../../extension-plus/src/util/plusUtils';// added for plus
+import { AccountContext, ActionContext, SettingsContext } from '../../../../extension-ui/src/components/contexts';
 import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { editAccount, getMetadata, tieAccount, updateMeta } from '../../../../extension-ui/src/messaging';// added for plus, updateMeta
-import { Select, ShortAddress, ShowBalance } from '../../components';
+import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
+import { history as historyIcon, ihistory, ireceive, irefresh, isend, istake, receive, refresh, send, stake } from '../../assets/icons';
+import { Header, Motion, Select, ShortAddress, ShowBalance } from '../../components';
 import { useApi, useEndpoint, useEndpoints } from '../../hooks';
+import { getPrice } from '../../util/api/getPrice';
 import getLogo from '../../util/getLogo';
 import { AddressState, FormattedAddressState, SavedMetaData } from '../../util/types';
-import { Header , Motion} from '../../components';
-import { prepareMetaData } from '../../../../extension-plus/src/util/plusUtils';// added for plus
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
-import type { KeypairType } from '@polkadot/util-crypto/types';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import { BN } from '@polkadot/util';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import { getPrice } from '../../util/api/getPrice';
-import { MoreVert as MoreVertIcon, ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
-import { send, isend, receive, stake, history as historyIcon, refresh, ireceive, istake, ihistory, irefresh } from '../../assets/icons';
 import AccountBrief from './AccountBrief';
-import { useHistory, useLocation } from 'react-router-dom';
-import type { ApiPromise } from '@polkadot/api';
 
 interface Props extends ThemeProps {
   className?: string;
@@ -122,7 +121,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(location?.state?.api);
   const [price, setPrice] = useState<number | undefined>();
-  const accountName = useMemo(() => location?.state?.identity?.display || account?.name, [location, account]);
+  const accountName = useMemo((): string => location?.state?.identity?.display || account?.name, [location, account]);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(location?.state?.balances as DeriveBalancesAll);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
 
@@ -322,7 +321,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   return (
     <Motion>
       <Container disableGutters sx={{ px: '30px' }}>
-        <Header address={address} genesisHash={genesisHash} icon={identicon}>
+        <Header icon={identicon}>
           <AccountBrief accountName={accountName} formatted={formatted} />
         </Header>
         <Grid alignItems='flex-end' container pt={1}>
