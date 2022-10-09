@@ -44,6 +44,7 @@
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
     "@polkadot/apps-config": "^0.118.1",
+    "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
     "better-react-spinkit": "^2.0.4",
     "chart.js": "^3.8.0",

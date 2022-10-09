@@ -5,7 +5,7 @@
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { Avatar, Divider, Grid, IconButton, Skeleton, Typography } from '@mui/material';
+import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -14,6 +14,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { copy1, eye } from '../assets/icons';
+import '@vaadin/icons';
+
 import { useApi, useEndpoint } from '../hooks';
 import FormatBalance from './FormatBalance';
 import FormatPrice from './FormatPrice';
@@ -25,11 +27,13 @@ interface Props {
   chain: Chain | null;
   price: number | undefined;
   balances: DeriveBalancesAll | undefined
+  isHidden: boolean | undefined;
 }
 
-export default function AccountDetail({ address, balances, chain, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, balances, chain, isHidden, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
   const { show } = useToast();
   const { t } = useTranslation();
+  const theme = useTheme();
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const decimals = api ? api.registry.chainDecimals[0] : 1;
@@ -118,26 +122,18 @@ export default function AccountDetail({ address, balances, chain, name, price, t
         <Grid item>
           <IconButton
             onClick={toggleVisibility}
-            sx={{ height: '15px', mt: '13px', mx: '7px', p: 0, width: '24px' }}
+            sx={{ height: '15px', mt: '13px', ml: '7px', p: 0, width: '24px' }}
           >
-            <Avatar
-              alt={'logo'}
-              src={eye}
-              sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, width: '22px' }}
-            />
+            <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
           </IconButton>
         </Grid>
         <Grid item>
           <CopyToClipboard text={String(address)}>
             <IconButton
               onClick={_onCopy}
-              sx={{ height: '23px', m: '10px 0', width: '25px' }}
+              sx={{ height: '23px', m: '10px 0', width: '36px' }}
             >
-              <Avatar
-                alt={'logo'}
-                src={copy1}
-                sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, width: '23px' }}
-              />
+              <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
             </IconButton>
           </CopyToClipboard>
         </Grid>
