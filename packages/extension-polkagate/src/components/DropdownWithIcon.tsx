@@ -20,7 +20,7 @@ interface Props {
   style: SxProps<Theme> | undefined;
 }
 
-export default function DropdownWithIcon({ defaultValue, icon = null, label, onChange, options, style }: Props) {
+export default function DropdownWithIcon({ defaultValue, icon = undefined, label, onChange, options, style }: Props) {
   return (
     <Grid
       alignItems='flex-end'
@@ -45,12 +45,23 @@ export default function DropdownWithIcon({ defaultValue, icon = null, label, onC
         pl={1}
         xs={1.5}
       >
-        {icon &&
-          <Avatar
+        {icon
+          ? <Avatar
             src={icon}
             sx={{ height: 31, width: 31 }}
             variant='square'
           />
+          : <Grid
+            sx={{
+              bgcolor: 'action.disabledBackground',
+              border: '1px solid',
+              borderColor: 'secondary.light',
+              borderRadius: '50%',
+              height: '31px',
+              width: '31px'
+            }}
+          >
+          </Grid>
         }
       </Grid>
     </Grid>
