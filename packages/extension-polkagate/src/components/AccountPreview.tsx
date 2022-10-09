@@ -279,9 +279,9 @@ export default function AccountPreview({ actions, address, allPrices, children, 
         address={formatted}
         balances={balances}
         chain={chain}
+        isHidden={isHidden}
         name={name || account?.name}
         price={price}
-        isHidden={isHidden}
         toggleVisibility={_toggleVisibility}
       />
       <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
