@@ -4043,6 +4043,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lit/reactive-element@npm:^1.3.0, @lit/reactive-element@npm:^1.4.0":
+  version: 1.4.1
+  resolution: "@lit/reactive-element@npm:1.4.1"
+  checksum: 27cf706217e9148e140b467185fb813165b2e2aad732fc578c26e566115fa6de73b85bdcd34137d839e004b76d7ae508940abcbd661059b69bc07d7fb6dcb754
+  languageName: node
+  linkType: hard
+
 "@logion/node-api@npm:0.3.2-1":
   version: 0.3.2-1
   resolution: "@logion/node-api@npm:0.3.2-1"
@@ -4585,6 +4592,13 @@ __metadata:
   dependencies:
     "@octokit/openapi-types": ^10.0.0
   checksum: 9a8988022dd21d21413e699491e3b672e3e436d0166220acf1c83ad62bfec519d37f4e2b155b660865ed5655fa94f626cc01f6bbd8149ba1807e5dc788ed8731
+  languageName: node
+  linkType: hard
+
+"@open-wc/dedupe-mixin@npm:^1.3.0":
+  version: 1.3.1
+  resolution: "@open-wc/dedupe-mixin@npm:1.3.1"
+  checksum: f0771906242cfd506531f3de65d44dbb069b0b61388612f91ad16b91838d216347d71144e4718dfaf9890a33ab0c7b625b0e6d979e09a288f81acb09f239f55d
   languageName: node
   linkType: hard
 
@@ -5840,6 +5854,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polymer/iron-flex-layout@npm:^3.0.0-pre.26":
+  version: 3.0.1
+  resolution: "@polymer/iron-flex-layout@npm:3.0.1"
+  dependencies:
+    "@polymer/polymer": ^3.0.0
+  checksum: bdfe717831ac9e7df475ae85a6b9c2cfa2fc5cdd8416f51f2707ec29a52f28b103868e33949751a65cea72c5ecf913d59c8b613ae1253c39565614348404d8e1
+  languageName: node
+  linkType: hard
+
+"@polymer/iron-icon@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "@polymer/iron-icon@npm:3.0.1"
+  dependencies:
+    "@polymer/iron-flex-layout": ^3.0.0-pre.26
+    "@polymer/iron-meta": ^3.0.0-pre.26
+    "@polymer/polymer": ^3.0.0
+  checksum: b0a08d6e3868c96701c67fa1ac2908dacbe7ed473c230f321976512b6c841d674867b7f447324266d0943991abfbea5a2f1a99d57ebc7049e02021b5958bed2c
+  languageName: node
+  linkType: hard
+
+"@polymer/iron-iconset-svg@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "@polymer/iron-iconset-svg@npm:3.0.1"
+  dependencies:
+    "@polymer/iron-meta": ^3.0.0-pre.26
+    "@polymer/polymer": ^3.0.0
+  checksum: 81d14a4eb5d79d8d35b2744834aa56c2bf10eb1af5c5aaf363cb087eaac9539ea8fef3ed1a66204e7ec694fb8579b7fd9bbd1d83223782550ca4558cd6de2adb
+  languageName: node
+  linkType: hard
+
+"@polymer/iron-meta@npm:^3.0.0-pre.26":
+  version: 3.0.1
+  resolution: "@polymer/iron-meta@npm:3.0.1"
+  dependencies:
+    "@polymer/polymer": ^3.0.0
+  checksum: 0bd49f27f0e0f7241083b0e6e1e262b96a2371ba4d8cf70174b320f12245c219973702f6ba5144453ab4754f28667854000bcbe0772817ab9bbaeecdb472e47e
+  languageName: node
+  linkType: hard
+
+"@polymer/polymer@npm:^3.0.0":
+  version: 3.5.1
+  resolution: "@polymer/polymer@npm:3.5.1"
+  dependencies:
+    "@webcomponents/shadycss": ^1.9.1
+  checksum: 4c499cd817e8ca79ad192d1006f7063a20173c425d00ba99ea93b25d47feccc72ccee7acdd41ad9aeba48f52f2e88aad632ba1651852d8170bc66d8717ec059c
+  languageName: node
+  linkType: hard
+
 "@popperjs/core@npm:^2.11.5":
   version: 2.11.5
   resolution: "@popperjs/core@npm:2.11.5"
@@ -6893,6 +6955,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/trusted-types@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@types/trusted-types@npm:2.0.2"
+  checksum: 3371eef5f1c50e1c3c07a127c1207b262ba65b83dd167a1c460fc1b135a3fb0c97b9f508efebd383f239cc5dd5b7169093686a692a501fde9c3f7208657d9b0d
+  languageName: node
+  linkType: hard
+
 "@types/uuid@npm:^8.3.4":
   version: 8.3.4
   resolution: "@types/uuid@npm:8.3.4"
@@ -7233,6 +7302,83 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vaadin/component-base@npm:~23.2.3":
+  version: 23.2.3
+  resolution: "@vaadin/component-base@npm:23.2.3"
+  dependencies:
+    "@open-wc/dedupe-mixin": ^1.3.0
+    "@polymer/polymer": ^3.0.0
+    "@vaadin/vaadin-development-mode-detector": ^2.0.0
+    "@vaadin/vaadin-usage-statistics": ^2.1.0
+    lit: ^2.0.0
+  checksum: 0f9a1a1418dade1dc3d9d49e81f81dec7ec5de4bf29560072fb315a9594d6fb7ce00bb620302fee127f939a95795e6aedf85f610c74e7457c30f811806848df1
+  languageName: node
+  linkType: hard
+
+"@vaadin/icon@npm:~23.2.3":
+  version: 23.2.3
+  resolution: "@vaadin/icon@npm:23.2.3"
+  dependencies:
+    "@polymer/polymer": ^3.0.0
+    "@vaadin/component-base": ~23.2.3
+    "@vaadin/vaadin-lumo-styles": ~23.2.3
+    "@vaadin/vaadin-themable-mixin": ~23.2.3
+    lit: ^2.0.0
+  checksum: 2611a86e9f0944ffe3757bbbdb64e0bbe01c45b2950eca90de1490aa0830def5a7b801f2bb438996efb0802f25d9f70e4a061a0a861369d99bae90d23b1bff32
+  languageName: node
+  linkType: hard
+
+"@vaadin/icons@npm:^23.2.3":
+  version: 23.2.3
+  resolution: "@vaadin/icons@npm:23.2.3"
+  dependencies:
+    "@polymer/iron-icon": ^3.0.0
+    "@polymer/iron-iconset-svg": ^3.0.0
+    "@polymer/polymer": ^3.0.0
+    "@vaadin/icon": ~23.2.3
+  checksum: d4baf792ea37715e8a95c5f5ac6ecf3a5620affcc30c14771415e8e43a875abbe7616a98f9cc260392502739c0f7475ea69068ed660d4df51554168b5bb1e5be
+  languageName: node
+  linkType: hard
+
+"@vaadin/vaadin-development-mode-detector@npm:^2.0.0":
+  version: 2.0.5
+  resolution: "@vaadin/vaadin-development-mode-detector@npm:2.0.5"
+  checksum: 2de395a064b0e21203385d4ca1b312694e4cea4eb918e99a754c340ec2980d617db862b59c82d6e4757c75964f5cc33abb0a5b183e99c24af4131d7d3fa40190
+  languageName: node
+  linkType: hard
+
+"@vaadin/vaadin-lumo-styles@npm:~23.2.3":
+  version: 23.2.3
+  resolution: "@vaadin/vaadin-lumo-styles@npm:23.2.3"
+  dependencies:
+    "@polymer/iron-icon": ^3.0.0
+    "@polymer/iron-iconset-svg": ^3.0.0
+    "@polymer/polymer": ^3.0.0
+    "@vaadin/icon": ~23.2.3
+    "@vaadin/vaadin-themable-mixin": ~23.2.3
+  checksum: 71445492160b30a4d3b23bf4f7d61d3bf8bc49fe0b26fe1225776afe4bcce3e103e8ce1f9094c278434dd0def47078b5088b6b00fc10836fd0d755a832179a40
+  languageName: node
+  linkType: hard
+
+"@vaadin/vaadin-themable-mixin@npm:~23.2.3":
+  version: 23.2.3
+  resolution: "@vaadin/vaadin-themable-mixin@npm:23.2.3"
+  dependencies:
+    "@open-wc/dedupe-mixin": ^1.3.0
+    lit: ^2.0.0
+  checksum: 83a458cb25e7d2351e3b07bf4e8401c7e075929c8d161b5ebf9e3f1c974d2b55ae2fa8488c7f98e80d5086357837fdd1406f8b211eaf9cdbc9118589c485fa31
+  languageName: node
+  linkType: hard
+
+"@vaadin/vaadin-usage-statistics@npm:^2.1.0":
+  version: 2.1.2
+  resolution: "@vaadin/vaadin-usage-statistics@npm:2.1.2"
+  dependencies:
+    "@vaadin/vaadin-development-mode-detector": ^2.0.0
+  checksum: ac71c388ea71ea0a8750ae5bb7e254e0186391afa9be37f6b4cce347ee749961f6a8647abb0a775df58edb8e72fd00c68f57497a441178034fde8fa861f2a886
+  languageName: node
+  linkType: hard
+
 "@vue/component-compiler-utils@npm:^3.3.0":
   version: 3.3.0
   resolution: "@vue/component-compiler-utils@npm:3.3.0"
@@ -7401,6 +7547,13 @@ __metadata:
     "@webassemblyjs/ast": 1.11.1
     "@xtuc/long": 4.2.2
   checksum: f15ae4c2441b979a3b4fce78f3d83472fb22350c6dc3fd34bfe7c3da108e0b2360718734d961bba20e7716cb8578e964b870da55b035e209e50ec9db0378a3f7
+  languageName: node
+  linkType: hard
+
+"@webcomponents/shadycss@npm:^1.9.1":
+  version: 1.11.0
+  resolution: "@webcomponents/shadycss@npm:1.11.0"
+  checksum: 4c02f0c59f498c8a9dc202101e66b2591162e26fd91daed4eec9cb966c1cf9ae5a16ec42db8da7edfa7a87f3f4806a1dd36659c23b32b248d3f4cfd2d841d4b1
   languageName: node
   linkType: hard
 
@@ -16395,6 +16548,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lit-element@npm:^3.2.0":
+  version: 3.2.2
+  resolution: "lit-element@npm:3.2.2"
+  dependencies:
+    "@lit/reactive-element": ^1.3.0
+    lit-html: ^2.2.0
+  checksum: e1df57c02ad5ae4c42b49a5066b3b623bccf7fa6610bbc3f65bc22cbbe1546ecd6a7f717b1f01863929262f416c4b8b7a39ff166114215f93cc22f4e5b3825c3
+  languageName: node
+  linkType: hard
+
+"lit-html@npm:^2.2.0, lit-html@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "lit-html@npm:2.4.0"
+  dependencies:
+    "@types/trusted-types": ^2.0.2
+  checksum: fb2ff513a23ce35783c231d3c184103b681f62792e2fa500b17f0bbd93b1a3168153b3fd52ccaca2c25ee5bb7f4006b657fc15ae893fa5dc733774c01eda5dce
+  languageName: node
+  linkType: hard
+
+"lit@npm:^2.0.0":
+  version: 2.4.0
+  resolution: "lit@npm:2.4.0"
+  dependencies:
+    "@lit/reactive-element": ^1.4.0
+    lit-element: ^3.2.0
+    lit-html: ^2.4.0
+  checksum: ac22b1cd31331dde47a784caceed35c17d075016467af2ad88a22b626ceb93f5069be14626f4cb0acf9c83b1cd2bcfe2e0810ecb8e94f1730abbb645cfc3e0f0
+  languageName: node
+  linkType: hard
+
 "load-json-file@npm:^6.2.0":
   version: 6.2.0
   resolution: "load-json-file@npm:6.2.0"
@@ -19851,6 +20034,7 @@ resolve@^2.0.0-next.3:
     "@polkadot/dev": ^0.67.127
     "@testing-library/react": ^13.3.0
     "@types/jest": ^28.1.1
+    "@vaadin/icons": ^23.2.3
     babel-plugin-transform-import-meta: ^2.1.1
     better-react-spinkit: ^2.0.4
     chart.js: ^3.8.0

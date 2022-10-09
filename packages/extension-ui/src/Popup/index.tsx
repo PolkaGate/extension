@@ -23,7 +23,7 @@ import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, Metad
 import ToastProvider from '../components/Toast/ToastProvider';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../messaging';
 import { buildHierarchy } from '../util/buildHierarchy';
-import Accounts from '../../../extension-polkagate/src/popup/index/Index';
+import Accounts from '../../../extension-polkagate/src/popup/home/Index';
 // import Accounts from './Accounts';
 import AuthList from './AuthManagement';
 import Authorize from './Authorize';

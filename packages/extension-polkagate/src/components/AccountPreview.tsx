@@ -11,19 +11,15 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { faUsb } from '@fortawesome/free-brands-svg-icons';
-import { faCodeBranch, faQrcode, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import CheckIcon from '@mui/icons-material/Check';
-import { Avatar, Grid, IconButton, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
-import Identicon from '../../../extension-ui/src/components/Identicon';
-import Menu from '../../../extension-ui/src/components/Menu';
 import useMetadata from '../../../extension-ui/src/hooks/useMetadata';
 import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
 import useToast from '../../../extension-ui/src/hooks/useToast';
@@ -32,16 +28,15 @@ import { showAccount } from '../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { useApi, useEndpoint } from '../hooks';
+import { getPrice } from '../util/api/getPrice';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
-import { ShortAddress, ShowBalance } from '.'; // added for Plus
 
 export interface Props {
   actions?: React.ReactNode;
   address?: string | null;
   children?: React.ReactNode;
-  className?: string;
   genesisHash?: string | null;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
@@ -51,7 +46,9 @@ export interface Props {
   suri?: string;
   toggleActions?: number;
   type?: KeypairType;
-  showPlus?: boolean;// added for plus
+  showPlus?: boolean;
+  setAllPrices: React.Dispatch<React.SetStateAction<any | undefined>>;
+  allPrices: number | undefined;
 }
 
 interface Recoded {
@@ -102,17 +99,17 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 const ACCOUNTS_SCREEN_HEIGHT = 550;
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-export default function AccountPreview({ actions, address, children, className, genesisHash, isExternal, isHardware, isHidden, name, parentName, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
 
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
-  const onAction = useContext(ActionContext);// added for plus
+  const onAction = useContext(ActionContext);
   const [{ account, formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
 
-  const endpoint = useEndpoint(accounts, address, chain);
+  const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
 
   const [showActionsMenu, setShowActionsMenu] = useState(false);
@@ -121,16 +118,40 @@ export default function AccountPreview({ actions, address, children, className, 
   const actMenuRef = useRef<HTMLDivElement>(null);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const { show } = useToast();
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
+  const [price, setPrice] = useState<number>();
 
   useOutsideClick([actIconRef, actMenuRef], () => (showActionsMenu && setShowActionsMenu(!showActionsMenu)));
+
+  useEffect(() => {
+    if (!chain) {
+      return;
+    }
+
+    // eslint-disable-next-line no-void
+    void getPrice(chain).then((p) => {
+      setPrice(p);
+    });
+  }, [chain]);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
     api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
   }, [api, formatted]);
+
+  useEffect((): void => {
+    if (balances === undefined || price === undefined || !api) {
+      return;
+    }
+
+    const decimals = api.registry.chainDecimals[0];
+    const temp = allPrices ?? {};
+
+    temp[balances.accountId] = { balances, decimals, price };
+    setAllPrices({ ...temp });
+  }, [api, balances, price, setAllPrices, allPrices]);
 
   useEffect((): void => {
     if (!address) {
@@ -176,7 +197,6 @@ export default function AccountPreview({ actions, address, children, className, 
   useEffect((): void => {
     // eslint-disable-next-line no-void
     api && formatted && void api.derive.accounts.info(formatted).then((info) => {
-      console.log('info:', info);
       setIdentity(info?.identity);
     });
   }, [api, formatted]);
@@ -255,7 +275,15 @@ export default function AccountPreview({ actions, address, children, className, 
         identiconTheme={theme}
         prefix={prefix}
       />
-      <AccountDetail address={formatted} chain={chain} name={name || account?.name} toggleVisibility={_toggleVisibility} />
+      <AccountDetail
+        address={formatted}
+        balances={balances}
+        chain={chain}
+        name={name || account?.name}
+        price={price}
+        isHidden={isHidden}
+        toggleVisibility={_toggleVisibility}
+      />
       <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
     </Grid>
   );
