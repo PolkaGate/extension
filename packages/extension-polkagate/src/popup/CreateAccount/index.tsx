@@ -23,7 +23,7 @@ interface Props {
   className?: string;
 }
 
-function CreateAccount ({ className }: Props): React.ReactElement {
+function CreateAccount({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
@@ -92,6 +92,10 @@ function CreateAccount ({ className }: Props): React.ReactElement {
     []
   );
 
+  const _onBackClick = useCallback(() => {
+    step === 1 ? onAction('/') : _onPreviousStep();
+  }, [_onPreviousStep, onAction, step]);
+
   useEffect(() => {
     genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
       console.error(error);
@@ -102,6 +106,7 @@ function CreateAccount ({ className }: Props): React.ReactElement {
   return (
     <>
       <HeaderBrand
+        onBackClick={_onBackClick}
         showBackArrow
         showSettings
         text={t<string>('Create an account')}
@@ -135,7 +140,6 @@ function CreateAccount ({ className }: Props): React.ReactElement {
                 <AccountNamePasswordCreation
                   buttonLabel={t<string>('Create account')}
                   isBusy={isBusy}
-                  onBackClick={_onPreviousStep}
                   onCreate={_onCreate}
                   onNameChange={setName}
                 />
