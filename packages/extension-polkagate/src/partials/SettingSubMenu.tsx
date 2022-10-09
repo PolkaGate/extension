@@ -123,7 +123,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='12px'
         >
           <Select
-            defaultValue={settings.i18nLang ?? languageOptions[0].value}
+            defaultValue={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
             label={t<string>('Language')}
             onChange={_onChangeLang}
             options={languageOptions}
