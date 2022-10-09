@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
@@ -13,9 +15,6 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { copy1, eye } from '../assets/icons';
-import '@vaadin/icons';
-
 import { useApi, useEndpoint } from '../hooks';
 import FormatBalance from './FormatBalance';
 import FormatPrice from './FormatPrice';

@@ -24,18 +24,18 @@ export default function AccountsTree({ parentName, setAllPrices, suri, allPrices
     >
       <AccountPreview
         {...account}
+        allPrices={allPrices}
         parentName={parentName}
         setAllPrices={setAllPrices}
         suri={suri}
-        allPrices={allPrices}
       />
       {account?.children?.map((child, index) => (
         <AccountsTree
           key={`${index}:${child.address}`}
           {...child}
+          allPrices={allPrices}
           parentName={account.name}
           setAllPrices={setAllPrices}
-          allPrices={allPrices}
         />
       ))}
     </Container>

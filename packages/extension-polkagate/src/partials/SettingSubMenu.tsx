@@ -147,9 +147,9 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           <Checkbox
             checked={camera}
             label={t<string>('Allow QR Camera Access')}
+            onChange={setCamera}
             style={{ marginTop: 0, marginLeft: '-20px' }}
             theme={theme}
-            onChange={setCamera}
           />
         </Grid>
         <Grid
