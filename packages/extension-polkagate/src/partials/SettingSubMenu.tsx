@@ -1,22 +1,20 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// import type { Theme, ThemeProps } from '../types';
-
-import { Avatar, Divider, Grid, IconButton, Input, InputLabel, useTheme } from '@mui/material';
-import React, { useMemo, useState , useCallback} from 'react';
+import { Avatar, Divider, Grid, IconButton, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
-import { externalLink } from '../assets/icons';
-import { ManageAccess, ManageAccessB } from '../assets/icons'
+import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
 import Checkbox from '../components/Checkbox';
 import MenuItem from '../components/MenuItem';
 import Select from '../components/Select';
 import Switch from '../components/Switch';
-import {  windowOpen } from '../messaging';
+import { useIsPopup } from '../hooks';
+import { setNotification, windowOpen } from '../messaging';
 
 interface Props {
   className?: string;
@@ -25,12 +23,17 @@ interface Props {
 export default function SettingSubMenu({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-
-  const [hasCammeraAccess, setHasCammeraAccess] = useState<boolean>(false);
+  const isPopup = useIsPopup();
+  const [notification, updateNotification] = useState(settings.notification);
+  const [camera, setCamera] = useState(settings.camera === 'on');
+  const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
-  const notificationOptions = ['Extension', 'PopUp', 'Window']
-    .map((item) => ({ text: item, value: item.toLowerCase() }));
+  const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
+
+  useEffect(() => {
+    settings.set({ camera: camera ? 'on' : 'off' });
+  }, [camera]);
 
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
@@ -39,6 +42,28 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
   const _onWindowOpen = useCallback(
     (): void => {
       windowOpen('/').catch(console.error);
+    }, []
+  );
+
+  const _onChangeLang = useCallback(
+    (value: string): void => {
+      settings.set({ i18nLang: value });
+    }, []
+  );
+
+  const _onChangePrefix = useCallback(
+    (value: string): void => {
+      setPrefix(value);
+      settings.set({ prefix: parseInt(value, 10) });
+    }, []
+  );
+
+  const _onChangeNotification = useCallback(
+    (value: string): void => {
+      setNotification(value).catch(console.error);
+
+      updateNotification(value);
+      settings.set({ notification: value });
     }, []
   );
 
@@ -62,40 +87,45 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           >
             <Switch theme={theme} />
           </Grid>
-          <Grid
-            item
-          >
-            <Divider
-              orientation='vertical'
-              sx={{
-                backgroundColor: 'text.primary',
-                height: '20px',
-                my: 'auto'
-              }}
-            />
-          </Grid>
-          <Grid
-            item
-          >
-            <IconButton
-              sx={{ height: '35px', width: '35px' }}
-              onClick={_onWindowOpen}
-            >
-              <Avatar
-                alt={'logo'}
-                src={externalLink}
-                sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '28px', width: '28px' }}
-              />
-            </IconButton>
-          </Grid>
+          {isPopup &&
+            <>
+              <Grid
+                item
+              >
+                <Divider
+                  orientation='vertical'
+                  sx={{
+                    backgroundColor: 'text.primary',
+                    height: '20px',
+                    my: 'auto'
+                  }}
+                />
+              </Grid>
+              <Grid
+                item
+              >
+                <IconButton
+                  sx={{ height: '35px', width: '35px' }}
+                  onClick={_onWindowOpen}
+                >
+                  <Avatar
+                    alt={'logo'}
+                    src={externalLink}
+                    sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '28px', width: '28px' }}
+                  />
+                </IconButton>
+              </Grid>
+            </>
+          }
         </Grid>
         <Grid
           item
           pt='12px'
         >
           <Select
-            defaultValue={languageOptions[0].value}
+            defaultValue={settings.i18nLang ?? languageOptions[0].value}
             label={t<string>('Language')}
+            onChange={_onChangeLang}
             options={languageOptions}
           />
         </Grid>
@@ -104,8 +134,9 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='10px'
         >
           <Select
-            defaultValue={notificationOptions[1].value}
+            defaultValue={notification ?? notificationOptions[1].value}
             label={t<string>('Notification')}
+            onChange={_onChangeNotification}
             options={notificationOptions}
           />
         </Grid>
@@ -114,9 +145,9 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='20px'
         >
           <Checkbox
-            checked={hasCammeraAccess}
+            checked={camera}
             label={t<string>('Allow QR Camera Access')}
-            onChange={setHasCammeraAccess}
+            onChange={setCamera}
             style={{ marginTop: 0, marginLeft: '-20px' }}
             theme={theme}
           />
@@ -135,8 +166,9 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='7px'
         >
           <Select
-            defaultValue={prefixOptions[2].value}
+            defaultValue={prefix ?? prefixOptions[2].value}
             label={t<string>('Default display address format')}
+            onChange={_onChangePrefix}
             options={prefixOptions}
           />
         </Grid>

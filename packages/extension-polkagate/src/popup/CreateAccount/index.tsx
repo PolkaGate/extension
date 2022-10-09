@@ -23,9 +23,12 @@ interface Props {
   className?: string;
 }
 
+const DEFAULT_CHAIN_INDEX = 1;
+
 function CreateAccount({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const options = useGenesisHashOptions();
   const [isBusy, setIsBusy] = useState(false);
   const [newChain, setNewChain] = useState<Chain | null>(null);
   const [step, setStep] = useState(1);
@@ -33,8 +36,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
   const [seed, setSeed] = useState<null | string>(null);
   const [type, setType] = useState(DEFAULT_TYPE);
   const [name, setName] = useState('');
-  const options = useGenesisHashOptions();
-  const [genesisHash, setGenesis] = useState('');
+  const [genesisHash, setGenesis] = useState<string | undefined>(options[DEFAULT_CHAIN_INDEX]?.value);
   const chain = useMetadata(genesisHash, true);
 
   useEffect((): void => {
@@ -130,7 +132,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
             : (
               <>
                 <DropdownWithIcon
-                  defaultValue={options[0].text}
+                  defaultValue={options[1].value}
                   icon={getLogo(newChain ?? undefined)}
                   label={t<string>('Select the chain')}
                   onChange={_onChangeNetwork}

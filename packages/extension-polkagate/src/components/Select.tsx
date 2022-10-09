@@ -1,11 +1,10 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import FormControl from '@mui/material/FormControl';
 import InputBase from '@mui/material/InputBase';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import NativeSelect from '@mui/material/NativeSelect';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
@@ -40,7 +39,6 @@ interface DropdownOption {
   value: string;
 }
 
-
 interface Props {
   defaultValue: string | undefined;
   onChange?: (value: string) => void;
@@ -56,11 +54,14 @@ export default function CustomizedSelect({ defaultValue, label, onChange, option
   );
 
   return (
-    <FormControl variant='standard' sx={{ width: '100%' }}>
+    <FormControl
+      sx={{ width: '100%' }}
+      variant='standard'
+    >
       <InputLabel
         htmlFor='selectChain'
+        sx={{ color: 'text.primary', fontSize: '18px', fontWeight: 300, transformOrigin: 'left bottom', letterSpacing: '-0.015em' }}
         variant='standard'
-        sx={{ color: 'text.primary', fontSize: '18px', fontWeight: 300, transformOrigin: 'left bottom', fontWeight: 300, letterSpacing: '-0.015em' }}
 
       >
         {label}
@@ -85,11 +86,15 @@ export default function CustomizedSelect({ defaultValue, label, onChange, option
         }}
       >
         {options.map(({ text, value }): React.ReactNode => (
-          <MenuItem key={value} sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }} value={value}>
+          <MenuItem
+            key={value}
+            sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
+            value={value}
+          >
             {text}
           </MenuItem>
         ))}
       </Select>
-    </FormControl >
+    </FormControl>
   );
 }
