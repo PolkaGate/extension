@@ -61,14 +61,19 @@ function ImportSeed(): React.ReactElement {
     []
   );
 
-  const _onBackClick = useCallback(
+  const _onCancelClick = useCallback(
     () => setStep1(true),
     []
   );
 
+  const _onBackClick = useCallback(() => {
+    step1 ? onAction('/') : _onCancelClick();
+  }, [_onCancelClick, onAction, step1]);
+
   return (
     <>
       <HeaderBrand
+        onBackClick={_onBackClick}
         showBackArrow
         showSettings
         text={t<string>(`Import Account (${step1 ? 1 : 2}/2)`)}
@@ -93,7 +98,7 @@ function ImportSeed(): React.ReactElement {
             <AccountNamePasswordCreation
               buttonLabel={t<string>('Add account')}
               isBusy={isBusy}
-              onBackClick={_onBackClick}
+              onBackClick={_onCancelClick}
               onCreate={_onCreate}
               onNameChange={setName}
               withCancel
