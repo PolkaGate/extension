@@ -6,7 +6,8 @@ import { BN } from '@polkadot/util';
 
 export const EXTENSION_NAME = 'Polkadot js plus ❤️';
 export const PREFERED_POOL_NAME = EXTENSION_NAME;
-export const PLUS_VERSION = '0.42.8.13';
+export const DEFAULT_CHAIN_INDEX = 1;
+export const PLUS_VERSION = '0.44.1.19';
 export const ENVIREONMENT = 'production'; //developement or production
 export const PPREFERED_POOL_ID_ON_WESTEND = new BN(6)
 export const PPREFERED_POOL_ID_ON_KUSAMA = undefined;

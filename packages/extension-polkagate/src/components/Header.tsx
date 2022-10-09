@@ -25,7 +25,6 @@ interface Props {
 }
 
 export default function Header({ children, icon, preUrl = '/', state = {}, showLogo }: Props): React.ReactElement<Props> {
-  const onAction = useContext(ActionContext);// added for plus
   const history = useHistory();
   const theme = useTheme();
 
@@ -38,7 +37,7 @@ export default function Header({ children, icon, preUrl = '/', state = {}, showL
 
   return (
     <>
-      <Grid container alignItems='center' justifyContent='flex-end' pt='26px'>
+      <Grid alignItems='center' container justifyContent='flex-end' pt='26px'>
         <Grid item xs={4}>
           {showLogo
             ? <Box component='img' sx={{ height: 45, width: 45 }} src={theme.palette.mode === 'dark' ? logoWhite : logoBlack} />
@@ -54,10 +53,10 @@ export default function Header({ children, icon, preUrl = '/', state = {}, showL
             </IconButton>
           }
         </Grid>
-        <Grid item textAlign='center' xs={4}>
+        <Grid item textAlign='center' m='auto' width='fit-content' >
           {icon}
         </Grid>
-        <Grid item xs={4} textAlign='right'>
+        <Grid item textAlign='right' xs={4}>
           <IconButton
             aria-label='menu'
             color='inherit'

@@ -16,14 +16,13 @@ import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import PAddress from '../../components/Address';
 import DropdownWithIcon from '../../components/DropdownWithIcon';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { DEFAULT_CHAIN_INDEX } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import Mnemonic from './Mnemonic';
 
 interface Props {
   className?: string;
 }
-
-const DEFAULT_CHAIN_INDEX = 1;
 
 function CreateAccount({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
