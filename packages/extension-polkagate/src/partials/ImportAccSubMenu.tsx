@@ -30,6 +30,12 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
     }, [onAction]
   );
 
+  const _goToAttachQR = useCallback(
+    () => {
+      onAction('/account/attach-qr');
+    }, [onAction]
+  );
+
   return (
     <>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
@@ -55,7 +61,7 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
           Icon={theme.palette.mode === 'light' ? qrB : qr}
           py='4px'
           text='Attach external QR-signer '
-        // onClick={ }
+          onClick={_goToAttachQR}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? connectB : connect}
