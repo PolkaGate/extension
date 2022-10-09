@@ -8,37 +8,33 @@ import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import FormatPrice from '../../components/FormatPrice';
 
 interface Props {
-  className?: string;
-  totalPrice: any | undefined;
+  allPrices: any | undefined;
 }
 
-export default function YouHave({ totalPrice, className }: Props): React.ReactElement {
+export default function YouHave({ allPrices }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [price, setPrice] = useState<number>();
 
   useEffect(() => {
-    if (!totalPrice) {
+    if (!allPrices) {
       return;
     }
 
     let price = 0;
 
-    console.log(totalPrice)
-    // .forEach((p) => {
-    //   // const t = Number(p.balances.freeBalance.add(p.balances.reservedBalance));
+    Object.entries(allPrices).forEach((p) => {
+      const t = Number(p[1].balances.freeBalance.add(p[1].balances.reservedBalance));
 
-    //   // price += (t * 10 ** -p.decimals) * p.price;
-
-    //   console.log('pppp:',p)
-    // });
+      price += (t * 10 ** -p[1].decimals) * p[1].price;
+    });
     setPrice(price);
-  }, [totalPrice]);
+  }, [allPrices]);
 
   return (
     <Grid
       container
-      textAlign='center'
       pt='20px'
+      textAlign='center'
     >
       <Grid
         item
@@ -51,17 +47,23 @@ export default function YouHave({ totalPrice, className }: Props): React.ReactEl
         </Typography>
       </Grid>
       <Grid
+        container
         item
+        justifyContent='center'
         xs={12}
       >
         <Typography
-          sx={{ fontSize: '32px', fontWeight: 500, lineHeight: 1 }}
+          sx={{ fontSize: '32px', fontWeight: 500, height: 36, lineHeight: 1 }}
         >
-{/* 
-          {!totalPrice
-            ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={90} />
+          {price === undefined
+            ? <Skeleton
+              height={38}
+              sx={{ transform: 'none' }}
+              variant='text'
+              width={223}
+            />
             : <FormatPrice num={price} />
-          } */}
+          }
         </Typography>
       </Grid>
     </Grid>

@@ -30,11 +30,8 @@ export default function Home({ className }: Props): React.ReactElement {
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
   const networkMap = useMemo(() => getNetworkMap(), []);
-  const [totalPrice, setTotalPrice] = useState<any>();
+  const [allPrices, setAllPrices] = useState<any>();
 
-  console.log('totalPrice:', totalPrice);
-
-  // added for plus
   useEffect(() => {
     // eslint-disable-next-line no-void
     void cryptoWaitReady().then(() => {
@@ -75,7 +72,7 @@ export default function Home({ className }: Props): React.ReactElement {
                 text={t<string>('Polkagate')}
               />
             </Grid>
-            <YouHave totalPrice={totalPrice} />
+            <YouHave allPrices={allPrices} />
             <Container
               disableGutters
               sx={[{
@@ -100,9 +97,9 @@ export default function Home({ className }: Props): React.ReactElement {
               {filteredAccount.map((json, index): React.ReactNode => (
                 <AccountsTree
                   {...json}
+                  allPrices={allPrices}
                   key={`${index}:${json.address}`}
-                  setTotalPrice={setTotalPrice}
-                  totalPrice={totalPrice}
+                  setAllPrices={setAllPrices}
                 />
               ))}
             </Container>

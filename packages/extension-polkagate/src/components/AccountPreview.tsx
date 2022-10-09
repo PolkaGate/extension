@@ -11,11 +11,9 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { faUsb } from '@fortawesome/free-brands-svg-icons';
-import { faCodeBranch, faQrcode, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import CheckIcon from '@mui/icons-material/Check';
-import { Avatar, Grid, IconButton, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -39,7 +37,6 @@ export interface Props {
   actions?: React.ReactNode;
   address?: string | null;
   children?: React.ReactNode;
-  className?: string;
   genesisHash?: string | null;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
@@ -50,8 +47,8 @@ export interface Props {
   toggleActions?: number;
   type?: KeypairType;
   showPlus?: boolean;
-  setTotalPrice: React.Dispatch<React.SetStateAction<any | undefined>>;
-  totalPrice: number | undefined;
+  setAllPrices: React.Dispatch<React.SetStateAction<any | undefined>>;
+  allPrices: number | undefined;
 }
 
 interface Recoded {
@@ -102,13 +99,13 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 const ACCOUNTS_SCREEN_HEIGHT = 550;
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-export default function AccountPreview({ setTotalPrice, totalPrice, actions, address, children, className, genesisHash, isExternal, isHardware, isHidden, name, parentName, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
 
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
-  const onAction = useContext(ActionContext);// added for plus
+  const onAction = useContext(ActionContext);
   const [{ account, formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
 
@@ -150,11 +147,11 @@ export default function AccountPreview({ setTotalPrice, totalPrice, actions, add
     }
 
     const decimals = api.registry.chainDecimals[0];
-    const temp = totalPrice ?? {};
+    const temp = allPrices ?? {};
 
     temp[balances.accountId] = { balances, decimals, price };
-    setTotalPrice(temp);
-  }, [api, balances, price, setTotalPrice, totalPrice]);
+    setAllPrices({ ...temp });
+  }, [api, balances, price, setAllPrices, allPrices]);
 
   useEffect((): void => {
     if (!address) {

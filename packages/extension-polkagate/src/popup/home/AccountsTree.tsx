@@ -11,11 +11,11 @@ import AccountPreview from '../../components/AccountPreview';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
-  setTotalPrice: React.Dispatch<React.SetStateAction<any | undefined>>
-  totalPrice: number | undefined;
+  setAllPrices: React.Dispatch<React.SetStateAction<any | undefined>>
+  allPrices: number | undefined;
 }
 
-export default function AccountsTree({ parentName, setTotalPrice, suri, totalPrice, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree({ parentName, setAllPrices, suri, allPrices, ...account }: Props): React.ReactElement<Props> {
   return (
     <Container
       className='tree'
@@ -25,17 +25,17 @@ export default function AccountsTree({ parentName, setTotalPrice, suri, totalPri
       <AccountPreview
         {...account}
         parentName={parentName}
-        setTotalPrice={setTotalPrice}
+        setAllPrices={setAllPrices}
         suri={suri}
-        totalPrice={totalPrice}
+        allPrices={allPrices}
       />
       {account?.children?.map((child, index) => (
         <AccountsTree
           key={`${index}:${child.address}`}
           {...child}
           parentName={account.name}
-          setTotalPrice={setTotalPrice}
-          totalPrice={totalPrice}
+          setAllPrices={setAllPrices}
+          allPrices={allPrices}
         />
       ))}
     </Container>
