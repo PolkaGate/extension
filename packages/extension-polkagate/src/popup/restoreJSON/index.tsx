@@ -171,7 +171,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
             borderRadius: '5px',
             display: 'block',
             m: '20px auto 0',
-            maxHeight: '150px',
+            maxHeight: parent.innerHeight / 2,
             overflowY: 'scroll',
             scrollbarWidth: 'none',
             width: '92%'
