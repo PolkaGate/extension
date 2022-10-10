@@ -434,3 +434,16 @@ export interface AlertType {
   text: string;
   severity: 'error' | 'warning' | 'info' | 'success'
 }
+
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' |'Society';
+
+export interface Proxy {
+  delay: number;
+  delegate: string;
+  proxyType: ProxyTypes;
+}
+
+export interface ProxyItem {
+  proxy: Proxy;
+  status: 'current' | 'new' | 'remove';
+}

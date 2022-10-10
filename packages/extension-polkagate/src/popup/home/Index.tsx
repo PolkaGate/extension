@@ -1,10 +1,10 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { Box, Container, Divider, Grid, InputAdornment, TextField, Typography } from '@mui/material';
-import { borderRadius, borderTop } from '@mui/system';
+import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -24,19 +24,24 @@ interface Props extends ThemeProps {
   className?: string;
 }
 
+interface Price {
+  address: string;
+  balances: DeriveBalancesAll;
+}
+
 export default function Home({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
   const networkMap = useMemo(() => getNetworkMap(), []);
-  const [allPrices, setAllPrices] = useState<any>();
+  const [allPrices, setAllPrices] = useState<Price[] | undefined>();
 
   useEffect(() => {
     // eslint-disable-next-line no-void
     void cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
-    }).catch(console.error);
+    }).catch(null);
   }, []);
 
   useEffect(() => {

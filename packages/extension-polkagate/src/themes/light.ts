@@ -13,7 +13,7 @@ export const lightTheme: ThemeOptions = {
     secondary: { main: '#99004F', light: '#BA2882' },
     background: { default: '#E8E0E5', paper: '#fff' },
     text: { primary: '#000', secondary: '#FFFFFF' },
-    action: { disabled: '#fff', disabledBackground: '#4B4B4B' }
+    action: { disabled: '#fff', disabledBackground: '#989898' }
   },
   components: {
     MuiSkeleton: {

@@ -7,6 +7,7 @@ import React, { useCallback, useContext } from 'react';
 import { ActionContext } from '../../../../extension-ui/src/components';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import PButton from '../../components/PButton';
+import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
 interface Props {
@@ -17,14 +18,16 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
+
   const _onClick = useCallback(
     () => onAction('/account/create'),
     [onAction]
   );
 
   const _goToRestoreFromJson = useCallback(
-    () => onAction('/account/restore-json'),
-    [onAction]
+    (): void => {
+      windowOpen('/account/restore-json').catch(console.error);
+    }, []
   );
 
   const _goToCreate = useCallback(
@@ -34,6 +37,11 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
 
   const _goToImport = useCallback(
     () => onAction('/account/import-seed'),
+    [onAction]
+  );
+
+  const _goToAttachQR = useCallback(
+    () => onAction('/account/attach-qr'),
     [onAction]
   );
 
@@ -87,7 +95,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
       />
       <PButton
         _mt='10px'
-        _onClick={_onClick}
+        _onClick={_goToAttachQR}
         _variant={'outlined'}
         text={t<string>('Attach QR signer')}
       />
