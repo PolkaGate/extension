@@ -75,7 +75,6 @@ function ImportSeed(): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        showSettings
         text={t<string>(`Import Account (${step1 ? 1 : 2}/2)`)}
       />
       <div>
