@@ -1,22 +1,17 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// import type { Theme, ThemeProps } from '../types';
-
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
 import { ActionContext } from '../../../extension-ui/src/components';
-import useIsPopup from '../../../extension-ui/src/hooks/useIsPopup';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { addCircle, addCircleB, exportIcon, exportIconB, importIcon, importIconB, roadBranch, roadBranchB, setting, settingB } from '../assets/icons';
 import MenuItem from '../components/MenuItem';
-import { setNotification, windowOpen } from '../messaging';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 
@@ -44,16 +39,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
   const { t } = useTranslation();
   const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
   const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
-  const [camera, setCamera] = useState(settings.camera === 'on');
-  const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
-  const [notification, updateNotification] = useState(settings.notification);
-  const isPopup = useIsPopup();
-  const languageOptions = useMemo(() => getLanguageOptions(), []);
   const onAction = useContext(ActionContext);
-
-  useEffect(() => {
-    settings.set({ camera: camera ? 'on' : 'off' });
-  }, [camera]);
 
   const toggleImportSubMenu = useCallback(() => {
     setShowImportSubMenu(!showImportSubMenu);
@@ -64,28 +50,6 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
     setShowSettingSubMenu(!showSettingSubMenu);
     showImportSubMenu && setShowImportSubMenu(!showImportSubMenu);
   }, [showImportSubMenu, showSettingSubMenu]);
-
-  const _onChangePrefix = useCallback(
-    (value: string): void => {
-      setPrefix(value);
-      settings.set({ prefix: parseInt(value, 10) });
-    }, []
-  );
-
-  const _onChangeNotification = useCallback(
-    (value: string): void => {
-      setNotification(value).catch(console.error);
-
-      updateNotification(value);
-      settings.set({ notification: value });
-    }, []
-  );
-
-  const _onChangeLang = useCallback(
-    (value: string): void => {
-      settings.set({ i18nLang: value });
-    }, []
-  );
 
   const _goToCreateAcc = useCallback(
     () => {
