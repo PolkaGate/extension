@@ -1,37 +1,33 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import FormControl from '@mui/material/FormControl';
-import InputBase from '@mui/material/InputBase';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import { FormControl, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  'label + &': {
-    marginTop: theme.spacing(3),
-    fontWeight: '300',
-    fontSize: '10px',
-    letterSpacing: '-0.015em'
-  },
   '& .MuiInputBase-input': {
-    borderRadius: 0,
-    // position: 'relative',
-    backgroundColor: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.primary.main}`,
-    fontSize: '14px',
-    fontWeight: '300',
-    letterSpacing: '-0.015em',
-    padding: '5px 10px 0px',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
       // borderRadius: 4,
       borderColor: theme.palette.secondary.main,
       boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-    }
+    },
+    backgroundColor: theme.palette.background.paper,
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: 0,
+    fontSize: '14px',
+    fontWeight: '300',
+    letterSpacing: '-0.015em',
+    padding: '5px 10px 0px',
+    transition: theme.transitions.create(['border-color', 'box-shadow'])
+  },
+  'label + &': {
+    fontSize: '10px',
+    fontWeight: '300',
+    letterSpacing: '-0.015em',
+    marginTop: theme.spacing(3)
   }
+
 }));
 
 interface DropdownOption {
@@ -73,23 +69,23 @@ export default function CustomizedSelect({ defaultValue, label, onChange, option
         onChange={_onChange}
         sx={{
           '> #selectChain': {
-            borderRadius: '5px',
             borderColor: 'secondary.light',
+            borderRadius: '5px',
+            fontSize: '18px',
             height: '29px',
+            lineHeight: '32px',
             p: 0,
             pl: '10px',
-            color: '#9A7DB2',
-            lineHeight: '32px',
-            fontSize: '18px',
             textAlign: 'left'
-          }
+          },
+          '> .MuiSvgIcon-root': { color: 'secondary.light', fontSize: '30px' }
         }}
       >
         {options.map(({ text, value }): React.ReactNode => (
           <MenuItem
             key={value}
             sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
-            value={value}
+            value={value !== '' ? value : text}
           >
             {text}
           </MenuItem>

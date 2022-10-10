@@ -35,7 +35,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
   const [seed, setSeed] = useState<null | string>(null);
   const [type, setType] = useState(DEFAULT_TYPE);
   const [name, setName] = useState('');
-  const [genesisHash, setGenesis] = useState<string | undefined>(options[DEFAULT_CHAIN_INDEX]?.value);
+  const [genesisHash, setGenesis] = useState<string | undefined>('');
   const chain = useMetadata(genesisHash, true);
 
   useEffect((): void => {
@@ -109,7 +109,6 @@ function CreateAccount({ className }: Props): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        showSettings
         text={t<string>('Create an account')}
       />
       <Loading>
@@ -131,7 +130,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
             : (
               <>
                 <DropdownWithIcon
-                  defaultValue={options[1].value}
+                  defaultValue={options[0].text}
                   icon={getLogo(newChain ?? undefined)}
                   label={t<string>('Select the chain')}
                   onChange={_onChangeNetwork}
