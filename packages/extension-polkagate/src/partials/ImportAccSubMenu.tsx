@@ -8,6 +8,7 @@ import { ActionContext } from '../../../extension-ui/src/components';
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
 import { MenuItem } from '../components';
 import useTranslation from '../hooks/useTranslation';
+import { windowOpen } from '../messaging';
 
 interface Props {
   className?: string;
@@ -19,9 +20,9 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
   const onAction = useContext(ActionContext);
 
   const _goToRestoreFromJson = useCallback(
-    () => {
-      onAction('/account/restore-json');
-    }, [onAction]
+    (): void => {
+      windowOpen('/account/restore-json').catch(console.error);
+    }, []
   );
 
   const _goToImportAcc = useCallback(
