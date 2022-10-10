@@ -4,7 +4,7 @@
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 // import PAccount from './PAccount';
 import AccountPreview from '../../components/AccountPreview';
@@ -18,6 +18,20 @@ interface Props extends AccountWithChildren {
 
 export default function AccountsTree({ allPrices, parentName, setAllPrices, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const label = useMemo(
+    (): string | undefined => {
+      if (account?.isExternal) {
+        return t('Address only');
+      }
+
+      if (account?.isHardware) {
+        return t('Ledger');
+      }
+
+      return;
+    },
+    [account, t]
+  );
 
   return (
     <Container
@@ -28,7 +42,7 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
       <Grid
         item
         sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
-        {account?.isExternal ? t('Address only') : ''}
+        {label}
       </Grid>
       <AccountPreview
         {...account}

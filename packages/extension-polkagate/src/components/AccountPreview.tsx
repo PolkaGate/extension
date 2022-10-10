@@ -268,6 +268,7 @@ export default function AccountPreview({ actions, address, allPrices, children, 
         identiconTheme={theme}
         prefix={prefix}
         proxies={proxies}
+        recoverable={recoverable}
       />
       <AccountDetail
         address={formatted}
