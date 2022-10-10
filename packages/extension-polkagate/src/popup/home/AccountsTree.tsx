@@ -27,7 +27,7 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
     >
       <Grid
         item
-        sx={{ bgcolor: '#454545', fontSize: '10px', width: 'fit-content', px: 1, ml: 3, position: 'absolute' }} >
+        sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
         {account?.isExternal ? t('Address only') : ''}
       </Grid>
       <AccountPreview
