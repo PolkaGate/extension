@@ -8,19 +8,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import Identicon from '../../../extension-ui/src/components/Identicon';
 import useToast from '../../../extension-ui/src/hooks/useToast';
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import useTranslation from '../hooks/useTranslation';
+import { Proxy } from '../util/plusTypes';
+import Identicon from './Identicon';
 
 interface Props {
   address: string | null;
   recoverable?: boolean;
-  realAccount?: boolean;
   identiconTheme: IconTheme;
   prefix?: number;
+  proxies: Proxy[] | undefined
 }
 
-export default function AccountIcons ({ address, identiconTheme, prefix, realAccount = false, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons({ address, identiconTheme, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { show } = useToast();
   const { t } = useTranslation();
@@ -55,29 +56,27 @@ export default function AccountIcons ({ address, identiconTheme, prefix, realAcc
         item
         justifyContent='center'
       >
-        <Grid item>
+        <Grid item title={t('is recoverable')}>
           <IconButton
-            disabled={recoverable}
+            disabled={!recoverable}
             sx={{ height: '15px', width: '15px' }}
           >
             <FontAwesomeIcon
               color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
               fontSize='13px'
               icon={faShieldHalved}
-              title={t('Recoverable')}
             />
           </IconButton>
         </Grid>
-        <Grid item>
+        <Grid item title={t('has proxy')}>
           <IconButton
-            disabled={realAccount}
+            disabled={!proxies?.length}
             sx={{ height: '15px', width: '15px' }}
           >
             <FontAwesomeIcon
-              color={!recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
+              color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
               fontSize='13px'
               icon={faSitemap}
-              title={t('RealAccount')}
             />
           </IconButton>
         </Grid>

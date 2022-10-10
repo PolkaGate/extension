@@ -32,6 +32,7 @@ import { getPrice } from '../util/api/getPrice';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
+import useProxies from '../hooks/useProxies';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -102,15 +103,13 @@ const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAU
 export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
-
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
-  const onAction = useContext(ActionContext);
   const [{ account, formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
-
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
+  const proxies = useProxies(api, formatted);
 
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [moveMenuUp, setIsMovedMenu] = useState(false);
@@ -218,11 +217,6 @@ export default function AccountPreview({ actions, address, allPrices, children, 
     [showActionsMenu]
   );
 
-  const _onCopy = useCallback(
-    () => show(t('Copied')),
-    [show, t]
-  );
-
   const _toggleVisibility = useCallback(
     (): void => {
       address && showAccount(address, isHidden || false).catch(console.error);
@@ -273,6 +267,7 @@ export default function AccountPreview({ actions, address, allPrices, children, 
         address={formatted}
         identiconTheme={theme}
         prefix={prefix}
+        proxies={proxies}
       />
       <AccountDetail
         address={formatted}
