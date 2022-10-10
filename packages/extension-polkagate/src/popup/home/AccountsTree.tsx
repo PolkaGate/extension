@@ -3,11 +3,12 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { Container } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import React from 'react';
 
 // import PAccount from './PAccount';
 import AccountPreview from '../../components/AccountPreview';
+import { useTranslation } from '../../hooks';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
@@ -15,13 +16,20 @@ interface Props extends AccountWithChildren {
   allPrices: number | undefined;
 }
 
-export default function AccountsTree({ parentName, setAllPrices, suri, allPrices, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree({ allPrices, parentName, setAllPrices, suri, ...account }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+
   return (
     <Container
       className='tree'
       disableGutters
-      sx={{ borderBottom: '1px solid', borderColor: 'secondary.light' }}
+      sx={{ borderBottom: '1px solid', borderColor: 'secondary.light', position: 'relative' }}
     >
+      <Grid
+        item
+        sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
+        {account?.isExternal ? t('Address only') : ''}
+      </Grid>
       <AccountPreview
         {...account}
         allPrices={allPrices}

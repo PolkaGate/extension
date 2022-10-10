@@ -184,5 +184,10 @@
   "Connect ledger device": "",
   "We do not send any clicks, pageviews or events to a central server.": "",
   "We do not use any trackers or analytics.": "",
-  "We don't collect keys, addresses or any information - your information never leaves this machine.": ""
+  "We don't collect keys, addresses or any information - your information never leaves this machine.": "",
+  "upload JSON": "",
+  "Browse file": "",
+  "drag and drop the file here": "",
+  "Password for this account (>5 characters)": "",
+  "Repeat password": ""
 }

@@ -36,7 +36,7 @@ export default function Home({ className }: Props): React.ReactElement {
     // eslint-disable-next-line no-void
     void cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
-    }).catch(console.error);
+    }).catch(null);
   }, []);
 
   useEffect(() => {

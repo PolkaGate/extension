@@ -261,7 +261,6 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   const parentNameSuri = getParentNameSuri(parentName, suri);
 
   const goToAccount = useCallback(() => {
-    // onAction(`/account/${genesisHash}/${address}/${formatted}/`);
     genesisHash && address && formatted && history.push({
       pathname: `/account/${genesisHash}/${address}/${formatted}/`,
       state: { api, balances, identity }
