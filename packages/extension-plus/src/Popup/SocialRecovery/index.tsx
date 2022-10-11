@@ -26,7 +26,7 @@ import { BN, hexToString } from '@polkadot/util';
 import { cryptoWaitReady, decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, SettingsContext } from '../../../../extension-ui/src/components/contexts';
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { Header } from '../../../../extension-ui/src/partials';
 import useApi from '../../hooks/useApi';

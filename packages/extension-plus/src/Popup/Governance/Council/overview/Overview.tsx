@@ -7,7 +7,7 @@ import { GroupRemove as GroupRemoveIcon, HowToReg as HowToRegIcon } from '@mui/i
 import { Button, Container, Divider, Grid, Paper } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import useMetadata from '../../../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../../../../../extension-ui/src/hooks/useTranslation';
 import { ChainInfo, CouncilInfo } from '../../../../util/plusTypes';
 import CancelVote from './cancelVotes/CancelVote';

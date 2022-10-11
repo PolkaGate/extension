@@ -15,5 +15,6 @@ export { default as Password } from './Password';
 export { default as Motion } from './Motion';
 export { default as ColorContext } from './ColorContext';
 export { default as MenuItem } from './MenuItem';
+export { default as Warning } from './Warning';
 
 export * from './contexts';

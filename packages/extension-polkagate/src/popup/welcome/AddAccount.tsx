@@ -19,14 +19,15 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
   const onAction = useContext(ActionContext);
   const theme = useTheme();
 
-  const _onClick = useCallback(
-    () => onAction('/account/create'),
-    [onAction]
-  );
-
   const _goToRestoreFromJson = useCallback(
     (): void => {
       windowOpen('/account/restore-json').catch(console.error);
+    }, []
+  );
+  
+  const _goToImportLedger = useCallback(
+    (): void => {
+      windowOpen('/account/import-ledger').catch(console.error);
     }, []
   );
 
@@ -101,7 +102,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
       />
       <PButton
         _mt='10px'
-        _onClick={_onClick}
+        _onClick={_goToImportLedger}
         _variant={'outlined'}
         text={t<string>('Connect ledger device')}
       />

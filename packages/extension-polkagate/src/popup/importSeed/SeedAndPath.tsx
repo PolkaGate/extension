@@ -13,7 +13,7 @@ import { Warning } from '@polkadot/extension-ui/components';
 import { getMetadata, validateSeed } from '@polkadot/extension-ui/messaging';
 import { objectSpread } from '@polkadot/util';
 
-import useGenesisHashOptions from '../../../../extension-ui/src/hooks/useGenesisHashOptions';
+import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import DropdownWithIcon from '../../components/DropdownWithIcon';
 import InputWithLabel from '../../components/InputWithLabel';

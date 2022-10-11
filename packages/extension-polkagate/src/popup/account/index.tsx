@@ -26,17 +26,15 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Identicon } from '@polkadot/extension-ui/components';
-import useGenesisHashOptions from '@polkadot/extension-ui/hooks/useGenesisHashOptions';
 import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import { history as historyIcon, ihistory, ireceive, irefresh, isend, istake, receive, refresh, send, stake } from '../../assets/icons';
 import { Header, Motion, Select, ShortAddress, ShowBalance } from '../../components';
 import { AccountContext, ActionContext, SettingsContext } from '../../components/contexts';
-import { useApi, useEndpoint, useEndpoints } from '../../hooks';
+import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata } from '../../hooks';
 import { editAccount, getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
 import { getPrice } from '../../util/api/getPrice';
 import getLogo from '../../util/getLogo';

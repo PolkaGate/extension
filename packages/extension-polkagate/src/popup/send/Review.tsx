@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 import { Identicon } from '@polkadot/extension-ui/components';
 
 import { AccountContext, ActionContext } from '../../../../extension-ui/src/components/contexts';
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { Button, Header, Motion, Password, ShortAddress } from '../../components';
 import getLogo from '../../util/getLogo';

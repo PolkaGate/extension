@@ -11,7 +11,7 @@ import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } fro
 import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
-import useMetadata from '../../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../../../../extension-ui/src/hooks/useTranslation';
 import { CircularProgressWithValue, PlusHeader, Popup, Progress, ShowBalance2, ShowValue } from '../../../components';
 import getTips from '../../../util/api/getTips';

@@ -17,7 +17,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
 import Identicon from '../../../extension-ui/src/components/Identicon';
-import useMetadata from '../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../hooks/useMetadata';
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
@@ -86,7 +86,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, className, genesisHash, isExternal, name, style, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, className, genesisHash, isHardware, isExternal, name, style, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);

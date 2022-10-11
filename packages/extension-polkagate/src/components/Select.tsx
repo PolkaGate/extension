@@ -85,7 +85,7 @@ export default function CustomizedSelect({ defaultValue, label, onChange, option
           <MenuItem
             key={value}
             sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
-            value={value !== '' ? value : text}
+            value={value || text}
           >
             {text}
           </MenuItem>

@@ -33,7 +33,9 @@ import Derive from './Derive';
 import Export from './Export';
 import ExportAll from './ExportAll';
 import Forget from './Forget';
-import ImportLedger from './ImportLedger';
+// import ImportLedger from './ImportLedger';
+import ImportLedger from '../../../extension-polkagate/src/popup/importLedger/index';
+
 import AttachQR from '../../../extension-polkagate/src/popup/attachQR/index';
 // import ImportSeed from './ImportSeed';
 import ImportSeed from '../../../extension-polkagate/src/popup/importSeed/index';

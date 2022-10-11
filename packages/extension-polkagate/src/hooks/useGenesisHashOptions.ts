@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getAllMetatdata } from '../messaging';
 import chains from '../util/chains';
-import useTranslation from './useTranslation';
+import { useTranslation } from '.';
 
 interface Option {
   text: string;
@@ -44,7 +44,7 @@ export default function (): Option[] {
       // remove the relay chains, they are at the top already
       .filter(({ text }) => !text.includes(RELAY_CHAIN))
       .concat(
-      // get any chain present in the metadata and not already part of chains
+        // get any chain present in the metadata and not already part of chains
         ...metadataChains.filter(
           ({ value }) => {
             return !chains.find(

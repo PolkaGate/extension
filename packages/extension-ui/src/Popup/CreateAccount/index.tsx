@@ -4,15 +4,15 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import useGenesisHashOptions from '../../../../extension-polkagate/src/hooks/useGenesisHashOptions';
+import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
+import Mnemonic from '../../../../extension-polkagate/src/popup/createAccount/Mnemonic';
 import { ActionContext, Address, Dropdown, Loading } from '../../components';
 import AccountNamePasswordCreation from '../../components/AccountNamePasswordCreation';
-import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
-import useMetadata from '../../hooks/useMetadata';
 import useTranslation from '../../hooks/useTranslation';
 import { createAccountSuri, createSeed, validateSeed } from '../../messaging';
 import { HeaderWithSteps } from '../../partials';
 import { DEFAULT_TYPE } from '../../util/defaultType';
-import Mnemonic from '../../../../extension-polkagate/src/popup/createAccount/Mnemonic';
 
 interface Props {
   className?: string;
