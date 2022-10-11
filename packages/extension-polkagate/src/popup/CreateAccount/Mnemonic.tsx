@@ -49,7 +49,7 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
         checked={isMnemonicSaved}
         label={t<string>('I have saved my mnemonic seed safely.')}
         onChange={setIsMnemonicSaved}
-        style={{ marginTop: '55px' }}
+        style={{ fontSize: '16px', marginTop: '55px' }}
         theme={theme}
       />
       <PButton
