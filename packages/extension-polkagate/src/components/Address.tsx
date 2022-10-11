@@ -166,7 +166,10 @@ function Address({ address, className, genesisHash, isExternal, name, style, typ
           <Typography
             fontSize={'16px'}
             fontWeight={400}
+            maxWidth='95%'
+            overflow='hidden'
             variant='h3'
+            whiteSpace='nowrap'
           >
             {name || t('<unknown>')}
           </Typography>

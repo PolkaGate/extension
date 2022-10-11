@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
@@ -16,6 +16,7 @@ interface Props {
 
 export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabled = false, text }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Grid
@@ -60,7 +61,7 @@ export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabl
           sx={{
             borderColor: 'secondary.main',
             borderRadius: '5px',
-            color: 'text.primary',
+            color: theme.palette.mode === 'dark' ? 'text.primary' : 'text.secondary',
             fontSize: '18px',
             fontWeight: 400,
             height: '36px',
