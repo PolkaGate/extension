@@ -7,7 +7,7 @@ import { BatchPrediction as BatchPredictionIcon, HowToVote as HowToVoteIcon, Whe
 import { Grid, Tab, Tabs } from '@mui/material';
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 
-import useMetadata from '../../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../../../../extension-ui/src/hooks/useTranslation';
 import { PlusHeader, Popup, Progress } from '../../../components';
 import getCurrentBlockNumber from '../../../util/api/getCurrentBlockNumber';

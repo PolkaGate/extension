@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ActionContext } from '../../../../extension-ui/src/components';
 import AccountNamePasswordCreation from '../../../../extension-ui/src/components/AccountNamePasswordCreation'
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { createAccountSuri } from '../../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';

@@ -21,7 +21,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { Plus } from '../../../extension-plus/src/components'; // added for Plus
 
 import details from '../assets/details.svg';
-import useMetadata from '../hooks/useMetadata';
+import useMetadata from '../../../extension-polkagate/src/hooks/useMetadata';
 import useOutsideClick from '../hooks/useOutsideClick';
 import useToast from '../hooks/useToast';
 import useTranslation from '../hooks/useTranslation';

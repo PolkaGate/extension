@@ -42,7 +42,7 @@ function ImportLedger ({ className }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const [name, setName] = useState<string | null>(null);
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useLedger(genesis, accountIndex, addressOffset);
-
+  
   useEffect(() => {
     if (address) {
       settings.set({ ledgerConn: 'webusb' });

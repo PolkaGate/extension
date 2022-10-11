@@ -3,6 +3,9 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
+import { faPeopleRoof,faTent, faUserShield } from '@fortawesome/free-solid-svg-icons';// added for plus,
+import { ContentCutOutlined } from '@mui/icons-material';
+import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';// added for plus, useContext
 import styled from 'styled-components';
 
@@ -13,14 +16,11 @@ import useEndpoints from '../../../../extension-plus/src/hooks/useEndpoints';// 
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../../extension-plus/src/util/constants';// added for plus
 import { SavedMetaData } from '../../../../extension-plus/src/util/plusTypes';// added for plus
 import { prepareMetaData } from '../../../../extension-plus/src/util/plusUtils';// added for plus
-import { AccountContext, ActionContext, ActionText, PAddress, Dropdown, Link, MenuDivider, MenuItem, Svg } from '../../components';// added for plus, AccountContext, ActionContext, Svg
-import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
+import useGenesisHashOptions from '../../../../extension-polkagate/src/hooks/useGenesisHashOptions';
+import { AccountContext, ActionContext, ActionText, Dropdown, Link, MenuDivider, MenuItem, PAddress, Svg } from '../../components';// added for plus, AccountContext, ActionContext, Svg
 import useTranslation from '../../hooks/useTranslation';
 import { editAccount, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
 import { Name } from '../../partials';
-import { faUserShield, faTent, faPeopleRoof } from '@fortawesome/free-solid-svg-icons';// added for plus,
-import { ContentCutOutlined } from '@mui/icons-material';
-import { Container, Grid } from '@mui/material';
 
 interface Props extends AccountJson {
   className?: string;

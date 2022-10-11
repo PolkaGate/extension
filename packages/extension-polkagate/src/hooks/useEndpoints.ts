@@ -9,8 +9,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { LinkOption } from '@polkadot/apps-config/settings/types';
-import useGenesisHashOptions from '@polkadot/extension-ui/hooks/useGenesisHashOptions';
 import useTranslation from '@polkadot/extension-ui/hooks/useTranslation';
+
+import { useGenesisHashOptions } from './';
 
 interface Option {
   text: string;

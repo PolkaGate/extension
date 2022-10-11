@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ActionContext, Address } from '../../components';
 import AccountNamePasswordCreation from '../../components/AccountNamePasswordCreation';
-import useMetadata from '../../hooks/useMetadata';
+import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../hooks/useTranslation';
 import { createAccountSuri } from '../../messaging';
 import { HeaderWithSteps } from '../../partials';

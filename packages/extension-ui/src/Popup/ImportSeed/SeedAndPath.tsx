@@ -13,8 +13,8 @@ import styled from 'styled-components';
 import { validateSeed } from '@polkadot/extension-ui/messaging';
 import { objectSpread } from '@polkadot/util';
 
+import useGenesisHashOptions from '../../../../extension-polkagate/src/hooks/useGenesisHashOptions';
 import { ButtonArea, Dropdown, InputWithLabel, NextStepButton, TextAreaWithLabel, VerticalSpace, Warning } from '../../components';
-import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {
