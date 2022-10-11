@@ -64,16 +64,21 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
 
   return (
     <Grid
-      alignItems='flex-start'
       bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
       container
       height='100%'
       justifyContent='end'
-      sx={{
+      sx={[{
         position: 'absolute',
         top: 0,
-        mixBlendMode: 'normal'
-      }}
+        mixBlendMode: 'normal',
+        overflowY: 'scroll',
+        scrollbarWidth: 'none',
+        '&::-webkit-scrollbar': {
+          display: 'none',
+          width: 0
+        }
+      }]}
       zIndex={10}
     >
       <Grid
@@ -81,10 +86,10 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         bgcolor='background.default'
         container
         display='block'
-        height='100%'
         item
         p='10px 24px'
-        width='85%'
+        sx={{height: 'parent.innerHeight'}}
+        width='86%'
       >
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
@@ -121,7 +126,6 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         >
           <SettingSubMenu />
         </MenuItem>
-        {/* <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} /> */}
       </Grid>
       <IconButton
         onClick={_toggleSettings}

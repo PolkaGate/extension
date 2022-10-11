@@ -33,7 +33,7 @@ export default function YouHave({ allPrices }: Props): React.ReactElement {
   return (
     <Grid
       container
-      pt='20px'
+      pt='15px'
       textAlign='center'
     >
       <Grid
@@ -41,7 +41,7 @@ export default function YouHave({ allPrices }: Props): React.ReactElement {
         xs={12}
       >
         <Typography
-          sx={{ fontSize: '18px', fontWeight: 300 }}
+          sx={{ fontSize: '18px' }}
         >
           {t('You have')}
         </Typography>
@@ -53,7 +53,7 @@ export default function YouHave({ allPrices }: Props): React.ReactElement {
         xs={12}
       >
         <Typography
-          sx={{ fontSize: '32px', fontWeight: 500, height: 36, lineHeight: 1 }}
+          sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}
         >
           {price === undefined
             ? <Skeleton

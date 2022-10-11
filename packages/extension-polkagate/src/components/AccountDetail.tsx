@@ -70,7 +70,6 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
     <>
       <Grid
         fontSize='18px'
-        fontWeight={300}
         item
       >
         <Balance />
@@ -86,7 +85,6 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
       />
       <Grid
         fontSize='18px'
-        fontWeight={300}
         item
       >
         <Price />
@@ -110,7 +108,6 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
         >
           <Typography
             fontSize='28px'
-            fontWeight={300}
             overflow='hidden'
             textOverflow='ellipsis'
             whiteSpace='nowrap'

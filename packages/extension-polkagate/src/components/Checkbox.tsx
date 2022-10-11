@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Theme } from '@mui/material/styles';
@@ -53,8 +53,8 @@ export default styled(Checkbox)(({ theme }: Props) => `
     position: relative;
     cursor: pointer;
     user-select: none;
-    padding-left: 45px;
-    font-size: 16px;
+    padding-left: 55px;
+    font-size: 18px;
     font-weight: 300;
     margin: auto;
 
@@ -71,7 +71,7 @@ export default styled(Checkbox)(({ theme }: Props) => `
     & span {
       position: absolute;
       top: 2px;
-      left: 20px;
+      left: 25px;
       height: 20px;
       width: 20px;
       border-radius: 5px;
