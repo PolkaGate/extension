@@ -7,7 +7,7 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
 import { logoWhite } from '../assets/logos';
-import MenuSettings from './Menu';
+import Menu from './Menu';
 
 interface Props {
   showBackArrow?: boolean;
@@ -42,7 +42,7 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text }: Props):
     <>
       {
         isMenuOpen && (
-          <MenuSettings isMenuOpen={isMenuOpen} reference={setMenuRef} setShowMenu={setShowMenu} theme={theme} />
+          <Menu isMenuOpen={isMenuOpen} reference={setMenuRef} setShowMenu={setShowMenu} theme={theme} />
         )
       }
       <Container sx={{
