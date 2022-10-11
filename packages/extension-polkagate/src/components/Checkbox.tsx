@@ -54,7 +54,7 @@ export default styled(Checkbox)(({ theme }: Props) => `
     cursor: pointer;
     user-select: none;
     padding-left: 55px;
-    font-size: 18px;
+    font-size: inherit;
     font-weight: 300;
     margin: auto;
 
