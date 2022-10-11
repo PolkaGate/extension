@@ -43,9 +43,9 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
   );
 
   const NoChainAlert = () => (
-    <Typography color='text.primary' variant='caption'>
+    <Grid color='text.primary' fontSize={'14px'} fontWeight={500} letterSpacing='-1.5%'>
       {t('Select a chain to view balance')}
-    </Typography>
+    </Grid>
   );
 
   const Balance = () => (
@@ -67,9 +67,13 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
   );
 
   const BalanceRow = () => (
-    <>
+    <Grid
+      container
+      fontSize='18px'
+      letterSpacing='-1.5%'
+    >
       <Grid
-        fontSize='18px'
+        fontWeight={500}
         item
       >
         <Balance />
@@ -84,12 +88,12 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
         }}
       />
       <Grid
-        fontSize='18px'
+        fontWeight={300}
         item
       >
         <Price />
       </Grid>
-    </>);
+    </Grid>);
 
   return (
     <Grid
