@@ -8,8 +8,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { ActionContext, Loading } from '../../../../extension-ui/src/components';
 import AccountNamePasswordCreation from '../../../../extension-ui/src/components/AccountNamePasswordCreation';
-import useGenesisHashOptions from '../../../../extension-ui/src/hooks/useGenesisHashOptions';
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
+import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
+import useMetadata from '../../hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';

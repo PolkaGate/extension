@@ -20,7 +20,7 @@ import { useHistory } from 'react-router-dom';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
-import useMetadata from '../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../hooks/useMetadata';
 import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';

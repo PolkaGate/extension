@@ -22,7 +22,7 @@ import { Identicon } from '@polkadot/extension-ui/components';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ActionContext, SettingsContext } from '../../../../extension-ui/src/components/contexts';
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { Amount, Button, Header, ShortAddress, ShowBalance, To, Motion } from '../../components';
 import { useApi, useEndpoint } from '../../hooks';

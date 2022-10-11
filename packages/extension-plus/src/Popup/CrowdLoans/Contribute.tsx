@@ -17,7 +17,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
 import { AccountContext, ActionContext } from '../../../../extension-ui/src/components/contexts';
-import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { ConfirmButton, Participator, Password, PlusHeader, Popup } from '../../components';
 import broadcast from '../../util/api/broadcast';

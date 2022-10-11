@@ -8,7 +8,7 @@ import type { DeriveCollectiveProposal } from '@polkadot/api-derive/types';
 import { Avatar, Container, Grid, Link, Paper } from '@mui/material';
 import React from 'react';
 
-import useMetadata from '../../../../../../extension-ui/src/hooks/useMetadata';
+import useMetadata from '../../../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../../../../../extension-ui/src/hooks/useTranslation';
 import getLogo from '../../../../util/getLogo';
 import { ChainInfo } from '../../../../util/plusTypes';

@@ -8,7 +8,7 @@ import React, { useCallback, useContext } from 'react';
 import styled from 'styled-components';
 
 import { ActionBar, ActionContext, Button, Link, Table, Warning } from '../../components';
-import useMetadata from '../../hooks/useMetadata';
+import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../hooks/useTranslation';
 import { approveMetaRequest, rejectMetaRequest } from '../../messaging';
 

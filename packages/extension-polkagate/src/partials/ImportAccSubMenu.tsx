@@ -37,6 +37,12 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
     }, [onAction]
   );
 
+  const _goToImportLedger = useCallback(
+    (): void => {
+      windowOpen('/account/import-ledger').catch(console.error);
+    }, []
+  );
+
   return (
     <>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
@@ -68,7 +74,7 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
           Icon={theme.palette.mode === 'light' ? connectB : connect}
           py='4px'
           text='Connect ledger device'
-        // onClick={ }
+          onClick={_goToImportLedger}
         />
         <MenuItem
           Icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
