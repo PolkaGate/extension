@@ -5,12 +5,4 @@
 import { ThemeOptions } from '@mui/material';
 
 export const baseTheme: ThemeOptions = {
-  typography: {
-    allVariants: {
-      fontFamily: 'Roboto'
-    },
-    h1: {
-      fontFamily: 'Eras'
-    }
-  }
 };
