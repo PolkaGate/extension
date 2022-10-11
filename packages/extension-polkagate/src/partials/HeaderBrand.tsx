@@ -80,8 +80,8 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text }: Props):
           <Grid item>
             <Typography
               color={showBackArrow ? 'text.primary' : '#ffffff'}
+              fontFamily={showBackArrow ? 'inherit' : 'Eras'}
               sx={{ fontSize: showBackArrow ? '20px' : '30px', letterSpacing: '-0.015em' }}
-              variant={showBackArrow ? 'h3' : 'h1'}
             >
               {text}
             </Typography>

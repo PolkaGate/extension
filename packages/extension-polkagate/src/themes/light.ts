@@ -27,7 +27,8 @@ export const lightTheme: ThemeOptions = {
   },
   typography: {
     allVariants: {
-      fontWeight: 400
+      fontWeight: 400,
+      fontFamily: 'Roboto'
     }
   }
 };

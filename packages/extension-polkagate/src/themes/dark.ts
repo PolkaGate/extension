@@ -31,7 +31,8 @@ export const darkTheme: ThemeOptions = {
   },
   typography: {
     allVariants: {
-      fontWeight: 300
+      fontWeight: 300,
+      fontFamily: 'Roboto'
     }
   }
 };

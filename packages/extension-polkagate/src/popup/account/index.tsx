@@ -30,18 +30,18 @@ import useGenesisHashOptions from '@polkadot/extension-ui/hooks/useGenesisHashOp
 import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { prepareMetaData } from '../../../../extension-plus/src/util/plusUtils';// added for plus
-import { AccountContext, ActionContext, SettingsContext } from '../../../../extension-ui/src/components/contexts';
 import useMetadata from '../../../../extension-ui/src/hooks/useMetadata';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { editAccount, getMetadata, tieAccount, updateMeta } from '../../../../extension-ui/src/messaging';// added for plus, updateMeta
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import { history as historyIcon, ihistory, ireceive, irefresh, isend, istake, receive, refresh, send, stake } from '../../assets/icons';
 import { Header, Motion, Select, ShortAddress, ShowBalance } from '../../components';
+import { AccountContext, ActionContext, SettingsContext } from '../../components/contexts';
 import { useApi, useEndpoint, useEndpoints } from '../../hooks';
+import { editAccount, getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
 import { getPrice } from '../../util/api/getPrice';
 import getLogo from '../../util/getLogo';
 import { AddressState, FormattedAddressState, SavedMetaData } from '../../util/types';
+import { prepareMetaData } from '../../util/utils';// added for plus
 import AccountBrief from './AccountBrief';
 
 interface Props extends ThemeProps {
@@ -114,7 +114,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const endpointOptions = useEndpoints(genesis);
 
   const currentChain = newChain ?? chain;
-  const endpoint = useEndpoint(accounts, address, currentChain);
+  const endpoint = useEndpoint(address, currentChain);
 
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const api = useApi(newEndpoint);
