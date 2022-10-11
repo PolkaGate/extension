@@ -64,6 +64,8 @@ function DerivationPath ({ className, defaultPath, isError, onChange, withSoftPa
         >
           <FontAwesomeIcon
             className='lockIcon'
+            color='#BA2882'
+            fontSize={20}
             icon={isDisabled ? faLock : faLockOpen}
           />
         </Button>
@@ -73,6 +75,7 @@ function DerivationPath ({ className, defaultPath, isError, onChange, withSoftPa
 }
 
 export default React.memo(styled(DerivationPath)(({ theme }: Props) => `
+  margin-top: 22px;
   > .container {
     display: flex;
     flex-direction: row;
@@ -80,10 +83,10 @@ export default React.memo(styled(DerivationPath)(({ theme }: Props) => `
 
   .lockButton {
     background: none;
-    height: 14px;
-    margin: 36px 2px 0 10px;
+    height: 25px;
+    margin: 25px 2px 0 10px;
     padding: 3px;
-    width: 11px;
+    width: 23px;
 
     &:not(:disabled):hover {
       background: none;
@@ -96,10 +99,6 @@ export default React.memo(styled(DerivationPath)(({ theme }: Props) => `
     &::-moz-focus-inner {
       border: 0;
     }
-  }
-
-  .lockIcon {
-    color: ${theme.iconNeutralColor}
   }
 
   .pathInput {
