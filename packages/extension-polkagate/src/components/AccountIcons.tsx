@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -8,8 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import useToast from '../hooks/useToast';
-import useTranslation from '../hooks/useTranslation';
+import {useToast, useTranslation} from '../hooks';
 import { Proxy } from '../util/plusTypes';
 import Identicon from './Identicon';
 
