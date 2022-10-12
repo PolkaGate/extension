@@ -27,7 +27,11 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
       if (account?.isHardware) {
         return t('Ledger');
       }
-      
+
+      if (account?.parentAddress) {
+        return t('Derived from');
+      }
+
       return undefined;
     },
     [account, t]
