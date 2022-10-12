@@ -19,7 +19,7 @@ import * as MetadataCache from '../../../extension-ui/src/MetadataCache';
 import { westendMetadata } from '../../../extension-ui/src/Popup/Signing/metadataMock';
 import { flushAllPromises } from '../../../extension-ui/src/testHelpers';
 import { buildHierarchy } from '../../../extension-ui/src/util/buildHierarchy';
-import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
+import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { Plus } from './';
 

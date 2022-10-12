@@ -14,8 +14,8 @@ import { AccountContext, ActionContext, Address, Button, InputFileWithLabel, Inp
 import useTranslation from '../hooks/useTranslation';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../messaging';
 import { Header } from '../partials';
-import { DEFAULT_TYPE } from '../util/defaultType';
-import { isKeyringPairs$Json } from '../util/typeGuards';
+import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
+import { isKeyringPairs$Json } from '../../../extension-polkagate/src/util/typeGuards';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 

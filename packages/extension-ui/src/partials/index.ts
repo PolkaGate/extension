@@ -4,6 +4,6 @@
 export { default as Header } from './Header';
 export { default as PHeader } from './PHeader';
 export { default as MenuSettings } from './MenuSettings';
-export { default as Name } from './Name';
-export { default as Password } from './Password';
+export { default as Name } from '../../../extension-polkagate/src/partials/Name';
+export { default as Password } from '../../../extension-polkagate/src/partials/Password';
 export { default as HeaderWithSteps } from './HeaderWithSteps';

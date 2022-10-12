@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -6,15 +6,14 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { Container, Grid } from '@mui/material';
 import React, { useMemo } from 'react';
 
-// import PAccount from './PAccount';
 import AccountPreview from '../../components/AccountPreview';
 import { useTranslation } from '../../hooks';
-import { Price } from '../../util/plusTypes';
+import { AddressPriceAll } from '../../util/plusTypes';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
-  setAllPrices: React.Dispatch<React.SetStateAction<any | undefined>>
-  allPrices: Price[] | undefined;
+  setAllPrices: React.Dispatch<React.SetStateAction<AddressPriceAll[] | undefined>>
+  allPrices: AddressPriceAll[] | undefined;
 }
 
 export default function AccountsTree({ allPrices, parentName, setAllPrices, suri, ...account }: Props): React.ReactElement<Props> {
@@ -28,11 +27,17 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
       if (account?.isHardware) {
         return t('Ledger');
       }
+
+      if (account?.parentAddress) {
+        return t('Derived from');
+      }
+
+      return undefined;
     },
     [account, t]
   );
 
-  // console.log('account:', account);
+  console.log('account:', account);
 
   return (
     <Container

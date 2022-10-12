@@ -1,13 +1,12 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext } from '../../../extension-ui/src/components';
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
-import { MenuItem } from '../components';
-import useTranslation from '../hooks/useTranslation';
+import { ActionContext, MenuItem } from '../components';
+import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
 interface Props {

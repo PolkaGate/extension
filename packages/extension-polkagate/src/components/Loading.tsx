@@ -1,15 +1,15 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
 
-import useTranslation from '../hooks/useTranslation';
+import { useTranslation } from '../hooks';
 
 interface Props {
   children?: React.ReactNode;
 }
 
-export default function Loading ({ children }: Props): React.ReactElement<Props> {
+export default function Loading({ children }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   if (!children) {

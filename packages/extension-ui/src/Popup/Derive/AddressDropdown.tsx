@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 import arrow from '../../assets/arrow-down.svg';
 import { Address } from '../../components';
-import useOutsideClick from '../../hooks/useOutsideClick';
+import useOutsideClick from '../../../../extension-polkagate/src/hooks/useOutsideClick';
 
 interface Props {
   allAddresses: [string, string | null][];

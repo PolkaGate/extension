@@ -4,15 +4,13 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import Name from '@polkadot/extension-ui/partials/Name';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext } from '../../../../extension-ui/src/components';
-import Address from '../../components/Address'
-import PButton from '../../components/PButton';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import Name from '../../partials/Name';
 
 interface Props {
   className?: string;

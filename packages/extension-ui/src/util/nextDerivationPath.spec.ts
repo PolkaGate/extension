@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { nextDerivationPath } from './nextDerivationPath';
+import { nextDerivationPath } from '../../../extension-polkagate/src/util/nextDerivationPath';
 
 describe('Generate Derivation Path', () => {
   const acc = (address: string, parentAddress?: string): {

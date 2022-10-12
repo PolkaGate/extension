@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 
 import useIsMounted from '../../../extension-ui/src/hooks/useIsMounted';
-import { Result, Validator } from '../../../extension-ui/src/util/validators';
+import { Result, Validator } from '../util/validators';
 import Warning from './Warning';
 
 interface BasicProps {

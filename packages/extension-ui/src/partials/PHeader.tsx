@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import {logoWhite, logoBlack} from '../../../extension-polkagate/src/assets/logos/';
 import InputFilter from '../components/InputFilter';
 import Link from '../components/Link';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useOutsideClick from '../../../extension-polkagate/src/hooks/useOutsideClick';
 import useTranslation from '../hooks/useTranslation';
 import MenuAdd from './MenuAdd';
 import MenuSettings from './MenuSettings';

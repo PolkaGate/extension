@@ -13,9 +13,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import useToast from '../../../extension-ui/src/hooks/useToast';
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { useApi, useEndpoint } from '../hooks';
+import { useApi, useEndpoint, useToast, useTranslation } from '../hooks';
 import FormatBalance from './FormatBalance';
 import FormatPrice from './FormatPrice';
 

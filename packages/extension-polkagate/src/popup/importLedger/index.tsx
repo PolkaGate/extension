@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -6,14 +6,14 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import { AccountContext, ActionContext, DropdownWithIcon, Warning } from '../../components';
 import Address from '../../components/Address';
 import PButton from '../../components/PButton';
-import { useLedger, useMetaData, useTranslation } from '../../hooks';
+import { useLedger, useMetadata, useTranslation } from '../../hooks';
 import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
-import { createAccountHardware, createAccountSuri, getMetadata, validateSeed } from '../../messaging';
+import { createAccountHardware, createAccountSuri, getMetadata } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import ledgerChains from '../../util/legerChains';
 
@@ -46,7 +46,7 @@ function ImportLedger(): React.ReactElement {
   const [name, setName] = useState<string | null>(null);
   const [step1, setStep1] = useState(true);
   const [type, setType] = useState(DEFAULT_TYPE);
-  const chain = useMetaData(account && account.genesis, true);
+  const chain = useMetadata(account && account.genesis, true);
 
   const [accountIndex, setAccountIndex] = useState<number>(0);
   const [addressOffset, setAddressOffset] = useState<number>(0);

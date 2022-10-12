@@ -1,11 +1,10 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
+export { default as AccountNamePasswordCreation } from '../../../extension-polkagate/src/components/AccountNamePasswordCreation';
 export { default as ActionBar } from './ActionBar';
 export { default as ActionText } from '../../../extension-polkagate/src/components/ActionText';
 export { default as Address } from './Address';
-export { default as PAddress } from './PAddress';
 export { default as BackButton } from './BackButton';
 export { default as Box } from './Box';
 export { default as Button } from './Button';
@@ -18,11 +17,11 @@ export { default as Icon } from './Icon';
 export { default as Identicon } from './Identicon';
 export { default as InputFilter } from './InputFilter';
 export { default as InputWithLabel } from '../../../extension-polkagate/src/components/InputWithLabel';
-export { default as InputFileWithLabel } from './InputFileWithLabel';
+export { default as InputFileWithLabel } from '../../../extension-polkagate/src/components/InputFileWithLabel';
 export { default as Label } from '../../../extension-polkagate/src/components/Label';
 export { default as Link } from './Link';
 export { default as List } from './List';
-export { default as Loading } from './Loading';
+export { default as Loading } from '../../../extension-polkagate/src/components/Loading';
 export { default as Main } from './Main';
 export { default as Menu } from './Menu';
 export { default as MenuDivider } from './MenuDivider';

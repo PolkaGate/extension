@@ -1,18 +1,15 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import type { ThemeProps } from '../../../../extension-ui/src/types';
 
 import { FiberManualRecord as FiberManualRecordIcon } from '@mui/icons-material';
 import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext } from '../../../../extension-ui/src/components';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import PButton from '../../components/PButton';
+import { ActionContext, PButton } from '../../components';
+import { useTranslation } from '../../hooks';
 import HeaderBrand from '../../partials/HeaderBrand';
 
-interface Props extends ThemeProps {
+interface Props {
   className?: string;
 }
 
