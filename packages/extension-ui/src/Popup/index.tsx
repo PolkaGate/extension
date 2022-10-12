@@ -4,6 +4,7 @@
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
+import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router';
 
@@ -15,40 +16,37 @@ import CrowdLoans from '../../../extension-plus/src/Popup/CrowdLoans';// added f
 import Governance from '../../../extension-plus/src/Popup/Governance';// added for plus
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
 import Account from '../../../extension-polkagate/src/popup/account';// added for plus
+import AttachQR from '../../../extension-polkagate/src/popup/attachQR';
+// import CreateAccount from './CreateAccount';
+import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
+// import Derive from './Derive';
+import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
+import Accounts from '../../../extension-polkagate/src/popup/home';
+// import ImportLedger from './ImportLedger';
+import ImportLedger from '../../../extension-polkagate/src/popup/importLedger';
+// import ImportSeed from './ImportSeed';
+import ImportSeed from '../../../extension-polkagate/src/popup/importSeed';
+// import RestoreJson from './RestoreJson';
+import RestoreJson from '../../../extension-polkagate/src/popup/restoreJSON';
 import Send from '../../../extension-polkagate/src/popup/send';// added for plus
 import Review from '../../../extension-polkagate/src/popup/send/Review';// added for plus
-
+import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { ErrorBoundary, Loading } from '../components';
+// import Welcome from './Welcome';
+import { ColorContext } from '../components/ColorContext';
 import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../components/contexts';
 import ToastProvider from '../components/Toast/ToastProvider';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../messaging';
 import { buildHierarchy } from '../util/buildHierarchy';
-import Accounts from '../../../extension-polkagate/src/popup/home/Index';
 // import Accounts from './Accounts';
 import AuthList from './AuthManagement';
 import Authorize from './Authorize';
-// import CreateAccount from './CreateAccount';
-import CreateAccount from '../../../extension-polkagate/src/popup/createAccount/index';
-// import Derive from './Derive';
-import Derive from '../../../extension-polkagate/src/popup/deriveAccount/index';
 import Export from './Export';
 import ExportAll from './ExportAll';
 import Forget from './Forget';
-// import ImportLedger from './ImportLedger';
-import ImportLedger from '../../../extension-polkagate/src/popup/importLedger/index';
-
-import AttachQR from '../../../extension-polkagate/src/popup/attachQR/index';
-// import ImportSeed from './ImportSeed';
-import ImportSeed from '../../../extension-polkagate/src/popup/importSeed/index';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
-// import RestoreJson from './RestoreJson';
-import RestoreJson from '../../../extension-polkagate/src/popup/restoreJSON/index';
 import Signing from './Signing';
-import Welcome from '../../../extension-polkagate/src/popup/welcome';
-// import Welcome from './Welcome';
-import { ColorContext } from '../components/ColorContext';
-import { AnimatePresence } from "framer-motion";
 
 const startSettings = uiSettings.get();
 

@@ -4,11 +4,12 @@
 import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
+import useTranslation from '../../hooks/useTranslation';
 import FormatPrice from '../../components/FormatPrice';
+import { Price } from '../../util/plusTypes';
 
 interface Props {
-  allPrices: any | undefined;
+  allPrices: Price[] | undefined;
 }
 
 export default function YouHave({ allPrices }: Props): React.ReactElement {
