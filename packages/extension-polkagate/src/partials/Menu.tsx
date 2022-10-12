@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext } from '../../../extension-ui/src/components';
+import { AccountContext, ActionContext } from '../../../extension-ui/src/components';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { addCircle, addCircleB, exportIcon, exportIconB, importIcon, importIconB, roadBranch, roadBranchB, setting, settingB } from '../assets/icons';
 import MenuItem from '../components/MenuItem';
@@ -40,6 +40,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
   const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
   const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
   const onAction = useContext(ActionContext);
+  const { master } = useContext(AccountContext);
 
   const toggleImportSubMenu = useCallback(() => {
     setShowImportSubMenu(!showImportSubMenu);
@@ -60,6 +61,12 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
   const _toggleSettings = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
     [setShowMenu]
+  );
+
+  const _goToDeriveAcc = useCallback(
+    () => {
+      master && onAction(`/account/derive/${master.address}`);
+    }, [master, onAction]
   );
 
   return (
@@ -88,18 +95,18 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         display='block'
         item
         p='10px 24px'
-        sx={{height: 'parent.innerHeight'}}
+        sx={{ height: 'parent.innerHeight' }}
         width='86%'
       >
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
-          text={t('Create new account')}
           onClick={_goToCreateAcc}
+          text={t('Create new account')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           Icon={theme.palette.mode === 'dark' ? roadBranch : roadBranchB}
-          // onClick={}
+          onClick={_goToDeriveAcc}
           text={t('Derive from accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />

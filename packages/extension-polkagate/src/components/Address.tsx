@@ -145,7 +145,7 @@ function Address({ address, className, genesisHash, isHardware, isExternal, name
       >
         <Grid
           item
-          xs={1.5}
+          width='40px'
         >
           <Identicon
             className='identityIcon'
@@ -161,7 +161,7 @@ function Address({ address, className, genesisHash, isHardware, isExternal, name
           container
           direction={'column'}
           item
-          xs={10}
+          width='calc(95% - 40px)'
         >
           <Typography
             fontSize={'16px'}
