@@ -1,13 +1,14 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useTheme } from '@mui/material';
+import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import Label from './Label';
 import { Input } from './TextInputs';
+import { eye, eyeSlashP } from '../assets/icons';
 import Warning from './Warning';
 
 interface Props {
@@ -25,9 +26,11 @@ interface Props {
   type?: 'text' | 'password';
   value?: string;
   withoutMargin?: boolean;
+  showPassword?: boolean;
+  setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function InputWithLabel ({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onBlur, onChange, onEnter, placeholder, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onBlur, onChange, onEnter, placeholder, setShowPassword, showPassword, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
   const [isCapsLock, setIsCapsLock] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
@@ -53,10 +56,15 @@ function InputWithLabel ({ className, defaultValue, disabled, isError, isFocused
     [onChange]
   );
 
+  const _showPassToggler = useCallback(() => {
+    setShowPassword && setShowPassword(!showPassword);
+  }, [setShowPassword, showPassword]);
+
   return (
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
+      style={{ position: 'relative' }}
     >
       <Input
         autoCapitalize='off'
@@ -70,13 +78,36 @@ function InputWithLabel ({ className, defaultValue, disabled, isError, isFocused
         placeholder={placeholder}
         readOnly={isReadOnly}
         spellCheck={false}
-        style={{ padding: 0, paddingLeft: '10px', fontSize: '18px', fontWeight: 300, color: '#9A7DB2' }}
+        style={{
+          borderColor: isError && setShowPassword ? theme.palette.secondary.dark : theme.palette.secondary.light,
+          borderWidth: isError && setShowPassword ? '3px' : '1px',
+          fontSize: '18px',
+          fontWeight: 300,
+          padding: 0,
+          paddingLeft: '10px'
+        }}
         theme={theme}
         type={type}
         value={value}
         withError={isError}
       />
-      { isCapsLock && (
+      {setShowPassword &&
+        <IconButton
+          onClick={_showPassToggler}
+          sx={{
+            bottom: '0',
+            position: 'absolute',
+            right: '0'
+          }}
+        >
+          <Avatar
+            alt={'logo'}
+            src={showPassword ? eye : eyeSlashP}
+            sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '18px', width: '18px' }}
+          />
+        </IconButton>
+      }
+      {isCapsLock && (
         <Warning isBelowInput>{t<string>('Warning: Caps lock is on')}</Warning>
       )}
     </Label>

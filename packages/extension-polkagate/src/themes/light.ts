@@ -10,7 +10,7 @@ export const lightTheme: ThemeOptions = {
   palette: {
     mode: 'light',
     primary: { main: '#99004F' },
-    secondary: { main: '#99004F', light: '#BA2882' },
+    secondary: { main: '#99004F', light: '#BA2882', dark: '#FF002B' },
     background: { default: '#E8E0E5', paper: '#fff' },
     text: { primary: '#000', secondary: '#FFFFFF' },
     action: { disabled: '#fff', disabledBackground: '#989898' }

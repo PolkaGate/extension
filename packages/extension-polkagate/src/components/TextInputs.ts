@@ -13,7 +13,6 @@ const TextBox = css(({ theme }: Props) => `
   border-radius: 5px;
   border: 1px solid ${theme.palette.secondary.light};
   box-sizing: border-box;
-  color: #FF46A0;
   display: block;
   font-size: 16px;
   min-height: 31px;
@@ -21,8 +20,11 @@ const TextBox = css(({ theme }: Props) => `
   font-weight: 400;
   resize: none;
   width: 100%;
-  // margin: 6px auto;
   font-family: ${theme.typography.allVariants.fontFamily};
+  &:focus{
+    outline: 1.5px solid ${theme.palette.secondary.light};
+    // box-shadow: 0 0 3px;
+  }
 `);
 
 export const TextArea = styled.textarea<Props>`${TextBox}`;

@@ -13,7 +13,7 @@ export const darkTheme: ThemeOptions = {
   palette: {
     mode: 'dark',
     primary: { main: '#99004F' },
-    secondary: { main: '#99004F', light: '#BA2882' },
+    secondary: { main: '#99004F', light: '#BA2882', dark: '#FF002B' },
     background: { default: '#180710', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B' },
