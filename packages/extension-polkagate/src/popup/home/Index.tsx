@@ -1,21 +1,21 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { AccountsStore } from '@polkadot/extension-base/stores'; // added for plus
+import { AccountsStore } from '@polkadot/extension-base/stores';
 import getNetworkMap from '@polkadot/extension-ui/util/getNetworkMap';
-import keyring from '@polkadot/ui-keyring'; // added for plus
-import { cryptoWaitReady } from '@polkadot/util-crypto'; // added for plus
+import keyring from '@polkadot/ui-keyring';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../../../../extension-ui/src/components';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
+import { AccountContext } from '../../components';
+import useTranslation from '../../hooks/useTranslation';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { Price } from '../../util/plusTypes';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import YouHave from './YouHave';
@@ -24,12 +24,7 @@ interface Props extends ThemeProps {
   className?: string;
 }
 
-interface Price {
-  address: string;
-  balances: DeriveBalancesAll;
-}
-
-export default function Home({ className }: Props): React.ReactElement {
+export default function Home ({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
@@ -60,6 +55,8 @@ export default function Home({ className }: Props): React.ReactElement {
 
     setFilter(filter.toLowerCase());
   }, []);
+
+  console.log('home');
 
   return (
     <>

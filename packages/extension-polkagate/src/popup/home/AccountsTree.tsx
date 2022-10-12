@@ -9,11 +9,12 @@ import React, { useMemo } from 'react';
 // import PAccount from './PAccount';
 import AccountPreview from '../../components/AccountPreview';
 import { useTranslation } from '../../hooks';
+import { Price } from '../../util/plusTypes';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
   setAllPrices: React.Dispatch<React.SetStateAction<any | undefined>>
-  allPrices: number | undefined;
+  allPrices: Price[] | undefined;
 }
 
 export default function AccountsTree({ allPrices, parentName, setAllPrices, suri, ...account }: Props): React.ReactElement<Props> {
@@ -27,11 +28,11 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
       if (account?.isHardware) {
         return t('Ledger');
       }
-
-      return;
     },
     [account, t]
   );
+
+  // console.log('account:', account);
 
   return (
     <Container

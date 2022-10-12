@@ -3,9 +3,9 @@
 /* eslint-disable header/header */
 /* eslint-disable camelcase */
 
-import type { DeriveAccountInfo, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { StakingLedger } from '@polkadot/types/interfaces';
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool, PalletRecoveryActiveRecovery } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
 import { ApiPromise } from '@polkadot/api';
@@ -435,7 +435,7 @@ export interface AlertType {
   severity: 'error' | 'warning' | 'info' | 'success'
 }
 
-export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' |'Society';
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society';
 
 export interface Proxy {
   delay: number;
@@ -446,4 +446,9 @@ export interface Proxy {
 export interface ProxyItem {
   proxy: Proxy;
   status: 'current' | 'new' | 'remove';
+}
+
+export interface Price {
+  address: string;
+  balances: DeriveBalancesAll;
 }
