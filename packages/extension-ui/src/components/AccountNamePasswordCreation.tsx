@@ -58,7 +58,7 @@ function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, 
         isFocused
         onChange={_onNameChange}
       />
-      <Password onChange={_onPasswordChange} />
+      <Password onChange={_onPasswordChange} onEnter={_onCreate} />
       {!withCancel &&
         <PButton
           _mt={mt}

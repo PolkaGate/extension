@@ -44,7 +44,7 @@ export default function TextAreaWithLabel({ className, isError, isFocused, isRea
         readOnly={isReadOnly}
         rows={rowsCount || 2}
         spellCheck={false}
-        style={{ height: '88px', margin: 'auto' }}
+        style={{ color: '#FF46A0', height: '88px', margin: 'auto' }}
         theme={theme}
         value={value}
         withError={isError}

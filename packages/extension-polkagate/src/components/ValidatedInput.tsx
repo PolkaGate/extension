@@ -21,7 +21,7 @@ type Props<T extends BasicProps> = T & {
   validator: Validator<string>;
 }
 
-function ValidatedInput<T extends Record<string, unknown>> ({ className, component: Input, defaultValue, onValidatedChange, validator, ...props }: Props<T>): React.ReactElement<Props<T>> {
+function ValidatedInput<T extends Record<string, unknown>>({ className, component: Input, defaultValue, onValidatedChange, validator, ...props }: Props<T>): React.ReactElement<Props<T>> {
   const [value, setValue] = useState(defaultValue || '');
   const [validationResult, setValidationResult] = useState<Result<string>>(Result.ok(''));
   const isMounted = useIsMounted();
@@ -59,7 +59,7 @@ function ValidatedInput<T extends Record<string, unknown>> ({ className, compone
     >
       <Input
         {...props as unknown as T}
-        isError={Result.isError(validationResult)}
+        isError={value && Result.isError(validationResult)}
         onChange={setValue}
         value={value}
       />
