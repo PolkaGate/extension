@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -9,8 +9,8 @@
  * */
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { Balance } from '@polkadot/types/interfaces';
 
 import { Avatar, Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -18,19 +18,15 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
-import { Identicon } from '@polkadot/extension-ui/components';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, SettingsContext } from '../../../../extension-ui/src/components/contexts';
-import useMetadata from '../../hooks/useMetadata';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { Amount, Button, Header, ShortAddress, ShowBalance, To, Motion } from '../../components';
-import { useApi, useEndpoint } from '../../hooks';
-import getLogo from '../../util/getLogo';
 import { isend, send } from '../../assets/icons';
+import { AccountContext, ActionContext, Amount, Button, Header, Identicon, Motion, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
+import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
-import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
 
 interface Props {
   className?: string;

@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import { QrScanAddress } from '@polkadot/react-qr';
 
 import { ActionContext, Address, ButtonArea, NextStepButton, VerticalSpace } from '../components';
-import AccountNamePasswordCreation from '../components/AccountNamePasswordCreation';
+import AccountNamePasswordCreation from '../../../extension-polkagate/src/components/AccountNamePasswordCreation';
 import useTranslation from '../hooks/useTranslation';
 import { createAccountExternal, createAccountSuri, createSeed } from '../messaging';
 import { Header, Name } from '../partials';

@@ -1,14 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import type { ThemeProps } from '../types';
 
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import React, { MouseEventHandler } from 'react';
-import styled from 'styled-components';
 
-import ActionText from '../../../extension-polkagate/src/components/ActionText';
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { useTranslation } from '../hooks';
+import ActionText from './ActionText';
 import TextAreaWithLabel from './TextAreaWithLabel';
 
 interface Props {

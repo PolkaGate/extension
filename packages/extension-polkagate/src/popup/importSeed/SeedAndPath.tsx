@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -9,16 +9,11 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
-import { Warning } from '@polkadot/extension-ui/components';
-import { getMetadata, validateSeed } from '@polkadot/extension-ui/messaging';
 import { objectSpread } from '@polkadot/util';
 
-import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import DropdownWithIcon from '../../components/DropdownWithIcon';
-import InputWithLabel from '../../components/InputWithLabel';
-import PButton from '../../components/PButton';
-import TextAreaWithLabel from '../../components/TextAreaWithLabel';
+import { DropdownWithIcon, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../components';
+import { useGenesisHashOptions, useTranslation } from '../../hooks';
+import { getMetadata, validateSeed } from '../../messaging';
 import getLogo from '../../util/getLogo';
 
 interface Props {

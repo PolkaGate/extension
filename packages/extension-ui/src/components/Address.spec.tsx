@@ -18,7 +18,7 @@ import * as MetadataCache from '../MetadataCache';
 import { westendMetadata } from '../Popup/Signing/metadataMock';
 import { flushAllPromises } from '../testHelpers';
 import { buildHierarchy } from '../util/buildHierarchy';
-import { DEFAULT_TYPE } from '../util/defaultType';
+import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
 import getParentNameSuri from '../util/getParentNameSuri';
 import { AccountContext, Address } from '.';
 

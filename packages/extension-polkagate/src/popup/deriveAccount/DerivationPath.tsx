@@ -1,7 +1,5 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import type { ThemeProps } from '../../types';
 
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,9 +7,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Button, InputWithLabel } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
+import { useTranslation } from '../../hooks';
 
-interface Props extends ThemeProps{
+interface Props {
   className?: string;
   defaultPath: string;
   isError: boolean;
@@ -21,7 +19,7 @@ interface Props extends ThemeProps{
   withSoftPath: boolean;
 }
 
-function DerivationPath ({ className, defaultPath, isError, onChange, withSoftPath }: Props): React.ReactElement<Props> {
+function DerivationPath({ className, defaultPath, isError, onChange, withSoftPath }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [path, setPath] = useState<string>(defaultPath);
   const [isDisabled, setIsDisabled] = useState(true);

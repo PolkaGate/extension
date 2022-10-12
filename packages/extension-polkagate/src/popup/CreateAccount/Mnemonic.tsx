@@ -1,13 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Checkbox, MnemonicSeed, Warning } from '../../../../extension-ui/src/components';
-import useToast from '../../../../extension-ui/src/hooks/useToast';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import PButton from '../../components/PButton';
+import { Checkbox, MnemonicSeed, PButton, Warning } from '../../components';
+import { useToast, useTranslation } from '../../hooks';
 
 interface Props {
   onNextStep: () => void;

@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
@@ -10,14 +10,14 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { u8aToString } from '@polkadot/util';
 
-import { AccountContext, ActionContext, InputFileWithLabel, InputWithLabel, Warning } from '../../../../extension-ui/src/components';
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
-import { isKeyringPairs$Json } from '../../../../extension-ui/src/util/typeGuards';
+import { AccountContext, ActionContext, InputFileWithLabel, InputWithLabel, Warning } from '../../components';
 import Address from '../../components/Address'
 import PButton from '../../components/PButton';
 import { useTranslation } from '../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../util/defaultType';
+import { isKeyringPairs$Json } from '../../util/typeGuards';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 

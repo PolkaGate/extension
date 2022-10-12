@@ -29,7 +29,7 @@ import { Chain } from '../../../../extension-chains/src/types';
 import { NextStepButton } from '../../../../extension-ui/src/components';
 import { AccountContext, SettingsContext } from '../../../../extension-ui/src/components/contexts';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
+import { DEFAULT_TYPE } from '../../../../extension-polkagate/src/util/defaultType';
 import { PlusHeader, Popup } from '../../components';
 import getLogo from '../../util/getLogo';
 import { AccountsBalanceType } from '../../util/plusTypes';

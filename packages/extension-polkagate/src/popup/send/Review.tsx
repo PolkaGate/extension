@@ -8,23 +8,8 @@
  * this component opens send review page
  * */
 
+import CheckIcon from '@mui/icons-material/Check';
 import { Avatar, Container, Divider, Grid, Link, Skeleton, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
-
-import { Identicon } from '@polkadot/extension-ui/components';
-
-import { AccountContext, ActionContext } from '../../../../extension-ui/src/components/contexts';
-import useMetadata from '../../hooks/useMetadata';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { Button, Header, Motion, Password, ShortAddress } from '../../components';
-import getLogo from '../../util/getLogo';
-import { isend, send as sendIcon } from '../../assets/icons';
-import { FormattedAddressState } from '../../util/types';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto'; // added for plus
-import { AccountsStore } from '@polkadot/extension-base/stores'; // added for plus
 import {
   ChasingDots,
   Circle,
@@ -38,10 +23,22 @@ import {
   WanderingCubes,
   Wave
 } from 'better-react-spinkit';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router';
+import { useLocation } from 'react-router-dom';
+
+import { AccountsStore } from '@polkadot/extension-base/stores'; 
+import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
-import { FLOATING_POINT_DIGIT } from '../../util/constants';
+import { cryptoWaitReady } from '@polkadot/util-crypto'; 
+
+import { isend, send as sendIcon } from '../../assets/icons';
+import { AccountContext, ActionContext, Button, Header, Identicon, Motion, Password, ShortAddress } from '../../components';
+import {useMetadata, useTranslation} from '../../hooks';
 import broadcast from '../../util/api/broadcast';
-import CheckIcon from '@mui/icons-material/Check';
+import { FLOATING_POINT_DIGIT } from '../../util/constants';
+import getLogo from '../../util/getLogo';
+import { FormattedAddressState } from '../../util/types';
 
 interface TxLog {
   from: string;

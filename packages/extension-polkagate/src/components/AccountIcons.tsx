@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import useToast from '../../../extension-ui/src/hooks/useToast';
+import useToast from '../hooks/useToast';
 import useTranslation from '../hooks/useTranslation';
 import { Proxy } from '../util/plusTypes';
 import Identicon from './Identicon';

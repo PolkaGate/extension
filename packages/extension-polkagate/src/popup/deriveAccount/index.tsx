@@ -1,12 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext } from '../../../../extension-ui/src/components';
-import Address from '../../components/Address';
-import useTranslation from '../../hooks/useTranslation';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address } from '../../components';
+import { useTranslation } from '../../hooks';
 import { deriveAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import SelectParent from './SelectParent';
@@ -83,7 +82,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>(`Add new account (${stepOne ? 1 : 2}/2)`)}
+        text={t<string>(`Derive account (${stepOne ? 1 : 2}/2)`)}
       />
       {stepOne && !account && (
         <SelectParent
@@ -104,7 +103,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
             />
           </div>
           <AccountNamePasswordCreation
-            buttonLabel={t<string>('Create derived account')}
+            buttonLabel={t<string>('Create')}
             isBusy={isBusy}
             onBackClick={_onBackClick}
             onCreate={_onCreate}

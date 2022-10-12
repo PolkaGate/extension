@@ -1,11 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useState } from 'react';
 
-import ButtonWithCancel from '../../../extension-polkagate/src/components/ButtonWithCancel';
-import PButton from '../../../extension-polkagate/src/components/PButton';
 import { Name, Password } from '../partials';
+import ButtonWithCancel from './ButtonWithCancel';
+import PButton from './PButton';
 
 interface Props {
   buttonLabel: string;

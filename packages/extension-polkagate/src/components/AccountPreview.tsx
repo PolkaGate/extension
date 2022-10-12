@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -19,20 +19,16 @@ import { useHistory } from 'react-router-dom';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
-import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
-import useToast from '../../../extension-ui/src/hooks/useToast';
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { showAccount } from '../../../extension-ui/src/messaging';
-import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
-import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
-import { useApi, useEndpoint } from '../hooks';
-import useMetadata from '../hooks/useMetadata';
-import useProxies from '../hooks/useProxies';
+import { useApi, useEndpoint, useMetadata, useOutsideClick, useProxies, useToast, useTranslation } from '../hooks';
+import { showAccount } from '../messaging';
 import { getPrice } from '../util/api/getPrice';
+import { DEFAULT_TYPE } from '../util/defaultType';
+import getParentNameSuri from '../util/getParentNameSuri';
+import { AddressPriceAll } from '../util/plusTypes';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
+import { AccountContext, SettingsContext } from '.';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -47,9 +43,8 @@ export interface Props {
   suri?: string;
   toggleActions?: number;
   type?: KeypairType;
-  showPlus?: boolean;
-  setAllPrices: React.Dispatch<React.SetStateAction<any | undefined>>;
-  allPrices: number | undefined;
+  setAllPrices: React.Dispatch<React.SetStateAction<AddressPriceAll[] | undefined>>;
+  allPrices: AddressPriceAll[] | undefined;
 }
 
 interface Recoded {
@@ -100,7 +95,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 const ACCOUNTS_SCREEN_HEIGHT = 550;
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, showPlus, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
   const { accounts } = useContext(AccountContext);
@@ -148,9 +143,9 @@ export default function AccountPreview({ actions, address, allPrices, children, 
     const decimals = api.registry.chainDecimals[0];
     const temp = allPrices ?? {};
 
-    temp[balances.accountId] = { balances, decimals, price };
+    temp[String(balances.accountId)] = { balances, decimals, price };
     setAllPrices({ ...temp });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, balances, price, setAllPrices]);
 
   useEffect((): void => {
@@ -261,8 +256,6 @@ export default function AccountPreview({ actions, address, allPrices, children, 
       state: { api, balances, identity }
     });
   }, [balances, history, genesisHash, address, formatted, api, identity]);
-
-  // console.log('xxxxxxxx');
 
   return (
     <Grid alignItems='center' container py='15px'>

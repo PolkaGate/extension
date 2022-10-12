@@ -1,12 +1,12 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Box, Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
 import { logoWhite } from '../assets/logos';
+import useOutsideClick from '../hooks/useOutsideClick';
 import Menu from './Menu';
 
 interface Props {
