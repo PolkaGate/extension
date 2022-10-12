@@ -20,7 +20,6 @@ import { useHistory } from 'react-router-dom';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
-import useMetadata from '../hooks/useMetadata';
 import useOutsideClick from '../../../extension-ui/src/hooks/useOutsideClick';
 import useToast from '../../../extension-ui/src/hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
@@ -28,11 +27,12 @@ import { showAccount } from '../../../extension-ui/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { useApi, useEndpoint } from '../hooks';
+import useMetadata from '../hooks/useMetadata';
+import useProxies from '../hooks/useProxies';
 import { getPrice } from '../util/api/getPrice';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
-import useProxies from '../hooks/useProxies';
 
 export interface Props {
   actions?: React.ReactNode;
