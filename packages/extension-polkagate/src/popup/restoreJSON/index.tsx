@@ -13,7 +13,7 @@ import { u8aToString } from '@polkadot/util';
 import { AccountContext, ActionContext, InputFileWithLabel, InputWithLabel, Warning } from '../../../../extension-ui/src/components';
 import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
 import { isKeyringPairs$Json } from '../../../../extension-ui/src/util/typeGuards';
-import Address from '../../components/Address'
+import Address from '../../components/Address';
 import PButton from '../../components/PButton';
 import { useTranslation } from '../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../messaging';
@@ -33,6 +33,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
   const [stepOne, setStep] = useState(true);
   const [accountsInfo, setAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
   const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isFileError, setFileError] = useState(false);
   const [requirePassword, setRequirePassword] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -214,15 +215,17 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
       )}
       {requirePassword && !stepOne && (
         <Grid
-          pt='10px'
           m='auto'
+          pt='10px'
           width='92%'
         >
           <InputWithLabel
             isError={isPasswordError}
             label={t<string>('Password for this file')}
             onChange={_onChangePass}
-            type='password'
+            setShowPassword={setShowPassword}
+            showPassword={showPassword}
+            type={showPassword ? 'text' : 'password'}
           />
           {isPasswordError && (
             <Warning

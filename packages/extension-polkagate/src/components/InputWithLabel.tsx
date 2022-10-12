@@ -79,8 +79,8 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
         readOnly={isReadOnly}
         spellCheck={false}
         style={{
-          borderColor: isError && type === 'password' ? theme.palette.secondary.dark : theme.palette.secondary.light,
-          borderWidth: isError && type === 'password' ? '3px' : '1px',
+          borderColor: isError && setShowPassword ? theme.palette.secondary.dark : theme.palette.secondary.light,
+          borderWidth: isError && setShowPassword ? '3px' : '1px',
           fontSize: '18px',
           fontWeight: 300,
           padding: 0,
