@@ -150,7 +150,8 @@ export default function AccountPreview({ actions, address, allPrices, children, 
 
     temp[balances.accountId] = { balances, decimals, price };
     setAllPrices({ ...temp });
-  }, [api, balances, price, setAllPrices, allPrices]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [api, balances, price, setAllPrices]);
 
   useEffect((): void => {
     if (!address) {
@@ -260,6 +261,8 @@ export default function AccountPreview({ actions, address, allPrices, children, 
       state: { api, balances, identity }
     });
   }, [balances, history, genesisHash, address, formatted, api, identity]);
+
+  // console.log('xxxxxxxx');
 
   return (
     <Grid alignItems='center' container py='15px'>
