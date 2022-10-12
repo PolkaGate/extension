@@ -8,5 +8,5 @@ export { default as useTranslation } from './useTranslation';
 export { useApi } from './useApi';
 export { default as useIsPopup } from './useIsPopup';
 export { useLedger } from './useLedger';
-export { default as useMetaData } from './useMetaData';
+export { default as useMetadata } from './useMetadata';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';
