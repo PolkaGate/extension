@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -6,17 +6,14 @@ import styled from 'styled-components';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { ActionContext, Loading } from '../../../../extension-ui/src/components';
-import AccountNamePasswordCreation from '../../../../extension-ui/src/components/AccountNamePasswordCreation';
-import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
-import useMetadata from '../../hooks/useMetadata';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../../../extension-ui/src/messaging';
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
+import { ActionContext, Loading } from '../../components';
+import AccountNamePasswordCreation from '../../components/AccountNamePasswordCreation';
 import PAddress from '../../components/Address';
 import DropdownWithIcon from '../../components/DropdownWithIcon';
+import { useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
+import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { DEFAULT_CHAIN_INDEX } from '../../util/constants';
+import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import Mnemonic from './Mnemonic';
 

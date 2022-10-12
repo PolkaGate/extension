@@ -8,11 +8,11 @@ import useGenesisHashOptions from '../../../../extension-polkagate/src/hooks/use
 import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import Mnemonic from '../../../../extension-polkagate/src/popup/createAccount/Mnemonic';
 import { ActionContext, Address, Dropdown, Loading } from '../../components';
-import AccountNamePasswordCreation from '../../components/AccountNamePasswordCreation';
+import AccountNamePasswordCreation from '../../../../extension-polkagate/src/components/AccountNamePasswordCreation';
 import useTranslation from '../../hooks/useTranslation';
 import { createAccountSuri, createSeed, validateSeed } from '../../messaging';
 import { HeaderWithSteps } from '../../partials';
-import { DEFAULT_TYPE } from '../../util/defaultType';
+import { DEFAULT_TYPE } from '../../../../extension-polkagate/src/util/defaultType';
 
 interface Props {
   className?: string;

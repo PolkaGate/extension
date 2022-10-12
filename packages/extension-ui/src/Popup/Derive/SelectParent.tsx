@@ -8,9 +8,9 @@ import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext, ActionContext, Address, ButtonArea, InputWithLabel, Label, NextStepButton, VerticalSpace, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { validateAccount, validateDerivationPath } from '../../messaging';
-import { nextDerivationPath } from '../../util/nextDerivationPath';
+import { nextDerivationPath } from '../../../../extension-polkagate/src/util/nextDerivationPath';
 import AddressDropdown from './AddressDropdown';
-import DerivationPath from './DerivationPath';
+import DerivationPath from '../../../../extension-polkagate/src/popup/deriveAccount/DerivationPath';
 
 interface Props {
   className?: string;

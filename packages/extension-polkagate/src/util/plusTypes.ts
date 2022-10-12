@@ -448,7 +448,12 @@ export interface ProxyItem {
   status: 'current' | 'new' | 'remove';
 }
 
-export interface Price {
-  address: string;
+export interface PriceAll {
   balances: DeriveBalancesAll;
+  decimals: number;
+  price: number;
+}
+
+export interface AddressPriceAll {
+  [k: string]: PriceAll;
 }

@@ -4,12 +4,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ActionContext, Address } from '../../components';
-import AccountNamePasswordCreation from '../../components/AccountNamePasswordCreation';
+import AccountNamePasswordCreation from '../../../../extension-polkagate/src/components/AccountNamePasswordCreation';
 import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../hooks/useTranslation';
 import { createAccountSuri } from '../../messaging';
 import { HeaderWithSteps } from '../../partials';
-import { DEFAULT_TYPE } from '../../util/defaultType';
+import { DEFAULT_TYPE } from '../../../../extension-polkagate/src/util/defaultType';
 import SeedAndPath from './SeedAndPath';
 
 export interface AccountInfo {

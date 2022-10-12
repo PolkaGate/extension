@@ -24,11 +24,11 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { ShortAddress, ShowBalance } from '../../../extension-polkagate/src/components'; // added for Plus
 import { useApi, useEndpoint } from '../../../extension-polkagate/src/hooks';
 import useMetadata from '../../../extension-polkagate/src/hooks/useMetadata';
-import useOutsideClick from '../hooks/useOutsideClick';
-import useToast from '../hooks/useToast';
+import useOutsideClick from '../../../extension-polkagate/src/hooks/useOutsideClick';
+import useToast from '../../../extension-polkagate/src/hooks/useToast';
 import useTranslation from '../hooks/useTranslation';
 import { showAccount } from '../messaging';
-import { DEFAULT_TYPE } from '../util/defaultType';
+import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
 import getParentNameSuri from '../util/getParentNameSuri';
 import { AccountContext, ActionContext, SettingsContext } from './contexts';
 import Identicon from './Identicon';

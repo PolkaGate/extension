@@ -30,7 +30,7 @@ import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
+import { DEFAULT_TYPE } from '../../util/defaultType';
 import { history as historyIcon, ihistory, ireceive, irefresh, isend, istake, receive, refresh, send, stake } from '../../assets/icons';
 import { Header, Motion, Select, ShortAddress, ShowBalance } from '../../components';
 import { AccountContext, ActionContext, SettingsContext } from '../../components/contexts';

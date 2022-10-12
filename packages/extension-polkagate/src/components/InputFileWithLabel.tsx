@@ -1,8 +1,8 @@
 // Copyright 2017-2022 @polkadot/react-components authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ThemeProps } from '../types';
-
+import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Grid, Typography } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
@@ -10,10 +10,8 @@ import styled from 'styled-components';
 
 import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
-import PButton from '../../../extension-polkagate/src/components/PButton';
 import useTranslation from '../hooks/useTranslation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
+import PButton from './PButton';
 
 function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
@@ -185,7 +183,7 @@ function InputFile({ accept, reset, className = '', clearContent, convertHex, is
     : dropZone;
 }
 
-export default React.memo(styled(InputFile)(({ isError, theme }: InputFileProps & ThemeProps) => `
+export default React.memo(styled(InputFile)(({ isError, theme }: InputFileProps) => `
   overflow-wrap: anywhere;
 
   &:hover {

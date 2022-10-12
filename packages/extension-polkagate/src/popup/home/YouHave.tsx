@@ -1,15 +1,15 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import useTranslation from '../../hooks/useTranslation';
 import FormatPrice from '../../components/FormatPrice';
-import { Price } from '../../util/plusTypes';
+import useTranslation from '../../hooks/useTranslation';
+import { AddressPriceAll } from '../../util/plusTypes';
 
 interface Props {
-  allPrices: Price[] | undefined;
+  allPrices: AddressPriceAll[] | undefined;
 }
 
 export default function YouHave({ allPrices }: Props): React.ReactElement {

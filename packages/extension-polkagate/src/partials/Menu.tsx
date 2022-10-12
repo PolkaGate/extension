@@ -8,10 +8,9 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext } from '../../../extension-ui/src/components';
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { addCircle, addCircleB, exportIcon, exportIconB, importIcon, importIconB, roadBranch, roadBranchB, setting, settingB } from '../assets/icons';
-import MenuItem from '../components/MenuItem';
+import { AccountContext, ActionContext, MenuItem } from '../components';
+import { useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 

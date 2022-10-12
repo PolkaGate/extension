@@ -17,10 +17,10 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
 import Identicon from '../../../extension-ui/src/components/Identicon';
-import useMetadata from '../hooks/useMetadata';
-import useToast from '../../../extension-ui/src/hooks/useToast';
+import useToast from '../hooks/useToast';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { DEFAULT_TYPE } from '../../../extension-ui/src/util/defaultType';
+import useMetadata from '../hooks/useMetadata';
+import { DEFAULT_TYPE } from '../util/defaultType';
 
 export interface Props {
   actions?: React.ReactNode;

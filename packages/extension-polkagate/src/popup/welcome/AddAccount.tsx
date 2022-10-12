@@ -1,12 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext } from '../../../../extension-ui/src/components';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import PButton from '../../components/PButton';
+import { ActionContext, PButton } from '../../components';
+import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
@@ -24,7 +23,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
       windowOpen('/account/restore-json').catch(console.error);
     }, []
   );
-  
+
   const _goToImportLedger = useCallback(
     (): void => {
       windowOpen('/account/import-ledger').catch(console.error);

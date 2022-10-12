@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import logo from '../assets/pjs.svg';
 import InputFilter from '../components/InputFilter';
 import Link from '../components/Link';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useOutsideClick from '../../../extension-polkagate/src/hooks/useOutsideClick';
 import useTranslation from '../hooks/useTranslation';
 import MenuAdd from './MenuAdd';
 import MenuSettings from './MenuSettings';

@@ -1,16 +1,13 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountContext, ActionContext } from '../../../../extension-ui/src/components';
-import AccountNamePasswordCreation from '../../../../extension-ui/src/components/AccountNamePasswordCreation'
-import useMetadata from '../../hooks/useMetadata';
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { createAccountSuri } from '../../../../extension-ui/src/messaging';
-import { DEFAULT_TYPE } from '../../../../extension-ui/src/util/defaultType';
-import Address from '../../components/Address';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address } from '../../components';
+import { useMetadata, useTranslation } from '../../hooks';
+import { createAccountSuri } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../util/defaultType';
 import SeedAndPath from './SeedAndPath';
 
 export interface AccountInfo {

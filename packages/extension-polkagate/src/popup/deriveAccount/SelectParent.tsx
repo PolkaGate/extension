@@ -1,19 +1,16 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, ActionContext, Label, Warning } from '../../../../extension-ui/src/components';
-import { validateAccount, validateDerivationPath } from '../../../../extension-ui/src/messaging';
-import DerivationPath from '../../../../extension-ui/src/Popup/Derive/DerivationPath';
-import { nextDerivationPath } from '../../../../extension-ui/src/util/nextDerivationPath';
-import Address from '../../components/Address';
-import InputWithLabel from '../../components/InputWithLabel';
-import PButton from '../../components/PButton';
+import { AccountContext, ActionContext, Address, InputWithLabel, Label, PButton, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
+import { validateAccount, validateDerivationPath } from '../../messaging';
+import { nextDerivationPath } from '../../util/nextDerivationPath';
 import AddressDropdown from './AddressDropdown';
+import DerivationPath from './DerivationPath';
 
 interface Props {
   className?: string;

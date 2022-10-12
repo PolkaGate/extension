@@ -7,7 +7,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import styled from 'styled-components';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import getNetworkMap from '@polkadot/extension-ui/util/getNetworkMap';
+import getNetworkMap from 'extension-polkagate/src/util/getNetworkMap';
 
 import { AccountsStore } from '@polkadot/extension-base/stores'; // added for plus
 import keyring from '@polkadot/ui-keyring'; // added for plus

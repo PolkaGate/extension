@@ -15,6 +15,7 @@ import uiSettings from '@polkadot/ui-settings';
 import CrowdLoans from '../../../extension-plus/src/Popup/CrowdLoans';// added for plus
 import Governance from '../../../extension-plus/src/Popup/Governance';// added for plus
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
+import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import Account from '../../../extension-polkagate/src/popup/account';// added for plus
 import AttachQR from '../../../extension-polkagate/src/popup/attachQR';
 // import CreateAccount from './CreateAccount';
@@ -34,7 +35,6 @@ import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { ErrorBoundary, Loading } from '../components';
 // import Welcome from './Welcome';
 import { ColorContext } from '../components/ColorContext';
-import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../components/contexts';
 import ToastProvider from '../components/Toast/ToastProvider';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../messaging';
 import { buildHierarchy } from '../util/buildHierarchy';
