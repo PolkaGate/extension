@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Button, InputWithLabel } from '../../components';
+import { IButton, InputWithLabel } from '../../components';
 import { useTranslation } from '../../hooks';
 
 interface Props {
@@ -56,7 +56,7 @@ function DerivationPath({ className, defaultPath, isError, onChange, withSoftPat
             value={path}
           />
         </div>
-        <Button
+        <IButton
           className='lockButton'
           onClick={_onExpand}
         >
@@ -66,7 +66,7 @@ function DerivationPath({ className, defaultPath, isError, onChange, withSoftPat
             fontSize={20}
             icon={isDisabled ? faLock : faLockOpen}
           />
-        </Button>
+        </IButton>
       </div>
     </div>
   );
