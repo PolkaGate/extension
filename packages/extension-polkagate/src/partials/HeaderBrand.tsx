@@ -12,11 +12,12 @@ import Menu from './Menu';
 interface Props {
   showBackArrow?: boolean;
   showSettings?: boolean;
+  withSteps?: { currentStep: string | number, totalSteps: string | number } | null;
   text?: React.ReactNode;
   onBackClick?: () => void;
 }
 
-function HeaderBrand ({ onBackClick, showBackArrow, showSettings, text }: Props): React.ReactElement<Props> {
+function HeaderBrand({ onBackClick, showBackArrow, showSettings, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -73,22 +74,40 @@ function HeaderBrand ({ onBackClick, showBackArrow, showSettings, text }: Props)
                   stroke: theme.palette.secondary.light,
                   strokeWidth: 1.5
                 }}
-                />
+              />
               : <Box
                 component='img'
                 src={logoWhite}
                 sx={{ height: 38, width: 38 }}
-                />
+              />
             }
           </Grid>
-          <Grid item>
+          <Grid
+            display='inline-flex'
+            item
+          >
             <Typography
               color={showBackArrow ? 'text.primary' : '#ffffff'}
               fontFamily={showBackArrow ? 'inherit' : 'Eras'}
-              sx={{ fontSize: showBackArrow ? '20px' : '30px', letterSpacing: '-0.015em' }}
+              fontWeight={400}
+              sx={{ fontSize: showBackArrow ? '20px' : '30px', lineHeight: showBackArrow ? 1.9 : 'inherit', letterSpacing: '-0.015em' }}
             >
               {text}
             </Typography>
+            {withSteps &&
+              <Typography
+                color={showBackArrow ? 'text.primary' : '#ffffff'}
+                fontFamily='inherit'
+                fontSize='20px'
+                fontWeight={400}
+                letterSpacing='-0.015em'
+                p='5px'
+              >
+                <span>(</span>
+                <span style={{ color: theme.palette.secondary.light }}>{withSteps.currentStep}</span>
+                <span>{'/' + withSteps.totalSteps.toString() + ')'}</span>
+              </Typography>
+            }
           </Grid>
           <Grid
             item
