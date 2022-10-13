@@ -1,13 +1,13 @@
 {
-  "author": "polkadotJsPlus@gmail.com",
-  "bugs": "https://github.com/polkadot-js/extension/issues",
-  "homepage": "https://github.com/polkadot-js/extension#readme",
+  "author": "polkagate@outlook.com",
+  "bugs": "https://github.com/polkagate/extension/issues",
+  "homepage": "https://github.com/polkagate/extension#readme",
   "license": "Apache-2.0",
   "packageManager": "yarn@3.2.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/polkadot-js/extension.git"
+    "url": "https://github.com/polkagate/extension.git"
   },
   "sideEffects": false,
   "version": "0.44.1",
