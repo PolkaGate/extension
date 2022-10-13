@@ -58,6 +58,7 @@ export default function MenuItem({ children, disabled = false, icon, onClick, py
           // xs={10}
           >
             <Typography
+              color={disabled ? 'text.disabled' : 'inherit'}
               fontSize='18px'
               fontWeight={300}
               lineHeight='20px'
