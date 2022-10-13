@@ -3,13 +3,14 @@
 
 import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Grid, Typography } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import styled from 'styled-components';
 
 import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
+import { upload } from '../assets/icons';
 import useTranslation from '../hooks/useTranslation';
 import PButton from './PButton';
 
@@ -134,12 +135,10 @@ function InputFile({ accept, reset, className = '', clearContent, convertHex, is
               }
               {(reset) &&
                 <Grid item mt='13px'>
-                  <FontAwesomeIcon
-                    className='copyIcon'
-                    icon={faCloudArrowUp}
-                    // onClick={_onCopy}
-                    size='2x'
-                    title={t('upload JSON')}
+                  <Box
+                    component='img'
+                    src={upload}
+                  sx={{ height: '35.5px', width: '51px' }}
                   />
                 </Grid>
               }
