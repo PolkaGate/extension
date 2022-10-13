@@ -54,7 +54,7 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
         width: '18px',
         color: `${settings.camera === 'on'
           ? theme.palette.mode === 'dark' ? 'white' : 'black'
-          : '#4B4B4B'}`
+          : 'theme.palette.text.disabled'}`
       }}
     />
   );
