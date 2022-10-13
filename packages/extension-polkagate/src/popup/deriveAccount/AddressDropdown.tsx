@@ -106,9 +106,10 @@ export default function AddressDropdown({ allAddresses, className, onSelect, sel
           },
           '> .tree:last-child': { border: 'none' },
           bgcolor: 'background.paper',
-          border: '1px solid',
+          border: '2px solid',
           borderColor: 'secondary.light',
           borderRadius: '5px',
+          boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)',
           maxHeight: '220px',
           overflow: 'hidden',
           overflowY: 'scroll',
@@ -126,7 +127,7 @@ export default function AddressDropdown({ allAddresses, className, onSelect, sel
             item
             key={address}
             onClick={_selectParent(address)}
-            sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}
+            sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', pr: '33px', cursor: 'pointer' }}
           >
             <Grid
               item

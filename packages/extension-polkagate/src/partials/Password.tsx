@@ -46,8 +46,7 @@ export default function Password({ isFocussed, onChange, onEnter }: Props): Reac
       />
       <ValidatedInput
         component={InputWithLabel}
-        dataInputRepeatPassword
-        // data-input-repeat-password
+        data-input-repeat-password
         label={t<string>('Repeat password')}
         onEnter={onEnter}
         onValidatedChange={setPass2}
