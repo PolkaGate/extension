@@ -19,7 +19,6 @@ interface Props {
   isFocused?: boolean;
   isReadOnly?: boolean;
   label: string;
-  onBlur?: () => void;
   onChange?: (value: string) => void;
   onEnter?: () => void;
   placeholder?: string;
@@ -30,8 +29,9 @@ interface Props {
   setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function InputWithLabel({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onBlur, onChange, onEnter, placeholder, setShowPassword, showPassword, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, setShowPassword, showPassword, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
   const [isCapsLock, setIsCapsLock] = useState(false);
+  const [offFocus, setOffFocus] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
   const _checkKey = useCallback(
@@ -60,6 +60,10 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
     setShowPassword && setShowPassword(!showPassword);
   }, [setShowPassword, showPassword]);
 
+  const _setOffFocus = useCallback(() => {
+    setOffFocus(true);
+  }, []);
+
   return (
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
@@ -72,15 +76,15 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
         autoFocus={isFocused}
         defaultValue={defaultValue || undefined}
         disabled={disabled}
-        onBlur={onBlur}
+        onBlur={_setOffFocus}
         onChange={_onChange}
         onKeyPress={_checkKey}
         placeholder={placeholder}
         readOnly={isReadOnly}
         spellCheck={false}
         style={{
-          borderColor: isError && setShowPassword ? theme.palette.secondary.dark : theme.palette.secondary.light,
-          borderWidth: isError && setShowPassword ? '3px' : '1px',
+          borderColor: isError ? theme.palette.warning.main : theme.palette.secondary.light,
+          borderWidth: isError ? '3px' : '1px',
           fontSize: '18px',
           fontWeight: 300,
           padding: 0,
@@ -89,7 +93,7 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
         theme={theme}
         type={type}
         value={value}
-        withError={isError}
+        withError={offFocus && isError}
       />
       {setShowPassword &&
         <IconButton

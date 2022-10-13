@@ -13,11 +13,12 @@ export const darkTheme: ThemeOptions = {
   palette: {
     mode: 'dark',
     primary: { main: '#99004F' },
-    secondary: { main: '#99004F', light: '#BA2882', dark: '#FF002B' },
+    secondary: { main: '#99004F', light: '#BA2882' },
     background: { default: '#180710', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000' },
-    action: { disabled: '#fff', disabledBackground: '#4B4B4B' },
-    success: { main: '#1F7720' }
+    action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
+    success: { main: '#1F7720' },
+    warning: { main: '#FF002B' }
   },
   components: {
     MuiSkeleton: {
