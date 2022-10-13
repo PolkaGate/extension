@@ -1,12 +1,12 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton } from '../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -32,6 +32,7 @@ export default function AttachQR({ className }: Props): React.ReactElement {
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [genesisHash, setGenesisHash] = useState<string | null>(null);
+  const [invalidQR, setInvalidQR] = useState<boolean>();
 
   const [stepOne, setStep] = useState(true);
 
@@ -83,6 +84,46 @@ export default function AttachQR({ className }: Props): React.ReactElement {
     }
   }, [onAction, stepOne]);
 
+  const _onError = useCallback((error: string) => {
+    console.log('error:', error)
+    setInvalidQR(String(error).includes('Invalid prefix'));
+  }, []);
+
+  const _onOkay = useCallback(() => {
+    setInvalidQR(false);
+  }, []);
+
+  const QRWarning = () => (
+    <Grid item container direction='column' justifyContent='center' alignItems='center' fontSize={14} pt='30px' pb='80px' border={1.5} mx='28px' borderColor='warning.main'>
+      <Grid item>
+        <Warning
+          isDanger
+        >
+          {t('Invalid QR code.')}
+        </Warning>
+      </Grid>
+      <Grid item>
+        {t('Please try another one.')}
+      </Grid>
+      <Button
+        onClick={_onOkay}
+        sx={{
+          borderColor: 'secondary.main',
+          borderRadius: '5px',
+          fontSize: 18,
+          fontWeight: 400,
+          height: '36px',
+          mt: '25px',
+          textTransform: 'none',
+          width: '60%'
+        }}
+        variant='contained'
+      >
+        {t<string>('Okay')}
+      </Button>
+    </Grid>
+  );
+
   return (
     <>
       <HeaderBrand
@@ -121,10 +162,16 @@ export default function AttachQR({ className }: Props): React.ReactElement {
             width='328px'
           >
             {!account &&
-              <QrScanAddress
-                onScan={_setAccount}
-                size={272}
-              />
+              <>
+                {!invalidQR
+                  ? <QrScanAddress
+                    onError={_onError}
+                    onScan={_setAccount}
+                    size={272}
+                  />
+                  : <QRWarning />
+                }
+              </>
             }
           </Grid>
           <Typography
@@ -139,13 +186,15 @@ export default function AttachQR({ className }: Props): React.ReactElement {
           </Typography>
         </div>
       }
-      {!stepOne && account &&
+      {
+        !stepOne && account &&
         <Address
           address={address}
           name={name}
         />
       }
-      {!stepOne && account &&
+      {
+        !stepOne && account &&
         (
           account?.isAddress
             ? (
@@ -170,7 +219,8 @@ export default function AttachQR({ className }: Props): React.ReactElement {
                 onNameChange={setName}
                 onPasswordChange={setPassword}
               />)
-        )}
+        )
+      }
     </>
   );
 }

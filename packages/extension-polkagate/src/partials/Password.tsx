@@ -24,7 +24,7 @@ export default function Password({ isFocussed, onChange, onEnter }: Props): Reac
   const isFirstPasswordValid = useMemo(() => isNotShorterThan(MIN_LENGTH, t<string>('Password is too short')), [t]);
   const isSecondPasswordValid = useCallback((firstPassword: string): Validator<string> => allOf(
     isNotShorterThan(MIN_LENGTH, t<string>('Password is too short')),
-    isSameAs(firstPassword, t<string>('Passwords do not match'))
+    isSameAs(firstPassword, t<string>('Password do not match'))
   ), [t]);
 
   useEffect((): void => {
