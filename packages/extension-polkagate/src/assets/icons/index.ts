@@ -39,3 +39,4 @@ export { default as refresh } from './refresh.png';
 export { default as irefresh } from './irefresh.png';
 export { default as copy } from './copy.png';
 export { default as icopy } from './icopy.png';
+export { default as upload } from './upload.png';
