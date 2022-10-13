@@ -7,17 +7,15 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import styled from 'styled-components';
-import { Theme } from '@mui/material';
 
-interface Props {
+interface Props extends ThemeProps {
   children: React.ReactNode;
   className?: string;
   isBelowInput?: boolean;
   isDanger?: boolean;
-  theme: Theme;
 }
 
-function Warning({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
+function Warning ({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
   return (
     <div className={`${className} ${isDanger ? 'danger' : ''} ${isBelowInput ? 'belowInput' : ''}`}>
       <FontAwesomeIcon
@@ -29,14 +27,14 @@ function Warning({ children, className = '', isBelowInput, isDanger }: Props): R
   );
 }
 
-export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
+export default React.memo(styled(Warning)<Props>(({ isDanger, theme }: Props) => `
   display: flex;
   flex-direction: row;
   padding-left: 18px;
   // color: ${theme.subTextColor};
   margin-right: 20px;
   margin-top: 37px;
-  // border-left: ${`0.25rem solid ${theme.iconWarningColor}`};
+  border-left: ${`0.25rem solid ${theme.iconWarningColor}`};
 
   &.belowInput {
     font-size: 14px;
@@ -48,9 +46,9 @@ export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
     }
   }
 
-  // &.danger {
-  //   border-left-color: ${theme.buttonBackgroundDanger};
-  // }
+  &.danger {
+    border-left-color: ${theme.buttonBackgroundDanger};
+  }
 
   .warning-message {
     display: flex;
@@ -61,7 +59,7 @@ export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
 
   .warningImage {
     margin: 5px 10px 5px 0;
-    color: ${theme.palette.warning.main};
+    color: #FF002B;
     font-size: 19px
   }
 `));
