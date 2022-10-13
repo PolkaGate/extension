@@ -1,10 +1,13 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import useIsMounted from '../../../extension-ui/src/hooks/useIsMounted';
+import { useTranslation } from '../hooks';
 import { Result, Validator } from '../util/validators';
+import Affirm from './Affirm';
 import Warning from './Warning';
 
 interface BasicProps {
@@ -25,6 +28,8 @@ function ValidatedInput<T extends Record<string, unknown>>({ className, componen
   const [value, setValue] = useState(defaultValue || '');
   const [validationResult, setValidationResult] = useState<Result<string>>(Result.ok(''));
   const isMounted = useIsMounted();
+  const theme = useTheme();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (defaultValue) {
@@ -63,10 +68,20 @@ function ValidatedInput<T extends Record<string, unknown>>({ className, componen
         onChange={setValue}
         value={value}
       />
+      {value && Result.isOk(validationResult) && props.dataInputRepeatPassword && (
+        <Affirm
+          isAffirm
+          isBelowInput
+          theme={theme}
+        >
+          {t<string>('Password match')}
+        </Affirm>
+      )}
       {value && Result.isError(validationResult) && (
         <Warning
           isBelowInput
           isDanger
+          theme={theme}
         >
           {validationResult.error.errorDescription}
         </Warning>
