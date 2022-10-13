@@ -72,7 +72,11 @@ function ImportSeed(): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>(`Import Account (${step1 ? 1 : 2}/2)`)}
+        text={t<string>('Import Account')}
+        withSteps={{
+          currentStep: `${step1 ? 1 : 2}`,
+          totalSteps: 2
+        }}
       />
       <div>
         <Address

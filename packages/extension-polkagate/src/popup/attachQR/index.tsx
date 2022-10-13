@@ -88,7 +88,11 @@ export default function AttachQR({ className }: Props): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>(`Attach QR-signer (${stepOne ? 1 : 2}/2)`)}
+        text={t<string>('Attach QR-signer')}
+        withSteps={{
+          currentStep: `${stepOne ? 1 : 2}`,
+          totalSteps: 2
+        }}
       />
       {stepOne &&
         <div>

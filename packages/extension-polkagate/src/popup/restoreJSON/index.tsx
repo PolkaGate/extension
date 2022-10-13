@@ -131,7 +131,11 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>(`Restore from JSON (${stepOne ? 1 : 2}/2)`)}
+        text={t<string>('Restore from JSON')}
+        withSteps={{
+          currentStep: `${stepOne ? 1 : 2}`,
+          totalSteps: 2
+        }}
       />
       {isPasswordError && !stepOne &&
         <Grid

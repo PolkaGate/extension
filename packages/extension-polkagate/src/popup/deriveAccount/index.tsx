@@ -82,7 +82,11 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>(`Derive account (${stepOne ? 1 : 2}/2)`)}
+        text={t<string>('Derive account')}
+        withSteps={{
+          currentStep: `${stepOne ? '1' : '2'}`,
+          totalSteps: 2
+        }}
       />
       {stepOne && !account && (
         <SelectParent
