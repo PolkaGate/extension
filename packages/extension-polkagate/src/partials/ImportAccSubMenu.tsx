@@ -3,17 +3,21 @@
 
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
 import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
+import settings from '@polkadot/ui-settings';
+import '@vaadin/icons';
+
 
 interface Props {
-  className?: string;
+  toggleSettingSubMenu: () => void
 }
 
-export default function ImportAccSubMenu({ className }: Props): React.ReactElement<Props> {
+export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -42,6 +46,19 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
     }, []
   );
 
+  const QrIcon = (
+    <vaadin-icon
+      icon='vaadin:qrcode'
+      style={{
+        height: '18px',
+        width: '18px',
+        color: `${settings.camera === 'on'
+          ? theme.palette.mode === 'dark' ? 'white' : 'black'
+          : '#4B4B4B'}`
+      }}
+    />
+  );
+
   return (
     <>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
@@ -51,32 +68,40 @@ export default function ImportAccSubMenu({ className }: Props): React.ReactEleme
         sx={{ p: '18px 0 15px 10px' }}
       >
         <MenuItem
-          Icon={theme.palette.mode === 'light' ? restoreB : restore}
+          icon={theme.palette.mode === 'light' ? restoreB : restore}
           onClick={_goToRestoreFromJson}
           py='4px'
           text={t('Restore from JSON file')}
         />
         <MenuItem
-          Icon={theme.palette.mode === 'light' ? keyB : key}
+          icon={theme.palette.mode === 'light' ? keyB : key}
           onClick={_goToImportAcc}
           py='4px'
           text={t('Import from Mnemonic')}
         // onClick={}
         />
         <MenuItem
-          Icon={theme.palette.mode === 'light' ? qrB : qr}
+          disabled={settings.camera !== 'on'}
+          onClick={_goToAttachQR}
           py='4px'
           text='Attach external QR-signer '
-          onClick={_goToAttachQR}
+          vaadinIcon={QrIcon}
         />
+        {settings.camera !== 'on' &&
+          <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} textAlign='left' sx={{ cursor: 'pointer' }}>
+            Allow QR camera access in the extension’s setting in order to use this feature
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: '#BA2882' }} />
+
+          </Grid>
+        }
         <MenuItem
-          Icon={theme.palette.mode === 'light' ? connectB : connect}
+          icon={theme.palette.mode === 'light' ? connectB : connect}
+          onClick={_goToImportLedger}
           py='4px'
           text='Connect ledger device'
-          onClick={_goToImportLedger}
         />
         <MenuItem
-          Icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
+          icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
           py='4px'
           text='Add proxied address'
         // onClick={ }

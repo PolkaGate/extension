@@ -98,34 +98,34 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         width='86%'
       >
         <MenuItem
-          Icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
+          icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
           onClick={_goToCreateAcc}
           text={t('Create new account')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={theme.palette.mode === 'dark' ? roadBranch : roadBranchB}
+          icon={theme.palette.mode === 'dark' ? roadBranch : roadBranchB}
           onClick={_goToDeriveAcc}
           text={t('Derive from accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={theme.palette.mode === 'dark' ? importIcon : importIconB}
+          icon={theme.palette.mode === 'dark' ? importIcon : importIconB}
           onClick={toggleImportSubMenu}
           showSubMenu={showImportSubMenu}
           text={t('Import account')}
         >
-          <ImportAccSubMenu />
+          <ImportAccSubMenu toggleSettingSubMenu={toggleSettingSubMenu} />
         </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={theme.palette.mode === 'dark' ? exportIcon : exportIconB}
+          icon={theme.palette.mode === 'dark' ? exportIcon : exportIconB}
           // onClick={onnn}
           text={t('Export all accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          Icon={theme.palette.mode === 'dark' ? setting : settingB}
+          icon={theme.palette.mode === 'dark' ? setting : settingB}
           onClick={toggleSettingSubMenu}
           showSubMenu={showSettingSubMenu}
           text={t('Setting')}

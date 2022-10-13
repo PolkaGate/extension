@@ -16,7 +16,7 @@ interface Props {
   onBackClick?: () => void;
 }
 
-function HeaderBrand({ onBackClick, showBackArrow, showSettings, text }: Props): React.ReactElement<Props> {
+function HeaderBrand ({ onBackClick, showBackArrow, showSettings, text }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -41,9 +41,13 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text }: Props):
   return (
     <>
       {
-        isMenuOpen && (
-          <Menu isMenuOpen={isMenuOpen} reference={setMenuRef} setShowMenu={setShowMenu} theme={theme} />
-        )
+        isMenuOpen &&
+        <Menu
+          isMenuOpen={isMenuOpen}
+          reference={setMenuRef}
+          setShowMenu={setShowMenu}
+          theme={theme}
+        />
       }
       <Container sx={{
         background: showBackArrow ? 'transparent' : 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)',
@@ -69,12 +73,12 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text }: Props):
                   stroke: theme.palette.secondary.light,
                   strokeWidth: 1.5
                 }}
-              />
+                />
               : <Box
                 component='img'
                 src={logoWhite}
                 sx={{ height: 38, width: 38 }}
-              />
+                />
             }
           </Grid>
           <Grid item>
