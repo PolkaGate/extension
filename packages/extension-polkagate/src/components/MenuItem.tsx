@@ -6,7 +6,9 @@ import { Avatar, Grid, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 
 interface Props {
-  Icon: string;
+  disabled?: boolean;
+  icon?: string;
+  vaadinIcon?: JSX.Element;
   text: string;
   children?: React.ReactElement<Props>;
   onClick?: MouseEventHandler<HTMLDivElement>;
@@ -14,7 +16,7 @@ interface Props {
   py?: string;
 }
 
-export default function MenuItem({ Icon, children, onClick, text, py = '8px', showSubMenu = false }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, icon, onClick, py = '8px', showSubMenu = false, text, vaadinIcon }: Props): React.ReactElement<Props> {
   return (
     <>
       <Grid
@@ -23,11 +25,12 @@ export default function MenuItem({ Icon, children, onClick, text, py = '8px', sh
         item
         justifyContent='space-between'
         my='4px'
-        onClick={onClick}
+        onClick={disabled ? () => null : onClick}
         py={py}
-        sx={{ cursor: 'pointer' }}
+        sx={{ cursor: disabled ? '' : 'pointer' }}
         textAlign='left'
         xs={12}
+        color={disabled ? '#4B4B4B' : 'inherit'}
       >
         <Grid
           container
@@ -40,11 +43,14 @@ export default function MenuItem({ Icon, children, onClick, text, py = '8px', sh
             item
             xs={1}
           >
-            <Avatar
-              alt={'logo'}
-              src={Icon}
-              sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '18px', width: '18px' }}
-            />
+            {vaadinIcon ??
+              <Avatar
+                alt={'logo'}
+                color={disabled ? '#4B4B4B' : 'inherit'}
+                src={icon}
+                sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '18px', width: '18px' }}
+              />
+            }
           </Grid>
           <Grid
             item

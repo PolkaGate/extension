@@ -157,7 +157,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           item
         >
           <MenuItem
-            Icon={theme.palette.mode === 'dark' ? ManageAccess : ManageAccessB}
+            icon={theme.palette.mode === 'dark' ? ManageAccess : ManageAccessB}
             text={t<string>('Manage website access')}
           />
         </Grid>
