@@ -8,7 +8,7 @@ interface Props {
   withError?: boolean;
   theme: Theme;
 }
-const TextBox = css(({ theme }: Props) => `
+const TextBox = css(({ theme, withError }: Props) => `
   background: ${theme.palette.background.paper};
   border-radius: 5px;
   border: 1px solid ${theme.palette.secondary.light};
@@ -22,8 +22,11 @@ const TextBox = css(({ theme }: Props) => `
   width: 100%;
   font-family: ${theme.typography.allVariants.fontFamily};
   &:focus{
-    outline: 1.5px solid ${theme.palette.secondary.light};
-    // box-shadow: 0 0 3px;
+    ${!withError
+    ? `outline: 2px solid ${theme.palette.action.focus};
+    border: none;`
+    : 'outline: none;'}
+    filter: drop-shadow(0px 0px 3px rgba(204, 88, 123, 0.83));
   }
 `);
 
