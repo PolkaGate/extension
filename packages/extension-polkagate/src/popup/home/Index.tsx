@@ -78,7 +78,7 @@ export default function Home ({ className }: Props): React.ReactElement {
                   display: 'none',
                   width: 0
                 },
-                '> .tree:last-child': { border: 'none' },
+                '> .tree:first-child': { border: 'none' },
                 backgroundColor: 'background.paper',
                 border: '0.5px solid',
                 borderColor: 'secondary.light',
