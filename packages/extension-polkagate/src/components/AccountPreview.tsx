@@ -24,7 +24,6 @@ import { showAccount } from '../messaging';
 import { AccMenu } from '../partials';
 import { getPrice } from '../util/api/getPrice';
 import { DEFAULT_TYPE } from '../util/defaultType';
-import getParentNameSuri from '../util/getParentNameSuri';
 import { AddressPriceAll } from '../util/plusTypes';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
@@ -93,7 +92,6 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
   };
 }
 
-const ACCOUNTS_SCREEN_HEIGHT = 550;
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
 export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
@@ -108,13 +106,10 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   const proxies = useProxies(api, formatted);
 
   const [showActionsMenu, setShowActionsMenu] = useState(false);
-  const [moveMenuUp, setIsMovedMenu] = useState(false);
-  const actIconRef = useRef<HTMLDivElement>(null);
   const actMenuRef = useRef<HTMLDivElement>(null);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
-  const { show } = useToast();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [price, setPrice] = useState<number>();
 
@@ -248,8 +243,6 @@ export default function AccountPreview({ actions, address, allPrices, children, 
         <span title={displayName}>{displayName}</span>
       </>);
   };
-
-  const parentNameSuri = getParentNameSuri(parentName, suri);
 
   const goToAccount = useCallback(() => {
     genesisHash && address && formatted && history.push({
