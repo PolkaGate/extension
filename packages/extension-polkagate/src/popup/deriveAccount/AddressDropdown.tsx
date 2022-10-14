@@ -69,11 +69,26 @@ export default function AddressDropdown({ allAddresses, className, onSelect, sel
             item
             width='30px'
           >
-            <Avatar
-              src={getChainLogo(selectedGenesis)}
-              sx={{ height: 25, width: 25 }}
-              variant='square'
-            />
+            {getChainLogo(selectedGenesis)
+              ? (
+                <Avatar
+                  src={getChainLogo(selectedGenesis)}
+                  sx={{ height: 25, width: 25 }}
+                  variant='square'
+                />)
+              : (
+                <Grid
+                  sx={{
+                    bgcolor: 'action.disabledBackground',
+                    border: '1px solid',
+                    borderColor: 'secondary.light',
+                    borderRadius: '50%',
+                    height: '25px',
+                    width: '25px'
+                  }}
+                >
+                </Grid>)
+            }
           </Grid>
         </Grid>
         <Grid
@@ -144,11 +159,26 @@ export default function AddressDropdown({ allAddresses, className, onSelect, sel
             <Grid
               item
             >
-              <Avatar
-                src={getChainLogo(genesisHash)}
-                sx={{ height: 25, width: 25 }}
-                variant='square'
-              />
+              {getChainLogo(genesisHash)
+                ? (
+                  <Avatar
+                    src={getChainLogo(genesisHash)}
+                    sx={{ height: 25, width: 25 }}
+                    variant='square'
+                  />)
+                : (
+                  <Grid
+                    sx={{
+                      bgcolor: 'action.disabledBackground',
+                      border: '1px solid',
+                      borderColor: 'secondary.light',
+                      borderRadius: '50%',
+                      height: '25px',
+                      width: '25px'
+                    }}
+                  >
+                  </Grid>)
+              }
             </Grid>
           </Grid>
         ))}
