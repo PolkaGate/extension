@@ -12,6 +12,7 @@ export { default as FormatBalance } from './FormatBalance';
 export { default as Amount } from './Amount';
 export { default as To } from './To';
 export { default as Button } from './Button';
+export { default as ButtonWithCancel } from './ButtonWithCancel';
 export { default as IButton } from './IButton';
 export { default as Password } from './Password';
 export { default as Motion } from './Motion';
@@ -29,5 +30,6 @@ export { default as Checkbox } from './Checkbox';
 export { default as Label } from './Label';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { default as Identicon } from './Identicon';
+export { default as ActionText } from './ActionText';
 
 export * from './contexts';
