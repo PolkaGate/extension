@@ -1,17 +1,10 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { IconButton, InputAdornment, TextField } from '@mui/material';
-import FormControl from '@mui/material/FormControl';
-import InputBase from '@mui/material/InputBase';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import NativeSelect from '@mui/material/NativeSelect';
-import Select from '@mui/material/Select';
+import { InputAdornment, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
-import { ArrowBackIosRounded, CheckRounded as CheckRoundedIcon, Clear as ClearIcon } from '@mui/icons-material';
-import { isValidAddress } from '../util/utils';
+
 import { MAX_AMOUNT_LENGTH } from '../util/constants';
 
 const CssTextField = styled(TextField)(({ theme }) => ({
@@ -27,6 +20,7 @@ const CssTextField = styled(TextField)(({ theme }) => ({
     fontWeight: 400,
     fontSize: '26px',
     letterSpacing: '-0.015em',
+    color: theme.palette.text.primary,
     padding: 0,
     '& fieldset': {
       border: `1px solid ${theme.palette.primary.main}`,
@@ -65,14 +59,18 @@ export default function CustomizedTextField({ decimals, setValue, token, value }
     <CssTextField
       InputProps={{
         endAdornment: (
-          <InputAdornment position='end' sx={{ pr: '10px', fontweight: 400, fontSize: '18px', letterSpacing: '-0.015em' }}>
+          <InputAdornment
+            position='end'
+            sx={{
+              color: (theme) => theme.palette.text.primary,
+              fontSize: '18px', fontWeight: 400, letterSpacing: '-0.015em', pr: '10px'
+            }}>
             {token ?? ''}
           </InputAdornment>
         ),
         inputProps: { min: 0 }
       }}
       autoComplete='off'
-      color='primary'
       fullWidth
       onChange={_onChange}
       size='small'
