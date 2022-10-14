@@ -96,6 +96,7 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
             className='seedError'
             isBelowInput
             isDanger
+            theme={theme}
           >
             {error}
           </Warning>
