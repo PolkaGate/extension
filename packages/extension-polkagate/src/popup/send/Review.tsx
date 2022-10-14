@@ -27,14 +27,14 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
-import { AccountsStore } from '@polkadot/extension-base/stores'; 
+import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
-import { cryptoWaitReady } from '@polkadot/util-crypto'; 
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { isend, send as sendIcon } from '../../assets/icons';
-import { AccountContext, ActionContext, Button, Header, Identicon, Motion, Password, ShortAddress } from '../../components';
-import {useMetadata, useTranslation} from '../../hooks';
+import { AccountContext, ActionContext, Button, Header, Identicon, Motion, Password, PButton, ShortAddress } from '../../components';
+import { useMetadata, useTranslation } from '../../hooks';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
@@ -163,7 +163,7 @@ export default function Send(): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  const Triology = ({ part1, part2, part3, showDivider = false }: { part1: any, part2: any, part3?: any, showDivider?: boolean }) => (
+  const Trilogy = ({ part1, part2, part3, showDivider = false }: { part1: any, part2: any, part3?: any, showDivider?: boolean }) => (
     <>
       <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', pb: showDivider ? '0px' : '4px' }}>
         <Grid item sx={{ fontSize: '16px', maxWidth: '30%', width: 'fit-content' }}>
@@ -193,8 +193,10 @@ export default function Send(): React.ReactElement {
           </div>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '81px', margin: 'auto' }} />
         </Header>
-        {!isConfirming &&
-          <>
+      </Container>
+      {!isConfirming &&
+        <>
+          <Container disableGutters sx={{ px: '30px' }}>
             <Grid alignItems='top' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
               <Grid item sx={{ fontSize: '16px', paddingTop: '15px' }} xs={4}>
                 {t('From')}:
@@ -252,22 +254,30 @@ export default function Send(): React.ReactElement {
               {t('Password')}:
             </Grid>
             <Password setValue={setPassword} value={password} />
-            <Button _disabled={isConfirming} _onClick={send} style={{ mt: '20px' }} title={t('Send')} />
-          </>}
-        {isConfirming &&
-          <>
+          </Container>
+          <PButton
+            _mt='20px'
+            _onClick={send}
+            _variant='contained'
+            disabled={isConfirming}
+            text={t('Send')}
+          />
+        </>}
+      {isConfirming &&
+        <>
+          <Container disableGutters sx={{ px: '30px' }}>
             <Grid container justifyContent='center' py='15px'>
               {!txLog?.status
                 ? <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={78} />
                 : <CheckIcon sx={{ bgcolor: 'green', color: 'white', borderRadius: '50%', fontSize: '78px', fontWeight: 600, p: '8px' }} />
               }
             </Grid>
-            <Triology part1={t('From')} part2={accountName} part3={<ShortAddress address={formatted} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
-            <Triology part1={t('Amount')} part2={state?.amount} part3={state?.api?.registry?.chainTokens[0]} />
-            <Triology part1={t('Fee')} part2={state?.fee?.toHuman()} showDivider />
-            <Triology part1={t('To')} part2={state?.recepientName} part3={<ShortAddress address={state?.recepient} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
-            <Triology part1={t('Block')} part2={txLog?.block ? `#${txLog?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
-            <Triology part1={t('Hash')} part2={txLog?.txHash ? <ShortAddress address={txLog?.txHash} addressStyle={{ fontSize: '16px' }} charsCount={6} showCopy /> : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
+            <Trilogy part1={t('From')} part2={accountName} part3={<ShortAddress address={formatted} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
+            <Trilogy part1={t('Amount')} part2={state?.amount} part3={state?.api?.registry?.chainTokens[0]} />
+            <Trilogy part1={t('Fee')} part2={state?.fee?.toHuman()} showDivider />
+            <Trilogy part1={t('To')} part2={state?.recepientName} part3={<ShortAddress address={state?.recepient} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
+            <Trilogy part1={t('Block')} part2={txLog?.block ? `#${txLog?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
+            <Trilogy part1={t('Hash')} part2={txLog?.txHash ? <ShortAddress address={txLog?.txHash} addressStyle={{ fontSize: '16px' }} charsCount={6} showCopy /> : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
             <Grid container item justifyContent='center' pt='5px' xs={12}>
               <Link
                 href={`${subscanLink(txLog?.txHash)}`}
@@ -283,9 +293,14 @@ export default function Send(): React.ReactElement {
                 />
               </Link>
             </Grid>
-            <Button _onClick={backToMyAccounts} style={{ mt: '15px' }} title={t('Back to My Account(s)')} />
-          </>}
-      </Container>
+          </Container>
+          <PButton
+            _mt='15px'
+            _onClick={backToMyAccounts}
+            _variant='contained'
+            text={t('Back to My Account(s)')}
+          />
+        </>}
     </Motion>
   );
 }
