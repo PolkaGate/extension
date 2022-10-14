@@ -33,7 +33,7 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
   const theme = useTheme();
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
-  const decimals = api ? api.registry.chainDecimals[0] : 1;
+  const decimals = api ? api.registry.chainDecimals[0] : undefined;
 
   const _onCopy = useCallback(
     () => show(t('Copied')),
