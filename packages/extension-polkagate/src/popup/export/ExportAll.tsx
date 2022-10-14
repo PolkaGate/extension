@@ -73,7 +73,7 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
         textAlign='left'
         width='88%'
       >
-        {t<string>('Create a password for encripting all accounts.')}
+        {t<string>('Create a password for encrypting all accounts.')}
       </Typography>
       <Grid
         m='auto'
