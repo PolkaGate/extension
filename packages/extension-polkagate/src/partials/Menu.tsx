@@ -68,6 +68,12 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
     }, [master, onAction]
   );
 
+  const _goToExportAll = useCallback(
+    () => {
+      onAction('/account/export-all');
+    }, [onAction]
+  );
+
   return (
     <Grid
       bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
@@ -120,7 +126,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           icon={theme.palette.mode === 'dark' ? exportIcon : exportIconB}
-          // onClick={onnn}
+          onClick={_goToExportAll}
           text={t('Export all accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
