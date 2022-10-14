@@ -38,23 +38,30 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
   );
 
   return (
-    <Container
-      className='tree'
-      disableGutters
-      sx={{ borderBottom: '1px solid', borderColor: 'secondary.light', position: 'relative' }}
-    >
-      <Grid
-        item
-        sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
-        {label}
-      </Grid>
-      <AccountPreview
-        {...account}
-        allPrices={allPrices}
-        parentName={parentName}
-        setAllPrices={setAllPrices}
-        suri={suri}
-      />
+    <>
+      <Container
+        className='tree'
+        disableGutters
+        sx={{
+          borderTopWidth: '1px',
+          borderTopStyle: 'solid',
+          borderColor: 'secondary.light',
+          position: 'relative'
+        }}
+      >
+        <Grid
+          item
+          sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
+          {label}
+        </Grid>
+        <AccountPreview
+          {...account}
+          allPrices={allPrices}
+          parentName={parentName}
+          setAllPrices={setAllPrices}
+          suri={suri}
+        />
+      </Container>
       {account?.children?.map((child, index) => (
         <AccountsTree
           key={`${index}:${child.address}`}
@@ -64,6 +71,6 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
           setAllPrices={setAllPrices}
         />
       ))}
-    </Container>
+    </>
   );
 }
