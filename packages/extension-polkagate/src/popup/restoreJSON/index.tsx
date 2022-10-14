@@ -5,7 +5,7 @@ import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/backgr
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { u8aToString } from '@polkadot/util';
@@ -40,6 +40,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
   // don't use the info from the file directly
   // rather use what comes from the background from jsonGetAccountInfo
   const [file, setFile] = useState<KeyringPair$Json | KeyringPairs$Json | undefined>(undefined);
+  const theme = useTheme();
 
   useEffect((): void => {
     !accounts.length && onAction();
@@ -148,6 +149,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
           <Warning
             isBelowInput
             isDanger
+            theme={theme}
           >
             {t<string>('You’ve used an incorrect password. Try again.')}
           </Warning>
@@ -213,6 +215,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
       {isFileError && (
         <Warning
           isDanger
+          theme={theme}
         >
           {t<string>('Invalid Json file')}
         </Warning>
@@ -235,6 +238,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
             <Warning
               isBelowInput
               isDanger
+              theme={theme}
             >
               {t<string>('incorrect password')}
             </Warning>

@@ -1,13 +1,11 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ThemeProps } from '../../../extension-ui/src/types';
-
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Theme } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
-import { Theme } from '@mui/material';
 
 interface Props {
   children: React.ReactNode;
@@ -33,10 +31,8 @@ export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
   display: flex;
   flex-direction: row;
   padding-left: 18px;
-  // color: ${theme.subTextColor};
   margin-right: 20px;
   margin-top: 37px;
-  // border-left: ${`0.25rem solid ${theme.iconWarningColor}`};
 
   &.belowInput {
     font-size: 14px;
@@ -47,10 +43,6 @@ export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
       margin-left: -15px;
     }
   }
-
-  // &.danger {
-  //   border-left-color: ${theme.buttonBackgroundDanger};
-  // }
 
   .warning-message {
     display: flex;
