@@ -112,7 +112,12 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
         </IconButton>
       }
       {isCapsLock && (
-        <Warning isBelowInput>{t<string>('Warning: Caps lock is on')}</Warning>
+        <Warning
+          isBelowInput
+          theme={theme}
+        >
+          {t<string>('Warning: Caps lock is on')}
+        </Warning>
       )}
     </Label>
   );

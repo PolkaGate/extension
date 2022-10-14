@@ -1,6 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -54,6 +55,7 @@ function ImportLedger(): React.ReactElement {
   const [genesis, setGenesis] = useState<string | null>(null);
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useLedger(genesis, accountIndex, addressOffset);
   const [newChain, setNewChain] = useState<Chain | null>(null);
+  const theme = useTheme();
 
   useEffect(() => {
     genesis && getMetadata(genesis, true).then(setNewChain).catch((error): void => {
@@ -185,13 +187,14 @@ function ImportLedger(): React.ReactElement {
         style={{ margin: 'auto', p: 0, width: '92%' }}
       />
       {!!ledgerWarning && (
-        <Warning>
+        <Warning theme={theme}>
           {ledgerWarning}
         </Warning>
       )}
       {(!!error || !!ledgerError) && (
         <Warning
           isDanger
+          theme={theme}
         >
           {error || ledgerError}
         </Warning>

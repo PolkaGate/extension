@@ -1,6 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
@@ -24,7 +25,7 @@ interface Props {
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-export default function SelectParent({ className, isLocked, parentName, onDerivationConfirmed, parentAddress, parentGenesis }: Props): React.ReactElement<Props> {
+export default function SelectParent ({ className, isLocked, onDerivationConfirmed, parentAddress, parentGenesis, parentName }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
@@ -41,6 +42,7 @@ export default function SelectParent({ className, isLocked, parentName, onDeriva
 
     return parent?.type === 'sr25519';
   }, [accounts, parentAddress]);
+  const theme = useTheme();
 
   // reset the password field if the parent address changes
   useEffect(() => {
@@ -165,6 +167,7 @@ export default function SelectParent({ className, isLocked, parentName, onDeriva
             <Warning
               isBelowInput
               isDanger
+              theme={theme}
             >
               {t('Wrong password')}
             </Warning>
@@ -181,6 +184,7 @@ export default function SelectParent({ className, isLocked, parentName, onDeriva
             <Warning
               isBelowInput
               isDanger
+              theme={theme}
             >
               {pathError}
             </Warning>
