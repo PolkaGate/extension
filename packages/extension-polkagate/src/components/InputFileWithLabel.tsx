@@ -1,9 +1,7 @@
-// Copyright 2017-2022 @polkadot/react-components authors & contributors
+// Copyright 2017-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import styled from 'styled-components';
@@ -62,7 +60,7 @@ function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   return data;
 }
 
-function InputFile({ accept, reset, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder }: InputFileProps): React.ReactElement<InputFileProps> {
+function InputFile({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, onChange, placeholder, reset }: InputFileProps): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
   const dropRef = createRef<DropzoneRef>();
   const [file, setFile] = useState<FileState | undefined>();
@@ -138,7 +136,7 @@ function InputFile({ accept, reset, className = '', clearContent, convertHex, is
                   <Box
                     component='img'
                     src={upload}
-                  sx={{ height: '35.5px', width: '51px' }}
+                    sx={{ height: '35.5px', width: '51px' }}
                   />
                 </Grid>
               }
