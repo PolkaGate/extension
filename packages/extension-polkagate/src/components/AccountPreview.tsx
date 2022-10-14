@@ -29,6 +29,7 @@ import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { AccountContext, SettingsContext } from '.';
+import { AccMenu } from '../partials';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -117,7 +118,7 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [price, setPrice] = useState<number>();
 
-  useOutsideClick([actIconRef, actMenuRef], () => (showActionsMenu && setShowActionsMenu(!showActionsMenu)));
+  // useOutsideClick([actIconRef, actMenuRef], () => (showActionsMenu && setShowActionsMenu(!showActionsMenu)));
 
   useEffect(() => {
     if (!chain) {
@@ -173,17 +174,17 @@ export default function AccountPreview({ actions, address, allPrices, children, 
     });
   }, [api, formatted]);
 
-  useEffect(() => {
-    if (!showActionsMenu) {
-      setIsMovedMenu(false);
-    } else if (actMenuRef.current) {
-      const { bottom } = actMenuRef.current.getBoundingClientRect();
+  // useEffect(() => {
+  //   if (!showActionsMenu) {
+  //     setIsMovedMenu(false);
+  //   } else if (actMenuRef.current) {
+  //     const { bottom } = actMenuRef.current.getBoundingClientRect();
 
-      if (bottom > ACCOUNTS_SCREEN_HEIGHT) {
-        setIsMovedMenu(true);
-      }
-    }
-  }, [showActionsMenu]);
+  //     if (bottom > ACCOUNTS_SCREEN_HEIGHT) {
+  //       setIsMovedMenu(true);
+  //     }
+  //   }
+  // }, [showActionsMenu]);
 
   useEffect((): void => {
     setShowActionsMenu(false);
@@ -202,7 +203,7 @@ export default function AccountPreview({ actions, address, allPrices, children, 
     , [identity?.judgements]
   );
 
-  const theme = (
+  const identiconTheme = (
     type === 'ethereum'
       ? 'ethereum'
       : (chain?.icon || 'polkadot')
@@ -261,7 +262,7 @@ export default function AccountPreview({ actions, address, allPrices, children, 
     <Grid alignItems='center' container py='15px'>
       <AccountIcons
         address={formatted}
-        identiconTheme={theme}
+        identiconTheme={identiconTheme}
         prefix={prefix}
         proxies={proxies}
         recoverable={recoverable}
@@ -276,6 +277,17 @@ export default function AccountPreview({ actions, address, allPrices, children, 
         toggleVisibility={_toggleVisibility}
       />
       <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
+      {
+        showActionsMenu &&
+        <AccMenu
+          account={account}
+          address={formatted}
+          chain={chain}
+          isMenuOpen={showActionsMenu}
+          reference={actMenuRef}
+          setShowMenu={setShowActionsMenu}
+        />
+      }
     </Grid>
   );
 }
