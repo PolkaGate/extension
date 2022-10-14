@@ -21,6 +21,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useApi, useEndpoint, useMetadata, useOutsideClick, useProxies, useToast, useTranslation } from '../hooks';
 import { showAccount } from '../messaging';
+import { AccMenu } from '../partials';
 import { getPrice } from '../util/api/getPrice';
 import { DEFAULT_TYPE } from '../util/defaultType';
 import getParentNameSuri from '../util/getParentNameSuri';
@@ -29,7 +30,6 @@ import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { AccountContext, SettingsContext } from '.';
-import { AccMenu } from '../partials';
 
 export interface Props {
   actions?: React.ReactNode;

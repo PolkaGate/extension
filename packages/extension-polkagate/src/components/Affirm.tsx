@@ -15,7 +15,7 @@ interface Props {
   theme: Theme;
 }
 
-function Affirm({ children, className = '', isBelowInput, isAffirm }: Props): React.ReactElement<Props> {
+function Affirm({ children, className = '', isAffirm, isBelowInput }: Props): React.ReactElement<Props> {
   return (
     <div className={`${className} ${isAffirm ? 'affirm' : ''} ${isBelowInput ? 'belowInput' : ''}`}>
       <FontAwesomeIcon
