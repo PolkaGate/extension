@@ -21,7 +21,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { isend, send } from '../../assets/icons';
-import { AccountContext, ActionContext, Amount, Button, Header, Identicon, Motion, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { AccountContext, ActionContext, Amount, Button, Header, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
@@ -43,7 +43,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const location = useLocation();
   const chain = useMetadata(genesisHash, true);
   const { accounts } = useContext(AccountContext);
-  const endpoint = useEndpoint(accounts, address, chain);
+  const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(location?.state?.api);
   const [fee, setFee] = useState<Balance>();
@@ -75,6 +75,10 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   );
 
   const setWholeAmount = useCallback((type: TransferType) => {
+    console.log('maxFee:', maxFee)
+    console.log('balances:', balances)
+    console.log('api:', api)
+
     if (!api || !balances?.availableBalance || !maxFee) {
       return;
     }
@@ -83,6 +87,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     const ED = type === 'Max' ? api.consts.balances.existentialDeposit as unknown as BN : BN_ZERO;
     const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimals);
 
+    console.log('allMaxAmount:', allMaxAmount)
     setAllMaxAmount(allMaxAmount);
   }, [api, balances?.availableBalance, decimals, maxFee]);
 
@@ -237,9 +242,14 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             {t('Max amount')}
           </Grid>
         </Grid>
-        <Button _disabled={buttonDisabled} _onClick={goToReview} style={{ mt: '15px' }} title={t('Next')} />
-
       </Container>
+      <PButton
+        _mt='15px'
+        _onClick={goToReview}
+        _variant='contained'
+        disabled={buttonDisabled}
+        text={t('Next')}
+      />
     </Motion>
   );
 }
