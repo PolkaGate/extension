@@ -8,6 +8,7 @@ import React, { useMemo } from 'react';
 
 import AccountPreview from '../../components/AccountPreview';
 import { useTranslation } from '../../hooks';
+import getParentNameSuri from '../../util/getParentNameSuri';
 import { AddressPriceAll } from '../../util/plusTypes';
 
 interface Props extends AccountWithChildren {
@@ -18,6 +19,9 @@ interface Props extends AccountWithChildren {
 
 export default function AccountsTree({ allPrices, parentName, setAllPrices, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+
+  const parentNameSuri = getParentNameSuri(parentName, suri);
+
   const label = useMemo(
     (): string | undefined => {
       if (account?.isExternal) {
@@ -29,13 +33,15 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
       }
 
       if (account?.parentAddress) {
-        return t('Derived from');
+        return t('Derived from {{parentNameSuri}}', { replace: { parentNameSuri } });
       }
 
       return undefined;
     },
-    [account, t]
+    [account, parentNameSuri, t]
   );
+
+  console.log('account:', account);
 
   return (
     <>
@@ -44,7 +50,7 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
         disableGutters
         sx={{
           borderTopWidth: '1px',
-          borderTopStyle: 'solid',
+          borderTopStyle: account?.parentAddress ? 'dashed' : 'solid',
           borderColor: 'secondary.light',
           position: 'relative'
         }}
