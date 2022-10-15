@@ -1,16 +1,18 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import '@vaadin/icons';
+
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
-import { connect, connectB, key, keyB, qr, qrB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
+import settings from '@polkadot/ui-settings';
+
+import { connect, connectB, key, keyB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
-import settings from '@polkadot/ui-settings';
-import '@vaadin/icons';
 
 
 interface Props {
@@ -85,7 +87,7 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
           onClick={_goToAttachQR}
           py='4px'
           text='Attach external QR-signer '
-          vaadinIcon={QrIcon}
+          iconComponent={QrIcon}
         />
         {settings.camera !== 'on' &&
           <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} textAlign='left' sx={{ cursor: 'pointer' }}>
