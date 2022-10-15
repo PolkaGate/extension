@@ -7,6 +7,8 @@ export { default as roadBranch } from './roadBranchW.png';
 export { default as roadBranchB } from './roadBranchB.png';
 export { default as connect } from './connectW.png';
 export { default as connectB } from './connectB.png';
+export { default as crowdloans } from './crowdloansW.png';
+export { default as crowdloansB } from './crowdloansB.png';
 export { default as key } from './keyW.png';
 export { default as keyB } from './keyB.png';
 export { default as qr } from './qrW.png';
