@@ -1,18 +1,19 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, useTheme } from '@mui/material';
+import { Container, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, DropdownWithIcon, Warning } from '../../components';
+import { AccountContext, ActionContext, DropdownWithIcon, Select, Warning } from '../../components';
 import Address from '../../components/Address';
 import PButton from '../../components/PButton';
 import { useLedger, useMetadata, useTranslation } from '../../hooks';
 import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
 import { createAccountHardware, createAccountSuri, getMetadata } from '../../messaging';
+import { Name } from '../../partials';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
@@ -39,16 +40,11 @@ export interface AccountInfo {
 function ImportLedger(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const genesisOptions = useGenesisHashOptions();
-
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [step1, setStep1] = useState(true);
-  const [type, setType] = useState(DEFAULT_TYPE);
-  const chain = useMetadata(account && account.genesis, true);
-
   const [accountIndex, setAccountIndex] = useState<number>(0);
   const [addressOffset, setAddressOffset] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -117,28 +113,6 @@ function ImportLedger(): React.ReactElement {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  useEffect((): void => {
-    setType(
-      chain && chain.definition.chainType === 'ethereum'
-        ? 'ethereum'
-        : DEFAULT_TYPE
-    );
-  }, [chain]);
-
-  const _onCreate = useCallback((name: string, password: string): void => {
-    // this should always be the case
-    if (name && password && account) {
-      setIsBusy(true);
-
-      createAccountSuri(name, password, account.suri, type, account.genesis)
-        .then(() => onAction('/'))
-        .catch((error): void => {
-          setIsBusy(false);
-          console.error(error);
-        });
-    }
-  }, [account, onAction, type]);
-
   const _onNextStep = useCallback(
     () => setStep1(false),
     []
@@ -153,10 +127,9 @@ function ImportLedger(): React.ReactElement {
     step1 ? onAction('/') : _onCancelClick();
   }, [_onCancelClick, onAction, step1]);
 
-  const _onChangeNetwork = useCallback(
-    (newGenesisHash: string) => setGenesis(newGenesisHash),
-    []
-  );
+  useEffect(() => {
+    !!name && _onNextStep();
+  }, [_onNextStep, name]);
 
   return (
     <>
@@ -176,8 +149,8 @@ function ImportLedger(): React.ReactElement {
         textAlign='left'
         width='88%'
       >
-        <b>1</b>. {t<string>('Connect your Ledger device to the computer.')}<br />
-        <b>2</b>. {t<string>('Open your desired App on the Ledger device.')}<br />
+        <b>1</b>. {t<string>('Connect your ledger device to the computer.')}<br />
+        <b>2</b>. {t<string>('Open your desired App on the ledger device.')}<br />
         <b>3</b>. {t<string>('Select the relevant chain of your desired App from below.')}<br />
       </Typography>
       <div>
@@ -197,6 +170,31 @@ function ImportLedger(): React.ReactElement {
         options={networkOps.current}
         style={{ margin: 'auto', p: 0, width: '92%' }}
       />
+      {!!genesis && !!address && !ledgerError && (
+        <Name
+          onChange={setName}
+          value={name || ''}
+        />
+      )}
+      {!!name && (
+        <Container disableGutters sx={{ p: '20px 15px' }}>
+          <Select
+            defaultValue={accOps.current[0].text}
+            isDdisabled={ledgerLoading}
+            label={t<string>('account type')}
+            onChange={_onSetAccountIndex}
+            options={accOps.current}
+          />
+          <Select
+            _mt='20px'
+            defaultValue={addOps.current[0].text}
+            isDdisabled={ledgerLoading}
+            label={t<string>('address index')}
+            onChange={_onSetAddressOffset}
+            options={addOps.current}
+          />
+        </Container>
+      )}
       {!!ledgerWarning && (
         <Warning theme={theme}>
           {ledgerWarning}
@@ -218,7 +216,7 @@ function ImportLedger(): React.ReactElement {
         />
         : <PButton
           _onClick={_onSave}
-          disabled={!!error || !!ledgerError || !address || !genesis}
+          disabled={!!error || !!ledgerError || !address || !genesis || !name}
           text={t<string>('Import')}
         />
       }
