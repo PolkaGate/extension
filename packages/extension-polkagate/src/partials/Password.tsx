@@ -54,7 +54,7 @@ export default function Password({ isFocussed, onChange, onEnter }: Props): Reac
         setShowPassword={setShowConfirmPassword}
         showPassword={showConfirmPassword}
         type={showConfirmPassword ? 'text' : 'password'}
-        validator={pass1 && isSecondPasswordValid(pass1)}
+        validator={isSecondPasswordValid(pass1)}
       />
     </>
   );
