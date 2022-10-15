@@ -41,8 +41,6 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
     [account, parentNameSuri, t]
   );
 
-  console.log('account:', account);
-
   return (
     <>
       <Container
