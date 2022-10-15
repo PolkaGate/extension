@@ -1,6 +1,10 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import '@vaadin/icons';
+
+import { faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
@@ -8,7 +12,7 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { addCircle, addCircleB, exportIcon, exportIconB, importIcon, importIconB, roadBranch, roadBranchB, setting, settingB } from '../assets/icons';
+import { addCircle, addCircleB, importIcon, importIconB, setting, settingB } from '../assets/icons';
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
@@ -110,7 +114,9 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? roadBranch : roadBranchB}
+          iconComponent={
+            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
           onClick={_goToDeriveAcc}
           text={t('Derive from accounts')}
         />
@@ -125,7 +131,11 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? exportIcon : exportIconB}
+          iconComponent={
+            <FontAwesomeIcon
+              color={theme.palette.text.primary}
+              icon={faFileExport} />
+          }
           onClick={_goToExportAll}
           text={t('Export all accounts')}
         />

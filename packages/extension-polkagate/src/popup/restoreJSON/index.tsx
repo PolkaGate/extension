@@ -202,15 +202,17 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
           ))}
         </Grid>
       }
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='20px auto'
-        textAlign='left'
-        width='88%'
-      >
-        {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
-      </Typography>
+      {stepOne &&
+        <Typography
+          fontSize='14px'
+          fontWeight={300}
+          m='20px auto'
+          textAlign='left'
+          width='88%'
+        >
+          {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
+        </Typography>
+      }
       <InputFileWithLabel
         accept={acceptedFormats}
         isError={isFileError}
