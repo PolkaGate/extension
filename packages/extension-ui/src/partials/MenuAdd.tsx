@@ -121,7 +121,7 @@ function MenuAdd ({ className, reference }: Props): React.ReactElement<Props> {
                 icon={faUsb}
                 rotation={270}
               />
-              <span>{ t<string>('Connect Ledger device')}</span>
+              <span>{ t<string>('Attach Ledger device')}</span>
             </Link>
           )
         }

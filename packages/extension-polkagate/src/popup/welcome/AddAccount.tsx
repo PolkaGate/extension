@@ -103,7 +103,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
         _mt='10px'
         _onClick={_goToImportLedger}
         _variant={'outlined'}
-        text={t<string>('Connect ledger device')}
+        text={t<string>('Attach ledger device')}
       />
     </>
   );
