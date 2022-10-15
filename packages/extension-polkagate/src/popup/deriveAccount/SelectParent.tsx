@@ -135,7 +135,7 @@ export default function SelectParent ({ className, isLocked, onDerivationConfirm
           : (
             <Label
               label={t<string>('Choose Parent Account')}
-              style={{ margin: 'auto', paddingBlock: '20px', width: '92%' }}
+              style={{ margin: 'auto', paddingBottom: '20px', width: '92%' }}
             >
               <AddressDropdown
                 allAddresses={allAddresses}
@@ -161,7 +161,6 @@ export default function SelectParent ({ className, isLocked, onDerivationConfirm
             showPassword={showPassword}
             type={showPassword ? 'text' : 'password'}
             value={parentPassword}
-
           />
           {!!parentPassword && !isProperParentPassword && (
             <Warning

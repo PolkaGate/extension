@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useTheme } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -169,6 +169,17 @@ function ImportLedger(): React.ReactElement {
           totalSteps: 2
         }}
       />
+      <Typography
+        fontSize='14px'
+        fontWeight={300}
+        m='20px auto'
+        textAlign='left'
+        width='88%'
+      >
+        <b>1</b>. {t<string>('Connect your Ledger device to the computer.')}<br />
+        <b>2</b>. {t<string>('Open your desired App on the Ledger device.')}<br />
+        <b>3</b>. {t<string>('Select the relevant chain of your desired App from below.')}<br />
+      </Typography>
       <div>
         <Address
           address={address}
