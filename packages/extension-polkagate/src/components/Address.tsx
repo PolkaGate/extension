@@ -37,6 +37,7 @@ export interface Props {
   toggleActions?: number;
   type?: KeypairType;
   style?: SxProps<Theme> | undefined;
+  showCopy?: boolean;
 }
 
 interface Recoded {
@@ -86,7 +87,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, className, genesisHash, isHardware, isExternal, name, style, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, className, genesisHash, isHardware, isExternal, name, style, showCopy = true, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
@@ -184,7 +185,7 @@ function Address({ address, className, genesisHash, isHardware, isExternal, name
               maxWidth={'220px'}
               overflow={'hidden'}
               textOverflow={'ellipsis'}
-              xs={10}
+              xs={showCopy ? 10 : 12}
             >
               <Typography
                 fontSize={'10px'}
@@ -195,23 +196,25 @@ function Address({ address, className, genesisHash, isHardware, isExternal, name
                 {formatted || address || t('<unknown>')}
               </Typography>
             </Grid>
-            <Grid
-              item
-              pl={'5px'}
-              xs={1.5}
-            >
-              <CopyToClipboard text={(formatted && formatted) || ''}>
-                <FontAwesomeIcon
-                  className='copyIcon'
-                  color={'#BA2882'}
-                  cursor='pointer'
-                  icon={faCopy}
-                  onClick={_onCopy}
-                  size='sm'
-                  title={t('copy address')}
-                />
-              </CopyToClipboard>
-            </Grid>
+            {showCopy &&
+              <Grid
+                item
+                pl={'5px'}
+                xs={1.5}
+              >
+                <CopyToClipboard text={(formatted && formatted) || ''}>
+                  <FontAwesomeIcon
+                    className='copyIcon'
+                    color={'#BA2882'}
+                    cursor='pointer'
+                    icon={faCopy}
+                    onClick={_onCopy}
+                    size='sm'
+                    title={t('copy address')}
+                  />
+                </CopyToClipboard>
+              </Grid>
+            }
           </Grid>
         </Grid>
       </Grid>

@@ -63,6 +63,7 @@ export default function AddressDropdown({ allAddresses, className, onSelect, sel
               genesisHash={selectedGenesis}
               name={selectedName}
               style={{ border: 'none', borderRadius: 0, m: 0, pl: '5px', px: 0, width: '245px' }}
+              showCopy={false}
             />
           </Grid>
           <Grid
@@ -154,6 +155,7 @@ export default function AddressDropdown({ allAddresses, className, onSelect, sel
                 genesisHash={genesisHash}
                 name={name}
                 style={{ m: 0, px: 'auto', width: '100%', border: 'none' }}
+                showCopy={false}
               />
             </Grid>
             <Grid
