@@ -5,14 +5,12 @@ import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/backgr
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { u8aToString } from '@polkadot/util';
 
-import { AccountContext, ActionContext, InputFileWithLabel, InputWithLabel, Warning } from '../../components';
-import Address from '../../components/Address'
-import PButton from '../../components/PButton';
+import { AccountContext, ActionContext, Address, InputFileWithLabel, InputWithLabel, PButton, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -204,6 +202,15 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
           ))}
         </Grid>
       }
+      <Typography
+        fontSize='14px'
+        fontWeight={300}
+        m='20px auto'
+        textAlign='left'
+        width='88%'
+      >
+        - {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
+      </Typography>
       <InputFileWithLabel
         accept={acceptedFormats}
         isError={isFileError}
