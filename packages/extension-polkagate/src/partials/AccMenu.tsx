@@ -1,8 +1,12 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
+import '@vaadin/icons';
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
 
+import { faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -10,11 +14,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { crowdloans, crowdloansB, sitemap, sitemapB } from '../assets/icons';
-import { AccountContext, ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
-import { useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
-import { getMetadata } from '../messaging';
+import { sitemap, sitemapB } from '../assets/icons';
+import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
+import { useEndpoint, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
+import { getMetadata, tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
+import { prepareMetaData } from '../util/utils';// added for plus
 
 interface Props {
   className?: string;
@@ -32,14 +37,25 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
   const settings = useContext(SettingsContext);
   const { show } = useToast();
   const options = useGenesisHashOptions();
-  const [newChain, setNewChain] = useState<Chain | null>(null);
+  const [newChain, setNewChain] = useState<Chain | null>(chain);
   const [genesisHash, setGenesis] = useState<string | undefined>('');
-  const endpointOptions = useEndpoints(genesisHash);
+  const endpointOptions = useEndpoints(genesisHash || newChain?.genesisHash || chain?.genesisHash);
+
+  const currentChain = newChain ?? chain;
+  const endpoint = useEndpoint(account.address, currentChain);
+  const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
+
+  console.log('newEndpoint:', newEndpoint);
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
 
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
+
+  useEffect(() => {
+    !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpointOptions]);
 
   const _closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
@@ -48,7 +64,7 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
 
   const _goToDeriveAcc = useCallback(
     () => {
-      onAction(`/account/derive/${account.address}/locked`);
+      account?.address && onAction(`/account/derive/${account.address}/locked`);
     }, [account?.address, onAction]
   );
 
@@ -65,8 +81,11 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
   );
 
   const _onChangeNetwork = useCallback(
-    (newGenesisHash: string) => setGenesis(newGenesisHash),
-    []
+    (newGenesisHash: string) => {
+      account?.address && tieAccount(account.address, newGenesisHash || null).catch(console.error);
+      setGenesis(newGenesisHash);
+    },
+    [account]
   );
 
   useEffect(() => {
@@ -75,6 +94,14 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
       setNewChain(null);
     });
   }, [genesisHash]);
+
+  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
+    setNewEndpoint(newEndpoint);
+    const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+
+    // eslint-disable-next-line no-void
+    chainName && account?.address && void updateMeta(account.address, prepareMetaData(chainName, 'endpoint', newEndpoint));
+  }, [account, chain?.name]);
 
   const movingParts = (
     <Grid
@@ -93,6 +120,7 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
         justifyContent='center'
         my='20px'
       >
+
         <Identicon
           className='identityIcon'
           iconTheme={identiconTheme}
@@ -104,7 +132,8 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
         />
         <Grid
           item
-          ml='10px'
+          pl='10px'
+          sx={{ maxWidth: '70%', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
         >
           <Typography
             fontSize='28px'
@@ -117,51 +146,69 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        icon={theme.palette.mode === 'dark' ? crowdloans : crowdloansB}
+        iconComponent={
+          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+        }
         // onClick={_goToDeriveAcc}
-        text={t('Crowdloans')}
+        text={t('Contribute to crowdloans')}
       />
       <MenuItem
-        icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
+        iconComponent={
+          <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+        }
         // onClick={onnn}
         text={t('Manage proxies')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
+        iconComponent={
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            icon={faFileExport} />
+        }
         // onClick={onnn}
         text={t('Export account')}
       />
       <MenuItem
         icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
+        iconComponent={
+          <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+        }
         // onClick={_goToDeriveAcc}
         text={t('Derive new account')}
       />
       <MenuItem
-        icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
+        iconComponent={
+          <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+        }
         // onClick={onnn}
         text={t('Rename')}
       />
       <MenuItem
-        icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
+        iconComponent={
+          <vaadin-icon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+        }
         // onClick={onnn}
         text={t('Forget account')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <DropdownWithIcon
-        defaultValue={options[0].text}
+        defaultValue={chain?.genesisHash ?? options[0].text}
         icon={getLogo(newChain ?? undefined)}
         label={t<string>('Select the chain')}
         onChange={_onChangeNetwork}
         options={options}
         style={{ width: '100%' }}
       />
-      <Select
-        defaultValue={endpointOptions.length > 0 ? endpointOptions[0].text : 'No chain selected'}
-        label={t<string>('Endpoint')}
-        onChange={() => null}
-        options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
-      />
+      {newEndpoint &&
+        <Select
+          _mt='10px'
+          defaultValue={newEndpoint ?? 'No chain selected'}
+          label={t<string>('Endpoint')}
+          onChange={_onChangeEndpoint}
+          options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
+        />
+      }
       <IconButton
         onClick={_closeMenu}
         sx={{
