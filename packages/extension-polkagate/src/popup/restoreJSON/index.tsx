@@ -206,10 +206,10 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         fontSize='14px'
         fontWeight={300}
         m='20px auto'
-        textAlign='left'
+        textAlign='center'
         width='88%'
       >
-        - {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
+        {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
       </Typography>
       <InputFileWithLabel
         accept={acceptedFormats}
