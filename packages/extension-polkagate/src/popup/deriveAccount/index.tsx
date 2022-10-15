@@ -1,6 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -89,13 +90,33 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
         }}
       />
       {stepOne && !account && (
-        <SelectParent
-          isLocked={isLocked}
-          onDerivationConfirmed={_onDerivationConfirmed}
-          parentAddress={parentAddress}
-          parentGenesis={parentGenesis}
-          parentName={parentName}
-        />
+        <>
+          <Typography
+            fontSize='14px'
+            fontWeight={300}
+            m='20px auto'
+            textAlign='left'
+            width='88%'
+          >
+            - {t<string>('A new account can be derived to structure accounts as parent and children.')}
+          </Typography>
+          <Typography
+            fontSize='14px'
+            fontWeight={300}
+            m='20px auto'
+            textAlign='left'
+            width='88%'
+          >
+            - {t<string>('A derived account inherits the Mnemonic from its parent, but has a unique derivation path.')}
+          </Typography>
+          <SelectParent
+            isLocked={isLocked}
+            onDerivationConfirmed={_onDerivationConfirmed}
+            parentAddress={parentAddress}
+            parentGenesis={parentGenesis}
+            parentName={parentName}
+          />
+        </>
       )}
       {!stepOne && account && (
         <>
