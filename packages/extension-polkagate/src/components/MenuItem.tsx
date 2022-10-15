@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Avatar, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Grid, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 
 interface Props {
   disabled?: boolean;
   icon?: string;
-  vaadinIcon?: JSX.Element;
+  iconComponent?: JSX.Element;
   text: string;
   children?: React.ReactElement<Props>;
   onClick?: MouseEventHandler<HTMLDivElement>;
@@ -16,7 +16,7 @@ interface Props {
   py?: string;
 }
 
-export default function MenuItem({ children, disabled = false, icon, onClick, py = '8px', showSubMenu = false, text, vaadinIcon }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, icon, onClick, py = '8px', showSubMenu = false, text, iconComponent }: Props): React.ReactElement<Props> {
   return (
     <>
       <Grid
@@ -43,8 +43,9 @@ export default function MenuItem({ children, disabled = false, icon, onClick, py
             item
             xs={1}
           >
-            {vaadinIcon ??
-              <Avatar
+            {iconComponent ??
+              <Box
+                component='img'
                 alt={'logo'}
                 color={disabled ? '#4B4B4B' : 'inherit'}
                 src={icon}
