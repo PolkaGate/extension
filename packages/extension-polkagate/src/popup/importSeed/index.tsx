@@ -83,6 +83,7 @@ function ImportSeed(): React.ReactElement {
           address={account?.address}
           genesisHash={account?.genesis}
           name={name}
+          showCopy={!!account?.address}
         />
       </div>
       {step1
