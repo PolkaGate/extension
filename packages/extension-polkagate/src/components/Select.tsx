@@ -37,21 +37,24 @@ interface DropdownOption {
 
 interface Props {
   defaultValue: string | undefined;
-  onChange?: (value: string) => void;
+  onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;
+  isDdisabled?: boolean;
+  _mt?: string | number;
 }
 
-export default function CustomizedSelect({ defaultValue, label, onChange, options }: Props) {
+export default function CustomizedSelect({ _mt = 0, defaultValue, isDdisabled = false, label, onChange, options }: Props) {
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) =>
-      onChange && onChange(value.trim()),
+      onChange && onChange(typeof value === 'string' ? value.trim() : value),
     [onChange]
   );
 
   return (
     <FormControl
-      sx={{ width: '100%' }}
+      disabled={isDdisabled}
+      sx={{ width: '100%', mt: `${_mt}` }}
       variant='standard'
     >
       <InputLabel

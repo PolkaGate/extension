@@ -24,12 +24,12 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
 
   const label = useMemo(
     (): string | undefined => {
-      if (account?.isExternal) {
-        return t('Address only');
-      }
-
       if (account?.isHardware) {
         return t('Ledger');
+      }
+
+      if (account?.isExternal) {
+        return t('Address only');
       }
 
       if (account?.parentAddress) {

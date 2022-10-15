@@ -98,7 +98,7 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
           icon={theme.palette.mode === 'light' ? connectB : connect}
           onClick={_goToImportLedger}
           py='4px'
-          text='Connect ledger device'
+          text='Attach ledger device'
         />
         <MenuItem
           icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
