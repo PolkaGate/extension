@@ -9,7 +9,7 @@ import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react';
 
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -19,7 +19,7 @@ import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsC
 import { useEndpoint, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
-import { prepareMetaData } from '../util/utils';// added for plus
+import { prepareMetaData } from '../util/utils';
 
 interface Props {
   reference: React.MutableRefObject<null>;
@@ -46,7 +46,7 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
-
+  const canDerive = useMemo(() => !(account?.isExternal || account?.isHardware));
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
   const resetToDefaults = () => {
@@ -171,14 +171,16 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
         // onClick={onnn}
         text={t('Export account')}
       />
-      <MenuItem
-        icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
-        iconComponent={
-          <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-        }
-        // onClick={_goToDeriveAcc}
-        text={t('Derive new account')}
-      />
+      {canDerive &&
+        <MenuItem
+          icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
+          iconComponent={
+            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
+          // onClick={_goToDeriveAcc}
+          text={t('Derive new account')}
+        />
+      }
       <MenuItem
         iconComponent={
           <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
