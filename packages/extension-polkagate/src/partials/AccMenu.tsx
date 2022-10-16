@@ -59,7 +59,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   useEffect(() => {
     !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newEndpoint]);
+  }, [newEndpoint, genesisHash]);
 
   const _closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
