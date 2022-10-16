@@ -3,43 +3,39 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
-import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { faUsb } from '@fortawesome/free-brands-svg-icons';
 import { faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-
-import { useApi, useEndpoint, useMetadata, useOutsideClick, useProxies, useToast, useTranslation } from '../hooks';
+import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../hooks';
 import { showAccount } from '../messaging';
 import { AccMenu } from '../partials';
 import { getPrice } from '../util/api/getPrice';
-import { DEFAULT_TYPE } from '../util/defaultType';
 import { AddressPriceAll } from '../util/plusTypes';
+import { getFormattedAddress } from '../util/utils';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
-import { AccountContext, SettingsContext } from '.';
-import type { ApiPromise } from '@polkadot/api';
+import { SettingsContext } from '.';
 
 export interface Props {
   actions?: React.ReactNode;
-  address?: string | null;
+  address: string;
   children?: React.ReactNode;
   genesisHash?: string | null;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
-  name?: string | null;
+  name: string;
   parentName?: string | null;
   suri?: string;
   toggleActions?: number;
@@ -48,68 +44,19 @@ export interface Props {
   allPrices: AddressPriceAll[] | undefined;
 }
 
-interface Recoded {
-  account: AccountJson | null;
-  formatted: string | null;
-  genesisHash?: string | null;
-  prefix?: number;
-  type: KeypairType;
-}
-
-// find an account in our list
-function findSubstrateAccount(accounts: AccountJson[], publicKey: Uint8Array): AccountJson | null {
-  const pkStr = publicKey.toString();
-
-  return accounts.find(({ address }): boolean =>
-    decodeAddress(address).toString() === pkStr
-  ) || null;
-}
-
-// find an account in our list
-function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | null {
-  return accounts.find(({ address }): boolean =>
-    address === _address
-  ) || null;
-}
-
-// recodes an supplied address using the prefix/genesisHash, include the actual saved account & chain
-function recodeAddress(address: string, accounts: AccountWithChildren[], chain: Chain | null, settings: SettingsStruct): Recoded {
-  // decode and create a shortcut for the encoded address
-  const publicKey = decodeAddress(address);
-
-  // find our account using the actual publicKey, and then find the associated chain
-  const account = findSubstrateAccount(accounts, publicKey);
-  const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
-
-  // always allow the actual settings to override the display
-  return {
-    account,
-    formatted: account?.type === 'ethereum'
-      ? address
-      : encodeAddress(publicKey, prefix),
-    genesisHash: account?.genesisHash,
-    prefix,
-    type: account?.type || DEFAULT_TYPE
-  };
-}
-
-const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 const isChainApi = (chain: Chain | null, api: ApiPromise | undefined) => (chain?.genesisHash && api?.genesisHash && chain.genesisHash === api.genesisHash?.toString());
 
-export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, allPrices, genesisHash, isExternal, isHardware, isHidden, name, setAllPrices, toggleActions, type }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
-  const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
-  const [{ account, formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
-  const chain = useMetadata(genesisHash || recodedGenesis, true);
+  const chain = useMetadata(genesisHash, true);
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
+  const [formatted, setFormatted] = useState<string>();
+
   const proxies = useProxies(api, formatted);
-
   const [showActionsMenu, setShowActionsMenu] = useState(false);
-  const actMenuRef = useRef<HTMLDivElement>(null);
-
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
@@ -146,40 +93,16 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   }, [api, balances, price, setAllPrices]);
 
   useEffect((): void => {
-    if (!address) {
-      return setRecoded(defaultRecoded);
+    if (address && chain && settings?.prefix) {
+      setFormatted(getFormattedAddress(address, chain, settings.prefix));
     }
-
-    const account = findAccountByAddress(accounts, address);
-
-    setRecoded(
-      (
-        chain?.definition.chainType === 'ethereum' ||
-        account?.type === 'ethereum' ||
-        (!account && givenType === 'ethereum')
-      )
-        ? { account, formatted: address, type: 'ethereum' }
-        : recodeAddress(address, accounts, chain, settings)
-    );
-  }, [accounts, address, chain, givenType, settings]);
+  }, [address, chain, settings]);
 
   useEffect(() => {
     setBalances(undefined);
     // eslint-disable-next-line no-void
     isChainApi(chain, api) && formatted && void api.derive.balances?.all(formatted).then(setBalances).catch(console.error);
   }, [api, chain, formatted]);
-
-  // useEffect(() => {
-  //   if (!showActionsMenu) {
-  //     setIsMovedMenu(false);
-  //   } else if (actMenuRef.current) {
-  //     const { bottom } = actMenuRef.current.getBoundingClientRect();
-
-  //     if (bottom > ACCOUNTS_SCREEN_HEIGHT) {
-  //       setIsMovedMenu(true);
-  //     }
-  //   }
-  // }, [showActionsMenu]);
 
   useEffect((): void => {
     setShowActionsMenu(false);
@@ -217,13 +140,12 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   );
 
   const Name = () => {
-    const accountName = name || account?.name;
-    const displayName = identity?.display || accountName || t('<Unknown>');
+    const displayName = identity?.display || name || t('<Unknown>');
 
     return (
       <>
-        {!!accountName && (account?.isExternal || isExternal) && (
-          (account?.isHardware || isHardware)
+        {!!name && (isExternal || isExternal) && (
+          isHardware
             ? (
               <FontAwesomeIcon
                 className='hardwareIcon'
@@ -251,21 +173,23 @@ export default function AccountPreview({ actions, address, allPrices, children, 
     });
   }, [balances, history, genesisHash, address, formatted, api, identity]);
 
+  // console.log('account:', account);
+
   return (
     <Grid alignItems='center' container py='15px'>
       <AccountIcons
-        address={formatted}
+        formatted={formatted}
         identiconTheme={identiconTheme}
-        prefix={prefix}
+        prefix={settings?.prefix}
         proxies={proxies}
         recoverable={recoverable}
       />
       <AccountDetail
-        address={formatted}
         balances={balances}
         chain={chain}
+        formatted={formatted}
         isHidden={isHidden}
-        name={name || account?.name}
+        name={name}
         price={price}
         toggleVisibility={_toggleVisibility}
       />
@@ -273,12 +197,15 @@ export default function AccountPreview({ actions, address, allPrices, children, 
       {
         showActionsMenu &&
         <AccMenu
-          account={account}
-          address={formatted}
+          address={address}
           chain={chain}
+          formatted={formatted}
+          isExternal={isExternal}
+          isHardware={isHardware}
           isMenuOpen={showActionsMenu}
-          reference={actMenuRef}
+          name={name}
           setShowMenu={setShowActionsMenu}
+          type={type}
         />
       }
     </Grid>

@@ -13,14 +13,14 @@ import { Proxy } from '../util/plusTypes';
 import Identicon from './Identicon';
 
 interface Props {
-  address: string | null;
+  formatted: string | undefined;
   recoverable?: boolean;
   identiconTheme: IconTheme;
   prefix?: number;
   proxies: Proxy[] | undefined
 }
 
-export default function AccountIcons({ address, identiconTheme, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons({ formatted, identiconTheme, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { show } = useToast();
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ export default function AccountIcons({ address, identiconTheme, prefix, proxies,
           onCopy={_onCopy}
           prefix={prefix}
           size={40}
-          value={address}
+          value={formatted}
         />
       </Grid>
       <Grid

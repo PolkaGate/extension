@@ -18,7 +18,7 @@ import FormatBalance from './FormatBalance';
 import FormatPrice from './FormatPrice';
 
 interface Props {
-  address: string | undefined | null;
+  formatted: string | undefined | null;
   name: string | undefined;
   toggleVisibility: () => void;
   chain: Chain | null;
@@ -27,11 +27,11 @@ interface Props {
   isHidden: boolean | undefined;
 }
 
-export default function AccountDetail({ address, balances, chain, isHidden, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ formatted, balances, chain, isHidden, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
   const { show } = useToast();
   const { t } = useTranslation();
   const theme = useTheme();
-  const endpoint = useEndpoint(address, chain);
+  const endpoint = useEndpoint(formatted, chain);
   const api = useApi(endpoint);
   const decimals = api ? api.registry.chainDecimals[0] : undefined;
 
@@ -126,7 +126,7 @@ export default function AccountDetail({ address, balances, chain, isHidden, name
           </IconButton>
         </Grid>
         <Grid item>
-          <CopyToClipboard text={String(address)}>
+          <CopyToClipboard text={String(formatted)}>
             <IconButton
               onClick={_onCopy}
               sx={{ height: '23px', m: '10px 0', width: '36px' }}

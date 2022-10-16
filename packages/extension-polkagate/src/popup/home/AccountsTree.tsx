@@ -47,9 +47,9 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
         className='tree'
         disableGutters
         sx={{
-          borderTopWidth: '1px',
-          borderTopStyle: account?.parentAddress ? 'dashed' : 'solid',
           borderColor: 'secondary.light',
+          borderTopStyle: account?.parentAddress ? 'dashed' : 'solid',
+          borderTopWidth: '1px',
           position: 'relative'
         }}
       >
