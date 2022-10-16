@@ -4,14 +4,14 @@
 import '@vaadin/icons';
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { sitemap, sitemapB } from '../assets/icons';
@@ -22,15 +22,18 @@ import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';
 
 interface Props {
-  reference: React.MutableRefObject<null>;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
-  account: AccountJson | null;
   chain: Chain | null;
+  formatted: string | undefined;
   address: string | null;
+  isHardware: boolean | null | undefined
+  isExternal: boolean | null | undefined
+  type: KeypairType | undefined;
+  name: string;
 }
 
-function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const settings = useContext(SettingsContext);
@@ -41,12 +44,12 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
   const endpointOptions = useEndpoints(genesisHash || newChain?.genesisHash || chain?.genesisHash);
 
   const currentChain = newChain ?? chain;
-  const endpoint = useEndpoint(account.address, currentChain);
+  const endpoint = useEndpoint(address, currentChain);
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
-  const canDerive = useMemo(() => !(account?.isExternal || account?.isHardware));
+  const canDerive = !(isExternal || isHardware);
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
   const resetToDefaults = () => {
@@ -63,15 +66,9 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
     [setShowMenu]
   );
 
-  const _goToDeriveAcc = useCallback(
-    () => {
-      account?.address && onAction(`/account/derive/${account.address}/locked`);
-    }, [account?.address, onAction]
-  );
-
   const identiconTheme = (
     (chain?.definition.chainType === 'ethereum' ||
-      account?.type === 'ethereum')
+      type === 'ethereum')
       ? 'ethereum'
       : (chain?.icon || 'polkadot')
   ) as IconTheme;
@@ -84,10 +81,10 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
   const _onChangeNetwork = useCallback(
     (newGenesisHash: string) => {
       resetToDefaults();
-      account?.address && tieAccount(account.address, newGenesisHash || null).catch(console.error);
+      address && tieAccount(address, newGenesisHash || null).catch(console.error);
       setGenesis(newGenesisHash);
     },
-    [account]
+    [address]
   );
 
   useEffect(() => {
@@ -102,8 +99,8 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
     const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
     // eslint-disable-next-line no-void
-    chainName && account?.address && void updateMeta(account.address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [account, chain?.name]);
+    chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
+  }, [address, chain?.name]);
 
   const movingParts = (
     <Grid
@@ -114,7 +111,7 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
       item
       mt='46px'
       px='46px'
-      sx={{ height: 'parent.innerHeight', borderRadius: '10px 10px 0px 0px' }}
+      sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }}
       width='100%'
     >
       <Grid
@@ -122,27 +119,26 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
         justifyContent='center'
         my='20px'
       >
-
         <Identicon
           className='identityIcon'
           iconTheme={identiconTheme}
-          isExternal={account?.isExternal}
+          isExternal={isExternal}
           onCopy={_onCopy}
           prefix={prefix}
           size={40}
-          value={address}
+          value={formatted}
         />
         <Grid
           item
           pl='10px'
-          sx={{ maxWidth: '70%', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+          sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
         >
           <Typography
             fontSize='28px'
             fontWeight={300}
             lineHeight={1.4}
           >
-            {account?.name}
+            {name}
           </Typography>
         </Grid>
       </Grid>
@@ -235,16 +231,16 @@ function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): R
       justifyContent='end'
       ref={containerRef}
       sx={[{
-        position: 'fixed',
-        top: 0,
-        ml: '-15px',
         mixBlendMode: 'normal',
+        ml: '-15px',
         overflowY: 'scroll',
+        position: 'fixed',
         scrollbarWidth: 'none',
         '&::-webkit-scrollbar': {
           display: 'none',
           width: 0
-        }
+        },
+        top: 0
       }]}
       width='357px'
       zIndex={10}
