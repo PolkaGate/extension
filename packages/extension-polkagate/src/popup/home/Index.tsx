@@ -22,10 +22,11 @@ interface Props {
   className?: string;
 }
 
-export default function Home ({ className }: Props): React.ReactElement {
+export default function Home({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
+  const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
   const networkMap = useMemo(() => getNetworkMap(), []);
   const [allPrices, setAllPrices] = useState<AddressPriceAll[] | undefined>();
@@ -47,6 +48,23 @@ export default function Home ({ className }: Props): React.ReactElement {
         : hierarchy
     );
   }, [filter, hierarchy, networkMap]);
+
+  useEffect(() => {
+    setSortedAccount(filteredAccount.sort((a, b) => {
+      const x = a.name.toLowerCase();
+      const y = b.name.toLowerCase();
+
+      if (x < y) {
+        return -1;
+      }
+
+      if (x > y) {
+        return 1;
+      }
+
+      return 0;
+    }));
+  }, [filteredAccount]);
 
   const _onFilter = useCallback((event: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>) => {
     const filter = event.target.value;
@@ -92,7 +110,7 @@ export default function Home ({ className }: Props): React.ReactElement {
                 width: '92%'
               }]}
             >
-              {filteredAccount.map((json, index): React.ReactNode => (
+              {sortedAccount.map((json, index): React.ReactNode => (
                 <AccountsTree
                   {...json}
                   allPrices={allPrices}
