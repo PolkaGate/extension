@@ -115,7 +115,7 @@ export function prepareMetaData(chain: Chain | null | string, label: string, met
 
   return JSON.stringify({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    [label]: JSON.stringify({ chainName: chainName, metaData: metaData })
+    [label]: JSON.stringify({ chainName, metaData })
   });
 }
 
