@@ -22,7 +22,6 @@ import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';// added for plus
 
 interface Props {
-  className?: string;
   reference: React.MutableRefObject<null>;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
@@ -31,13 +30,13 @@ interface Props {
   address: string | null;
 }
 
-function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function AccMenu({ account, address, chain, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const settings = useContext(SettingsContext);
   const { show } = useToast();
   const options = useGenesisHashOptions();
-  const [newChain, setNewChain] = useState<Chain | null>(chain);
+  const [newChain, setNewChain] = useState<Chain | null | undefined>();
   const [genesisHash, setGenesis] = useState<string | undefined>('');
   const endpointOptions = useEndpoints(genesisHash || newChain?.genesisHash || chain?.genesisHash);
 
@@ -45,17 +44,19 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
   const endpoint = useEndpoint(account.address, currentChain);
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
 
-  console.log('newEndpoint:', newEndpoint);
-
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
 
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
+  const resetToDefaults = () => {
+    setNewEndpoint(undefined);
+  };
+
   useEffect(() => {
     !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpointOptions]);
+  }, [newEndpoint]);
 
   const _closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
@@ -82,6 +83,7 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
 
   const _onChangeNetwork = useCallback(
     (newGenesisHash: string) => {
+      resetToDefaults();
       account?.address && tieAccount(account.address, newGenesisHash || null).catch(console.error);
       setGenesis(newGenesisHash);
     },
@@ -194,7 +196,7 @@ function AccMenu({ account, address, chain, className, isMenuOpen, setShowMenu }
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <DropdownWithIcon
         defaultValue={chain?.genesisHash ?? options[0].text}
-        icon={getLogo(newChain ?? undefined)}
+        icon={getLogo(newChain || chain || undefined)}
         label={t<string>('Select the chain')}
         onChange={_onChangeNetwork}
         options={options}

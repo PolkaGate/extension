@@ -29,6 +29,7 @@ import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { AccountContext, SettingsContext } from '.';
+import type { ApiPromise } from '@polkadot/api';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -93,6 +94,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 }
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
+const isChainApi = (chain: Chain | null, api: ApiPromise | undefined) => (chain?.genesisHash && api?.genesisHash && chain.genesisHash === api.genesisHash?.toString());
 
 export default function AccountPreview({ actions, address, allPrices, children, genesisHash, isExternal, isHardware, isHidden, name, parentName, setAllPrices, suri, toggleActions, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -113,13 +115,12 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [price, setPrice] = useState<number>();
 
-  // useOutsideClick([actIconRef, actMenuRef], () => (showActionsMenu && setShowActionsMenu(!showActionsMenu)));
-
   useEffect(() => {
     if (!chain) {
       return;
     }
 
+    setPrice(undefined);
     // eslint-disable-next-line no-void
     void getPrice(chain).then((p) => {
       setPrice(p);
@@ -163,11 +164,10 @@ export default function AccountPreview({ actions, address, allPrices, children, 
   }, [accounts, address, chain, givenType, settings]);
 
   useEffect(() => {
+    setBalances(undefined);
     // eslint-disable-next-line no-void
-    api && formatted && void api.derive.balances?.all(formatted).then((b) => {
-      setBalances(b);
-    });
-  }, [api, formatted]);
+    isChainApi(chain, api) && formatted && void api.derive.balances?.all(formatted).then(setBalances).catch(console.error);
+  }, [api, chain, formatted]);
 
   // useEffect(() => {
   //   if (!showActionsMenu) {
