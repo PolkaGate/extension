@@ -4,20 +4,26 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import '@vaadin/icons';
+import type { ApiPromise } from '@polkadot/api';
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { Chain } from '@polkadot/extension-chains/types';
+import { BN } from '@polkadot/util';
 
 import { useApi, useEndpoint, useToast, useTranslation } from '../hooks';
+import { updateMeta } from '../messaging';
+import { prepareMetaData } from '../util/utils';
 import FormatBalance from './FormatBalance';
 import FormatPrice from './FormatPrice';
 
 interface Props {
+  api: ApiPromise | undefined
+  address: string;
   formatted: string | undefined | null;
   name: string | undefined;
   toggleVisibility: () => void;
@@ -25,14 +31,14 @@ interface Props {
   price: number | undefined;
   balances: DeriveBalancesAll | undefined
   isHidden: boolean | undefined;
+  lastTotalBalance: BN | undefined
+
 }
 
-export default function AccountDetail({ formatted, balances, chain, isHidden, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ api, address, balances, chain, formatted, isHidden, lastTotalBalance, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
   const { show } = useToast();
   const { t } = useTranslation();
   const theme = useTheme();
-  const endpoint = useEndpoint(formatted, chain);
-  const api = useApi(endpoint);
   const decimals = api ? api.registry.chainDecimals[0] : undefined;
 
   const _onCopy = useCallback(
@@ -46,11 +52,34 @@ export default function AccountDetail({ formatted, balances, chain, isHidden, na
     </Grid>
   );
 
+  console.log('lastTotalBalance:', lastTotalBalance);
+  console.log('balances:', balances);
+  console.log('api:', api);
+
+  const formattedBalance = (balances || lastTotalBalance) && api &&
+    <FormatBalance
+      api={api}
+      decimalPoint={2}
+      value={balances
+        ? balances.freeBalance.add(balances.reservedBalance)
+        : lastTotalBalance}
+    />;
+
+  useEffect((): void => {
+    if (balances && chain) {
+      const totalBalance = balances.freeBalance.add(balances.reservedBalance).toString();
+
+      console.log('saving balance to ' + totalBalance)
+      // eslint-disable-next-line no-void
+      void updateMeta(address, prepareMetaData(chain, 'totalBalance', totalBalance));
+    }
+  }, [address, balances, chain]);
+
   const Balance = () => (
     <>
-      {!balances || !api
+      {!formattedBalance || !api
         ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={103} />
-        : <FormatBalance api={api} decimalPoint={2} value={balances.freeBalance.add(balances.reservedBalance)} />
+        : formattedBalance
       }
     </>
   );
