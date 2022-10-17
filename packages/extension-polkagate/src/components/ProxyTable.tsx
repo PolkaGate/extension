@@ -1,14 +1,17 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { nameAddress, Proxy } from '../util/plusTypes';
+import { nameAddress, Proxy } from '../util/types';
 import Identicon from './Identicon';
 import Label from './Label';
+import Progress from './Progress';
 
 interface Props {
   addresesOnThisChain: nameAddress[];
@@ -118,107 +121,127 @@ export default function ProxyTable({ addresesOnThisChain, chain, label, withRemo
                 address
               </Grid> */}
             </Grid>
-            {proxies &&
-              proxies.map((proxy, index) => {
-                return (
-                  <Grid
-                    container
-                    item
-                    key={index}
-                    sx={{
-                      '> div:not(:last-child)': {
-                        borderRight: '1px solid',
-                        borderRightColor: 'secondary.light'
-                      },
-                      height: '41px',
-                      textAlign: 'center'
-                    }}
-                    xs={12}
-                  >
-                    <Grid
-                      alignItems='center'
-                      container
-                      height='100%'
-                      item
-                      justifyContent='center'
-                      xs={4.5}
-                    >
+            {chain &&
+              (proxies
+                ? proxies.length
+                  ? proxies.map((proxy, index) => {
+                    return (
                       <Grid
+                        container
                         item
-                        width='30px'
+                        key={index}
+                        sx={{
+                          '> div:not(:last-child)': {
+                            borderRight: '1px solid',
+                            borderRightColor: 'secondary.light'
+                          },
+                          height: '41px',
+                          textAlign: 'center'
+                        }}
+                        xs={12}
                       >
-                        <Identicon
-                          // prefix={chain?.ss58Format ?? 42}
-                          prefix={0}
-                          size={30}
-                          // theme={chain?.icon || 'polkadot'}
-                          theme={'polkadot'}
-                          value={proxy.delegate}
-                        />
+                        <Grid
+                          alignItems='center'
+                          container
+                          height='100%'
+                          item
+                          justifyContent='center'
+                          xs={4.5}
+                        >
+                          <Grid
+                            item
+                            width='30px'
+                          >
+                            <Identicon
+                              prefix={chain?.ss58Format ?? 42}
+                              size={30}
+                              theme={chain?.icon || 'polkadot'}
+                              value={proxy.delegate}
+                            />
+                          </Grid>
+                          <Typography
+                            fontSize='12px'
+                            fontWeight={400}
+                            maxWidth='85px'
+                            overflow='hidden'
+                            pl='5px'
+                            textOverflow='ellipsis'
+                          >
+                            {proxy.delegate}
+                          </Typography>
+                        </Grid>
+                        <Grid
+                          alignItems='center'
+                          container
+                          height='100%'
+                          item
+                          justifyContent='center'
+                          xs={3}
+                        >
+                          <Typography
+                            fontSize='12px'
+                            fontWeight={400}
+                          >
+                            {proxy.proxyType}
+                          </Typography>
+                        </Grid>
+                        <Grid
+                          alignItems='center'
+                          container
+                          height='100%'
+                          item
+                          justifyContent='center'
+                          xs={2}
+                        >
+                          <Typography
+                            fontSize='12px'
+                            fontWeight={400}
+                          >
+                            {proxy.delay}
+                          </Typography>
+                        </Grid>
+                        <Grid
+                          alignItems='center'
+                          container
+                          height='100%'
+                          item
+                          justifyContent='center'
+                          xs={2.5}
+                        >
+                          <Typography
+                            fontSize='12px'
+                            fontWeight={400}
+                          >
+                            {isAvailable(proxy.delegate) ? 'Yes' : 'No'}
+                          </Typography>
+                        </Grid>
+                        {/* <Grid item>
+                      address
+                    </Grid> */}
                       </Grid>
-                      <Typography
-                        fontSize='12px'
-                        fontWeight={400}
-                        maxWidth='85px'
-                        overflow='hidden'
-                        pl='5px'
-                        textOverflow='ellipsis'
-                      >
-                        {proxy.delegate}
-                      </Typography>
-                    </Grid>
+                    );
+                  })
+                  : (
                     <Grid
-                      alignItems='center'
-                      container
-                      height='100%'
-                      item
-                      justifyContent='center'
-                      xs={3}
+                      display='inline-flex'
+                      p='10px'
                     >
+                      <FontAwesomeIcon
+                        className='warningImage'
+                        icon={faExclamationTriangle}
+                      />
                       <Typography
                         fontSize='12px'
                         fontWeight={400}
+                        lineHeight='20px'
+                        pl='8px'
                       >
-                        {proxy.proxyType}
+                        {`No proxies found for the above account’s address on ${chain.name}. You can use it as Watch Only Account.`}
                       </Typography>
                     </Grid>
-                    <Grid
-                      alignItems='center'
-                      container
-                      height='100%'
-                      item
-                      justifyContent='center'
-                      xs={2}
-                    >
-                      <Typography
-                        fontSize='12px'
-                        fontWeight={400}
-                      >
-                        {proxy.delay}
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      alignItems='center'
-                      container
-                      height='100%'
-                      item
-                      justifyContent='center'
-                      xs={2.5}
-                    >
-                      <Typography
-                        fontSize='12px'
-                        fontWeight={400}
-                      >
-                        {isAvailable(proxy.delegate)}
-                      </Typography>
-                    </Grid>
-                    {/* <Grid item>
-                address
-              </Grid> */}
-                  </Grid>
-                )
-              })
-            }
+                  )
+                : <Progress pt={'10px'} title={'Loading proxies ...'} />
+              )}
           </Grid>
         </Label>
       </Grid>

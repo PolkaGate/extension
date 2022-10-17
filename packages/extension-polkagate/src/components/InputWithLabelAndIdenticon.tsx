@@ -18,12 +18,12 @@ interface Props {
   onChange?: (value: string) => void;
   style?: SxProps<Theme>;
   chain?: Chain;
+  address: string | undefined;
+  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function InputWithLabelAndIdenticon({ chain = undefined, onChange, label, style }: Props): React.ReactElement<Props> {
+export default function InputWithLabelAndIdenticon({ chain = undefined, setAddress, address, onChange, label, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
-  const [address, setAddress] = useState<string | null | undefined>();
-  const [pasteValue, setPasteValue] = useState<string | undefined>();
   const theme = useTheme();
 
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
@@ -47,9 +47,8 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, onChange
   const pasteAddress = useCallback(async () => {
     const val = await navigator.clipboard.readText();
 
-    setPasteValue(val);
-    // handleAddress({ target: { value: val } });
-  }, []);
+    isValidAddress(val) && setAddress(val);
+  }, [setAddress]);
 
   return (
     <Grid
@@ -77,11 +76,12 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, onChange
               fontSize: '18px',
               fontWeight: 300,
               padding: 0,
-              paddingLeft: '10px'
+              paddingLeft: '10px',
+              paddingRight: '30px'
             }}
             theme={theme}
             type='text'
-            property={pasteValue}
+            value={address ?? ''}
             withError={offFocus && address !== undefined && !isValidAddress(address)}
           />
           <IconButton
@@ -127,6 +127,6 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, onChange
             </Grid>)
         }
       </Grid>
-    </Grid>
+    </Grid >
   );
 }
