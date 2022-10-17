@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { Proxy } from '../util/plusTypes';
+import { Proxy } from '../util/types';
 
 export default function useProxies(api: ApiPromise | undefined, proxiedAddress: string | undefined | null): Proxy[] | undefined {
   const [proxies, setProxies] = useState<Proxy[] | undefined>();
