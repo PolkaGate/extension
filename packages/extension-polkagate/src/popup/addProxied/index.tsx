@@ -31,10 +31,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<Proxy[] | undefined>();
-  console.log('chain:', chain)
-  // const endpoint = useEndpoint(accounts, realAddress, chain);
   const endpoint = useEndpoint(realAddress, chain);
-  console.log('endpoint:', endpoint)
   const api = useApi(endpoint);
   const genesisOptions = useGenesisHashOptions();
 
@@ -64,12 +61,9 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   useEffect(() => {
     (!realAddress || !chain) && setProxies(undefined);
   }, [realAddress, chain]);
-  console.log('realAddress:', realAddress)
-  console.log('api &&:', api)
   useEffect(() => {
     realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
       setProxies(JSON.parse(JSON.stringify(proxies[0])));
-      console.log('proxies &&:', JSON.parse(JSON.stringify(proxies[0])))
     });
   }, [api, chain, realAddress]);
 

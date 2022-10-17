@@ -9,7 +9,7 @@ import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import {useToast, useTranslation} from '../hooks';
-import { Proxy } from '../util/plusTypes';
+import { Proxy } from '../util/types';
 import Identicon from './Identicon';
 
 interface Props {

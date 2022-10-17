@@ -3,15 +3,15 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { CircularProgress, Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
+import { useTranslation } from '../hooks';
 import { nameAddress, Proxy } from '../util/types';
 import Identicon from './Identicon';
 import Label from './Label';
-import Progress from './Progress';
 
 interface Props {
   addresesOnThisChain: nameAddress[];
@@ -22,8 +22,9 @@ interface Props {
   proxies?: Proxy[];
 }
 
-export default function ProxyTable({ addresesOnThisChain, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
+export default function ProxyTable ({ addresesOnThisChain, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
   const isAvailable = useCallback((address: string): nameAddress => addresesOnThisChain?.find((a) => a.address === address), [addresesOnThisChain]);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -240,7 +241,31 @@ export default function ProxyTable({ addresesOnThisChain, chain, label, withRemo
                       </Typography>
                     </Grid>
                   )
-                : <Progress pt={'10px'} title={'Loading proxies ...'} />
+                : (
+                  <Grid
+                    alignItems='center'
+                    container
+                    justifyContent='center'
+                  >
+                    <Grid
+                      item
+                    >
+                      <CircularProgress
+                        color='warning'
+                        m='auto'
+                        size={25}
+                        thickness={2}
+                      />
+                    </Grid>
+                    <Typography
+                      fontSize='13px'
+                      lineHeight='41px'
+                      pl='10px'
+                    >
+                      {t<string>('looking for proxies...')}
+                    </Typography>
+                  </Grid>
+                )
               )}
           </Grid>
         </Label>
