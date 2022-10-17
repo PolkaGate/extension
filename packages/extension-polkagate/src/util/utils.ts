@@ -1,6 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
@@ -128,9 +129,27 @@ export function getSubstrateAddress(address: string): string {
 export function prepareMetaData(chain: Chain | null | string, label: string, metaData: any): string {
   const chainName = (chain as Chain)?.name?.replace(' Relay Chain', '') ?? chain;
 
+  if (label === 'balancesOnLocalStorage') {
+    const { balances, decimals, tokens } = metaData as { balances: DeriveBalancesAll, tokens: string[], decimals: number[] };
+
+    metaData = {
+      availableBalance: balances.availableBalance.toString(),
+      decimals,
+      tokens,
+      freeBalance: balances.freeBalance.toString(),
+      reservedBalance: balances.reservedBalance.toString(),
+      frozenMisc: balances.frozenMisc.toString(),
+      frozenFee: balances.frozenFee.toString(),
+      lockedBalance: balances.lockedBalance.toString(),
+      vestedBalance: balances.vestedBalance.toString(),
+      vestedClaimable: balances.vestedClaimable.toString(),
+      votingBalance: balances.votingBalance.toString()
+    };
+  }
+
   return JSON.stringify({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    [label]: JSON.stringify({ chainName: chainName, metaData: metaData })
+    [label]: JSON.stringify({ chainName, metaData })
   });
 }
 

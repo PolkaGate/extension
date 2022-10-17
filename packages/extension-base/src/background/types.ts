@@ -42,8 +42,8 @@ export interface AccountJson extends KeyringPair$Meta {
   type?: KeypairType;
   whenCreated?: number;
 
-  // added for plus
-  lastBalance?: string;
+  // added for polkagate
+  balancesOnLocalStorage?: string;
   txHistory?: string;
   stakingConsts?: string;
   poolStakingConsts?: string;

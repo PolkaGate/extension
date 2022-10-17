@@ -16,12 +16,14 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { BN } from '@polkadot/util';
+
 import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../hooks';
-import { showAccount } from '../messaging';
+import { showAccount, updateMeta } from '../messaging';
 import { AccMenu } from '../partials';
 import { getPrice } from '../util/api/getPrice';
-import { AddressPriceAll } from '../util/plusTypes';
-import { getFormattedAddress } from '../util/utils';
+import { AddressPriceAll, LastBalances, SavedMetaData } from '../util/types';
+import { getFormattedAddress, prepareMetaData } from '../util/utils';
 import AccountDetail from './AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
@@ -35,18 +37,35 @@ export interface Props {
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
-  name: string;
+  name?: string | undefined;
   parentName?: string | null;
   suri?: string;
   toggleActions?: number;
   type?: KeypairType;
   setAllPrices: React.Dispatch<React.SetStateAction<AddressPriceAll[] | undefined>>;
   allPrices: AddressPriceAll[] | undefined;
+  balancesOnLocalStorage?: string;
 }
 
 const isChainApi = (chain: Chain | null, api: ApiPromise | undefined) => (chain?.genesisHash && api?.genesisHash && chain.genesisHash === api.genesisHash?.toString());
 
-export default function AccountPreview({ address, allPrices, genesisHash, isExternal, isHardware, isHidden, name, setAllPrices, toggleActions, type }: Props): React.ReactElement<Props> {
+const prepareLastBalance = ({ availableBalance, decimals, freeBalance, frozenFee, frozenMisc, lockedBalance, reservedBalance, tokens, vestedBalance, vestedClaimable, votingBalance }): LastBalances => {
+  return {
+    availableBalance: new BN(availableBalance),
+    decimals,
+    tokens,
+    freeBalance: new BN(freeBalance),
+    reservedBalance: new BN(reservedBalance),
+    frozenMisc: new BN(frozenMisc),
+    frozenFee: new BN(frozenFee),
+    lockedBalance: new BN(lockedBalance),
+    vestedBalance: new BN(vestedBalance),
+    vestedClaimable: new BN(vestedClaimable),
+    votingBalance: new BN(votingBalance)
+  };
+};
+
+export default function AccountPreview({ address, allPrices, genesisHash, isExternal, isHardware, isHidden, name, setAllPrices, toggleActions, balancesOnLocalStorage, type }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
   const settings = useContext(SettingsContext);
@@ -54,13 +73,35 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [formatted, setFormatted] = useState<string>();
-
   const proxies = useProxies(api, formatted);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [price, setPrice] = useState<number>();
+  const chainName = chain?.name?.replace(' Relay Chain', '');
+
+  useEffect((): void => {
+    if (balances && chain && api) {
+      // eslint-disable-next-line no-void
+      void updateMeta(address, prepareMetaData(chain, 'balancesOnLocalStorage', { balances, decimals: api.registry.chainDecimals, tokens: api.registry.chainTokens }));
+    }
+  }, [address, balances, chain, api]);
+
+  const lastBalances = useMemo((): LastBalances | undefined => {
+    if (!balancesOnLocalStorage) {
+      return;
+    }
+
+    /** read balances saved in local storage */
+    const parsedLastBalances = JSON.parse(balancesOnLocalStorage) as SavedMetaData;
+
+    if (parsedLastBalances.chainName === chainName) {
+      return prepareLastBalance(parsedLastBalances.metaData);
+    }
+
+    return undefined;
+  }, [chainName, balancesOnLocalStorage]);
 
   useEffect(() => {
     if (!chain) {
@@ -173,8 +214,6 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
     });
   }, [balances, history, genesisHash, address, formatted, api, identity]);
 
-  // console.log('account:', account);
-
   return (
     <Grid alignItems='center' container py='15px'>
       <AccountIcons
@@ -185,10 +224,13 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
         recoverable={recoverable}
       />
       <AccountDetail
+        address={address}
+        api={api}
         balances={balances}
         chain={chain}
         formatted={formatted}
         isHidden={isHidden}
+        lastBalances={lastBalances}
         name={name}
         price={price}
         toggleVisibility={_toggleVisibility}

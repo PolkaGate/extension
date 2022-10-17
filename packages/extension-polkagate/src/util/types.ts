@@ -1,11 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 /* eslint-disable camelcase */
 
-import type { DeriveAccountInfo, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { StakingLedger } from '@polkadot/types/interfaces';
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool, PalletRecoveryActiveRecovery } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
 import { ApiPromise } from '@polkadot/api';
@@ -17,14 +17,18 @@ export interface TransactionStatus {
   text: string | null;
 }
 
-export interface BalanceType {
-  coin: string;
-  available: bigint;
-  total: bigint;
-  reserved?: bigint;
-  miscFrozen?: bigint;
-  feeFrozen?: bigint;
-  decimals: number
+export interface LastBalances {
+  availableBalance: BN;
+  decimals: number[];
+  tokens: string[];
+  freeBalance: BN;
+  reservedBalance: BN;
+  frozenMisc: BN;
+  frozenFee: BN;
+  lockedBalance: BN;
+  vestedBalance: BN;
+  vestedClaimable: BN;
+  votingBalance: BN;
 }
 
 export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain: null, name: null };
@@ -32,7 +36,7 @@ export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain
 export interface AccountsBalanceType {
   address: string; // formatted address
   chain: string | null; // chainName actually
-  balanceInfo?: BalanceType;
+  balanceInfo?: LastBalances; 
   name: string | null;
   txHistory?: string;
 }
@@ -438,4 +442,27 @@ export interface RewardInfo {
 export interface AlertType {
   text: string;
   severity: 'error' | 'warning' | 'info' | 'success'
+}
+
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society';
+
+export interface Proxy {
+  delay: number;
+  delegate: string;
+  proxyType: ProxyTypes;
+}
+
+export interface ProxyItem {
+  proxy: Proxy;
+  status: 'current' | 'new' | 'remove';
+}
+
+export interface PriceAll {
+  balances: DeriveBalancesAll;
+  decimals: number;
+  price: number;
+}
+
+export interface AddressPriceAll {
+  [k: string]: PriceAll;
 }

@@ -30,7 +30,7 @@ interface Props {
   isHardware: boolean | null | undefined
   isExternal: boolean | null | undefined
   type: KeypairType | undefined;
-  name: string;
+  name: string | undefined;
 }
 
 function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
@@ -249,6 +249,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         container={containerRef.current}
         direction='up'
         in={isMenuOpen}
+        mountOnEnter
+        unmountOnExit
       >
         {movingParts}
       </Slide>
