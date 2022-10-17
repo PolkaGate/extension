@@ -36,6 +36,12 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
     }, [onAction]
   );
 
+  const _goToAddProxied = useCallback(
+    () => {
+      onAction('/account/proxy');
+    }, [onAction]
+  );
+
   const _goToAttachQR = useCallback(
     () => {
       onAction('/account/attach-qr');
@@ -104,9 +110,9 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
         />
         <MenuItem
           icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
+          onClick={_goToAddProxied}
           py='4px'
           text='Add proxied address'
-        // onClick={ }
         />
       </Grid>
     </>
