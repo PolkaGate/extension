@@ -22,6 +22,7 @@ export { default as Warning } from './Warning';
 export { default as InputFileWithLabel } from './InputFileWithLabel';
 export { default as InputWithLabelAndIdenticon } from './InputWithLabelAndIdenticon';
 export { default as InputWithLabel } from './InputWithLabel';
+export { default as ProxyTable } from './ProxyTable';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
 export { default as ValidatedInput } from './ValidatedInput';
 export { default as PButton } from './PButton';
