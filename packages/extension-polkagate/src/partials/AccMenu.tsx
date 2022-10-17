@@ -56,6 +56,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     setNewEndpoint(undefined);
   };
 
+  const _onForgetAccount = useCallback(() => {
+    onAction(`/account/forget/${address}/`);
+  }, [address, onAction]);
+
   useEffect(() => {
     !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,7 +139,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         >
           <Typography
             fontSize='28px'
-            fontWeight={300}
+            fontWeight={400}
             lineHeight={1.4}
           >
             {name}
@@ -188,7 +192,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         iconComponent={
           <vaadin-icon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        // onClick={onnn}
+        onClick={_onForgetAccount}
         text={t('Forget account')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
