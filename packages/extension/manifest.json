@@ -1,7 +1,7 @@
 {
   "author": "Polkagate",
   "description": "The gateway to the Polkadot ecosystem",
-  "homepage_url": "https://polkagate.xyz",
+  "homepage_url": "http://polkagate.xyz",
   "name": "PolkaGate",
   "short_name": "PG",
   "manifest_version": 2,

@@ -1,0 +1,182 @@
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
+import type { ThemeProps } from '../types';
+
+import { Grid, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
+
+import keyring from '@polkadot/ui-keyring';
+
+import { AccountContext, ActionContext, Address, ButtonWithCancel, InputWithLabel, Warning } from '../../components';
+import { useTranslation } from '../../hooks';
+import { forgetAccount } from '../../messaging';
+import HeaderBrand from '../../partials/HeaderBrand';
+
+const acceptedFormats = ['application/json', 'text/plain'].join(', ');
+
+interface Props extends RouteComponentProps<{ address: string }>, ThemeProps {
+  className?: string;
+}
+
+function ForgetAccount({ match: { params: { address } } }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
+  const [isBusy, setIsBusy] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isPasswordError, setIsPasswordError] = useState(false);
+  const theme = useTheme();
+
+  const _goHome = useCallback(
+    () => onAction('/'),
+    [onAction]
+  );
+
+  const _onClick = useCallback(
+    (): void => {
+      try {
+        setIsBusy(true);
+        const signer = keyring.getPair(address);
+
+        signer.unlock(password);
+
+        forgetAccount(address)
+          .then(() => {
+            setIsBusy(false);
+            onAction('/');
+          })
+          .catch((error: Error) => {
+            setIsBusy(false);
+            console.error(error);
+          });
+      } catch (e) {
+        setIsPasswordError(true);
+        setIsBusy(false);
+      }
+    },
+    [address, onAction, password]
+  );
+
+  const _onChangePass = useCallback(
+    (pass: string): void => {
+      setPassword(pass);
+      setIsPasswordError(false);
+    }, []
+  );
+
+  const _onBackClick = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
+
+  return (
+    <>
+      <HeaderBrand
+        onBackClick={_onBackClick}
+        showBackArrow
+        text={t<string>('Forget account')}
+      />
+      {isPasswordError &&
+        <Grid
+          color='red'
+          height='30px'
+          m='auto'
+          pt='5px'
+          width='92%'
+        >
+          <Warning
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('You’ve used an incorrect password. Try again.')}
+          </Warning>
+        </Grid>
+      }
+      <Grid
+        container
+        direction='column'
+        sx={{
+          '&::-webkit-scrollbar': {
+            display: 'none',
+            width: 0
+          },
+          '> .tree:first-child': {
+            borderTopLeftRadius: '5px',
+            borderTopRightRadius: '5px'
+          },
+          '> .tree:last-child': {
+            border: 'none',
+            borderBottomLeftRadius: '5px',
+            borderBottomRightRadius: '5px'
+          },
+          border: '0.5px solid',
+          borderColor: 'secondary.light',
+          borderRadius: '5px',
+          display: 'block',
+          m: '20px auto 0',
+          maxHeight: parent.innerHeight * 2 / 3,
+          overflowY: 'scroll',
+          scrollbarWidth: 'none',
+          width: '92%'
+        }}
+      >
+        <Address
+          address={address}
+          className='tree'
+          style={{
+            border: 'none',
+            borderBottom: '1px solid',
+            borderBottomColor: 'secondary.light',
+            borderRadius: 'none',
+            m: 0,
+            width: '100%'
+          }}
+        />
+      </Grid>
+      <Grid container p='23px 24px 0px 14px' letterSpacing='-1.5%'>
+        <Warning
+          isBelowInput
+          isDanger
+          theme={theme}
+        >
+          {t('You are about to remove this account. This means you will not be able to access it via this extension anymore. If you want to recover it after, you need to use the Mnemonic seed.')}
+        </Warning>
+      </Grid>
+      <Grid
+        item
+        pt='110px'
+        m='auto'
+        width='92%'
+      >
+        <InputWithLabel
+          isError={isPasswordError}
+          label={t<string>('Password for this account')}
+          onChange={_onChangePass}
+          setShowPassword={setShowPassword}
+          showPassword={showPassword}
+          type={showPassword ? 'text' : 'password'}
+        />
+        {isPasswordError && (
+          <Warning
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('incorrect password')}
+          </Warning>
+        )}
+      </Grid>
+      <ButtonWithCancel
+        _onClick={_onClick}
+        _onClickCancel={_goHome}
+        disabled={!password?.length}
+        text={t<string>('Forget')}
+      />
+    </>
+  );
+}
+
+export default withRouter(ForgetAccount);

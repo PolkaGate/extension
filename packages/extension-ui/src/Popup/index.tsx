@@ -11,40 +11,34 @@ import { Route, Switch } from 'react-router';
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
-import AddProxy from '../../../extension-polkagate/src/popup/addProxied/index'
+
 import CrowdLoans from '../../../extension-plus/src/Popup/CrowdLoans';// added for plus
 import Governance from '../../../extension-plus/src/Popup/Governance';// added for plus
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
 import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import Account from '../../../extension-polkagate/src/popup/account';// added for plus
+import AddProxy from '../../../extension-polkagate/src/popup/addProxied/index'
 import AttachQR from '../../../extension-polkagate/src/popup/attachQR';
-// import CreateAccount from './CreateAccount';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
-// import Derive from './Derive';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
+import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
+// import Forget from './Forget';
+import ForgetAccount from '../../../extension-polkagate/src/popup/ForgetAccount';
 import Accounts from '../../../extension-polkagate/src/popup/home';
-// import ImportLedger from './ImportLedger';
 import ImportLedger from '../../../extension-polkagate/src/popup/importLedger';
-// import ImportSeed from './ImportSeed';
 import ImportSeed from '../../../extension-polkagate/src/popup/importSeed';
-// import RestoreJson from './RestoreJson';
 import RestoreJson from '../../../extension-polkagate/src/popup/restoreJSON';
 import Send from '../../../extension-polkagate/src/popup/send';// added for plus
 import Review from '../../../extension-polkagate/src/popup/send/Review';// added for plus
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { ErrorBoundary, Loading } from '../components';
-// import Welcome from './Welcome';
 import { ColorContext } from '../components/ColorContext';
 import ToastProvider from '../components/Toast/ToastProvider';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../messaging';
 import { buildHierarchy } from '../util/buildHierarchy';
-// import Accounts from './Accounts';
 import AuthList from './AuthManagement';
 import Authorize from './Authorize';
 import Export from './Export';
-import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
-// import ExportAll from './ExportAll';
-import Forget from './Forget';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
@@ -165,7 +159,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                           <Route path='/account/proxy'>{wrapWithErrorBoundary(<AddProxy />, 'add-proxy')}</Route>
                           <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
-                          <Route path='/account/forget/:address'>{wrapWithErrorBoundary(<Forget />, 'forget-address')}</Route>
+                          <Route path='/account/forget/:address'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
                           <Route path='/account/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                           <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                           <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>

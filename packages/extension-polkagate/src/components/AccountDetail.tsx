@@ -57,8 +57,6 @@ export default function AccountDetail({ address, api, balances, chain, formatted
     ? <FormatBalance api={api} decimalPoint={2} value={balances.freeBalance.add(balances.reservedBalance)} />
     : lastBalances && <FormatBalance2 decimalPoint={2} decimals={lastBalances.decimals} tokens={lastBalances.tokens} value={lastBalances.freeBalance.add(lastBalances.reservedBalance)} />;
 
-
-
   const Balance = () => (
     <>
       {!formattedBalance

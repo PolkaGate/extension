@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -10,17 +10,16 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
-import Identicon from '../../../extension-ui/src/components/Identicon';
-import useToast from '../hooks/useToast';
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { useTranslation } from '../hooks';
 import useMetadata from '../hooks/useMetadata';
+import useToast from '../hooks/useToast';
 import { DEFAULT_TYPE } from '../util/defaultType';
+import { AccountContext, Identicon, SettingsContext } from './';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -87,12 +86,19 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, className, genesisHash, isHardware, isExternal, name, style, showCopy = true, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, className, genesisHash, isExternal, isHardware, name, showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
   const [{ formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
+  const accName = useMemo(() => {
+    if (name || !accounts) {
+      return;
+    }
+
+    return accounts.find((acc) => acc.address === address)?.name;
+  }, [accounts, address, name]);
 
   const { show } = useToast();
 
@@ -172,7 +178,7 @@ function Address({ address, className, genesisHash, isHardware, isExternal, name
             variant='h3'
             whiteSpace='nowrap'
           >
-            {name || t('<unknown>')}
+            {accName || t('<unknown>')}
           </Typography>
           <Grid
             container
