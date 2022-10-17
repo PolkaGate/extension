@@ -69,39 +69,30 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
       <Typography
         fontSize='14px'
         fontWeight={300}
-        m='20px auto'
+        m='15px auto'
         textAlign='left'
         width='88%'
       >
-       - {t<string>('Your accounts will be encrypted with a password and stored in a JSON file.')}
+        {t<string>('All your accounts will be encrypted with a password and stored in a JSON file.')}
       </Typography>
       <Typography
         fontSize='14px'
         fontWeight={300}
-        m='20px auto'
+        m='5px auto'
         textAlign='left'
         width='88%'
       >
-       - {t<string>('The JSON file can later be used to import the accounts into the extension using the provided password.')}
-      </Typography>
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='20px auto'
-        textAlign='left'
-        width='88%'
-      >
-        {t<string>('Enter a password for encrypting all accounts')}:
+        {t<string>('You can later use this JSON file to import your accounts into the extension using the provided password.')}
       </Typography>
       <Grid
-        m='auto'
+        m='15px auto'
         width='92%'
       >
         <InputWithLabel
           data-export-all-password
           disabled={isBusy}
           isError={!!error}
-          label={t<string>('Password')}
+          label={t<string>('Create a password')}
           onChange={onPassChange}
           setShowPassword={setShowPassword}
           showPassword={showPassword}
