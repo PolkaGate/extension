@@ -11,7 +11,7 @@ import { Route, Switch } from 'react-router';
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
-
+import AddProxy from '../../../extension-polkagate/src/popup/addProxied/index'
 import CrowdLoans from '../../../extension-plus/src/Popup/CrowdLoans';// added for plus
 import Governance from '../../../extension-plus/src/Popup/Governance';// added for plus
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
@@ -163,6 +163,7 @@ export default function Popup(): React.ReactElement {
                           <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                           <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
                           <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
+                          <Route path='/account/proxy'>{wrapWithErrorBoundary(<AddProxy />, 'add-proxy')}</Route>
                           <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
                           <Route path='/account/forget/:address'>{wrapWithErrorBoundary(<Forget />, 'forget-address')}</Route>
                           <Route path='/account/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
