@@ -20,6 +20,7 @@ export { default as ColorContext } from './ColorContext';
 export { default as MenuItem } from './MenuItem';
 export { default as Warning } from './Warning';
 export { default as InputFileWithLabel } from './InputFileWithLabel';
+export { default as InputWithLabelAndIdenticon } from './InputWithLabelAndIdenticon';
 export { default as InputWithLabel } from './InputWithLabel';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
 export { default as ValidatedInput } from './ValidatedInput';
