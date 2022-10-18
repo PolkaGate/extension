@@ -40,7 +40,8 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
     // we have a dedicated error for this
     if (!seed) {
       onAccountChange(null);
-
+      setError('');
+      
       return;
     }
 
@@ -84,9 +85,10 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
     <>
       <div style={{ margin: 'auto', width: '92%' }}>
         <TextAreaWithLabel
+          fontSize='18px'
           isError={!!error}
           isFocused
-          label={t<string>('existing 12 or 24-word mnemonic seed')}
+          label={t<string>('Existing 12 or 24-word mnemonic seed')}
           onChange={setSeed}
           rowsCount={2}
           value={seed || ''}
@@ -107,16 +109,16 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
           label={t<string>('Select the chain')}
           onChange={_onChangeNetwork}
           options={genesisOptions}
-          style={{ marginTop: '20px', p: 0 }}
+          style={{ marginTop: '35px', p: 0 }}
         />
         <Grid
           container
           onClick={_onToggleAdvanced}
           pb='10px'
-          pt='25px'
+          pt='15px'
           sx={{ cursor: 'pointer' }}
         >
-          <Grid
+          {/* <Grid
             alignItems='center'
             container
             item
@@ -132,8 +134,8 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
                 transform: advanced ? 'rotate(-0.25turn) translate(5px, 5px)' : 'rotate(-180deg)'
               }}
             />
-          </Grid>
-          <Grid
+          </Grid> */}
+          {/* <Grid
             item
           >
             <Typography
@@ -142,17 +144,17 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
             >
               {t<string>('Advanced')}
             </Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
-        {advanced && (
-          <InputWithLabel
-            isError={!!path && !!error}
-            label={t<string>('Derivation path')}
-            onChange={setPath}
-            value={path || ''}
+        {/* {advanced && ( */}
+        <InputWithLabel
+          isError={!!path && !!error}
+          label={t<string>('Derivation path If it is derived account, otherwise ignore')}
+          onChange={setPath}
+          value={path || ''}
 
-          />
-        )}
+        />
+        {/* )} */}
       </div>
       <PButton
         _onClick={onNextStep}

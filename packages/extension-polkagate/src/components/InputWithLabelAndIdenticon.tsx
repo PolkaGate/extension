@@ -107,9 +107,9 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, setAddre
         {isValidAddress(address)
           ? (
             <Identicon
+              iconTheme={chain?.icon || 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
               size={31}
-              theme={chain?.icon || 'polkadot'}
               value={address}
             />
           )

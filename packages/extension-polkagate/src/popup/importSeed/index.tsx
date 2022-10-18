@@ -1,6 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Address } from '../../components';
@@ -78,6 +79,15 @@ function ImportSeed(): React.ReactElement {
           totalSteps: 2
         }}
       />
+      <Typography
+        fontSize='14px'
+        fontWeight={300}
+        m='20px auto'
+        textAlign='left'
+        width='88%'
+      >
+        {t<string>('Enter a Mnemonic seed (recovery phrase) of an account to import it.')}
+      </Typography>
       <div>
         <Address
           address={account?.address}
