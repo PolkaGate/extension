@@ -91,6 +91,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     [address]
   );
 
+  const _onRenameAccount = useCallback(() => {
+    formatted && name && (chain?.genesisHash || genesisHash) && onAction(`/rename/${formatted}/${name}/${chain?.genesisHash || genesisHash}`);
+  }, [formatted, chain?.genesisHash, genesisHash, name, onAction]);
+
   useEffect(() => {
     genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
       console.error(error);
@@ -185,7 +189,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         iconComponent={
           <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        // onClick={onnn}
+        onClick={_onRenameAccount}
         text={t('Rename')}
       />
       <MenuItem
