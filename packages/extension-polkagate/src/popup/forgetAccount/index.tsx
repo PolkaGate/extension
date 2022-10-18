@@ -152,9 +152,14 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
       </Grid>
       <Grid
         item
-        pt='110px'
         m='auto'
-        width='92%'
+        width='90%'
+        ml='6%'
+        mr='15px'
+        sx={{
+          bottom: '80px',
+          position: 'absolute'
+        }}
       >
         {needsPasswordConfirmation
           ? <>
