@@ -1,7 +1,8 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button, Grid, useTheme } from '@mui/material';
+import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
@@ -12,9 +13,10 @@ interface Props {
   _onClickCancel?: React.MouseEventHandler<HTMLButtonElement>;
   _mt?: string;
   disabled?: boolean;
+  _isBusy?: boolean;
 }
 
-export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabled = false, text }: Props): React.ReactElement<Props> {
+export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCancel, disabled = false, text }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -55,23 +57,40 @@ export default function ButtonWithCancel({ _mt, _onClick, _onClickCancel, disabl
         item
         xs={5.8}
       >
-        <Button
-          disabled={disabled}
-          onClick={_onClick}
-          sx={{
-            borderColor: 'secondary.main',
-            borderRadius: '5px',
-            color: theme.palette.mode === 'dark' ? 'text.primary' : 'text.secondary',
-            fontSize: '18px',
-            fontWeight: 400,
-            height: '36px',
-            textTransform: 'none',
-            width: '100%'
-          }}
-          variant='contained'
-        >
-          {text}
-        </Button>
+        {_isBusy
+          ? <Grid container justifyContent='center' alignItems='center'
+            sx={{
+              border: '1px solid',
+              borderColor: 'secondary.main',
+              borderRadius: '5px',
+              backgroundColor: 'secondary.main',
+              textTransform: 'none',
+              fontSize: '18px',
+              fontWeight: 400,
+              height: '36px',
+              textTransform: 'none',
+              width: '100%'
+            }}>
+            <Circle color='white' scaleEnd={0.7} scaleStart={0.4} size={25} />
+          </Grid>
+          : <Button
+            disabled={disabled}
+            onClick={_onClick}
+            sx={{
+              borderColor: 'secondary.main',
+              borderRadius: '5px',
+              color: theme.palette.mode === 'dark' ? 'text.primary' : 'text.secondary',
+              fontSize: '18px',
+              fontWeight: 400,
+              height: '36px',
+              textTransform: 'none',
+              width: '100%'
+            }}
+            variant='contained'
+          >
+            {text}
+          </Button>
+        }
       </Grid>
     </Grid>
   );

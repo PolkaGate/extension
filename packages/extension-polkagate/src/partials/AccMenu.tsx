@@ -57,8 +57,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   };
 
   const _onForgetAccount = useCallback(() => {
-    onAction(`/account/forget/${address}/`);
-  }, [address, onAction]);
+    onAction(`/forget/${address}/${isExternal}`);
+  }, [address, isExternal, onAction]);
 
   useEffect(() => {
     !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
@@ -130,7 +130,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
           onCopy={_onCopy}
           prefix={prefix}
           size={40}
-          value={formatted}
+          value={formatted || address}
         />
         <Grid
           item

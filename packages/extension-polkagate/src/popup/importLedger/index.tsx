@@ -215,6 +215,7 @@ function ImportLedger(): React.ReactElement {
           text={t<string>('Refresh')}
         />
         : <PButton
+          _isBusy={isBusy}
           _onClick={_onSave}
           disabled={!!error || !!ledgerError || !address || !genesis || !name}
           text={t<string>('Import')}
