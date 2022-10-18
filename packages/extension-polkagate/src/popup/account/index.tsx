@@ -8,6 +8,8 @@
  * this component opens social recovery index page to choose between configuring your account and rescuing other account
  * */
 
+import '@vaadin/icons';
+
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -15,10 +17,9 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { faHistory, faPaperPlane, faQrcode, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Avatar, Container, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -30,15 +31,14 @@ import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { DEFAULT_TYPE } from '../../util/defaultType';
-import { history as historyIcon, ihistory, ireceive, irefresh, isend, istake, receive, refresh, send, stake } from '../../assets/icons';
-import { Header, Motion, Select, ShortAddress, ShowBalance } from '../../components';
+import { Header, Motion, Select, ShowBalance } from '../../components';
 import { AccountContext, ActionContext, SettingsContext } from '../../components/contexts';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata } from '../../hooks';
-import { editAccount, getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
+import { getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
 import { getPrice } from '../../util/api/getPrice';
+import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
-import { AddressState, FormattedAddressState, SavedMetaData } from '../../util/types';
+import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';// added for plus
 import AccountBrief from './AccountBrief';
 
@@ -209,48 +209,86 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       // isExternal={isExternal}
       // onCopy={_onCopy}
       prefix={chain?.ss58Format ?? 42}
-      size={58}
+      size={40}
       value={formatted}
     />
   );
 
-  const MenuItem = ({ icon, title, noDivider = false, onClick }: { icon: any, title: string, noDivider?: boolean, onClick: () => void }) => (
+  const MenuItem = ({ icon, noDivider = false, onClick, title }: { icon: any, title: string, noDivider?: boolean, onClick: () => void }) => (
     <>
-      <Grid container direction='column' item justifyContent='center' xs={2}>
-        <Grid height='38px' item width='27px'>
+      <Grid container direction='column' item justifyContent='center' xs={2} mt='5px'>
+        <Grid item width='27px'>
           <IconButton
             onClick={onClick}
-            sx={{ alignSelf: 'center' }}
+            sx={{ alignSelf: 'center', transform: 'scale(0.9)', py: 0 }}
           >
-            <Avatar
-              alt={'logo'}
-              src={icon}
-              sx={{ height: '30px', width: '30px' }}
-              variant='square'
-            />
+            {icon}
           </IconButton>
         </Grid>
-        <Grid item mt='10px' textAlign='center'>
-          <Typography sx={{ fontSize: '12px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '12px' }}>
+        <Grid item textAlign='center'>
+          <Typography sx={{ fontSize: '12px', fontWeight: 300, letterSpacing: '-0.015em' }}>
             {title}
           </Typography>
         </Grid>
       </Grid>
       {!noDivider &&
-        <Grid alignItems='center' item justifyContent='center' mx='8px'>
-          <Divider orientation='vertical' sx={{ mt: '12px', height: '28px', width: '2px', borderColor: 'primary.main' }} />
+        <Grid alignItems='center' item justifyContent='center' mx='10px'>
+          <Divider orientation='vertical' sx={{ borderColor: 'text.primary', height: '30px', mt: '5px', width: '2px' }} />
         </Grid>
       }
     </>
   );
 
   const Menu = () => (
-    <Grid container flexWrap='nowrap' item pt='5px'>
-      <MenuItem icon={theme.palette.mode === 'dark' ? send : isend} title={'Send'} onClick={goToSend} />
-      <MenuItem icon={theme.palette.mode === 'dark' ? receive : ireceive} title={'Receive'} />
-      <MenuItem icon={theme.palette.mode === 'dark' ? stake : istake} title={'Stake'} />
-      <MenuItem icon={theme.palette.mode === 'dark' ? historyIcon : ihistory} title={'History'} />
-      <MenuItem icon={theme.palette.mode === 'dark' ? refresh : irefresh} title={'Refresh'} noDivider />
+    <Grid container flexWrap='nowrap' item>
+      <MenuItem
+        icon={
+          <FontAwesomeIcon
+            icon={faPaperPlane}
+            // onClick={goToSend}
+            size='lg'
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+          />
+        }
+        title={'Send'}
+        onClick={goToSend}
+      />
+      <MenuItem
+        icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />
+        }
+        title={'Receive'}
+        onClick={goToSend}
+      />
+      <MenuItem
+        icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+        title={'Stake'}
+        onClick={goToSend}
+      />
+      <MenuItem
+        icon={
+          <FontAwesomeIcon
+            icon={faHistory}
+            // onClick={goToSend}
+            size='lg'
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+          />
+        }
+        title={'History'}
+        onClick={goToSend}
+      />
+      <MenuItem
+        icon={
+          <FontAwesomeIcon
+            icon={faRefresh}
+            // onClick={goToSend}
+            size='lg'
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+          />
+        }
+        title={'Refresh'}
+        onClick={goToSend}
+        noDivider
+      />
     </Grid>
   );
 
@@ -286,12 +324,12 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             </Grid>
             <Grid container direction='column' item justifyContent='flex-end' xs>
               <Grid item textAlign='right'>
-                <Typography sx={{ fontSize: '20px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '20px' }}>
+                <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
                   <ShowBalance api={apiToUse} balance={value} />
                 </Typography>
               </Grid>
               <Grid item pt='6px' textAlign='right'>
-                <Typography sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '20px' }}>
+                <Typography sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }}>
                   {balanceInUSD !== undefined
                     ? `$${Number(balanceInUSD)?.toLocaleString()}`
                     : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
@@ -305,24 +343,24 @@ export default function AccountDetails({ className }: Props): React.ReactElement
                   // onClick={_onClick}
                   sx={{ p: 0 }}
                 >
-                  <ArrowForwardIosRoundedIcon />
+                  <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
                 </IconButton>
               </Grid>
             }
           </Grid>
         </Grid>
-        <Divider sx={{ bgcolor: 'secondary.main', height: type === 'Others' ? '2px' : '1px', mt: type === 'Others' ? '10px' : '0px' }} />
+        <Divider sx={{ bgcolor: 'secondary.main', height: type === 'Others' ? '2px' : '1px', my: '5px' }} />
       </>
     );
   };
 
   return (
     <Motion>
-      <Container disableGutters sx={{ px: '30px' }}>
+      <Container disableGutters sx={{ px: '15px' }}>
         <Header icon={identicon}>
-          <AccountBrief accountName={accountName} formatted={formatted} />
+          <AccountBrief accountName={accountName} address={address} formatted={formatted} isHidden={account?.isHidden} theme={theme} />
         </Header>
-        <Grid alignItems='flex-end' container pt={1}>
+        <Grid alignItems='flex-end' container pt='15px'>
           <Grid item xs>
             <Select defaultValue={genesisHash} label={'Select the chain'} onChange={_onChangeGenesis} options={genesisOptions} />
           </Grid>
@@ -335,10 +373,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             />
           </Grid>
         </Grid>
-        <Grid height='20px' item xs>
+        <Grid height='20px' item xs mt='10px'>
           {newEndpoint && <Select defaultValue={newEndpoint} label={'Select the endpoint'} onChange={_onChangeEndpoint} options={endpointOptions} />}
         </Grid>
-        <Grid item pt='45px' xs>
+        <Grid item pt='50px' xs>
           <Balance balances={balances} type={'Total'} />
           <Balance balances={balances} type={'Available'} />
           <Balance balances={balances} type={'Reserved'} />

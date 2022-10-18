@@ -9,17 +9,16 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { Divider, Grid, IconButton, Skeleton, Tooltip, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useToast, useTranslation } from '../hooks';
 import { LastBalances } from '../util/types';
-import { prepareMetaData } from '../util/utils';
 import FormatBalance from './FormatBalance';
-import FormatPrice from './FormatPrice';
 import FormatBalance2 from './FormatBalance2';
+import FormatPrice from './FormatPrice';
 
 interface Props {
   api: ApiPromise | undefined
@@ -184,6 +183,6 @@ export default function AccountDetail({ address, api, balances, chain, formatted
           : <BalanceRow />
         }
       </Grid>
-    </Grid >
+    </Grid>
   );
 }
