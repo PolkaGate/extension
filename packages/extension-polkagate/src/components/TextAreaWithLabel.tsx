@@ -20,7 +20,7 @@ interface Props {
   style?: React.CSSProperties | undefined;
 }
 
-export default function TextAreaWithLabel({ className, isError, isFocused, isReadOnly, fontSize, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
+export default function TextAreaWithLabel({ className, fontSize, isError, isFocused, isReadOnly, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(
