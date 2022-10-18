@@ -68,7 +68,7 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
-      style={{ position: 'relative' }}
+      style={{ position: 'relative', letterSpacing: '-0.015em'}}
     >
       <Input
         autoCapitalize='off'
