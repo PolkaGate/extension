@@ -40,7 +40,8 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
     // we have a dedicated error for this
     if (!seed) {
       onAccountChange(null);
-
+      setError('');
+      
       return;
     }
 
