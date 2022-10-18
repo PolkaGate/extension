@@ -109,6 +109,7 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
         )}
       </Grid>
       <ButtonWithCancel
+        _isBusy={isBusy}
         _onClick={_onExportAllButtonClick}
         _onClickCancel={_goHome}
         disabled={pass.length === 0 || !!error}

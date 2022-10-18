@@ -255,6 +255,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         </Grid>
       )}
       <PButton
+        _isBusy={isBusy}
         _onClick={_onRestore}
         _variant='contained'
         disabled={stepOne || !password}

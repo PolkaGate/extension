@@ -18,7 +18,7 @@ interface Props {
   mt?: string;
 }
 
-function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, mt }: Props): React.ReactElement<Props> {
+function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onCreate, onNameChange, onPasswordChange, withCancel = false }: Props): React.ReactElement<Props> {
   const [name, setName] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -61,6 +61,7 @@ function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, 
       <Password onChange={_onPasswordChange} onEnter={_onCreate} />
       {!withCancel &&
         <PButton
+          _isBusy={isBusy}
           _mt={mt}
           _onClick={_onCreate}
           _variant='contained'
@@ -70,6 +71,7 @@ function AccountNamePasswordCreation({ withCancel = false, buttonLabel, isBusy, 
       }
       {withCancel &&
         <ButtonWithCancel
+          _isBusy={isBusy}
           _onClick={_onCreate}
           _onClickCancel={_onBackClick}
           disabled={!password || !name}

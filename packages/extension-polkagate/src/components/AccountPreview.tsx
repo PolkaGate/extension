@@ -217,7 +217,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
   return (
     <Grid alignItems='center' container py='15px'>
       <AccountIcons
-        formatted={formatted}
+        formatted={formatted || address}
         identiconTheme={identiconTheme}
         prefix={settings?.prefix}
         proxies={proxies}

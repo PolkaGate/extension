@@ -10,38 +10,43 @@ import { RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, ActionContext, Address, ButtonWithCancel, InputWithLabel, Warning } from '../../components';
+import { AccountContext, ActionContext, Address, ButtonWithCancel, Checkbox, InputWithLabel, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { forgetAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-interface Props extends RouteComponentProps<{ address: string }>, ThemeProps {
+interface Props extends RouteComponentProps<{ address: string, isExternal: string }>, ThemeProps {
   className?: string;
 }
 
-function ForgetAccount({ match: { params: { address } } }: Props): React.ReactElement<Props> {
+function ForgetAccount({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [checkConfirmed, setCheckConfirmed] = useState<boolean>(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
   const theme = useTheme();
+  const needsPasswordConfirmation = isExternal !== 'true';
 
   const _goHome = useCallback(
     () => onAction('/'),
     [onAction]
   );
 
-  const _onClick = useCallback(
+  const _onClickForget = useCallback(
     (): void => {
       try {
         setIsBusy(true);
-        const signer = keyring.getPair(address);
 
-        signer.unlock(password);
+        if (needsPasswordConfirmation) {
+          const signer = keyring.getPair(address);
+
+          signer.unlock(password);
+        }
 
         forgetAccount(address)
           .then(() => {
@@ -151,28 +156,40 @@ function ForgetAccount({ match: { params: { address } } }: Props): React.ReactEl
         m='auto'
         width='92%'
       >
-        <InputWithLabel
-          isError={isPasswordError}
-          label={t<string>('Password for this account')}
-          onChange={_onChangePass}
-          setShowPassword={setShowPassword}
-          showPassword={showPassword}
-          type={showPassword ? 'text' : 'password'}
-        />
-        {isPasswordError && (
-          <Warning
-            isBelowInput
-            isDanger
+        {needsPasswordConfirmation
+          ? <>
+            <InputWithLabel
+              isError={isPasswordError}
+              label={t<string>('Password for this account')}
+              onChange={_onChangePass}
+              setShowPassword={setShowPassword}
+              showPassword={showPassword}
+              type={showPassword ? 'text' : 'password'}
+            />
+            {isPasswordError && (
+              <Warning
+                isBelowInput
+                isDanger
+                theme={theme}
+              >
+                {t<string>('incorrect password')}
+              </Warning>
+            )}
+          </>
+          : <Checkbox
+            checked={checkConfirmed}
+            label={t<string>('I want to forget this account.')}
+            onChange={setCheckConfirmed}
+            style={{ fontSize: '16px', marginLeft: '-25px', marginTop: 0, textAlign: 'left' }}
             theme={theme}
-          >
-            {t<string>('incorrect password')}
-          </Warning>
-        )}
+          />
+        }
       </Grid>
       <ButtonWithCancel
-        _onClick={_onClick}
+        _isBusy={isBusy}
+        _onClick={_onClickForget}
         _onClickCancel={_goHome}
-        disabled={!password?.length}
+        disabled={!checkConfirmed && !password?.length}
         text={t<string>('Forget')}
       />
     </>

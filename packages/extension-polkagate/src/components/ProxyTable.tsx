@@ -1,9 +1,10 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CircularProgress, Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Circle } from 'better-react-spinkit';
 import React, { useCallback } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -14,7 +15,7 @@ import Identicon from './Identicon';
 import Label from './Label';
 
 interface Props {
-  addresesOnThisChain: nameAddress[];
+  addressesOnThisChain: nameAddress[];
   chain?: Chain | undefined;
   label: string;
   withRemove?: boolean;
@@ -22,8 +23,8 @@ interface Props {
   proxies?: Proxy[];
 }
 
-export default function ProxyTable ({ addresesOnThisChain, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
-  const isAvailable = useCallback((address: string): nameAddress => addresesOnThisChain?.find((a) => a.address === address), [addresesOnThisChain]);
+export default function ProxyTable({ addressesOnThisChain, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
+  const isAvailable = useCallback((address: string): nameAddress => addressesOnThisChain?.find((a) => a.address === address), [addressesOnThisChain]);
   const { t } = useTranslation();
 
   return (
@@ -118,9 +119,6 @@ export default function ProxyTable ({ addresesOnThisChain, chain, label, withRem
                   Available
                 </Typography>
               </Grid>
-              {/* <Grid item>
-                address
-              </Grid> */}
             </Grid>
             {chain &&
               (proxies
@@ -250,12 +248,7 @@ export default function ProxyTable ({ addresesOnThisChain, chain, label, withRem
                     <Grid
                       item
                     >
-                      <CircularProgress
-                        color='warning'
-                        m='auto'
-                        size={25}
-                        thickness={2}
-                      />
+                      <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
                     </Grid>
                     <Typography
                       fontSize='13px'

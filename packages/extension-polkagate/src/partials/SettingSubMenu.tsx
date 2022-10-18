@@ -9,10 +9,7 @@ import settings from '@polkadot/ui-settings';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
-import Checkbox from '../components/Checkbox';
-import MenuItem from '../components/MenuItem';
-import Select from '../components/Select';
-import Switch from '../components/Switch';
+import { Checkbox, MenuItem, Select, Switch } from '../components';
 import { useIsPopup } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
 

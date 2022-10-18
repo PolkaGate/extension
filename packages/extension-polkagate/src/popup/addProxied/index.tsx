@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
@@ -26,7 +26,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
-  const [addresesOnThisChain, setAddresesOnThisChain] = useState<nameAddress[]>([]);
+  const [addressesOnThisChain, setAddressesOnThisChain] = useState<nameAddress[]>([]);
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
@@ -35,8 +35,8 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const api = useApi(endpoint);
   const genesisOptions = useGenesisHashOptions();
 
-  const handleAlladdressesOnThisChain = useCallback((prefix: number): void => {
-    const allAddresesOnSameChain = accounts.reduce(function (result: nameAddress[], acc): nameAddress[] {
+  const handleAllAddressesOnThisChain = useCallback((prefix: number): void => {
+    const allAddressesOnSameChain = accounts.reduce(function (result: nameAddress[], acc): nameAddress[] {
       const publicKey = decodeAddress(acc.address);
 
       result.push({ address: encodeAddress(publicKey, prefix), name: acc?.name });
@@ -44,7 +44,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
       return result;
     }, []);
 
-    setAddresesOnThisChain(allAddresesOnSameChain);
+    setAddressesOnThisChain(allAddressesOnSameChain);
   }, [accounts]);
 
   useEffect(() => {
@@ -55,8 +55,8 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   }, []);
 
   useEffect(() => {
-    chain?.ss58Format !== undefined && handleAlladdressesOnThisChain(chain.ss58Format);
-  }, [chain, handleAlladdressesOnThisChain]);
+    chain?.ss58Format !== undefined && handleAllAddressesOnThisChain(chain.ss58Format);
+  }, [chain, handleAllAddressesOnThisChain]);
 
   useEffect(() => {
     (!realAddress || !chain) && setProxies(undefined);
@@ -122,7 +122,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
         style={{ m: 'auto', width: '92%' }}
       />
       <ProxyTable
-        addresesOnThisChain={addresesOnThisChain}
+        addressesOnThisChain={addressesOnThisChain}
         chain={realAddress ? chain : undefined}
         label={t<string>('Proxies')}
         proxies={proxies}

@@ -16,6 +16,7 @@ export { default as ButtonWithCancel } from './ButtonWithCancel';
 export { default as IButton } from './IButton';
 export { default as Password } from './Password';
 export { default as Motion } from './Motion';
+export { default as Switch } from './Switch';
 export { default as ColorContext } from './ColorContext';
 export { default as MenuItem } from './MenuItem';
 export { default as Warning } from './Warning';
