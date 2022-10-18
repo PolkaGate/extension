@@ -42,6 +42,7 @@ import Export from './Export';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
+import Rename from '../../../extension-polkagate/src/popup/rename';
 
 const startSettings = uiSettings.get();
 
@@ -150,6 +151,7 @@ export default function Popup(): React.ReactElement {
                       <ToastProvider>
                         <Switch>
                           <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
+                          <Route path='/rename/:address/:name/:genesisHash'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                           <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                           <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'socialRecovery')}</Route>
                           <Route exact path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>

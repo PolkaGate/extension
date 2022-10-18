@@ -466,3 +466,9 @@ export interface PriceAll {
 export interface AddressPriceAll {
   [k: string]: PriceAll;
 }
+
+export interface RenameAcc {
+  address: string;
+  name: string;
+  genesisHash: string;
+}
