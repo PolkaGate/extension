@@ -37,7 +37,7 @@ export default function Header({ children, icon, preUrl = '/', state = {}, showL
 
   return (
     <>
-      <Grid alignItems='center' container justifyContent='flex-end' pt='26px'>
+      <Grid alignItems='center' container justifyContent='flex-end' pt='15px'>
         <Grid item xs={4}>
           {showLogo
             ? <Box component='img' sx={{ height: 45, width: 45 }} src={theme.palette.mode === 'dark' ? logoWhite : logoBlack} />
