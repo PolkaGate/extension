@@ -1,20 +1,21 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Theme } from '@mui/material/styles';
 import styled, { css } from 'styled-components';
 
 interface Props {
+  fontSize?: string;
   withError?: boolean;
   theme: Theme;
 }
-const TextBox = css(({ theme, withError }: Props) => `
+const TextBox = css(({ fontSize, theme, withError }: Props) => `
   background: ${theme.palette.background.paper};
   border-radius: 5px;
-  border: 1px solid ${theme.palette.secondary.light};
+  border: ${withError ? 2 : 1}px solid ${withError ? theme.palette.warning.main : theme.palette.secondary.light};
   box-sizing: border-box;
   display: block;
-  font-size: 16px;
+  font-size: ${fontSize || '16px'};
   min-height: 31px;
   padding: 12px;
   font-weight: 400;
