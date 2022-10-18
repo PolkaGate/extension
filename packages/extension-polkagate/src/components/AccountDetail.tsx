@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -41,6 +41,8 @@ export default function AccountDetail({ address, api, balances, chain, formatted
   const theme = useTheme();
   const decimals = api ? api.registry.chainDecimals[0] : undefined;
   const token = api ? api.registry.chainTokens[0] : undefined;
+
+  const shortAddress = `${formatted?.slice(0, 12)}...${formatted?.slice(-12)}`;
 
   const _onCopy = useCallback(
     () => show(t('Copied')),
@@ -138,12 +140,37 @@ export default function AccountDetail({ address, api, balances, chain, formatted
         </Grid>
         <Grid item>
           <CopyToClipboard text={String(formatted)}>
-            <IconButton
-              onClick={_onCopy}
-              sx={{ height: '23px', m: '10px 0', width: '36px' }}
+            <Tooltip
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    '& .MuiTooltip-arrow': {
+                      color: 'text.primary',
+                      height: '10px'
+                    },
+                    backgroundColor: 'text.primary',
+                    color: 'text.secondary',
+                    fontSize: '14px',
+                    fontWeight: 400
+                  }
+                }
+              }}
+              placement='top'
+              title={shortAddress}
             >
-              <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
-            </IconButton>
+              <IconButton
+                title={String(formatted)}
+                onClick={_onCopy}
+                sx={{
+                  height: '23px',
+                  m: '10px 0',
+                  width: '36px'
+                }}
+              >
+                <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
+              </IconButton>
+            </Tooltip>
           </CopyToClipboard>
         </Grid>
       </Grid>
@@ -157,6 +184,6 @@ export default function AccountDetail({ address, api, balances, chain, formatted
           : <BalanceRow />
         }
       </Grid>
-    </Grid>
+    </Grid >
   );
 }
