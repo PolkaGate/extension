@@ -1,18 +1,18 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback } from 'react';
 import { useTheme } from '@mui/material';
+import React, { useCallback } from 'react';
 
 import Label from './Label';
 import { TextArea } from './TextInputs';
-import { Height } from '@mui/icons-material';
 
 interface Props {
   className?: string;
   isError?: boolean;
   isFocused?: boolean;
   isReadOnly?: boolean;
+  fontSize?: string;
   rowsCount?: number;
   label: string;
   onChange?: (value: string) => void;
@@ -20,7 +20,7 @@ interface Props {
   style?: React.CSSProperties | undefined;
 }
 
-export default function TextAreaWithLabel({ className, isError, isFocused, isReadOnly, label, onChange, rowsCount, value, style }: Props): React.ReactElement<Props> {
+export default function TextAreaWithLabel({ className, isError, isFocused, isReadOnly, fontSize, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(
@@ -40,6 +40,7 @@ export default function TextAreaWithLabel({ className, isError, isFocused, isRea
         autoCapitalize='off'
         autoCorrect='off'
         autoFocus={isFocused}
+        fontSize={fontSize}
         onChange={_onChange}
         readOnly={isReadOnly}
         rows={rowsCount || 2}
