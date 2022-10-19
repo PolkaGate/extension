@@ -1,11 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagaqte authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
- * this component opens social recovery index page to choose between configuring your account and rescuing other account
+ * this component 
  * */
 
 import '@vaadin/icons';
@@ -17,27 +17,23 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faHistory, faPaperPlane, faQrcode, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Avatar, Container, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
-import { Identicon } from '@polkadot/extension-ui/components';
 import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { ChainLogo, Header, Motion, Select, ShowBalance } from '../../components';
-import { AccountContext, ActionContext, SettingsContext } from '../../components/contexts';
-import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata } from '../../hooks';
+import { AccountContext, ActionContext, ChainLogo, Header, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
+import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
 import { getPrice } from '../../util/api/getPrice';
 import { DEFAULT_TYPE } from '../../util/defaultType';
-import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';// added for plus
 import AccountBrief from './AccountBrief';
@@ -55,13 +51,6 @@ interface Recoded {
 }
 
 const defaultRecoded = { account: null, newFormattedAddress: null, prefix: 42, type: DEFAULT_TYPE };
-
-// find an account in our list
-function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | null {
-  return accounts.find(({ address }): boolean =>
-    address === _address
-  ) || null;
-}
 
 // find an account in our list
 function findSubstrateAccount(accounts: AccountJson[], publicKey: Uint8Array): AccountJson | null {
@@ -365,7 +354,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             <Select defaultValue={genesisHash} label={'Select the chain'} onChange={_onChangeGenesis} options={genesisOptions} />
           </Grid>
           <Grid item pl={1}>
-            <ChainLogo genesisHash={newChain?.genesisHash ?? chain?.genesisHash} size={31}/>
+            <ChainLogo genesisHash={newChain?.genesisHash ?? chain?.genesisHash} size={31} />
           </Grid>
         </Grid>
         <Grid height='20px' item xs mt='10px'>

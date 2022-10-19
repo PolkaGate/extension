@@ -6,7 +6,7 @@ import '@vaadin/icons';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
@@ -191,7 +191,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       }
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            icon={faEdit} />
+          // <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={_onRenameAccount}
         text={t('Rename')}
