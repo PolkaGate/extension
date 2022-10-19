@@ -2,22 +2,32 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useTranslation } from '../hooks';
+import useAccount from '../hooks/useAccount';
+import useMetadata from '../hooks/useMetadata';
 import Identicon from './Identicon';
 
 interface Props {
   address: string;
-  chain?: Chain;
-  name: string;
+  name?: string;
   style?: SxProps<Theme>;
 }
 
-export default function Identity({ address, chain, name, style }: Props): React.ReactElement<Props> {
+export default function Identity({ address, name, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const account = useAccount(address);
+  const chain = useMetadata(account?.genesisHash, true);
+  const [formatted, setFormatted] = useState<string | undefined>();
+
+  useEffect(() => {
+    const publicKey = decodeAddress(address);
+
+    setFormatted(encodeAddress(publicKey, chain?.ss58Format));
+  }, [address, chain]);
 
   return (
     <Grid
@@ -31,10 +41,10 @@ export default function Identity({ address, chain, name, style }: Props): React.
         pr='8px'
       >
         <Identicon
-          iconTheme={chain?.icon || 'polkadot'}
+          iconTheme={chain?.icon ?? 'polkadot'}
           prefix={chain?.ss58Format ?? 42}
           size={40}
-          value={address}
+          value={formatted ?? account?.address}
         />
       </Grid>
       <Grid
@@ -47,7 +57,7 @@ export default function Identity({ address, chain, name, style }: Props): React.
           overflow='hidden'
           textOverflow='ellipsis'
         >
-          {name || t<string>('unknown')}
+          {name || account?.name || t<string>('unknown')}
         </Typography>
       </Grid>
     </Grid>

@@ -92,8 +92,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   );
 
   const _onRenameAccount = useCallback(() => {
-    formatted && name && (chain?.genesisHash || genesisHash) && onAction(`/rename/${formatted}/${name}/${chain?.genesisHash || genesisHash}`);
-  }, [formatted, chain?.genesisHash, genesisHash, name, onAction]);
+    address && onAction(`/rename/${address}`);
+  }, [address, onAction]);
 
   const _onExportAccount = useCallback(() => {
     address && name && onAction(`/export/${address}`);
