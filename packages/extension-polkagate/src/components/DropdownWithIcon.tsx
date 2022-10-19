@@ -48,7 +48,7 @@ export default function DropdownWithIcon({ defaultValue, icon = undefined, label
         {icon
           ? <Avatar
             src={icon}
-            sx={{ height: 31, width: 31 }}
+            sx={{ height: 31, width: 31, borderRadius: '50%' }}
             variant='square'
           />
           : <Grid
