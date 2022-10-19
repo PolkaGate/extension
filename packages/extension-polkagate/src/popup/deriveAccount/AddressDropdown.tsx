@@ -16,8 +16,8 @@ interface Props {
   allAddresses: [string, string | null, string | undefined][];
   onSelect: (address: string) => void;
   selectedAddress: string;
-  selectedName: string;
-  selectedGenesis: string | null;
+  selectedName: string | null;
+  selectedGenesis: string | undefined;
 }
 
 export default function AddressDropdown({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName }: Props): React.ReactElement<Props> {
@@ -30,7 +30,7 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
 
   useOutsideClick([ref], _hideDropdown);
 
-  const getChainLogo = (genesisHash: string) => getLogo(allChains.find((chain) => chain.genesisHash === genesisHash)?.chain.replace(' Relay Chain', ''));
+  const getChainLogo = (genesisHash: string | undefined | null) => getLogo(allChains.find((chain) => chain.genesisHash === genesisHash)?.chain.replace(' Relay Chain', ''));
 
   return (
     <div style={{ position: 'relative' }}>
