@@ -2,20 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady, decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../../../../../extension-ui/src/components/contexts';
-import { ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../../components'
+import { AccountContext, ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../../components'
 import { useApi, useEndpoint, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { nameAddress, Proxy } from '../../../util/types';
+import { NameAddress, Proxy } from '../../../util/types';
 
 interface Props {
   className?: string;
@@ -26,7 +25,6 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
-  const [addressesOnThisChain, setAddressesOnThisChain] = useState<nameAddress[]>([]);
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
@@ -35,17 +33,20 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const api = useApi(endpoint);
   const genesisOptions = useGenesisHashOptions();
 
-  const handleAllAddressesOnThisChain = useCallback((prefix: number): void => {
-    const allAddressesOnSameChain = accounts.reduce(function (result: nameAddress[], acc): nameAddress[] {
+  const addressesOnThisChain = useMemo((): NameAddress[] | undefined => {
+    console.log('chain?.ss58Format:', chain?.ss58Format)
+    if (chain?.ss58Format === undefined) {
+      return undefined;
+    }
+
+    return accounts.reduce(function (result: NameAddress[], acc): NameAddress[] {
       const publicKey = decodeAddress(acc.address);
 
-      result.push({ address: encodeAddress(publicKey, prefix), name: acc?.name });
+      result.push({ address: encodeAddress(publicKey, chain.ss58Format), name: acc?.name });
 
       return result;
     }, []);
-
-    setAddressesOnThisChain(allAddressesOnSameChain);
-  }, [accounts]);
+  }, [accounts, chain?.ss58Format]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -53,10 +54,6 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
   }, []);
-
-  useEffect(() => {
-    chain?.ss58Format !== undefined && handleAllAddressesOnThisChain(chain.ss58Format);
-  }, [chain, handleAllAddressesOnThisChain]);
 
   useEffect(() => {
     (!realAddress || !chain) && setProxies(undefined);
