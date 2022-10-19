@@ -18,7 +18,7 @@ interface Props {
   isLocked?: boolean;
   parentAddress: string;
   parentName: string | null;
-  parentGenesis: string | null;
+  parentGenesis: string | undefined;
   onDerivationConfirmed: (derivation: { account: { address: string; suri: string }; parentPassword: string }) => void;
 }
 
