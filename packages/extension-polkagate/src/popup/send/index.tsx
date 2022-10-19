@@ -21,7 +21,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { isend, send } from '../../assets/icons';
-import { AccountContext, ActionContext, Amount, Button, Header, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { AccountContext, ActionContext, Amount, Button, ChainLogo, Header, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
@@ -160,15 +160,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     />
   );
 
-  const ChainLogo = (
-    <Avatar
-      alt={'logo'}
-      src={getLogo(chain)}
-      sx={{ height: 25, width: 25, borderRadius:'50%' }}
-      variant='square'
-    />
-  );
-
   return (
     <Motion>
       <Container disableGutters sx={{ px: '30px' }}>
@@ -185,10 +176,10 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           {t('From Account')}:
         </div>
         <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ pt: '7px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-          <Grid item mt='7px' xs={1.3}>
+          <Grid item mt='7px' xs={1}>
             {identicon}
           </Grid>
-          <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '26px' }} xs={6}>
+          <Grid item sx={{ overflow: 'hidden', pl: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '26px' }} xs={6}>
             {accountName}
           </Grid>
           <Grid item xs>
@@ -197,7 +188,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         </Grid>
         <Grid alignItems='center' container>
           <Grid item mt='5px' xs={1}>
-            {ChainLogo}
+            <ChainLogo genesisHash={chain?.genesisHash} />
           </Grid>
           <Grid container item sx={{ pl: '10px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={11}>
             <Grid alignItems='center' container item justifyContent='space-between'>

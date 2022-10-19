@@ -31,7 +31,7 @@ import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
-import { Header, Motion, Select, ShowBalance } from '../../components';
+import { ChainLogo, Header, Motion, Select, ShowBalance } from '../../components';
 import { AccountContext, ActionContext, SettingsContext } from '../../components/contexts';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
@@ -365,12 +365,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             <Select defaultValue={genesisHash} label={'Select the chain'} onChange={_onChangeGenesis} options={genesisOptions} />
           </Grid>
           <Grid item pl={1}>
-            <Avatar
-              alt={'logo'}
-              src={getLogo(newChain ?? chain)}
-              sx={{ height: 31, width: 31 }}
-              variant='square'
-            />
+            <ChainLogo genesisHash={newChain?.genesisHash ?? chain?.genesisHash} size={31}/>
           </Grid>
         </Grid>
         <Grid height='20px' item xs mt='10px'>
