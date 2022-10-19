@@ -194,7 +194,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
           <FontAwesomeIcon
             color={theme.palette.text.primary}
             icon={faEdit} />
-          // <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={_onRenameAccount}
         text={t('Rename')}
