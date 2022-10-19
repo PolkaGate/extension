@@ -164,7 +164,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     <Avatar
       alt={'logo'}
       src={getLogo(chain)}
-      sx={{ height: 25, width: 25 }}
+      sx={{ height: 25, width: 25, borderRadius:'50%' }}
       variant='square'
     />
   );

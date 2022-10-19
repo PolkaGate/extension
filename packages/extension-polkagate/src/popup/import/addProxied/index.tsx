@@ -34,7 +34,6 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const genesisOptions = useGenesisHashOptions();
 
   const addressesOnThisChain = useMemo((): NameAddress[] | undefined => {
-    console.log('chain?.ss58Format:', chain?.ss58Format)
     if (chain?.ss58Format === undefined) {
       return undefined;
     }

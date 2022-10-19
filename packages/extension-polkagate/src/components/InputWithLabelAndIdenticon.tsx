@@ -44,10 +44,8 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, setAddre
     setOffFocus(true);
   }, []);
 
-  const pasteAddress = useCallback(async () => {
-    const val = await navigator.clipboard.readText();
-
-    isValidAddress(val) && setAddress(val);
+  const pasteAddress = useCallback(() => {
+    navigator.clipboard.readText().then((clipText) => isValidAddress(clipText) && setAddress(clipText)).catch(console.error);
   }, [setAddress]);
 
   return (

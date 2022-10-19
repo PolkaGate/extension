@@ -7,7 +7,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Avatar, Grid } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import Address from '../../components/Address';
+import { Address, ChainLogo } from '../../components';
 import { useOutsideClick } from '../../hooks';
 import allChains from '../../util/chains';
 import getLogo from '../../util/getLogo';
@@ -69,7 +69,7 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
             item
             width='30px'
           >
-            {getChainLogo(selectedGenesis)
+            {/* {getChainLogo(selectedGenesis)
               ? (
                 <Avatar
                   src={getChainLogo(selectedGenesis)}
@@ -88,7 +88,8 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
                   }}
                 >
                 </Grid>)
-            }
+            } */}
+            <ChainLogo genesisHash={selectedGenesis} />
           </Grid>
         </Grid>
         <Grid
@@ -160,11 +161,11 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
             <Grid
               item
             >
-              {getChainLogo(genesisHash)
+              {/* {getChainLogo(genesisHash)
                 ? (
                   <Avatar
                     src={getChainLogo(genesisHash)}
-                    sx={{ height: 25, width: 25 }}
+                    sx={{ height: 25, width: 25, borderRadius: '50%' }}
                     variant='square'
                   />)
                 : (
@@ -179,7 +180,8 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
                     }}
                   >
                   </Grid>)
-              }
+              } */}
+              <ChainLogo genesisHash={genesisHash} />
             </Grid>
           </Grid>
         ))}
