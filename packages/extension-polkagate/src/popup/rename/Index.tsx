@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -19,8 +19,7 @@ interface Props {
 export default function Rename({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { address, genesisHash, name } = useParams<RenameAcc>();
-  const chain = useMetadata(genesisHash, true);
+  const { address } = useParams<{ address: string }>();
   const [newName, setNewName] = useState<string | undefined>();
 
   const _onBackClick = useCallback(() => {
@@ -47,8 +46,7 @@ export default function Rename({ className }: Props): React.ReactElement<Props> 
       />
       <Identity
         address={address}
-        chain={chain}
-        name={newName || name}
+        name={newName}
         style={{ padding: '20px' }}
       />
       <Typography
