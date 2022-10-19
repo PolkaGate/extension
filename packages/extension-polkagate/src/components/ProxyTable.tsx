@@ -13,9 +13,10 @@ import { useTranslation } from '../hooks';
 import { NameAddress, Proxy } from '../util/types';
 import Identicon from './Identicon';
 import Label from './Label';
+import { toShortAddress } from '../util/utils';
 
 interface Props {
-  addressesOnThisChain: NameAddress[];
+  addressesOnThisChain: NameAddress[] | undefined;
   chain?: Chain | undefined;
   label: string;
   withRemove?: boolean;
@@ -80,7 +81,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  Address
+                  {t('Address')}
                 </Typography>
               </Grid>
               <Grid
@@ -92,7 +93,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  Type
+                  {t('Type')}
                 </Typography>
               </Grid>
               <Grid
@@ -104,7 +105,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  Delay
+                  {t('Delay')}
                 </Typography>
               </Grid>
               <Grid
@@ -116,7 +117,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  Available
+                  {t('Available')}
                 </Typography>
               </Grid>
             </Grid>
@@ -144,7 +145,8 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                           container
                           height='100%'
                           item
-                          justifyContent='center'
+                          justifyContent='left'
+                          pl='3px'
                           xs={4.5}
                         >
                           <Grid
@@ -166,7 +168,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                             pl='5px'
                             textOverflow='ellipsis'
                           >
-                            {proxy.delegate}
+                            {isAvailable(proxy.delegate)?.name || toShortAddress(proxy.delegate)}
                           </Typography>
                         </Grid>
                         <Grid
