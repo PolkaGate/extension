@@ -23,8 +23,9 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [pass, setPass] = useState('');
-  const [error, setError] = useState('');
+  const [isPasswordError, setIsPasswordError] = useState(false);
 
   const _goHome = useCallback(
     () => onAction('/'),
@@ -33,12 +34,8 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
 
   const onPassChange = useCallback(
     (password: string | null) => {
-      if (password) {
-        setPass(password);
-        setError('');
-      } else {
-        setError('Error');
-      }
+      setPass(password);
+      setIsPasswordError(false);
     }
     , []);
 
@@ -54,9 +51,9 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
 
           onAction('/');
         })
-        .catch((error: Error) => {
-          console.error(error);
-          setError(error.message);
+        .catch((err: Error) => {
+          console.error(err);
+          setIsPasswordError(true);
           setIsBusy(false);
         });
     },
@@ -70,6 +67,23 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
         showBackArrow
         text={t<string>('Export account')}
       />
+      {isPasswordError &&
+        <Grid
+          color='red'
+          height='30px'
+          m='auto'
+          pt='5px'
+          width='92%'
+        >
+          <Warning
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('You’ve used an incorrect password. Try again.')}
+          </Warning>
+        </Grid>
+      }
       <Address
         address={address}
         showCopy
@@ -92,16 +106,40 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
           {t<string>('You are exporting your account. Keep it safe and don’t share it with anyone.')}
         </Typography>
       </Grid>
-      <Password
+      {/* <Password
         label={t<string>('Create password')}
         onChange={onPassChange}
         onEnter={_onExportButtonClick}
-      />
+      /> */}
+      <Grid
+        sx={{
+          m: '20px auto',
+          width: '92%'
+        }}
+      >
+        <InputWithLabel
+          isError={isPasswordError}
+          label={t<string>('Password for this account')}
+          onChange={onPassChange}
+          setShowPassword={setShowPassword}
+          showPassword={showPassword}
+          type={showPassword ? 'text' : 'password'}
+        />
+        {isPasswordError && (
+          <Warning
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('incorrect password')}
+          </Warning>
+        )}
+      </Grid>
       <ButtonWithCancel
         _isBusy={isBusy}
         _onClick={_onExportButtonClick}
         _onClickCancel={_goHome}
-        disabled={pass.length === 0 || !!error}
+        disabled={pass.length === 0 || !!isPasswordError}
         text={t<string>('Export')}
       />
     </>
