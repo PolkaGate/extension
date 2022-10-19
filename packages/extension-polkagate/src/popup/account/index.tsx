@@ -5,7 +5,7 @@
 
 /**
  * @description
- * this component 
+ * this component shows an account information in detail
  * */
 
 import '@vaadin/icons';
@@ -37,6 +37,7 @@ import { DEFAULT_TYPE } from '../../util/defaultType';
 import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';// added for plus
 import AccountBrief from './AccountBrief';
+import Others from './Others';
 
 interface Props extends ThemeProps {
   className?: string;
@@ -111,6 +112,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const accountName = useMemo((): string => location?.state?.identity?.display || account?.name, [location, account]);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(location?.state?.balances as DeriveBalancesAll);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
+  const [showOthers, setShowOthers] = useState<boolean>(false);
 
   useEffect(() => {
     api && setApiToUse(api);
@@ -163,10 +165,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [endpointOptions]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    newEndpoint && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && void apiToUse.derive.balances?.all(formatted).then((b) => {
-      setBalances(b);
-    });
+    newEndpoint && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis &&
+      apiToUse.derive.balances?.all(formatted).then(setBalances).catch(console.error);
   }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress]);
 
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
@@ -281,6 +281,16 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     </Grid>
   );
 
+  console.log('balances:', balances);
+  balances && console.log('lockedBreakdown:', JSON.parse(JSON.stringify(balances?.lockedBreakdown)));
+
+  const goToOthers = useCallback(() => {
+    balances && account && chain && history.push({
+      pathname: `/others/${address}/${formatted}`,
+      state: { account, balances, chain }
+    });
+  }, [balances, account, history, address, formatted, chain]);
+
   const Balance = ({ balances, type }: { type: string, balances: DeriveBalancesAll | undefined }) => {
     let value: BN | undefined;
 
@@ -329,7 +339,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             {type === 'Others' &&
               <Grid item textAlign='right' xs={1.5}>
                 <IconButton
-                  // onClick={_onClick}
+                  onClick={goToOthers}
                   sx={{ p: 0 }}
                 >
                   <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
@@ -368,6 +378,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
         </Grid>
         <Menu />
       </Container>
+      {balances && account && showOthers && <Others balance={balances} account={account} />}
     </Motion>
 
   );
