@@ -21,7 +21,7 @@ function ChainLogo({ genesisHash, showDefault = true, size = 25 }: Props): React
       {logo
         ? <Avatar
           src={logo}
-          sx={{ height: size, width: size, borderRadius: '50%' }}
+          sx={{ borderRadius: '50%', height: size, width: size }}
           variant='square'
         />
         : showDefault && <Grid
