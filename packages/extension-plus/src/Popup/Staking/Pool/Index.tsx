@@ -26,7 +26,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import useTranslation from '../../../../../extension-ui/src/hooks/useTranslation';
-import { updateMeta } from '../../../../../extension-ui/src/messaging';
+import { updateMeta } from '../../../../../extension-polkagate/src/messaging';
 import { PlusHeader, Popup } from '../../../components';
 import { useMapEntries } from '../../../hooks';
 import { MAX_ACCEPTED_COMMISSION } from '../../../util/constants';

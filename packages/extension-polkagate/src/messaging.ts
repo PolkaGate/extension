@@ -71,7 +71,7 @@ export async function editAccount (address: string, name: string): Promise<boole
   return sendMessage('pri(accounts.edit)', { address, name });
 }
 
-// added for polkagate
+// added for plus
 export async function updateMeta (address: string, meta: string): Promise<boolean> {
   return sendMessage('pri(accounts.updateMeta)', { address, meta });
 }

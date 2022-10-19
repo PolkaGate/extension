@@ -15,35 +15,33 @@ import uiSettings from '@polkadot/ui-settings';
 import CrowdLoans from '../../../extension-plus/src/Popup/CrowdLoans';// added for plus
 import Governance from '../../../extension-plus/src/Popup/Governance';// added for plus
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
+import { Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
-import Account from '../../../extension-polkagate/src/popup/account';// added for plus
-import AddProxy from '../../../extension-polkagate/src/popup/import/addProxied/index'
-import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
+import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
+import Account from '../../../extension-polkagate/src/popup/account';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
+import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
-// import Forget from './Forget';
 import ForgetAccount from '../../../extension-polkagate/src/popup/ForgetAccount';
 import Accounts from '../../../extension-polkagate/src/popup/home';
+import AddProxy from '../../../extension-polkagate/src/popup/import/addProxied';
+import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
-import Send from '../../../extension-polkagate/src/popup/send';// added for plus
-import Review from '../../../extension-polkagate/src/popup/send/Review';// added for plus
+import Rename from '../../../extension-polkagate/src/popup/rename';
+import Send from '../../../extension-polkagate/src/popup/send';
+import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
-import { ErrorBoundary, Loading } from '../components';
-import { ColorContext } from '../components/ColorContext';
+import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
+import { ErrorBoundary } from '../components';
 import ToastProvider from '../components/Toast/ToastProvider';
-import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../messaging';
-import { buildHierarchy } from '../util/buildHierarchy';
 import AuthList from './AuthManagement';
 import Authorize from './Authorize';
-// import Export from './Export';
-import Export from '../../../extension-polkagate/src/popup/export/Export';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
-import Rename from '../../../extension-polkagate/src/popup/rename';
 
 const startSettings = uiSettings.get();
 

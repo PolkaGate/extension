@@ -9,8 +9,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { AccountContext } from '@polkadot/extension-ui/components';
-import { buildHierarchy } from '@polkadot/extension-ui/util/buildHierarchy';
 
+import { buildHierarchy } from '../../../../extension-polkagate/src/util/buildHierarchy';
 import { STAKING_ACTIONS } from '../../util/constants';
 import { AccountsBalanceType, BalanceType } from '../../util/plusTypes';
 import { amountToMachine } from '../../util/plusUtils';

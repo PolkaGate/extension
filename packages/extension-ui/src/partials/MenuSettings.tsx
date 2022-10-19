@@ -14,7 +14,7 @@ import { ActionContext, ActionText, Checkbox, Dropdown, Menu, MenuDivider, MenuI
 import { SwitchModeButton } from '../components/SwitchModeButton ';
 import useIsPopup from '../hooks/useIsPopup';
 import useTranslation from '../hooks/useTranslation';
-import { setNotification, windowOpen } from '../messaging';
+import { setNotification, windowOpen } from '../../../extension-polkagate/src/messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
 
 interface Option {

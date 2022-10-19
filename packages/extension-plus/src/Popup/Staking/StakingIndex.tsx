@@ -9,8 +9,7 @@
  * */
 
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { StakingLedger } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces';
+import type { AccountId,StakingLedger  } from '@polkadot/types/interfaces';
 import type { AccountsBalanceType, NominatorInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../util/plusTypes';
 
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
@@ -23,9 +22,9 @@ import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } fro
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { AccountJson } from '@polkadot/extension-base/background/types';
-import { updateMeta } from '@polkadot/extension-ui/messaging';
 import { BN, bnMax } from '@polkadot/util';
 
+import { updateMeta } from '../../../../extension-polkagate/src/messaging';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { PlusHeader, Popup, ShowBalance2 } from '../../components';
 import useEndPoint from '../../hooks/useEndPoint';

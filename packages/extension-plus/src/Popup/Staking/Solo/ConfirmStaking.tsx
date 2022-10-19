@@ -18,10 +18,10 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { updateMeta } from '@polkadot/extension-ui/messaging';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
+import { updateMeta } from '../../../../../extension-polkagate/src/messaging';
 import { AccountContext } from '../../../../../extension-ui/src/components';
 import useTranslation from '../../../../../extension-ui/src/hooks/useTranslation';
 import { ConfirmButton, Hint, Password, PlusHeader, Popup, ShortAddress } from '../../../components';

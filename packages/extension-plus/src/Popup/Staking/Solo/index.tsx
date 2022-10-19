@@ -22,8 +22,8 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
+import { updateMeta } from '../../../../../extension-polkagate/src/messaging';
 import useTranslation from '../../../../../extension-ui/src/hooks/useTranslation';
-import { updateMeta } from '../../../../../extension-ui/src/messaging';
 import { PlusHeader, Popup } from '../../../components';
 import getRewardsSlashes from '../../../util/api/getRewardsSlashes';
 import { getStakingReward } from '../../../util/api/staking';

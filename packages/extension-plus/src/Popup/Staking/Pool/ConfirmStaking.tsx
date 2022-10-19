@@ -19,10 +19,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { updateMeta } from '@polkadot/extension-ui/messaging';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
+import { updateMeta } from '../../../../../extension-polkagate/src/messaging';
 import { AccountContext } from '../../../../../extension-ui/src/components';
 import useTranslation from '../../../../../extension-ui/src/hooks/useTranslation';
 import { ConfirmButton, FormatBalance, Hint, Password, PlusHeader, Popup } from '../../../components';

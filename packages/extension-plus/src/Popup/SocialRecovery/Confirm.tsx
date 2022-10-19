@@ -19,7 +19,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { updateMeta } from '@polkadot/extension-ui/messaging';
+import { updateMeta } from '../../../../extension-polkagate/src/messaging';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 

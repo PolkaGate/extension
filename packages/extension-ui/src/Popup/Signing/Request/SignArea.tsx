@@ -8,7 +8,7 @@ import { PASSWORD_EXPIRY_MIN } from '@polkadot/extension-base/defaults';
 
 import { ActionBar, ActionContext, Button, ButtonArea, Checkbox, Link } from '../../../components';
 import useTranslation from '../../../hooks/useTranslation';
-import { approveSignPassword, cancelSignRequest, isSignLocked } from '../../../messaging';
+import { approveSignPassword, cancelSignRequest, isSignLocked } from '../../../../../extension-polkagate/src/messaging';
 import Unlock from '../Unlock';
 
 interface Props {

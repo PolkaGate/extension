@@ -13,11 +13,11 @@ import { configure, mount } from 'enzyme';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 
-import * as messaging from '../messaging';
-import * as MetadataCache from '../MetadataCache';
+import * as messaging from '../../../extension-polkagate/src/messaging';
+import * as MetadataCache from '../../../extension-polkagate/src/MetadataCache';
 import { westendMetadata } from '../Popup/Signing/metadataMock';
 import { flushAllPromises } from '../testHelpers';
-import { buildHierarchy } from '../util/buildHierarchy';
+import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
 import getParentNameSuri from '../util/getParentNameSuri';
 import { AccountContext, Address } from '.';

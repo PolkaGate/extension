@@ -18,7 +18,7 @@ import { BN_HUNDRED, BN_MILLION } from '@polkadot/util';
 import { Chain } from '../../../../../../extension-chains/src/types';
 import { AccountContext } from '../../../../../../extension-ui/src/components/contexts';
 import useTranslation from '../../../../../../extension-ui/src/hooks/useTranslation';
-import { updateMeta } from '../../../../../../extension-ui/src/messaging';
+import { updateMeta } from '../../../../../../extension-polkagate/src/messaging';
 import { AddressInput, ConfirmButton, Participator, Password, PlusHeader, Popup, ShowBalance } from '../../../../components';
 import Hint from '../../../../components/Hint';
 import broadcast from '../../../../util/api/broadcast';

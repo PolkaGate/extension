@@ -27,7 +27,7 @@ import { Option } from '@polkadot/types-codec';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext } from '../../../extension-ui/src/components/contexts';
-import { updateMeta } from '../../../extension-ui/src/messaging';
+import { updateMeta } from '../../../extension-polkagate/src/messaging';
 import useApi from '../hooks/useApi';
 import useEndPoint from '../hooks/useEndPoint';
 import AddressQRcode from '../Popup/AddressQRcode/AddressQRcode';
