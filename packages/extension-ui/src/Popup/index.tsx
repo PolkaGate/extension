@@ -17,17 +17,17 @@ import Governance from '../../../extension-plus/src/Popup/Governance';// added f
 import SocialRecovery from '../../../extension-plus/src/Popup/SocialRecovery';// added for plus
 import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import Account from '../../../extension-polkagate/src/popup/account';// added for plus
-import AddProxy from '../../../extension-polkagate/src/popup/addProxied/index'
-import AttachQR from '../../../extension-polkagate/src/popup/attachQR';
+import AddProxy from '../../../extension-polkagate/src/popup/import/addProxied/index'
+import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 // import Forget from './Forget';
 import ForgetAccount from '../../../extension-polkagate/src/popup/ForgetAccount';
 import Accounts from '../../../extension-polkagate/src/popup/home';
-import ImportLedger from '../../../extension-polkagate/src/popup/importLedger';
-import ImportSeed from '../../../extension-polkagate/src/popup/importSeed';
-import RestoreJson from '../../../extension-polkagate/src/popup/restoreJSON';
+import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
+import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
+import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
 import Send from '../../../extension-polkagate/src/popup/send';// added for plus
 import Review from '../../../extension-polkagate/src/popup/send/Review';// added for plus
 import Welcome from '../../../extension-polkagate/src/popup/welcome';

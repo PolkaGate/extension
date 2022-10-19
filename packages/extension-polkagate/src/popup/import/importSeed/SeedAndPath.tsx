@@ -11,10 +11,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import { objectSpread } from '@polkadot/util';
 
-import { DropdownWithIcon, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../components';
-import { useGenesisHashOptions, useTranslation } from '../../hooks';
-import { getMetadata, validateSeed } from '../../messaging';
-import getLogo from '../../util/getLogo';
+import { DropdownWithIcon, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../../components';
+import { useGenesisHashOptions, useTranslation } from '../../../hooks';
+import { getMetadata, validateSeed } from '../../../messaging';
+import getLogo from '../../../util/getLogo';
 
 interface Props {
   className?: string;

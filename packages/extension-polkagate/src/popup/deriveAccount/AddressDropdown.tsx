@@ -14,14 +14,13 @@ import getLogo from '../../util/getLogo';
 
 interface Props {
   allAddresses: [string, string | null, string | undefined][];
-  className?: string;
   onSelect: (address: string) => void;
   selectedAddress: string;
   selectedName: string;
   selectedGenesis: string | null;
 }
 
-export default function AddressDropdown({ allAddresses, className, onSelect, selectedAddress, selectedGenesis, selectedName }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 

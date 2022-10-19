@@ -93,11 +93,15 @@ function Address({ address, className, genesisHash, isExternal, isHardware, name
   const [{ formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
   const accName = useMemo(() => {
-    if (name || !accounts) {
+    if (name) {
+      return name;
+    }
+
+    if (!accounts) {
       return;
     }
 
-    return accounts.find((acc) => acc.address === address)?.name;
+    return accounts.find((a) => a.address === address)?.name;
   }, [accounts, address, name]);
 
   const { show } = useToast();

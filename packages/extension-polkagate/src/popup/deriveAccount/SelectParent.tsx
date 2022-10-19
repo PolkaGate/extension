@@ -17,7 +17,7 @@ interface Props {
   className?: string;
   isLocked?: boolean;
   parentAddress: string;
-  parentName: string;
+  parentName: string | null;
   parentGenesis: string | null;
   onDerivationConfirmed: (derivation: { account: { address: string; suri: string }; parentPassword: string }) => void;
 }
@@ -59,7 +59,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
       setPathError(t('Soft derivation is only allowed for sr25519 accounts'));
     }
   }, [allowSoftDerivation, suriPath, t]);
-  console.log('hierarchy:', hierarchy);
+
   const allAddresses = useMemo(
     () => hierarchy
       .filter(({ isExternal }) => !isExternal)
@@ -134,7 +134,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
           )
           : (
             <Label
-              label={t<string>('Choose Parent Account')}
+              label={t<string>('Choose parent account')}
               style={{ margin: 'auto', paddingBottom: '20px', width: '92%' }}
             >
               <AddressDropdown

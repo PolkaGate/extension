@@ -9,13 +9,13 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady, decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../../../../extension-ui/src/components/contexts';
-import { ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../components'
-import { useApi, useEndpoint, useGenesisHashOptions, useTranslation } from '../../hooks';
-import { createAccountExternal, getMetadata } from '../../messaging';
-import { HeaderBrand, Name } from '../../partials';
-import getLogo from '../../util/getLogo';
-import { nameAddress, Proxy } from '../../util/types';
+import { AccountContext } from '../../../../../extension-ui/src/components/contexts';
+import { ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../../components'
+import { useApi, useEndpoint, useGenesisHashOptions, useTranslation } from '../../../hooks';
+import { createAccountExternal, getMetadata } from '../../../messaging';
+import { HeaderBrand, Name } from '../../../partials';
+import getLogo from '../../../util/getLogo';
+import { nameAddress, Proxy } from '../../../util/types';
 
 interface Props {
   className?: string;
