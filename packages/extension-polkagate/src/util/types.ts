@@ -296,6 +296,10 @@ export interface nameAddress {
   name?: string;
   address: string;
 }
+export interface NameAddress {
+  name?: string;
+  address: string;
+}
 
 interface Judgment {
   index: number;

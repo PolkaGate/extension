@@ -10,12 +10,12 @@ import React, { useCallback } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
-import { nameAddress, Proxy } from '../util/types';
+import { NameAddress, Proxy } from '../util/types';
 import Identicon from './Identicon';
 import Label from './Label';
 
 interface Props {
-  addressesOnThisChain: nameAddress[];
+  addressesOnThisChain: NameAddress[];
   chain?: Chain | undefined;
   label: string;
   withRemove?: boolean;
@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function ProxyTable({ addressesOnThisChain, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
-  const isAvailable = useCallback((address: string): nameAddress => addressesOnThisChain?.find((a) => a.address === address), [addressesOnThisChain]);
+  const isAvailable = useCallback((address: string): NameAddress | undefined => addressesOnThisChain?.find((a) => a.address === address), [addressesOnThisChain]);
   const { t } = useTranslation();
 
   return (
@@ -214,9 +214,6 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                             {isAvailable(proxy.delegate) ? 'Yes' : 'No'}
                           </Typography>
                         </Grid>
-                        {/* <Grid item>
-                      address
-                    </Grid> */}
                       </Grid>
                     );
                   })
