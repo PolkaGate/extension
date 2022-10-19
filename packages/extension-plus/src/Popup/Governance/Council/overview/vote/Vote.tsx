@@ -7,11 +7,11 @@ import { HowToReg as HowToRegIcon } from '@mui/icons-material';
 import { Grid, InputAdornment, TextField, Tooltip } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { updateMeta } from '@polkadot/extension-ui/messaging';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
 import { Chain } from '../../../../../../../extension-chains/src/types';
+import { updateMeta } from '../../../../../../../extension-polkagate/src/messaging';
 import { AccountContext } from '../../../../../../../extension-ui/src/components/contexts';
 import useTranslation from '../../../../../../../extension-ui/src/hooks/useTranslation';
 import { ConfirmButton, Participator, Password, PlusHeader, Popup, Progress, ShowBalance } from '../../../../../components';

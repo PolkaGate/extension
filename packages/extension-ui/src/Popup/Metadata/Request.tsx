@@ -7,10 +7,10 @@ import type { ThemeProps } from '../../types';
 import React, { useCallback, useContext } from 'react';
 import styled from 'styled-components';
 
-import { ActionBar, ActionContext, Button, Link, Table, Warning } from '../../components';
 import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
+import { approveMetaRequest, rejectMetaRequest } from '../../../../extension-polkagate/src/messaging';
+import { ActionBar, ActionContext, Button, Link, Table, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { approveMetaRequest, rejectMetaRequest } from '../../messaging';
 
 interface Props {
   className?: string;

@@ -8,10 +8,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { AccountContext, SettingsContext } from '@polkadot/extension-ui/components';
-import { buildHierarchy } from '@polkadot/extension-ui/util/buildHierarchy';
 import { Balance } from '@polkadot/types/interfaces';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
+import { buildHierarchy } from '../../../../extension-polkagate/src/util/buildHierarchy';
 import getChainInfo from '../../util/getChainInfo';
 import { ChainInfo } from '../../util/plusTypes';
 import { accounts, actives, auction, endpoints, getText, makeShortAddr, SettingsStruct } from '../../util/test/testHelper';

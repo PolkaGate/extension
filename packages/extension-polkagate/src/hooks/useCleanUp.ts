@@ -12,7 +12,7 @@ import { useCallback, useEffect } from 'react';
 
 import { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { updateMeta } from '../../../extension-ui/src/messaging';
+import { updateMeta } from '../messaging';
 import { PLUS_VERSION } from '../util/constants';
 import { SavedMetaData } from '../util/plusTypes';
 import { prepareMetaData } from '../util/utils';

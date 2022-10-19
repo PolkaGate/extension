@@ -12,12 +12,12 @@ import { Grid, InputAdornment, Skeleton, TextField } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
-import { updateMeta } from '@polkadot/extension-ui/messaging';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, ActionContext } from '../../../../extension-ui/src/components/contexts';
 import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
+import { updateMeta } from '../../../../extension-polkagate/src/messaging';
+import { AccountContext, ActionContext } from '../../../../extension-ui/src/components/contexts';
 import useTranslation from '../../../../extension-ui/src/hooks/useTranslation';
 import { ConfirmButton, Participator, Password, PlusHeader, Popup } from '../../components';
 import broadcast from '../../util/api/broadcast';

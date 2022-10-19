@@ -13,7 +13,7 @@ import { AccountContext, Link, MediaContext, Menu, MenuDivider, MenuItem } from 
 import useIsPopup from '../hooks/useIsPopup';
 import { useLedger } from '../hooks/useLedger';
 import useTranslation from '../hooks/useTranslation';
-import { windowOpen } from '../messaging';
+import { windowOpen } from '../../../extension-polkagate/src/messaging';
 
 interface Props extends ThemeProps {
   className?: string;

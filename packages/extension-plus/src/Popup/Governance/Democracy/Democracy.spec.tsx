@@ -13,10 +13,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { AccountContext, SettingsContext } from '@polkadot/extension-ui/components';
-import { buildHierarchy } from '@polkadot/extension-ui/util/buildHierarchy';
 import { Balance } from '@polkadot/types/interfaces';
 
 import Extension from '../../../../../extension-base/src/background/handlers/Extension';
+import { buildHierarchy } from '../../../../../extension-polkagate/src/util/buildHierarchy';
 import getCurrentBlockNumber from '../../../util/api/getCurrentBlockNumber';
 import getProposals from '../../../util/api/getProposals';
 import getReferendums from '../../../util/api/getReferendums';

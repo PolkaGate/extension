@@ -17,7 +17,7 @@ import keyring from '@polkadot/ui-keyring';
 import { Chain } from '../../../../../../extension-chains/src/types';
 import { AccountContext } from '../../../../../../extension-ui/src/components/contexts';
 import useTranslation from '../../../../../../extension-ui/src/hooks/useTranslation';
-import { updateMeta } from '../../../../../../extension-ui/src/messaging';
+import { updateMeta } from '../../../../../../extension-polkagate/src/messaging';
 import { ConfirmButton, Participator, Password, PlusHeader, Popup, ShowBalance } from '../../../../components';
 import broadcast from '../../../../util/api/broadcast';
 import { PASS_MAP, VOTE_MAP } from '../../../../util/constants';

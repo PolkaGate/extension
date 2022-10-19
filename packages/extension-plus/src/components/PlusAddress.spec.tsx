@@ -14,11 +14,11 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 
 import { AccountContext, Address } from '../../../extension-ui/src/components';
-import * as messaging from '../../../extension-ui/src/messaging';
-import * as MetadataCache from '../../../extension-ui/src/MetadataCache';
+import * as messaging from '../../../extension-polkagate/src/messaging';
+import * as MetadataCache from '../../../extension-polkagate/src/MetadataCache';
 import { westendMetadata } from '../../../extension-ui/src/Popup/Signing/metadataMock';
 import { flushAllPromises } from '../../../extension-ui/src/testHelpers';
-import { buildHierarchy } from '../../../extension-ui/src/util/buildHierarchy';
+import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
 import getParentNameSuri from '../../../extension-ui/src/util/getParentNameSuri';
 import { Plus } from './';

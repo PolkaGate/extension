@@ -12,7 +12,7 @@ import { TypeRegistry } from '@polkadot/types';
 
 import { ActionContext, Address, VerticalSpace, Warning } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { approveSignSignature } from '../../../messaging';
+import { approveSignSignature } from '../../../../../extension-polkagate/src/messaging';
 import Bytes from '../Bytes';
 import Extrinsic from '../Extrinsic';
 import LedgerSign from '../LedgerSign';

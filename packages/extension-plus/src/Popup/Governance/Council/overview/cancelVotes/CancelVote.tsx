@@ -10,7 +10,7 @@ import { Container, Grid } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { updateMeta } from '@polkadot/extension-ui/messaging';
+import { updateMeta } from '../../../../../../../extension-polkagate/src/messaging';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 

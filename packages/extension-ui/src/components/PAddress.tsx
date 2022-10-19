@@ -27,7 +27,7 @@ import useMetadata from '../../../extension-polkagate/src/hooks/useMetadata';
 import useOutsideClick from '../../../extension-polkagate/src/hooks/useOutsideClick';
 import useToast from '../../../extension-polkagate/src/hooks/useToast';
 import useTranslation from '../hooks/useTranslation';
-import { showAccount } from '../messaging';
+import { showAccount } from '../../../extension-polkagate/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
 import getParentNameSuri from '../util/getParentNameSuri';
 import { AccountContext, ActionContext, SettingsContext } from './contexts';

@@ -10,7 +10,7 @@ import { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handl
 import { InputFilter } from '@polkadot/extension-ui/components';
 
 import useTranslation from '../../hooks/useTranslation';
-import { getAuthList, removeAuthorization, toggleAuthorization } from '../../messaging';
+import { getAuthList, removeAuthorization, toggleAuthorization } from '../../../../extension-polkagate/src/messaging';
 import { Header } from '../../partials';
 import WebsiteEntry from './WebsiteEntry';
 

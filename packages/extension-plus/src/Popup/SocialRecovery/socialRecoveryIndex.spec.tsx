@@ -10,9 +10,9 @@ import ReactDOM from 'react-dom';
 import { MemoryRouter, Route } from 'react-router';
 
 import { AccountContext, SettingsContext } from '@polkadot/extension-ui/components';
-import { buildHierarchy } from '@polkadot/extension-ui/util/buildHierarchy';
 import { BN } from '@polkadot/util';
 
+import { buildHierarchy } from '../../../../extension-polkagate/src/util/buildHierarchy';
 import { ShowBalance2 } from '../../components';
 import getChainInfo from '../../util/getChainInfo';
 import { ChainInfo, RecoveryConsts } from '../../util/plusTypes';

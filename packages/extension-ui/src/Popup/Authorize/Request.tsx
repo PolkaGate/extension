@@ -8,9 +8,9 @@ import React, { useCallback, useContext } from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 
+import { approveAuthRequest, rejectAuthRequest } from '../../../../extension-polkagate/src/messaging';
 import { ActionBar, ActionContext, Button, Icon, Link, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { approveAuthRequest, rejectAuthRequest } from '../../../../extension-polkagate/src/messaging';
 
 interface Props extends ThemeProps {
   authId: string;

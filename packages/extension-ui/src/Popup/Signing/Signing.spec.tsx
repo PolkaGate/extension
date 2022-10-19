@@ -13,8 +13,8 @@ import { act } from 'react-dom/test-utils';
 import { ThemeProvider } from 'styled-components';
 
 import { ActionContext, Address, Button, Input, SigningReqContext, themes } from '../../components';
-import * as messaging from '../../messaging';
-import * as MetadataCache from '../../MetadataCache';
+import * as messaging from '../../../../extension-polkagate/src/messaging';
+import * as MetadataCache from '../../../../extension-polkagate/src/MetadataCache';
 import { flushAllPromises } from '../../testHelpers';
 import Extrinsic from './Extrinsic';
 import { westendMetadata } from './metadataMock';

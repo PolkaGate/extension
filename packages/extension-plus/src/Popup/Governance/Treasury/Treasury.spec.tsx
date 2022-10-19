@@ -11,11 +11,11 @@ import ReactDOM from 'react-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveTreasuryProposal, DeriveTreasuryProposals } from '@polkadot/api-derive/types';
-import { buildHierarchy } from '@polkadot/extension-ui/util/buildHierarchy';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN_HUNDRED, BN_MILLION } from '@polkadot/util';
 
 import Extension from '../../../../../extension-base/src/background/handlers/Extension';
+import { buildHierarchy } from '../../../../../extension-polkagate/src/util/buildHierarchy';
 import { AccountContext, SettingsContext } from '../../../../../extension-ui/src/components';
 import getTips from '../../../util/api/getTips';
 import getChainInfo from '../../../util/getChainInfo';
