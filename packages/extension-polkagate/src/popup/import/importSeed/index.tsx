@@ -4,11 +4,11 @@
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address } from '../../components';
-import { useMetadata, useTranslation } from '../../hooks';
-import { createAccountSuri } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { DEFAULT_TYPE } from '../../util/defaultType';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address } from '../../../components';
+import { useMetadata, useTranslation } from '../../../hooks';
+import { createAccountSuri } from '../../../messaging';
+import HeaderBrand from '../../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../../util/defaultType';
 import SeedAndPath from './SeedAndPath';
 
 export interface AccountInfo {

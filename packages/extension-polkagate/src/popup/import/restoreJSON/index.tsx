@@ -10,12 +10,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { u8aToString } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Address, InputFileWithLabel, InputWithLabel, PButton, Warning } from '../../components';
-import { useTranslation } from '../../hooks';
-import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { DEFAULT_TYPE } from '../../util/defaultType';
-import { isKeyringPairs$Json } from '../../util/typeGuards';
+import { AccountContext, ActionContext, Address, InputFileWithLabel, InputWithLabel, PButton, Warning } from '../../../components';
+import { useTranslation } from '../../../hooks';
+import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
+import HeaderBrand from '../../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../../util/defaultType';
+import { isKeyringPairs$Json } from '../../../util/typeGuards';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 

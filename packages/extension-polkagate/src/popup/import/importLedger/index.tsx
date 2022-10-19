@@ -7,17 +7,17 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, DropdownWithIcon, Select, Warning } from '../../components';
-import Address from '../../components/Address';
-import PButton from '../../components/PButton';
-import { useLedger, useMetadata, useTranslation } from '../../hooks';
-import useGenesisHashOptions from '../../hooks/useGenesisHashOptions';
-import { createAccountHardware, createAccountSuri, getMetadata } from '../../messaging';
-import { Name } from '../../partials';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { DEFAULT_TYPE } from '../../util/defaultType';
-import getLogo from '../../util/getLogo';
-import ledgerChains from '../../util/legerChains';
+import { AccountContext, ActionContext, DropdownWithIcon, Select, Warning } from '../../../components';
+import Address from '../../../components/Address';
+import PButton from '../../../components/PButton';
+import { useLedger, useMetadata, useTranslation } from '../../../hooks';
+import useGenesisHashOptions from '../../../hooks/useGenesisHashOptions';
+import { createAccountHardware, createAccountSuri, getMetadata } from '../../../messaging';
+import { Name } from '../../../partials';
+import HeaderBrand from '../../../partials/HeaderBrand';
+import { DEFAULT_TYPE } from '../../../util/defaultType';
+import getLogo from '../../../util/getLogo';
+import ledgerChains from '../../../util/legerChains';
 
 interface AccOption {
   text: string;

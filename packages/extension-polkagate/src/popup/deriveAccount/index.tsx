@@ -94,20 +94,11 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
           <Typography
             fontSize='14px'
             fontWeight={300}
-            m='20px auto'
+            m='25px auto'
             textAlign='left'
             width='88%'
           >
-            - {t<string>('A new account can be derived to structure accounts as parent and children.')}
-          </Typography>
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            m='20px auto'
-            textAlign='left'
-            width='88%'
-          >
-            - {t<string>('A derived account inherits the Mnemonic from its parent, but has a unique derivation path.')}
+            {t<string>('A derived account inherits the Mnemonic from its parent, but has a unique derivation path.')}
           </Typography>
           <SelectParent
             isLocked={isLocked}

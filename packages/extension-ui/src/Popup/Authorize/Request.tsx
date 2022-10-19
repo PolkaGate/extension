@@ -10,7 +10,7 @@ import styled from 'styled-components';
 
 import { ActionBar, ActionContext, Button, Icon, Link, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { approveAuthRequest, rejectAuthRequest } from '../../messaging';
+import { approveAuthRequest, rejectAuthRequest } from '../../../../extension-polkagate/src/messaging';
 
 interface Props extends ThemeProps {
   authId: string;

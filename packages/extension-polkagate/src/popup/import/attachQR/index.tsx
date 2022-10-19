@@ -6,11 +6,11 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../components';
-import { useTranslation } from '../../hooks';
-import { createAccountExternal, createAccountSuri, createSeed } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import Name from '../../partials/Name';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, PButton, Warning } from '../../../components';
+import { useTranslation } from '../../../hooks';
+import { createAccountExternal, createAccountSuri, createSeed } from '../../../messaging';
+import HeaderBrand from '../../../partials/HeaderBrand';
+import Name from '../../../partials/Name';
 
 interface Props {
   className?: string;
