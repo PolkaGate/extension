@@ -37,6 +37,8 @@ export interface Props {
   type?: KeypairType;
   style?: SxProps<Theme> | undefined;
   showCopy?: boolean;
+  width?: string;
+  margin?: string;
 }
 
 interface Recoded {
@@ -86,7 +88,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, className, genesisHash, isExternal, isHardware, name, showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, className, genesisHash, isExternal, isHardware, margin = '20px auto', name, width = '92%', showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
@@ -148,9 +150,9 @@ function Address({ address, className, genesisHash, isExternal, isHardware, name
           borderColor: 'secondary.light',
           borderRadius: '5px',
           height: '70px',
-          m: '20px auto',
+          m: { margin },
           p: '14px 8px',
-          width: '92%',
+          width: { width },
           ...style
         }}
       >
