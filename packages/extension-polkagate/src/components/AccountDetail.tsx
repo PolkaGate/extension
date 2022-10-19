@@ -44,7 +44,8 @@ export default function AccountDetail({ address, api, balances, chain, formatted
   const shortAddress = `${formatted?.slice(0, 12)}...${formatted?.slice(-12)}`;
 
   const _onCopy = useCallback(
-    () => show(t('Copied')),
+    () =>
+      show(t('Copied')),
     [show, t]
   );
 
@@ -138,39 +139,39 @@ export default function AccountDetail({ address, api, balances, chain, formatted
           </IconButton>
         </Grid>
         <Grid item>
-          <CopyToClipboard text={String(formatted)}>
-            <Tooltip
-              arrow
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    '& .MuiTooltip-arrow': {
-                      color: 'text.primary',
-                      height: '10px'
-                    },
-                    backgroundColor: 'text.primary',
-                    color: 'text.secondary',
-                    fontSize: '14px',
-                    fontWeight: 400
-                  }
+          <Tooltip
+            arrow
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  '& .MuiTooltip-arrow': {
+                    color: 'text.primary',
+                    height: '10px'
+                  },
+                  backgroundColor: 'text.primary',
+                  color: 'text.secondary',
+                  fontSize: '14px',
+                  fontWeight: 400
                 }
+              }
+            }}
+            placement='top'
+            title={shortAddress}
+          >
+            <IconButton
+              onClick={_onCopy}
+              sx={{
+                height: '23px',
+                m: '10px 0',
+                width: '36px'
               }}
-              placement='top'
-              title={shortAddress}
+              title={String(formatted)}
             >
-              <IconButton
-                title={String(formatted)}
-                onClick={_onCopy}
-                sx={{
-                  height: '23px',
-                  m: '10px 0',
-                  width: '36px'
-                }}
-              >
+              <CopyToClipboard text={String(formatted)}>
                 <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
-              </IconButton>
-            </Tooltip>
-          </CopyToClipboard>
+              </CopyToClipboard>
+            </IconButton>
+          </Tooltip>
         </Grid>
       </Grid>
       <Grid
