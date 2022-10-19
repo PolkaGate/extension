@@ -9,13 +9,14 @@ import { allOf, isNotShorterThan, isSameAs, Validator } from '../util/validators
 
 interface Props {
   isFocussed?: boolean;
+  label?: string;
   onChange: (password: string | null) => void;
   onEnter: () => void;
 }
 
 const MIN_LENGTH = 6;
 
-export default function Password({ isFocussed, onChange, onEnter }: Props): React.ReactElement<Props> {
+export default function Password({ isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [pass1, setPass1] = useState<string | null>(null);
   const [pass2, setPass2] = useState<string | null>(null);
@@ -37,7 +38,7 @@ export default function Password({ isFocussed, onChange, onEnter }: Props): Reac
         component={InputWithLabel}
         data-input-password
         isFocused={isFocussed}
-        label={t<string>('Password for this account (>5 characters)')}
+        label={label || t<string>('Password for this account (>5 characters)')}
         onValidatedChange={setPass1}
         setShowPassword={setShowPassword}
         showPassword={showPassword}

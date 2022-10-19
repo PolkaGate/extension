@@ -95,6 +95,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     formatted && name && (chain?.genesisHash || genesisHash) && onAction(`/rename/${formatted}/${name}/${chain?.genesisHash || genesisHash}`);
   }, [formatted, chain?.genesisHash, genesisHash, name, onAction]);
 
+  const _onExportAccount = useCallback(() => {
+    address && name && onAction(`/export/${address}`);
+  }, [address, name, onAction]);
+
   useEffect(() => {
     genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
       console.error(error);
@@ -172,7 +176,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
             color={theme.palette.text.primary}
             icon={faFileExport} />
         }
-        // onClick={onnn}
+        onClick={_onExportAccount}
         text={t('Export account')}
       />
       {canDerive &&

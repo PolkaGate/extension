@@ -38,7 +38,8 @@ import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequest
 import { buildHierarchy } from '../util/buildHierarchy';
 import AuthList from './AuthManagement';
 import Authorize from './Authorize';
-import Export from './Export';
+// import Export from './Export';
+import Export from '../../../extension-polkagate/src/popup/export/Export';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
@@ -161,7 +162,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/account/proxy'>{wrapWithErrorBoundary(<AddProxy />, 'add-proxy')}</Route>
                           <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
                           <Route exact path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
-                          <Route path='/account/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
+                          <Route exact path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
                           <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
                           <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
                           <Route path='/account/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
