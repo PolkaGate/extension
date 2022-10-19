@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountContext, AccountNamePasswordCreation, ActionContext, Address } from '../../components';
+import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, Label } from '../../components';
 import { useTranslation } from '../../hooks';
 import { deriveAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -89,17 +89,17 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
           totalSteps: 2
         }}
       />
+      <Typography
+        fontSize='14px'
+        fontWeight={300}
+        m='25px auto'
+        textAlign='left'
+        width='88%'
+      >
+        {t<string>('A derived account inherits the Mnemonic from its parent, but has a unique derivation path.')}
+      </Typography>
       {stepOne && !account && (
         <>
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            m='25px auto'
-            textAlign='left'
-            width='88%'
-          >
-            {t<string>('A derived account inherits the Mnemonic from its parent, but has a unique derivation path.')}
-          </Typography>
           <SelectParent
             isLocked={isLocked}
             onDerivationConfirmed={_onDerivationConfirmed}
@@ -111,13 +111,18 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
       )}
       {!stepOne && account && (
         <>
-          <div>
+          <Label
+            label={t<string>('New derived account')}
+            style={{ margin: 'auto', width: '92%' }}
+          >
             <Address
               address={account.address}
               genesisHash={parentGenesis}
+              margin='0'
               name={name}
+              width={'100%'}
             />
-          </div>
+          </Label>
           <AccountNamePasswordCreation
             buttonLabel={t<string>('Create')}
             isBusy={isBusy}
