@@ -11,13 +11,16 @@ import Menu from './Menu';
 
 interface Props {
   showBackArrow?: boolean;
-  showSettings?: boolean;
+  showMenu?: boolean;
   withSteps?: { currentStep: string | number, totalSteps: string | number } | null;
   text?: React.ReactNode;
   onBackClick?: () => void;
+  _centerItem?: JSX.Element;
+  noBorder?: boolean;
+  paddingBottom?: number;
 }
 
-function HeaderBrand({ onBackClick, showBackArrow, showSettings, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, text, withSteps = null, noBorder = false, paddingBottom = 11 }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -39,6 +42,76 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text, withSteps
     []
   );
 
+  const LeftIcon = () => (
+    <Grid item>
+      {showBackArrow
+        ? <ArrowBackIosIcon
+          onClick={onBackClick}
+          sx={{
+            color: 'secondary.light',
+            cursor: 'pointer',
+            fontSize: 25,
+            stroke: theme.palette.secondary.light,
+            strokeWidth: 1.5
+          }}
+        />
+        : <Box
+          component='img'
+          src={logoWhite}
+          sx={{ height: 38, width: 38 }}
+        />
+      }
+    </Grid>
+  );
+
+  const CenterItem = () => (
+    <Grid
+      display='inline-flex'
+      item
+    >
+      <Typography
+        color={showBackArrow ? 'text.primary' : '#ffffff'}
+        fontFamily={showBackArrow ? 'inherit' : 'Eras'}
+        fontWeight={400}
+        sx={{ fontSize: showBackArrow ? '20px' : '30px', lineHeight: showBackArrow ? 1.9 : 'inherit', letterSpacing: '-0.015em' }}
+      >
+        {text}
+      </Typography>
+      {withSteps &&
+        <Typography
+          color={showBackArrow ? 'text.primary' : '#ffffff'}
+          fontFamily='inherit'
+          fontSize='20px'
+          fontWeight={400}
+          letterSpacing='-0.015em'
+          p='5px'
+        >
+          <span>(</span>
+          <span style={{ color: theme.palette.secondary.light }}>{withSteps.currentStep}</span>
+          <span>{'/' + withSteps.totalSteps.toString() + ')'}</span>
+        </Typography>
+      }
+    </Grid>
+  );
+
+  const RightMenuIcon = () => (
+    <Grid
+      item
+      sx={{ height: '38px', visibility: showMenu ? 'visible' : 'hidden' }}
+    >
+      <IconButton
+        aria-label='menu'
+        color='inherit'
+        edge='start'
+        onClick={_handleMenuClick}
+        size='small'
+        sx={{ p: 0 }}
+      >
+        <MenuIcon sx={{ color: showBackArrow ? 'secondary.light' : '#fff', fontSize: 38 }} />
+      </IconButton>
+    </Grid>
+  );
+
   return (
     <>
       {
@@ -52,10 +125,10 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text, withSteps
       }
       <Container sx={{
         background: showBackArrow ? 'transparent' : 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)',
-        borderBottom: '0.5px solid',
+        borderBottom: `${noBorder ? '' : '0.5px solid'}`,
         borderColor: 'secondary.light',
         lineHeight: 0,
-        p: '18px 30px 11px'
+        p: `18px 30px ${paddingBottom}px`
       }}
       >
         <Grid
@@ -63,67 +136,9 @@ function HeaderBrand({ onBackClick, showBackArrow, showSettings, text, withSteps
           container
           justifyContent='space-between'
         >
-          <Grid item>
-            {showBackArrow
-              ? <ArrowBackIosIcon
-                onClick={onBackClick}
-                sx={{
-                  color: 'secondary.light',
-                  cursor: 'pointer',
-                  fontSize: 25,
-                  stroke: theme.palette.secondary.light,
-                  strokeWidth: 1.5
-                }}
-              />
-              : <Box
-                component='img'
-                src={logoWhite}
-                sx={{ height: 38, width: 38 }}
-              />
-            }
-          </Grid>
-          <Grid
-            display='inline-flex'
-            item
-          >
-            <Typography
-              color={showBackArrow ? 'text.primary' : '#ffffff'}
-              fontFamily={showBackArrow ? 'inherit' : 'Eras'}
-              fontWeight={400}
-              sx={{ fontSize: showBackArrow ? '20px' : '30px', lineHeight: showBackArrow ? 1.9 : 'inherit', letterSpacing: '-0.015em' }}
-            >
-              {text}
-            </Typography>
-            {withSteps &&
-              <Typography
-                color={showBackArrow ? 'text.primary' : '#ffffff'}
-                fontFamily='inherit'
-                fontSize='20px'
-                fontWeight={400}
-                letterSpacing='-0.015em'
-                p='5px'
-              >
-                <span>(</span>
-                <span style={{ color: theme.palette.secondary.light }}>{withSteps.currentStep}</span>
-                <span>{'/' + withSteps.totalSteps.toString() + ')'}</span>
-              </Typography>
-            }
-          </Grid>
-          <Grid
-            item
-            sx={{ height: '38px', visibility: !showSettings ? 'hidden' : 'visible' }}
-          >
-            <IconButton
-              aria-label='menu'
-              color='inherit'
-              edge='start'
-              onClick={_handleMenuClick}
-              size='small'
-              sx={{ p: 0 }}
-            >
-              <MenuIcon sx={{ color: showBackArrow ? 'secondary.light' : '#fff', fontSize: 38 }} />
-            </IconButton>
-          </Grid>
+          <LeftIcon />
+          {_centerItem ?? <CenterItem />}
+          <RightMenuIcon />
         </Grid>
       </Container>
     </>

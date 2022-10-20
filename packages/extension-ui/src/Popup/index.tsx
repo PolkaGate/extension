@@ -19,6 +19,7 @@ import { Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import Account from '../../../extension-polkagate/src/popup/account';
+import Others from '../../../extension-polkagate/src/popup/account/Others';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
@@ -168,6 +169,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                           <Route path='/account/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                           <Route path='/account/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
+                          <Route exact path='/others/:address/:formatted'>{wrapWithErrorBoundary(<Others />, 'others')}</Route>
                           <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
                           <Route
                             exact

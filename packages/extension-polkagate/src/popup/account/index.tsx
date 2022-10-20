@@ -5,7 +5,7 @@
 
 /**
  * @description
- * this component 
+ * this component shows an account information in detail
  * */
 
 import '@vaadin/icons';
@@ -32,11 +32,14 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { AccountContext, ActionContext, ChainLogo, Header, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
+import { HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';// added for plus
 import AccountBrief from './AccountBrief';
+import Others from './Others';
+import { getValue } from './util';
 
 interface Props extends ThemeProps {
   className?: string;
@@ -88,7 +91,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const settings = useContext(SettingsContext);
   const onAction = useContext(ActionContext);// added for plus
   const theme = useTheme();
-  const location = useLocation();
+  const { state } = useLocation();
   const { accounts } = useContext(AccountContext);
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const [{ account, newFormattedAddress, newGenesisHash, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
@@ -106,10 +109,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const api = useApi(newEndpoint);
 
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(location?.state?.api);
+  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api || state?.apiToUse);
   const [price, setPrice] = useState<number | undefined>();
-  const accountName = useMemo((): string => location?.state?.identity?.display || account?.name, [location, account]);
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(location?.state?.balances as DeriveBalancesAll);
+  const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
 
   useEffect(() => {
@@ -149,13 +152,17 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     );
   }, [accounts, address, chain, settings]);
 
-  const goToAccount = useCallback(() => {
-    newFormattedAddress && newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/${newFormattedAddress}/`);
-  }, [address, newFormattedAddress, newGenesisHash, onAction]);
+  const gotToHome = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
 
-  useEffect(() => {
-    newChain && newGenesisHash && newFormattedAddress && goToAccount();
-  }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
+  // const goToAccount = useCallback(() => {
+  //   newFormattedAddress && newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/${newFormattedAddress}/`);
+  // }, [address, newFormattedAddress, newGenesisHash, onAction]);
+
+  // useEffect(() => {
+  //   newChain && newGenesisHash && newFormattedAddress && goToAccount();
+  // }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
 
   useEffect(() => {
     !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
@@ -163,10 +170,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [endpointOptions]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    newEndpoint && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && void apiToUse.derive.balances?.all(formatted).then((b) => {
-      setBalances(b);
-    });
+    newEndpoint && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis &&
+      apiToUse.derive.balances?.all(formatted).then(setBalances).catch(console.error);
   }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress]);
 
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
@@ -281,25 +286,15 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     </Grid>
   );
 
+  const goToOthers = useCallback(() => {
+    balances && account && chain && history.push({
+      pathname: `/others/${address}/${formatted}`,
+      state: { account, apiToUse, balances, chain, price }
+    });
+  }, [balances, account, chain, history, address, formatted, apiToUse, price]);
+
   const Balance = ({ balances, type }: { type: string, balances: DeriveBalancesAll | undefined }) => {
-    let value: BN | undefined;
-
-    if (type === 'Total' && balances) {
-      value = balances.freeBalance.add(balances.reservedBalance);
-    }
-
-    if (type === 'Available' && balances) {
-      value = balances.availableBalance;
-    }
-
-    if (type === 'Reserved' && balances) {
-      value = balances.reservedBalance;
-    }
-
-    if (type === 'Others' && balances) {
-      value = balances.lockedBalance.add(balances.vestingTotal);
-    }
-
+    const value = getValue(type, balances);
     const balanceInUSD = price && value && apiToUse && Number(value) / (10 ** apiToUse.registry.chainDecimals[0]) * price;
 
     return (
@@ -329,7 +324,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             {type === 'Others' &&
               <Grid item textAlign='right' xs={1.5}>
                 <IconButton
-                  // onClick={_onClick}
+                  onClick={goToOthers}
                   sx={{ p: 0 }}
                 >
                   <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
@@ -345,10 +340,16 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   return (
     <Motion>
+      <HeaderBrand
+        _centerItem={identicon}
+        noBorder
+        onBackClick={gotToHome}
+        paddingBottom={0}
+        showBackArrow
+        showMenu
+      />
       <Container disableGutters sx={{ px: '15px' }}>
-        <Header icon={identicon}>
-          <AccountBrief accountName={accountName} address={address} formatted={formatted} isHidden={account?.isHidden} theme={theme} />
-        </Header>
+        <AccountBrief accountName={accountName} address={address} formatted={formatted} isHidden={account?.isHidden} theme={theme} />
         <Grid alignItems='flex-end' container pt='15px'>
           <Grid item xs>
             <Select defaultValue={genesisHash} label={'Select the chain'} onChange={_onChangeGenesis} options={genesisOptions} />
