@@ -6,11 +6,11 @@ import { Grid, IconButton } from '@mui/material';
 import React from 'react';
 
 interface Props {
-  moreOnClick: () => void;
-  goOnClick: () => void;
+  menuOnClick: () => void;
+  goToAccount: () => void;
 }
 
-export default function AccountFeatures ({ goOnClick, moreOnClick }: Props): React.ReactElement<Props> {
+export default function AccountFeatures ({ goToAccount, menuOnClick }: Props): React.ReactElement<Props> {
   return (
     <Grid
       container
@@ -23,7 +23,7 @@ export default function AccountFeatures ({ goOnClick, moreOnClick }: Props): Rea
         width='fit-content'
       >
         <IconButton
-          onClick={moreOnClick}
+          onClick={menuOnClick}
           sx={{ p: 0 }}
         >
           <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
@@ -37,7 +37,7 @@ export default function AccountFeatures ({ goOnClick, moreOnClick }: Props): Rea
         mt='5px'
       >
         <IconButton
-          onClick={goOnClick}
+          onClick={goToAccount}
           sx={{ p: 0 }}
         >
           <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />

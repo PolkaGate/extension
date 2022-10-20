@@ -168,7 +168,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
       : (chain?.icon || 'polkadot')
   ) as IconTheme;
 
-  const _onClick = useCallback(
+  const menuOnClick = useCallback(
     () => setShowActionsMenu(!showActionsMenu),
     [showActionsMenu]
   );
@@ -235,7 +235,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
         price={price}
         toggleVisibility={_toggleVisibility}
       />
-      <AccountFeatures goOnClick={goToAccount} moreOnClick={_onClick} />
+      <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
         showActionsMenu &&
         <AccMenu

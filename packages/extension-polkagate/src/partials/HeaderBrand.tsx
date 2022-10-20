@@ -11,15 +11,16 @@ import Menu from './Menu';
 
 interface Props {
   showBackArrow?: boolean;
-  showSettings?: boolean;
+  showMenu?: boolean;
   withSteps?: { currentStep: string | number, totalSteps: string | number } | null;
   text?: React.ReactNode;
   onBackClick?: () => void;
   _centerItem?: JSX.Element;
   noBorder?: boolean;
+  paddingBottom?: number;
 }
 
-function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showSettings, text, withSteps = null, noBorder = false }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, text, withSteps = null, noBorder = false, paddingBottom = 11 }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -96,7 +97,7 @@ function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showSettings, te
   const RightMenuIcon = () => (
     <Grid
       item
-      sx={{ height: '38px', visibility: !showSettings ? 'hidden' : 'visible' }}
+      sx={{ height: '38px', visibility: showMenu ? 'visible' : 'hidden' }}
     >
       <IconButton
         aria-label='menu'
@@ -127,7 +128,7 @@ function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showSettings, te
         borderBottom: `${noBorder ? '' : '0.5px solid'}`,
         borderColor: 'secondary.light',
         lineHeight: 0,
-        p: '18px 30px 11px'
+        p: `18px 30px ${paddingBottom}px`
       }}
       >
         <Grid

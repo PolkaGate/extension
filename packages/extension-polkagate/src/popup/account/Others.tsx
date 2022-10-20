@@ -38,6 +38,7 @@ import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';// added for plus
 import AccountBrief from './AccountBrief';
 import { HeaderBrand } from '../../partials';
+import { getValue } from './util';
 
 interface AddressFormatted {
   address: string;
@@ -48,44 +49,101 @@ export default function Others(): React.ReactElement<void> {
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();
-  const location = useLocation();
+  const { state: { account, chain, price, balances, apiToUse } } = useLocation();
   const { address, formatted } = useParams<AddressFormatted>();
 
   const identicon = (
     <Identicon
-      iconTheme={location?.state?.chain?.icon || 'polkadot'}
+      iconTheme={chain?.icon || 'polkadot'}
       // isExternal={isExternal}
       // onCopy={_onCopy}
-      prefix={location?.state?.chain?.ss58Format ?? 42}
+      prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}
     />
   );
 
-  console.log('history:', location?.state);
-  
-  const _onBackClick = useCallback(() => {
-  
-  }, []);
+  console.log('balancesbalances:', balances);
+  console.log('namedReserved:', balances?.namedReserved);
+  console.log('lockedBreakdown:', balances?.lockedBreakdown);
+
+  const goToAccount = useCallback(() => {
+    chain?.genesisHash && address && formatted && history.push({
+      pathname: `/account/${chain?.genesisHash}/${address}/${formatted}/`,
+      state: { apiToUse, balances }
+    });
+  }, [balances, history, chain?.genesisHash, address, formatted, apiToUse]);
+
+  const Balance = ({ balances, type }: { type: string, balances: DeriveBalancesAll | undefined }) => {
+    const value = getValue(type, balances);
+    const balanceInUSD = price && value && apiToUse && Number(value) / (10 ** apiToUse.registry.chainDecimals[0]) * price;
+
+    return (
+      <>
+        <Grid alignItems='center' container justifyContent='space-between' py='5px'>
+          <Grid item xs={4.5}>
+            <Typography sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }}>
+              {type}
+            </Typography>
+          </Grid>
+          <Grid container direction='column' item justifyContent='flex-end' xs>
+            <Grid item textAlign='right'>
+              <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
+                <ShowBalance api={apiToUse} balance={value} />
+              </Typography>
+            </Grid>
+            <Grid item pt='6px' textAlign='right'>
+              <Typography sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }}>
+                {balanceInUSD !== undefined
+                  ? `$${Number(balanceInUSD)?.toLocaleString()}`
+                  : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
+                }
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Divider sx={{ bgcolor: 'secondary.main', height: type === 'Others' ? '2px' : '1px', my: '5px' }} />
+      </>
+    );
+  };
 
   return (
     <Motion>
-      <>
-        <HeaderBrand
-          _centerItem={identicon}
-          onBackClick={_onBackClick}
-          showBackArrow
-          noBorder
-        />
+      <HeaderBrand
+        _centerItem={identicon}
+        noBorder
+        onBackClick={goToAccount}
+        paddingBottom={0}
+        showBackArrow
+      />
+      <Container disableGutters sx={{ px: '15px' }}>
+        <Grid container item justifyContent='center' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography sx={{ fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+            {account?.name}
+          </Typography>
+        </Grid>
+        <Grid container item justifyContent='center'>
+          <Typography sx={{ fontSize: '36px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+            {t('Others')}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' item justifyContent='center'>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px' }} />
+        </Grid>
+      </Container>
+      <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
+        {/* <Balance balances={balances} type={'Free Balance'} /> */}
+        {/* <Balance balances={balances} type={'Reserved Balance'} /> */}
+        <Balance balances={balances} type={'Frozen Misc'} />
+        <Balance balances={balances} type={'Frozen Fee'} />
+        <Balance balances={balances} type={'Locked Balance'} />
+        <Balance balances={balances} type={'Vested Balance'} />
+        <Balance balances={balances} type={'Vested Claimable'} />
+        <Balance balances={balances} type={'Vesting Locked'} />
+        <Balance balances={balances} type={'Vesting Total'} />
+        {/* <Balance balances={balances} type={'Voting Balance'} /> */}
 
-        {/* <Header icon={identicon}>
-          <Grid item container justifyContent='center' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            <Typography sx={{ fontSize: '36px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '36px' }}>
-              {location?.state?.account?.name}
-            </Typography>
-          </Grid>
-        </Header> */}
-      </>
+      </Container>
     </Motion>
 
   );
