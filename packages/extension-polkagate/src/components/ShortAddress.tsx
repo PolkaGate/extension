@@ -33,7 +33,7 @@ export default function ShortAddress({ address, charsCount = SHORT_ADDRESS_CHARA
         <Grid item>
           <CopyToClipboard text={String(address)}>
             <IconButton
-              sx={{ height: '20px', mb: '4px', p: '0px', width: '20px' }}
+              sx={{ height: '20px', p: '0px', width: '20px' }}
             // onClick={_onCopy}
             >
               <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
