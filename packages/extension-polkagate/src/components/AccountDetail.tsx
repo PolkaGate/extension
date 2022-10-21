@@ -145,6 +145,13 @@ export default function AccountDetail({ address, api, balances, chain, formatted
           <Tooltip
             arrow={!copied}
             componentsProps={{
+              popper: {
+                sx: {
+                  '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                    mb: '5px'
+                  }
+                }
+              },
               tooltip: {
                 sx: {
                   '& .MuiTooltip-arrow': {
@@ -153,7 +160,7 @@ export default function AccountDetail({ address, api, balances, chain, formatted
                   },
                   backgroundColor: 'text.primary',
                   color: 'text.secondary',
-                  fontSize: '14px',
+                  fontSize: copied ? '16px' : '14px',
                   fontWeight: 400
                 }
               }
