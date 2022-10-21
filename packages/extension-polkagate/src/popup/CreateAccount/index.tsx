@@ -6,10 +6,7 @@ import styled from 'styled-components';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { ActionContext, Loading } from '../../components';
-import AccountNamePasswordCreation from '../../components/AccountNamePasswordCreation';
-import PAddress from '../../components/Address';
-import DropdownWithIcon from '../../components/DropdownWithIcon';
+import { AccountNamePasswordCreation, ActionContext, Address, DropdownWithIcon, Loading } from '../../components';
 import { useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -114,7 +111,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
       />
       <Loading>
         <div>
-          <PAddress
+          <Address
             address={address}
             genesisHash={genesisHash}
             name={name}
