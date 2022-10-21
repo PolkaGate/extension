@@ -7,10 +7,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
-import { InputFilter } from '@polkadot/extension-ui/components';
 
-import useTranslation from '../../hooks/useTranslation';
 import { getAuthList, removeAuthorization, toggleAuthorization } from '../../../../extension-polkagate/src/messaging';
+import { InputFilter } from '../../components';
+import useTranslation from '../../hooks/useTranslation';
 import { Header } from '../../partials';
 import WebsiteEntry from './WebsiteEntry';
 

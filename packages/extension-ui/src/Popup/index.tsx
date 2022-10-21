@@ -20,6 +20,7 @@ import { AccountContext, ActionContext, AuthorizeReqContext, MediaContext, Metad
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import Account from '../../../extension-polkagate/src/popup/account';
 import Others from '../../../extension-polkagate/src/popup/account/Others';
+import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
@@ -38,7 +39,6 @@ import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { ErrorBoundary } from '../components';
 import ToastProvider from '../components/Toast/ToastProvider';
-import AuthList from './AuthManagement';
 import Authorize from './Authorize';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';

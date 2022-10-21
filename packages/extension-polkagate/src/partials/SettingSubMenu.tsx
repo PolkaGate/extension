@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Avatar, Divider, Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
-import { Checkbox, MenuItem, Select, Switch } from '../components';
+import { ActionContext, Checkbox, MenuItem, Select, Switch } from '../components';
 import { useIsPopup } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
 
@@ -21,6 +21,8 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
+  const onAction = useContext(ActionContext);
+
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
@@ -41,6 +43,10 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
       windowOpen('/').catch(console.error);
     }, []
   );
+
+  const _onAuthManagement = useCallback(() => {
+    onAction('/auth-list');
+  }, [onAction]);
 
   const _onChangeLang = useCallback(
     (value: string): void => {
@@ -155,6 +161,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
         >
           <MenuItem
             icon={theme.palette.mode === 'dark' ? ManageAccess : ManageAccessB}
+            onClick={_onAuthManagement}
             text={t<string>('Manage website access')}
           />
         </Grid>
