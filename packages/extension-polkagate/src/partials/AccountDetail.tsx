@@ -14,11 +14,12 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { useToast, useTranslation } from '../hooks';
-import { LastBalances } from '../util/types';
 import FormatBalance from '../components/FormatBalance';
 import FormatBalance2 from '../components/FormatBalance2';
 import FormatPrice from '../components/FormatPrice';
+import { useTranslation } from '../hooks';
+import { LastBalances } from '../util/types';
+import CopyAddressButton from '../components/CopyAddressButton';
 
 interface Props {
   api: ApiPromise | undefined
@@ -38,15 +39,6 @@ export default function AccountDetail({ address, api, balances, chain, formatted
   const { t } = useTranslation();
   const theme = useTheme();
   const decimals = api ? api.registry.chainDecimals[0] : undefined;
-  const [copied, setCopy] = useState<boolean>(false);
-
-  const _onCopy = useCallback(() => {
-    setCopy(true);
-  }, []);
-
-  const handelCloseToolTip = useCallback(() => {
-    setTimeout(() => setCopy(false), 200);
-  }, []);
 
   const NoChainAlert = () => (
     <Grid color='text.primary' fontSize={'14px'} fontWeight={500} letterSpacing='-1.5%'>
@@ -105,64 +97,6 @@ export default function AccountDetail({ address, api, balances, chain, formatted
       </Grid>
     </Grid>);
 
-  const CopyButton = ({ address, copied, handelCloseToolTip }: {
-    copied: boolean; handelCloseToolTip: () => void; address: string | null | undefined;
-  }) => {
-    const shortAddress = `${address?.slice(0, 12)}...${address?.slice(-12)}`;
-
-    return (
-      <Grid item>
-        <Tooltip
-          arrow={!copied}
-          componentsProps={{
-            popper: {
-              sx: {
-                '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                  mb: '3px',
-                  p: '3px 15px'
-                },
-                '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                  mb: '3px',
-                  p: '3px 15px'
-                }
-              }
-            },
-            tooltip: {
-              sx: {
-                '& .MuiTooltip-arrow': {
-                  color: 'text.primary',
-                  height: '10px'
-                },
-                backgroundColor: 'text.primary',
-                color: 'text.secondary',
-                fontSize: copied ? '16px' : '14px',
-                fontWeight: 400
-              }
-            }
-          }}
-          leaveDelay={700}
-          onClose={handelCloseToolTip}
-          placement='top'
-          title={copied ? t<string>('Copied') : shortAddress}
-        >
-          <IconButton
-            onClick={_onCopy}
-            sx={{
-              height: '23px',
-              m: '10px 0',
-              width: '36px'
-            }}
-            title={String(address)}
-          >
-            <CopyToClipboard text={String(address)}>
-              <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
-            </CopyToClipboard>
-          </IconButton>
-        </Tooltip>
-      </Grid>
-    );
-  };
-
   return (
     <Grid
       container
@@ -195,7 +129,9 @@ export default function AccountDetail({ address, api, balances, chain, formatted
             <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
           </IconButton>
         </Grid>
-        <CopyButton address={formatted || address} copied={copied} handelCloseToolTip={handelCloseToolTip} />
+        <Grid item sx={{ m: '10px 0' }}>
+          <CopyAddressButton address={formatted || address} showAddress size={25} />
+        </Grid>
       </Grid>
       <Grid
         alignItems='center'

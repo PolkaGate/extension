@@ -20,6 +20,7 @@ import useMetadata from '../hooks/useMetadata';
 import useToast from '../hooks/useToast';
 import { DEFAULT_TYPE } from '../util/defaultType';
 import { AccountContext, Identicon, SettingsContext } from './';
+import CopyAddressButton from './CopyAddressButton';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -197,7 +198,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
               maxWidth={'220px'}
               overflow={'hidden'}
               textOverflow={'ellipsis'}
-              whiteSpace= 'nowrap'
+              whiteSpace='nowrap'
               xs={showCopy ? 10 : 12}
             >
               <Typography
@@ -210,23 +211,24 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
               </Typography>
             </Grid>
             {showCopy &&
-              <Grid
-                item
-                pl={'5px'}
-                xs={1.5}
-              >
-                <CopyToClipboard text={(formatted && formatted) || ''}>
-                  <FontAwesomeIcon
-                    className='copyIcon'
-                    color={'#BA2882'}
-                    cursor='pointer'
-                    icon={faCopy}
-                    // onClick={_onCopy}
-                    size='sm'
-                    title={t('copy address')}
-                  />
-                </CopyToClipboard>
-              </Grid>
+              <CopyAddressButton size={16} address={formatted} />
+              // <Grid
+              //   item
+              //   pl={'5px'}
+              //   xs={1.5}
+              // >
+              //   <CopyToClipboard text={(formatted && formatted) || ''}>
+              //     <FontAwesomeIcon
+              //       className='copyIcon'
+              //       color={'#BA2882'}
+              //       cursor='pointer'
+              //       icon={faCopy}
+              //       // onClick={_onCopy}
+              //       size='sm'
+              //       title={t('copy address')}
+              //     />
+              //   </CopyToClipboard>
+              // </Grid>
             }
           </Grid>
         </Grid>
