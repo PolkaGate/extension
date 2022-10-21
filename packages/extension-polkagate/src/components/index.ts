@@ -35,6 +35,7 @@ export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { default as Identicon } from './Identicon';
 export { default as ActionText } from './ActionText';
 export { default as ChainLogo } from './ChainLogo';
+export { default as InputFilter } from './InputFilter';
 // export { default as ErrorBoundary } from './ErrorBoundary';
 
 export * from './contexts';

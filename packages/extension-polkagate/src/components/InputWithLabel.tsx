@@ -1,14 +1,14 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
+import { Avatar, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { eye, eyeSlashP } from '../assets/icons';
+import useTranslation from '../hooks/useTranslation';
 import Label from './Label';
 import { Input } from './TextInputs';
-import { eye, eyeSlashP } from '../assets/icons';
 import Warning from './Warning';
 
 interface Props {
@@ -68,7 +68,7 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
-      style={{ position: 'relative', letterSpacing: '-0.015em'}}
+      style={{ position: 'relative', letterSpacing: '-0.015em' }}
     >
       <Input
         autoCapitalize='off'
