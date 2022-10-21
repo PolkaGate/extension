@@ -1,25 +1,22 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { Divider, Grid, IconButton, Skeleton, Tooltip, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import React from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
+import CopyAddressButton from '../components/CopyAddressButton';
 import FormatBalance from '../components/FormatBalance';
 import FormatBalance2 from '../components/FormatBalance2';
 import FormatPrice from '../components/FormatPrice';
 import { useTranslation } from '../hooks';
 import { LastBalances } from '../util/types';
-import CopyAddressButton from '../components/CopyAddressButton';
 
 interface Props {
   api: ApiPromise | undefined
