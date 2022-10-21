@@ -167,6 +167,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                             overflow='hidden'
                             pl='5px'
                             textOverflow='ellipsis'
+                            whiteSpace='nowrap'
                           >
                             {isAvailable(proxy.delegate)?.name || toShortAddress(proxy.delegate)}
                           </Typography>

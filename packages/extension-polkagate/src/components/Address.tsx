@@ -197,6 +197,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
               maxWidth={'220px'}
               overflow={'hidden'}
               textOverflow={'ellipsis'}
+              whiteSpace= 'nowrap'
               xs={showCopy ? 10 : 12}
             >
               <Typography

@@ -145,7 +145,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
             >
               <Grid
                 item
-                maxWidth='300px'
+                maxWidth='275px'
               >
                 <Address
                   address={parentAddress}
