@@ -38,19 +38,34 @@ export default function AccountDetail({ address, api, balances, chain, formatted
   const decimals = api ? api.registry.chainDecimals[0] : undefined;
 
   const NoChainAlert = () => (
-    <Grid color='text.primary' fontSize={'14px'} fontWeight={500} letterSpacing='-1.5%'>
+    <Grid
+      color='text.primary'
+      fontSize={'14px'}
+      fontWeight={500}
+      letterSpacing='-1.5%'>
       {t('Select a chain to view balance')}
     </Grid>
   );
 
   const formattedBalance = (balances && api)
-    ? <FormatBalance api={api} decimalPoint={2} value={balances.freeBalance.add(balances.reservedBalance)} />
-    : lastBalances && <FormatBalance2 decimalPoint={2} decimals={lastBalances.decimals} tokens={lastBalances.tokens} value={lastBalances.freeBalance.add(lastBalances.reservedBalance)} />;
+    ? <FormatBalance
+      api={api}
+      decimalPoint={2}
+      value={balances.freeBalance.add(balances.reservedBalance)} />
+    : lastBalances && <FormatBalance2
+      decimalPoint={2}
+      decimals={lastBalances.decimals}
+      tokens={lastBalances.tokens}
+      value={lastBalances.freeBalance.add(lastBalances.reservedBalance)} />;
 
   const Balance = () => (
     <>
       {!formattedBalance
-        ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={103} />
+        ? <Skeleton
+          height={22}
+          sx={{ transform: 'none', my: '2.5px' }}
+          variant='text'
+          width={103} />
         : formattedBalance
       }
     </>
@@ -59,8 +74,15 @@ export default function AccountDetail({ address, api, balances, chain, formatted
   const Price = () => (
     <>
       {price === undefined || !balances || !decimals
-        ? <Skeleton height={22} sx={{ transform: 'none', my: '2.5px' }} variant='text' width={90} />
-        : <FormatPrice amount={balances.freeBalance.add(balances.reservedBalance)} decimals={decimals} price={price} />
+        ? <Skeleton
+          height={22}
+          sx={{ transform: 'none', my: '2.5px' }}
+          variant='text'
+          width={90} />
+        : <FormatPrice
+          amount={balances.freeBalance.add(balances.reservedBalance)}
+          decimals={decimals}
+          price={price} />
       }
     </>
   );
@@ -123,11 +145,21 @@ export default function AccountDetail({ address, api, balances, chain, formatted
             onClick={toggleVisibility}
             sx={{ height: '15px', mt: '13px', ml: '7px', p: 0, width: '24px' }}
           >
-            <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
+            <vaadin-icon
+              icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'}
+              style={{ height: '20px', color: `${theme.palette.secondary.light}` }}
+            />
           </IconButton>
         </Grid>
-        <Grid item sx={{ m: '10px 0' }}>
-          <CopyAddressButton address={formatted || address} showAddress size={25} />
+        <Grid
+          item
+          sx={{ m: '10px 0' }}
+        >
+          <CopyAddressButton
+            address={formatted || address}
+            showAddress
+            size={25}
+          />
         </Grid>
       </Grid>
       <Grid
