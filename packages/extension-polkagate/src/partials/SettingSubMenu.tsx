@@ -34,6 +34,11 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
 
+  interface Option {
+    text: string;
+    value: string;
+  }
+
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
     .map(({ text, value }): Option => ({ text, value: `${value}` }));
