@@ -24,7 +24,7 @@ import { AccMenu } from '../partials';
 import { getPrice } from '../util/api/getPrice';
 import { AddressPriceAll, LastBalances, SavedMetaData } from '../util/types';
 import { getFormattedAddress, prepareMetaData } from '../util/utils';
-import AccountDetail from './AccountDetail';
+import AccountDetail from '../partials/AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { SettingsContext } from '.';

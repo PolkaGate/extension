@@ -132,10 +132,10 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
       : (chain?.icon || 'polkadot')
   ) as IconTheme;
 
-  const _onCopy = useCallback(
-    () => show(t('Copied')),
-    [show, t]
-  );
+  // const _onCopy = useCallback(
+  //   () => show(t('Copied')),
+  //   [show, t]
+  // );
 
   return (
     <>
@@ -164,7 +164,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
             className='identityIcon'
             iconTheme={theme}
             isExternal={isExternal}
-            onCopy={_onCopy}
+            // onCopy={_onCopy}
             prefix={prefix}
             size={40}
             value={formatted || address}
@@ -221,7 +221,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
                     color={'#BA2882'}
                     cursor='pointer'
                     icon={faCopy}
-                    onClick={_onCopy}
+                    // onClick={_onCopy}
                     size='sm'
                     title={t('copy address')}
                   />
