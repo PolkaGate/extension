@@ -147,8 +147,13 @@ export default function AccountDetail({ address, api, balances, chain, formatted
             componentsProps={{
               popper: {
                 sx: {
+                  '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                    mb: '3px',
+                    p: '3px 15px'
+                  },
                   '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                    mb: '5px'
+                    mb: '3px',
+                    p: '3px 15px'
                   }
                 }
               },
