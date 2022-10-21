@@ -1,12 +1,12 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, ActionContext, Address, InputWithLabel, Label, PButton, Warning } from '../../components';
+import { AccountContext, ActionContext, Address, ChainLogo, InputWithLabel, Label, PButton, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { validateAccount, validateDerivationPath } from '../../messaging';
 import { nextDerivationPath } from '../../util/nextDerivationPath';
@@ -85,7 +85,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
   );
 
   const _onParentChange = useCallback(
-    (address: string) => onAction(`/account/derive/${address}`),
+    (address: string) => onAction(`/derive/${address}`),
     [onAction]
   );
 
@@ -127,10 +127,42 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
       <div className={className}>
         {isLocked
           ? (
-            <Address
-              address={parentAddress}
-              genesisHash={parentGenesis}
-            />
+            <Grid
+              alignItems='center'
+              container
+              item
+              justifyContent='space-around'
+              sx={{
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'secondary.light',
+                borderRadius: '5px',
+                m: 'auto',
+                mb: '20px',
+                position: 'relative',
+                width: '92%'
+              }}
+            >
+              <Grid
+                item
+                maxWidth='300px'
+              >
+                <Address
+                  address={parentAddress}
+                  className='address'
+                  genesisHash={parentGenesis}
+                  name={parentName}
+                  showCopy={false}
+                  style={{ border: 'none', borderRadius: 0, m: 0, pl: '5px', px: 0, width: '100%' }}
+                />
+              </Grid>
+              <Grid
+                item
+                width='30px'
+              >
+                <ChainLogo genesisHash={parentGenesis} />
+              </Grid>
+            </Grid>
           )
           : (
             <Label
