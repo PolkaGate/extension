@@ -9,7 +9,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { Divider, Grid, IconButton, Skeleton, Tooltip, Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -40,14 +40,17 @@ export default function AccountDetail({ address, api, balances, chain, formatted
   const theme = useTheme();
   const decimals = api ? api.registry.chainDecimals[0] : undefined;
   const token = api ? api.registry.chainTokens[0] : undefined;
+  const [copied, setCopy] = useState<boolean>(false);
 
-  const shortAddress = `${formatted?.slice(0, 12)}...${formatted?.slice(-12)}`;
+  const shortAddress = `${(formatted || address)?.slice(0, 12)}...${(formatted || address)?.slice(-12)}`;
 
-  const _onCopy = useCallback(
-    () =>
-      show(t('Copied')),
-    [show, t]
-  );
+  const _onCopy = useCallback(() => {
+    setCopy(true);
+  }, []);
+
+  const handelCloseToolTip = useCallback(() => {
+    setTimeout(() => setCopy(false), 200);
+  }, []);
 
   const NoChainAlert = () => (
     <Grid color='text.primary' fontSize={'14px'} fontWeight={500} letterSpacing='-1.5%'>
@@ -140,7 +143,7 @@ export default function AccountDetail({ address, api, balances, chain, formatted
         </Grid>
         <Grid item>
           <Tooltip
-            arrow
+            arrow={!copied}
             componentsProps={{
               tooltip: {
                 sx: {
@@ -155,8 +158,10 @@ export default function AccountDetail({ address, api, balances, chain, formatted
                 }
               }
             }}
+            leaveDelay={700}
+            onClose={handelCloseToolTip}
             placement='top'
-            title={shortAddress}
+            title={copied ? t<string>('Copied') : shortAddress}
           >
             <IconButton
               onClick={_onCopy}
@@ -184,6 +189,6 @@ export default function AccountDetail({ address, api, balances, chain, formatted
           : <BalanceRow />
         }
       </Grid>
-    </Grid>
+    </Grid >
   );
 }
