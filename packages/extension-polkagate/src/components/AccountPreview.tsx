@@ -219,7 +219,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
       <AccountIcons
         formatted={formatted || address}
         identiconTheme={identiconTheme}
-        prefix={settings?.prefix}
+        prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}
       />
