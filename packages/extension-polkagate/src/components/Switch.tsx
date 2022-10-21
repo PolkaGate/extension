@@ -11,7 +11,7 @@ import { ColorContext } from './';
 
 interface Props {
   className?: string;
-  theme: Theme;
+  // theme: Theme;
 }
 
 function Switch({ className }: Props): React.ReactElement<Props> {

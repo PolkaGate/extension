@@ -8,6 +8,8 @@ import { AuthUrlInfo } from '@polkadot/extension-base/background/handlers/State'
 import { RemoveAuth, Switch } from '@polkadot/extension-ui/components';
 
 import useTranslation from '../../hooks/useTranslation';
+import { Grid } from '@mui/material';
+import { BorderBottom } from '@mui/icons-material';
 
 interface Props {
   info: AuthUrlInfo;
@@ -16,7 +18,7 @@ interface Props {
   url: string;
 }
 
-function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const switchAccess = useCallback(() => {
@@ -28,37 +30,54 @@ function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.Reac
   }, [removeAuth, url]);
 
   return (
-    <div>
-      <div>
+    <Grid
+      container
+      sx={{
+        borderBottom: '1px solid',
+        borderBottomColor: 'secondaary.light'
+      }}
+    >
+      <Grid
+        alignItems='center'
+        container
+        item
+        justifyContent='center'
+        sx={{
+          borderRight: '1px solid',
+          borderRightColor: 'secondary.light'
+        }}
+        xs={6}
+      >
         {url}
-      </div>
-      <Switch
-        checked={info.isAllowed}
-        checkedLabel={t<string>('allowed')}
-        className='info'
-        onChange={switchAccess}
-        uncheckedLabel={t<string>('denied')}
-      />
-      <div
-         onClick={_removeAuth}
+      </Grid>
+      <Grid
+        alignItems='center'
+        container
+        item
+        justifyContent='center'
+        sx={{
+          borderRight: '1px solid',
+          borderRightColor: 'secondary.light'
+        }}
+        xs={5}
+      >
+        <Switch
+          checked={info.isAllowed}
+          checkedLabel={t<string>('allowed')}
+          className='info'
+          onChange={switchAccess}
+          uncheckedLabel={t<string>('denied')}
+        />
+      </Grid>
+      <Grid
+        alignItems='center'
+        container
+        item
+        justifyContent='center'
+        onClick={_removeAuth}
       >
         <RemoveAuth />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 }
-
-export default styled(WebsiteEntry)(({ theme }: Props) => `
-  display: flex;
-  align-items: center;
-
-  .url{
-    flex: 1;
-  }
-
-  &.denied {
-    .slider::before {
-        background-color: ${theme.backButtonBackground};
-      }
-  }
-`);

@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
 
-import { ActionContext, InputFilter, PButton } from '../../components';
+import { ActionContext, InputFilter, Label, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { getAuthList, removeAuthorization, toggleAuthorization } from '../../messaging';
 import { HeaderBrand } from '../../partials';
@@ -59,12 +59,15 @@ export default function AuthManagement({ className }: Props): React.ReactElement
       <Typography
         fontSize='14px'
         fontWeight={300}
-        m='10px'
-        width='fit-content'
+        m='20px auto'
+        width='90%'
       >
         {t<string>('Allow/Deny website(s) to request access to the extension\'s visible accounts')}
       </Typography>
-      <Grid item px='15px'>
+      <Grid
+        item
+        px='15px'
+      >
         <InputFilter
           label={t<string>('Search')}
           onChange={_onChangeFilter}
@@ -74,29 +77,60 @@ export default function AuthManagement({ className }: Props): React.ReactElement
           withReset
         />
       </Grid>
-      <div>
-        {
-          !authList || !Object.entries(authList)?.length
-            ? <div>{t<string>('No website request yet!')}</div>
-            : <>
-              <div>
-                {Object.entries(authList)
-                  .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
-                  .map(
-                    ([url, info]: [string, AuthUrlInfo]) =>
-                      <WebsiteEntry
-                        info={info}
-                        key={url}
-                        removeAuth={removeAuth}
-                        toggleAuth={toggleAuth}
-                        url={url}
-                      />
-                  )}
-              </div>
-            </>
-        }
-      </div>
-
+      <Label
+        label={t<string>('Websites')}
+        style={{
+          margin: '20px auto 0',
+          width: '92%'
+        }}
+      >
+        <Grid
+          container
+          justifyContent='center'
+          minHeight='38px'
+          sx={{
+            bgcolor: 'background.paper',
+            border: '1px solid',
+            borderColor: 'secondary.light',
+            borderRadius: '5px',
+            fontSize: '12px',
+            fontWeight: '5px',
+            overflow: 'hidden'
+          }}
+        >
+          {
+            !authList || !Object.entries(authList)?.length
+              ? (
+                <Grid
+                  alignItems='center'
+                  container
+                  item
+                  pl='10px'
+                  textAlign='left'
+                  xs={12}
+                >
+                  {t<string>('No website request yet!')}
+                </Grid>
+              )
+              : <>
+                <Grid item>
+                  {Object.entries(authList)
+                    .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
+                    .map(
+                      ([url, info]: [string, AuthUrlInfo]) =>
+                        <WebsiteEntry
+                          info={info}
+                          key={url}
+                          removeAuth={removeAuth}
+                          toggleAuth={toggleAuth}
+                          url={url}
+                        />
+                    )}
+                </Grid>
+              </>
+          }
+        </Grid>
+      </Label>
       <PButton
         _onClick={_onBackClick}
         text={t<string>('Back')}
