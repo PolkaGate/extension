@@ -68,7 +68,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
 
   const _goToDeriveAcc = useCallback(
     () => {
-      master && onAction(`/account/derive/${master.address}`);
+      master && onAction(`/derive/${master.address}`);
     }, [master, onAction]
   );
 
