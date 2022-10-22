@@ -26,19 +26,18 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, ChainLogo, Header, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
+import { AccountContext, ActionContext, ChainLogo, DropdownWithIcon, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
-import { getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
+import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
 import { DEFAULT_TYPE } from '../../util/defaultType';
+import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
-import { prepareMetaData } from '../../util/utils';// added for plus
+import { prepareMetaData } from '../../util/utils';
 import AccountBrief from './AccountBrief';
-import Others from './Others';
 import { getValue } from './util';
 
 interface Props extends ThemeProps {
@@ -115,6 +114,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
 
+  console.log('endpoint:', endpoint);
+  console.log('newEndpoint:', newEndpoint)
   useEffect(() => {
     api && setApiToUse(api);
   }, [api]);
@@ -156,18 +157,13 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     onAction('/');
   }, [onAction]);
 
-  // const goToAccount = useCallback(() => {
-  //   newFormattedAddress && newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/${newFormattedAddress}/`);
-  // }, [address, newFormattedAddress, newGenesisHash, onAction]);
-
-  // useEffect(() => {
-  //   newChain && newGenesisHash && newFormattedAddress && goToAccount();
-  // }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
+  const goToAccount = useCallback(() => {
+    newFormattedAddress && newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/${newFormattedAddress}/`);
+  }, [address, newFormattedAddress, newGenesisHash, onAction]);
 
   useEffect(() => {
-    !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpointOptions]);
+    newChain && newGenesisHash && newFormattedAddress && goToAccount();
+  }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
 
   useEffect(() => {
     newEndpoint && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis &&
@@ -210,7 +206,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const MenuItem = ({ icon, noDivider = false, onClick, title }: { icon: any, title: string, noDivider?: boolean, onClick: () => void }) => (
     <>
-      <Grid container direction='column' item justifyContent='center' xs={2} mt='5px'>
+      <Grid container direction='column' item justifyContent='center' mt='5px' xs={2}>
         <Grid item width='27px'>
           <IconButton
             onClick={onClick}
@@ -238,50 +234,50 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       <MenuItem
         icon={
           <FontAwesomeIcon
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
             icon={faPaperPlane}
             // onClick={goToSend}
             size='lg'
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
           />
         }
-        title={'Send'}
         onClick={goToSend}
+        title={'Send'}
       />
       <MenuItem
         icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />
         }
-        title={'Receive'}
         onClick={goToSend}
+        title={'Receive'}
       />
       <MenuItem
         icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-        title={'Stake'}
         onClick={goToSend}
+        title={'Stake'}
       />
       <MenuItem
         icon={
           <FontAwesomeIcon
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
             icon={faHistory}
             // onClick={goToSend}
             size='lg'
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
           />
         }
-        title={'History'}
         onClick={goToSend}
+        title={'History'}
       />
       <MenuItem
         icon={
           <FontAwesomeIcon
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
             icon={faRefresh}
             // onClick={goToSend}
             size='lg'
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
           />
         }
-        title={'Refresh'}
-        onClick={goToSend}
         noDivider
+        onClick={goToSend}
+        title={'Refresh'}
       />
     </Grid>
   );
@@ -306,21 +302,23 @@ export default function AccountDetails({ className }: Props): React.ReactElement
                 {type}
               </Typography>
             </Grid>
-            <Grid container direction='column' item justifyContent='flex-end' xs>
-              <Grid item textAlign='right'>
-                <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
-                  <ShowBalance api={apiToUse} balance={value} />
-                </Typography>
+            {type !== 'Others' &&
+              <Grid container direction='column' item justifyContent='flex-end' xs>
+                <Grid item textAlign='right'>
+                  <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
+                    <ShowBalance api={apiToUse} balance={value} />
+                  </Typography>
+                </Grid>
+                <Grid item pt='6px' textAlign='right'>
+                  <Typography sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }}>
+                    {balanceInUSD !== undefined
+                      ? `$${Number(balanceInUSD)?.toLocaleString()}`
+                      : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
+                    }
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item pt='6px' textAlign='right'>
-                <Typography sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }}>
-                  {balanceInUSD !== undefined
-                    ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                    : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
-                  }
-                </Typography>
-              </Grid>
-            </Grid>
+            }
             {type === 'Others' &&
               <Grid item textAlign='right' xs={1.5}>
                 <IconButton
@@ -350,16 +348,25 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief accountName={accountName} address={address} formatted={formatted} isHidden={account?.isHidden} theme={theme} />
-        <Grid alignItems='flex-end' container pt='15px'>
-          <Grid item xs>
-            <Select defaultValue={genesisHash} label={'Select the chain'} onChange={_onChangeGenesis} options={genesisOptions} />
-          </Grid>
-          <Grid item pl={1}>
-            <ChainLogo genesisHash={newChain?.genesisHash ?? chain?.genesisHash} size={31} />
-          </Grid>
+        <Grid alignItems='flex-end' container pt='10px'>
+          <DropdownWithIcon
+            defaultValue={genesisHash}
+            icon={getLogo(newChain || chain || undefined)}
+            label={t<string>('Select the chain')}
+            onChange={_onChangeGenesis}
+            options={genesisOptions}
+            style={{ width: '100%' }}
+          />
         </Grid>
-        <Grid height='20px' item xs mt='10px'>
-          {newEndpoint && <Select defaultValue={newEndpoint} label={'Select the endpoint'} onChange={_onChangeEndpoint} options={endpointOptions} />}
+        <Grid height='20px' item mt='10px' xs>
+          {(newEndpoint || endpoint) &&
+            <Select
+              label={'Select the endpoint'}
+              onChange={_onChangeEndpoint}
+              options={endpointOptions}
+              value={newEndpoint || endpoint}
+            />
+          }
         </Grid>
         <Grid item pt='50px' xs>
           <Balance balances={balances} type={'Total'} />
