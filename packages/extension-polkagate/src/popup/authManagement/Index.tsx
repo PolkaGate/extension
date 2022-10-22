@@ -66,6 +66,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
       </Typography>
       <Grid
         item
+        position='relative'
         px='15px'
       >
         <InputFilter
