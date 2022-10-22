@@ -3,12 +3,12 @@
 
 import type { RequestAuthorizeTab } from '@polkadot/extension-base/background/types';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { approveAuthRequest, rejectAuthRequest } from '../../../../extension-polkagate/src/messaging';
 import { ActionContext, ButtonWithCancel, PButton, Warning } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
+import { useTranslation } from '../../hooks';
+import { approveAuthRequest, rejectAuthRequest } from '../../messaging';
 
 interface Props {
   authId: string;
