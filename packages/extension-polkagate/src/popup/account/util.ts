@@ -12,39 +12,39 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { BN } from '@polkadot/util';
 
-export const getValue = (type: string, balances: DeriveBalancesAll | undefined): BN | undefined => {
+export const getValue = (type: string, balances: DeriveBalancesAll | null | undefined): BN | undefined => {
   if (!balances) {
     return;
   }
 
-  switch (type) {
-    case ('Total'):
+  switch (type.toLocaleLowerCase()) {
+    case ('total'):
       return balances.freeBalance.add(balances.reservedBalance);
-    case ('Available'):
+    case ('available'):
       return balances.availableBalance;
-    case ('Reserved'):
+    case ('reserved'):
       return balances.reservedBalance;
-    case ('Others'):
+    case ('others'):
       return balances.lockedBalance.add(balances.vestingTotal);
-    case ('Free Balance'):
+    case ('free balance'):
       return balances.freeBalance;
-    case ('Reserved Balance'):
+    case ('reserved balance'):
       return balances.reservedBalance;
-    case ('Frozen Misc'):
+    case ('frozen misc'):
       return balances.frozenMisc;
-    case ('Frozen Fee'):
+    case ('frozen fee'):
       return balances.frozenFee;
-    case ('Locked Balance'):
+    case ('locked balance'):
       return balances.lockedBalance;
-    case ('Vested Balance'):
+    case ('vested balance'):
       return balances.vestedBalance;
-    case ('Vested Claimable'):
+    case ('vested claimable'):
       return balances.vestedClaimable;
-    case ('Vesting Locked'):
+    case ('vesting locked'):
       return balances.vestingLocked;
-    case ('Vesting Total'):
+    case ('vesting total'):
       return balances.vestingTotal;
-    case ('Voting Balance'):
+    case ('voting balance'):
       return balances.votingBalance;
     default:
       return undefined;

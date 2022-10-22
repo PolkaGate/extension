@@ -20,7 +20,7 @@ import type { ThemeProps } from '../../../../extension-ui/src/types';
 import { faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -28,7 +28,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, DropdownWithIcon, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
+import { AccountContext, ActionContext, DropdownWithIcon, Identicon, Motion, Select, SettingsContext } from '../../components';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
@@ -38,7 +38,7 @@ import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';
 import AccountBrief from './AccountBrief';
-import { getValue } from './util';
+import LabelBalancePrice from './LabelBalancePrice';
 
 interface Props extends ThemeProps {
   className?: string;
@@ -115,7 +115,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [isRefreshing, setRefresh] = useState<boolean | undefined>(false);
 
   useEffect(() => {
-    console.log('api:', api)
     api && setApiToUse(api);
   }, [api]);
 
@@ -167,7 +166,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
 
   const getBalances = useCallback(() => {
-    console.log('gebalancesis called:', apiToUse && formatted);
     apiToUse && formatted &&
       apiToUse.derive.balances?.all(formatted).then((b) => {
         setBalances(b);
@@ -177,11 +175,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     , [apiToUse, formatted]);
 
   useEffect(() => {
-    console.log('condition1:', (endpoint || newEndpoint))
-    console.log('condition2:', !!apiToUse)
-    console.log('condition3:', (newFormattedAddress === formatted))
-    console.log('condition4:', String(apiToUse?.genesisHash) === genesis);
-
     // eslint-disable-next-line no-void
     (endpoint || newEndpoint) && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && getBalances();
   }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint]);
@@ -214,9 +207,9 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const goToSend = useCallback(() => {
     balances && history.push({
       pathname: `/send/${genesisHash}/${address}/${formatted}/`,
-      state: { balances, api: apiToUse }
+      state: { balances, api: apiToUse, price }
     });
-  }, [balances, history, genesisHash, address, formatted, apiToUse]);
+  }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
 
   const identicon = (
     <Identicon
@@ -315,52 +308,26 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     });
   }, [balances, account, chain, history, address, formatted, apiToUse, price]);
 
-  const Balance = ({ balances, type }: { type: string, balances: DeriveBalancesAll | undefined }) => {
-    const value = getValue(type, balances);
-    const balanceInUSD = price && value && apiToUse && Number(value) / (10 ** apiToUse.registry.chainDecimals[0]) * price;
-
-    return (
-      <>
-        <Grid item py='5px'>
-          <Grid alignItems='center' container justifyContent='space-between'>
-            <Grid item xs={3}>
-              <Typography sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }}>
-                {type}
-              </Typography>
-            </Grid>
-            {type !== 'Others' &&
-              <Grid container direction='column' item justifyContent='flex-end' xs>
-                <Grid item textAlign='right'>
-                  <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
-                    <ShowBalance api={apiToUse} balance={value} />
-                  </Typography>
-                </Grid>
-                <Grid item pt='6px' textAlign='right'>
-                  <Typography sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }}>
-                    {balanceInUSD !== undefined
-                      ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                      : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
-                    }
-                  </Typography>
-                </Grid>
-              </Grid>
-            }
-            {type === 'Others' &&
-              <Grid item textAlign='right' xs={1.5}>
-                <IconButton
-                  onClick={goToOthers}
-                  sx={{ p: 0 }}
-                >
-                  <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
-                </IconButton>
-              </Grid>
-            }
+  const Others = (
+    <>
+      <Grid item py='5px'>
+        <Grid alignItems='center' container justifyContent='space-between'>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
+            {t('Others')}
+          </Grid>
+          <Grid item textAlign='right' xs={1.5}>
+            <IconButton
+              onClick={goToOthers}
+              sx={{ p: 0 }}
+            >
+              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
+            </IconButton>
           </Grid>
         </Grid>
-        <Divider sx={{ bgcolor: 'secondary.main', height: type === 'Others' ? '2px' : '1px', my: '5px' }} />
-      </>
-    );
-  };
+      </Grid>
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '5px' }} />
+    </>
+  );
 
   return (
     <Motion>
@@ -395,10 +362,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           }
         </Grid>
         <Grid item pt='50px' xs>
-          <Balance balances={balances} type={'Total'} />
-          <Balance balances={balances} type={'Available'} />
-          <Balance balances={balances} type={'Reserved'} />
-          <Balance balances={balances} type={'Others'} />
+          <LabelBalancePrice api={apiToUse} balances={balances} label={'Total'} price={price} />
+          <LabelBalancePrice api={apiToUse} balances={balances} label={'Available'} price={price} />
+          <LabelBalancePrice api={apiToUse} balances={balances} label={'Reserved'} price={price} />
+          {Others}
         </Grid>
         <Menu />
       </Container>
