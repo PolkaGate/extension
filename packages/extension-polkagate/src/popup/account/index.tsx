@@ -28,7 +28,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, ChainLogo, DropdownWithIcon, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
+import { AccountContext, ActionContext, DropdownWithIcon, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
@@ -106,26 +106,27 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const endpoint = useEndpoint(address, currentChain);
 
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
-  const api = useApi(newEndpoint);
+  const api = useApi(newEndpoint || endpoint);
 
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api || state?.apiToUse);
   const [price, setPrice] = useState<number | undefined>();
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
-  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined | null>(state?.balances as DeriveBalancesAll);
+  const [isRefreshing, setRefresh] = useState<boolean | undefined>(false);
 
-  console.log('endpoint:', endpoint);
-  console.log('newEndpoint:', newEndpoint)
   useEffect(() => {
+    console.log('api:', api)
     api && setApiToUse(api);
   }, [api]);
 
-  const resetToDefaults = () => {
+  const resetToDefaults = useCallback(() => {
     setBalances(undefined);
     setNewEndpoint(undefined);
     setRecoded(defaultRecoded);
     setPrice(undefined);
-  };
+  }, []);
+
+  const onRefreshClick = useCallback(() => setRefresh(true), []);
 
   useEffect(() => {
     chain && getPrice(chain).then((price) => {
@@ -165,10 +166,33 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     newChain && newGenesisHash && newFormattedAddress && goToAccount();
   }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
 
+  const getBalances = useCallback(() => {
+    console.log('gebalancesis called:', apiToUse && formatted);
+    apiToUse && formatted &&
+      apiToUse.derive.balances?.all(formatted).then((b) => {
+        setBalances(b);
+        setRefresh(false);
+      }).catch(console.error);
+  }
+    , [apiToUse, formatted]);
+
   useEffect(() => {
-    newEndpoint && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis &&
-      apiToUse.derive.balances?.all(formatted).then(setBalances).catch(console.error);
-  }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress]);
+    console.log('condition1:', (endpoint || newEndpoint))
+    console.log('condition2:', !!apiToUse)
+    console.log('condition3:', (newFormattedAddress === formatted))
+    console.log('condition4:', String(apiToUse?.genesisHash) === genesis);
+
+    // eslint-disable-next-line no-void
+    (endpoint || newEndpoint) && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && getBalances();
+  }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint]);
+
+  useEffect(() => {
+    if (isRefreshing) {
+      setBalances(null);
+      // eslint-disable-next-line no-void
+      void getBalances();
+    }
+  }, [isRefreshing, getBalances]);
 
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     resetToDefaults();
@@ -177,14 +201,15 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       console.error(error);
       setNewChain(null);
     });
-  }, [address]);
+  }, [address, resetToDefaults]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     setNewEndpoint(newEndpoint);
+    const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
 
     // eslint-disable-next-line no-void
     chainName && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chainName]);
+  }, [address, chain?.name, newChain?.name]);
 
   const goToSend = useCallback(() => {
     balances && history.push({
@@ -271,12 +296,13 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           <FontAwesomeIcon
             color={theme.palette.mode === 'dark' ? 'white' : 'black'}
             icon={faRefresh}
+            spin={isRefreshing}
             // onClick={goToSend}
             size='lg'
           />
         }
         noDivider
-        onClick={goToSend}
+        onClick={onRefreshClick}
         title={'Refresh'}
       />
     </Grid>
