@@ -21,16 +21,14 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { isend, send } from '../../assets/icons';
-import { AccountContext, ActionContext, Amount, Button, ChainLogo, Header, Identicon, InputWithLabelAndIdenticon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { AccountContext, ActionContext, Amount, ChainLogo, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
-import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
-import { HeaderBrand } from '../../partials';
-import { fontWeight } from '@mui/system';
-import { getValue } from '../account/util';
 import LabelBalancePrice from '../account/LabelBalancePrice';
+import { getValue } from '../account/util';
 
 interface Props {
   className?: string;
@@ -213,7 +211,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <From />
-        <InputWithLabelAndIdenticon address={recepient} label={t('To')} setAddress={setRecepient} showIdenticon={false} style={{ pt: '5px' }} />
+        <To address={recepient} label={t('To')} setAddress={setRecepient} style={{ pt: '5px' }} name={recepientName} />
 
 
         <Grid alignItems='center' container>
@@ -239,14 +237,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             </Grid>
           </Grid>
         </Grid>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px' }} />
-        <div style={{ fontSize: '16px', fontWeight: 300, paddingTop: '7px', letterSpacing: '-0.015em' }}>
-          {t('To')}:
-        </div>
-        <To address={recepient} setAddress={setRecepient} />
-        <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', height: '38px', fontSize: '24px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={12}>
-          {recepientName}
-        </Grid>
+      
+       
         <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px' }} />
         <div style={{ fontSize: '16px', fontWeight: 300, paddingTop: '8px', letterSpacing: '-0.015em' }}>
           {t('Amount')}:
