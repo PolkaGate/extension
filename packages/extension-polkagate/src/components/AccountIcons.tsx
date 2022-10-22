@@ -22,13 +22,7 @@ interface Props {
 
 export default function AccountIcons({ formatted, identiconTheme, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const { show } = useToast();
   const { t } = useTranslation();
-
-  const _onCopy = useCallback(
-    () => show(t('Copied')),
-    [show, t]
-  );
 
   return (
     <Grid
@@ -43,7 +37,7 @@ export default function AccountIcons({ formatted, identiconTheme, prefix, proxie
       >
         <Identicon
           iconTheme={identiconTheme}
-          onCopy={_onCopy}
+          // onCopy={_onCopy}
           prefix={prefix}
           size={40}
           value={formatted}

@@ -7,18 +7,15 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { faCopy } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useTranslation } from '../hooks';
 import useMetadata from '../hooks/useMetadata';
-import useToast from '../hooks/useToast';
 import { DEFAULT_TYPE } from '../util/defaultType';
+import CopyAddressButton from './CopyAddressButton';
 import { AccountContext, Identicon, SettingsContext } from './';
 
 export interface Props {
@@ -106,8 +103,6 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
     return accounts.find((a) => a.address === address)?.name;
   }, [accounts, address, name]);
 
-  const { show } = useToast();
-
   useEffect((): void => {
     if (!address) {
       return setRecoded(defaultRecoded);
@@ -131,11 +126,6 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
       ? 'ethereum'
       : (chain?.icon || 'polkadot')
   ) as IconTheme;
-
-  const _onCopy = useCallback(
-    () => show(t('Copied')),
-    [show, t]
-  );
 
   return (
     <>
@@ -164,7 +154,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
             className='identityIcon'
             iconTheme={theme}
             isExternal={isExternal}
-            onCopy={_onCopy}
+            // onCopy={_onCopy}
             prefix={prefix}
             size={40}
             value={formatted || address}
@@ -197,6 +187,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
               maxWidth={'220px'}
               overflow={'hidden'}
               textOverflow={'ellipsis'}
+              whiteSpace='nowrap'
               xs={showCopy ? 10 : 12}
             >
               <Typography
@@ -209,23 +200,10 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
               </Typography>
             </Grid>
             {showCopy &&
-              <Grid
-                item
-                pl={'5px'}
-                xs={1.5}
-              >
-                <CopyToClipboard text={(formatted && formatted) || ''}>
-                  <FontAwesomeIcon
-                    className='copyIcon'
-                    color={'#BA2882'}
-                    cursor='pointer'
-                    icon={faCopy}
-                    onClick={_onCopy}
-                    size='sm'
-                    title={t('copy address')}
-                  />
-                </CopyToClipboard>
-              </Grid>
+              <CopyAddressButton
+                address={formatted}
+                size={16}
+              />
             }
           </Grid>
         </Grid>

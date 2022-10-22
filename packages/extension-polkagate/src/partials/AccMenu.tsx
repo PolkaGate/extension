@@ -60,6 +60,12 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     onAction(`/forget/${address}/${isExternal}`);
   }, [address, isExternal, onAction]);
 
+  const _goToDeriveAcc = useCallback(
+    () => {
+      address && onAction(`/derive/${address}/locked`);
+    }, [address, onAction]
+  );
+
   useEffect(() => {
     !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,11 +82,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       ? 'ethereum'
       : (chain?.icon || 'polkadot')
   ) as IconTheme;
-
-  const _onCopy = useCallback(
-    () => show(t('Copied')),
-    [show, t]
-  );
 
   const _onChangeNetwork = useCallback(
     (newGenesisHash: string) => {
@@ -135,7 +136,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
           className='identityIcon'
           iconTheme={identiconTheme}
           isExternal={isExternal}
-          onCopy={_onCopy}
           prefix={prefix}
           size={40}
           value={formatted || address}
@@ -185,7 +185,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          // onClick={_goToDeriveAcc}
+          onClick={_goToDeriveAcc}
           text={t('Derive new account')}
         />
       }

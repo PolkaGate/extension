@@ -24,7 +24,7 @@ import { AccMenu } from '../partials';
 import { getPrice } from '../util/api/getPrice';
 import { AddressPriceAll, LastBalances, SavedMetaData } from '../util/types';
 import { getFormattedAddress, prepareMetaData } from '../util/utils';
-import AccountDetail from './AccountDetail';
+import AccountDetail from '../partials/AccountDetail';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { SettingsContext } from '.';
@@ -219,7 +219,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
       <AccountIcons
         formatted={formatted || address}
         identiconTheme={identiconTheme}
-        prefix={settings?.prefix}
+        prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}
       />

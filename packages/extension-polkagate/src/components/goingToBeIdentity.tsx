@@ -50,12 +50,13 @@ export default function Identity({ address, name, style }: Props): React.ReactEl
       <Grid
         item
         maxWidth='82%'
+        overflow='hidden'
+        textOverflow='ellipsis'
       >
         <Typography
           fontSize='28px'
           fontWeight={400}
-          overflow='hidden'
-          textOverflow='ellipsis'
+          whiteSpace='nowrap'
         >
           {name || account?.name || t<string>('unknown')}
         </Typography>
