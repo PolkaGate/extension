@@ -1,10 +1,12 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/** description
+ * This button shows an icon button like a lock 🔓 button in derived account path
+ */
 
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
-
 
 interface Props extends ThemeProps {
   className?: string;

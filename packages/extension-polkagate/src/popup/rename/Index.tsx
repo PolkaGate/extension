@@ -1,22 +1,17 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext, PButton } from '../../components';
+import { ActionContext, ButtonWithCancel } from '../../components';
 import Identity from '../../components/goingToBeIdentity';
-import { useMetadata, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { HeaderBrand, Name } from '../../partials';
-import { RenameAcc } from '../../util/types';
 
-interface Props {
-  className?: string;
-}
-
-export default function Rename({ className }: Props): React.ReactElement<Props> {
+export default function Rename(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { address } = useParams<{ address: string }>();
@@ -61,8 +56,9 @@ export default function Rename({ className }: Props): React.ReactElement<Props> 
         label={t<string>('Name')}
         onChange={editName}
       />
-      <PButton
+      <ButtonWithCancel
         _onClick={_changeName}
+        _onClickCancel={_onBackClick}
         disabled={!newName}
         text={t<string>('Rename')}
       />
