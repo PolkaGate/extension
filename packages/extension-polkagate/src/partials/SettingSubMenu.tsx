@@ -131,7 +131,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='12px'
         >
           <Select
-            defaultValue={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
+            value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
             label={t<string>('Language')}
             onChange={_onChangeLang}
             options={languageOptions}
@@ -142,7 +142,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='10px'
         >
           <Select
-            defaultValue={notification ?? notificationOptions[1].value}
+            value={notification ?? notificationOptions[1].value}
             label={t<string>('Notification')}
             onChange={_onChangeNotification}
             options={notificationOptions}
@@ -175,7 +175,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='7px'
         >
           <Select
-            defaultValue={prefix ?? prefixOptions[2].value}
+            value={prefix ?? prefixOptions[2].value}
             label={t<string>('Default display address format')}
             onChange={_onChangePrefix}
             options={prefixOptions}

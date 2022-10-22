@@ -11,12 +11,13 @@ interface Props {
   text: string;
   _onClick: React.MouseEventHandler<HTMLButtonElement>;
   _onClickCancel?: React.MouseEventHandler<HTMLButtonElement>;
+  cancelText?: string;
   _mt?: string;
   disabled?: boolean;
   _isBusy?: boolean;
 }
 
-export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCancel, disabled = false, text }: Props): React.ReactElement<Props> {
+export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -50,7 +51,7 @@ export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCance
           }}
           variant='text'
         >
-          {t<string>('Cancel')}
+          {cancelText || t<string>('Cancel')}
         </Button>
       </Grid>
       <Grid
