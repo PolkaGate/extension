@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
-import { Box, Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
@@ -17,10 +17,11 @@ interface Props {
   onBackClick?: () => void;
   _centerItem?: JSX.Element;
   noBorder?: boolean;
+  shortBorder?: boolean;
   paddingBottom?: number;
 }
 
-function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, text, withSteps = null, noBorder = false, paddingBottom = 11 }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, shortBorder, text, withSteps = null, noBorder = false, paddingBottom = 11 }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isMenuOpen, setShowMenu] = useState(false);
   const addIconRef = useRef(null);
@@ -125,7 +126,7 @@ function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, text, 
       }
       <Container sx={{
         background: showBackArrow ? 'transparent' : 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)',
-        borderBottom: `${noBorder ? '' : '0.5px solid'}`,
+        borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
         borderColor: 'secondary.light',
         lineHeight: 0,
         p: `18px 30px ${paddingBottom}px`
@@ -140,6 +141,9 @@ function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, text, 
           {_centerItem ?? <CenterItem />}
           <RightMenuIcon />
         </Grid>
+        {shortBorder &&
+          <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
+        }
       </Container>
     </>
   );
