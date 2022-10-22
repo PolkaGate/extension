@@ -10,12 +10,10 @@ import settings from '@polkadot/ui-settings';
 import { AccountContext, ActionContext, DropdownWithIcon, Select, Warning } from '../../../components';
 import Address from '../../../components/Address';
 import PButton from '../../../components/PButton';
-import { useLedger, useMetadata, useTranslation } from '../../../hooks';
-import useGenesisHashOptions from '../../../hooks/useGenesisHashOptions';
-import { createAccountHardware, createAccountSuri, getMetadata } from '../../../messaging';
+import { useLedger, useTranslation } from '../../../hooks';
+import { createAccountHardware, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import HeaderBrand from '../../../partials/HeaderBrand';
-import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
 
@@ -42,7 +40,6 @@ function ImportLedger(): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
-  const [account, setAccount] = useState<AccountInfo | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [step1, setStep1] = useState(true);
   const [accountIndex, setAccountIndex] = useState<number>(0);
