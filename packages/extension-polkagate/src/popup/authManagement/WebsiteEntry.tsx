@@ -5,9 +5,8 @@ import { Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { AuthUrlInfo } from '@polkadot/extension-base/background/handlers/State';
-import { RemoveAuth } from '@polkadot/extension-ui/components';
 
-import { Switch } from '../../components';
+import { RemoveAuth, Switch } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {
@@ -17,7 +16,7 @@ interface Props {
   url: string;
 }
 
-export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -45,6 +44,7 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
         alignItems='center'
         container
         item
+        maxWidth='163px'
         sx={{
           borderRight: '1px solid',
           borderRightColor: 'secondary.light',
@@ -53,7 +53,6 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap'
         }}
-        xs={6}
       >
         {url}
       </Grid>
@@ -71,6 +70,7 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
         <Switch
           checkedLabel={t<string>('Allowed')}
           fontSize='12px'
+          fontWeight={400}
           isChecked={info.isAllowed}
           onChange={switchAccess}
           theme={theme}

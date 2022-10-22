@@ -5,7 +5,6 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
-import styled from 'styled-components';
 
 import Label from './Label';
 import { Input } from './TextInputs';
@@ -19,7 +18,7 @@ interface Props {
   theme: Theme;
 }
 
-function InputFilter({ label, onChange, placeholder, theme, value, withReset = false }: Props) {
+export default function InputFilter({ label, onChange, placeholder, theme, value, withReset = false }: Props) {
   const inputRef: React.RefObject<HTMLInputElement> | null = useRef(null);
 
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,26 +57,17 @@ function InputFilter({ label, onChange, placeholder, theme, value, withReset = f
       {
         withReset && !!value && (
           <FontAwesomeIcon
-            // className='resetIcon'
             icon={faTimes}
             onClick={onResetFilter}
+            style={{
+              cursor: 'pointer',
+              position: 'absolute',
+              right: '25px',
+              top: '32px'
+            }}
           />
         )
       }
     </div>
   );
 }
-
-export default styled(InputFilter)(({ theme }: Props) => `
-  // padding-left: 1rem !important;
-  // padding-right: 1rem !important;
-  position: relative;
-
-  .resetIcon {
-    position: absolute;
-    right: 28px;
-    top: 12px;
-    /* color: ${theme.iconNeutralColor}; */
-    cursor: pointer;
-  }
-`);
