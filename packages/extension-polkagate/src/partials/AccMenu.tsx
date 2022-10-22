@@ -217,10 +217,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       {newEndpoint &&
         <Select
           _mt='10px'
-          defaultValue={newEndpoint ?? 'No chain selected'}
           label={t<string>('Endpoint')}
           onChange={_onChangeEndpoint}
           options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
+          value={newEndpoint ?? 'No chain selected'}
         />
       }
       <IconButton
