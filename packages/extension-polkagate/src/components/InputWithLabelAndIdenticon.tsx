@@ -15,14 +15,15 @@ import { Input } from './TextInputs';
 
 interface Props {
   label: string;
-  onChange?: (value: string) => void;
+  // onChange?: (value: string) => void;
   style?: SxProps<Theme>;
   chain?: Chain;
   address: string | undefined;
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  showIdenticon?: boolean;
 }
 
-export default function InputWithLabelAndIdenticon({ chain = undefined, setAddress, address, onChange, label, style }: Props): React.ReactElement<Props> {
+export default function InputWithLabelAndIdenticon({ chain = undefined, setAddress, address, label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
 
@@ -57,7 +58,7 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, setAddre
     >
       <Grid
         item
-        xs={10.5}
+        xs
       >
         <Label
           label={label}
@@ -98,33 +99,35 @@ export default function InputWithLabelAndIdenticon({ chain = undefined, setAddre
           </IconButton>
         </Label>
       </Grid>
-      <Grid
-        item
-        xs={1.2}
-      >
-        {isValidAddress(address)
-          ? (
-            <Identicon
-              iconTheme={chain?.icon || 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={31}
-              value={address}
-            />
-          )
-          : (
-            <Grid
-              sx={{
-                bgcolor: 'action.disabledBackground',
-                border: '1px solid',
-                borderColor: 'secondary.light',
-                borderRadius: '50%',
-                height: '31px',
-                width: '31px'
-              }}
-            >
-            </Grid>)
-        }
-      </Grid>
-    </Grid >
+      {showIdenticon &&
+        <Grid
+          item
+          xs={1.2}
+        >
+          {isValidAddress(address)
+            ? (
+              <Identicon
+                iconTheme={chain?.icon || 'polkadot'}
+                prefix={chain?.ss58Format ?? 42}
+                size={31}
+                value={address}
+              />
+            )
+            : (
+              <Grid
+                sx={{
+                  bgcolor: 'action.disabledBackground',
+                  border: '1px solid',
+                  borderColor: 'secondary.light',
+                  borderRadius: '50%',
+                  height: '31px',
+                  width: '31px'
+                }}
+              >
+              </Grid>)
+          }
+        </Grid>
+      }
+    </Grid>
   );
 }

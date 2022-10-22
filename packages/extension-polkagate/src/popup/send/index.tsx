@@ -21,12 +21,14 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { isend, send } from '../../assets/icons';
-import { AccountContext, ActionContext, Amount, Button, ChainLogo, Header, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { AccountContext, ActionContext, Amount, ChainLogo, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
-import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
+import LabelBalancePrice from '../account/LabelBalancePrice';
+import { getValue } from '../account/util';
 
 interface Props {
   className?: string;
@@ -37,24 +39,28 @@ type TransferType = 'All' | 'Max' | 'Normal';
 export default function Send({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
+  const onAction = useContext(ActionContext);
+
   const history = useHistory();
   const theme = useTheme();
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
-  const location = useLocation();
+  const { state } = useLocation();
   const chain = useMetadata(genesisHash, true);
   const { accounts } = useContext(AccountContext);
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(location?.state?.api);
+  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
-  const [recepient, setRecepient] = useState<string | undefined>(location?.state?.recepient);
-  const [amount, setAmount] = useState<string>(location?.state?.amount ?? '0');
+  const [recepient, setRecepient] = useState<string | undefined>(state?.recepient);
+  const [amount, setAmount] = useState<string>(state?.amount ?? '0');
   const [allMaxAmount, setAllMaxAmount] = useState<string | undefined>();
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(location?.state?.balances as DeriveBalancesAll);
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const [transferType, setTransferType] = useState<TransferType | undefined>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
+
+  const [step1, setStep1] = useState(true);
 
   const prevUrl = `/account/${genesisHash}/${address}/${formatted}/`;
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
@@ -75,10 +81,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   );
 
   const setWholeAmount = useCallback((type: TransferType) => {
-    console.log('maxFee:', maxFee)
-    console.log('balances:', balances)
-    console.log('api:', api)
-
     if (!api || !balances?.availableBalance || !maxFee) {
       return;
     }
@@ -87,7 +89,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     const ED = type === 'Max' ? api.consts.balances.existentialDeposit as unknown as BN : BN_ZERO;
     const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimals);
 
-    console.log('allMaxAmount:', allMaxAmount)
     setAllMaxAmount(allMaxAmount);
   }, [api, balances?.availableBalance, decimals, maxFee]);
 
@@ -160,32 +161,59 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     />
   );
 
+  const _onCancelClick = useCallback(
+    () => setStep1(true),
+    []
+  );
+
+  const _onBackClick = useCallback(() => {
+    step1
+      ? history.push({
+        pathname: `/account/${genesisHash}/${address}/${formatted}/`,
+        state: { balances, api: apiToUse, price: state?.price as number | undefined }
+      })
+      : _onCancelClick();
+  }, [_onCancelClick, address, apiToUse, balances, formatted, genesisHash, history, state?.price, step1]);
+
+  const From = () => {
+    const totalBalance = getValue('Total', balances);
+
+    return (
+      <>
+        <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+          {t('From')}
+        </div>
+        <Grid container justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '10px' }}>
+          <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px' }}>
+            {accountName}
+            <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', justifyContent: 'flex-start' }} />
+          </Grid>
+          <Grid item>
+            <LabelBalancePrice api={apiToUse} balances={balances} label='Total' price={state?.price} showLabel={false} />
+          </Grid>
+
+        </Grid>
+      </>
+    )
+  };
+
   return (
     <Motion>
-      <Container disableGutters sx={{ px: '30px' }}>
-        <Header address={address} genesisHash={genesisHash} icon={icon} preUrl={prevUrl}>
-          <div style={{ fontWeight: 500, fontSize: '24px', lineHeight: '36px', letterSpacing: '-0.015em', textAlign: 'center' }}>
-            {t('Send Fund')}
-          </div>
-          <div style={{ fontWeight: 700, fontSize: '11px', lineHeight: '25px', letterSpacing: '-0.015em', textAlign: 'center' }}>
-            {t('On the same chain')}
-          </div>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '81px', margin: 'auto' }} />
-        </Header>
-        <div style={{ fontSize: '16px', fontWeight: 300, paddingTop: '15px', letterSpacing: '-0.015em' }}>
-          {t('From Account')}:
-        </div>
-        <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ pt: '7px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-          <Grid item mt='7px' xs={1}>
-            {identicon}
-          </Grid>
-          <Grid item sx={{ overflow: 'hidden', pl: '10px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '26px' }} xs={6}>
-            {accountName}
-          </Grid>
-          <Grid item xs>
-            <ShortAddress address={formatted} addressStyle={{ fontSize: '18px', justifyContent: 'flex-end' }} />
-          </Grid>
-        </Grid>
+      <HeaderBrand
+        onBackClick={_onBackClick}
+        shortBorder
+        showBackArrow
+        text={t<string>('Send fund')}
+        withSteps={{
+          currentStep: `${step1 ? 1 : 2}`,
+          totalSteps: 2
+        }}
+      />
+      <Container disableGutters sx={{ px: '15px' }}>
+        <From />
+        <To address={recepient} label={t('To')} setAddress={setRecepient} style={{ pt: '5px' }} name={recepientName} />
+
+
         <Grid alignItems='center' container>
           <Grid item mt='5px' xs={1}>
             <ChainLogo genesisHash={chain?.genesisHash} />
@@ -209,14 +237,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             </Grid>
           </Grid>
         </Grid>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px' }} />
-        <div style={{ fontSize: '16px', fontWeight: 300, paddingTop: '7px', letterSpacing: '-0.015em' }}>
-          {t('To')}:
-        </div>
-        <To address={recepient} setAddress={setRecepient} />
-        <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', height: '38px', fontSize: '24px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={12}>
-          {recepientName}
-        </Grid>
+      
+       
         <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px' }} />
         <div style={{ fontSize: '16px', fontWeight: 300, paddingTop: '8px', letterSpacing: '-0.015em' }}>
           {t('Amount')}:
@@ -233,14 +255,14 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             {t('Max amount')}
           </Grid>
         </Grid>
+        <PButton
+          _mt='15px'
+          _onClick={goToReview}
+          _variant='contained'
+          disabled={buttonDisabled}
+          text={t('Next')}
+        />
       </Container>
-      <PButton
-        _mt='15px'
-        _onClick={goToReview}
-        _variant='contained'
-        disabled={buttonDisabled}
-        text={t('Next')}
-      />
     </Motion>
   );
 }
