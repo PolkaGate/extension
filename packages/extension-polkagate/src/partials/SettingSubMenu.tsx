@@ -9,7 +9,7 @@ import settings from '@polkadot/ui-settings';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import getLanguageOptions from '../../../extension-ui/src/util/getLanguageOptions';
 import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
-import { ActionContext, Checkbox, MenuItem, Select, Switch } from '../components';
+import { ActionContext, Checkbox, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
 
@@ -22,6 +22,7 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
   const theme = useTheme();
   const isPopup = useIsPopup();
   const onAction = useContext(ActionContext);
+  const colorMode = useContext(ColorContext);
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
@@ -66,6 +67,12 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
     }, []
   );
 
+  const _onChangeTheme = useCallback(
+    (): void => {
+      colorMode.toggleColorMode();
+    }, [colorMode]
+  );
+
   const _onChangeNotification = useCallback(
     (value: string): void => {
       setNotification(value).catch(console.error);
@@ -93,7 +100,13 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           <Grid
             item
           >
-            <Switch theme={theme} />
+            <Switch
+              checkedLabel={t<string>('Dark')}
+              isChecked={theme.palette.mode === 'dark'}
+              onChange={_onChangeTheme}
+              theme={theme}
+              uncheckedLabel={t<string>('Light')}
+            />
           </Grid>
           {isPopup &&
             <>
@@ -113,8 +126,8 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
                 item
               >
                 <IconButton
-                  sx={{ height: '35px', width: '35px' }}
                   onClick={_onWindowOpen}
+                  sx={{ height: '35px', width: '35px' }}
                 >
                   <Avatar
                     alt={'logo'}
@@ -131,10 +144,10 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='12px'
         >
           <Select
-            value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
             label={t<string>('Language')}
             onChange={_onChangeLang}
             options={languageOptions}
+            value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
           />
         </Grid>
         <Grid
@@ -142,10 +155,10 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='10px'
         >
           <Select
-            value={notification ?? notificationOptions[1].value}
             label={t<string>('Notification')}
             onChange={_onChangeNotification}
             options={notificationOptions}
+            value={notification ?? notificationOptions[1].value}
           />
         </Grid>
         <Grid
@@ -175,10 +188,10 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
           pt='7px'
         >
           <Select
-            value={prefix ?? prefixOptions[2].value}
             label={t<string>('Default display address format')}
             onChange={_onChangePrefix}
             options={prefixOptions}
+            value={prefix ?? prefixOptions[2].value}
           />
         </Grid>
       </Grid>

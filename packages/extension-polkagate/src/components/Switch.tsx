@@ -1,48 +1,47 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, useTheme } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React from 'react';
 import styled from 'styled-components';
 
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
-import { ColorContext } from './';
-
 interface Props {
   className?: string;
-  // theme: Theme;
+  theme: Theme;
+  onChange: () => void;
+  checkedLabel: string;
+  uncheckedLabel: string;
+  fontSize?: string;
+  fontWeight?: number;
+  isChecked?: boolean;
 }
 
-function Switch({ className }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
-  const colorMode = React.useContext(ColorContext);
-  const theme = useTheme();
-
+function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, onChange, theme, uncheckedLabel, isChecked = false }: Props): React.ReactElement<Props> {
   return (
     <div className={className}>
       <Typography
         display='inline'
-        fontSize='18px'
-        fontWeight={300}
+        fontSize={fontSize}
+        fontWeight={fontWeight}
       >
-        {t<string>('Light')}
+        {uncheckedLabel}
       </Typography>
       <label>
         <input
-          checked={theme.palette.mode === 'dark'}
+          checked={isChecked}
           className='checkbox'
-          onChange={colorMode.toggleColorMode}
+          onChange={onChange}
           type='checkbox'
         />
         <span className='slider' />
       </label>
       <Typography
         display='inline'
-        fontSize='18px'
-        fontWeight={300}
+        fontSize={fontSize}
+        fontWeight={fontWeight}
       >
-        {t<string>('Dark')}
+        {checkedLabel}
       </Typography>
     </div>
   );

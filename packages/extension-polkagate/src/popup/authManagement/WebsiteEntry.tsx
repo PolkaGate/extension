@@ -1,15 +1,14 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
-import styled from 'styled-components';
 
 import { AuthUrlInfo } from '@polkadot/extension-base/background/handlers/State';
-import { RemoveAuth, Switch } from '@polkadot/extension-ui/components';
+import { RemoveAuth } from '@polkadot/extension-ui/components';
 
+import { Switch } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { Grid } from '@mui/material';
-import { BorderBottom } from '@mui/icons-material';
 
 interface Props {
   info: AuthUrlInfo;
@@ -20,6 +19,7 @@ interface Props {
 
 export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const switchAccess = useCallback(() => {
     toggleAuth(url);
@@ -32,19 +32,26 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
   return (
     <Grid
       container
+      item
       sx={{
+        '&:last-child': {
+          borderBottom: 'none'
+        },
         borderBottom: '1px solid',
-        borderBottomColor: 'secondaary.light'
+        borderBottomColor: 'secondary.light'
       }}
     >
       <Grid
         alignItems='center'
         container
         item
-        justifyContent='center'
         sx={{
           borderRight: '1px solid',
-          borderRightColor: 'secondary.light'
+          borderRightColor: 'secondary.light',
+          overflowX: 'hidden',
+          pl: '5px',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
         }}
         xs={6}
       >
@@ -59,14 +66,15 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
           borderRight: '1px solid',
           borderRightColor: 'secondary.light'
         }}
-        xs={5}
+        xs={5.2}
       >
         <Switch
-          checked={info.isAllowed}
-          checkedLabel={t<string>('allowed')}
-          className='info'
+          checkedLabel={t<string>('Allowed')}
+          fontSize='12px'
+          isChecked={info.isAllowed}
           onChange={switchAccess}
-          uncheckedLabel={t<string>('denied')}
+          theme={theme}
+          uncheckedLabel={t<string>('Denied')}
         />
       </Grid>
       <Grid
@@ -75,6 +83,7 @@ export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Prop
         item
         justifyContent='center'
         onClick={_removeAuth}
+        xs={0.8}
       >
         <RemoveAuth />
       </Grid>

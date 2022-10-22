@@ -29,6 +29,9 @@ const TextBox = css(({ fontSize, theme, withError }: Props) => `
     : 'outline: none;'}
     filter: drop-shadow(0px 0px 3px rgba(204, 88, 123, 0.83));
   }
+  &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #9A7DB2;
+}
 `);
 
 export const TextArea = styled.textarea<Props>`${TextBox}`;

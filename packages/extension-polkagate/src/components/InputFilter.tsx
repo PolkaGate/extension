@@ -3,10 +3,11 @@
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Theme, Typography } from '@mui/material';
+import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 
+import Label from './Label';
 import { Input } from './TextInputs';
 
 interface Props {
@@ -32,21 +33,28 @@ function InputFilter({ label, onChange, placeholder, theme, value, withReset = f
 
   return (
     <div>
-      <Typography fontSize='14px'>
-        {label}
-      </Typography>
-      <Input
-        autoCapitalize='off'
-        autoCorrect='off'
-        autoFocus
-        onChange={onChangeFilter}
-        placeholder={placeholder}
-        ref={inputRef}
-        spellCheck={false}
-        theme={theme}
-        type='text'
-        value={value}
-      />
+      <Label
+        label={label}
+      >
+        <Input
+          autoCapitalize='off'
+          autoCorrect='off'
+          autoFocus
+          onChange={onChangeFilter}
+          placeholder={placeholder}
+          ref={inputRef}
+          spellCheck={false}
+          style={{
+            fontSize: '18px',
+            fontWeight: 300,
+            padding: 0,
+            paddingLeft: '10px'
+          }}
+          theme={theme}
+          type='text'
+          value={value}
+        />
+      </Label>
       {
         withReset && !!value && (
           <FontAwesomeIcon
@@ -56,13 +64,13 @@ function InputFilter({ label, onChange, placeholder, theme, value, withReset = f
           />
         )
       }
-    </div >
+    </div>
   );
 }
 
 export default styled(InputFilter)(({ theme }: Props) => `
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
+  // padding-left: 1rem !important;
+  // padding-right: 1rem !important;
   position: relative;
 
   .resetIcon {

@@ -86,6 +86,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
       >
         <Grid
           container
+          direction='column'
           justifyContent='center'
           minHeight='38px'
           sx={{
@@ -94,7 +95,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
             borderColor: 'secondary.light',
             borderRadius: '5px',
             fontSize: '12px',
-            fontWeight: '5px',
+            fontWeight: '400',
             overflow: 'hidden'
           }}
         >
@@ -113,20 +114,18 @@ export default function AuthManagement({ className }: Props): React.ReactElement
                 </Grid>
               )
               : <>
-                <Grid item>
-                  {Object.entries(authList)
-                    .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
-                    .map(
-                      ([url, info]: [string, AuthUrlInfo]) =>
-                        <WebsiteEntry
-                          info={info}
-                          key={url}
-                          removeAuth={removeAuth}
-                          toggleAuth={toggleAuth}
-                          url={url}
-                        />
-                    )}
-                </Grid>
+                {Object.entries(authList)
+                  .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
+                  .map(
+                    ([url, info]: [string, AuthUrlInfo]) =>
+                      <WebsiteEntry
+                        info={info}
+                        key={url}
+                        removeAuth={removeAuth}
+                        toggleAuth={toggleAuth}
+                        url={url}
+                      />
+                  )}
               </>
           }
         </Grid>
