@@ -1,12 +1,13 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
-import styled from 'styled-components';
 
 import { AuthUrlInfo } from '@polkadot/extension-base/background/handlers/State';
-import { RemoveAuth, Switch } from '@polkadot/extension-ui/components';
+import { RemoveAuth } from '@polkadot/extension-ui/components';
 
+import { Switch } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {
@@ -16,8 +17,9 @@ interface Props {
   url: string;
 }
 
-function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ info, removeAuth, toggleAuth, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const switchAccess = useCallback(() => {
     toggleAuth(url);
@@ -28,37 +30,63 @@ function WebsiteEntry ({ info, removeAuth, toggleAuth, url }: Props): React.Reac
   }, [removeAuth, url]);
 
   return (
-    <div>
-      <div>
+    <Grid
+      container
+      item
+      sx={{
+        '&:last-child': {
+          borderBottom: 'none'
+        },
+        borderBottom: '1px solid',
+        borderBottomColor: 'secondary.light'
+      }}
+    >
+      <Grid
+        alignItems='center'
+        container
+        item
+        sx={{
+          borderRight: '1px solid',
+          borderRightColor: 'secondary.light',
+          overflowX: 'hidden',
+          pl: '5px',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}
+        xs={6}
+      >
         {url}
-      </div>
-      <Switch
-        checked={info.isAllowed}
-        checkedLabel={t<string>('allowed')}
-        className='info'
-        onChange={switchAccess}
-        uncheckedLabel={t<string>('denied')}
-      />
-      <div
-         onClick={_removeAuth}
+      </Grid>
+      <Grid
+        alignItems='center'
+        container
+        item
+        justifyContent='center'
+        sx={{
+          borderRight: '1px solid',
+          borderRightColor: 'secondary.light'
+        }}
+        xs={5.2}
+      >
+        <Switch
+          checkedLabel={t<string>('Allowed')}
+          fontSize='12px'
+          isChecked={info.isAllowed}
+          onChange={switchAccess}
+          theme={theme}
+          uncheckedLabel={t<string>('Denied')}
+        />
+      </Grid>
+      <Grid
+        alignItems='center'
+        container
+        item
+        justifyContent='center'
+        onClick={_removeAuth}
+        xs={0.8}
       >
         <RemoveAuth />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 }
-
-export default styled(WebsiteEntry)(({ theme }: Props) => `
-  display: flex;
-  align-items: center;
-
-  .url{
-    flex: 1;
-  }
-
-  &.denied {
-    .slider::before {
-        background-color: ${theme.backButtonBackground};
-      }
-  }
-`);
