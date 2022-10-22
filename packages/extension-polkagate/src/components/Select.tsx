@@ -37,6 +37,7 @@ interface DropdownOption {
 
 interface Props {
   defaultValue: string | undefined;
+  value: string | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;
@@ -44,7 +45,7 @@ interface Props {
   _mt?: string | number;
 }
 
-export default function CustomizedSelect({ _mt = 0, defaultValue, isDdisabled = false, label, onChange, options }: Props) {
+export default function CustomizedSelect({ _mt = 0, defaultValue, isDdisabled = false, label, onChange, options, value }: Props) {
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) =>
       onChange && onChange(typeof value === 'string' ? value.trim() : value),
@@ -67,6 +68,7 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, isDdisabled = 
       </InputLabel>
       <Select
         defaultValue={defaultValue}
+        value={value}
         id='selectChain'
         input={<BootstrapInput />}
         onChange={_onChange}
