@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { u8aToString } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Address, InputFileWithLabel, InputWithLabel, PButton, Warning } from '../../../components';
+import { AccountContext, ActionContext, Address, InputFileWithLabel, Password, PButton, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
@@ -235,13 +235,12 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
           m='auto'
           width='92%'
         >
-          <InputWithLabel
+          <Password
             isError={isPasswordError}
             label={t<string>('Password for this file')}
             onChange={_onChangePass}
             setShowPassword={setShowPassword}
             showPassword={showPassword}
-            type={showPassword ? 'text' : 'password'}
           />
           {isPasswordError && (
             <Warning

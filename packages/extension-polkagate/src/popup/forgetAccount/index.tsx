@@ -1,23 +1,20 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
-import type { ThemeProps } from '../types';
-
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, ActionContext, Address, ButtonWithCancel, Checkbox, InputWithLabel, Warning } from '../../components';
+import { ActionContext, Address, ButtonWithCancel, Checkbox, Password, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { forgetAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-interface Props extends RouteComponentProps<{ address: string, isExternal: string }>, ThemeProps {
+interface Props extends RouteComponentProps<{ address: string, isExternal: string }> {
   className?: string;
 }
 
@@ -141,7 +138,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           }}
         />
       </Grid>
-      <Grid container p='23px 24px 0px 14px' letterSpacing='-1.5%'>
+      <Grid container letterSpacing='-1.5%' p='23px 24px 0px 14px'>
         <Warning
           isBelowInput
           isDanger
@@ -153,23 +150,22 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
       <Grid
         item
         m='auto'
-        width='90%'
         ml='6%'
         mr='15px'
         sx={{
           bottom: '80px',
           position: 'absolute'
         }}
+        width='90%'
       >
         {needsPasswordConfirmation
           ? <>
-            <InputWithLabel
+            <Password
               isError={isPasswordError}
               label={t<string>('Password for this account')}
               onChange={_onChangePass}
               setShowPassword={setShowPassword}
               showPassword={showPassword}
-              type={showPassword ? 'text' : 'password'}
             />
             {isPasswordError && (
               <Warning

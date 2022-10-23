@@ -8,10 +8,10 @@ import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext, Address, ButtonWithCancel, InputWithLabel, Warning } from '../../components';
+import { ActionContext, Address, ButtonWithCancel, Password, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
-import { HeaderBrand, Password } from '../../partials';
+import { HeaderBrand } from '../../partials';
 
 interface Props {
   className?: string;
@@ -117,13 +117,12 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
           width: '92%'
         }}
       >
-        <InputWithLabel
+        <Password
           isError={isPasswordError}
           label={t<string>('Password for this account')}
           onChange={onPassChange}
           setShowPassword={setShowPassword}
           showPassword={showPassword}
-          type={showPassword ? 'text' : 'password'}
         />
         {isPasswordError && (
           <Warning
