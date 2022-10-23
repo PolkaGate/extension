@@ -24,13 +24,14 @@ export interface Props {
   api: ApiPromise | undefined;
   title?: string;
   direction?: ResponsiveStyleValue<GridDirection> | undefined;
+  decimalPoint?: number;
 }
 
-export default function ShowBalance2({ api, balance }: Props): React.ReactElement<Props> {
+export default function ShowBalance({ api, balance, decimalPoint }: Props): React.ReactElement<Props> {
   return (
     <>
       {balance !== undefined && api
-        ? <FormatBalance api={api} value={balance} />
+        ? <FormatBalance api={api} decimalPoint={decimalPoint} value={balance} />
         : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
       }
     </>
