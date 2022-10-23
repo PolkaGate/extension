@@ -24,13 +24,12 @@ interface Props {
   placeholder?: string;
   value?: string;
   withoutMargin?: boolean;
-  showPassword?: boolean;
-  setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Password({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, setShowPassword, showPassword, value, withoutMargin }: Props): React.ReactElement<Props> {
+function Password({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
   const [isCapsLock, setIsCapsLock] = useState(false);
   const [offFocus, setOffFocus] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
   const _checkKey = useCallback(
@@ -54,8 +53,8 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
   );
 
   const _showPassToggler = useCallback(() => {
-    setShowPassword && setShowPassword(!showPassword);
-  }, [setShowPassword, showPassword]);
+     setShowPass(!showPass);
+  }, [showPass]);
 
   const _setOffFocus = useCallback(() => {
     setOffFocus(true);
@@ -88,7 +87,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
           paddingLeft: '10px'
         }}
         theme={theme}
-        type={showPassword ? 'text' : 'password'}
+        type={showPass ? 'text' : 'password'}
         withError={offFocus && isError}
       />
       <IconButton
@@ -101,7 +100,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
       >
         <Avatar
           alt={'logo'}
-          src={showPassword ? eye : eyeSlashP}
+          src={showPass ? eye : eyeSlashP}
           sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '18px', width: '18px' }}
         />
       </IconButton>

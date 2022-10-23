@@ -32,7 +32,6 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
   const [accountsInfo, setAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
   const [password, setPassword] = useState<string>('');
   const [isFileError, setFileError] = useState(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [requirePassword, setRequirePassword] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
   // don't use the info from the file directly
@@ -231,16 +230,14 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
       )}
       {requirePassword && !stepOne && (
         <Grid
-          pt='10px'
           m='auto'
+          pt='10px'
           width='92%'
         >
           <Password
             isError={isPasswordError}
             label={t<string>('Password for this file')}
             onChange={_onChangePass}
-            setShowPassword={setShowPassword}
-            showPassword={showPassword}
           />
           {isPasswordError && (
             <Warning
