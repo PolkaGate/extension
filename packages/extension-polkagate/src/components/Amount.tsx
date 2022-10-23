@@ -15,23 +15,23 @@ const CssTextField = styled(TextField)(({ theme }) => ({
   //   borderBottomColor: 'green',
   // },
   '& .MuiOutlinedInput-root': {
-    borderRadius: 0,
-    height: '52px',
+    borderRadius: 5,
+    height: '48px',
     fontWeight: 400,
-    fontSize: '26px',
+    fontSize: '28px',
     letterSpacing: '-0.015em',
     color: theme.palette.text.primary,
     padding: 0,
     '& fieldset': {
-      border: `1px solid ${theme.palette.primary.main}`,
+      border: `1px solid ${theme.palette.primary.main}`
     },
     '&:hover fieldset': {
-      borderColor: theme.palette.secondary.main,
-    },
+      borderColor: theme.palette.secondary.main
+    }
     // '&.Mui-focused fieldset': {
     //   borderColor: 'green',
     // },
-  },
+  }
 }));
 
 interface Props {
@@ -50,32 +50,33 @@ export default function CustomizedTextField({ decimals, setValue, token, value }
         return;
       }
 
-      setValue(value.slice(0, MAX_AMOUNT_LENGTH))
+      setValue(value.slice(0, MAX_AMOUNT_LENGTH));
     },
     [decimals, setValue]
   );
 
   return (
     <CssTextField
-      InputProps={{
-        endAdornment: (
-          <InputAdornment
-            position='end'
-            sx={{
-              color: (theme) => theme.palette.text.primary,
-              fontSize: '18px', fontWeight: 400, letterSpacing: '-0.015em', pr: '10px'
-            }}>
-            {token ?? ''}
-          </InputAdornment>
-        ),
-        inputProps: { min: 0 }
-      }}
+      // InputProps={{
+      //   endAdornment: (
+      //     <InputAdornment
+      //       position='end'
+      //       sx={{
+      //         color: (theme) => theme.palette.text.primary,
+      //         fontSize: '18px', fontWeight: 400, letterSpacing: '-0.015em', pr: '10px'
+      //       }}>
+      //       {token ?? ''}
+      //     </InputAdornment>
+      //   ),
+      //   inputProps: { min: 0 }
+      // }}
       autoComplete='off'
       fullWidth
       onChange={_onChange}
       size='small'
-      sx={{ pt: '6px' }}
-      type='number'
+      // sx={{ pt: '6px' }}
+      // type='number'
+      placeholder='00.00'
       value={value ?? ''}
     />
   );
