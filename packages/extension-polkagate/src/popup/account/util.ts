@@ -19,8 +19,10 @@ export const getValue = (type: string, balances: DeriveBalancesAll | null | unde
 
   switch (type.toLocaleLowerCase()) {
     case ('total'):
+    case ('total balance'):
       return balances.freeBalance.add(balances.reservedBalance);
     case ('available'):
+    case ('available balance'):
       return balances.availableBalance;
     case ('reserved'):
       return balances.reservedBalance;

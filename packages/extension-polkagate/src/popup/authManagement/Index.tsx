@@ -62,7 +62,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
         m='20px auto'
         width='90%'
       >
-        {t<string>('Allow/Deny website(s) to request access to the extension\'s visible accounts')}
+        {t<string>('Allow or deny website(s) to request access to the extension\'s visible accounts')}
       </Typography>
       <Grid
         item

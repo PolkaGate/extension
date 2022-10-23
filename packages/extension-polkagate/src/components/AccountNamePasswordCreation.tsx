@@ -3,7 +3,7 @@
 
 import React, { useCallback, useState } from 'react';
 
-import { Name, Password } from '../partials';
+import { Name, Passwords } from '../partials';
 import ButtonWithCancel from './ButtonWithCancel';
 import PButton from './PButton';
 
@@ -58,7 +58,7 @@ function AccountNamePasswordCreation({ buttonLabel, isBusy, mt, onBackClick, onC
         isFocused
         onChange={_onNameChange}
       />
-      <Password onChange={_onPasswordChange} onEnter={_onCreate} />
+      <Passwords onChange={_onPasswordChange} onEnter={_onCreate} />
       {!withCancel &&
         <PButton
           _isBusy={isBusy}

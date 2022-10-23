@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, ActionContext, Address, ChainLogo, InputWithLabel, Label, PButton, Warning } from '../../components';
+import { AccountContext, ActionContext, Address, ChainLogo, Password, Label, PButton, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { validateAccount, validateDerivationPath } from '../../messaging';
 import { nextDerivationPath } from '../../util/nextDerivationPath';
@@ -183,7 +183,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
           ref={passwordInputRef}
           style={{ margin: 'auto', width: '92%' }}
         >
-          <InputWithLabel
+          <Password
             data-input-password
             isError={!!parentPassword && !isProperParentPassword}
             isFocused
@@ -191,7 +191,6 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
             onChange={_onParentPasswordEnter}
             setShowPassword={setShowPassword}
             showPassword={showPassword}
-            type={showPassword ? 'text' : 'password'}
             value={parentPassword}
           />
           {!!parentPassword && !isProperParentPassword && (

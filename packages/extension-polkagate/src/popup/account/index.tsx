@@ -171,8 +171,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
         setBalances(b);
         setRefresh(false);
       }).catch(console.error);
-  }
-    , [apiToUse, formatted]);
+  }, [apiToUse, formatted]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -320,7 +319,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
               onClick={goToOthers}
               sx={{ p: 0 }}
             >
-              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
+              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: '#BA2882', strokeWidth: 2 }} />
             </IconButton>
           </Grid>
         </Grid>

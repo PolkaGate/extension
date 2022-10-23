@@ -4,4 +4,4 @@
 export { default as MenuSettings } from './MenuSettings';
 export { default as Header } from './Header';
 export { default as Name } from '../../../extension-polkagate/src/partials/Name';
-export { default as Password } from '../../../extension-polkagate/src/partials/Password';
+export { default as Password } from '../../../extension-polkagate/src/partials/Passwords';
