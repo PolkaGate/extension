@@ -23,7 +23,6 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [password, setPassword] = useState<string>('');
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [checkConfirmed, setCheckConfirmed] = useState<boolean>(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
   const theme = useTheme();
@@ -164,8 +163,6 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
               isError={isPasswordError}
               label={t<string>('Password for this account')}
               onChange={_onChangePass}
-              setShowPassword={setShowPassword}
-              showPassword={showPassword}
             />
             {isPasswordError && (
               <Warning

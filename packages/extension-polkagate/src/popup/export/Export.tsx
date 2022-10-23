@@ -23,7 +23,6 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [pass, setPass] = useState('');
   const [isPasswordError, setIsPasswordError] = useState(false);
 
@@ -121,8 +120,6 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
           isError={isPasswordError}
           label={t<string>('Password for this account')}
           onChange={onPassChange}
-          setShowPassword={setShowPassword}
-          showPassword={showPassword}
         />
         {isPasswordError && (
           <Warning

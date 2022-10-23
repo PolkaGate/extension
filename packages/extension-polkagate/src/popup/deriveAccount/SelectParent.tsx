@@ -34,7 +34,6 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
   const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
   const [parentPassword, setParentPassword] = useState<string>('');
   const [isProperParentPassword, setIsProperParentPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [pathError, setPathError] = useState('');
   const passwordInputRef = useRef<HTMLDivElement>(null);
   const allowSoftDerivation = useMemo(() => {
@@ -189,8 +188,6 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
             isFocused
             label={t<string>('Password for the account to derive from')}
             onChange={_onParentPasswordEnter}
-            setShowPassword={setShowPassword}
-            showPassword={showPassword}
             value={parentPassword}
           />
           {!!parentPassword && !isProperParentPassword && (
