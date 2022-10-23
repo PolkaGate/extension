@@ -21,7 +21,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { isend, send } from '../../assets/icons';
-import { AccountContext, ActionContext, Amount, ChainLogo, Identicon, Motion, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { AccountContext, ActionContext, Amount, ChainLogo, Identicon, Motion, Password, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
@@ -59,6 +59,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [transferType, setTransferType] = useState<TransferType | undefined>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
+  const [password, setPassword] = useState<string | undefined>();
+  const [isPasswordError, setIsPasswordError] = useState(false);
 
   const [step1, setStep1] = useState(true);
 
@@ -99,12 +101,19 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     });
   }, [balances, history, genesisHash, address, formatted, allMaxAmount, amount, apiToUse, fee, recepient, recepientName, transfer, transferType]);
 
+  const onChangePass = useCallback(
+    (pass: string): void => {
+      setPassword(pass);
+      setIsPasswordError(false);
+    }, []
+  );
+
   useEffect(() => {
     const amountAsBN = new BN(parseFloat(parseFloat(allMaxAmount ?? amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
     const isAmountGreaterThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
-    setButtonDisabled(!isValidAddress(recepient) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble);
-  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, recepient]);
+    setButtonDisabled(!isValidAddress(recepient) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
+  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, password, recepient]);
 
   useEffect(() => {
     api && setApiToUse(api);
@@ -143,24 +152,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       .then((i) => setMaxFee(i?.partialFee)).catch(console.error);
   }, [apiToUse, formatted, transfer, balances]);
 
-  const icon = (<Avatar
-    alt={'logo'}
-    src={theme.palette.mode === 'dark' ? send : isend}
-    sx={{ height: '64px', width: '86px' }}
-  />);
-
-  const identicon = (
-    <Identicon
-      className='identityIcon'
-      iconTheme={chain?.icon || 'polkadot'}
-      // isExternal={isExternal}
-      // onCopy={_onCopy}
-      prefix={chain?.ss58Format ?? 42}
-      size={25}
-      value={formatted}
-    />
-  );
-
   const _onCancelClick = useCallback(
     () => setStep1(true),
     []
@@ -183,7 +174,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       <Grid container justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '10px' }}>
         <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px' }}>
           {accountName}
-          <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', justifyContent: 'flex-start' }} />
+          <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start' }} />
         </Grid>
         <Grid item>
           <LabelBalancePrice api={apiToUse} balances={balances} label='Total' price={state?.price} showLabel={false} />
@@ -254,16 +245,20 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         <To address={recepient} label={t('To')} name={recepientName} setAddress={setRecipient} style={{ pt: '5px' }} />
         <Asset />
         <AmountWithMaxAll />
-
-     
-        <PButton
-          _mt='15px'
-          _onClick={goToReview}
-          _variant='contained'
-          disabled={buttonDisabled}
-          text={t('Next')}
-        />
+        <div style={{ paddingTop: '10px' }}>
+          <Password
+            isError={isPasswordError}
+            label={t<string>('Password')}
+            onChange={onChangePass}
+          />
+        </div>
       </Container>
+      <PButton
+        _onClick={goToReview}
+        _variant='contained'
+        disabled={buttonDisabled}
+        text={t('Next')}
+      />
     </Motion>
   );
 }
