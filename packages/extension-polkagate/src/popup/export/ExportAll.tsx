@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import { AccountContext, ActionContext, ButtonWithCancel } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccounts } from '../../messaging';
-import { HeaderBrand, Password } from '../../partials';
+import { HeaderBrand, Passwords } from '../../partials';
 
 interface Props {
   className?: string;
@@ -81,7 +81,7 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
       >
         {t<string>('You can later use this JSON file to import your accounts into the extension using the provided password.')}
       </Typography>
-      <Password
+      <Passwords
         label={t<string>('Create a password')}
         onChange={onPassChange}
         onEnter={_onExportAllButtonClick}
