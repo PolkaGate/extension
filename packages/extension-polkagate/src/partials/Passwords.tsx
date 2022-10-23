@@ -3,8 +3,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { InputWithLabel, ValidatedInput } from '../../../extension-ui/src/components';
 import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { Password, ValidatedInput } from '../components';
 import { allOf, isNotShorterThan, isSameAs, Validator } from '../util/validators';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 const MIN_LENGTH = 6;
 
-export default function Password({ isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
+export default function Passwords({ isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [pass1, setPass1] = useState<string | null>(null);
   const [pass2, setPass2] = useState<string | null>(null);
@@ -35,18 +35,17 @@ export default function Password({ isFocussed, onChange, onEnter, label = undefi
   return (
     <>
       <ValidatedInput
-        component={InputWithLabel}
+        component={Password}
         data-input-password
         isFocused={isFocussed}
         label={label || t<string>('Password for this account (>5 characters)')}
         onValidatedChange={setPass1}
         setShowPassword={setShowPassword}
         showPassword={showPassword}
-        type={showPassword ? 'text' : 'password'}
         validator={isFirstPasswordValid}
       />
       <ValidatedInput
-        component={InputWithLabel}
+        component={Password}
         dataInputRepeatPassword
         // data-input-repeat-password
         label={t<string>('Repeat password')}
@@ -54,7 +53,6 @@ export default function Password({ isFocussed, onChange, onEnter, label = undefi
         onValidatedChange={setPass2}
         setShowPassword={setShowConfirmPassword}
         showPassword={showConfirmPassword}
-        type={showConfirmPassword ? 'text' : 'password'}
         validator={isSecondPasswordValid(pass1)}
       />
     </>
