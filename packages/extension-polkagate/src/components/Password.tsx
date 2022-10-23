@@ -26,7 +26,7 @@ interface Props {
   withoutMargin?: boolean;
 }
 
-function Password({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
+function Password({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, withoutMargin }: Props): React.ReactElement<Props> {
   const [isCapsLock, setIsCapsLock] = useState(false);
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -53,7 +53,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
   );
 
   const _showPassToggler = useCallback(() => {
-     setShowPass(!showPass);
+    setShowPass(!showPass);
   }, [showPass]);
 
   const _setOffFocus = useCallback(() => {
@@ -64,7 +64,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
-      style={{ position: 'relative', letterSpacing: '-0.015em' }}
+      style={{ letterSpacing: '-0.015em', position: 'relative' }}
     >
       <Input
         autoCapitalize='off'
