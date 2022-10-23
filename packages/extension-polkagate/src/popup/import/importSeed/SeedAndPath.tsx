@@ -152,7 +152,6 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
           label={t<string>('Derivation path If it is derived account, otherwise ignore')}
           onChange={setPath}
           value={path || ''}
-
         />
         {/* )} */}
       </div>
