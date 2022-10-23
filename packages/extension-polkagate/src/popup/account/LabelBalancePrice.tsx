@@ -36,15 +36,15 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
       <Grid item py='5px'>
         <Grid alignItems='center' container justifyContent='space-between'>
           {showLabel &&
-            <Grid item xs={3} sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
               {label}
             </Grid>
           }
           <Grid container direction='column' item justifyContent='flex-end' xs>
-            <Grid item textAlign='right' sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
-              <ShowBalance api={api} balance={value} />
+            <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} textAlign='right'>
+              <ShowBalance api={api} balance={value} decimalPoint={2} />
             </Grid>
-            <Grid item pt='6px' textAlign='right' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }}>
+            <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined
                 ? `$${Number(balanceInUSD)?.toLocaleString()}`
                 : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />

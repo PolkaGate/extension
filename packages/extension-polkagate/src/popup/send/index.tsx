@@ -28,7 +28,7 @@ import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constan
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
 import LabelBalancePrice from '../account/LabelBalancePrice';
-import { getValue } from '../account/util';
+import BalanceFee from './BalanceFee';
 
 interface Props {
   className?: string;
@@ -52,7 +52,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
-  const [recepient, setRecepient] = useState<string | undefined>(state?.recepient);
+  const [recepient, setRecipient] = useState<string | undefined>(state?.recepient);
   const [amount, setAmount] = useState<string>(state?.amount ?? '0');
   const [allMaxAmount, setAllMaxAmount] = useState<string | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
@@ -175,27 +175,67 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       : _onCancelClick();
   }, [_onCancelClick, address, apiToUse, balances, formatted, genesisHash, history, state?.price, step1]);
 
-  const From = () => {
-    const totalBalance = getValue('Total', balances);
-
-    return (
-      <>
-        <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-          {t('From')}
-        </div>
-        <Grid container justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '10px' }}>
-          <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px' }}>
-            {accountName}
-            <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', justifyContent: 'flex-start' }} />
-          </Grid>
-          <Grid item>
-            <LabelBalancePrice api={apiToUse} balances={balances} label='Total' price={state?.price} showLabel={false} />
-          </Grid>
-
+  const From = () => (
+    <>
+      <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+        {t('From')}
+      </div>
+      <Grid container justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '10px' }}>
+        <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px' }}>
+          {accountName}
+          <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', justifyContent: 'flex-start' }} />
         </Grid>
-      </>
-    )
-  };
+        <Grid item>
+          <LabelBalancePrice api={apiToUse} balances={balances} label='Total' price={state?.price} showLabel={false} />
+        </Grid>
+
+      </Grid>
+    </>
+  );
+
+  const Asset = () => (
+    <Grid container item sx={{ pt: '10px' }} xs={12}>
+      <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+        {t('Asset')}
+      </div>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
+        <Grid container item xs={1.5}>
+          <ChainLogo genesisHash={genesisHash} size={31} />
+        </Grid>
+        <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
+          <Grid item>
+            {t('Available balance')}
+            <br />
+            {t('Fee')}
+          </Grid>
+        </Grid>
+        <Grid container item justifyContent='flex-end' xs>
+          <BalanceFee api={apiToUse} balances={balances} type='available' fee={fee} />
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+
+  const AmountWithMaxAll = () => (
+    <>
+      <div style={{ fontSize: '16px', paddingTop: '10px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+        {t('Amount')}
+      </div>
+      <Grid container item xs={12}>
+        <Grid item xs={8}>
+          <Amount decimals={decimals} setValue={setAmount} token={apiToUse?.registry?.chainTokens[0]} value={allMaxAmount ?? amount} />
+        </Grid>
+        <Grid container item xs={4} sx={{ pl: '10px' }}>
+          <Grid item onClick={() => setWholeAmount('All')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
+            {t('All amount')}
+          </Grid>
+          <Grid item onClick={() => setWholeAmount('Max')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
+            {t('Max amount')}
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
 
   return (
     <Motion>
@@ -211,50 +251,11 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <From />
-        <To address={recepient} label={t('To')} setAddress={setRecepient} style={{ pt: '5px' }} name={recepientName} />
+        <To address={recepient} label={t('To')} name={recepientName} setAddress={setRecipient} style={{ pt: '5px' }} />
+        <Asset />
+        <AmountWithMaxAll />
 
-
-        <Grid alignItems='center' container>
-          <Grid item mt='5px' xs={1}>
-            <ChainLogo genesisHash={chain?.genesisHash} />
-          </Grid>
-          <Grid container item sx={{ pl: '10px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={11}>
-            <Grid alignItems='center' container item justifyContent='space-between'>
-              <Grid item sx={{ fontSize: '14px' }}>
-                {t('Available balance')}
-              </Grid>
-              <Grid item sx={{ fontSize: '18px' }}>
-                <ShowBalance api={apiToUse} balance={balances?.availableBalance} />
-              </Grid>
-            </Grid>
-            <Grid container item justifyContent='space-between' sx={{ lineHeight: '15px' }}>
-              <Grid item sx={{ fontSize: '14px' }}>
-                {t('Fee')}
-              </Grid>
-              <Grid item sx={{ fontSize: '18px' }}>
-                <ShowBalance api={apiToUse} balance={fee} />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      
-       
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '5px' }} />
-        <div style={{ fontSize: '16px', fontWeight: 300, paddingTop: '8px', letterSpacing: '-0.015em' }}>
-          {t('Amount')}:
-        </div>
-        <Amount decimals={decimals} setValue={setAmount} token={apiToUse?.registry?.chainTokens[0]} value={allMaxAmount ?? amount} />
-        <Grid container sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', mt: '13px' }}>
-          <Grid item onClick={() => setWholeAmount('All')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
-            {t('All amount')}
-          </Grid>
-          <Grid item px='10px'>
-            <Divider orientation='vertical' sx={{ m: 'auto', height: '28px', width: '2px', borderColor: 'primary.main' }} />
-          </Grid>
-          <Grid item onClick={() => setWholeAmount('Max')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
-            {t('Max amount')}
-          </Grid>
-        </Grid>
+     
         <PButton
           _mt='15px'
           _onClick={goToReview}
