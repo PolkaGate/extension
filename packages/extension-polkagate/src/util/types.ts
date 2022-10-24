@@ -10,6 +10,8 @@ import type { BN } from '@polkadot/util';
 
 import { ApiPromise } from '@polkadot/api';
 import { Balance } from '@polkadot/types/interfaces';
+import { AccountJson } from '@polkadot/extension-base/background/types';
+import { Chain } from '@polkadot/extension-chains/types';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -36,7 +38,7 @@ export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain
 export interface AccountsBalanceType {
   address: string; // formatted address
   chain: string | null; // chainName actually
-  balanceInfo?: LastBalances; 
+  balanceInfo?: LastBalances;
   name: string | null;
   txHistory?: string;
 }
@@ -475,4 +477,11 @@ export interface RenameAcc {
   address: string;
   name: string;
   genesisHash: string;
+}
+
+export interface AccountMenuInfo {
+  account: AccountJson | null;
+  chain: Chain | null;
+  formatted: string;
+  type: KeypairType;
 }
