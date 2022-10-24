@@ -4,20 +4,24 @@
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
-import { identity } from 'sinon-chrome';
 
+import { BN } from '@polkadot/util';
+
+import { FormatBalance2 } from '../../components';
 import { useTranslation } from '../../hooks';
 import { SubQueryHistory } from '../../util/types';
 
 interface Props {
   anotherDay: boolean;
   info: SubQueryHistory;
+  decimal: number;
+  token: string;
 }
 
 const upperCaseFirstChar = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const shorAddress = (addr: string) => addr.slice(0, 4) + '...' + addr.slice(-4);
 
-export default function HistoryItem({ anotherDay, info }: Props): React.ReactElement {
+export default function HistoryItem({ anotherDay, decimal, info, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const _goToDetail = useCallback(() => {
     return 'ccsdasd';
@@ -62,8 +66,8 @@ export default function HistoryItem({ anotherDay, info }: Props): React.ReactEle
       <Grid
         alignItems='center'
         container
-        item
         direction='column'
+        item
         justifyContent='space-between'
         sx={{
           '> .historyItems:last-child': {
@@ -118,7 +122,10 @@ export default function HistoryItem({ anotherDay, info }: Props): React.ReactEle
               fontSize='20px'
               fontWeight={300}
             >
-              amount
+              {info?.transfer?.amount
+                ? <FormatBalance2 decimalPoint={2} decimals={[Number(decimal)]} tokens={[token]} value={new BN(info.transfer.amount)} />
+                : 'N/A'
+              }
             </Typography>
             <Typography
               fontSize='16px'

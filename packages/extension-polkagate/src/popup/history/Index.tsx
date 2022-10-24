@@ -16,12 +16,14 @@ import HistoryItem from './HistoryItem';
 interface ChainNameAddressState {
   chainName: string;
   address: string;
+  decimals: string;
+  token: string;
 }
 
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { address, chainName } = useParams<ChainNameAddressState>();
+  const { address, chainName, decimals, token } = useParams<ChainNameAddressState>();
 
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [history, setHistory] = useState<SubQueryHistory[] | undefined>();
@@ -137,10 +139,16 @@ export default function TransactionHistory(): React.ReactElement<''> {
           />
         </Tabs>
       </Box>
-      <Grid container item  sx={{  height:'70%' }} xs={12}>
+      <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
         {history?.map((h, index) => {
           return (
-            <HistoryItem info={h} key={index} anotherDay={index === 0 || (index > 0 && history[index - 1].timestamp !== h.timestamp)} />
+            <HistoryItem
+              anotherDay={index === 0 || (index > 0 && history[index - 1].timestamp !== h.timestamp)}
+              info={h}
+              key={index}
+              decimals={Number(decimals)}
+              token={token}
+            />
           )
         })}
       </Grid>
