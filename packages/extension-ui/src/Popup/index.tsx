@@ -44,6 +44,7 @@ import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
+import History from '../../../extension-polkagate/src/popup/history/Index';
 
 const startSettings = uiSettings.get();
 
@@ -153,6 +154,7 @@ export default function Popup(): React.ReactElement {
                         <Switch>
                           <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                           <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
+                          <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                           <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                           <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'socialRecovery')}</Route>
                           <Route exact path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
