@@ -407,19 +407,49 @@ export interface Initiation {
 
 export type Close = Initiation;
 
+interface Reward {
+  era: number,
+  stash: string,
+  amount: string,
+  eventIdx: number,
+  isReward: boolean,
+  validator: string
+}
+
+interface Transfer {
+  to: string,
+  fee: string,
+  from: string,
+  amount: string,
+  success: boolean,
+  eventIdx: number
+}
+
+interface extrinsic {
+  fee: string,
+  call: string,
+  hash: string,
+  module: string,
+  success: boolean
+}
 export interface SubQueryRewardInfo {
   blockNumber: number,
   timestamp: string,
   extrinsicHash: string,
   address: string,
-  reward: {
-    era: number,
-    stash: string,
-    amount: string,
-    eventIdx: number,
-    isReward: boolean,
-    validator: string
-  }
+  reward: Reward
+}
+export interface SubQueryHistory {
+  id: string,
+  blockNumber: number,
+  extrinsicIdx: number,
+  extrinsicHash: string,
+  timestamp: string,
+  address: string,
+  reward: Reward,
+  extrinsic: extrinsic,
+  transfer: Transfer,
+  assetTransfer: JSON,
 }
 
 export interface SubscanRewardInfo {

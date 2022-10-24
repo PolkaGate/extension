@@ -113,7 +113,9 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined | null>(state?.balances as DeriveBalancesAll);
   const [isRefreshing, setRefresh] = useState<boolean | undefined>(false);
-  const [showMenu, setShowMenu] = useState(false);
+  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
+  const decimal = apiToUse && apiToUse.registry.chainDecimals[0];
+  const token = apiToUse && apiToUse.registry.chainTokens[0];
 
   useEffect(() => {
     api && setApiToUse(api);
@@ -198,11 +200,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     setNewEndpoint(newEndpoint);
-    const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
 
     // eslint-disable-next-line no-void
     chainName && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chain?.name, newChain?.name]);
+  }, [address, chainName]);
 
   const goToSend = useCallback(() => {
     balances && history.push({
@@ -212,8 +213,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
 
   const goToHistory = useCallback(() => {
-    onAction(`/history/${address}`);
-  }, [address, onAction]);
+    chainName && formatted && decimal && token && onAction(`/history/${chainName}/${decimal}/${token}/${formatted}`);
+  }, [chainName, decimal, formatted, onAction, token]);
 
   const identicon = (
     <Identicon

@@ -9,6 +9,7 @@ export { default as DropdownWithIcon } from './DropdownWithIcon';
 export { default as Header } from './Header';
 export { default as ShowBalance } from './ShowBalance';
 export { default as FormatBalance } from './FormatBalance';
+export { default as FormatBalance2 } from './FormatBalance2';
 export { default as Amount } from './Amount';
 export { default as To } from './To';
 export { default as Button } from './Button';

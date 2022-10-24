@@ -10,10 +10,10 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
+import { useTranslation } from '../../hooks';
 import HeaderBrand from '../../partials/HeaderBrand';
 import getNetworkMap from '../../util/getNetworkMap';
-import { AddressPriceAll } from '../../util/plusTypes';
+import { AddressPriceAll } from '../../util/types';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import YouHave from './YouHave';

@@ -1,19 +1,47 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Divider, Tab, Tabs } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 
 import { ActionContext } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
+import { getHistory } from '../../util/subquery/history';
+import { SubQueryHistory } from '../../util/types';
 import Detail from './Detail';
 import HistoryItem from './HistoryItem';
+
+interface ChainNameAddressState {
+  chainName: string;
+  address: string;
+  decimals: string;
+  token: string;
+}
 
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const { address, chainName, decimals, token } = useParams<ChainNameAddressState>();
+
   const [tabIndex, setTabIndex] = useState<number>(1);
+  const [history, setHistory] = useState<SubQueryHistory[] | undefined>();
+
+
+  useEffect(() => {
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+
+    chainName && address && getHistory(chainName, address).then((history) => {
+      history?.forEach((h) => {
+        h.timestamp = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
+      });
+      setHistory(history);
+
+      console.log('history:', history);
+    }
+    ).catch(console.error);
+  }, [address, chainName]);
 
   const _onBack = useCallback(() => {
     onAction('/');
@@ -65,7 +93,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }}
               />}
             label=''
-            sx={{ p: '0', minWidth: '1px', width: '1px' }}
+            sx={{ minWidth: '1px', p: '0', width: '1px' }}
             value={4}
           />
           <Tab
@@ -111,9 +139,19 @@ export default function TransactionHistory(): React.ReactElement<''> {
           />
         </Tabs>
       </Box>
-      <div style={{ margin: 'auto', width: '92%' }}>
-        <HistoryItem />
-      </div>
+      <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
+        {history?.map((h, index) => {
+          return (
+            <HistoryItem
+              anotherDay={index === 0 || (index > 0 && history[index - 1].timestamp !== h.timestamp)}
+              info={h}
+              key={index}
+              decimals={Number(decimals)}
+              token={token}
+            />
+          )
+        })}
+      </Grid>
       {/* un comment the following line to see the Detail page */}
       {/* <Detail /> */}
     </>
