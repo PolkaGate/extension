@@ -211,6 +211,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     });
   }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
 
+  const goToHistory = useCallback(() => {
+    onAction(`/history/${address}`);
+  }, [address, onAction]);
+
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
@@ -281,7 +285,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             size='lg'
           />
         }
-        onClick={goToSend}
+        onClick={goToHistory}
         title={'History'}
       />
       <MenuItem
