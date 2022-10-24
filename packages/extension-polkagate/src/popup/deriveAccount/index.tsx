@@ -96,7 +96,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
         textAlign='left'
         width='88%'
       >
-        {t<string>('A derived account inherits the Mnemonic from its parent, but has a unique derivation path.')}
+        {t<string>('A derived account inherits the mnemonic from its parent, but has a unique derivation path.')}
       </Typography>
       {stepOne && !account && (
         <>
