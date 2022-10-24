@@ -24,7 +24,7 @@ interface Props {
   accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, onBackClick, showBackArrow, showMenu, shortBorder, text, withSteps = null, noBorder = false, paddingBottom = 11 }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, accountMenuInfo, noBorder = false, onBackClick, paddingBottom = 11, shortBorder, showBackArrow, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setShowMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
