@@ -10,16 +10,13 @@ import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { sitemap, sitemapB } from '../assets/icons';
-import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
-import { useEndpoint, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
-import { getMetadata, tieAccount, updateMeta } from '../messaging';
-import getLogo from '../util/getLogo';
-import { prepareMetaData } from '../util/utils';
+import { ActionContext, Identicon, MenuItem, SettingsContext } from '../components';
+import { useTranslation } from '../hooks';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,23 +34,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   const { t } = useTranslation();
   const theme = useTheme();
   const settings = useContext(SettingsContext);
-  const options = useGenesisHashOptions();
-  const [newChain, setNewChain] = useState<Chain | null | undefined>();
-  const [genesisHash, setGenesis] = useState<string | undefined>('');
-  const endpointOptions = useEndpoints(genesisHash || newChain?.genesisHash || chain?.genesisHash);
-
-  const currentChain = newChain ?? chain;
-  const endpoint = useEndpoint(address, currentChain);
-  const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
-
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
   const canDerive = !(isExternal || isHardware);
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
-
-  const resetToDefaults = () => {
-    setNewEndpoint(undefined);
-  };
 
   const _onForgetAccount = useCallback(() => {
     onAction(`/forget/${address}/${isExternal}`);
@@ -64,11 +48,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       address && onAction(`/derive/${address}/locked`);
     }, [address, onAction]
   );
-
-  useEffect(() => {
-    !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newEndpoint, genesisHash]);
 
   const _closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
@@ -89,13 +68,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   const _onExportAccount = useCallback(() => {
     address && name && onAction(`/export/${address}`);
   }, [address, name, onAction]);
-
-  useEffect(() => {
-    genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
-      console.error(error);
-      setNewChain(null);
-    });
-  }, [genesisHash]);
 
   const movingParts = (
     <Grid
