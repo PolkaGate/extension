@@ -19,7 +19,7 @@ export default function Detail(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
-  const { state: { chainName, info, decimals, token, path } } = useLocation();
+  const { state: { chainName, info, decimal, token, path } } = useLocation();
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
   const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.extrinsicHash);
 
@@ -113,7 +113,7 @@ export default function Detail(): React.ReactElement {
         {label}
       </Grid>
       <Grid item>
-        <FormatBalance2 decimals={[Number(decimals)]} tokens={[token]} value={new BN(amount)} />
+        <FormatBalance2 decimals={[Number(decimal)]} tokens={[token]} value={new BN(amount)} />
       </Grid>
     </Grid>
   );

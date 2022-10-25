@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 interface ChainNameAddressState {
   chainName: string;
   formatted: string;
-  decimals: string;
+  decimal: string;
   token: string;
 }
 
@@ -24,9 +24,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const location = useLocation();
-
-  const { chainName, decimals, formatted, token } = useParams<ChainNameAddressState>();
-
+  const { chainName, decimal, formatted, token } = useParams<ChainNameAddressState>();
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [history, setHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
 
@@ -36,7 +34,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
     chainName && formatted && getHistory(chainName, formatted).then((history) => {
       const temp = {};
 
-      history?.forEach((h) => {
+      history?.reverse()?.forEach((h) => {
         if (h.reward === null) {// to ingonre reward history
           const day = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
 
@@ -161,13 +159,13 @@ export default function TransactionHistory(): React.ReactElement<''> {
             return info.map((h, index) => (
               <HistoryItem
                 anotherDay={index === 0}
+                chainName={chainName}
                 date={date}
-                decimals={Number(decimals)}
+                decimal={Number(decimal)}
                 info={h}
                 key={index}
                 path={location?.pathname}
                 token={token}
-                chainName={chainName}
               />
             ));
           })}

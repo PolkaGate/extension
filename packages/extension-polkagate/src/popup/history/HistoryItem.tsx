@@ -16,23 +16,23 @@ import { toShortAddress, upperCaseFirstChar } from '../../util/utils';
 interface Props {
   anotherDay: boolean;
   info: SubQueryHistory;
-  decimals: number;
+  decimal: number;
   token: string;
   date?: string;
   path: string | undefined;
   chainName: string;
 }
 
-export default function HistoryItem({ anotherDay, chainName, date, decimals, info, path, token }: Props): React.ReactElement {
+export default function HistoryItem({ anotherDay, chainName, date, decimal, info, path, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
 
   const _goToDetail = useCallback(() => {
     info?.extrinsicHash && history.push({
       pathname: `/detail/${info.extrinsicHash}`,
-      state: { chainName, decimals, info, path, token }
+      state: { chainName, decimal, info, path, token }
     });
-  }, [decimals, history, info, token, path, chainName]);
+  }, [decimal, history, info, token, path, chainName]);
 
   const action = useMemo(() => {
     if (info.transfer) {
@@ -128,7 +128,7 @@ export default function HistoryItem({ anotherDay, chainName, date, decimals, inf
               fontWeight={300}
             >
               {info?.transfer?.amount
-                ? <FormatBalance2 decimalPoint={2} decimals={[Number(decimals)]} tokens={[token]} value={new BN(info.transfer.amount)} />
+                ? <FormatBalance2 decimalPoint={2} decimals={[Number(decimal)]} tokens={[token]} value={new BN(info.transfer.amount)} />
                 : 'N/A'
               }
             </Typography>
