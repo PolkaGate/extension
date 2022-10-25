@@ -2,22 +2,30 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, LensBlur as LensBlurIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Divider, Grid, Link, Typography } from '@mui/material';
+import React, { useCallback, useContext, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { FormatBalance2, PButton } from '../../components';
+import { ActionContext, FormatBalance2, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import { SubQueryHistory } from '../../util/types';
+import getLogo from '../../util/getLogo';
 import { toShortAddress, upperCaseFirstChar } from '../../util/utils';
+
 
 export default function Detail(): React.ReactElement {
   const { t } = useTranslation();
-  const { state: { info, decimals, token } } = useLocation();
+  const onAction = useContext(ActionContext);
+
+  const { state: { chainName, info, decimals, token, path } } = useLocation();
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.extrinsicHash);
+
+  const _onBack = useCallback(() => {
+    path && onAction(path);
+  }, [onAction, path]);
 
   const action = useMemo((): string | undefined => {
     if (info?.transfer) {
@@ -37,11 +45,7 @@ export default function Detail(): React.ReactElement {
     if (info?.extrinsic) {
       return upperCaseFirstChar(info?.extrinsic.call);
     }
-  }, [info, t]);
-
-  const _onBack = useCallback(() => {
-    return 'sdasd';
-  }, []);
+  }, [info]);
 
   const success = useMemo((): boolean =>
     !!(info?.extrinsic?.success || info?.transfer?.success || info?.reward?.success)
@@ -55,7 +59,7 @@ export default function Detail(): React.ReactElement {
 
   const to = useMemo(() => {
     if (info?.transfer) {
-      return `${t('To')}: ${toShortAddress(info.transfer.from)}`;
+      return `${t('To')}: ${toShortAddress(info.transfer.to)}`;
     }
   }, [info, t]);
 
@@ -68,6 +72,10 @@ export default function Detail(): React.ReactElement {
   const fee = useMemo((): string | undefined => {
     if (info?.transfer) {
       return info.transfer.fee;
+    }
+
+    if (info?.extrinsic) {
+      return info.extrinsic.fee;
     }
   }, [info]);
 
@@ -206,12 +214,19 @@ export default function Detail(): React.ReactElement {
         />
         <Item item={`${t('Block')}: #${info?.blockNumber}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.extrinsicHash, 6)}`} noDivider />
-        <LensBlurIcon
-          sx={{
-            fontSize: '40px',
-            mt: '20px'
-          }}
-        />
+        <Link
+          href={`${subscanLink()}`}
+          rel='noreferrer'
+          target='_blank'
+          underline='none'
+        >
+          <Grid
+            alt={'subscan'}
+            component='img'
+            src={getLogo('subscan')}
+            sx={{ height: 40, width: 40 }}
+          />
+        </Link>
       </Grid>
       <PButton
         _onClick={_onBack}

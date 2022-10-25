@@ -7,6 +7,7 @@ import { MAX_HISTORY_RECORD_TO_SHOW } from '../constants';
 import { SubQueryHistory } from '../types';
 import { getUrl, postReq } from './util';
 
+/** reward is filtered while fetching history */
 export async function getHistory(chainName: string, address: string | AccountId): Promise<SubQueryHistory[]> {
   const url = getUrl(chainName);
 
@@ -14,7 +15,8 @@ export async function getHistory(chainName: string, address: string | AccountId)
   historyElements(
     last:${MAX_HISTORY_RECORD_TO_SHOW}  ,
      filter: {
-      address:{equalTo:"${String(address)}"}
+      address:{equalTo:"${String(address)}"},
+      reward:{isNull:true}
       }
     ) {
       nodes {

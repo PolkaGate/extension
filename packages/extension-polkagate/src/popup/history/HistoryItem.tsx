@@ -3,7 +3,7 @@
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
@@ -18,19 +18,21 @@ interface Props {
   info: SubQueryHistory;
   decimals: number;
   token: string;
-  date?: date;
+  date?: string;
+  path: string | undefined;
+  chainName: string;
 }
 
-export default function HistoryItem({ anotherDay, decimals, info, token, date}: Props): React.ReactElement {
+export default function HistoryItem({ anotherDay, chainName, date, decimals, info, path, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
 
   const _goToDetail = useCallback(() => {
     info?.extrinsicHash && history.push({
       pathname: `/detail/${info.extrinsicHash}`,
-      state: { info, decimals, token }
+      state: { chainName, decimals, info, path, token }
     });
-  }, [history, info]);
+  }, [decimals, history, info, token, path, chainName]);
 
   const action = useMemo(() => {
     if (info.transfer) {
