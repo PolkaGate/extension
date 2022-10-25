@@ -11,6 +11,7 @@ import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory } from '../../util/types';
 import HistoryItem from './HistoryItem';
+import { useLocation } from 'react-router-dom';
 
 interface ChainNameAddressState {
   chainName: string;
@@ -22,6 +23,8 @@ interface ChainNameAddressState {
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const location = useLocation();
+
   const { chainName, decimals, formatted, token } = useParams<ChainNameAddressState>();
 
   const [tabIndex, setTabIndex] = useState<number>(1);
@@ -34,13 +37,15 @@ export default function TransactionHistory(): React.ReactElement<''> {
       const temp = {};
 
       history?.forEach((h) => {
-        const day = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
+        if (h.reward === null) {// to ingonre reward history
+          const day = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
 
-        if (!temp[day]) {
-          temp[day] = [];
+          if (!temp[day]) {
+            temp[day] = [];
+          }
+
+          temp[day].push(h);
         }
-
-        temp[day].push(h);
       });
 
       setHistory(temp);
@@ -54,8 +59,11 @@ export default function TransactionHistory(): React.ReactElement<''> {
   }, [onAction]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
+    if (history) {
+      // filter history
+    }
     setTabIndex(tabIndex);
-  }, []);
+  }, [history]);
 
   return (
     <>
@@ -147,7 +155,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
       </Box>
       {history
         ? <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
-          {Object.entries(history)?.map((group)=> {
+          {Object.entries(history)?.map((group) => {
             const [date, info] = group;
 
             return info.map((h, index) => (
@@ -157,12 +165,17 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 decimals={Number(decimals)}
                 info={h}
                 key={index}
+                path={location?.pathname}
                 token={token}
+                chainName={chainName}
               />
             ));
           })}
         </Grid>
-        : <Progress size={50} title={t('Loading history')} pt='150px' />
+        : <Progress pt='150px'
+          size={50}
+          title={t('Loading history')}
+        />
       }
     </>
   );
