@@ -15,8 +15,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useTranslation } from '../hooks';
 import useMetadata from '../hooks/useMetadata';
 import { DEFAULT_TYPE } from '../util/defaultType';
-import CopyAddressButton from './CopyAddressButton';
-import { AccountContext, Identicon, SettingsContext } from './';
+import { AccountContext, Identicon, SettingsContext, ShortAddress } from './';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -182,28 +181,28 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
             item
             justifyContent={'space-between'}
           >
-            <Grid
-              item
-              maxWidth={'220px'}
-              overflow={'hidden'}
-              textOverflow={'ellipsis'}
-              whiteSpace='nowrap'
-              xs={showCopy ? 10 : 12}
-            >
-              <Typography
-                fontSize={'10px'}
-                fontWeight={300}
-                letterSpacing={'-0.015em'}
-                variant='overline'
-              >
-                {formatted || address || t('<unknown>')}
-              </Typography>
-            </Grid>
-            {showCopy &&
-              <CopyAddressButton
-                address={formatted}
-                size={16}
-              />
+            {(formatted || address)
+              ? (
+                <ShortAddress
+                  address={formatted || address}
+                  addressStyle={{
+                    fontSize: '10px',
+                    fontWeight: 300,
+                    justifyContent: 'space-between',
+                    lineHeight: '23px'
+                  }}
+                  clipped
+                  showCopy={showCopy}
+                />)
+              : (
+                <Typography
+                  fontSize={'10px'}
+                  fontWeight={300}
+                  variant='h3'
+                  whiteSpace='nowrap'
+                >
+                  {t('<unknown>')}
+                </Typography>)
             }
           </Grid>
         </Grid>
