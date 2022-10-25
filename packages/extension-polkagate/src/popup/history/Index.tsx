@@ -5,7 +5,7 @@ import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext } from '../../components';
+import { ActionContext, Progress } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
@@ -15,7 +15,7 @@ import HistoryItem from './HistoryItem';
 
 interface ChainNameAddressState {
   chainName: string;
-  address: string;
+  formatted: string;
   decimals: string;
   token: string;
 }
@@ -23,25 +23,32 @@ interface ChainNameAddressState {
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { address, chainName, decimals, token } = useParams<ChainNameAddressState>();
+  const { chainName, decimals, formatted, token } = useParams<ChainNameAddressState>();
 
   const [tabIndex, setTabIndex] = useState<number>(1);
-  const [history, setHistory] = useState<SubQueryHistory[] | undefined>();
-
+  const [history, setHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
 
   useEffect(() => {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
 
-    chainName && address && getHistory(chainName, address).then((history) => {
-      history?.forEach((h) => {
-        h.timestamp = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
-      });
-      setHistory(history);
+    chainName && formatted && getHistory(chainName, formatted).then((history) => {
+      const temp = {};
 
-      console.log('history:', history);
+      history?.forEach((h) => {
+        const day = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
+
+        if (!temp[day]) {
+          temp[day] = [];
+        }
+
+        temp[day].push(h);
+      });
+
+      setHistory(temp);
+      console.log('grouped history:', temp);
     }
     ).catch(console.error);
-  }, [address, chainName]);
+  }, [formatted, chainName]);
 
   const _onBack = useCallback(() => {
     onAction('/');
@@ -139,21 +146,25 @@ export default function TransactionHistory(): React.ReactElement<''> {
           />
         </Tabs>
       </Box>
-      <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
-        {history?.map((h, index) => {
-          return (
-            <HistoryItem
-              anotherDay={index === 0 || (index > 0 && history[index - 1].timestamp !== h.timestamp)}
-              info={h}
-              key={index}
-              decimals={Number(decimals)}
-              token={token}
-            />
-          )
-        })}
-      </Grid>
-      {/* un comment the following line to see the Detail page */}
-      {/* <Detail /> */}
+      {history
+        ? <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
+          {Object.entries(history)?.map((group)=> {
+            const [date, info] = group;
+
+            return info.map((h, index) => (
+              <HistoryItem
+                anotherDay={index === 0}
+                date={date}
+                decimals={Number(decimals)}
+                info={h}
+                key={index}
+                token={token}
+              />
+            ));
+          })}
+        </Grid>
+        : <Progress size={50} title={t('Loading history')} pt='150px' />
+      }
     </>
   );
 }

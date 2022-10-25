@@ -3,29 +3,34 @@
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { FormatBalance2 } from '../../components';
 import { useTranslation } from '../../hooks';
 import { SubQueryHistory } from '../../util/types';
+import { toShortAddress, upperCaseFirstChar } from '../../util/utils';
 
 interface Props {
   anotherDay: boolean;
   info: SubQueryHistory;
-  decimal: number;
+  decimals: number;
   token: string;
+  date?: date;
 }
 
-const upperCaseFirstChar = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const shorAddress = (addr: string) => addr.slice(0, 4) + '...' + addr.slice(-4);
-
-export default function HistoryItem({ anotherDay, decimal, info, token }: Props): React.ReactElement {
+export default function HistoryItem({ anotherDay, decimals, info, token, date}: Props): React.ReactElement {
   const { t } = useTranslation();
+  const history = useHistory();
+
   const _goToDetail = useCallback(() => {
-    return 'ccsdasd';
-  }, []);
+    info?.extrinsicHash && history.push({
+      pathname: `/detail/${info.extrinsicHash}`,
+      state: { info, decimals, token }
+    });
+  }, [history, info]);
 
   const action = useMemo(() => {
     if (info.transfer) {
@@ -39,28 +44,30 @@ export default function HistoryItem({ anotherDay, decimal, info, token }: Props)
     if (info.extrinsic) {
       return upperCaseFirstChar(info.extrinsic.module);
     }
-
   }, [info, t]);
 
   const subAction = useMemo(() => {
     if (info.transfer) {
       if (info.id.includes('to')) {
-        return `${t('From')}: ${shorAddress(info.transfer.from)}`;
+        return `${t('From')}: ${toShortAddress(info.transfer.from)}`;
       }
 
-      return `${t('To')}: ${shorAddress(info.transfer.to)}`;
+      return `${t('To')}: ${toShortAddress(info.transfer.to)}`;
     }
 
     if (info.extrinsic) {
       return upperCaseFirstChar(info.extrinsic.call);
     }
-
   }, [info, t]);
 
+  const success = useMemo((): boolean =>
+    !!(info.extrinsic?.success || info.transfer?.success || info.reward?.success)
+    , [info]);
+
   return (
-    <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : 0}px` }} >
+    <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }} >
       {anotherDay && <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-        {info.timestamp}
+        {date}
       </Grid>
       }
       <Grid
@@ -95,14 +102,10 @@ export default function HistoryItem({ anotherDay, decimal, info, token }: Props)
             item
             pl='10px'
             textAlign='left'
-            xs={5.5}
+            xs={6}
+            sx={{ fontSize: '22px', fontWeight: 400 }}
           >
-            <Typography
-              fontSize='22px'
-              fontWeight={400}
-            >
-              {action}
-            </Typography>
+            {action}
             <Typography
               fontSize='16px'
               fontWeight={300}
@@ -116,23 +119,23 @@ export default function HistoryItem({ anotherDay, decimal, info, token }: Props)
             item
             pr='10px'
             textAlign='right'
-            xs={5.5}
+            xs={5}
           >
             <Typography
               fontSize='20px'
               fontWeight={300}
             >
               {info?.transfer?.amount
-                ? <FormatBalance2 decimalPoint={2} decimals={[Number(decimal)]} tokens={[token]} value={new BN(info.transfer.amount)} />
+                ? <FormatBalance2 decimalPoint={2} decimals={[Number(decimals)]} tokens={[token]} value={new BN(info.transfer.amount)} />
                 : 'N/A'
               }
             </Typography>
             <Typography
               fontSize='16px'
               fontWeight={400}
-              color={info.extrinsic?.success || info.transfer?.success || info.reward?.success ? 'green' : 'red'}
+              color={success ? 'green' : 'red'}
             >
-              {(info.extrinsic?.success || info.transfer?.success || info.reward?.success) ? t<string>('Completed') : t<string>('Failed')}
+              {success ? t<string>('Completed') : t<string>('Failed')}
             </Typography>
           </Grid>
           <Grid
