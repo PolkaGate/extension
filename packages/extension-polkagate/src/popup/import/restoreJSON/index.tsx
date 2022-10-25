@@ -129,7 +129,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Restore from JSON')}
+        text={t<string>('Restore From JSON')}
         withSteps={{
           currentStep: `${stepOne ? 1 : 2}`,
           totalSteps: 2

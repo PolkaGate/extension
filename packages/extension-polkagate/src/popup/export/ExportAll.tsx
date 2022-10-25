@@ -61,7 +61,7 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
       <HeaderBrand
         onBackClick={_goHome}
         showBackArrow
-        text={t<string>('Export all accounts')}
+        text={t<string>('Export All Accounts')}
       />
       <Typography
         fontSize='14px'
