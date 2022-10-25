@@ -10,7 +10,6 @@ import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory } from '../../util/types';
-import Detail from './Detail';
 import HistoryItem from './HistoryItem';
 
 interface ChainNameAddressState {

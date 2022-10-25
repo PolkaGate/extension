@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, LensBlur as LensBlurIcon } from '@mui/icons-material';
@@ -6,12 +6,13 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { BN } from '@polkadot/util';
+
 import { FormatBalance2, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { SubQueryHistory } from '../../util/types';
 import { toShortAddress, upperCaseFirstChar } from '../../util/utils';
-import { BN } from '@polkadot/util';
 
 export default function Detail(): React.ReactElement {
   const { t } = useTranslation();
