@@ -31,7 +31,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { AccountContext, ActionContext, DropdownWithIcon, Identicon, Motion, Select, SettingsContext } from '../../components';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
-import { HeaderBrand } from '../../partials';
+import { AccMenuInside, HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
@@ -113,6 +113,9 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined | null>(state?.balances as DeriveBalancesAll);
   const [isRefreshing, setRefresh] = useState<boolean | undefined>(false);
+  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
+  const decimal = apiToUse && apiToUse.registry.chainDecimals[0];
+  const token = apiToUse && apiToUse.registry.chainTokens[0];
 
   useEffect(() => {
     api && setApiToUse(api);
@@ -197,11 +200,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     setNewEndpoint(newEndpoint);
-    const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
 
     // eslint-disable-next-line no-void
     chainName && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chain?.name, newChain?.name]);
+  }, [address, chainName]);
 
   const goToSend = useCallback(() => {
     balances && history.push({
@@ -211,8 +213,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
 
   const goToHistory = useCallback(() => {
-    onAction(`/history/${address}`);
-  }, [address, onAction]);
+    chainName && formatted && decimal && token && onAction(`/history/${chainName}/${decimal}/${token}/${formatted}`);
+  }, [chainName, decimal, formatted, onAction, token]);
 
   const identicon = (
     <Identicon
@@ -336,6 +338,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     <Motion>
       <HeaderBrand
         _centerItem={identicon}
+        accountMenuInfo={{ account, chain, formatted, type }}
         noBorder
         onBackClick={gotToHome}
         paddingBottom={0}

@@ -7,6 +7,8 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
 import useOutsideClick from '../hooks/useOutsideClick';
+import { AccountMenuInfo } from '../util/types';
+import AccMenuInside from './AccMenuInside';
 import Menu from './Menu';
 
 interface Props {
@@ -19,28 +21,29 @@ interface Props {
   noBorder?: boolean;
   shortBorder?: boolean;
   paddingBottom?: number;
+  accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, shortBorder, text, withSteps = null, noBorder = false, paddingBottom = 11 }: Props): React.ReactElement<Props> {
-  const [isAddOpen, setShowAdd] = useState(false);
+function HeaderBrand({ _centerItem, accountMenuInfo, noBorder = false, onBackClick, paddingBottom = 11, shortBorder, showBackArrow, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setShowMenu] = useState(false);
-  const addIconRef = useRef(null);
-  const addMenuRef = useRef(null);
+  const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
   const setMenuRef = useRef(null);
   const theme = useTheme();
-
-  useOutsideClick([addIconRef, addMenuRef], (): void => {
-    isAddOpen && setShowAdd(!isAddOpen);
-  });
 
   useOutsideClick([setIconRef, setMenuRef], (): void => {
     isMenuOpen && setShowMenu(!isMenuOpen);
   });
 
   const _handleMenuClick = useCallback(
-    () => setShowMenu((isMenuOpen) => !isMenuOpen),
-    []
+    () => {
+      if (accountMenuInfo) {
+        setShowAccountMenu((open) => !open);
+      } else {
+        setShowMenu((open) => !open);
+      }
+    },
+    [accountMenuInfo]
   );
 
   const LeftIcon = () => (
@@ -122,6 +125,20 @@ function HeaderBrand({ _centerItem, onBackClick, showBackArrow, showMenu, shortB
           reference={setMenuRef}
           setShowMenu={setShowMenu}
           theme={theme}
+        />
+      }
+      {
+        isAccountMenuOpen && accountMenuInfo?.account && accountMenuInfo?.chain &&
+        <AccMenuInside
+          address={accountMenuInfo.account.address}
+          chain={accountMenuInfo.chain}
+          formatted={accountMenuInfo.formatted}
+          isExternal={accountMenuInfo.account.isExternal}
+          isHardware={accountMenuInfo.account.isHardware}
+          isMenuOpen={isAccountMenuOpen}
+          name={accountMenuInfo.account.name}
+          setShowMenu={setShowAccountMenu}
+          type={accountMenuInfo.type}
         />
       }
       <Container sx={{

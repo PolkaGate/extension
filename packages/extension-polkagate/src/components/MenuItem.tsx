@@ -14,9 +14,10 @@ interface Props {
   onClick?: MouseEventHandler<HTMLDivElement>;
   showSubMenu?: boolean;
   py?: string;
+  pl?: string;
 }
 
-export default function MenuItem({ children, disabled = false, icon, onClick, py = '8px', showSubMenu = false, text, iconComponent }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, icon, onClick, pl = '0', py = '8px', showSubMenu = false, text, iconComponent }: Props): React.ReactElement<Props> {
   return (
     <>
       <Grid
@@ -26,6 +27,7 @@ export default function MenuItem({ children, disabled = false, icon, onClick, py
         justifyContent='space-between'
         my='4px'
         onClick={disabled ? () => null : onClick}
+        pl={pl}
         py={py}
         sx={{ cursor: disabled ? '' : 'pointer' }}
         textAlign='left'

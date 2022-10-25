@@ -10,6 +10,8 @@ import type { BN } from '@polkadot/util';
 
 import { ApiPromise } from '@polkadot/api';
 import { Balance } from '@polkadot/types/interfaces';
+import { AccountJson } from '@polkadot/extension-base/background/types';
+import { Chain } from '@polkadot/extension-chains/types';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -36,7 +38,7 @@ export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain
 export interface AccountsBalanceType {
   address: string; // formatted address
   chain: string | null; // chainName actually
-  balanceInfo?: LastBalances; 
+  balanceInfo?: LastBalances;
   name: string | null;
   txHistory?: string;
 }
@@ -405,19 +407,49 @@ export interface Initiation {
 
 export type Close = Initiation;
 
+interface Reward {
+  era: number,
+  stash: string,
+  amount: string,
+  eventIdx: number,
+  isReward: boolean,
+  validator: string
+}
+
+interface Transfer {
+  to: string,
+  fee: string,
+  from: string,
+  amount: string,
+  success: boolean,
+  eventIdx: number
+}
+
+interface extrinsic {
+  fee: string,
+  call: string,
+  hash: string,
+  module: string,
+  success: boolean
+}
 export interface SubQueryRewardInfo {
   blockNumber: number,
   timestamp: string,
   extrinsicHash: string,
   address: string,
-  reward: {
-    era: number,
-    stash: string,
-    amount: string,
-    eventIdx: number,
-    isReward: boolean,
-    validator: string
-  }
+  reward: Reward
+}
+export interface SubQueryHistory {
+  id: string,
+  blockNumber: number,
+  extrinsicIdx: number,
+  extrinsicHash: string,
+  timestamp: string,
+  address: string,
+  reward: Reward,
+  extrinsic: extrinsic,
+  transfer: Transfer,
+  assetTransfer: JSON,
 }
 
 export interface SubscanRewardInfo {
@@ -475,4 +507,11 @@ export interface RenameAcc {
   address: string;
   name: string;
   genesisHash: string;
+}
+
+export interface AccountMenuInfo {
+  account: AccountJson | null;
+  chain: Chain | null;
+  formatted: string;
+  type: KeypairType;
 }
