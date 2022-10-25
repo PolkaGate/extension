@@ -234,7 +234,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         onBackClick={_onBackClick}
         shortBorder
         showBackArrow
-        text={t<string>('Send fund')}
+        text={t<string>('Send Fund')}
         withSteps={{
           currentStep: `${step1 ? 1 : 2}`,
           totalSteps: 2

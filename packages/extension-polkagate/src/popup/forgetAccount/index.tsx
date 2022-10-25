@@ -77,7 +77,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Forget account')}
+        text={t<string>('Forget Account')}
       />
       {isPasswordError &&
         <Grid

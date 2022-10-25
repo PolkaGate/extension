@@ -54,7 +54,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Manage website access')}
+        text={t<string>('Manage Website Access')}
       />
       <Typography
         fontSize='14px'

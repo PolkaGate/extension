@@ -64,7 +64,7 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
       <HeaderBrand
         onBackClick={_goHome}
         showBackArrow
-        text={t<string>('Export account')}
+        text={t<string>('Export Account')}
       />
       {isPasswordError &&
         <Grid

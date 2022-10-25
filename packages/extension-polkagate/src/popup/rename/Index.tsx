@@ -37,7 +37,7 @@ export default function Rename(): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Rename account')}
+        text={t<string>('Rename Account')}
       />
       <Identity
         address={address}
