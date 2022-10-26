@@ -21,7 +21,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { isend, send } from '../../assets/icons';
-import { AccountContext, ActionContext, Amount, ChainLogo, Identicon, Motion, Password, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
+import { AccountContext, ActionContext, Amount, ButtonWithCancel, ChainLogo, Identicon, Motion, Password, PButton, SettingsContext, ShortAddress, ShowBalance, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT } from '../../util/constants';
@@ -52,7 +52,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
-  const [recepient, setRecipient] = useState<string | undefined>(state?.recepient);
+  const [recipient, setRecipient] = useState<string | undefined>(state?.recepient);
   const [amount, setAmount] = useState<string>(state?.amount ?? '0');
   const [allMaxAmount, setAllMaxAmount] = useState<string | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
@@ -71,15 +71,15 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
-    apiToUse && recepient && void apiToUse.derive.accounts.info(recepient).then((info) => {
+    apiToUse && recipient && void apiToUse.derive.accounts.info(recipient).then((info) => {
       setIdentity(info?.identity);
     });
-  }, [apiToUse, recepient]);
+  }, [apiToUse, recipient]);
 
   const recepientName = useMemo(
     (): string =>
-      identity?.display || accounts?.find((a) => getFormattedAddress(a.address, chain, settings?.prefix) === recepient)?.name || t('Unknown'),
-    [accounts, chain, recepient, settings?.prefix, t, identity]
+      identity?.display || accounts?.find((a) => getFormattedAddress(a.address, chain, settings?.prefix) === recipient)?.name || t('Unknown'),
+    [accounts, chain, recipient, settings?.prefix, t, identity]
   );
 
   const setWholeAmount = useCallback((type: TransferType) => {
@@ -97,9 +97,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const goToReview = useCallback(() => {
     balances && history.push({
       pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-      state: { amount: allMaxAmount ?? amount, api: apiToUse, balances, fee, recepient, recepientName, transfer, transferType }
+      state: { amount: allMaxAmount ?? amount, api: apiToUse, balances, fee, recepient: recipient, recepientName, transfer, transferType }
     });
-  }, [balances, history, genesisHash, address, formatted, allMaxAmount, amount, apiToUse, fee, recepient, recepientName, transfer, transferType]);
+  }, [balances, history, genesisHash, address, formatted, allMaxAmount, amount, apiToUse, fee, recipient, recepientName, transfer, transferType]);
 
   const onChangePass = useCallback(
     (pass: string): void => {
@@ -112,8 +112,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     const amountAsBN = new BN(parseFloat(parseFloat(allMaxAmount ?? amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
     const isAmountGreaterThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
-    setButtonDisabled(!isValidAddress(recepient) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
-  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, password, recepient]);
+    setButtonDisabled(!isValidAddress(recipient) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
+  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, password, recipient]);
 
   useEffect(() => {
     api && setApiToUse(api);
@@ -166,20 +166,32 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       : _onCancelClick();
   }, [_onCancelClick, address, apiToUse, balances, formatted, genesisHash, history, state?.price, step1]);
 
+  const identicon = (
+    <Identicon
+      iconTheme={chain?.icon || 'polkadot'}
+      // isExternal={isExternal}
+      // onCopy={_onCopy}
+      prefix={chain?.ss58Format ?? 42}
+      size={31}
+      value={formatted}
+    />
+  );
+
   const From = () => (
     <>
       <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
         {t('From')}
       </div>
-      <Grid container justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '10px' }}>
+      <Grid container justifyContent='felx-start' spacing={0.5} alignItems='center' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px', mt: '2px' }}>
+        <Grid item >
+          {identicon}
+        </Grid>
         <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px' }}>
           {accountName}
-          <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start' }} />
         </Grid>
-        <Grid item>
-          <LabelBalancePrice api={apiToUse} balances={balances} label='Total' price={state?.price} showLabel={false} />
+        <Grid item  >
+          <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', pt: '5px' }} />
         </Grid>
-
       </Grid>
     </>
   );
@@ -216,12 +228,12 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         <Grid item xs={8}>
           <Amount decimals={decimals} setValue={setAmount} token={apiToUse?.registry?.chainTokens[0]} value={allMaxAmount ?? amount} />
         </Grid>
-        <Grid container item xs={4} sx={{ pl: '10px' }}>
-          <Grid item onClick={() => setWholeAmount('All')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
-            {t('All amount')}
-          </Grid>
+        <Grid container item sx={{ pl: '10px' }} xs={4}>
           <Grid item onClick={() => setWholeAmount('Max')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
             {t('Max amount')}
+          </Grid>
+          <Grid item onClick={() => setWholeAmount('All')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
+            {t('All amount')}
           </Grid>
         </Grid>
       </Grid>
@@ -242,7 +254,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <From />
-        <To address={recepient} label={t('To')} name={recepientName} setAddress={setRecipient} style={{ pt: '5px' }} />
+        <To address={recipient} label={t('To')} name={recepientName} setAddress={setRecipient} style={{ pt: '10px' }} />
         <Asset />
         <AmountWithMaxAll />
         <div style={{ paddingTop: '10px' }}>
@@ -253,9 +265,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           />
         </div>
       </Container>
-      <PButton
+      <ButtonWithCancel
         _onClick={goToReview}
-        _variant='contained'
+        _onClickCancel={_onBackClick}
         disabled={buttonDisabled}
         text={t('Next')}
       />
