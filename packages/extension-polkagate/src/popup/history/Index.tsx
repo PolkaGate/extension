@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { ActionContext, Progress } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -11,7 +12,6 @@ import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory } from '../../util/types';
 import HistoryItem from './HistoryItem';
-import { useLocation } from 'react-router-dom';
 
 interface ChainNameAddressState {
   chainName: string;
@@ -29,7 +29,7 @@ const TAB_MAP = {
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const location = useLocation();
+  const { pathname, state } = useLocation();
   const { chainName, decimal, formatted, token } = useParams<ChainNameAddressState>();
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [history, setHistory] = useState<SubQueryHistory[] | undefined>();
@@ -71,8 +71,8 @@ export default function TransactionHistory(): React.ReactElement<''> {
   console.log('groupedhistory:', grouped);
 
   const _onBack = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+    onAction(state?.pathname ?? '/');
+  }, [onAction, state?.pathname]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
@@ -193,7 +193,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 decimal={Number(decimal)}
                 info={h}
                 key={index}
-                path={location?.pathname}
+                path={pathname}
                 token={token}
               />
             ));

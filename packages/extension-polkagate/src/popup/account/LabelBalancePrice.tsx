@@ -47,7 +47,7 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
             <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined
                 ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
+                : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '90px', transform: 'none' }} height={15} />
               }
             </Grid>
           </Grid>
