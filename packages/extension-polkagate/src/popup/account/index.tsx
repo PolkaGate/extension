@@ -90,7 +90,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const settings = useContext(SettingsContext);
   const onAction = useContext(ActionContext);// added for plus
   const theme = useTheme();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const { accounts } = useContext(AccountContext);
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const [{ account, newFormattedAddress, newGenesisHash, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
@@ -128,7 +128,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     setPrice(undefined);
   }, []);
 
-  const onRefreshClick = useCallback(() => setRefresh(true), []);
+  const onRefreshClick = useCallback(() => !isRefreshing && setRefresh(true), [isRefreshing]);
 
   useEffect(() => {
     chain && getPrice(chain).then((price) => {
@@ -171,6 +171,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const getBalances = useCallback(() => {
     apiToUse && formatted &&
       apiToUse.derive.balances?.all(formatted).then((b) => {
+        console.log('setting new balances')
         setBalances(b);
         setRefresh(false);
       }).catch(console.error);
@@ -213,12 +214,19 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
 
   const goToReceive = useCallback(() => {
-    onAction(`/receive/${address}/`);
-  }, [address, onAction]);
+    history.push({
+      pathname: `/receive/${address}/`,
+      state: { pathname }
+    });
+  }, [history, address, pathname]);
 
   const goToHistory = useCallback(() => {
-    chainName && formatted && decimal && token && onAction(`/history/${chainName}/${decimal}/${token}/${formatted}`);
-  }, [chainName, decimal, formatted, onAction, token]);
+    chainName && formatted && decimal && token &&
+    history.push({
+      pathname: `/history/${chainName}/${decimal}/${token}/${formatted}`,
+      state: { pathname }
+    });
+  }, [chainName, formatted, decimal, token, history, pathname]);
 
   const identicon = (
     <Identicon

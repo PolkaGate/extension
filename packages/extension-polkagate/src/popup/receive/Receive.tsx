@@ -1,10 +1,11 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid,Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import QRCode from 'qrcode.react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
@@ -19,6 +20,8 @@ interface Props {
 export default function Receive({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const location = useLocation();
+  console.log(location?.state?.pathname)
   const { address } = useParams<{ address: string }>();
   const account = useAccount(address);
   const [formatted, setFormatted] = useState<string | undefined>();
@@ -31,8 +34,8 @@ export default function Receive({ className }: Props): React.ReactElement {
   }, [address, chain]);
 
   const _onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+    onAction(location?.state?.pathname ?? '/');
+  }, [location?.state?.pathname, onAction]);
 
   return (
     <>
