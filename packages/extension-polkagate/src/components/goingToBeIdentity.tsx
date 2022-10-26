@@ -9,8 +9,8 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useTranslation } from '../hooks';
 import useAccount from '../hooks/useAccount';
 import useMetadata from '../hooks/useMetadata';
-import Identicon from './Identicon';
 import ChainLogo from './ChainLogo';
+import Identicon from './Identicon';
 
 interface Props {
   address: string;
