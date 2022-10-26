@@ -209,7 +209,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       <DropdownWithIcon
         defaultValue={chain?.genesisHash ?? options[0].text}
         icon={getLogo(newChain || chain || undefined)}
-        label={t<string>('Select the chain')}
+        label={t<string>('Chain')}
         onChange={_onChangeNetwork}
         options={options}
         style={{ width: '100%' }}
@@ -217,7 +217,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       {newEndpoint &&
         <Select
           _mt='10px'
-          label={t<string>('Endpoint')}
+          label={t<string>('Remote node')}
           onChange={_onChangeEndpoint}
           options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
           value={newEndpoint ?? 'No chain selected'}
