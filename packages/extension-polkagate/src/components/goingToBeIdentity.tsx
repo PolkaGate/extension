@@ -10,14 +10,16 @@ import { useTranslation } from '../hooks';
 import useAccount from '../hooks/useAccount';
 import useMetadata from '../hooks/useMetadata';
 import Identicon from './Identicon';
+import ChainLogo from './ChainLogo';
 
 interface Props {
   address: string;
   name?: string;
   style?: SxProps<Theme>;
+  showChainLogo?: boolean;
 }
 
-export default function Identity({ address, name, style }: Props): React.ReactElement<Props> {
+export default function Identity({ address, name, showChainLogo = false, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const account = useAccount(address);
   const chain = useMetadata(account?.genesisHash, true);
@@ -33,34 +35,51 @@ export default function Identity({ address, name, style }: Props): React.ReactEl
     <Grid
       alignItems='center'
       container
-      justifyContent='center'
+      justifyContent='space-between'
       sx={{ ...style }}
     >
       <Grid
+        container
         item
-        pr='8px'
+        xs={showChainLogo ? 11 : 12}
       >
-        <Identicon
-          iconTheme={chain?.icon ?? 'polkadot'}
-          prefix={chain?.ss58Format ?? 42}
-          size={40}
-          value={formatted ?? account?.address}
-        />
-      </Grid>
-      <Grid
-        item
-        maxWidth='82%'
-        overflow='hidden'
-        textOverflow='ellipsis'
-      >
-        <Typography
-          fontSize='28px'
-          fontWeight={400}
-          whiteSpace='nowrap'
+        <Grid
+          item
+          pr='8px'
         >
-          {name || account?.name || t<string>('unknown')}
-        </Typography>
+          <Identicon
+            iconTheme={chain?.icon ?? 'polkadot'}
+            prefix={chain?.ss58Format ?? 42}
+            size={40}
+            value={formatted ?? account?.address}
+          />
+        </Grid>
+        <Grid
+          item
+          maxWidth={'82%'}
+          // overflow='hidden'
+          // textOverflow='ellipsis'
+        >
+          <Typography
+            fontSize='28px'
+            fontWeight={400}
+            whiteSpace='nowrap'
+            overflow='hidden'
+            textOverflow='ellipsis'
+          >
+            {name || account?.name || t<string>('unknown')}
+          </Typography>
+        </Grid>
       </Grid>
+      {showChainLogo &&
+        <Grid
+          item
+        >
+          <ChainLogo
+            genesisHash={account?.genesisHash}
+          />
+        </Grid>
+      }
     </Grid>
   );
 }

@@ -13,3 +13,4 @@ export { default as useGenesisHashOptions } from './useGenesisHashOptions';
 export { default as useToast } from './useToast';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as useProxies } from './useProxies';
+export { default as useAccount } from './useAccount';
