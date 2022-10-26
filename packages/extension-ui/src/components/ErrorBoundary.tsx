@@ -1,9 +1,11 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributor
 // SPDX-License-Identifier: Apache-2.0
 
+import { Grid } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
+import { HeaderBrand } from '../../../extension-polkagate/src/partials';
 import Header from '../partials/Header';
 import Button from './Button';
 import ButtonArea from './ButtonArea';
@@ -25,11 +27,11 @@ interface State {
 class ErrorBoundary extends React.Component<Props> {
   public override state: State = { error: null };
 
-  public static getDerivedStateFromError (error: Error): Partial<State> {
+  public static getDerivedStateFromError(error: Error): Partial<State> {
     return { error };
   }
 
-  public override componentDidUpdate (prevProps: Props) {
+  public override componentDidUpdate(prevProps: Props) {
     const { error } = this.state;
     const { trigger } = this.props;
 
@@ -43,19 +45,19 @@ class ErrorBoundary extends React.Component<Props> {
     window.location.hash = '/';
   };
 
-  public override render (): React.ReactNode {
+  public override render(): React.ReactNode {
     const { children, t } = this.props;
     const { error } = this.state;
 
     return error
       ? (
         <>
-          <Header text={t<string>('An error occured')} />
-          <div>
+          <HeaderBrand noBorder text={t<string>('Polkagate')} />
+          <Grid container paddingTop='25px' justifyContent='center' mx='15px'>
             {t<string>('Something went wrong with the query and rendering of this component. {{message}}', {
               replace: { message: error.message }
             })}
-          </div>
+          </Grid>
           <VerticalSpace />
           <ButtonArea>
             <Button

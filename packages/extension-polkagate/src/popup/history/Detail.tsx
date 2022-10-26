@@ -55,7 +55,7 @@ export default function Detail(): React.ReactElement {
     const name = accountName(accounts, info?.transfer?.from);
 
     if (info?.transfer) {
-      return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.transfer.from)}${name ? ')' : ''}}`;
+      return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.transfer.from)}${name ? ')' : ''}`;
     }
   }, [accounts, info?.transfer, t]);
 
