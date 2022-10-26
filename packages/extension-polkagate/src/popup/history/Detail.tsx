@@ -49,7 +49,7 @@ export default function Detail(): React.ReactElement {
 
   const success = useMemo((): boolean =>
     !!(info?.extrinsic?.success || info?.transfer?.success || info?.reward?.success)
-    , [info]);
+  , [info]);
 
   const from = useMemo(() => {
     if (info?.transfer) {
