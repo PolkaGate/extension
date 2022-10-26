@@ -10,6 +10,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
+import CopyAddressButton from './CopyAddressButton';
 
 interface Props {
   address: string | AccountId | undefined;
@@ -44,16 +45,9 @@ export default function ShortAddress({ address, clipped = false, charsCount = SH
         {inParentheses ? ')' : ''}
       </Grid>
       {showCopy &&
-        <Grid item>
-          <CopyToClipboard text={String(address)}>
-            <IconButton
-              sx={{ height: '20px', p: '0px', width: '20px' }}
-            // onClick={_onCopy}
-            >
-              <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}` }} />
-            </IconButton>
-          </CopyToClipboard>
-        </Grid>
+        <CopyAddressButton
+          address={address}
+        />
       }
     </Grid>
   );
