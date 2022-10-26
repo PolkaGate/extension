@@ -58,6 +58,7 @@ export default function BalanceFee({ api, balances, fee, type }: Props): React.R
           api={api}
           balance={fee}
           decimalPoint={4}
+          height={15}
         />
       </Grid>
     </Grid>
