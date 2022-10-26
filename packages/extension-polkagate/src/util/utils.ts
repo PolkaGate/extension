@@ -7,7 +7,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -127,6 +127,16 @@ export function getSubstrateAddress(address: string): string {
 
   return encodeAddress(publicKey, 42);
 }
+
+export const accountName = (accounts: AccountJson[], address: string): string | undefined => {
+  if (!accounts.length || !address) {
+    return undefined;
+  }
+
+  const addr = getSubstrateAddress(address);
+
+  return accounts.find((acc) => acc.address === addr)?.name;
+};
 
 export function prepareMetaData(chain: Chain | null | string, label: string, metaData: any): string {
   const chainName = (chain as Chain)?.name?.replace(' Relay Chain', '') ?? chain;
