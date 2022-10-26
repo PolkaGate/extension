@@ -49,7 +49,7 @@ export default function Detail(): React.ReactElement {
 
   const success = useMemo((): boolean =>
     !!(info?.extrinsic?.success || info?.transfer?.success || info?.reward?.success)
-    , [info]);
+  , [info]);
 
   const from = useMemo(() => {
     if (info?.transfer) {
@@ -214,19 +214,21 @@ export default function Detail(): React.ReactElement {
         />
         <Item item={`${t('Block')}: #${info?.blockNumber}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.extrinsicHash, 6)}`} noDivider />
-        <Link
-          href={`${subscanLink()}`}
-          rel='noreferrer'
-          target='_blank'
-          underline='none'
-        >
-          <Grid
-            alt={'subscan'}
-            component='img'
-            src={getLogo('subscan')}
-            sx={{ height: 40, width: 40 }}
-          />
-        </Link>
+        <Grid item sx={{ mt: '20px' }}>
+          <Link
+            href={`${subscanLink()}`}
+            rel='noreferrer'
+            target='_blank'
+            underline='none'
+          >
+            <Grid
+              alt={'subscan'}
+              component='img'
+              src={getLogo('subscan')}
+              sx={{ height: 40, width: 40 }}
+            />
+          </Link>
+        </Grid>
       </Grid>
       <PButton
         _onClick={_onBack}

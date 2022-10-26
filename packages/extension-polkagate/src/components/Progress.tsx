@@ -1,9 +1,9 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CircularProgress, Grid } from '@mui/material';
-import React from 'react';
+import { Grid, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
+import React from 'react';
 
 interface Props {
   title?: string;
@@ -12,6 +12,8 @@ interface Props {
 }
 
 function Progress({ pt = '50px', title, size = 25 }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
   return (
     <Grid
       alignItems='center'
@@ -20,7 +22,7 @@ function Progress({ pt = '50px', title, size = 25 }: Props): React.ReactElement<
       justifyContent='center'
       pt={pt}
     >
-      <Circle color='white' scaleEnd={0.7} scaleStart={0.4} size={size} />
+      <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={size} />
       <Grid
         item
         sx={{ fontSize: 13, paddingTop: '20px' }}
