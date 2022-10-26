@@ -105,12 +105,12 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, info
             pl='10px'
             textAlign='left'
             xs={6}
-            sx={{ fontSize: '22px', fontWeight: 400 }}
+            sx={{ fontSize: '22px', fontWeight: 300 }}
           >
             {action}
             <Typography
               fontSize='16px'
-              fontWeight={300}
+              fontWeight={200}
             >
               {subAction}
             </Typography>
