@@ -5,8 +5,7 @@ import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext, ButtonWithCancel } from '../../components';
-import Identity from '../../components/goingToBeIdentity';
+import { ActionContext, ButtonWithCancel, Identity } from '../../components';
 import { useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { HeaderBrand, Name } from '../../partials';

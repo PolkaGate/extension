@@ -46,6 +46,7 @@ import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
 import History from '../../../extension-polkagate/src/popup/history/Index';
 import Detail from '../../../extension-polkagate/src/popup/history/Detail';
+import Receive from '../../../extension-polkagate/src/popup/receive/Receive';
 
 const startSettings = uiSettings.get();
 
@@ -157,6 +158,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                           <Route path='/history/:chainName/:decimal/:token/:formatted'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                           <Route path='/detail/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>
+                          <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                           <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                           <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
                           <Route exact path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>

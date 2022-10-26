@@ -212,6 +212,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     });
   }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
 
+  const goToReceive = useCallback(() => {
+    onAction(`/receive/${address}/`);
+  }, [address, onAction]);
+
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token && onAction(`/history/${chainName}/${decimal}/${token}/${formatted}`);
   }, [chainName, decimal, formatted, onAction, token]);
@@ -269,7 +273,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       <MenuItem
         icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />
         }
-        onClick={goToSend}
+        onClick={goToReceive}
         title={'Receive'}
       />
       <MenuItem
