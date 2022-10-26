@@ -32,7 +32,10 @@ export default function ShowBalance({ api, balance, decimalPoint }: Props): Reac
     <>
       {balance !== undefined && api
         ? <FormatBalance api={api} decimalPoint={decimalPoint} value={balance} />
-        : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
+        : <Skeleton
+          height={20}
+          sx={{ display: 'inline-block', transform: 'none', width: '90px' }}
+        />
       }
     </>
   );
