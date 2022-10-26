@@ -8,16 +8,16 @@ import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { ActionContext, FormatBalance2, PButton } from '../../components';
+import { AccountContext, ActionContext, CopyAddressButton, FormatBalance2, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import getLogo from '../../util/getLogo';
-import { toShortAddress, upperCaseFirstChar } from '../../util/utils';
-
+import { accountName, toShortAddress, upperCaseFirstChar } from '../../util/utils';
 
 export default function Detail(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const { accounts } = useContext(AccountContext);
 
   const { state: { chainName, info, decimal, token, path } } = useLocation();
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
@@ -52,14 +52,18 @@ export default function Detail(): React.ReactElement {
     , [info]);
 
   const from = useMemo(() => {
+    const name = accountName(accounts, info?.transfer?.from);
+
     if (info?.transfer) {
-      return `${t('From')}: ${toShortAddress(info.transfer.from)}`;
+      return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.transfer.from)}${name ? ')' : ''}`;
     }
-  }, [info, t]);
+  }, [accounts, info?.transfer, t]);
 
   const to = useMemo(() => {
+    const name = accountName(accounts, info?.transfer?.to);
+
     if (info?.transfer) {
-      return `${t('To')}: ${toShortAddress(info.transfer.to)}`;
+      return `${t('To')}: ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.transfer.to)}${name ? ')' : ''}`;
     }
   }, [info, t]);
 
@@ -79,17 +83,26 @@ export default function Detail(): React.ReactElement {
     }
   }, [info]);
 
-  const Item = ({ item, mt = 0, noDivider = false }: { item: string | undefined, mt?: number, noDivider?: boolean }) => (
+  const Item = ({ item, mt = 0, noDivider = false, toCopy }: { item: string | undefined, mt?: number, noDivider?: boolean, toCopy?: string }) => (
     <>
       {item &&
         <>
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            sx={{ mt: `${mt}px` }}
-          >
-            {item}
-          </Typography>
+          <Grid container justifyContent='center' alignItems='center'>
+            <Grid item>
+              <Typography
+                fontSize='16px'
+                fontWeight={400}
+                sx={{ mt: `${mt}px` }}
+              >
+                {item}
+              </Typography>
+            </Grid>
+            <Grid item>
+              {toCopy && <CopyAddressButton
+                address={toCopy}
+              />}
+            </Grid>
+          </Grid>
           {!noDivider && <Divider
             sx={{
               bgcolor: 'secondary.light',
@@ -105,9 +118,13 @@ export default function Detail(): React.ReactElement {
   );
 
   const Amount = ({ amount, label }: { label: string, amount: string }) => (
-    <Grid container item justifyContent='center' spacing={1}
+    <Grid
+      container
       fontSize='16px'
       fontWeight={400}
+      item
+      justifyContent='center'
+      spacing={1}
     >
       <Grid item>
         {label}
@@ -171,14 +188,12 @@ export default function Detail(): React.ReactElement {
         >
           {action}
         </Typography>
-        {/* {Condition && */}
         <Typography
           fontSize='18px'
           fontWeight={300}
         >
           {subAction}
         </Typography>
-        {/* } */}
         <Divider
           sx={{
             bgcolor: 'secondary.light',
@@ -196,8 +211,8 @@ export default function Detail(): React.ReactElement {
           Reason
         </Typography> */}
         <Item item={info?.timestamp && (new Date(parseInt(info.timestamp) * 1000)).toLocaleDateString(undefined, options)} mt={15} />
-        <Item item={from} />
-        <Item item={to} />
+        <Item item={from} toCopy={info?.transfer?.from} />
+        <Item item={to} toCopy={info?.transfer?.to} />
         {amount &&
           <Amount label={t('Amount')} amount={amount} />
         }
@@ -213,20 +228,22 @@ export default function Detail(): React.ReactElement {
           }}
         />
         <Item item={`${t('Block')}: #${info?.blockNumber}`} noDivider />
-        <Item item={`${t('Hash')}: #${toShortAddress(info?.extrinsicHash, 6)}`} noDivider />
-        <Link
-          href={`${subscanLink()}`}
-          rel='noreferrer'
-          target='_blank'
-          underline='none'
-        >
-          <Grid
-            alt={'subscan'}
-            component='img'
-            src={getLogo('subscan')}
-            sx={{ height: 40, width: 40 }}
-          />
-        </Link>
+        <Item item={`${t('Hash')}: #${toShortAddress(info?.extrinsicHash, 6)}`} noDivider toCopy={info?.extrinsicHash} />
+        <Grid item sx={{ mt: '20px' }}>
+          <Link
+            href={`${subscanLink()}`}
+            rel='noreferrer'
+            target='_blank'
+            underline='none'
+          >
+            <Grid
+              alt={'subscan'}
+              component='img'
+              src={getLogo('subscan')}
+              sx={{ height: 40, width: 40 }}
+            />
+          </Link>
+        </Grid>
       </Grid>
       <PButton
         _onClick={_onBack}

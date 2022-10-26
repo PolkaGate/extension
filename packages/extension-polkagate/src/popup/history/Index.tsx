@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router';
 
 import { ActionContext, Progress } from '../../components';
@@ -20,47 +20,76 @@ interface ChainNameAddressState {
   token: string;
 }
 
+const TAB_MAP = {
+  ALL: 1,
+  TRANSFERS: 2,
+  STAKING: 3
+};
+
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const location = useLocation();
   const { chainName, decimal, formatted, token } = useParams<ChainNameAddressState>();
   const [tabIndex, setTabIndex] = useState<number>(1);
-  const [history, setHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
+  const [history, setHistory] = useState<SubQueryHistory[] | undefined>();
+  // const [groupedHistory, setGroupedHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
+  const [filtered, setFiltered] = useState<SubQueryHistory[] | undefined>();
 
-  useEffect(() => {
+  const grouped = useMemo((): Record<string, SubQueryHistory[]> | undefined => {
+    const list = (filtered && [...filtered]) || (history && [...history]);
+
+    if (!list) {
+      return undefined;
+    }
+
+    const temp = {};
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
 
-    chainName && formatted && getHistory(chainName, formatted).then((history) => {
-      const temp = {};
+    list?.reverse()?.forEach((h) => {
+      if (h.reward === null) {// to ignore reward history
+        const day = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
 
-      history?.reverse()?.forEach((h) => {
-        if (h.reward === null) {// to ingonre reward history
-          const day = new Date(parseInt(h.timestamp) * 1000).toLocaleDateString(undefined, options);
-
-          if (!temp[day]) {
-            temp[day] = [];
-          }
-
-          temp[day].push(h);
+        if (!temp[day]) {
+          temp[day] = [];
         }
-      });
 
-      setHistory(temp);
-      console.log('grouped history:', temp);
+        temp[day].push(h);
+      }
+    });
+
+    return temp;
+  }, [filtered, history]);
+
+  useEffect(() => {
+    chainName && formatted && getHistory(chainName, formatted).then((res) => {
+      setHistory(res ? [...res] : undefined);
     }
     ).catch(console.error);
   }, [formatted, chainName]);
+
+  console.log('groupedhistory:', grouped);
 
   const _onBack = useCallback(() => {
     onAction('/');
   }, [onAction]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
+    setTabIndex(tabIndex);
+
     if (history) {
       // filter history
+
+      if (tabIndex === TAB_MAP.TRANSFERS) {
+        return setFiltered(history.filter((h) => h.id.includes('to') || h.id.includes('from')));
+      }
+
+      if (tabIndex === TAB_MAP.STAKING) {
+        return setFiltered(history.filter((h) => h.extrinsic?.module === 'staking' || h.extrinsic?.module === 'nominationPools'));
+      }
+
+      return setFiltered(undefined); // for the All tab
     }
-    setTabIndex(tabIndex);
   }, [history]);
 
   return (
@@ -131,7 +160,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }}
               />}
             label=''
-            sx={{ p: '0', minWidth: '1px', width: '1px' }}
+            sx={{ minWidth: '1px', p: '0', width: '1px' }}
             value={5}
           />
           <Tab
@@ -151,9 +180,9 @@ export default function TransactionHistory(): React.ReactElement<''> {
           />
         </Tabs>
       </Box>
-      {history
+      {grouped
         ? <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
-          {Object.entries(history)?.map((group) => {
+          {Object.entries(grouped)?.map((group) => {
             const [date, info] = group;
 
             return info.map((h, index) => (
@@ -170,7 +199,8 @@ export default function TransactionHistory(): React.ReactElement<''> {
             ));
           })}
         </Grid>
-        : <Progress pt='150px'
+        : <Progress
+          pt='150px'
           size={50}
           title={t('Loading history')}
         />

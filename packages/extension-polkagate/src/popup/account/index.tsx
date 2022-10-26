@@ -355,7 +355,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           <DropdownWithIcon
             defaultValue={genesisHash}
             icon={getLogo(newChain || chain || undefined)}
-            label={t<string>('Select the chain')}
+            label={t<string>('Chain')}
             onChange={_onChangeGenesis}
             options={genesisOptions}
             style={{ width: '100%' }}
@@ -364,7 +364,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
         <Grid height='20px' item mt='10px' xs>
           {(newEndpoint || endpoint) &&
             <Select
-              label={'Select the endpoint'}
+              label={'Remote node'}
               onChange={_onChangeEndpoint}
               options={endpointOptions}
               value={newEndpoint || endpoint}
