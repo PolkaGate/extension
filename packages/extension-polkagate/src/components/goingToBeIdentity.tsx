@@ -6,11 +6,8 @@ import React, { useEffect, useState } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { useTranslation } from '../hooks';
-import useAccount from '../hooks/useAccount';
-import useMetadata from '../hooks/useMetadata';
-import ChainLogo from './ChainLogo';
-import Identicon from './Identicon';
+import { useAccount, useMetadata,useTranslation } from '../hooks';
+import { ChainLogo, Identicon } from '.';
 
 interface Props {
   address: string;
@@ -57,8 +54,6 @@ export default function Identity({ address, name, showChainLogo = false, style }
         <Grid
           item
           maxWidth={'82%'}
-          // overflow='hidden'
-          // textOverflow='ellipsis'
         >
           <Typography
             fontSize='28px'
