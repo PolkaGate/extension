@@ -41,7 +41,7 @@ interface Props {
   decimals: number;
 }
 
-export default function CustomizedTextField({ decimals, setValue, token, value }: Props) {
+export default function CustomizedTextField({ decimals, setValue, value }: Props) {
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) => {
       if (parseInt(value).toString().length > decimals - 1) {
