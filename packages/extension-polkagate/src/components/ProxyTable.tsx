@@ -3,30 +3,42 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
 import { NameAddress, Proxy } from '../util/types';
-import Identicon from './Identicon';
+import { getSubstrateAddress, toShortAddress } from '../util/utils';
 import Label from './Label';
-import { toShortAddress } from '../util/utils';
+import { AccountContext, Identicon } from './';
 
 interface Props {
-  addressesOnThisChain: NameAddress[] | undefined;
-  chain?: Chain | undefined;
+  addressesOnThisChain?: NameAddress[] | undefined;
+  chain?: Chain | undefined | null;
   label: string;
   withRemove?: boolean;
   style?: SxProps<Theme>;
   proxies?: Proxy[];
+  onSelect?: (selected: Proxy) => void
+
 }
 
-export default function ProxyTable({ addressesOnThisChain, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
-  const isAvailable = useCallback((address: string): NameAddress | undefined => addressesOnThisChain?.find((a) => a.address === address), [addressesOnThisChain]);
+export default function ProxyTable({ addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const { accounts } = useContext(AccountContext);
+  const [selectedIndex, setSelectedIndex] = useState<number>();
+
+  const isAvailable = useCallback((address: string): NameAddress | undefined =>
+    accounts?.find((a) => a.address === getSubstrateAddress(address))
+    , [accounts]);
+
+  const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
+  }, [onSelect, proxies]);
 
   return (
     <>
@@ -117,7 +129,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  {t('Available')}
+                  {onSelect ? t('Select') : t('Available')}
                 </Typography>
               </Grid>
             </Grid>
@@ -136,6 +148,7 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                             borderRightColor: 'secondary.light'
                           },
                           height: '41px',
+                          opacity: `${isAvailable(proxy.delegate) ? 1 : 0.5}`,
                           textAlign: 'center'
                         }}
                         xs={12}
@@ -210,12 +223,29 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                           justifyContent='center'
                           xs={2.5}
                         >
-                          <Typography
-                            fontSize='12px'
-                            fontWeight={400}
-                          >
-                            {isAvailable(proxy.delegate) ? 'Yes' : 'No'}
-                          </Typography>
+                          {onSelect
+                            ? <FormControlLabel
+                              control={
+                                <Radio
+                                  // checked={selectedIndex === index}
+                                  sx={{ color: 'red' }}
+                                  disabled={!isAvailable(proxy.delegate)}
+                                  onChange={handleOptionChange}
+                                  size='small'
+                                  value={index}
+                                />
+                              }
+                              label=''
+                              sx={{ pl: '20px' }}
+                              value={index}
+                            />
+                            : <Typography
+                              fontSize='12px'
+                              fontWeight={400}
+                            >
+                              {isAvailable(proxy.delegate) ? 'Yes' : 'No'}
+                            </Typography>
+                          }
                         </Grid>
                       </Grid>
                     );
@@ -261,8 +291,8 @@ export default function ProxyTable({ addressesOnThisChain, chain, label, withRem
                 )
               )}
           </Grid>
-        </Label>
-      </Grid>
+        </Label >
+      </Grid >
     </>
   );
 }

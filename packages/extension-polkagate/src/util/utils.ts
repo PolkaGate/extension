@@ -122,7 +122,11 @@ export function handleAccountBalance(balance: any): { available: bigint, feeFroz
   };
 }
 
-export function getSubstrateAddress(address: string): string {
+export function getSubstrateAddress(address: string | undefined): string | undefined {
+  if (!address) {
+    return undefined;
+  }
+  
   const publicKey = decodeAddress(address);
 
   return encodeAddress(publicKey, 42);

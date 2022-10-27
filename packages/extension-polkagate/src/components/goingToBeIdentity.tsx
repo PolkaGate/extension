@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { useAccount, useMetadata,useTranslation } from '../hooks';
+import { useAccount, useMetadata, useTranslation } from '../hooks';
 import { ChainLogo, Identicon } from '.';
 
 interface Props {
@@ -58,9 +58,9 @@ export default function Identity({ address, name, showChainLogo = false, style }
           <Typography
             fontSize='28px'
             fontWeight={400}
-            whiteSpace='nowrap'
             overflow='hidden'
             textOverflow='ellipsis'
+            whiteSpace='nowrap'
           >
             {name || account?.name || t<string>('unknown')}
           </Typography>
