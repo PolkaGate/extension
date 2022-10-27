@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
@@ -14,8 +14,6 @@ import { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { updateMeta } from '../messaging';
 import { PLUS_VERSION } from '../util/constants';
-import { SavedMetaData } from '../util/plusTypes';
-import { prepareMetaData } from '../util/utils';
 
 export default function useCleanUp(accounts: AccountJson[] | undefined, address: string | null | undefined): void {
   const history: string[] = [];

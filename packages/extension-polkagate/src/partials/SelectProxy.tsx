@@ -11,6 +11,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, PButton, ProxyTable } from '../components'
 import { useMetadata, useTranslation } from '../hooks';
+import useRedirectOnRefresh from '../hooks/useRedirectOnRefresh';
 import { createAccountExternal } from '../messaging';
 import { HeaderBrand } from '../partials';
 import { Proxy } from '../util/types';
@@ -23,6 +24,8 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
   const { t } = useTranslation();
   const history = useHistory();
   const { state } = useLocation();
+
+  useRedirectOnRefresh('/');
   const { genesisHash, proxiedAddress } = useParams<{ proxiedAddress: string, genesisHash: string }>();
   const chain = useMetadata(genesisHash, true);
 
@@ -42,6 +45,9 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
   //     return result;
   //   }, []);
   // }, [accounts, chain?.ss58Format]);
+  const backPath: string = state?.pathname ?? '/';
+
+
 
   useEffect(() => {
     // eslint-disable-next-line no-void

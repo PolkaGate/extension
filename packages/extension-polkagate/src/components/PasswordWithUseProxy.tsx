@@ -44,6 +44,7 @@ export default function PasswordWithUseProxy({ api, genesisHash, defaultValue, d
       setIsPasswordError(false);
     }, []
   );
+  
   const goToSelectProxy = useCallback(
     (): void => {
       proxiedAddress && history.push({

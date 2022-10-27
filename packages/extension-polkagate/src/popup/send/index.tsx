@@ -67,7 +67,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
-  const passwordForName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(state?.selectedProxy?.delegate))?.name, [accounts, state]);
+  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(state?.selectedProxy?.delegate))?.name, [accounts, state]);
   const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
 
   useEffect((): void => {
@@ -318,7 +318,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             proxiedAddress={formatted}
             isError={isPasswordError}
             // isFocused
-            label={`${t<string>('Password')} for ${passwordForName || accountName}`}
+            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
             onChange={onChangePass}
           />
         </div>
