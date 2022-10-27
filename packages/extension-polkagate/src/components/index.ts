@@ -22,7 +22,8 @@ export { default as Identity } from './goingToBeIdentity';
 export { default as To } from './To';
 export { default as ButtonWithCancel } from './ButtonWithCancel';
 export { default as IButton } from './IButton';
-export { default as Motion } from './Motion';
+export { default as Identicon } from './Identicon';
+export { default as InputFilter } from './InputFilter';
 export { default as Switch } from './Switch';
 export { default as RemoveAuth } from './RemoveAuth';
 export { default as MenuItem } from './MenuItem';
@@ -31,15 +32,18 @@ export { default as InputFileWithLabel } from './InputFileWithLabel';
 export { default as InputWithLabelAndIdenticon } from './InputWithLabelAndIdenticon';
 export { default as InputWithLabel } from './InputWithLabel';
 export { default as Password } from './Password';
+export { default as PasswordWithUseProxy } from './PasswordWithUseProxy';
 export { default as ProxyTable } from './ProxyTable';
-export { default as ValidatedInput } from './ValidatedInput';
 export { default as PButton } from './PButton';
+export { default as Progress } from './Progress';
+export { default as ValidatedInput } from './ValidatedInput';
+export { default as Label } from './Label';
+
 export { default as Loading } from './Loading';
 export { default as MnemonicSeed } from './MnemonicSeed';
-export { default as Label } from './Label';
+export { default as Motion } from './Motion';
+
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
-export { default as Identicon } from './Identicon';
-export { default as InputFilter } from './InputFilter';
-export { default as Progress } from './Progress';
+
 
 export * from './contexts';
