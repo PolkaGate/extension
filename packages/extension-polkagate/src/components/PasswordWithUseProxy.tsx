@@ -20,7 +20,7 @@ interface Props {
   isFocused?: boolean;
   isReadOnly?: boolean;
   label: string;
-  onChange: (password: string | undefined, isPasswordError: boolean, selectedProxy: Proxy | undefined) => void;
+  onChange: (password: string | undefined, isPasswordError: boolean) => void;
   onEnter?: () => void;
   placeholder?: string;
   value?: string;
@@ -28,7 +28,7 @@ interface Props {
   genesisHash: string;
 }
 
-export default function PasswordWithUseProxy({ api, genesisHash, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, proxiedAddress, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordWithUseProxy({ api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, proxiedAddress, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -36,7 +36,6 @@ export default function PasswordWithUseProxy({ api, genesisHash, defaultValue, d
   const proxies = useProxies(api, proxiedAddress);
   const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedProxy, setSelected] = useState<Proxy>();
 
   const _onChange = useCallback(
     (pass: string): void => {
@@ -44,7 +43,7 @@ export default function PasswordWithUseProxy({ api, genesisHash, defaultValue, d
       setIsPasswordError(false);
     }, []
   );
-  
+
   const goToSelectProxy = useCallback(
     (): void => {
       proxiedAddress && history.push({
@@ -55,8 +54,8 @@ export default function PasswordWithUseProxy({ api, genesisHash, defaultValue, d
   );
 
   useEffect(() => {
-    onChange(password, isPasswordError, selectedProxy);
-  }, [password, isPasswordError, onChange, selectedProxy]);
+    onChange(password, isPasswordError);
+  }, [password, isPasswordError, onChange]);
 
   return (
     <Grid container>

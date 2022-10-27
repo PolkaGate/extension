@@ -62,12 +62,12 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-
   const [step1, setStep1] = useState(true);
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(state?.selectedProxy?.delegate))?.name, [accounts, state]);
+  const selectedProxy = state?.selectedProxy?.delegate as unknown as string;
+  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxy))?.name, [accounts, state]);
   const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
 
   useEffect((): void => {
@@ -187,13 +187,15 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
   const goToReview = useCallback(() => {
     try {
-      const signer = keyring.getPair(formatted);
+      console.log('state?.selected?.proxy', selectedProxy);
+      console.log('state?.selected?.proxy ?? formatted', selectedProxy ?? formatted);
+      const signer = keyring.getPair(selectedProxy ?? formatted);
 
       signer.unlock(password);
 
       balances && history.push({
         pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-        state: { amount: allMaxAmount ?? amount, api: apiToUse, balances, fee, recipient, recipientName, transfer, transferType }
+        state: { amount: allMaxAmount ?? amount, api: apiToUse, balances, fee, recipient, recipientName, signer, transfer, transferType }
       });
 
       // setIsConfirming(false);
@@ -201,7 +203,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       console.log('Password failed:', e);
       setIsPasswordError(true);
     }
-  }, [address, allMaxAmount, amount, apiToUse, balances, fee, formatted, genesisHash, history, password, recipient, recipientName, transfer, transferType]);
+  }, [address, allMaxAmount, amount, apiToUse, balances, fee, formatted, genesisHash, history, password, recipient, recipientName, state?.selected?.proxy, transfer, transferType]);
 
 
   const identicon = (
@@ -315,11 +317,11 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           <PasswordWithUseProxy
             api={apiToUse || api}
             genesisHash={genesisHash}
+            onChange={onChangePass}
             proxiedAddress={formatted}
             isError={isPasswordError}
             // isFocused
             label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
-            onChange={onChangePass}
           />
         </div>
       </Container>

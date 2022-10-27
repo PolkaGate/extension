@@ -22,7 +22,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { isend, send as sendIcon } from '../../assets/icons';
 import { AccountContext, ActionContext, Button, Header, Identicon, Motion, Password, PButton, ShortAddress } from '../../components';
-import { useMetadata, useTranslation } from '../../hooks';
+import { useMetadata, useRedirectOnRefresh, useTranslation } from '../../hooks';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
@@ -39,8 +39,10 @@ interface TxLog {
   status: 'failed' | 'success';
 }
 
-export default function Send(): React.ReactElement {
+export default function Review(): React.ReactElement {
   const { t } = useTranslation();
+
+  // useRedirectOnRefresh('/');
   const theme = useTheme();
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const { state } = useLocation();
@@ -88,21 +90,6 @@ export default function Send(): React.ReactElement {
   useEffect(() => {
     !state?.amount && onAction(prevUrl);
   }, [state, onAction, prevUrl]);
-
-  useEffect(() => {
-    cryptoWaitReady()
-      .then((): void => {
-        console.log('keyring is loading');
-
-        // load all the keyring data
-        keyring.loadAll({ store: new AccountsStore() });
-
-        console.log('keyring load completed');
-      })
-      .catch((error): void => {
-        console.error('keyring load failed', error);
-      });
-  }, []);
 
   const send = useCallback(async () => {
     try {
