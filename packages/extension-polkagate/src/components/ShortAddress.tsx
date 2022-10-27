@@ -31,7 +31,7 @@ export default function ShortAddress({ address, clipped = false, charsCount = SH
       return;
     }
 
-    const offset = showCopy ? 50 : 10;
+    const offset = showCopy ? 50 : 20;
 
     (cRef?.current?.offsetWidth < pRef?.current?.offsetWidth - offset) && setCharactersCount(charactersCount + 1);
   }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
