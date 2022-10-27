@@ -33,6 +33,7 @@ import ImportLedger from '../../../extension-polkagate/src/popup/import/importLe
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
 import Rename from '../../../extension-polkagate/src/popup/rename';
+import SelectProxy from '../../../extension-polkagate/src/partials/SelectProxy';
 import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
@@ -156,6 +157,7 @@ export default function Popup(): React.ReactElement {
                         <Switch>
                           <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                           <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
+                          <Route path='/selectProxy/:proxiedAddress/:genesisHash'>{wrapWithErrorBoundary(<SelectProxy />, 'select-proxy')}</Route>
                           <Route path='/history/:chainName/:decimal/:token/:formatted'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                           <Route path='/detail/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>
                           <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
