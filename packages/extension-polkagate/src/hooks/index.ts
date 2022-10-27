@@ -1,4 +1,4 @@
-// Copyright 2017-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2017-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { useMapEntries } from './useMapEntries';
@@ -14,3 +14,4 @@ export { default as useToast } from './useToast';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as useProxies } from './useProxies';
 export { default as useAccount } from './useAccount';
+export { default as useRedirectOnRefresh } from './useRedirectOnRefresh';
