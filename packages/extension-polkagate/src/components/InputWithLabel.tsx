@@ -21,9 +21,12 @@ interface Props {
   placeholder?: string;
   value?: string;
   withoutMargin?: boolean;
+  height?: number;
+  fontSize?: number;
+  fontWeight?: number;
 }
 
-function InputWithLabel({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const _checkKey = useCallback(
@@ -65,8 +68,9 @@ function InputWithLabel({ className, defaultValue, disabled, isError, isFocused,
         style={{
           borderColor: isError ? theme.palette.warning.main : theme.palette.secondary.light,
           borderWidth: isError ? '3px' : '1px',
-          fontSize: '18px',
-          fontWeight: 300,
+          fontSize: `${fontSize}px`,
+          fontWeight: { fontWeight },
+          height: `${height}px`,
           padding: 0,
           paddingLeft: '10px'
         }}

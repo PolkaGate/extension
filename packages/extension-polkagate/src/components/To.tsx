@@ -98,7 +98,7 @@ export default function To({ address, label, setAddress, style, name }: Props): 
           />
         </IconButton>
       </Grid>
-      <Grid
+      {address && <Grid
         item
         sx={{
           border: 1,
@@ -119,6 +119,7 @@ export default function To({ address, label, setAddress, style, name }: Props): 
       >
         {name}
       </Grid>
+      }
     </Grid>
   );
 }
