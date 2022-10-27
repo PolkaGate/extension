@@ -21,8 +21,9 @@ interface Props {
 }
 
 export default function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, addressStyle, showCopy = false, inParentheses = false }: Props): React.ReactElement {
-  const [charactersCount, setCharactersCount] = useState<number>(address?.length / 2);
-  const ref = useRef(null);
+  const [charactersCount, setCharactersCount] = useState<number>(1);
+  const pRef = useRef(null);
+  const cRef = useRef(null);
 
   useEffect(() => {
     if (!clipped) {
@@ -30,22 +31,27 @@ export default function ShortAddress({ address, clipped = false, charsCount = SH
       return;
     }
 
-    (ref?.current?.offsetHeight > 30) && setCharactersCount(charactersCount - 1);
-  }, [charsCount, clipped, showCopy, ref.current?.offsetWidth, ref.current?.offsetHeight, charactersCount]);
+    const offset = showCopy ? 50 : 10;
+
+    (cRef?.current?.offsetWidth < pRef?.current?.offsetWidth - offset) && setCharactersCount(charactersCount + 1);
+  }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
 
   return (
     <Grid
       alignItems='center'
       container
       justifyContent='center'
-      ref={ref}
+      ref={pRef}
       sx={{ ...addressStyle }}
+      width='100%'
     >
       <Grid
         item
+        ref={cRef}
+        width='fit-content'
       >
         {inParentheses ? '(' : ''}
-        {!charsCount ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
+        {!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
         {inParentheses ? ')' : ''}
       </Grid>
       {showCopy &&
