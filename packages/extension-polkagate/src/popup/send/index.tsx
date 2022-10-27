@@ -5,7 +5,7 @@
 
 /**
  * @description
- * this component opens social recovery index page to choose between configuring your account and rescuing other account
+ * this component opens 
  * */
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
@@ -23,12 +23,12 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, Password, SettingsContext, ShortAddress, To } from '../../components';
-import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, PasswordWithUseProxy, SettingsContext, ShortAddress, To } from '../../components';
+import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
-import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
+import { amountToHuman, getFormattedAddress, getSubstrateAddress, isValidAddress } from '../../util/utils';
 import BalanceFee from './BalanceFee';
 
 interface Props {
@@ -50,6 +50,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
+
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipient, setRecipient] = useState<string | undefined>(state?.recepient);
@@ -66,6 +67,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
+  const passwordForName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(state?.selectedProxy?.delegate))?.name, [accounts, state]);
   const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
 
   useEffect((): void => {
@@ -222,10 +224,12 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         <Grid item mx='5px'>
           {identicon}
         </Grid>
-        <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px', mr: '5px' }}>
+        <Grid
+          item
+          sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px', maxWidth: '50%', mr: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {accountName}
         </Grid>
-        <Grid item >
+        <Grid item>
           <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', pt: '5px' }} />
         </Grid>
       </Grid>
@@ -280,10 +284,10 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         />
       </Grid>
       <Grid alignItems='flex-end' container item sx={{ pl: '10px', pt: '20px' }} xs={4}>
-        <Grid item onClick={() => setWholeAmount('Max')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
+        <Grid item onClick={() => setWholeAmount('Max')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {t('Max amount')}
         </Grid>
-        <Grid item onClick={() => setWholeAmount('All')} sx={{ textDecorationLine: 'underline', cursor: 'pointer' }}>
+        <Grid item onClick={() => setWholeAmount('All')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {t('All amount')}
         </Grid>
       </Grid>
@@ -308,10 +312,13 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         <Asset />
         <AmountWithMaxAll />
         <div style={{ paddingTop: '10px' }}>
-          <Password
+          <PasswordWithUseProxy
+            api={apiToUse || api}
+            genesisHash={genesisHash}
+            proxiedAddress={formatted}
             isError={isPasswordError}
             // isFocused
-            label={t<string>('Password')}
+            label={`${t<string>('Password')} for ${passwordForName || accountName}`}
             onChange={onChangePass}
           />
         </div>

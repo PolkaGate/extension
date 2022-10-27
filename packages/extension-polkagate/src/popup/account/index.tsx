@@ -112,7 +112,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [price, setPrice] = useState<number | undefined>();
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined | null>(state?.balances as DeriveBalancesAll);
-  const [isRefreshing, setRefresh] = useState<boolean | undefined>(false);
+  const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
   const decimal = apiToUse && apiToUse.registry.chainDecimals[0];
   const token = apiToUse && apiToUse.registry.chainTokens[0];
@@ -128,7 +128,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     setPrice(undefined);
   }, []);
 
-  const onRefreshClick = useCallback(() => !isRefreshing && setRefresh(true), [isRefreshing]);
+  const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
 
   useEffect(() => {
     chain && getPrice(chain).then((price) => {
@@ -171,7 +171,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const getBalances = useCallback(() => {
     apiToUse && formatted &&
       apiToUse.derive.balances?.all(formatted).then((b) => {
-        console.log('setting new balances')
         setBalances(b);
         setRefresh(false);
       }).catch(console.error);
@@ -179,16 +178,16 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    (endpoint || newEndpoint) && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && getBalances();
-  }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint]);
+    (endpoint || newEndpoint) && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && !balances && getBalances();
+  }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint, balances]);
 
   useEffect(() => {
-    if (isRefreshing) {
+    if (refresh) {
       setBalances(null);
       // eslint-disable-next-line no-void
-      void getBalances();
+      // void getBalances();
     }
-  }, [isRefreshing, getBalances]);
+  }, [refresh, getBalances]);
 
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     resetToDefaults();
@@ -222,10 +221,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token &&
-    history.push({
-      pathname: `/history/${chainName}/${decimal}/${token}/${formatted}`,
-      state: { pathname }
-    });
+      history.push({
+        pathname: `/history/${chainName}/${decimal}/${token}/${formatted}`,
+        state: { pathname }
+      });
   }, [chainName, formatted, decimal, token, history, pathname]);
 
   const identicon = (
@@ -306,7 +305,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           <FontAwesomeIcon
             color={theme.palette.mode === 'dark' ? 'white' : 'black'}
             icon={faRefresh}
-            spin={isRefreshing}
+            spin={refresh}
             // onClick={goToSend}
             size='lg'
           />
