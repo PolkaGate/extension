@@ -143,11 +143,11 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
             item
             key={address}
             onClick={_selectParent(address)}
-            sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', pr: '33px', cursor: 'pointer' }}
+            sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', pr: '30px', cursor: 'pointer' }}
           >
             <Grid
               item
-              xs={10.8}
+              xs={10.7}
             >
               <Address
                 address={address}
