@@ -13,9 +13,11 @@ interface Props {
   disabled?: boolean;
   _fontSize?: string;
   _isBusy?: boolean;
+  _ml?: number;
+  _width?: number;
 }
 
-function PButton({ _fontSize = '16px', _isBusy, _mt, _onClick, _variant = 'contained', disabled = false, text }: Props): React.ReactElement<Props> {
+function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant = 'contained', _width = 88, disabled = false, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -50,11 +52,11 @@ function PButton({ _fontSize = '16px', _isBusy, _mt, _onClick, _variant = 'conta
             fontSize: _fontSize,
             fontWeight: 400,
             height: '36px',
-            ml: '6%',
+            ml: `${_ml}%`,
             mt: _mt ?? 0,
             position: !_mt ? 'absolute' : 'inherit',
             textTransform: 'none',
-            width: '88%'
+            width: `${_width}%`
           }}
           variant={_variant}
         >

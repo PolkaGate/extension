@@ -21,10 +21,10 @@ async function getStackingConsts(endpoint) {
     const minNominatorBond = await apiAt.query.staking.minNominatorBond();
 
     return {
-      existentialDeposit: BigInt(existentialDeposit),
+      existentialDeposit,
       maxNominations,
       maxNominatorRewardedPerValidator,
-      minNominatorBond: BigInt(minNominatorBond),
+      minNominatorBond,
       unbondingDuration: bondingDuration * sessionsPerEra * epochDurationInHours / 24 // unboundingDuration in days
     };
   } catch (error) {

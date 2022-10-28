@@ -40,7 +40,6 @@ function ShowBalance2({ api, balance, direction = 'column', title }: Props): Rea
           : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />
         }
       </Grid>
-
     </Grid>
   );
 }
