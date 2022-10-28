@@ -219,6 +219,13 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     });
   }, [history, address, pathname]);
 
+  const goToStaking = useCallback(() => {
+    history.push({
+      pathname: `/staking/${genesisHash}/${formatted}/`,
+      state: { api, pathname }
+    });
+  }, [history, genesisHash, formatted, pathname, api]);
+
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token &&
       history.push({
@@ -285,7 +292,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       />
       <MenuItem
         icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-        onClick={goToSend}
+        onClick={goToStaking}
         title={'Stake'}
       />
       <MenuItem

@@ -45,10 +45,10 @@ export interface AccountsBalanceType {
 }
 
 export interface StakingConsts {
-  existentialDeposit: bigint;
+  existentialDeposit: BN;
   maxNominations: number;
   maxNominatorRewardedPerValidator: number;
-  minNominatorBond: bigint;
+  minNominatorBond: BN;
   unbondingDuration: number
 }
 
