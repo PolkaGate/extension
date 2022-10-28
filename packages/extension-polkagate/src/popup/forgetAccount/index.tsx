@@ -143,7 +143,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           isDanger
           theme={theme}
         >
-          {t('You are about to remove this account. This means you will not be able to access it via this extension anymore. If you want to recover it after, you need to use the Mnemonic seed.')}
+          {t('You are about to remove this account. This means you will not be able to access it via this extension anymore. If you want to recover it after, you need to use the mnemonic seed.')}
         </Warning>
       </Grid>
       <Grid
