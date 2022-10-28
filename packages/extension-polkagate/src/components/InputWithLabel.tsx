@@ -56,7 +56,7 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
       <Input
         autoCapitalize='off'
         autoCorrect='off'
-        autoFocus={isFocused}
+        autoFocus={!offFocus && isFocused}
         defaultValue={defaultValue || undefined}
         disabled={disabled}
         onBlur={_setOffFocus}

@@ -91,7 +91,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
         _mt='10px'
         _onClick={_goToImport}
         _variant={'outlined'}
-        text={t<string>('Import from Mnemonic')}
+        text={t<string>('Import from mnemonic')}
       />
       <PButton
         _mt='10px'

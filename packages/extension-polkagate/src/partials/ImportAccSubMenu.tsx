@@ -85,7 +85,7 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
           icon={theme.palette.mode === 'light' ? keyB : key}
           onClick={_goToImportAcc}
           py='4px'
-          text={t('Import from Mnemonic')}
+          text={t('Import from mnemonic')}
         // onClick={}
         />
         <MenuItem

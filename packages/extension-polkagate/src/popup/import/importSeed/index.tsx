@@ -86,7 +86,7 @@ function ImportSeed(): React.ReactElement {
         textAlign='left'
         width='88%'
       >
-        {t<string>('Enter a Mnemonic seed (recovery phrase) of an account to import it.')}
+        {t<string>('Enter a mnemonic seed (recovery phrase) of an account to import it.')}
       </Typography>
       <div>
         <Address

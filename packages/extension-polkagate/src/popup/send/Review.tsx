@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -13,7 +13,7 @@ import { Avatar, Container, Divider, Grid, Link, Skeleton, useTheme } from '@mui
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -21,12 +21,14 @@ import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { isend, send as sendIcon } from '../../assets/icons';
-import { AccountContext, ActionContext, Button, Header, Identicon, Motion, Password, PButton, ShortAddress } from '../../components';
-import { useMetadata, useTranslation } from '../../hooks';
+import { AccountContext, ActionContext, Button, ButtonWithCancel, FormatBalance, Header, Identicon, Motion, Password, PButton, ShortAddress } from '../../components';
+import { useMetadata, useRedirectOnRefresh, useTranslation } from '../../hooks';
+import { HeaderBrand } from '../../partials';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
+import { toShortAddress } from '../../util/utils';
 
 interface TxLog {
   from: string;
@@ -39,11 +41,14 @@ interface TxLog {
   status: 'failed' | 'success';
 }
 
-export default function Send(): React.ReactElement {
+export default function Review(): React.ReactElement {
   const { t } = useTranslation();
+
+  // useRedirectOnRefresh('/');
   const theme = useTheme();
-  const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
+  const history = useHistory();
   const { state } = useLocation();
+  const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const onAction = useContext(ActionContext);
   const chain = useMetadata(genesisHash, true);
   const { accounts } = useContext(AccountContext);
@@ -52,7 +57,6 @@ export default function Send(): React.ReactElement {
   const [txLog, setTxLog] = useState<TxLog | undefined>();
 
   const prevUrl = isConfirming ? '' : `/send/${genesisHash}/${address}/${formatted}/`;
-  const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
   const network = chain ? chain.name.replace(' Relay Chain', '') : 'westend';
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
@@ -80,7 +84,7 @@ export default function Send(): React.ReactElement {
     <Avatar
       alt={'logo'}
       src={getLogo(chain)}
-      sx={{ height: 25, width: 25 }}
+      sx={{ height: 31, width: 31 }}
       variant='square'
     />
   );
@@ -88,21 +92,6 @@ export default function Send(): React.ReactElement {
   useEffect(() => {
     !state?.amount && onAction(prevUrl);
   }, [state, onAction, prevUrl]);
-
-  useEffect(() => {
-    cryptoWaitReady()
-      .then((): void => {
-        console.log('keyring is loading');
-
-        // load all the keyring data
-        keyring.loadAll({ store: new AccountsStore() });
-
-        console.log('keyring load completed');
-      })
-      .catch((error): void => {
-        console.error('keyring load failed', error);
-      });
-  }, []);
 
   const send = useCallback(async () => {
     try {
@@ -151,6 +140,15 @@ export default function Send(): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
+  const _onBackClick = useCallback(() => {
+    console.log('state?.backPath:', state?.backPath);
+
+    state?.backPath && history.push({
+      pathname: state?.backPath,
+      state: { ...state }
+    });
+  }, [history, state]);
+
   const Trilogy = ({ part1, part2, part3, showDivider = false }: { part1: any, part2: any, part3?: any, showDivider?: boolean }) => (
     <>
       <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', pb: showDivider ? '0px' : '4px' }}>
@@ -169,89 +167,95 @@ export default function Send(): React.ReactElement {
     </>
   );
 
+  const Info = ({ data1, data2, label, noDivider = false, fontSize1 = 28, _pt = 0 }: { fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number }) => (
+    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
+      <Grid item sx={{ fontSize: '16px', pt: `${_pt}px` }}>
+        {label}:
+      </Grid>
+      {/* <Grid item mt='7px' xs={1.5}>
+          {identicon}
+        </Grid> */}
+      <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pt: `${15 - _pt}px`, lineHeight: '20px' }}>
+        {data1}
+      </Grid>
+      {data2 &&
+        <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
+          {data2}
+        </Grid>
+      }
+      {!noDivider &&
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', mb: '10px', width: '240px' }} />
+      }
+    </Grid>
+  );
+
+  const Review = () => (
+    <>
+      <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
+        <Info data1={state?.accountName} data2={toShortAddress(formatted)} label={t('From')} />
+        <Info data1={state?.recipientName} data2={toShortAddress(state?.recipient)} label={t('To')} />
+        <Info
+          data1={
+            <Grid alignItems='center' container item>
+              <Grid item>
+                {ChainLogo}
+              </Grid>
+              <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
+                {state?.api?.registry?.chainTokens[0]}
+              </Grid>
+            </Grid>
+          }
+          label={t('Asset')}
+          noDivider
+        />
+        <Info
+          data1={
+            <FormatBalance api={state?.api} decimalPoint={2} value={state?.fee} />
+          }
+          fontSize1={20}
+          label={t('Fee')}
+          _pt={10}
+        />
+        <Info
+          data1={state?.amount}
+          label={t('Amount')}
+          noDivider
+        />
+      </Container>
+      <ButtonWithCancel
+        _onClick={send}
+        _onClickCancel={_onBackClick}
+        text={t('Send')}
+      />
+    </>
+  )
+
   return (
     <Motion>
-      <Container disableGutters sx={{ px: '30px' }}>
-        <Header address={address} genesisHash={genesisHash} icon={icon} preUrl={prevUrl} state={state}>
-          <div style={{ fontWeight: 500, fontSize: '24px', lineHeight: '36px', letterSpacing: '-0.015em', textAlign: 'center' }}>
-            {t('Send Fund')}
-          </div>
-          <div style={{ fontWeight: 700, fontSize: '11px', lineHeight: '25px', letterSpacing: '-0.015em', textAlign: 'center' }}>
-            {isConfirming ? t('Confirmation') : t('Review')}
-          </div>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '81px', margin: 'auto' }} />
-        </Header>
-      </Container>
-      {!isConfirming &&
-        <>
-          <Container disableGutters sx={{ px: '30px' }}>
-            <Grid alignItems='top' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-              <Grid item sx={{ fontSize: '16px', paddingTop: '15px' }} xs={4}>
-                {t('From')}:
-              </Grid>
-              <Grid alignItems='center' container item sx={{ pt: '15px' }} xs={8}>
-                <Grid item mt='7px' xs={1.5}>
-                  {identicon}
-                </Grid>
-                <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '26px', pl: '8px' }} xs={10.5}>
-                  {accountName}
-                </Grid>
-                <Grid item>
-                  <ShortAddress address={formatted} addressStyle={{ fontSize: '16px' }} />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '8px' }} />
-            <Grid alignItems='top' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-              <Grid item sx={{ fontSize: '16px', paddingTop: '15px' }} xs={4}>
-                {t('Amount')}:
-              </Grid>
-              <Grid alignItems='center' container item sx={{ pt: '15px' }} xs={8}>
-                <Grid item xs={1.5}>
-                  {ChainLogo}
-                </Grid>
-                <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '26px', pl: '8px' }} xs={10.5}>
-                  {state?.amount} {state?.api?.registry?.chainTokens[0]}
-                </Grid>
-                <Grid container item pt='10px'>
-                  <Grid item sx={{ fontSize: '14px', pr: '8px' }}>
-                    {t('Fee')}:
-                  </Grid>
-                  <Grid item sx={{ fontSize: '16px' }}>
-                    {state?.fee?.toHuman()}
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '8px' }} />
-            <Grid alignItems='top' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-              <Grid item sx={{ fontSize: '16px', paddingTop: '15px' }} xs={4}>
-                {t('To')}:
-              </Grid>
-              <Grid alignItems='center' container item sx={{ pt: '15px' }} xs={8}>
-                <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '26px' }} xs={10.5}>
-                  {state?.recepientName}
-                </Grid>
-                <Grid item>
-                  <ShortAddress address={state?.recepient} addressStyle={{ fontSize: '16px' }} />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '1px', mt: '8px' }} />
-            <Grid item sx={{ fontSize: '16px', paddingTop: '15px' }} xs={4}>
-              {t('Password')}:
-            </Grid>
-            <Password setValue={setPassword} value={password} />
-          </Container>
-          <PButton
-            _mt='20px'
-            _onClick={send}
-            _variant='contained'
-            disabled={isConfirming}
-            text={t('Send')}
-          />
-        </>}
-      {isConfirming &&
+      <HeaderBrand
+        onBackClick={_onBackClick}
+        shortBorder
+        showBackArrow
+        text={t<string>('Send Fund')}
+        withSteps={{
+          currentStep: 2,
+          totalSteps: 2
+        }}
+      />
+      <Grid container direction='column' item justifyContent='center' sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '25px', px: '5px' }}>
+        <Grid item sx={{ m: 'auto' }}>
+          {isConfirming ? t('Confirmation') : t('Review')}
+        </Grid>
+        <Grid item>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
+        </Grid>
+      </Grid>
+      {
+        !isConfirming &&
+        <Review />
+      }
+      {
+        isConfirming &&
         <>
           <Container disableGutters sx={{ px: '30px' }}>
             <Grid container justifyContent='center' py='15px'>
@@ -288,7 +292,8 @@ export default function Send(): React.ReactElement {
             _variant='contained'
             text={t('Back to My Account(s)')}
           />
-        </>}
-    </Motion>
+        </>
+      }
+    </Motion >
   );
 }
