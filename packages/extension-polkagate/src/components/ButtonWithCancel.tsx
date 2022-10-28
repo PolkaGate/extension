@@ -80,7 +80,8 @@ export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCance
             sx={{
               borderColor: 'secondary.main',
               borderRadius: '5px',
-              color: theme.palette.mode === 'dark' ? 'text.primary' : 'text.secondary',
+              // color: theme.palette.mode === 'dark' ? 'text.primary' : 'text.secondary',
+              color: 'text.primary',
               fontSize: '18px',
               fontWeight: 400,
               height: '36px',
