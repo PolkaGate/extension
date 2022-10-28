@@ -69,7 +69,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
       <Input
         autoCapitalize='off'
         autoCorrect='off'
-        autoFocus={isFocused}
+        autoFocus={!offFocus && isFocused}
         defaultValue={defaultValue || undefined}
         disabled={disabled}
         onBlur={_setOffFocus}
