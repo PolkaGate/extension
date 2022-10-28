@@ -41,7 +41,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
   const history = useHistory();
-  const { state } = useLocation();
+  const { pathname, state } = useLocation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
 
@@ -62,7 +62,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [step1, setStep1] = useState(true);
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
@@ -148,28 +147,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       .then((i) => setMaxFee(i?.partialFee)).catch(console.error);
   }, [apiToUse, formatted, transfer, balances]);
 
-  const _onCancelClick = useCallback(
-    () => setStep1(true),
-    []
-  );
-
-  const _onBackClick = useCallback(() => {
-    step1
-      ? history.push({
-        pathname: `/account/${genesisHash}/${address}/${formatted}/`,
-        state: { balances, api: apiToUse, price: state?.price as number | undefined }
-      })
-      : _onCancelClick();
-  }, [_onCancelClick, address, apiToUse, balances, formatted, genesisHash, history, state?.price, step1]);
-
-
-  // const goToReview = useCallback(() => {
-  //   balances && history.push({
-  //     pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-  //     state: { amount: allMaxAmount ?? amount, api: apiToUse, balances, fee, recepient: recipient, recepientName: recipientName, transfer, transferType }
-  //   });
-  // }, [balances, history, genesisHash, address, formatted, allMaxAmount, amount, apiToUse, fee, recipient, recipientName, transfer, transferType]);
-
   useEffect(() => {
     cryptoWaitReady()
       .then((): void => {
@@ -185,17 +162,22 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       });
   }, []);
 
+  const _onBackClick = useCallback(() => {
+    history.push({
+      pathname: `/account/${genesisHash}/${address}/${formatted}/`,
+      state: { balances, api: apiToUse, price: state?.price as number | undefined, selectedProxy: state?.selectedProxy }
+    });
+  }, [address, apiToUse, balances, formatted, genesisHash, history, state?.price, state?.selectedProxy]);
+
   const goToReview = useCallback(() => {
     try {
-      console.log('state?.selected?.proxy', selectedProxy);
-      console.log('state?.selected?.proxy ?? formatted', selectedProxy ?? formatted);
       const signer = keyring.getPair(selectedProxy ?? formatted);
 
       signer.unlock(password);
 
       balances && history.push({
         pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-        state: { amount: allMaxAmount ?? amount, api: apiToUse, balances, fee, recipient, recipientName, signer, transfer, transferType }
+        state: { accountName, amount: allMaxAmount ?? amount, api: apiToUse, backPath: pathname, balances, fee, recipient, recipientName, signer, transfer, transferType }
       });
 
       // setIsConfirming(false);
@@ -203,8 +185,17 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       console.log('Password failed:', e);
       setIsPasswordError(true);
     }
-  }, [address, allMaxAmount, amount, apiToUse, balances, fee, formatted, genesisHash, history, password, recipient, recipientName, state?.selected?.proxy, transfer, transferType]);
+  }, [accountName, address, allMaxAmount, amount, apiToUse, balances, fee, formatted, genesisHash, history, password, pathname, recipient, recipientName, selectedProxy, transfer, transferType]);
 
+  const _onChangeAmount = useCallback((value: string) => {
+    if (parseInt(value).toString().length > decimals - 1) {
+      console.log(`The amount digits is more than decimal:${decimals}`);
+
+      return;
+    }
+
+    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+  }, [decimals]);
 
   const identicon = (
     <Identicon
@@ -261,40 +252,34 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     </Grid>
   );
 
-  const _onChangeAmount = useCallback((value: string) => {
-    if (parseInt(value).toString().length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+  const AmountWithMaxAll = () => {
+    const value = state?.amount || allMaxAmount || amount;
 
-      return;
-    }
-
-    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
-
-  const AmountWithMaxAll = () => (
-    <Grid container item pt='5px' xs={12}>
-      <Grid item xs={8}>
-        <InputWithLabel
-          fontSize={28}
-          fontWeight={400}
-          height={50}
-          isFocused={!password && !!recipient}
-          label={t('Amount')}
-          onChange={_onChangeAmount}
-          placeholder={'00.00'}
-          value={allMaxAmount || amount}
-        />
-      </Grid>
-      <Grid alignItems='flex-end' container item sx={{ pl: '10px', pt: '20px' }} xs={4}>
-        <Grid item onClick={() => setWholeAmount('Max')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-          {t('Max amount')}
+    return (
+      <Grid container item pt='5px' xs={12}>
+        <Grid item xs={8}>
+          <InputWithLabel
+            fontSize={28}
+            fontWeight={400}
+            height={50}
+            isFocused={!!recipient && !password}
+            label={t('Amount')}
+            onChange={_onChangeAmount}
+            placeholder={'00.00'}
+            value={value}
+          />
         </Grid>
-        <Grid item onClick={() => setWholeAmount('All')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-          {t('All amount')}
+        <Grid alignItems='flex-end' container item sx={{ pl: '10px', pt: '20px' }} xs={4}>
+          <Grid item onClick={() => setWholeAmount('Max')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+            {t('Max amount')}
+          </Grid>
+          <Grid item onClick={() => setWholeAmount('All')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+            {t('All amount')}
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  );
+    )
+  };
 
   return (
     <Motion>
@@ -304,13 +289,13 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         showBackArrow
         text={t<string>('Send Fund')}
         withSteps={{
-          currentStep: `${step1 ? 1 : 2}`,
+          currentStep: 1,
           totalSteps: 2
         }}
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <From />
-        <To address={recipient} label={t('To')} name={recipientName} setAddress={setRecipient} style={{ pt: '10px' }} />
+        <To address={state?.recipient || recipient} label={t('To')} name={recipientName} setAddress={setRecipient} style={{ pt: '10px' }} />
         <Asset />
         <AmountWithMaxAll />
         <div style={{ paddingTop: '10px' }}>
