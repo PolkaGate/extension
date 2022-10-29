@@ -1,23 +1,67 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import { QuestionMarkRounded as QuestionMarkRoundedIcon } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
   children: React.ReactNode;
-  className?: string;
   label: string;
   style?: React.CSSProperties | undefined;
+  helperText?: string;
 }
 
-function Label({ children, className, label, style }: Props): React.ReactElement<Props> {
+function Label({ children, helperText = '', label, style }: Props): React.ReactElement<Props> {
+  const ref = useRef(null);
+  const [tpLocation, setTpLocation] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (ref) {
+      setTpLocation(`${ref.current?.offsetWidth + 10}px`);
+    }
+  }, [ref.current?.offsetWidth, tpLocation]);
+
   return (
     <div
-      className={className}
       style={{ ...style }}
     >
-      <label>{label}</label>
+      <label ref={ref}>{label}</label>
+      {helperText?.length > 0 &&
+        <Tooltip
+          arrow
+          componentsProps={{
+            tooltip: {
+              sx: {
+                '& .MuiTooltip-arrow': {
+                  color: 'text.primary',
+                  height: '10px'
+                },
+                backgroundColor: 'text.primary',
+                color: 'text.secondary',
+                fontSize: '14px',
+                fontWeight: 400
+              }
+            }
+          }}
+          placement='top'
+          title={helperText}
+        >
+          <QuestionMarkRoundedIcon
+            sx={{
+              bgcolor: 'secondary.light',
+              borderRadius: '50%',
+              color: 'background.default',
+              height: '16px',
+              left: tpLocation,
+              position: 'absolute',
+              top: '4px',
+              width: '16px'
+            }}
+          />
+        </Tooltip>
+      }
       {children}
     </div>
   );
