@@ -24,9 +24,10 @@ interface Props {
   height?: number;
   fontSize?: number;
   fontWeight?: number;
+  helperText?: string;
 }
 
-function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel({ className, defaultValue, helperText, disabled, fontSize = 18, fontWeight = 300, height = 31, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const _checkKey = useCallback(
@@ -52,6 +53,7 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
       style={{ position: 'relative', letterSpacing: '-0.015em' }}
+      helperText={helperText}
     >
       <Input
         autoCapitalize='off'
