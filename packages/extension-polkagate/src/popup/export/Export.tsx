@@ -75,6 +75,7 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
           width='92%'
         >
           <Warning
+            fontWeight={400}
             isBelowInput
             isDanger
             theme={theme}
