@@ -206,7 +206,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [address, chainName]);
 
   const goToSend = useCallback(() => {
-    balances && history.push({
+    // balances && 
+    history.push({
       pathname: `/send/${genesisHash}/${address}/${formatted}/`,
       state: { balances, api: apiToUse, price }
     });
