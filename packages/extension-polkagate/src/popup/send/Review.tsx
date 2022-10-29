@@ -60,6 +60,7 @@ export default function Review(): React.ReactElement {
   const network = chain ? chain.name.replace(' Relay Chain', '') : 'westend';
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
+  const token = state?.api?.registry?.chainTokens[0] ?? '';
 
   const icon = (
     <Avatar
@@ -141,8 +142,6 @@ export default function Review(): React.ReactElement {
   }, [onAction]);
 
   const _onBackClick = useCallback(() => {
-    console.log('state?.backPath:', state?.backPath);
-
     state?.backPath && history.push({
       pathname: state?.backPath,
       state: { ...state }
@@ -167,24 +166,39 @@ export default function Review(): React.ReactElement {
     </>
   );
 
-  const Info = ({ data1, data2, label, noDivider = false, fontSize1 = 28, _pt = 0 }: { fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number }) => (
+  const Info = ({ data1, data2, label, noDivider = false, fontSize1 = 28, _pt = 0, showIdenticon }: { fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number, showIdenticon?: boolean }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${_pt}px` }}>
         {label}:
       </Grid>
-      {/* <Grid item mt='7px' xs={1.5}>
-          {identicon}
-        </Grid> */}
-      <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pt: `${15 - _pt}px`, lineHeight: '20px' }}>
-        {data1}
+      <Grid container item sx={{ pt: `${5 - _pt}px`, lineHeight: '20px' }} alignItems='center' justifyContent='center'>
+        {showIdenticon && state?.chain &&
+          <Grid item>
+            <Identicon
+              iconTheme={state?.chain?.icon || 'polkadot'}
+              prefix={state?.chain?.ss58Format ?? 42}
+              size={31}
+              value={data2}
+            />
+          </Grid>
+        }
+        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '10px' }}>
+          {data1}
+        </Grid>
       </Grid>
       {data2 &&
-        <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
-          {data2}
-        </Grid>
+        <>
+          {showIdenticon
+            ? <ShortAddress address={data2} />
+            : <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
+              {data2}
+            </Grid>
+          }
+        </>
       }
-      {!noDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', mb: '10px', width: '240px' }} />
+      {
+        !noDivider &&
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: '10px', mt: '5px', width: '240px' }} />
       }
     </Grid>
   );
@@ -192,17 +206,19 @@ export default function Review(): React.ReactElement {
   const Review = () => (
     <>
       <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
-        <Info data1={state?.accountName} data2={toShortAddress(formatted)} label={t('From')} />
-        <Info data1={state?.recipientName} data2={toShortAddress(state?.recipient)} label={t('To')} />
+        <Info data1={state?.accountName} data2={formatted} label={t('From')} showIdenticon />
+        <Info data1={state?.recipientName} data2={state?.recipient} label={t('To')} showIdenticon />
         <Info
           data1={
             <Grid alignItems='center' container item>
               <Grid item>
                 {ChainLogo}
               </Grid>
-              <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-                {state?.api?.registry?.chainTokens[0]}
-              </Grid>
+              {state &&
+                <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
+                  {token}
+                </Grid>
+              }
             </Grid>
           }
           label={t('Asset')}
@@ -210,11 +226,11 @@ export default function Review(): React.ReactElement {
         />
         <Info
           data1={
-            <FormatBalance api={state?.api} decimalPoint={2} value={state?.fee} />
+            state?.api && <FormatBalance api={state?.api} decimalPoint={2} value={state?.fee} />
           }
           fontSize1={20}
           label={t('Fee')}
-          _pt={10}
+        // _pt={10}
         />
         <Info
           data1={state?.amount}
@@ -228,7 +244,7 @@ export default function Review(): React.ReactElement {
         text={t('Send')}
       />
     </>
-  )
+  );
 
   return (
     <Motion>
@@ -265,7 +281,7 @@ export default function Review(): React.ReactElement {
               }
             </Grid>
             <Trilogy part1={t('From')} part2={accountName} part3={<ShortAddress address={formatted} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
-            <Trilogy part1={t('Amount')} part2={state?.amount} part3={state?.api?.registry?.chainTokens[0]} />
+            <Trilogy part1={t('Amount')} part2={state?.amount} part3={token} />
             <Trilogy part1={t('Fee')} part2={state?.fee?.toHuman()} showDivider />
             <Trilogy part1={t('To')} part2={state?.recepientName} part3={<ShortAddress address={state?.recepient} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
             <Trilogy part1={t('Block')} part2={txLog?.block ? `#${txLog?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
@@ -294,6 +310,6 @@ export default function Review(): React.ReactElement {
           />
         </>
       }
-    </Motion >
+    </Motion>
   );
 }

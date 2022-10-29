@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { faPaste } from '@fortawesome/free-solid-svg-icons';
@@ -10,17 +10,18 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
 import isValidAddress from '../util/validateAddress';
-import { Input } from './TextInputs';
+import { Identicon, Input } from './';
 
 interface Props {
-  label: string;
-  style?: SxProps<Theme>;
   address: string | undefined;
-  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  chain: Chain | null;
+  label: string;
   name?: string;
+  style?: SxProps<Theme>;
+  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function To({ address, label, setAddress, style, name }: Props): React.ReactElement<Props> {
+export default function To({ address, chain, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const { t } = useTranslation();
@@ -56,8 +57,8 @@ export default function To({ address, label, setAddress, style, name }: Props): 
     >
       <Grid
         item
-        xs={12}
         sx={{ position: 'relative' }}
+        xs={12}
       >
         <Typography sx={{ fontSize: '16px' }}>
           {label}
@@ -81,7 +82,6 @@ export default function To({ address, label, setAddress, style, name }: Props): 
           type='text'
           value={address ?? ''}
           withError={offFocus && address !== undefined && !isValidAddress(address)}
-
         />
         <IconButton
           onClick={pasteAddress}
@@ -98,27 +98,50 @@ export default function To({ address, label, setAddress, style, name }: Props): 
           />
         </IconButton>
       </Grid>
-      {address && <Grid
-        item
-        sx={{
-          border: 1,
-          borderTop: 0,
-          borderColor: theme.palette.secondary.light,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          height: '38px',
-          fontSize: '28px',
-          fontWeight: 400,
-          letterSpacing: '-0.015em',
-          borderBottomLeftRadius: '5%',
-          borderBottomRightRadius: '5%',
-          pl: '7px'
-        }}
-        xs={12}
-      >
-        {name}
-      </Grid>
+      {address && chain &&
+        <Grid
+          alignItems='center'
+          container
+          item
+          sx={{
+            border: 1,
+            borderBottomLeftRadius: '5%',
+            borderBottomRightRadius: '5%',
+            borderColor: theme.palette.secondary.light,
+            borderTop: 0,
+            fontSize: '28px',
+            fontWeight: 400,
+            // height: '38px',
+            letterSpacing: '-0.015em',
+            py: '2px',
+            pl: '7px'
+          }}
+          xs={12}
+        >
+          <Grid
+            item
+            xs={1.3}
+          >
+            <Identicon
+              iconTheme={chain?.icon || 'polkadot'}
+              prefix={chain?.ss58Format ?? 42}
+              size={31}
+              value={address}
+            />
+          </Grid>
+          <Grid
+            item
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              pl: '5px'
+            }}
+            xs
+          >
+            {name}
+          </Grid>
+        </Grid>
       }
     </Grid>
   );
