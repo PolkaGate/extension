@@ -25,7 +25,7 @@ function Label({ children, helperText = '', label, style }: Props): React.ReactE
 
   return (
     <div
-      style={{ ...style }}
+      style={{ textAlign: 'left', ...style }}
     >
       <label ref={ref}>{label}</label>
       {helperText?.length > 0 &&
