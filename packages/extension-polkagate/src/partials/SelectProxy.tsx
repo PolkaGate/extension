@@ -70,11 +70,13 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
       <ProxyTable
         chain={chain}
         label={t<string>('Proxies')}
+        maxHeight={window.innerHeight / 2}
         onSelect={onSelect}
         proxies={state?.proxies}
         style={{
           m: '20px auto',
-          width: '92%'
+          width: '92%',
+
         }}
       />
       <PButton

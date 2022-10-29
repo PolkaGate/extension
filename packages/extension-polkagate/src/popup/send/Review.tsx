@@ -166,12 +166,40 @@ export default function Review(): React.ReactElement {
     </>
   );
 
+  const AsProxy = ({ proxyName, proxyAddress, fontSize1 = 28}: { fontSize1?: number, proxyName: string | Element, proxyAddress?: string }) => (
+    <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
+      <Grid item sx={{ fontSize: '16px' }}>
+        {t('Through')}
+      </Grid>
+      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
+      <Grid container item sx={{ lineHeight: '28px' }} alignItems='center' justifyContent='center'>
+        {showIdenticon && state?.chain &&
+          <Grid item>
+            <Identicon
+              iconTheme={state?.chain?.icon || 'polkadot'}
+              prefix={state?.chain?.ss58Format ?? 42}
+              size={31}
+              value={proxyAddress}
+            />
+          </Grid>
+        }
+        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '10px' }}>
+          {proxyName}
+        </Grid>
+      </Grid>
+      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
+      <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
+        {t('as proxy')}
+      </Grid>
+    </Grid>
+  );
+
   const Info = ({ data1, data2, label, noDivider = false, fontSize1 = 28, _pt = 0, showIdenticon }: { fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number, showIdenticon?: boolean }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${_pt}px` }}>
         {label}:
       </Grid>
-      <Grid container item sx={{ pt: `${5 - _pt}px`, lineHeight: '20px' }} alignItems='center' justifyContent='center'>
+      <Grid container item sx={{ pt: `${5 - _pt}px`, lineHeight: '28px' }} alignItems='center' justifyContent='center'>
         {showIdenticon && state?.chain &&
           <Grid item>
             <Identicon
@@ -207,6 +235,7 @@ export default function Review(): React.ReactElement {
     <>
       <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
         <Info data1={state?.accountName} data2={formatted} label={t('From')} showIdenticon />
+        <AsProxy proxyAddress={state?.proxyAddress} proxyName={state?.proxyName} />
         <Info data1={state?.recipientName} data2={state?.recipient} label={t('To')} showIdenticon />
         <Info
           data1={

@@ -26,15 +26,14 @@ interface Props {
   maxHeight?: string;
 }
 
-export default function ProxyTable({ addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '109px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
-  const [selectedIndex, setSelectedIndex] = useState<number>();
 
   const isAvailable = useCallback((address: string): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(address))
-    , [accounts]);
+  , [accounts]);
 
   const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
@@ -228,10 +227,10 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
                               control={
                                 <Radio
                                   // checked={selectedIndex === index}
-                                  sx={{ color: 'red' }}
                                   disabled={!isAvailable(proxy.delegate)}
                                   onChange={handleOptionChange}
                                   size='small'
+                                  sx={{ color: 'red' }}
                                   value={index}
                                 />
                               }
@@ -291,8 +290,8 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
                 )
               )}
           </Grid>
-        </Label >
-      </Grid >
+        </Label>
+      </Grid>
     </>
   );
 }

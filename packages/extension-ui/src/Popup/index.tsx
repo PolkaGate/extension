@@ -41,7 +41,7 @@ import Receive from '../../../extension-polkagate/src/popup/receive/Receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
 import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
-import Staking from '../../../extension-polkagate/src/popup/staking';
+import Staking from '../../../extension-polkagate/src/popup/stake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
