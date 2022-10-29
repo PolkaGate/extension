@@ -66,7 +66,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
   const selectedProxy = state?.selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxy))?.name, [accounts, state]);
+  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxy))?.name, [accounts, selectedProxy]);
   const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
 
   useEffect((): void => {
@@ -165,9 +165,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const _onBackClick = useCallback(() => {
     history.push({
       pathname: `/account/${genesisHash}/${address}/${formatted}/`,
-      state: { balances, api: apiToUse, price: state?.price as number | undefined, selectedProxy: state?.selectedProxy }
+      state: { balances, api: apiToUse, price: state?.price as number | undefined, selectedProxy }
     });
-  }, [address, apiToUse, balances, formatted, genesisHash, history, state?.price, state?.selectedProxy]);
+  }, [address, apiToUse, balances, formatted, genesisHash, history, state?.price, selectedProxy]);
 
   const goToReview = useCallback(() => {
     try {
@@ -177,15 +177,29 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
       balances && history.push({
         pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-        state: { accountName, amount: allMaxAmount ?? amount, api: apiToUse, chain, backPath: pathname, balances, fee, recipient, recipientName, signer, transfer, transferType }
+        state: {
+          accountName,
+          amount: allMaxAmount ?? amount,
+          api: apiToUse,
+          chain,
+          backPath: pathname,
+          balances,
+          fee,
+          recipient,
+          recipientName,
+          signer,
+          transfer,
+          transferType,
+          selectedPrxy,
+          selectedProxyName
+        }
       });
-
       // setIsConfirming(false);
     } catch (e) {
       console.log('Password failed:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, address, allMaxAmount, amount, apiToUse, balances, fee, formatted, genesisHash, history, password, pathname, recipient, recipientName, selectedProxy, transfer, transferType]);
+  }, [accountName, address, allMaxAmount, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, password, pathname, recipient, recipientName, selectedProxy, selectedProxyName, transfer, transferType]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (parseInt(value).toString().length > decimals - 1) {
