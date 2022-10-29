@@ -44,9 +44,9 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
   const handleNext = useCallback(() => {
     proxiedAddress && history.push({
       pathname: backPath,
-      state: { selectedProxy }
+      state: { selectedProxy, ...state.prevState }
     });
-  }, [backPath, history, proxiedAddress, selectedProxy]);
+  }, [backPath, history, proxiedAddress, selectedProxy, state]);
 
   const onSelect = useCallback((selected: Proxy) => {
     setSelectedProxy(selected);
@@ -70,13 +70,12 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
       <ProxyTable
         chain={chain}
         label={t<string>('Proxies')}
-        maxHeight={window.innerHeight / 2}
+        maxHeight='50%'
         onSelect={onSelect}
         proxies={state?.proxies}
         style={{
           m: '20px auto',
-          width: '92%',
-
+          width: '92%'
         }}
       />
       <PButton

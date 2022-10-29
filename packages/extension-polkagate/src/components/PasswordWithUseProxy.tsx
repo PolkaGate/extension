@@ -26,9 +26,10 @@ interface Props {
   value?: string;
   withoutMargin?: boolean;
   genesisHash: string;
+  prevState?: Record<string, any>;
 }
 
-export default function PasswordWithUseProxy({ api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, proxiedAddress, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordWithUseProxy({ api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -48,9 +49,9 @@ export default function PasswordWithUseProxy({ api, defaultValue, disabled, gene
     (): void => {
       proxiedAddress && history.push({
         pathname: `/selectProxy/${proxiedAddress}/${genesisHash}`,
-        state: { pathname, proxies }
+        state: { pathname, prevState, proxies }
       });
-    }, [genesisHash, history, pathname, proxiedAddress, proxies]
+    }, [genesisHash, history, pathname, proxiedAddress, proxies, prevState]
   );
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function PasswordWithUseProxy({ api, defaultValue, disabled, gene
           withoutMargin={withoutMargin}
         />
       </Grid>
-      {!!proxies?.length &&
+      {(!!proxies?.length || prevState?.selectedProxyAddress) &&
         <Grid
           item
           onClick={goToSelectProxy}

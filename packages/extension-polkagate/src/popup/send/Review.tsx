@@ -62,25 +62,6 @@ export default function Review(): React.ReactElement {
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
   const token = state?.api?.registry?.chainTokens[0] ?? '';
 
-  const icon = (
-    <Avatar
-      alt={'logo'}
-      src={theme.palette.mode === 'dark' ? sendIcon : isend}
-      sx={{ height: '64px', width: '86px' }}
-    />);
-
-  const identicon = (
-    <Identicon
-      className='identityIcon'
-      iconTheme={chain?.icon || 'polkadot'}
-      // isExternal={isExternal}
-      // onCopy={_onCopy}
-      prefix={chain?.ss58Format ?? 42}
-      size={25}
-      value={formatted}
-    />
-  );
-
   const ChainLogo = (
     <Avatar
       alt={'logo'}
@@ -100,7 +81,7 @@ export default function Review(): React.ReactElement {
         return;
       }
 
-      const { api, amount, transferType, transfer, recepient } = state;
+      const { api, amount, transferType, transfer, recepientAddress } = state;
       const signer = keyring.getPair(formatted);
 
       signer.unlock(password);
@@ -110,18 +91,18 @@ export default function Review(): React.ReactElement {
       if (['All', 'Max'].includes(transferType)) {
         const keepAlive = transferType === 'Max';
 
-        params = [recepient, keepAlive];
+        params = [recepientAddress, keepAlive];
       } else {
         const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
 
-        params = [recepient, amountAsBN];
+        params = [recepientAddress, amountAsBN];
       }
 
       const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted);
 
       setTxLog({
         from: formatted,
-        to: recepient,
+        to: recepientAddress,
         block: block || 0,
         txHash: txHash || '',
         amount,
@@ -166,40 +147,45 @@ export default function Review(): React.ReactElement {
     </>
   );
 
-  const AsProxy = ({ proxyName, proxyAddress, fontSize1 = 28}: { fontSize1?: number, proxyName: string | Element, proxyAddress?: string }) => (
+  const AsProxy = ({ address, name }: { name: string | Element, address: string }) => (
     <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '16px' }}>
+      <Grid item sx={{ fontSize: '12px' }} xs={2}>
         {t('Through')}
       </Grid>
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
-      <Grid container item sx={{ lineHeight: '28px' }} alignItems='center' justifyContent='center'>
-        {showIdenticon && state?.chain &&
-          <Grid item>
-            <Identicon
-              iconTheme={state?.chain?.icon || 'polkadot'}
-              prefix={state?.chain?.ss58Format ?? 42}
-              size={31}
-              value={proxyAddress}
-            />
+      <Grid alignItems='center' container item justifyContent='center' sx={{ width: 'fit-content', px: '2px', maxWidth: '66%' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
+          {state?.chain &&
+            <Grid item>
+              <Identicon
+                iconTheme={state?.chain?.icon || 'polkadot'}
+                prefix={state?.chain?.ss58Format ?? 42}
+                size={25}
+                value={address}
+              />
+            </Grid>
+          }
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '10px' }}>
+            {name}
+            <Grid item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '12px', width: 'fit-content' }}>
+              <ShortAddress address={address} />
+            </Grid>
           </Grid>
-        }
-        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '10px' }}>
-          {proxyName}
         </Grid>
       </Grid>
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
-      <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
+      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2}>
         {t('as proxy')}
       </Grid>
     </Grid>
   );
 
-  const Info = ({ data1, data2, label, noDivider = false, fontSize1 = 28, _pt = 0, showIdenticon }: { fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number, showIdenticon?: boolean }) => (
+  const Info = ({ _pt1 = 0, _pt2 = 5, _mb = 10, data1, data2, fontSize1 = 28, label, noDivider = false, showIdenticon, showProxy }: { _mb?: number, _pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number, showIdenticon?: boolean, showProxy?: boolean }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '16px', pt: `${_pt}px` }}>
-        {label}:
+      <Grid item sx={{ fontSize: '16px', pt: `${_pt1}px` }}>
+        {label}
       </Grid>
-      <Grid container item sx={{ pt: `${5 - _pt}px`, lineHeight: '28px' }} alignItems='center' justifyContent='center'>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${_pt2}px`, lineHeight: '28px' }}>
         {showIdenticon && state?.chain &&
           <Grid item>
             <Identicon
@@ -224,9 +210,11 @@ export default function Review(): React.ReactElement {
           }
         </>
       }
-      {
-        !noDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: '10px', mt: '5px', width: '240px' }} />
+      {state?.selectedProxyAddress && showProxy &&
+        <AsProxy address={state?.selectedProxyAddress} name={state?.selectedProxyName} />
+      }
+      {!noDivider &&
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${_mb}px`, mt: '5px', width: '240px' }} />
       }
     </Grid>
   );
@@ -234,9 +222,8 @@ export default function Review(): React.ReactElement {
   const Review = () => (
     <>
       <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
-        <Info data1={state?.accountName} data2={formatted} label={t('From')} showIdenticon />
-        <AsProxy proxyAddress={state?.proxyAddress} proxyName={state?.proxyName} />
-        <Info data1={state?.recipientName} data2={state?.recipient} label={t('To')} showIdenticon />
+        <Info data1={state?.accountName} data2={formatted} label={t('From')} showIdenticon showProxy />
+        <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} showIdenticon _pt1={0} _pt2={0} />
         <Info
           data1={
             <Grid alignItems='center' container item>
@@ -251,6 +238,7 @@ export default function Review(): React.ReactElement {
             </Grid>
           }
           label={t('Asset')}
+          _pt2={0}
           noDivider
         />
         <Info
@@ -259,11 +247,14 @@ export default function Review(): React.ReactElement {
           }
           fontSize1={20}
           label={t('Fee')}
-        // _pt={10}
+          _pt1={0}
+          _pt2={0}
+          _mb={0}
         />
         <Info
           data1={state?.amount}
           label={t('Amount')}
+          _pt2={0}
           noDivider
         />
       </Container>
@@ -312,7 +303,7 @@ export default function Review(): React.ReactElement {
             <Trilogy part1={t('From')} part2={accountName} part3={<ShortAddress address={formatted} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
             <Trilogy part1={t('Amount')} part2={state?.amount} part3={token} />
             <Trilogy part1={t('Fee')} part2={state?.fee?.toHuman()} showDivider />
-            <Trilogy part1={t('To')} part2={state?.recepientName} part3={<ShortAddress address={state?.recepient} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
+            <Trilogy part1={t('To')} part2={state?.recepientName} part3={<ShortAddress address={state?.recepientAddress} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
             <Trilogy part1={t('Block')} part2={txLog?.block ? `#${txLog?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
             <Trilogy part1={t('Hash')} part2={txLog?.txHash ? <ShortAddress address={txLog?.txHash} addressStyle={{ fontSize: '16px' }} charsCount={6} showCopy /> : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
             <Grid container item justifyContent='center' pt='5px' xs={12}>
