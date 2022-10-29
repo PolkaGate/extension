@@ -28,6 +28,7 @@ export default function ShortAddress({ address, clipped = false, charsCount = SH
   useEffect(() => {
     if (!clipped) {
       setCharactersCount(charsCount);
+
       return;
     }
 

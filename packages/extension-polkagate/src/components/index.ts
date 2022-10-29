@@ -36,6 +36,7 @@ export { default as PasswordWithUseProxy } from './PasswordWithUseProxy';
 export { default as ProxyTable } from './ProxyTable';
 export { default as PButton } from './PButton';
 export { default as Progress } from './Progress';
+export { Input } from './TextInputs';
 export { default as ValidatedInput } from './ValidatedInput';
 export { default as Label } from './Label';
 

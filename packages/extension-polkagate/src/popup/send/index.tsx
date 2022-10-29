@@ -177,7 +177,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
       balances && history.push({
         pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-        state: { accountName, amount: allMaxAmount ?? amount, api: apiToUse, backPath: pathname, balances, fee, recipient, recipientName, signer, transfer, transferType }
+        state: { accountName, amount: allMaxAmount ?? amount, api: apiToUse, chain, backPath: pathname, balances, fee, recipient, recipientName, signer, transfer, transferType }
       });
 
       // setIsConfirming(false);
@@ -256,7 +256,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     const value = state?.amount || allMaxAmount || amount;
 
     return (
-      <Grid container item pt='5px' xs={12}>
+      <Grid container item pt='10px' xs={12}>
         <Grid item xs={8}>
           <InputWithLabel
             fontSize={28}
@@ -295,18 +295,25 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <From />
-        <To address={state?.recipient || recipient} label={t('To')} name={recipientName} setAddress={setRecipient} style={{ pt: '10px' }} />
+        <To
+          address={state?.recipient || recipient}
+          chain={chain}
+          label={t('To')}
+          name={recipientName}
+          setAddress={setRecipient}
+          style={{ pt: '10px' }}
+        />
         <Asset />
         <AmountWithMaxAll />
         <div style={{ paddingTop: '10px' }}>
           <PasswordWithUseProxy
             api={apiToUse || api}
             genesisHash={genesisHash}
+            isError={isPasswordError}
+            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
             onChange={onChangePass}
             proxiedAddress={formatted}
-            isError={isPasswordError}
-            // isFocused
-            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+          // isFocused
           />
         </div>
       </Container>
