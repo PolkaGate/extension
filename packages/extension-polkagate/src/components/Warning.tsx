@@ -13,6 +13,7 @@ interface Props {
   isBelowInput?: boolean;
   isDanger?: boolean;
   theme: Theme;
+  fontWeight?: number;
 }
 
 function Warning({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
@@ -27,7 +28,7 @@ function Warning({ children, className = '', isBelowInput, isDanger }: Props): R
   );
 }
 
-export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
+export default React.memo(styled(Warning)<Props>(({ fontWeight = 300, theme }: Props) => `
   display: flex;
   flex-direction: row;
   padding-left: 18px;
@@ -48,7 +49,7 @@ export default React.memo(styled(Warning)<Props>(({ theme }: Props) => `
     display: flex;
     align-items: center;
     font-size: 14px;
-    font-weight: 300;
+    font-weight: ${fontWeight};
   }
 
   .warningImage {

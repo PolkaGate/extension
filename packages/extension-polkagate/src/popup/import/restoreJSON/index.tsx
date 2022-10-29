@@ -144,6 +144,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
           width='92%'
         >
           <Warning
+            fontWeight={400}
             isBelowInput
             isDanger
             theme={theme}

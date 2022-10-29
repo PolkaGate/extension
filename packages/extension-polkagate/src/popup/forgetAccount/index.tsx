@@ -88,6 +88,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           width='92%'
         >
           <Warning
+            fontWeight={400}
             isBelowInput
             isDanger
             theme={theme}
