@@ -4,6 +4,7 @@
 import { FormControl, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
+import Label from './Label';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   '& .MuiInputBase-input': {
@@ -24,8 +25,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     fontSize: '10px',
     fontWeight: '300',
-    letterSpacing: '-0.015em',
-    marginTop: theme.spacing(3)
+    letterSpacing: '-0.015em'
   }
 
 }));
@@ -43,9 +43,10 @@ interface Props {
   label: string;
   isDdisabled?: boolean;
   _mt?: string | number;
+  helperText?: string;
 }
 
-export default function CustomizedSelect({ _mt = 0, defaultValue, isDdisabled = false, label, onChange, options, value }: Props) {
+export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, isDdisabled = false, label, onChange, options, value }: Props) {
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) =>
       onChange && onChange(typeof value === 'string' ? value.trim() : value),
@@ -58,44 +59,50 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, isDdisabled = 
       sx={{ width: '100%', mt: `${_mt}` }}
       variant='standard'
     >
-      <InputLabel
+      {/* <InputLabel
         htmlFor='selectChain'
         sx={{ color: 'text.primary', fontSize: '18px', fontWeight: 300, transformOrigin: 'left bottom', letterSpacing: '-0.015em' }}
         variant='standard'
 
       >
         {label}
-      </InputLabel>
-      <Select
-        defaultValue={defaultValue}
-        value={value}
-        id='selectChain'
-        input={<BootstrapInput />}
-        onChange={_onChange}
-        sx={{
-          '> #selectChain': {
-            borderColor: 'secondary.light',
-            borderRadius: '5px',
-            fontSize: '18px',
-            height: '29px',
-            lineHeight: '32px',
-            p: 0,
-            pl: '10px',
-            textAlign: 'left'
-          },
-          '> .MuiSvgIcon-root': { color: 'secondary.light', fontSize: '30px' }
-        }}
+      </InputLabel> */}
+      <Label
+        label={label}
+        helperText={helperText}
       >
-        {options.map(({ text, value }): React.ReactNode => (
-          <MenuItem
-            key={value}
-            sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
-            value={value || text}
-          >
-            {text}
-          </MenuItem>
-        ))}
-      </Select>
+        <Select
+          defaultValue={defaultValue}
+          value={value}
+          id='selectChain'
+          input={<BootstrapInput />}
+          onChange={_onChange}
+          sx={{
+            '> #selectChain': {
+              borderColor: 'secondary.light',
+              borderRadius: '5px',
+              fontSize: '18px',
+              height: '29px',
+              lineHeight: '32px',
+              p: 0,
+              pl: '10px',
+              textAlign: 'left'
+            },
+            '> .MuiSvgIcon-root': { color: 'secondary.light', fontSize: '30px' },
+            width: '100%'
+          }}
+        >
+          {options.map(({ text, value }): React.ReactNode => (
+            <MenuItem
+              key={value}
+              sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
+              value={value || text}
+            >
+              {text}
+            </MenuItem>
+          ))}
+        </Select>
+      </Label>
     </FormControl>
   );
 }
