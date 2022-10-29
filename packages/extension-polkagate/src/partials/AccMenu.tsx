@@ -100,6 +100,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     address && name && onAction(`/export/${address}`);
   }, [address, name, onAction]);
 
+  const _onManageProxies = useCallback(() => {
+    address && onAction(`/manageProxies/${address}`);
+  }, [address, onAction]);
+
   useEffect(() => {
     genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
       console.error(error);
@@ -166,7 +170,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        // onClick={onnn}
+        onClick={_onManageProxies}
         text={t('Manage proxies')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
