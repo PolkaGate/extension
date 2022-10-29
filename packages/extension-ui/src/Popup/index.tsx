@@ -43,6 +43,7 @@ import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Staking from '../../../extension-polkagate/src/popup/staking';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
+import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { ErrorBoundary } from '../components';
 import ToastProvider from '../components/Toast/ToastProvider';
@@ -158,6 +159,7 @@ export default function Popup(): React.ReactElement {
                         <Switch>
                           <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                           <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
+                          <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                           <Route path='/selectProxy/:proxiedAddress/:genesisHash'>{wrapWithErrorBoundary(<SelectProxy />, 'select-proxy')}</Route>
                           <Route path='/history/:chainName/:decimal/:token/:formatted'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                           <Route path='/detail/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>

@@ -23,10 +23,10 @@ interface Props {
   style?: SxProps<Theme>;
   proxies?: Proxy[];
   onSelect?: (selected: Proxy) => void
-
+  maxHeight?: string;
 }
 
-export default function ProxyTable({ addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '109px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -66,7 +66,7 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
               borderColor: 'secondary.light',
               borderRadius: '5px',
               display: 'block',
-              maxHeight: '109px',
+              maxHeight,
               minHeight: '68px',
               overflowY: 'scroll',
               scrollbarWidth: 'none'
