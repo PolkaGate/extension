@@ -24,16 +24,17 @@ interface Props {
   proxies?: Proxy[];
   onSelect?: (selected: Proxy) => void
   maxHeight?: string;
+  proxyTypeFilter?: string[];
 }
 
-export default function ProxyTable({ addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ proxyTypeFilter, addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
 
-  const isAvailable = useCallback((address: string): NameAddress | undefined =>
-    accounts?.find((a) => a.address === getSubstrateAddress(address))
-  , [accounts]);
+  const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
+    accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && proxyTypeFilter?.includes(proxy.proxyType))
+  , [accounts, proxyTypeFilter]);
 
   const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
@@ -147,7 +148,7 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
                             borderRightColor: 'secondary.light'
                           },
                           height: '41px',
-                          opacity: `${isAvailable(proxy.delegate) ? 1 : 0.5}`,
+                          opacity: `${isAvailable(proxy) ? 1 : 0.5}`,
                           textAlign: 'center'
                         }}
                         xs={12}
@@ -181,7 +182,7 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
                             textOverflow='ellipsis'
                             whiteSpace='nowrap'
                           >
-                            {isAvailable(proxy.delegate)?.name || toShortAddress(proxy.delegate)}
+                            {isAvailable(proxy)?.name || toShortAddress(proxy.delegate)}
                           </Typography>
                         </Grid>
                         <Grid
@@ -227,7 +228,7 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
                               control={
                                 <Radio
                                   // checked={selectedIndex === index}
-                                  disabled={!isAvailable(proxy.delegate)}
+                                  disabled={!isAvailable(proxy)}
                                   onChange={handleOptionChange}
                                   size='small'
                                   sx={{ color: 'red' }}
@@ -242,7 +243,7 @@ export default function ProxyTable({ addressesOnThisChain, onSelect, chain, labe
                               fontSize='12px'
                               fontWeight={400}
                             >
-                              {isAvailable(proxy.delegate) ? 'Yes' : 'No'}
+                              {isAvailable(proxy) ? 'Yes' : 'No'}
                             </Typography>
                           }
                         </Grid>
