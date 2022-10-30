@@ -101,8 +101,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   }, [address, name, onAction]);
 
   const _onManageProxies = useCallback(() => {
-    address && onAction(`/manageProxies/${address}`);
-  }, [address, onAction]);
+    address && currentChain && onAction(`/manageProxies/${address}`);
+  }, [address, currentChain, onAction]);
 
   useEffect(() => {
     genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
@@ -167,6 +167,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         text={t('Contribute to crowdloans')}
       />
       <MenuItem
+        disabled={!currentChain}
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }

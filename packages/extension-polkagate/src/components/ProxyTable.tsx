@@ -5,7 +5,7 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -25,16 +25,22 @@ interface Props {
   onSelect?: (selected: Proxy) => void
   maxHeight?: string;
   proxyTypeFilter?: string[];
+  notFoundText?: string;
 }
 
-export default function ProxyTable({ proxyTypeFilter, addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ proxyTypeFilter, notFoundText = '', addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
+  const [wanrningText, setWanrningText] = useState<string>();
+
+  useEffect(() => {
+    setWanrningText(notFoundText || `No proxies found for the above account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
+  }, [chain?.name, notFoundText]);
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && proxyTypeFilter?.includes(proxy.proxyType))
-  , [accounts, proxyTypeFilter]);
+    , [accounts, proxyTypeFilter]);
 
   const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
@@ -69,7 +75,8 @@ export default function ProxyTable({ proxyTypeFilter, addressesOnThisChain, onSe
               maxHeight,
               minHeight: '68px',
               overflowY: 'scroll',
-              scrollbarWidth: 'none'
+              scrollbarWidth: 'none',
+              textAlign: 'center'
             }}
           >
             <Grid
@@ -265,7 +272,8 @@ export default function ProxyTable({ proxyTypeFilter, addressesOnThisChain, onSe
                         lineHeight='20px'
                         pl='8px'
                       >
-                        {`No proxies found for the above account’s address on ${chain.name}. You can use it as Watch Only Account.`}
+                        {/* {`No proxies found for the above account’s address on ${chain.name}. You can use it as Watch Only Account.`} */}
+                        {wanrningText}
                       </Typography>
                     </Grid>
                   )
