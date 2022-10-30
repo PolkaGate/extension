@@ -1,25 +1,34 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 import { Divider, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { BN } from '@polkadot/util';
-
-import { AccountContext, ActionContext, CopyAddressButton, FormatBalance2, PButton } from '../../components';
-import { useTranslation } from '../../hooks';
+import { AccountContext, ActionContext, PButton } from '../../components';
+import { useRedirectOnRefresh, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import getLogo from '../../util/getLogo';
 import { accountName, toShortAddress, upperCaseFirstChar } from '../../util/utils';
+import Amount from './partials/Amount';
+import FailSuccessIcon from './partials/FailSuccessIcon';
+import Item from './partials/Item';
 
+interface LocationState {
+  chainName: string;
+  info: Record<string, any>;
+  decimal: number;
+  token: string;
+  path: string;
+}
+
+// TODO: make this as a popup
 export default function Detail(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
+  const onAction = useContext(ActionContext);
 
-  const { state: { chainName, info, decimal, token, path } } = useLocation();
+  const { state: { chainName, decimal, info, path, token } } = useLocation<LocationState>();
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
   const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.extrinsicHash);
 
@@ -83,92 +92,6 @@ export default function Detail(): React.ReactElement {
     }
   }, [info]);
 
-  const Item = ({ item, mt = 0, noDivider = false, toCopy }: { item: string | undefined, mt?: number, noDivider?: boolean, toCopy?: string }) => (
-    <>
-      {item &&
-        <>
-          <Grid container justifyContent='center' alignItems='center'>
-            <Grid item>
-              <Typography
-                fontSize='16px'
-                fontWeight={400}
-                sx={{ mt: `${mt}px` }}
-              >
-                {item}
-              </Typography>
-            </Grid>
-            <Grid item>
-              {toCopy && <CopyAddressButton
-                address={toCopy}
-              />}
-            </Grid>
-          </Grid>
-          {!noDivider && <Divider
-            sx={{
-              bgcolor: 'secondary.light',
-              height: '2px',
-              m: '3px auto',
-              width: '75%'
-            }}
-          />
-          }
-        </>
-      }
-    </>
-  );
-
-  const Amount = ({ amount, label }: { label: string, amount: string }) => (
-    <Grid
-      container
-      fontSize='16px'
-      fontWeight={400}
-      item
-      justifyContent='center'
-      spacing={1}
-    >
-      <Grid item>
-        {label}
-      </Grid>
-      <Grid item>
-        <FormatBalance2 decimals={[Number(decimal)]} tokens={[token]} value={new BN(amount)} />
-      </Grid>
-    </Grid>
-  );
-
-  const FailSuccessIcon = () => (
-    <>
-      {
-        success
-          ? <CheckCircleIcon
-            sx={{
-              bgcolor: '#fff',
-              borderRadius: '50%',
-              color: 'success.main',
-              fontSize: '54px',
-              mt: '20px'
-            }
-            }
-          />
-          : <CancelIcon
-            sx={{
-              bgcolor: '#fff',
-              borderRadius: '50%',
-              color: 'warning.main',
-              fontSize: '54px',
-              mt: '20px'
-            }}
-          />
-      }
-      <Typography
-        fontSize='16px'
-        fontWeight={500}
-        mt='10px'
-      >
-        {success ? t<string>('Completed') : t<string>('Failed')}
-      </Typography>
-    </>
-  );
-
   return (
     <>
       <HeaderBrand
@@ -202,7 +125,7 @@ export default function Detail(): React.ReactElement {
             width: '35%'
           }}
         />
-        <FailSuccessIcon />
+        <FailSuccessIcon success={success} />
         {/* <Typography
           fontSize='16px'
           fontWeight={400}
@@ -214,10 +137,10 @@ export default function Detail(): React.ReactElement {
         <Item item={from} toCopy={info?.transfer?.from} />
         <Item item={to} toCopy={info?.transfer?.to} />
         {amount &&
-          <Amount label={t('Amount')} amount={amount} />
+          <Amount amount={amount} decimal={decimal} label={t('Amount')} token={token} />
         }
         {fee &&
-          <Amount label={t('Fee')} amount={fee} />
+          <Amount amount={fee} decimal={decimal} label={t('Fee')} token={token} />
         }
         <Divider
           sx={{

@@ -5,7 +5,7 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect,useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -40,7 +40,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-    , [accounts, proxyTypeFilter]);
+  , [accounts, proxyTypeFilter]);
 
   const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
@@ -93,7 +93,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
             >
               <Grid
                 item
-                xs={4.7}
+                xs={4.5}
               >
                 <Typography
                   fontSize='12px'
@@ -105,7 +105,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
               </Grid>
               <Grid
                 item
-                xs={3.9}
+                xs={3}
               >
                 <Typography
                   fontSize='12px'
@@ -117,7 +117,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
               </Grid>
               <Grid
                 item
-                xs={1.4}
+                xs={2}
               >
                 <Typography
                   fontSize='12px'
@@ -129,7 +129,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
               </Grid>
               <Grid
                 item
-                xs={2}
+                xs={2.5}
               >
                 <Typography
                   fontSize='12px'
@@ -167,7 +167,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                           item
                           justifyContent='left'
                           pl='3px'
-                          xs={4.7}
+                          xs={4.5}
                         >
                           <Grid
                             item
@@ -183,7 +183,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                           <Typography
                             fontSize='12px'
                             fontWeight={400}
-                            maxWidth='calc(100% - 35px)'
+                            maxWidth='85px'
                             overflow='hidden'
                             pl='5px'
                             textOverflow='ellipsis'
@@ -198,7 +198,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                           height='100%'
                           item
                           justifyContent='center'
-                          xs={3.9}
+                          xs={3}
                         >
                           <Typography
                             fontSize='12px'
@@ -213,7 +213,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                           height='100%'
                           item
                           justifyContent='center'
-                          xs={1.4}
+                          xs={2}
                         >
                           <Typography
                             fontSize='12px'
@@ -228,7 +228,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                           height='100%'
                           item
                           justifyContent='center'
-                          xs={2}
+                          xs={2.5}
                         >
                           {onSelect
                             ? <FormControlLabel

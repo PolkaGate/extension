@@ -146,10 +146,17 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       return;
     }
 
-    const amountAsBN = new BN(parseFloat(parseFloat(allMaxAmount ?? amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+    let params = [];
 
-    const keepAlive = transferType === 'Max';
-    const params = ['All', 'Max'].includes(transferType) ? [formatted, keepAlive] : [formatted, amountAsBN];
+    if (['All', 'Max'].includes(transferType)) {
+      const keepAlive = transferType === 'Max';
+
+      params = [formatted, keepAlive]; // just for fee calculation, sender and receiver are the same
+    } else {
+      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+
+      params = [formatted, amountAsBN];
+    }
 
     // eslint-disable-next-line no-void
     void transfer(...params).paymentInfo(formatted)
@@ -344,9 +351,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           prevState={myState}
           proxiedAddress={formatted}
           proxyTypeFilter={['Any']}
-          style={{paddingTop: '10px' }}
-          // isFocused
-          />
+          style={{ paddingTop: '10px' }}
+        // isFocused
+        />
       </Container>
       <ButtonWithCancel
         _onClick={goToReview}
