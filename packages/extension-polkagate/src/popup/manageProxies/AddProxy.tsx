@@ -2,17 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { canDerive } from '@polkadot/extension-base/utils';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Select } from '../../components';
 import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
+import getAllAddressess from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
 
 interface Props {
+  address: string
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
@@ -29,7 +30,7 @@ const isEqualProxiy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy({ chain, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, chain, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>(null);
   const [delay, setDelay] = useState<number>(0);
@@ -44,19 +45,12 @@ export default function AddProxy({ chain, proxyItems, setProxyItems, setShowAddP
     value: type
   }));
 
-  const allAddresses = useMemo(
-    () => hierarchy
-      .filter(({ isExternal }) => !isExternal)
-      .filter(({ type }) => canDerive(type))
-      .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name]),
-    [hierarchy]
-  );
+  const allAddresses = getAllAddressess(hierarchy, true, true, chain.ss58Format, address);
 
   const _addProxy = useCallback(() => {
     const proxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;
 
     proxyItems?.push({ proxy, status: 'new' });
-    console.log('proxyItems:', proxyItems)
     setProxyItems(proxyItems);
     setShowAddProxy(!showAddProxy);
   }, [delay, proxyItems, realAddress, selectedProxyType, setProxyItems, setShowAddProxy, showAddProxy]);
@@ -81,6 +75,7 @@ export default function AddProxy({ chain, proxyItems, setProxyItems, setShowAddP
 
     if (alreadyExisting) {
       setAddButtonDisabled(true);
+
       return;
     }
 
@@ -146,8 +141,8 @@ export default function AddProxy({ chain, proxyItems, setProxyItems, setShowAddP
         <Typography
           fontSize='16px'
           fontWeight={300}
-          pl='10px'
           pb='4px'
+          pl='10px'
         >
           {t<string>('Block(s)')}
         </Typography>

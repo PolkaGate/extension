@@ -7,12 +7,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ActionContext, ProxyTable, ShowBalance } from '../../components';
 import { useAccount, useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
+import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 
 interface Props {
@@ -36,12 +36,10 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor : BN_ZERO;
-  const available = proxies?.filter((item) => item.status !== 'remove')?.length ?? 0;
+  const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
 
   useEffect(() => {
-    const publicKey = decodeAddress(address);
-
-    chain && setFormatted(encodeAddress(publicKey, chain?.ss58Format));
+    chain && setFormatted(getFormattedAddress(address, undefined, chain.ss58Format));
     !available ? setDepositValue(BN_ZERO) : setDepositValue(proxyDepositBase.add(proxyDepositFactor.muln(available))) as unknown as BN;
   }, [address, api, available, chain, formatted, proxyDepositBase, proxyDepositFactor]);
 
@@ -105,6 +103,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
                 sx={{
                   bgcolor: 'primary.main',
                   borderRadius: '50px',
+                  color: 'background.default',
                   fontSize: '36px'
                 }}
               />
@@ -162,6 +161,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       }
       {showAddProxy &&
         <AddProxy
+          address={address}
           chain={chain}
           proxyItems={proxyItems}
           setProxyItems={setProxyItems}
