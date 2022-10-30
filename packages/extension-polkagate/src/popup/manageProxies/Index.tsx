@@ -25,6 +25,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
   const [formatted, setFormatted] = useState<string | undefined>();
   const [depositValue, setDepositValue] = useState<BN | undefined>();
+  const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
 
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
@@ -43,13 +44,17 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
     !available ? setDepositValue(BN_ZERO) : setDepositValue(proxyDepositBase.add(proxyDepositFactor.muln(available))) as unknown as BN;
   }, [address, api, available, chain, formatted, proxyDepositBase, proxyDepositFactor]);
 
+  useEffect(() => {
+    proxyItems !== undefined && !(account?.isExternal && proxyItems.length === 0) && setEnableAddProxyButton(false);
+  }, [account?.isExternal, proxyItems]);
+
   const _onBackClick = useCallback(() => {
     onAction('/');
   }, [onAction]);
 
   const _openAddProxy = useCallback(() => {
-    proxyItems !== undefined && setShowAddProxy(!showAddProxy);
-  }, [proxyItems, showAddProxy]);
+    !disableAddProxyButton && setShowAddProxy(!showAddProxy);
+  }, [disableAddProxyButton, showAddProxy]);
 
   useEffect(() => {
     formatted && api && api.query.proxy?.proxies(formatted).then((proxies) => {
@@ -89,6 +94,9 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
           <Grid
             container
             m='auto'
+            sx={{
+              opacity: disableAddProxyButton ? 0.5 : 1
+            }}
             width='92%'
           >
             <Grid
@@ -124,12 +132,12 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
             chain={chain}
             label={t<string>('Proxies')}
             maxHeight={window.innerHeight / 2.3}
+            notFoundText={t<string>('No proxies found.')}
             proxies={proxyItems ? proxies : undefined}
             style={{
               m: '20px auto 10px',
               width: '92%'
             }}
-            notFoundText={t<string>('No proxies found.')}
           />
           <Grid
             alignItems='end'
@@ -142,6 +150,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
             <Typography
               fontSize='14px'
               fontWeight={300}
+              lineHeight='23px'
             >
               {t<string>('Deposit:')}
             </Typography>
