@@ -215,7 +215,7 @@ export default function Review(): React.ReactElement {
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${pt2}px`, lineHeight: '28px' }}>
         {showIdenticon && state?.chain &&
-          <Grid item>
+          <Grid item pr='10px' >
             <Identicon
               iconTheme={state?.chain?.icon || 'polkadot'}
               prefix={state?.chain?.ss58Format ?? 42}
@@ -224,7 +224,7 @@ export default function Review(): React.ReactElement {
             />
           </Grid>
         }
-        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '10px' }}>
+        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {data1}
         </Grid>
       </Grid>
