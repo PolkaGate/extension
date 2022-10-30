@@ -7,4 +7,4 @@ export { default as Name } from './Name';
 export { default as Passwords } from './Passwords';
 export { default as AccMenu } from './AccMenu';
 export { default as AccMenuInside } from './AccMenuInside';
-// export { default as HeaderWithSteps } from './HeaderWithSteps';
+export { default as WaitScreen } from './WaitScreen';
