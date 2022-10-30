@@ -73,6 +73,7 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
         maxHeight='50%'
         onSelect={onSelect}
         proxies={state?.proxies}
+        proxyTypeFilter={state?.proxyTypeFilter}
         style={{
           m: '20px auto',
           width: '92%'
