@@ -129,6 +129,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
               m: '20px auto 10px',
               width: '92%'
             }}
+            notFoundText={t<string>('No proxies found.')}
           />
           <Grid
             alignItems='end'
