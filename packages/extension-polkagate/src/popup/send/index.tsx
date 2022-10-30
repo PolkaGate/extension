@@ -342,8 +342,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             isError={isPasswordError}
             label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
             onChange={onChangePass}
-            proxiedAddress={formatted}
             prevState={myState}
+            proxiedAddress={formatted}
+            proxyTypeFilter={['Any']}
           // isFocused
           />
         </div>
