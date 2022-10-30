@@ -104,7 +104,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
               item
               onClick={_openAddProxy}
               sx={{
-                cursor: 'pointer'
+                cursor: disableAddProxyButton ? 'context-menu' : 'pointer'
               }}
             >
               <AddRoundedIcon

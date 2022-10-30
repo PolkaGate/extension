@@ -72,11 +72,11 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
               borderColor: 'secondary.light',
               borderRadius: '5px',
               display: 'block',
-              textAlign: 'center',
               maxHeight,
               minHeight: '68px',
               overflowY: 'scroll',
-              scrollbarWidth: 'none'
+              scrollbarWidth: 'none',
+              textAlign: 'center'
             }}
           >
             <Grid
