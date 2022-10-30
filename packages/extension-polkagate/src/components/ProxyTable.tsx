@@ -39,8 +39,8 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
   }, [chain?.name, notFoundText]);
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
-    accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && proxyTypeFilter?.includes(proxy.proxyType))
-    , [accounts, proxyTypeFilter]);
+    accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
+  , [accounts, proxyTypeFilter]);
 
   const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
