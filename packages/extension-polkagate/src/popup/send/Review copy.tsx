@@ -22,7 +22,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { BN } from '@polkadot/util';
 
 import { ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, ShortAddress } from '../../components';
-import { useMetadata, useTranslation } from '../../hooks';
+import { useMetadata, useRedirectOnRefresh, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
@@ -52,9 +52,12 @@ interface LocationState {
 export default function Review(): React.ReactElement {
   const { t } = useTranslation();
 
-  // useRedirectOnRefresh('/');
+  useRedirectOnRefresh('/');
+  const theme = useTheme();
   const history = useHistory();
   const { state } = useLocation<LocationState>();
+  const { accountName, amount, api, backPath, fee, recipientAddress, recipientName, selectedProxyAddress, selectedProxyName, signer, transfer, transferType } = state;
+
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const onAction = useContext(ActionContext);
   const chain = useMetadata(genesisHash, true);
@@ -64,8 +67,8 @@ export default function Review(): React.ReactElement {
   const [showReceipt, setShowReceipt] = useState<boolean>(false);
 
   const prevUrl = isConfirming ? '' : `/send/${genesisHash}/${address}/${formatted}/`;
-  const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
-  const token = state?.api?.registry?.chainTokens[0] ?? '';
+  const decimals = api?.registry?.chainDecimals[0] ?? 1;
+  const token = api?.registry?.chainTokens[0] ?? '';
 
   const ChainLogo = (
     <Avatar
@@ -77,16 +80,14 @@ export default function Review(): React.ReactElement {
   );
 
   useEffect(() => {
-    !state?.amount && onAction(prevUrl);
-  }, [state, onAction, prevUrl]);
+    !amount && onAction(prevUrl);
+  }, [state, onAction, prevUrl, amount]);
 
   const send = useCallback(async () => {
     try {
-      if (!state || !formatted) {
+      if (!state) {
         return;
       }
-
-      const { amount, api, recipientAddress, selectedProxyAddress, signer, transfer, transferType } = state;
 
       setShowWaitScreen(true);
       let params = [];
@@ -101,17 +102,18 @@ export default function Review(): React.ReactElement {
         params = [recipientAddress, amountAsBN];
       }
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxyAddress);
+      const { block, failureText, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxyAddress);
 
       setTxInfo({
         amount,
         block: block || 0,
-        failureText,
-        fee: state?.fee || fee || '',
-        from: { address: formatted, name: state?.accountName },
-        status,
         chain,
-        to: { address: recipientAddress, name: state?.recipientName },
+        failureText,
+        fee,
+        from: { address: formatted, name: accountName },
+        status,
+        to: { address: recipientAddress, name: recipientName },
+        token,
         txHash: txHash || ''
       });
 
@@ -121,14 +123,14 @@ export default function Review(): React.ReactElement {
       console.log('error:', e);
       setIsConfirming(false);
     }
-  }, [chain, decimals, formatted, state]);
+  }, [accountName, amount, api, chain, decimals, fee, formatted, recipientAddress, recipientName, selectedProxyAddress, signer, state, token, transfer, transferType]);
 
   const _onBackClick = useCallback(() => {
-    state?.backPath && history.push({
-      pathname: state?.backPath,
+    backPath && history.push({
+      pathname: backPath,
       state: { ...state }
     });
-  }, [history, state]);
+  }, [backPath, history, state]);
 
   const AsProxy = ({ address, name }: { name: string | Element, address: string }) => (
     <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
@@ -138,11 +140,11 @@ export default function Review(): React.ReactElement {
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
       <Grid alignItems='center' container item justifyContent='center' sx={{ width: 'fit-content', px: '2px', maxWidth: '66%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
-          {state?.chain &&
+          {chain &&
             <Grid item>
               <Identicon
-                iconTheme={state?.chain?.icon || 'polkadot'}
-                prefix={state?.chain?.ss58Format ?? 42}
+                iconTheme={chain?.icon || 'polkadot'}
+                prefix={chain?.ss58Format ?? 42}
                 size={25}
                 value={address}
               />
@@ -169,11 +171,11 @@ export default function Review(): React.ReactElement {
         {label}
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${pt2}px`, lineHeight: '28px' }}>
-        {showIdenticon && state?.chain &&
+        {showIdenticon && chain &&
           <Grid item pr='10px' >
             <Identicon
-              iconTheme={state?.chain?.icon || 'polkadot'}
-              prefix={state?.chain?.ss58Format ?? 42}
+              iconTheme={chain?.icon || 'polkadot'}
+              prefix={chain?.ss58Format ?? 42}
               size={31}
               value={data2}
             />
@@ -193,8 +195,8 @@ export default function Review(): React.ReactElement {
           }
         </>
       }
-      {state?.selectedProxyAddress && showProxy &&
-        <AsProxy address={state?.selectedProxyAddress} name={state?.selectedProxyName} />
+      {selectedProxyAddress && showProxy &&
+        <AsProxy address={selectedProxyAddress} name={selectedProxyName} />
       }
       {!noDivider &&
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
@@ -219,12 +221,12 @@ export default function Review(): React.ReactElement {
           {isConfirming ? t('Confirmation') : t('Review')}
         </Grid>
         <Grid item>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', margin: 'auto', width: '138px' }} />
         </Grid>
       </Grid>
       <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
-        <Info data1={state?.accountName} data2={formatted} label={t('From')} pt1={state?.selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
-        <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
+        <Info data1={accountName} data2={formatted} label={t('From')} pt1={selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
+        <Info data1={recipientName} data2={recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
         <Info
           data1={
             <Grid alignItems='center' container item>
@@ -244,7 +246,7 @@ export default function Review(): React.ReactElement {
         />
         <Info
           data1={
-            state?.api && <FormatBalance api={state?.api} decimalPoint={2} value={state?.fee} />
+            api && <FormatBalance api={api} decimalPoint={2} value={fee} />
           }
           fontSize1={20}
           label={t('Fee')}
@@ -253,7 +255,7 @@ export default function Review(): React.ReactElement {
           pt2={0}
         />
         <Info
-          data1={state?.amount}
+          data1={amount}
           label={t('Amount')}
           noDivider
           pt2={0}
