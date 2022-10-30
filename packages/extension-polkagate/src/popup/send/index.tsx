@@ -335,19 +335,18 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         />
         <Asset />
         <AmountWithMaxAll />
-        <div style={{ paddingTop: '10px' }}>
-          <PasswordWithUseProxy
-            api={apiToUse || api}
-            genesisHash={genesisHash}
-            isError={isPasswordError}
-            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
-            onChange={onChangePass}
-            prevState={myState}
-            proxiedAddress={formatted}
-            proxyTypeFilter={['Any']}
+        <PasswordWithUseProxy
+          api={apiToUse || api}
+          genesisHash={genesisHash}
+          isError={isPasswordError}
+          label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+          onChange={onChangePass}
+          prevState={myState}
+          proxiedAddress={formatted}
+          proxyTypeFilter={['Any']}
+          style={{paddingTop: '10px' }}
           // isFocused
           />
-        </div>
       </Container>
       <ButtonWithCancel
         _onClick={goToReview}
