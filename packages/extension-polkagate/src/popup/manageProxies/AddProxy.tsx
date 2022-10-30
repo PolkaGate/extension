@@ -1,19 +1,23 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Select } from '../../components';
+import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Select, ShowIdentity } from '../../components';
 import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddressess from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
 
 interface Props {
-  address: string
+  address: string;
+  api: ApiPromise;
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
@@ -30,10 +34,11 @@ const isEqualProxiy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy({ address, chain, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, api, chain, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>(null);
   const [delay, setDelay] = useState<number>(0);
+  const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined | null>();
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
@@ -82,12 +87,24 @@ export default function AddProxy({ address, chain, proxyItems, setProxyItems, se
     setAddButtonDisabled(false);
   }, [delay, proxyItems, realAddress, selectedProxyType]);
 
+  useEffect(() => {
+    realAddress && api && api.derive.accounts.info(realAddress).then((info) => {
+      if (info.identity.display) {
+        console.log('infooooooo:', info);
+
+        setAccountInfo(info.identity);
+      } else {
+        setAccountInfo(null);
+      }
+    });
+  }, [api, realAddress]);
+
   return (
     <>
       <Typography
         fontSize='14px'
         fontWeight={300}
-        m='25px auto'
+        m='20px auto 15px'
         textAlign='left'
         width='90%'
       >
@@ -102,7 +119,7 @@ export default function AddProxy({ address, chain, proxyItems, setProxyItems, se
         setAddress={setRealAddress}
         showIdenticon
         style={{
-          m: '20px auto',
+          m: '12px auto',
           width: '92%'
         }}
       />
@@ -123,7 +140,7 @@ export default function AddProxy({ address, chain, proxyItems, setProxyItems, se
         alignItems='end'
         container
         sx={{
-          m: '20px auto',
+          m: '15px auto',
           width: '92%'
         }}
       >
@@ -147,6 +164,15 @@ export default function AddProxy({ address, chain, proxyItems, setProxyItems, se
           {t<string>('Block(s)')}
         </Typography>
       </Grid>
+      {accountInfo !== undefined &&
+        <ShowIdentity
+          accountIdentity={accountInfo}
+          style={{
+            m: 'auto',
+            width: '92%'
+          }}
+        />
+      }
       <PButton
         _onClick={_addProxy}
         disabled={addButtonDisabled}

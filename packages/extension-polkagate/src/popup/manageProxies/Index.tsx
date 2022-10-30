@@ -172,6 +172,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       {showAddProxy &&
         <AddProxy
           address={address}
+          api={api}
           chain={chain}
           proxyItems={proxyItems}
           setProxyItems={setProxyItems}
