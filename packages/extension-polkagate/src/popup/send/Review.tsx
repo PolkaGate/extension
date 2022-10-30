@@ -8,6 +8,12 @@
  * this component opens send review page
  * */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { KeyringPair } from '@polkadot/keyring/types';
+import type { AnyTuple } from '@polkadot/types/types';
+
 import CheckIcon from '@mui/icons-material/Check';
 import { Avatar, Container, Divider, Grid, Link, Skeleton, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
@@ -16,6 +22,8 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
+import { Chain } from '@polkadot/extension-chains/types';
+import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -23,13 +31,14 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { isend, send as sendIcon } from '../../assets/icons';
 import { AccountContext, ActionContext, Button, ButtonWithCancel, FormatBalance, Header, Identicon, Motion, Password, PButton, ShortAddress } from '../../components';
 import { useMetadata, useRedirectOnRefresh, useTranslation } from '../../hooks';
-import { HeaderBrand } from '../../partials';
+import { HeaderBrand, WaitScreen } from '../../partials';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { toShortAddress } from '../../util/utils';
 
+type TransferType = 'All' | 'Max' | 'Normal';
 interface TxLog {
   from: string;
   to?: string;
@@ -41,13 +50,30 @@ interface TxLog {
   status: 'failed' | 'success';
 }
 
+interface LocationState {
+  accountName: string | undefined;
+  amount: string | undefined;
+  api: ApiPromise | undefined;
+  backPath: string | undefined;
+  balances: DeriveBalancesAll;
+  chain: Chain | null;
+  fee: Balance | undefined;
+  recipientAddress: string | undefined;
+  recipientName: string | undefined;
+  selectedProxyAddress: string | undefined;
+  selectedProxyName: string | undefined;
+  signer: KeyringPair;
+  transfer: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
+  transferType: TransferType | undefined;
+}
+
 export default function Review(): React.ReactElement {
   const { t } = useTranslation();
 
   // useRedirectOnRefresh('/');
   const theme = useTheme();
   const history = useHistory();
-  const { state } = useLocation();
+  const { state } = useLocation<LocationState>();
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const onAction = useContext(ActionContext);
   const chain = useMetadata(genesisHash, true);
@@ -55,6 +81,7 @@ export default function Review(): React.ReactElement {
   const [password, setPassword] = useState<string | undefined>();
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
   const [txLog, setTxLog] = useState<TxLog | undefined>();
+  const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
 
   const prevUrl = isConfirming ? '' : `/send/${genesisHash}/${address}/${formatted}/`;
   const network = chain ? chain.name.replace(' Relay Chain', '') : 'westend';
@@ -81,35 +108,36 @@ export default function Review(): React.ReactElement {
         return;
       }
 
-      const { api, amount, transferType, transfer, recepientAddress } = state;
-      const signer = keyring.getPair(formatted);
+      const { amount, api, recipientAddress, selectedProxyAddress, signer, transfer, transferType } = state;
+      // const signer = keyring.getPair(formatted);
 
-      signer.unlock(password);
+      // signer.unlock(password);
       setIsConfirming(true);
+      setShowWaitScreen(true);
       let params = [];
 
-      if (['All', 'Max'].includes(transferType)) {
-        const keepAlive = transferType === 'Max';
+      // if (['All', 'Max'].includes(transferType)) {
+      //   const keepAlive = transferType === 'Max';
 
-        params = [recepientAddress, keepAlive];
-      } else {
-        const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+      //   params = [recipientAddress, keepAlive];
+      // } else {
+      //   const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
 
-        params = [recepientAddress, amountAsBN];
-      }
+      //   params = [recipientAddress, amountAsBN];
+      // }
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted);
+      // const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted);
 
-      setTxLog({
-        from: formatted,
-        to: recepientAddress,
-        block: block || 0,
-        txHash: txHash || '',
-        amount,
-        failureText,
-        fee: fee || '',
-        status
-      });
+      // setTxLog({
+      //   from: formatted,
+      //   to: recipientAddress,
+      //   block: block || 0,
+      //   txHash: txHash || '',
+      //   amount,
+      //   failureText,
+      //   fee: fee || '',
+      //   status
+      // });
 
       // setIsConfirming(false);
     } catch (e) {
@@ -180,12 +208,12 @@ export default function Review(): React.ReactElement {
     </Grid>
   );
 
-  const Info = ({ _pt1 = 0, _pt2 = 5, _mb = 10, data1, data2, fontSize1 = 28, label, noDivider = false, showIdenticon, showProxy }: { _mb?: number, _pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, _pt?: number, showIdenticon?: boolean, showProxy?: boolean }) => (
+  const Info = ({ pt1 = 0, pt2 = 5, mb = 10, data1, data2, fontSize1 = 28, label, noDivider = false, showIdenticon, showProxy }: { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, showIdenticon?: boolean, showProxy?: boolean }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '16px', pt: `${_pt1}px` }}>
+      <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
         {label}
       </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${_pt2}px`, lineHeight: '28px' }}>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${pt2}px`, lineHeight: '28px' }}>
         {showIdenticon && state?.chain &&
           <Grid item>
             <Identicon
@@ -214,7 +242,7 @@ export default function Review(): React.ReactElement {
         <AsProxy address={state?.selectedProxyAddress} name={state?.selectedProxyName} />
       }
       {!noDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${_mb}px`, mt: '5px', width: '240px' }} />
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
       }
     </Grid>
   );
@@ -222,8 +250,8 @@ export default function Review(): React.ReactElement {
   const Review = () => (
     <>
       <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
-        <Info data1={state?.accountName} data2={formatted} label={t('From')} showIdenticon showProxy />
-        <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} showIdenticon _pt1={0} _pt2={0} />
+        <Info data1={state?.accountName} data2={formatted} label={t('From')} pt1={state?.selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
+        <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
         <Info
           data1={
             <Grid alignItems='center' container item>
@@ -238,8 +266,8 @@ export default function Review(): React.ReactElement {
             </Grid>
           }
           label={t('Asset')}
-          _pt2={0}
           noDivider
+          pt2={0}
         />
         <Info
           data1={
@@ -247,15 +275,15 @@ export default function Review(): React.ReactElement {
           }
           fontSize1={20}
           label={t('Fee')}
-          _pt1={0}
-          _pt2={0}
-          _mb={0}
+          mb={0}
+          pt1={0}
+          pt2={0}
         />
         <Info
           data1={state?.amount}
           label={t('Amount')}
-          _pt2={0}
           noDivider
+          pt2={0}
         />
       </Container>
       <ButtonWithCancel
@@ -263,6 +291,7 @@ export default function Review(): React.ReactElement {
         _onClickCancel={_onBackClick}
         text={t('Send')}
       />
+
     </>
   );
 
@@ -290,7 +319,7 @@ export default function Review(): React.ReactElement {
         !isConfirming &&
         <Review />
       }
-      {
+      {/* {
         isConfirming &&
         <>
           <Container disableGutters sx={{ px: '30px' }}>
@@ -303,7 +332,7 @@ export default function Review(): React.ReactElement {
             <Trilogy part1={t('From')} part2={accountName} part3={<ShortAddress address={formatted} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
             <Trilogy part1={t('Amount')} part2={state?.amount} part3={token} />
             <Trilogy part1={t('Fee')} part2={state?.fee?.toHuman()} showDivider />
-            <Trilogy part1={t('To')} part2={state?.recepientName} part3={<ShortAddress address={state?.recepientAddress} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
+            <Trilogy part1={t('To')} part2={state?.recipientName} part3={<ShortAddress address={state?.recipientAddress} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
             <Trilogy part1={t('Block')} part2={txLog?.block ? `#${txLog?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
             <Trilogy part1={t('Hash')} part2={txLog?.txHash ? <ShortAddress address={txLog?.txHash} addressStyle={{ fontSize: '16px' }} charsCount={6} showCopy /> : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
             <Grid container item justifyContent='center' pt='5px' xs={12}>
@@ -329,7 +358,8 @@ export default function Review(): React.ReactElement {
             text={t('Back to My Account(s)')}
           />
         </>
-      }
+      } */}
+      <WaitScreen show={showWaitScreen} title={t('Send Fund')} />
     </Motion>
   );
 }
