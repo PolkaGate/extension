@@ -525,3 +525,16 @@ export interface Recoded {
   prefix?: number;
   type: KeypairType;
 }
+
+export interface TransferTxInfo {
+  amount: string;
+  block: number;
+  chain: Chain;
+  from: NameAddress;
+  txHash: string;
+  to?: NameAddress;
+  failureText?: string;
+  fee: Balance;
+  status: string;
+  token: string;
+}

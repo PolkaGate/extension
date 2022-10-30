@@ -8,10 +8,10 @@ import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { FormatBalance2 } from '../../components';
-import { useTranslation } from '../../hooks';
-import { SubQueryHistory } from '../../util/types';
-import { toShortAddress, upperCaseFirstChar } from '../../util/utils';
+import { FormatBalance2 } from '../../../components';
+import { useTranslation } from '../../../hooks';
+import { SubQueryHistory } from '../../../util/types';
+import { toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 
 interface Props {
   anotherDay: boolean;

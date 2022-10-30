@@ -4,14 +4,14 @@
 import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, Progress } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory } from '../../util/types';
-import HistoryItem from './HistoryItem';
+import HistoryItem from './partials/HistoryItem';
 
 interface ChainNameAddressState {
   chainName: string;
@@ -28,16 +28,16 @@ const TAB_MAP = {
 
 export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const history = useHistory();
   const { pathname, state } = useLocation();
   const { chainName, decimal, formatted, token } = useParams<ChainNameAddressState>();
   const [tabIndex, setTabIndex] = useState<number>(1);
-  const [history, setHistory] = useState<SubQueryHistory[] | undefined>();
+  const [txHistory, setTxHistory] = useState<SubQueryHistory[] | undefined>();
   // const [groupedHistory, setGroupedHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
   const [filtered, setFiltered] = useState<SubQueryHistory[] | undefined>();
 
   const grouped = useMemo((): Record<string, SubQueryHistory[]> | undefined => {
-    const list = (filtered && [...filtered]) || (history && [...history]);
+    const list = (filtered && [...filtered]) || (txHistory && [...txHistory]);
 
     if (!list) {
       return undefined;
@@ -59,11 +59,11 @@ export default function TransactionHistory(): React.ReactElement<''> {
     });
 
     return temp;
-  }, [filtered, history]);
+  }, [filtered, txHistory]);
 
   useEffect(() => {
     chainName && formatted && getHistory(chainName, formatted).then((res) => {
-      setHistory(res ? [...res] : undefined);
+      setTxHistory(res ? [...res] : undefined);
     }
     ).catch(console.error);
   }, [formatted, chainName]);
@@ -71,26 +71,28 @@ export default function TransactionHistory(): React.ReactElement<''> {
   console.log('groupedhistory:', grouped);
 
   const _onBack = useCallback(() => {
-    onAction(state?.pathname ?? '/');
-  }, [onAction, state?.pathname]);
+    history.push({
+      pathname: state?.pathname ?? '/'
+    });
+  }, [history, state?.pathname]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
 
-    if (history) {
+    if (txHistory) {
       // filter history
 
       if (tabIndex === TAB_MAP.TRANSFERS) {
-        return setFiltered(history.filter((h) => h.id.includes('to') || h.id.includes('from')));
+        return setFiltered(txHistory.filter((h) => h.id.includes('to') || h.id.includes('from')));
       }
 
       if (tabIndex === TAB_MAP.STAKING) {
-        return setFiltered(history.filter((h) => h.extrinsic?.module === 'staking' || h.extrinsic?.module === 'nominationPools'));
+        return setFiltered(txHistory.filter((h) => h.extrinsic?.module === 'staking' || h.extrinsic?.module === 'nominationPools'));
       }
 
       return setFiltered(undefined); // for the All tab
     }
-  }, [history]);
+  }, [txHistory]);
 
   return (
     <>

@@ -1,6 +1,5 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
@@ -9,7 +8,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 
-import { TxInfo } from '../plusTypes';
+import { TxInfo } from '../types';
 
 export async function signAndSend(
   api: ApiPromise,
@@ -46,19 +45,16 @@ export async function signAndSend(
         const signedBlock = await api.rpc.chain.getBlock(hash);
         const blockNumber = signedBlock.block.header.number;
         const txHash = result.txHash.toString();
-console.log('txHash:', txHash)
+
         // search for the hash of the extrinsic in the block
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         signedBlock.block.extrinsics.forEach(async (ex) => {
-          console.log('ex:', ex)
-
           if (ex.isSigned) {
-            console.log('ex.isSigned:', ex.isSigned)
-
             if (String(ex.signer) == senderAddress) {
-              const queryInfo = await api.rpc.payment.queryInfo(ex.toHex(), signedBlock.block.hash);
-              const fee = queryInfo.partialFee.toString();
-              console.log('blockNumber:', blockNumber)
+              /** since the api is replaced hence needs more effort to calculate the */
+              // const queryInfo = await api.call.transactionPaymentApi.queryInfo(ex.toHex(), signedBlock.block.hash);
+
+              const fee = undefined; //queryInfo.partialFee.toString();
 
               resolve({ block: Number(blockNumber), failureText, fee, status: txFailed ? 'failed' : 'success', txHash });
             }
