@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -28,9 +28,10 @@ interface Props {
   genesisHash: string;
   prevState?: Record<string, any>;
   proxyTypeFilter?: string[];
+  style?: SxProps<Theme>;
 }
 
-export default function PasswordWithUseProxy({ api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxyTypeFilter, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordWithUseProxy({ api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxyTypeFilter, style, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
@@ -60,7 +61,7 @@ export default function PasswordWithUseProxy({ api, defaultValue, disabled, gene
   }, [password, isPasswordError, onChange]);
 
   return (
-    <Grid container>
+    <Grid container sx={{...style}}>
       <Grid
         item
         xs={proxies?.length ? 9 : 12}
