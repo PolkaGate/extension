@@ -101,9 +101,7 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={_onBackClick}
           shortBorder
-          showBackArrow
           text={title}
         />
         <Grid
