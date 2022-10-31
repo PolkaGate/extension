@@ -528,12 +528,13 @@ export interface Recoded {
 
 export interface TransferTxInfo {
   amount: string;
+  api: ApiPromise;
   block: number;
   chain: Chain;
   from: NameAddress;
   txHash: string;
-  to?: NameAddress;
-  failureText?: string;
+  to: NameAddress;
+  failureText: string;
   fee: Balance;
   status: string;
   token: string;
