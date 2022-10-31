@@ -534,6 +534,7 @@ export interface TransferTxInfo {
   from: NameAddress;
   txHash: string;
   to: NameAddress;
+  throughProxy: NameAddress | null;
   failureText: string;
   fee: Balance;
   status: string;
