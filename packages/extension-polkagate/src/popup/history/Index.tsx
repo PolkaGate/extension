@@ -32,7 +32,8 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const { pathname, state } = useLocation();
   const { chainName, decimal, formatted, token } = useParams<ChainNameAddressState>();
   const [tabIndex, setTabIndex] = useState<number>(1);
-  const [txHistory, setTxHistory] = useState<SubQueryHistory[] | undefined>();
+  const [isRefreshing, setRefresh] = useState<boolean>(true);
+  const [txHistory, setTxHistory] = useState<SubQueryHistory[] | undefined | null>();
   // const [groupedHistory, setGroupedHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
   const [filtered, setFiltered] = useState<SubQueryHistory[] | undefined>();
 
@@ -61,12 +62,18 @@ export default function TransactionHistory(): React.ReactElement<''> {
     return temp;
   }, [filtered, txHistory]);
 
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    setTxHistory(null);
+  }, []);
+
   useEffect(() => {
-    chainName && formatted && getHistory(chainName, formatted).then((res) => {
+    chainName && formatted && isRefreshing && getHistory(chainName, formatted).then((res) => {
       setTxHistory(res ? [...res] : undefined);
+      setRefresh(false);
     }
     ).catch(console.error);
-  }, [formatted, chainName]);
+  }, [formatted, chainName, isRefreshing]);
 
   console.log('groupedhistory:', grouped);
 
@@ -97,7 +104,9 @@ export default function TransactionHistory(): React.ReactElement<''> {
   return (
     <>
       <HeaderBrand
+        isRefreshing={isRefreshing}
         onBackClick={_onBack}
+        onRefresh={onRefresh}
         showBackArrow
         text={t<string>('Transaction History')}
       />

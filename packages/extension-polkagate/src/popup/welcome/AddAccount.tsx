@@ -48,6 +48,7 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
   return (
     <>
       <HeaderBrand
+        showBrand
         showMenu
         text={t<string>('Polkagate')}
       />

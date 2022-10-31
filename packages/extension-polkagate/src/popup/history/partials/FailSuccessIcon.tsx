@@ -2,16 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Cancel as CancelIcon, Check as CheckIcon } from '@mui/icons-material';
-import { Typography } from '@mui/material';
+import { Container, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../../../hooks';
 
-export default function FailSuccessIcon({ showLabel = true, size = 54, success }: { success: boolean, showLabel?: boolean, size?: number }) {
+export default function FailSuccessIcon({ showLabel = true, style = { fontSize: '54px', mt: '20px' }, success }:
+  { success: boolean, showLabel?: boolean, size?: number, style?: SxProps<Theme> }) {
   const { t } = useTranslation();
 
   return (
-    <>
+    <Container
+      disableGutters
+      sx={{ ...style }}
+    >
       {
         success
           ? <CheckIcon
@@ -19,9 +23,8 @@ export default function FailSuccessIcon({ showLabel = true, size = 54, success }
               bgcolor: 'success.main',
               borderRadius: '50%',
               color: 'white',
-              fontSize: `${size}px`,
-              mt: '20px',
-              stroke: 'white'
+              stroke: 'white',
+              fontSize: style.fontSize
             }}
           />
           : <CancelIcon
@@ -29,8 +32,7 @@ export default function FailSuccessIcon({ showLabel = true, size = 54, success }
               bgcolor: '#fff',
               borderRadius: '50%',
               color: 'warning.main',
-              fontSize: `${size}px`,
-              mt: '20px'
+              fontSize: style.fontSize
             }}
           />
       }
@@ -42,6 +44,6 @@ export default function FailSuccessIcon({ showLabel = true, size = 54, success }
         {success ? t<string>('Completed') : t<string>('Failed')}
       </Typography>
       }
-    </>
+    </Container>
   );
 }

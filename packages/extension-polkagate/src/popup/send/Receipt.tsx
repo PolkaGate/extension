@@ -19,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 
-import { ActionContext, Motion, PButton, ShortAddress } from '../../components';
+import { ActionContext, Motion, ShortAddress, TwoButtons } from '../../components';
 import Popup from '../../components/Popup';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
@@ -28,23 +28,6 @@ import { TransferTxInfo } from '../../util/types';
 import FailSuccessIcon from '../history/partials/FailSuccessIcon';
 
 type TransferType = 'All' | 'Max' | 'Normal';
-
-interface LocationState {
-  accountName: string | undefined;
-  amount: string | undefined;
-  api: ApiPromise | undefined;
-  backPath: string | undefined;
-  balances: DeriveBalancesAll;
-  chain: Chain | null;
-  fee: Balance | undefined;
-  recipientAddress: string | undefined;
-  recipientName: string | undefined;
-  selectedProxyAddress: string | undefined;
-  selectedProxyName: string | undefined;
-  signer: KeyringPair;
-  transfer: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  transferType: TransferType | undefined;
-}
 
 interface Props {
   show: boolean;
@@ -58,15 +41,22 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
   // useRedirectOnRefresh('/');
   const theme = useTheme();
   const history = useHistory();
-  const { state } = useLocation<LocationState>();
+  const { state } = useLocation();
   const onAction = useContext(ActionContext);
 
   const network = info.chain.name.replace(' Relay Chain', '');
+  const decimal = info.api.registry.chainDecimals[0] as number;
+  const token = info.api.registry.chainTokens[0];
+  const historyLink = `/history/${network}/${decimal}/${token}/${info.from.address}`
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
 
-  const backToMyAccounts = useCallback(() => {
+  const gotToMyAccounts = useCallback(() => {
     onAction('/');
   }, [onAction]);
+
+  const gotToHistory = useCallback(() => {
+    onAction(historyLink);
+  }, [historyLink, onAction]);
 
   const _onBackClick = useCallback(() => {
     state?.backPath && history.push({
@@ -75,7 +65,7 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
     });
   }, [history, state]);
 
-  const Trilogy = ({ part1, part2, part3, showDivider = false }: { part1: any, part2: any, part3?: any, showDivider?: boolean }) => (
+  const Row = ({ part1, part2, part3, showDivider = false }: { part1: any, part2: any, part3?: any, showDivider?: boolean }) => (
     <>
       <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', pb: showDivider ? '0px' : '4px' }}>
         <Grid item sx={{ fontSize: '16px', maxWidth: '30%', width: 'fit-content' }}>
@@ -88,7 +78,7 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
           {part3}
         </Grid>
       </Grid>
-      {showDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '8px' }} />
+      {showDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '4px' }} />
       }
     </>
   );
@@ -111,15 +101,13 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
           </Grid>
         </Grid>
         <Container disableGutters sx={{ px: '20px' }}>
-          <Grid container justifyContent='center' py='30px'>
-            <FailSuccessIcon success={info?.status === 'success'} showLabel={false} size={87} />
-          </Grid>
-          <Trilogy part1={t<string>('From')} part2={info.from.name} part3={<ShortAddress address={info.from.address} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
-          <Trilogy part1={t<string>('Amount')} part2={info.amount} part3={info.token} />
-          <Trilogy part1={t<string>('Fee')} part2={state?.fee?.toHuman()} showDivider />
-          <Trilogy part1={t<string>('To')} part2={state?.recipientName} part3={<ShortAddress address={state?.recipientAddress} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
-          <Trilogy part1={t<string>('Block')} part2={info?.block ? `#${info?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
-          <Trilogy part1={t<string>('Hash')} part2={info?.txHash ? <ShortAddress address={info?.txHash} addressStyle={{ fontSize: '16px' }} charsCount={6} showCopy /> : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
+          <FailSuccessIcon success={info?.status === 'success'} showLabel={false} style={{ fontSize: '87px', pt: '30px', textAlign: 'center' }} />
+          <Row part1={t<string>('From')} part2={info.from.name} part3={<ShortAddress address={info.from.address} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
+          <Row part1={t<string>('Amount')} part2={info.amount} part3={info.token} />
+          <Row part1={t<string>('Fee')} part2={info.fee.toHuman()} showDivider />
+          <Row part1={t<string>('To')} part2={info.to.name} part3={<ShortAddress address={info.to.address} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
+          <Row part1={t<string>('Block')} part2={info?.block ? `#${info?.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
+          <Row part1={t<string>('Hash')} part2={info?.txHash ? <ShortAddress address={info?.txHash} addressStyle={{ fontSize: '16px' }} charsCount={6} showCopy /> : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />} />
           <Grid container item justifyContent='center' pt='5px' xs={12}>
             <Link
               href={`${subscanLink(info?.txHash)}`}
@@ -136,11 +124,11 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
             </Link>
           </Grid>
         </Container>
-        <PButton
-          _mt='15px'
-          _onClick={backToMyAccounts}
-          _variant='contained'
-          text={t<string>('Back to My Account(s)')}
+        <TwoButtons
+          onPrimaryClick={gotToMyAccounts}
+          onSecondaryClick={gotToHistory}
+          primaryBtnText={t('My accounts')}
+          secondaryBtnText={t('History')}
         />
       </Popup>
     </Motion>

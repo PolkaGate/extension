@@ -12,13 +12,14 @@ interface Props {
   className?: string;
 }
 
-export default function Authorize ({ className = '' }: Props): React.ReactElement {
+export default function Authorize({ className = '' }: Props): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(AuthorizeReqContext);
 
   return (
     <>
       <HeaderBrand
+        showBrand
         text={t<string>('Polkagate')}
       />
       {requests.map(({ id, request, url }, index): React.ReactNode => (

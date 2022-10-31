@@ -84,6 +84,7 @@ export default function Home({ className }: Props): React.ReactElement {
               xs={12}
             >
               <HeaderBrand
+                showBrand
                 showMenu
                 text={t<string>('Polkagate')}
               />

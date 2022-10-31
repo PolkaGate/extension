@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import FormatPrice from '../../components/FormatPrice';
 import useTranslation from '../../hooks/useTranslation';
-import { AddressPriceAll } from '../../util/plusTypes';
+import { AddressPriceAll } from '../../util/types';
 
 interface Props {
   allPrices: AddressPriceAll[] | undefined;

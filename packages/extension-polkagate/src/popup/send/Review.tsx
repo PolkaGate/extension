@@ -104,13 +104,14 @@ export default function Review(): React.ReactElement {
       const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxyAddress);
 
       setTxInfo({
+        api,
         amount,
         block: block || 0,
+        chain,
         failureText,
         fee: state?.fee || fee || '',
         from: { address: formatted, name: state?.accountName },
         status,
-        chain,
         to: { address: recipientAddress, name: state?.recipientName },
         txHash: txHash || ''
       });
