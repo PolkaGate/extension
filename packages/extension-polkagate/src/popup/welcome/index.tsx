@@ -28,7 +28,10 @@ const Welcome = function ({ className }: Props): React.ReactElement<Props> {
 
   return (
     <>
-      <HeaderBrand text={t<string>('Polkagate')} />
+      <HeaderBrand
+        showBrand
+        text={t<string>('Polkagate')}
+      />
       <div className={className}>
         <Typography
           component='h2'

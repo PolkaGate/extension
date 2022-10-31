@@ -78,7 +78,7 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
           {part3}
         </Grid>
       </Grid>
-      {showDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '8px' }} />
+      {showDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '4px' }} />
       }
     </>
   );

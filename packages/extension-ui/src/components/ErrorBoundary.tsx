@@ -52,7 +52,7 @@ class ErrorBoundary extends React.Component<Props> {
     return error
       ? (
         <>
-          <HeaderBrand noBorder text={t<string>('Polkagate')} />
+          <HeaderBrand noBorder showBrand text={t<string>('Polkagate')} />
           <Grid container paddingTop='25px' justifyContent='center' mx='15px'>
             {t<string>('Something went wrong with the query and rendering of this component. {{message}}', {
               replace: { message: error.message }
