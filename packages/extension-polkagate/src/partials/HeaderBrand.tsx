@@ -36,8 +36,6 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   const setMenuRef = useRef(null);
   const theme = useTheme();
 
-  console.log('showBrand:', showBrand);
-  
   useOutsideClick([setIconRef, setMenuRef], (): void => {
     isMenuOpen && setShowMenu(!isMenuOpen);
   });
