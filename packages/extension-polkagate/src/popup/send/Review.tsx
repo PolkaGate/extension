@@ -86,7 +86,7 @@ export default function Review(): React.ReactElement {
         return;
       }
 
-      const { amount, api, recipientAddress, selectedProxyAddress, signer, transfer, transferType } = state;
+      const { accountName, amount, api, recipientAddress, recipientName, selectedProxyAddress, selectedProxyName, signer, transfer, transferType } = state;
 
       setShowWaitScreen(true);
       let params = [];
@@ -100,8 +100,10 @@ export default function Review(): React.ReactElement {
 
         params = [recipientAddress, amountAsBN];
       }
+      console.log('lets go ...');
 
       const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxyAddress);
+      console.log('txHash:', txHash);
 
       setTxInfo({
         api,
@@ -110,9 +112,10 @@ export default function Review(): React.ReactElement {
         chain,
         failureText,
         fee: state?.fee || fee || '',
-        from: { address: formatted, name: state?.accountName },
+        from: { address: formatted, name: accountName },
         status,
-        to: { address: recipientAddress, name: state?.recipientName },
+        to: { address: recipientAddress, name: recipientName },
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
         txHash: txHash || ''
       });
 
