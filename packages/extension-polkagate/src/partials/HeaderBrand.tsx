@@ -53,8 +53,8 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
 
   const LeftIcon = () => (
     <Grid item>
-      {showBackArrow
-        ? <ArrowBackIosIcon
+      {showBackArrow &&
+        <ArrowBackIosIcon
           onClick={onBackClick}
           sx={{
             color: 'secondary.light',
@@ -63,8 +63,9 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
             stroke: theme.palette.secondary.light,
             strokeWidth: 1.5
           }}
-        />
-        : <Box
+        />}
+      {!showBackArrow && showBrand &&
+        <Box
           component='img'
           src={logoWhite}
           sx={{ height: 38, width: 38 }}
