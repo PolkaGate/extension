@@ -29,14 +29,16 @@ interface Props {
   prevState?: Record<string, any>;
   proxyTypeFilter?: string[];
   style?: SxProps<Theme>;
+  setShowSelectProxy: React.Dispatch<React.SetStateAction<boolean>>;
+   proxies: Proxy[] | undefined
+
 }
 
-export default function PasswordWithUseProxy({ api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxyTypeFilter, style, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordWithUseProxy({proxies, setShowSelectProxy, api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxyTypeFilter, style, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
   const { pathname } = useLocation();
-  const proxies = useProxies(api, proxiedAddress);
   const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
 
@@ -49,11 +51,9 @@ export default function PasswordWithUseProxy({ api, defaultValue, disabled, gene
 
   const goToSelectProxy = useCallback(
     (): void => {
-      proxiedAddress && history.push({
-        pathname: `/selectProxy/${proxiedAddress}/${genesisHash}`,
-        state: { pathname, prevState, proxies, proxyTypeFilter }
-      });
-    }, [proxiedAddress, history, genesisHash, pathname, prevState, proxies, proxyTypeFilter]
+      setShowSelectProxy(true);
+  // proxies, proxyTypeFilter }
+    }, [setShowSelectProxy]
   );
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function PasswordWithUseProxy({ api, defaultValue, disabled, gene
   }, [password, isPasswordError, onChange]);
 
   return (
-    <Grid container sx={{...style}}>
+    <Grid container sx={{ ...style }}>
       <Grid
         item
         xs={proxies?.length ? 9 : 12}

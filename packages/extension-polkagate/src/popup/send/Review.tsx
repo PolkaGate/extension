@@ -100,10 +100,8 @@ export default function Review(): React.ReactElement {
 
         params = [recipientAddress, amountAsBN];
       }
-      console.log('lets go ...');
 
       const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxyAddress);
-      console.log('txHash:', txHash);
 
       setTxInfo({
         api,
