@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 import AccountPreview from '../../components/AccountPreview';
 import { useTranslation } from '../../hooks';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import { AddressPriceAll } from '../../util/plusTypes';
+import { AddressPriceAll } from '../../util/types';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
