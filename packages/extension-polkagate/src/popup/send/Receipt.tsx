@@ -19,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 
-import { ActionContext, Motion, PButton, ShortAddress } from '../../components';
+import { ActionContext, Motion, PButton, ShortAddress, TwoButtons } from '../../components';
 import Popup from '../../components/Popup';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
@@ -111,9 +111,7 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
           </Grid>
         </Grid>
         <Container disableGutters sx={{ px: '20px' }}>
-          <Grid container justifyContent='center' py='30px'>
-            <FailSuccessIcon success={info?.status === 'success'} showLabel={false} size={87} />
-          </Grid>
+          <FailSuccessIcon success={info?.status === 'success'} showLabel={false} style={{ fontSize: '87px', pt: '30px', textAlign: 'center' }} />
           <Trilogy part1={t<string>('From')} part2={info.from.name} part3={<ShortAddress address={info.from.address} addressStyle={{ fontSize: '16px' }} inParentheses />} showDivider />
           <Trilogy part1={t<string>('Amount')} part2={info.amount} part3={info.token} />
           <Trilogy part1={t<string>('Fee')} part2={state?.fee?.toHuman()} showDivider />
@@ -136,12 +134,18 @@ export default function Receipt({ info, show, title }: Props): React.ReactElemen
             </Link>
           </Grid>
         </Container>
-        <PButton
+        <TwoButtons
+          primaryBtnText={t('My accounts')}
+          secondaryBtnText={t('History')}
+          onPrimaryClick={backToMyAccounts}
+          onSecondaryClick={backToMyAccounts}
+        />
+        {/* <PButton
           _mt='15px'
           _onClick={backToMyAccounts}
           _variant='contained'
           text={t<string>('Back to My Account(s)')}
-        />
+        /> */}
       </Popup>
     </Motion>
   );
