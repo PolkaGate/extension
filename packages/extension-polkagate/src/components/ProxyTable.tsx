@@ -3,9 +3,9 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect,useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -16,10 +16,8 @@ import Label from './Label';
 import { AccountContext, Identicon } from './';
 
 interface Props {
-  addressesOnThisChain?: NameAddress[] | undefined;
   chain?: Chain | undefined | null;
   label: string;
-  withRemove?: boolean;
   style?: SxProps<Theme>;
   proxies?: Proxy[];
   onSelect?: (selected: Proxy) => void
@@ -28,9 +26,8 @@ interface Props {
   notFoundText?: string;
 }
 
-export default function ProxyTable({ proxyTypeFilter, notFoundText = '', addressesOnThisChain, onSelect, chain, label, withRemove = false, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelect, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const [wanrningText, setWanrningText] = useState<string>();
 
@@ -40,7 +37,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-    , [accounts, proxyTypeFilter]);
+  , [accounts, proxyTypeFilter]);
 
   const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
@@ -231,27 +228,29 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                           xs={2}
                         >
                           {onSelect
-                            ? <FormControlLabel
-                              control={
-                                <Radio
-                                  // checked={selectedIndex === index}
-                                  disabled={!isAvailable(proxy)}
-                                  onChange={handleOptionChange}
-                                  size='small'
-                                  sx={{ color: 'red' }}
-                                  value={index}
-                                />
-                              }
-                              label=''
-                              sx={{ pl: '20px' }}
-                              value={index}
-                            />
-                            : <Typography
-                              fontSize='12px'
-                              fontWeight={400}
-                            >
-                              {isAvailable(proxy) ? 'Yes' : 'No'}
-                            </Typography>
+                            ? (
+                              <FormControlLabel
+                                control={
+                                  <Radio
+                                    // checked={selectedIndex === index}
+                                    disabled={!isAvailable(proxy)}
+                                    onChange={handleOptionChange}
+                                    size='small'
+                                    sx={{ color: 'red' }}
+                                    value={index}
+                                  />
+                                }
+                                label=''
+                                sx={{ pl: '20px' }}
+                                value={index}
+                              />)
+                            : (
+                              <Typography
+                                fontSize='12px'
+                                fontWeight={400}
+                              >
+                                {isAvailable(proxy) ? 'Yes' : 'No'}
+                              </Typography>)
                           }
                         </Grid>
                       </Grid>
@@ -272,7 +271,6 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', address
                         lineHeight='20px'
                         pl='8px'
                       >
-                        {/* {`No proxies found for the above account’s address on ${chain.name}. You can use it as Watch Only Account.`} */}
                         {wanrningText}
                       </Typography>
                     </Grid>
