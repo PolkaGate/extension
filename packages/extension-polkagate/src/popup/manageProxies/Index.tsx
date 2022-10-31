@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, ProxyTable, ShowBalance } from '../../components';
+import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../components';
 import { useAccount, useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
@@ -26,6 +26,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const [formatted, setFormatted] = useState<string | undefined>();
   const [depositValue, setDepositValue] = useState<BN | undefined>();
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
+  const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
 
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
@@ -39,6 +40,26 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor : BN_ZERO;
   const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
 
+  const _onBackClick = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
+
+  const _openAddProxy = useCallback(() => {
+    !disableAddProxyButton && setShowAddProxy(!showAddProxy);
+  }, [disableAddProxyButton, showAddProxy]);
+
+  const _toConfirm = useCallback(() => {
+    !disableAddProxyButton && setShowAddProxy(!showAddProxy);
+  }, [disableAddProxyButton, showAddProxy]);
+
+  useEffect(() => {
+    if (!disableAddProxyButton) {
+      const anyChanges = proxyItems?.length === proxyItems?.filter((item) => item.status === 'current')?.length;
+
+      !anyChanges && setEnableToConfirmButton(false);
+    }
+  }, [disableAddProxyButton, proxyItems, proxyItems?.length]);
+
   useEffect(() => {
     chain && setFormatted(getFormattedAddress(address, undefined, chain.ss58Format));
     !available ? setDepositValue(BN_ZERO) : setDepositValue(proxyDepositBase.add(proxyDepositFactor.muln(available))) as unknown as BN;
@@ -47,14 +68,6 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   useEffect(() => {
     proxyItems !== undefined && !(account?.isExternal && proxyItems.length === 0) && setEnableAddProxyButton(false);
   }, [account?.isExternal, proxyItems]);
-
-  const _onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
-
-  const _openAddProxy = useCallback(() => {
-    !disableAddProxyButton && setShowAddProxy(!showAddProxy);
-  }, [disableAddProxyButton, showAddProxy]);
 
   useEffect(() => {
     formatted && api && api.query.proxy?.proxies(formatted).then((proxies) => {
@@ -167,6 +180,11 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
               />
             </Grid>
           </Grid>
+          <PButton
+            _onClick={_toConfirm}
+            disabled={disableToConfirmButton}
+            text={t<string>('Next')}
+          />
         </>
       }
       {showAddProxy &&
