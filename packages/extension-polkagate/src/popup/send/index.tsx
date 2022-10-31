@@ -8,8 +8,7 @@
  * this component opens 
  * */
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Container, Grid, useTheme } from '@mui/material';
@@ -26,8 +25,9 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, PasswordWithUseProxy, SettingsContext, ShortAddress, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
+import SelectProxy from '../../partials/SelectProxy';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
-import { FormattedAddressState } from '../../util/types';
+import { FormattedAddressState, Proxy } from '../../util/types';
 import { amountToHuman, getFormattedAddress, getSubstrateAddress, isValidAddress } from '../../util/utils';
 import BalanceFee from './BalanceFee';
 
@@ -56,6 +56,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
+  const proxies = useProxies(apiToUse||api, formatted);
 
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
@@ -68,10 +69,12 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
+  const [showSelectProxy, setShowSelectProxy] = useState(false);
+  const [selectedProxy, setSelectedProxy] = useState<Proxy>();
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
-  const selectedProxyAddress = state?.selectedProxy?.delegate as unknown as string;
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
   const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
   const recipientName = useMemo(
@@ -350,8 +353,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           onChange={onChangePass}
           prevState={myState}
           proxiedAddress={formatted}
-          proxyTypeFilter={['Any']}
+          proxies={proxies}
           style={{ paddingTop: '10px' }}
+          setShowSelectProxy={setShowSelectProxy}
         // isFocused
         />
       </Container>
@@ -361,6 +365,17 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         disabled={buttonDisabled}
         text={t('Next')}
       />
+      {showSelectProxy &&
+        <SelectProxy
+          genesisHash={genesisHash}
+          proxiedAddress={formatted}
+          proxies={proxies}
+          proxyTypeFilter={['Any']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+          setShow={setShowSelectProxy}
+          show={showSelectProxy}
+        />}
     </Motion>
   );
 }

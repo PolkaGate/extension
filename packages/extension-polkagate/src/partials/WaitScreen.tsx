@@ -21,7 +21,6 @@ export default function WaitScreen({ show, title }: Props): React.ReactElement {
     <Popup show={show}>
       <HeaderBrand
         shortBorder
-        showBackArrow
         text={title}
       />
       <Grid container px='20px' justifyContent='center'>

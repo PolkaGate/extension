@@ -2,58 +2,52 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { PButton, ProxyTable } from '../components'
+import { PButton, ProxyTable } from '../components';
+import Popup from '../components/Popup';
 import { useMetadata, useTranslation } from '../hooks';
-import useRedirectOnRefresh from '../hooks/useRedirectOnRefresh';
 import { HeaderBrand } from '../partials';
 import { Proxy } from '../util/types';
 
 interface Props {
-  className?: string;
+  show: boolean;
+  proxiedAddress: string;
+  genesisHash: string;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedProxy: Proxy | undefined
+  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>
+  proxyTypeFilter: string[]
+  proxies: Proxy[] | undefined;
 }
 
-export default function SelectProxy({ className }: Props): React.ReactElement<Props> {
+export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const history = useHistory();
-  const { state } = useLocation();
-
-  useRedirectOnRefresh('/');
-  const { genesisHash, proxiedAddress } = useParams<{ proxiedAddress: string, genesisHash: string }>();
   const chain = useMetadata(genesisHash, true);
-
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const backPath = (state?.pathname ?? '/') as unknown as string;
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
 
   const _goBack = useCallback(
-    () => {
-      history.push({ pathname: backPath });
-    }
-    , [backPath, history]);
+    () =>
+      setShow(false)
+    , [setShow]);
 
   const handleNext = useCallback(() => {
-    proxiedAddress && history.push({
-      pathname: backPath,
-      state: { selectedProxy, ...state.prevState }
-    });
-  }, [backPath, history, proxiedAddress, selectedProxy, state]);
+    _goBack();
+  }, [_goBack]);
 
   const onSelect = useCallback((selected: Proxy) => {
     setSelectedProxy(selected);
-  }, []);
+  }, [setSelectedProxy]);
 
   return (
-    <>
+    <Popup show={show}>
       <HeaderBrand
         onBackClick={_goBack}
         showBackArrow
@@ -72,8 +66,8 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
         label={t<string>('Proxies')}
         maxHeight='50%'
         onSelect={onSelect}
-        proxies={state?.proxies}
-        proxyTypeFilter={state?.proxyTypeFilter}
+        proxies={proxies}
+        proxyTypeFilter={proxyTypeFilter}
         style={{
           m: '20px auto',
           width: '92%'
@@ -84,6 +78,6 @@ export default function SelectProxy({ className }: Props): React.ReactElement<Pr
         disabled={!selectedProxy}
         text={t('Next')}
       />
-    </>
+    </Popup>
   );
 }
