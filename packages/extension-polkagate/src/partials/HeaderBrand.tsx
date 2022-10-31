@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
@@ -17,6 +19,8 @@ interface Props {
   withSteps?: { currentStep: string | number, totalSteps: string | number } | null;
   text?: React.ReactNode;
   onBackClick?: () => void;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
   _centerItem?: JSX.Element;
   noBorder?: boolean;
   shortBorder?: boolean;
@@ -24,7 +28,7 @@ interface Props {
   accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, noBorder = false, onBackClick, paddingBottom = 11, shortBorder, showBackArrow, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showBackArrow, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setShowMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -101,7 +105,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, noBorder = false, onBackCli
   const RightMenuIcon = () => (
     <Grid
       item
-      sx={{ height: '38px', visibility: showMenu ? 'visible' : 'hidden' }}
+      sx={{ height: '38px' }}
     >
       <IconButton
         aria-label='menu'
@@ -109,9 +113,24 @@ function HeaderBrand({ _centerItem, accountMenuInfo, noBorder = false, onBackCli
         edge='start'
         onClick={_handleMenuClick}
         size='small'
-        sx={{ p: 0 }}
+        sx={{ p: 0, visibility: showMenu && !onRefresh ? 'visible' : 'hidden' }}
       >
         <MenuIcon sx={{ color: showBackArrow ? 'secondary.light' : '#fff', fontSize: 38 }} />
+      </IconButton>
+      <IconButton
+        aria-label='menu'
+        color='inherit'
+        edge='start'
+        onClick={onRefresh}
+        size='small'
+        sx={{ p: 0, visibility: !showMenu && !!onRefresh ? 'visible' : 'hidden' }}
+      >
+        <FontAwesomeIcon
+          color={theme.palette.secondary.light}
+          icon={faRefresh}
+          size='lg'
+          spin={isRefreshing}
+        />
       </IconButton>
     </Grid>
   );
