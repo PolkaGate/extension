@@ -97,50 +97,15 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           </Warning>
         </Grid>
       }
+      <Address
+        address={address}
+      />
       <Grid
-        container
-        direction='column'
-        sx={{
-          '&::-webkit-scrollbar': {
-            display: 'none',
-            width: 0
-          },
-          '> .tree:first-child': {
-            borderTopLeftRadius: '5px',
-            borderTopRightRadius: '5px'
-          },
-          '> .tree:last-child': {
-            border: 'none',
-            borderBottomLeftRadius: '5px',
-            borderBottomRightRadius: '5px'
-          },
-          border: '0.5px solid',
-          borderColor: 'secondary.light',
-          borderRadius: '5px',
-          display: 'block',
-          m: '20px auto 0',
-          maxHeight: parent.innerHeight * 2 / 3,
-          overflowY: 'scroll',
-          scrollbarWidth: 'none',
-          width: '92%'
-        }}
+        m='-20px auto 0'
+        width='100%'
       >
-        <Address
-          address={address}
-          className='tree'
-          style={{
-            border: 'none',
-            borderBottom: '1px solid',
-            borderBottomColor: 'secondary.light',
-            borderRadius: 'none',
-            m: 0,
-            width: '100%'
-          }}
-        />
-      </Grid>
-      <Grid container letterSpacing='-1.5%' p='23px 24px 0px 14px'>
         <Warning
-          isBelowInput
+          // isBelowInput
           isDanger
           theme={theme}
         >
@@ -148,15 +113,8 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
         </Warning>
       </Grid>
       <Grid
-        item
-        m='auto'
-        ml='6%'
-        mr='15px'
-        sx={{
-          bottom: '80px',
-          position: 'absolute'
-        }}
-        width='90%'
+        m='40px auto 0'
+        width='92%'
       >
         {needsPasswordConfirmation
           ? <>
@@ -175,13 +133,14 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
               </Warning>
             )}
           </>
-          : <Checkbox
-            checked={checkConfirmed}
-            label={t<string>('I want to forget this account.')}
-            onChange={setCheckConfirmed}
-            style={{ fontSize: '16px', marginLeft: '-25px', marginTop: 0, textAlign: 'left' }}
-            theme={theme}
-          />
+          : (
+            <Checkbox
+              checked={checkConfirmed}
+              label={t<string>('I want to forget this account.')}
+              onChange={setCheckConfirmed}
+              style={{ fontSize: '16px' }}
+              theme={theme}
+            />)
         }
       </Grid>
       <ButtonWithCancel
