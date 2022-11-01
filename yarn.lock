@@ -4989,9 +4989,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/dev@npm:^0.67.150":
-  version: 0.67.150
-  resolution: "@polkadot/dev@npm:0.67.150"
+"@polkadot/dev@npm:^0.67.151":
+  version: 0.67.151
+  resolution: "@polkadot/dev@npm:0.67.151"
   dependencies:
     "@babel/cli": ^7.19.3
     "@babel/core": ^7.19.6
@@ -5017,8 +5017,8 @@ __metadata:
     "@rollup/plugin-json": ^5.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rushstack/eslint-patch": ^1.2.0
-    "@typescript-eslint/eslint-plugin": ^5.41.0
-    "@typescript-eslint/parser": ^5.41.0
+    "@typescript-eslint/eslint-plugin": ^5.42.0
+    "@typescript-eslint/parser": ^5.42.0
     "@vue/component-compiler-utils": ^3.3.0
     babel-jest: ^29.2.2
     babel-plugin-module-extension-resolver: ^1.0.0-rc.2
@@ -5032,7 +5032,7 @@ __metadata:
     eslint-plugin-header: ^3.1.1
     eslint-plugin-import: ^2.26.0
     eslint-plugin-import-newlines: ^1.2.3
-    eslint-plugin-n: ^15.3.0
+    eslint-plugin-n: ^15.4.0
     eslint-plugin-promise: ^6.1.1
     eslint-plugin-react: ^7.31.10
     eslint-plugin-react-hooks: ^4.6.0
@@ -5054,7 +5054,7 @@ __metadata:
     mkdirp: ^1.0.4
     prettier: ^2.7.1
     rimraf: ^3.0.2
-    rollup: ^3.2.3
+    rollup: ^3.2.5
     rollup-plugin-cleanup: ^3.2.1
     typescript: ^4.8.4
     webpack: ^5.74.0
@@ -5088,7 +5088,7 @@ __metadata:
     polkadot-exec-swc: scripts/polkadot-exec-swc.mjs
     polkadot-exec-tsc: scripts/polkadot-exec-tsc.mjs
     polkadot-exec-webpack: scripts/polkadot-exec-webpack.mjs
-  checksum: 91dd5ad98ce6a26df93f294258bb6b095c946cc508edb3ca9366e9e3d1f9c8f9cae5120b98688f63b86d2c07d79e19180cf4f8e20bf31b7f6f7fc2fa53092607
+  checksum: c66c6e460634e0adc43e424ba7a8c3f51826cdc8d8c3dd5742a5e40f3c7934a84b461a7fde7ce7348150428d46731ee94a4cbb753d93102ac0d39edfe347fea0
   languageName: node
   linkType: hard
 
@@ -5699,7 +5699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/util-crypto@npm:^10.1.1":
+"@polkadot/util-crypto@npm:^10.1.11":
   version: 10.1.11
   resolution: "@polkadot/util-crypto@npm:10.1.11"
   dependencies:
@@ -5833,7 +5833,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/x-fetch@npm:^10.1.1":
+"@polkadot/x-fetch@npm:^10.1.11":
   version: 10.1.11
   resolution: "@polkadot/x-fetch@npm:10.1.11"
   dependencies:
@@ -7196,7 +7196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.41.0":
+"@typescript-eslint/eslint-plugin@npm:^5.42.0":
   version: 5.42.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.42.0"
   dependencies:
@@ -7236,7 +7236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.41.0":
+"@typescript-eslint/parser@npm:^5.42.0":
   version: 5.42.0
   resolution: "@typescript-eslint/parser@npm:5.42.0"
   dependencies:
@@ -12144,9 +12144,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^15.3.0":
-  version: 15.3.0
-  resolution: "eslint-plugin-n@npm:15.3.0"
+"eslint-plugin-n@npm:^15.4.0":
+  version: 15.4.0
+  resolution: "eslint-plugin-n@npm:15.4.0"
   dependencies:
     builtins: ^5.0.1
     eslint-plugin-es: ^4.1.0
@@ -12158,7 +12158,7 @@ __metadata:
     semver: ^7.3.7
   peerDependencies:
     eslint: ">=7.0.0"
-  checksum: a5a4c778804a0d343ca904c917b8e583b4df28aaad593ea6d41893befac45d4f92ab38d895aac018ac757583697d38e99397d4deda783ec8ff650bb2041d23c8
+  checksum: 30c82ea4af765d5c15afda0dc09302fd98963a2965b05c3f2a8048d586a78cc3ab53d9dbb3babbd1b926bdf9aab4e2c4353cce9088d8931000363fdbccc99b51
   languageName: node
   linkType: hard
 
@@ -20234,9 +20234,9 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.2.3":
-  version: 3.2.4
-  resolution: "rollup@npm:3.2.4"
+"rollup@npm:^3.2.5":
+  version: 3.2.5
+  resolution: "rollup@npm:3.2.5"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -20244,7 +20244,7 @@ resolve@^2.0.0-next.3:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 638e8a8237120c7bf7d41ecdcb6c9ddb396302e4adf75ee5f81d54cb7fb65a3fcc3bafefdc32438f818ac1f6ae5fb632fd69cdaf42139e160831eb697417df1d
+  checksum: 1779b778fe4b14f80a995a641d3a89a76e3651170536192022dce1821f1241ee49496353655aa812dc8f8334c89a302ad957b757d4370cf57e41ca270bb394fd
   languageName: node
   linkType: hard
 
@@ -20260,7 +20260,7 @@ resolve@^2.0.0-next.3:
     "@mui/material": ^5.8.3
     "@polkadot/api": latest
     "@polkadot/apps-config": ^0.118.1
-    "@polkadot/dev": ^0.67.150
+    "@polkadot/dev": ^0.67.151
     "@testing-library/react": ^13.3.0
     "@types/jest": ^28.1.1
     "@vaadin/icons": ^23.2.3
