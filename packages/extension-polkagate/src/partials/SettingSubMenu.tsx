@@ -163,13 +163,13 @@ export default function SettingSubMenu({ className }: Props): React.ReactElement
         </Grid>
         <Grid
           item
-          pt='20px'
+          pt='15px'
         >
           <Checkbox
             checked={camera}
             label={t<string>('Allow QR camera access')}
             onChange={setCamera}
-            style={{ fontSize: '18px', marginLeft: '-25px', marginTop: 0, textAlign: 'left' }}
+            style={{ fontSize: '18px' }}
             theme={theme}
           />
         </Grid>
