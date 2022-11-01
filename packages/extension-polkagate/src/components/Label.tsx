@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { QuestionMarkRounded as QuestionMarkRoundedIcon } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -27,7 +27,9 @@ function Label({ children, helperText = '', label, style }: Props): React.ReactE
     <div
       style={{ textAlign: 'left', ...style }}
     >
-      <label ref={ref}>{label}</label>
+      <Grid ref={ref} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {label}
+      </Grid>
       {helperText?.length > 0 &&
         <Tooltip
           arrow
