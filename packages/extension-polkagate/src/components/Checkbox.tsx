@@ -1,97 +1,92 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Grid, SxProps, Typography } from '@mui/material';
 import { Theme } from '@mui/material/styles';
-import React, { useCallback } from 'react';
-import styled from 'styled-components';
+import React, { useCallback, useState } from 'react';
 
 import Checkmark from '../assets/checkmark.svg';
 
 interface Props {
   checked: boolean;
-  className?: string;
   label: string;
   onChange?: (checked: boolean) => void;
   onClick?: () => void;
-  theme?: Theme;
-  style?: React.CSSProperties | undefined;
+  theme: Theme;
+  style?: SxProps<Theme> | undefined
+  height?: number;
+  width?: number;
 }
 
-function Checkbox({ checked, className, label, onChange, onClick, style }: Props): React.ReactElement<Props> {
+export default function Checkbox({ checked = false, height = 22, label, theme, onChange, onClick, style, width = 22 }: Props): React.ReactElement<Props> {
+  const [getChecked, setChecked] = useState<Boolean>(checked);
+
   const _onChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => onChange && onChange(event.target.checked),
     [onChange]
   );
 
   const _onClick = useCallback(
-    () => onClick && onClick(),
-    [onClick]
+    () => {
+      onClick && onClick();
+      setChecked(!getChecked);
+    },
+    [getChecked, onClick]
   );
 
   return (
-    <div
-      className={className}
-      style={{ margin: '41px auto 10px', ...style }}
+    <Grid
+      alignItems='center'
+      container
+      position='relative'
+      sx={{ ...style }}
     >
-      <label color='text.primary'>
-        {label}
-        <input
-          checked={checked}
-          onChange={_onChange}
-          onClick={_onClick}
-          type='checkbox'
-        />
-        <span />
-      </label>
-    </div>
+      <Grid
+        item
+        display='inline-flex'
+        lineHeight='25px'
+      >
+        <Grid
+          sx={{
+            border: '1px solid',
+            borderColor: 'secondary.light',
+            borderRadius: '5px',
+            height,
+            m: 'auto',
+            mr: label.length ? '7px' : 0,
+            width
+          }}
+        >
+          <img
+            src={Checkmark}
+            style={{
+              height: height - 2,
+              width: width - 3,
+              visibility: getChecked ? 'visible' : 'hidden'
+            }}
+          />
+        </Grid>
+        <Typography
+          fontSize='inherit'
+          textAlign='left'
+        >
+          {label}
+        </Typography>
+      </Grid>
+      <input
+        checked={getChecked}
+        onChange={_onChange}
+        onClick={_onClick}
+        style={{
+          cursor: 'pointer',
+          height: '100%',
+          margin: 0,
+          opacity: 0,
+          position: 'absolute',
+          width: '100%'
+        }}
+        type='checkbox'
+      />
+    </Grid>
   );
 }
-
-export default styled(Checkbox)(({ theme }: Props) => `
-  label {
-    display: block;
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    padding-left: 55px;
-    font-size: inherit;
-    font-weight: 300;
-    margin: auto;
-
-    & input {
-      position: absolute;
-      opacity: 0;
-      left: 15px;
-      cursor: pointer;
-      height: 20px;
-      width: 20px;
-      border-color: ${theme.palette.secondary.light};
-    }
-
-    & span {
-      position: absolute;
-      top: 2px;
-      left: 25px;
-      height: 20px;
-      width: 20px;
-      border-radius: 5px;
-      background-color: transparent;
-      border: 0.5px solid ${theme.palette.secondary.light};
-      &:after {
-        content: '';
-        display: none;
-        width: 16px;
-        height: 16px;
-        position: absolute;
-        left: 0;
-        top: 0;
-        mask: url(${Checkmark});
-        mask-size: cover;
-        background: ${theme.palette.secondary.light};
-      }
-    }
-  }
-  input:checked ~ span:after {
-    display: block;
-  }
-`);
