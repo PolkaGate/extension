@@ -27,7 +27,7 @@ function Label({ children, helperText = '', label, style }: Props): React.ReactE
     <div
       style={{ textAlign: 'left', ...style }}
     >
-      <Grid ref={ref} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <Grid ref={ref} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content', maxWidth: '100%' }}>
         {label}
       </Grid>
       {helperText?.length > 0 &&
