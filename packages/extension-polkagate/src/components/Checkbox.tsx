@@ -18,7 +18,7 @@ interface Props {
   width?: number;
 }
 
-export default function Checkbox({ checked = false, height = 22, label, theme, onChange, onClick, style, width = 22 }: Props): React.ReactElement<Props> {
+export default function Checkbox({ checked = false, height = 20, label, theme, onChange, onClick, style, width = 20 }: Props): React.ReactElement<Props> {
   const [getChecked, setChecked] = useState<Boolean>(checked);
 
   const _onChange = useCallback(
@@ -53,7 +53,7 @@ export default function Checkbox({ checked = false, height = 22, label, theme, o
             borderRadius: '5px',
             height,
             m: 'auto',
-            mr: label.length ? '7px' : 0,
+            mr: label.length ? '5px' : 0,
             width
           }}
         >
