@@ -25,9 +25,10 @@ interface Props {
   fontSize?: number;
   fontWeight?: number;
   helperText?: string;
+  type?: string;
 }
 
-function InputWithLabel({ className, defaultValue, helperText, disabled, fontSize = 18, fontWeight = 300, height = 31, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const _checkKey = useCallback(
@@ -77,7 +78,7 @@ function InputWithLabel({ className, defaultValue, helperText, disabled, fontSiz
           paddingLeft: '10px'
         }}
         theme={theme}
-        type='text'
+        type={type}
         value={value}
         withError={offFocus && isError}
       />

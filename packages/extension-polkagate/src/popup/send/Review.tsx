@@ -137,8 +137,8 @@ export default function Review(): React.ReactElement {
       <Grid item sx={{ fontSize: '12px' }} xs={2}>
         {t('Through')}
       </Grid>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
-      <Grid alignItems='center' container item justifyContent='center' sx={{ width: 'fit-content', px: '2px', maxWidth: '66%' }}>
+      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
+      <Grid alignItems='center' container item justifyContent='center' sx={{ width: 'fit-content', px: '2px', maxWidth: '65%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
           {state?.chain &&
             <Grid item>
@@ -150,15 +150,17 @@ export default function Review(): React.ReactElement {
               />
             </Grid>
           }
-          <Grid item sx={{ fontSize: '16px', fontWeight: 400, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '10px' }}>
-            {name}
+          <Grid container item sx={{ fontSize: '16px', fontWeight: 400, maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '7px' }}>
+            <Grid item sx={{ lineHeight: '16px' }}>
+              {name}
+            </Grid>
             <Grid item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '12px', width: 'fit-content' }}>
               <ShortAddress address={address} />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '10px', mt: '5px', width: '1px' }} />
+      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
       <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2}>
         {t('as proxy')}
       </Grid>

@@ -56,7 +56,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
-  const proxies = useProxies(apiToUse||api, formatted);
+  const proxies = useProxies(apiToUse || api, formatted);
 
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
@@ -307,6 +307,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             onChange={_onChangeAmount}
             placeholder={'00.00'}
             value={value}
+            type='number'
           />
         </Grid>
         <Grid alignItems='flex-end' container item sx={{ pl: '10px', pt: '20px' }} xs={4}>

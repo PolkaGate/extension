@@ -1,13 +1,12 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { useProxies, useTranslation } from '../hooks';
+import { useTranslation } from '../hooks';
 import { Proxy } from '../util/types';
 import { Password } from './';
 
@@ -30,15 +29,11 @@ interface Props {
   proxyTypeFilter?: string[];
   style?: SxProps<Theme>;
   setShowSelectProxy: React.Dispatch<React.SetStateAction<boolean>>;
-   proxies: Proxy[] | undefined
-
+  proxies: Proxy[] | undefined
 }
 
-export default function PasswordWithUseProxy({proxies, setShowSelectProxy, api, defaultValue, disabled, genesisHash, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxyTypeFilter, style, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordWithUseProxy({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxies, setShowSelectProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const history = useHistory();
-  const { pathname } = useLocation();
   const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
 
@@ -52,7 +47,7 @@ export default function PasswordWithUseProxy({proxies, setShowSelectProxy, api, 
   const goToSelectProxy = useCallback(
     (): void => {
       setShowSelectProxy(true);
-  // proxies, proxyTypeFilter }
+      // proxies, proxyTypeFilter }
     }, [setShowSelectProxy]
   );
 
