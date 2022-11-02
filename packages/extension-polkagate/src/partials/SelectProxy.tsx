@@ -12,7 +12,7 @@ import { PButton, ProxyTable } from '../components';
 import Popup from '../components/Popup';
 import { useMetadata, useTranslation } from '../hooks';
 import { HeaderBrand } from '../partials';
-import { Proxy } from '../util/types';
+import { Proxy, ProxyItem } from '../util/types';
 
 interface Props {
   show: boolean;
@@ -22,7 +22,7 @@ interface Props {
   selectedProxy: Proxy | undefined
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>
   proxyTypeFilter: string[]
-  proxies: Proxy[] | undefined;
+  proxies: ProxyItem[] | undefined;
 }
 
 export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
@@ -65,6 +65,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
         chain={chain}
         label={t<string>('Proxies')}
         maxHeight='50%'
+        mode='Select'
         onSelect={onSelect}
         proxies={proxies}
         proxyTypeFilter={proxyTypeFilter}

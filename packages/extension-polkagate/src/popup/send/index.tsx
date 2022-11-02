@@ -27,7 +27,7 @@ import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '..
 import { HeaderBrand } from '../../partials';
 import SelectProxy from '../../partials/SelectProxy';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
-import { FormattedAddressState, Proxy } from '../../util/types';
+import { FormattedAddressState, Proxy, ProxyItem } from '../../util/types';
 import { amountToHuman, getFormattedAddress, getSubstrateAddress, isValidAddress } from '../../util/utils';
 import BalanceFee from './BalanceFee';
 
@@ -58,6 +58,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
   const proxies = useProxies(apiToUse || api, formatted);
 
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
@@ -95,6 +96,12 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       setIdentity(info?.identity);
     });
   }, [apiToUse, recipientAddress]);
+
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
 
   useEffect((): void => {
     state?.recipientAddress && setRecipientAddress(state?.recipientAddress);
@@ -370,7 +377,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         <SelectProxy
           genesisHash={genesisHash}
           proxiedAddress={formatted}
-          proxies={proxies}
+          proxies={proxyItems}
           proxyTypeFilter={['Any']}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}

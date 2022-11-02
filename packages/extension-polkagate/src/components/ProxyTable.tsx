@@ -3,45 +3,114 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
-import { NameAddress, Proxy } from '../util/types';
+import { NameAddress, Proxy, ProxyItem } from '../util/types';
 import { getSubstrateAddress, toShortAddress } from '../util/utils';
 import Label from './Label';
-import { AccountContext, Identicon } from './';
+import { AccountContext, Checkbox, Identicon } from '.';
 
 interface Props {
   chain?: Chain | undefined | null;
   label: string;
   style?: SxProps<Theme>;
-  proxies?: Proxy[];
-  onSelect?: (selected: Proxy) => void
+  proxies?: ProxyItem[];
+  onSelect?: (selected: Proxy) => void;
+  mode: 'None' | 'Availability' | 'Delete' | 'Select' | 'Status';
   maxHeight?: string;
   proxyTypeFilter?: string[];
   notFoundText?: string;
 }
 
-export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelect, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const [wanrningText, setWanrningText] = useState<string>();
+  const theme = useTheme();
 
   useEffect(() => {
     setWanrningText(notFoundText || `No proxies found for the above account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
-  }, [chain?.name, notFoundText]);
+  }, [chain?.name, notFoundText, proxies?.length]);
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-  , [accounts, proxyTypeFilter]);
+    , [accounts, proxyTypeFilter]);
 
-  const handleOptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
   }, [onSelect, proxies]);
+
+  const handleDelete = useCallback((proxy: Proxy) => {
+    proxies && onSelect && onSelect(proxy);
+  }, [onSelect, proxies]);
+
+  const Select = ({ proxy, index }: { proxy: Proxy, index: number }) => (
+    <FormControlLabel
+      control={
+        <Radio
+          disabled={!isAvailable(proxy)}
+          onChange={handleSelect}
+          size='small'
+          sx={{ color: 'red' }}
+          value={index}
+        />
+      }
+      label=''
+      sx={{ m: 'auto' }}
+      value={index}
+    />
+  );
+
+  const Delete = ({ proxyItem }: { proxyItem: ProxyItem }) => (
+    <Grid
+      onClick={() => handleDelete(proxyItem.proxy)}
+    >
+      {proxyItem.status === 'new'
+        ? (
+          <DeleteIcon
+            sx={{
+              color: 'secondary.main',
+              cursor: 'pointer',
+              fontSize: '30px'
+            }}
+          />)
+        : (
+          <Checkbox
+            checked={proxyItem.status === 'remove'}
+            height={25}
+            label=''
+            style={{ margin: 'auto', width: 'fit-content' }}
+            theme={theme}
+            width={25}
+          />)
+      }
+    </Grid>
+  );
+
+  const Available = ({ proxy }: { proxy: Proxy }) => (
+    <Typography
+      fontSize='12px'
+      fontWeight={400}
+    >
+      {isAvailable(proxy) ? 'Yes' : 'No'}
+    </Typography>
+  );
+
+  const Status = ({ status }: { status: string }) => (
+    <Typography
+      fontSize='12px'
+      fontWeight={400}
+    >
+      {status === 'new' && 'Adding'}
+      {status === 'remove' && 'Removing'}
+    </Typography>
+  );
 
   return (
     <>
@@ -90,7 +159,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
             >
               <Grid
                 item
-                xs={4.7}
+                xs={mode === 'None' ? 6.1 : 4.7}
               >
                 <Typography
                   fontSize='12px'
@@ -102,7 +171,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
               </Grid>
               <Grid
                 item
-                xs={3.9}
+                xs={mode === 'None' ? 4.5 : 3.9}
               >
                 <Typography
                   fontSize='12px'
@@ -124,23 +193,25 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                   {t('Delay')}
                 </Typography>
               </Grid>
-              <Grid
-                item
-                xs={2}
-              >
-                <Typography
-                  fontSize='12px'
-                  fontWeight={300}
-                  lineHeight='25px'
+              {mode !== 'None' &&
+                <Grid
+                  item
+                  xs={2}
                 >
-                  {onSelect ? t('Select') : t('Available')}
-                </Typography>
-              </Grid>
+                  <Typography
+                    fontSize='12px'
+                    fontWeight={300}
+                    lineHeight='25px'
+                  >
+                    {mode === 'Select' ? t('Select') : mode === 'Delete' ? t('Delete') : mode === 'Status' ? t('Status') : t('Available')}
+                  </Typography>
+                </Grid>
+              }
             </Grid>
             {chain &&
               (proxies
                 ? proxies.length
-                  ? proxies.map((proxy, index) => {
+                  ? proxies.map((proxyItem, index) => {
                     return (
                       <Grid
                         container
@@ -152,7 +223,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                             borderRightColor: 'secondary.light'
                           },
                           height: '41px',
-                          opacity: `${isAvailable(proxy) ? 1 : 0.5}`,
+                          // opacity: `${isAvailable(proxy) ? 1 : 0.5}`,
                           textAlign: 'center'
                         }}
                         xs={12}
@@ -164,7 +235,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                           item
                           justifyContent='left'
                           pl='3px'
-                          xs={4.7}
+                          xs={mode === 'None' ? 6.1 : 4.7}
                         >
                           <Grid
                             item
@@ -174,7 +245,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                               prefix={chain?.ss58Format ?? 42}
                               size={30}
                               theme={chain?.icon || 'polkadot'}
-                              value={proxy.delegate}
+                              value={proxyItem.proxy.delegate}
                             />
                           </Grid>
                           <Typography
@@ -186,7 +257,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                             textOverflow='ellipsis'
                             whiteSpace='nowrap'
                           >
-                            {isAvailable(proxy)?.name || toShortAddress(proxy.delegate)}
+                            {isAvailable(proxyItem.proxy)?.name || toShortAddress(proxyItem.proxy.delegate)}
                           </Typography>
                         </Grid>
                         <Grid
@@ -195,13 +266,13 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                           height='100%'
                           item
                           justifyContent='center'
-                          xs={3.9}
+                          xs={mode === 'None' ? 4.5 : 3.9}
                         >
                           <Typography
                             fontSize='12px'
                             fontWeight={400}
                           >
-                            {proxy.proxyType}
+                            {proxyItem.proxy.proxyType}
                           </Typography>
                         </Grid>
                         <Grid
@@ -216,43 +287,28 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                             fontSize='12px'
                             fontWeight={400}
                           >
-                            {proxy.delay}
+                            {proxyItem.proxy.delay}
                           </Typography>
                         </Grid>
-                        <Grid
-                          alignItems='center'
-                          container
-                          height='100%'
-                          item
-                          justifyContent='center'
-                          xs={2}
-                        >
-                          {onSelect
-                            ? (
-                              <FormControlLabel
-                                control={
-                                  <Radio
-                                    // checked={selectedIndex === index}
-                                    disabled={!isAvailable(proxy)}
-                                    onChange={handleOptionChange}
-                                    size='small'
-                                    sx={{ color: 'red' }}
-                                    value={index}
-                                  />
-                                }
-                                label=''
-                                sx={{ pl: '20px' }}
-                                value={index}
-                              />)
-                            : (
-                              <Typography
-                                fontSize='12px'
-                                fontWeight={400}
-                              >
-                                {isAvailable(proxy) ? 'Yes' : 'No'}
-                              </Typography>)
-                          }
-                        </Grid>
+                        {mode !== 'None' &&
+                          <Grid
+                            alignItems='center'
+                            container
+                            height='100%'
+                            item
+                            justifyContent='center'
+                            xs={2}
+                          >
+                            {mode === 'Availability'
+                              ? <Available proxy={proxyItem.proxy} />
+                              : mode === 'Select'
+                                ? <Select proxy={proxyItem.proxy} index={index} />
+                                : mode === 'Delete'
+                                  ? <Delete proxyItem={proxyItem} />
+                                  : <Status status={proxyItem.status} />
+                            }
+                          </Grid>
+                        }
                       </Grid>
                     );
                   })
