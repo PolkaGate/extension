@@ -7,7 +7,7 @@ import type { NominatorInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Va
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, bnMax } from '@polkadot/util';
@@ -23,7 +23,7 @@ const workers: Worker[] = [];
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-
+  const history = useHistory();
   const { state } = useLocation();
   const { formatted, genesisHash } = useParams<{ formatted: string, genesisHash: string }>();
   const address = useMemo(() => getSubstrateAddress(formatted), [formatted]);
@@ -191,7 +191,14 @@ export default function Index(): React.ReactElement {
     setMinToReceiveRewardsInSolo(minSolo);
   }, [nominatorInfo?.minNominated, stakingConsts]);
 
-  const Option = ({ title, text, minText, balance }: { balance?: BN, title: string, text: string, minText: string }) => (
+  const goToPoolStaking = useCallback(() => {
+    genesisHash && formatted && history.push({
+      pathname: `/pool/${genesisHash}/${formatted}/`
+    });
+  }, [formatted, genesisHash, history]);
+
+  const Option = ({ balance, goToStake, minText, text, title }:
+    { balance?: BN, title: string, text: string, minText: string, goToStake: () => void }) => (
     <Grid container direction='column' justifyContent='center' alignItems='center' sx={{ border: '0.5px solid #BA2882', backgroundColor: 'background.paper', borderRadius: '5%', px: '14px', py: '15px', mt: '15px', letterSpacing: '-1.5%' }}>
       <Grid item sx={{ fontSize: '20px', fontWeight: 400 }}>
         {title}
@@ -215,14 +222,14 @@ export default function Index(): React.ReactElement {
         _mt={'15px'}
         _ml={0}
         _width={100}
-        // _onClick={_onCreate}
+        _onClick={goToStake}
         // disabled={!password || !name}
         text={t('Enter')}
       />
     </Grid>
   );
 
-   return (
+  return (
     <>
       <HeaderBrand
         onBackClick={onBackClick}
@@ -239,12 +246,15 @@ export default function Index(): React.ReactElement {
           minText={t('Minimum to join a pool')}
           text={t('Stakers (members) with a small amount of tokens can pool their funds together and act as a single nominator. The earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
           title={t('Pool Staking')}
+          goToStake={goToPoolStaking}
         />
         <Option
           balance={minToReceiveRewardsInSolo}
           minText={t('Minimum to receive rewards')}
           text={t('Stakers (nominators) with sufficient amount of tokens can choose solo staking. Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
           title={t('Solo Staking')}
+          goToStake={goToPoolStaking}
+
         />
       </Container>
     </>
