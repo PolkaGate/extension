@@ -1,13 +1,14 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faClose,faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
+import { ActionContext } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { AccountMenuInfo } from '../util/types';
 import AccMenuInside from './AccMenuInside';
@@ -21,6 +22,7 @@ interface Props {
   text?: React.ReactNode;
   onBackClick?: () => void;
   onRefresh?: () => void;
+  showClose?: boolean;
   isRefreshing?: boolean;
   _centerItem?: JSX.Element;
   noBorder?: boolean;
@@ -29,12 +31,13 @@ interface Props {
   accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showBackArrow, showBrand, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setShowMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
   const setMenuRef = useRef(null);
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
 
   useOutsideClick([setIconRef, setMenuRef], (): void => {
     isMenuOpen && setShowMenu(!isMenuOpen);
@@ -50,6 +53,10 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
     },
     [accountMenuInfo]
   );
+
+  const onClose = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
 
   const LeftIcon = () => (
     <Grid item>
@@ -105,21 +112,23 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
     </Grid>
   );
 
-  const RightMenuIcon = () => (
+  const RightItem = () => (
     <Grid
       item
-      sx={{ height: '38px' }}
+      // sx={{ height: '38px' }}
     >
-      <IconButton
-        aria-label='menu'
-        color='inherit'
-        edge='start'
-        onClick={_handleMenuClick}
-        size='small'
-        sx={{ p: 0, visibility: showMenu && !onRefresh ? 'visible' : 'hidden' }}
-      >
-        <MenuIcon sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 38 }} />
-      </IconButton>
+      {!onRefresh && !showClose &&
+        <IconButton
+          aria-label='menu'
+          color='inherit'
+          edge='start'
+          onClick={_handleMenuClick}
+          size='small'
+          sx={{ p: 0, visibility: showMenu ? 'visible' : 'hidden' }}
+        >
+          <MenuIcon sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 38 }} />
+        </IconButton>
+      }
       {!!onRefresh &&
         <IconButton
           aria-label='menu'
@@ -134,6 +143,22 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
             icon={faRefresh}
             size='lg'
             spin={isRefreshing}
+          />
+        </IconButton>
+      }
+      {showClose &&
+        <IconButton
+          aria-label='menu'
+          color='inherit'
+          edge='start'
+          onClick={onClose}
+          size='small'
+          sx={{ p: 0 }}
+        >
+          <FontAwesomeIcon
+            color={theme.palette.secondary.light}
+            icon={faClose}
+            size='lg'
           />
         </IconButton>
       }
@@ -180,7 +205,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
         >
           <LeftIcon />
           {_centerItem ?? <CenterItem />}
-          <RightMenuIcon />
+          <RightItem />
         </Grid>
         {shortBorder &&
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
