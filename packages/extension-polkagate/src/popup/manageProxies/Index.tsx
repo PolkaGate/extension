@@ -14,6 +14,7 @@ import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
 import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
+import Review from './Review';
 
 interface Props {
   className?: string;
@@ -21,8 +22,8 @@ interface Props {
 
 export default function ManageProxies({ className }: Props): React.ReactElement {
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | undefined>();
-  const [proxies, setProxies] = useState<Proxy[] | undefined>();
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
+  const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
   const [formatted, setFormatted] = useState<string | undefined>();
   const [depositValue, setDepositValue] = useState<BN | undefined>();
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
@@ -49,8 +50,33 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   }, [disableAddProxyButton, showAddProxy]);
 
   const _toConfirm = useCallback(() => {
-    !disableAddProxyButton && setShowAddProxy(!showAddProxy);
+    setShowReviewProxy(!showAddProxy);
   }, [disableAddProxyButton, showAddProxy]);
+
+  const onSelect = useCallback((selected: Proxy) => {
+    const toDeleteIndex = proxyItems?.indexOf(proxyItems?.find((item) => item.proxy.delegate === selected.delegate && item.proxy.proxyType === selected.proxyType));
+
+    if (toDeleteIndex !== undefined || toDeleteIndex !== -1) {
+      if (proxyItems[toDeleteIndex].status === 'current') {
+        proxyItems[toDeleteIndex].status = 'remove';
+        setProxyItems(proxyItems);
+
+        return;
+      }
+
+      if (proxyItems[toDeleteIndex].status === 'remove') {
+        proxyItems[toDeleteIndex].status = 'current';
+        setProxyItems(proxyItems);
+
+        return;
+      }
+
+      if (proxyItems[toDeleteIndex].status === 'new') {
+        proxyItems.splice(toDeleteIndex, 1);
+        setProxyItems(proxyItems);
+      }
+    }
+  }, [proxyItems]);
 
   useEffect(() => {
     if (!disableAddProxyButton) {
@@ -77,15 +103,6 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
     });
   }, [api, chain, formatted]);
 
-  useEffect(() => {
-    const prox: Proxy[] = [];
-
-    proxyItems && proxyItems.forEach((item) => {
-      prox.push(item.proxy);
-    });
-    setProxies(prox);
-  }, [proxyItems?.length, proxyItems]);
-
   return (
     <>
       <HeaderBrand
@@ -93,7 +110,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
         showBackArrow
         text={showAddProxy ? t<string>('Add Proxy') : t<string>('Manage Proxies')}
       />
-      {!showAddProxy &&
+      {!showAddProxy && !showReviewProxy &&
         <>
           <Typography
             fontSize='14px'
@@ -146,7 +163,9 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
             label={t<string>('Proxies')}
             maxHeight={window.innerHeight / 2.3}
             notFoundText={t<string>('No proxies found.')}
-            proxies={proxyItems ? proxies : undefined}
+            mode='Delete'
+            onSelect={onSelect}
+            proxies={proxyItems ?? proxyItems}
             style={{
               m: '20px auto 10px',
               width: '92%'
@@ -187,7 +206,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
           />
         </>
       }
-      {showAddProxy &&
+      {showAddProxy && !showReviewProxy &&
         <AddProxy
           address={address}
           api={api}
@@ -196,6 +215,15 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
           setProxyItems={setProxyItems}
           setShowAddProxy={setShowAddProxy}
           showAddProxy={showAddProxy}
+        />
+      }
+      {showReviewProxy &&
+        <Review
+          address={formatted}
+          api={api}
+          chain={chain}
+          depositValue={depositValue}
+          proxies={proxyItems}
         />
       }
     </>
