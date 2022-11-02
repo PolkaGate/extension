@@ -174,7 +174,7 @@ export default function Index(): React.ReactElement {
     endpoint && getPoolStakingConsts(endpoint);
   }, [chain, endpoint, getPoolStakingConsts, getStakingConsts]);
 
-  const _onBackClick = useCallback(() => {
+  const onBackClick = useCallback(() => {
     onAction(state?.pathname ?? '/');
   }, [onAction, state?.pathname]);
 
@@ -222,10 +222,11 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  return (
+   return (
     <>
       <HeaderBrand
-        onBackClick={_onBackClick}
+        onBackClick={onBackClick}
+        showClose
         showBackArrow
         text={t<string>('Staking')}
       />
