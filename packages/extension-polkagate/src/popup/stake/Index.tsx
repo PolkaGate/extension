@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { AccountsBalanceType, NominatorInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../util/types';
+import type { NominatorInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../util/types';
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, bnMax } from '@polkadot/util';
 
-import { ActionContext, ButtonWithCancel, PButton, ShowBalance } from '../../components';
+import { ActionContext, PButton, ShowBalance } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
-import { editAccount, updateMeta } from '../../messaging';
+import { updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../util/utils';
 
@@ -226,8 +226,8 @@ export default function Index(): React.ReactElement {
     <>
       <HeaderBrand
         onBackClick={onBackClick}
-        showClose
         showBackArrow
+        showClose
         text={t<string>('Staking')}
       />
       <Container
