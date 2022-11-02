@@ -20,7 +20,7 @@ export async function signAndSend(
     // eslint-disable-next-line no-void
     void submittable.signAndSend(_signer, async (result) => {
       let txFailed = false;
-      let failureText: string;
+      let failureText = '';
 
       console.log(JSON.parse(JSON.stringify(result)));
 
@@ -41,25 +41,28 @@ export async function signAndSend(
       }
 
       if (result.status.isFinalized || result.status.isInBlock) {
+        console.log('result.status', result.status);
         const hash = result.status.isFinalized ? result.status.asFinalized : result.status.asInBlock;
+
         const signedBlock = await api.rpc.chain.getBlock(hash);
         const blockNumber = signedBlock.block.header.number;
         const txHash = result.txHash.toString();
 
+        //FIXME: Do we need to get applied fee from blockchain
         // search for the hash of the extrinsic in the block
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        signedBlock.block.extrinsics.forEach(async (ex) => {
-          if (ex.isSigned) {
-            if (String(ex.signer) == senderAddress) {
-              /** since the api is replaced hence needs more effort to calculate the */
-              // const queryInfo = await api.call.transactionPaymentApi.queryInfo(ex.toHex(), signedBlock.block.hash);
+        // signedBlock.block.extrinsics.forEach(async (ex) => {
+        //   if (ex.isSigned) {
+        //     if (String(ex.signer) == senderAddress) {
+        /** since the api is replaced hence needs more effort to calculate the */
+        // const queryInfo = await api.call.transactionPaymentApi.queryInfo(ex.toHex(), signedBlock.block.hash);
 
-              const fee = undefined; //queryInfo.partialFee.toString();
+        const fee = undefined; //queryInfo.partialFee.toString();
 
-              resolve({ block: Number(blockNumber), failureText, fee, status: txFailed ? 'failed' : 'success', txHash });
-            }
-          }
-        });
+        resolve({ block: Number(blockNumber), failureText, fee, status: txFailed ? 'failed' : 'success', txHash });
+        //     }
+        //   }
+        // });
       }
     }).catch((e) => {
       console.log('catch error', e);
