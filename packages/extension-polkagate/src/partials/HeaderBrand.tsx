@@ -1,13 +1,14 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faRefresh, faClose } from '@fortawesome/free-solid-svg-icons';
+import { faClose,faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useRef, useState, useContext } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
+import { ActionContext } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { AccountMenuInfo } from '../util/types';
 import AccMenuInside from './AccMenuInside';
@@ -30,7 +31,7 @@ interface Props {
   accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, showClose, onRefresh, paddingBottom = 11, shortBorder, showBackArrow, showBrand, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setShowMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -145,7 +146,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
           />
         </IconButton>
       }
-      {!!showClose &&
+      {showClose &&
         <IconButton
           aria-label='menu'
           color='inherit'
