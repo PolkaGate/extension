@@ -28,7 +28,9 @@ import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState, NameAddress, TransferTxInfo } from '../../util/types';
-import Receipt from './Receipt';
+// import Receipt from './Receipt';
+import Confirmation from '../../partials/Confirmation';
+import SendTxDetail from './partial/SendTxDetail';
 
 type TransferType = 'All' | 'Max' | 'Normal';
 
@@ -66,6 +68,10 @@ export default function Review(): React.ReactElement {
   const prevUrl = isConfirming ? '' : `/send/${genesisHash}/${address}/${formatted}/`;
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
   const token = state?.api?.registry?.chainTokens[0] ?? '';
+
+  const goToMyAccounts = useCallback(() => {
+    onAction('/');
+  }, [onAction]);
 
   const ChainLogo = (
     <Avatar
@@ -269,7 +275,16 @@ export default function Review(): React.ReactElement {
         text={t('Send')}
       />
       <WaitScreen show={showWaitScreen} title={t('Send Fund')} />
-      {txInfo && <Receipt show={showReceipt} title={t('Send Fund')} info={txInfo} />}
+      {/* {txInfo && <Receipt show={showReceipt} title={t('Send Fund')} info={txInfo} />} */}
+      {txInfo && (
+        <Confirmation
+          headerTitle={t('Send Fund')}
+          onPrimaryBtnClick={goToMyAccounts}
+          primaryBtnText={t('My accounts')}
+          showConfirmation={showReceipt}
+          txInfo={txInfo}
+        ><SendTxDetail txInfo={txInfo} /></Confirmation>)
+      }
     </Motion>
   );
 }
