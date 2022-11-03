@@ -34,6 +34,7 @@ export { default as InputFileWithLabel } from './InputFileWithLabel';
 export { default as InputWithLabelAndIdenticon } from './InputWithLabelAndIdenticon';
 export { default as InputWithLabel } from './InputWithLabel';
 export { default as Password } from './Password';
+export { default as Popup } from './Popup';
 export { default as PasswordWithUseProxy } from './PasswordWithUseProxy';
 export { default as ProxyTable } from './ProxyTable';
 export { default as PButton } from './PButton';

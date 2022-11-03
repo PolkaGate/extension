@@ -7,8 +7,14 @@ import React from 'react';
 
 import { useTranslation } from '../../../hooks';
 
-export default function FailSuccessIcon({ showLabel = true, style = { fontSize: '54px', mt: '20px' }, success }:
-  { success: boolean, showLabel?: boolean, size?: number, style?: SxProps<Theme> }) {
+interface Props {
+  success: boolean;
+  showLabel?: boolean;
+  size?: number;
+  style?: SxProps<Theme>;
+}
+
+export default function FailSuccessIcon({ showLabel = true, style = { fontSize: '54px', mt: '20px' }, success }: Props) {
   const { t } = useTranslation();
 
   return (
