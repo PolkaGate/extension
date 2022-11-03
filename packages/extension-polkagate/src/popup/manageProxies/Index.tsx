@@ -28,6 +28,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const [depositValue, setDepositValue] = useState<BN | undefined>();
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
+  const [available, setAvailable] = useState<number>(0);
 
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor : BN_ZERO;
-  const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
+  // const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
 
   const _onBackClick = useCallback(() => {
     onAction('/');
@@ -51,7 +52,6 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
   const _toConfirm = useCallback(() => {
     setShowReviewProxy(!showAddProxy);
-  }, [disableAddProxyButton, showAddProxy]);
   }, [showAddProxy]);
 
   const checkForChanges = useCallback(() => {
@@ -60,6 +60,9 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
       !anyChanges && setEnableToConfirmButton(false);
       anyChanges && setEnableToConfirmButton(true);
+    }
+    
+    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length);
   }, [disableAddProxyButton, proxyItems]);
 
   const onSelect = useCallback((selected: Proxy) => {
