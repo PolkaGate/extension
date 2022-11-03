@@ -7,6 +7,8 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
 import type { AccountsBalanceType, MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../util/types';
+import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
 import { faHistory, faMinusCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,6 +26,7 @@ import { useApi, useEndpoint, useMapEntries, useMetadata, useTranslation } from 
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
+import { getValue } from '../../account/util';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -78,7 +81,7 @@ export default function Index(): React.ReactElement {
   const [validatorsIdentitiesIsFetched, setValidatorsIdentitiesIsFetched] = useState<boolean>(false);
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
   const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
-  const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>();
+  const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
 
 
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
@@ -98,6 +101,9 @@ export default function Index(): React.ReactElement {
   const [tabValue, setTabValue] = useState(4);
   const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
   const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
+  const [redeemable, setRedeemable] = useState<BN | undefined>();
+  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
 
 
   const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
@@ -219,6 +225,10 @@ export default function Index(): React.ReactElement {
   };
 
   useEffect(() => {
+    api && !apiToUse && setApiToUse(api);
+  }, [api, apiToUse]);
+
+  useEffect(() => {
     /** get some staking constant like min Nominator Bond ,... */
     endpoint && getStakingConsts(chain, endpoint);
     endpoint && getPoolStakingConsts(endpoint);
@@ -304,6 +314,42 @@ export default function Index(): React.ReactElement {
     endpoint && getPools(endpoint);
   }, [endpoint, formatted]);
 
+  useEffect(() => {
+    // eslint-disable-next-line no-void
+    endpoint && apiToUse && void apiToUse.derive.balances?.all(formatted).then((b) => {
+      setBalances(b);
+    });
+  }, [apiToUse, formatted, endpoint]);
+
+  useEffect((): void => {
+    // eslint-disable-next-line no-void
+    api && void api.query.staking.currentEra().then((ce) => {
+      setCurrentEraIndex(Number(ce));
+    });
+  }, [api]);
+
+  useEffect(() => {
+    if (myPool === undefined || !api || !currentEraIndex) {
+      return;
+    }
+
+    let unlockingValue = BN_ZERO;
+    let redeemValue = BN_ZERO;
+
+    if (myPool !== null && myPool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
+      for (const [era, unbondingPoint] of Object.entries(myPool.member?.unbondingEras)) {
+        if (currentEraIndex > Number(era)) {
+          redeemValue = redeemValue.add(new BN(unbondingPoint as string));
+        } else {
+          unlockingValue = unlockingValue.add(new BN(unbondingPoint as string));
+        }
+      }
+    }
+
+    setRedeemable(redeemValue);
+    setUnlockingAmount(unlockingValue);
+  }, [myPool, api, currentEraIndex]);
+
   const onBackClick = useCallback(() => {
     onAction(state?.pathname ?? '/');
   }, [onAction, state?.pathname]);
@@ -381,19 +427,61 @@ export default function Index(): React.ReactElement {
   );
 
   const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
+  const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
 
-  const Staked = () => (
-    <Grid item p='13px 15px'>
-      <Grid alignItems='center' container justifyContent='space-between'>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={3}>
-          {t('Staked')}
+  const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
+    const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
+
+    return (
+      <>
+        <Grid alignItems='center' p='10px 15px' container justifyContent='space-between'>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={5}>
+            {label}
+          </Grid>
+          <Grid container item xs justifyContent='flex-end'>
+            <Grid container direction='column' item xs alignItems='flex-end'>
+              <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
+                <ShowBalance api={api} balance={value} decimalPoint={2} />
+              </Grid>
+              <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+                {link1Text &&
+                  <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    {link1Text}
+                  </Grid>
+                }
+                {link2Text &&
+                  <>
+                    <Grid alignItems='center' item justifyContent='center' mx='6px'>
+                      <Divider orientation='vertical' sx={{ borderColor: 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
+                    </Grid>
+                    <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                      {link2Text}
+                    </Grid>
+                  </>
+                }
+              </Grid>
+            </Grid>
+            {label === 'Unstaking' &&
+              <Grid
+                alignItems='center'
+                container
+                item
+                xs={1}
+                sx={{ ml: '25px' }}
+              >
+                <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
+              </Grid>
+            }
+          </Grid>
         </Grid>
-        <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} textAlign='right'>
-          <ShowBalance api={api} balance={staked} decimalPoint={2} />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
+        {showDivider &&
+          <Grid item container justifyContent='center' xs={12}>
+            <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '90%' }} />
+          </Grid>
+        }
+      </>
+    );
+  };
 
   return (
     <>
@@ -405,12 +493,13 @@ export default function Index(): React.ReactElement {
       />
       <Container
         disableGutters
+        sx={{ pt: '5px' }}
       >
-        <Staked />
-        <Grid item container justifyContent='center' xs={12}>
-          <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '5px', px: '5px', width: '90%' }} />
-        </Grid>
-
+        <Row label={t('Staked')} value={staked} />
+        <Row label={t('Rewards')} value={claimable} link1Text={t('Claim')} link2Text={t('Stake')} />
+        <Row label={t('Redeemable')} value={redeemable} link1Text={t('Withdraw')} />
+        <Row label={t('Unstaking')} value={unlockingAmount} link1Text={t('Restake')} />
+        <Row label={t('Available to stake')} value={getValue('available', balances)} showDivider={false} />
         <Menu />
       </Container>
     </>

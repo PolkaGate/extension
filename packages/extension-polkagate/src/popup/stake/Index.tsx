@@ -193,9 +193,17 @@ export default function Index(): React.ReactElement {
 
   const goToPoolStaking = useCallback(() => {
     genesisHash && formatted && history.push({
-      pathname: `/pool/${genesisHash}/${formatted}/`
+      pathname: `/pool/${genesisHash}/${formatted}/`,
+      state: { currentEraIndex }
     });
-  }, [formatted, genesisHash, history]);
+  }, [currentEraIndex, formatted, genesisHash, history]);
+
+  useEffect((): void => {
+    // eslint-disable-next-line no-void
+    api && void api.query.staking.currentEra().then((ce) => {
+      setCurrentEraIndex(Number(ce));
+    });
+  }, [api]);
 
   const Option = ({ balance, goToStake, minText, text, title }:
     { balance?: BN, title: string, text: string, minText: string, goToStake: () => void }) => (
