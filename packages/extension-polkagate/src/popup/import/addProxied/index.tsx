@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -59,7 +59,9 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   }, [realAddress, chain]);
   useEffect(() => {
     realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
-      setProxies(JSON.parse(JSON.stringify(proxies[0])));
+      const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+      setProxies(fetchedProxyItems);
     });
   }, [api, chain, realAddress]);
 
