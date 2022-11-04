@@ -57,7 +57,7 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
         </Typography>
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: 'auto', pt: '30px', textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', m: '20px auto', textAlign: 'center', width: 'fit-content' }}
           success={txInfo.status === 'success'}
         />
         {failReason &&
