@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -14,7 +14,7 @@ import { useApi, useEndpoint, useGenesisHashOptions, useTranslation } from '../.
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { NameAddress, Proxy } from '../../../util/types';
+import { NameAddress, Proxy, ProxyItem } from '../../../util/types';
 
 interface Props {
   className?: string;
@@ -28,7 +28,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
-  const [proxies, setProxies] = useState<Proxy[] | undefined>();
+  const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
   const endpoint = useEndpoint(realAddress, chain);
   const api = useApi(endpoint);
   const genesisOptions = useGenesisHashOptions();
@@ -59,7 +59,9 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   }, [realAddress, chain]);
   useEffect(() => {
     realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
-      setProxies(JSON.parse(JSON.stringify(proxies[0])));
+      const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+      setProxies(fetchedProxyItems);
     });
   }, [api, chain, realAddress]);
 
@@ -118,10 +120,10 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
         style={{ m: 'auto', width: '92%' }}
       />
       <ProxyTable
-        addressesOnThisChain={addressesOnThisChain}
         chain={realAddress ? chain : undefined}
         label={t<string>('Proxies')}
         proxies={proxies}
+        mode='Availability'
         style={{
           m: '20px auto',
           width: '92%'

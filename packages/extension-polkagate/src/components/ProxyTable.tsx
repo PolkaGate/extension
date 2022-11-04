@@ -43,7 +43,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
     , [accounts, proxyTypeFilter]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    proxies && onSelect && onSelect(proxies[Number(event.target.value)]);
+    proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
   }, [onSelect, proxies]);
 
   const handleDelete = useCallback((proxy: Proxy) => {

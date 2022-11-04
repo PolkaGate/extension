@@ -28,6 +28,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const [depositValue, setDepositValue] = useState<BN | undefined>();
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
+  const [available, setAvailable] = useState<number>(0);
 
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor : BN_ZERO;
-  const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
+  // const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
 
   const _onBackClick = useCallback(() => {
     onAction('/');
@@ -51,7 +52,18 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
   const _toConfirm = useCallback(() => {
     setShowReviewProxy(!showAddProxy);
-  }, [disableAddProxyButton, showAddProxy]);
+  }, [showAddProxy]);
+
+  const checkForChanges = useCallback(() => {
+    if (!disableAddProxyButton) {
+      const anyChanges = proxyItems?.length === proxyItems?.filter((item) => item.status === 'current')?.length;
+
+      !anyChanges && setEnableToConfirmButton(false);
+      anyChanges && setEnableToConfirmButton(true);
+    }
+    
+    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length);
+  }, [disableAddProxyButton, proxyItems]);
 
   const onSelect = useCallback((selected: Proxy) => {
     const toDeleteIndex = proxyItems?.indexOf(proxyItems?.find((item) => item.proxy.delegate === selected.delegate && item.proxy.proxyType === selected.proxyType));
@@ -60,6 +72,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       if (proxyItems[toDeleteIndex].status === 'current') {
         proxyItems[toDeleteIndex].status = 'remove';
         setProxyItems(proxyItems);
+        checkForChanges();
 
         return;
       }
@@ -67,6 +80,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       if (proxyItems[toDeleteIndex].status === 'remove') {
         proxyItems[toDeleteIndex].status = 'current';
         setProxyItems(proxyItems);
+        checkForChanges();
 
         return;
       }
@@ -74,26 +88,21 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       if (proxyItems[toDeleteIndex].status === 'new') {
         proxyItems.splice(toDeleteIndex, 1);
         setProxyItems(proxyItems);
+        checkForChanges();
       }
     }
-  }, [proxyItems]);
-
-  useEffect(() => {
-    if (!disableAddProxyButton) {
-      const anyChanges = proxyItems?.length === proxyItems?.filter((item) => item.status === 'current')?.length;
-
-      !anyChanges && setEnableToConfirmButton(false);
-    }
-  }, [disableAddProxyButton, proxyItems, proxyItems?.length]);
+  }, [checkForChanges, proxyItems]);
 
   useEffect(() => {
     chain && setFormatted(getFormattedAddress(address, undefined, chain.ss58Format));
     !available ? setDepositValue(BN_ZERO) : setDepositValue(proxyDepositBase.add(proxyDepositFactor.muln(available))) as unknown as BN;
-  }, [address, api, available, chain, formatted, proxyDepositBase, proxyDepositFactor]);
+    checkForChanges();
+  }, [address, api, available, chain, checkForChanges, formatted, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
   useEffect(() => {
     proxyItems !== undefined && !(account?.isExternal && proxyItems.length === 0) && setEnableAddProxyButton(false);
-  }, [account?.isExternal, proxyItems]);
+    checkForChanges();
+  }, [account?.isExternal, checkForChanges, proxyItems]);
 
   useEffect(() => {
     formatted && api && api.query.proxy?.proxies(formatted).then((proxies) => {
@@ -165,7 +174,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
             notFoundText={t<string>('No proxies found.')}
             mode='Delete'
             onSelect={onSelect}
-            proxies={proxyItems ?? proxyItems}
+            proxies={proxyItems}
             style={{
               m: '20px auto 10px',
               width: '92%'
@@ -211,6 +220,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
           address={address}
           api={api}
           chain={chain}
+          onChange={checkForChanges}
           proxyItems={proxyItems}
           setProxyItems={setProxyItems}
           setShowAddProxy={setShowAddProxy}

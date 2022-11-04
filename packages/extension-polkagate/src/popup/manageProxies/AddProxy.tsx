@@ -22,7 +22,8 @@ interface Props {
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
   proxyItems: ProxyItem[];
-  setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | undefined>>
+  setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | undefined>>;
+  onChange: () => void;
 }
 
 interface DropdownOption {
@@ -34,7 +35,7 @@ const isEqualProxiy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy({ address, api, chain, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>(null);
   const [delay, setDelay] = useState<number>(0);
@@ -58,7 +59,8 @@ export default function AddProxy({ address, api, chain, proxyItems, setProxyItem
     proxyItems?.push({ proxy, status: 'new' });
     setProxyItems(proxyItems);
     setShowAddProxy(!showAddProxy);
-  }, [delay, proxyItems, realAddress, selectedProxyType, setProxyItems, setShowAddProxy, showAddProxy]);
+    onChange();
+  }, [delay, onChange, proxyItems, realAddress, selectedProxyType, setProxyItems, setShowAddProxy, showAddProxy]);
 
   const _selectProxyType = useCallback((type: string | number): void => {
     setSelectedProxyType(type as string);
@@ -90,7 +92,6 @@ export default function AddProxy({ address, api, chain, proxyItems, setProxyItem
   useEffect(() => {
     realAddress && api && api.derive.accounts.info(realAddress).then((info) => {
       if (info.identity.display) {
-        console.log('infooooooo:', info);
 
         setAccountInfo(info.identity);
       } else {
