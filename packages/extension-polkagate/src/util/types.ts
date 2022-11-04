@@ -128,11 +128,18 @@ export interface TransactionDetail {
 }
 
 export interface TxInfo {
-  block?: number;
-  fee?: string;
+  amount?: string;
+  api?: ApiPromise;
+  block: number;
+  chain: Chain;
+  from?: NameAddress;
+  fee: string;
   status: string;
-  txHash?: string;
+  txHash: string;
+  to?: NameAddress;
+  throughProxy?: NameAddress | null;
   failureText?: string
+  token?: string;
 }
 
 export interface Auction {
@@ -540,3 +547,4 @@ export interface TransferTxInfo {
   status: string;
   token: string;
 }
+
