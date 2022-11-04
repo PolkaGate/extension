@@ -27,6 +27,7 @@ import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
 import { getValue } from '../../account/util';
+import Info from './Info';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -113,6 +114,7 @@ export default function Index(): React.ReactElement {
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
+  const [showInfo, setShowInfo] = useState<boolean>(false);
 
   const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
     /** 1- get some staking constant like min Nominator Bond ,... */
@@ -423,6 +425,10 @@ export default function Index(): React.ReactElement {
     </>
   );
 
+  const goToIno = useCallback(() => {
+    setShowInfo(true);
+  }, []);
+
   const Menu = () => (
     <Grid container item sx={{ bottom: '10px', position: 'absolute' }}>
       <Grid item container justifyContent='center' xs={12}>
@@ -452,7 +458,7 @@ export default function Index(): React.ReactElement {
         <MenuItem
           noDivider
           icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToHistory}
+          onClick={goToIno}
           title={'Info'}
         />
       </Grid>
@@ -529,7 +535,7 @@ export default function Index(): React.ReactElement {
             }
           </Grid>
         </Grid>
-        {label === 'Unstaking' && showUnlockings &&
+        {label === 'Unstaking' && showUnlockings && !!toBeReleased?.length &&
           <ToBeReleased />
         }
         {showDivider &&
@@ -560,6 +566,7 @@ export default function Index(): React.ReactElement {
         <Row label={t('Available to stake')} value={getValue('available', balances)} showDivider={false} />
         <Menu />
       </Container>
+      <Info showInfo={showInfo} backPath={location?.pathname} />
     </>
   );
 }

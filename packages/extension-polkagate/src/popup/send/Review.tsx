@@ -61,12 +61,11 @@ export default function Review(): React.ReactElement {
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const onAction = useContext(ActionContext);
   const chain = useMetadata(genesisHash, true);
-  const [isConfirming, setIsConfirming] = useState<boolean>(false);
   const [txInfo, setTxInfo] = useState<TransferTxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showReceipt, setShowReceipt] = useState<boolean>(false);
 
-  const prevUrl = isConfirming ? '' : `/send/${genesisHash}/${address}/${formatted}/`;
+  const prevUrl = `/send/${genesisHash}/${address}/${formatted}/`;
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
   const token = state?.api?.registry?.chainTokens[0] ?? '';
 
@@ -182,6 +181,17 @@ export default function Review(): React.ReactElement {
     </Grid>
   );
 
+  const SubTitle = ({ label }: { label: string }) => (
+    <Grid container direction='column' item justifyContent='center' sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '25px', px: '5px' }}>
+      <Grid item sx={{ m: 'auto' }}>
+        {label}
+      </Grid>
+      <Grid item>
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
+      </Grid>
+    </Grid>
+  );
+
   return (
     <Motion>
       <HeaderBrand
@@ -194,14 +204,7 @@ export default function Review(): React.ReactElement {
           totalSteps: 2
         }}
       />
-      <Grid container direction='column' item justifyContent='center' sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '25px', px: '5px' }}>
-        <Grid item sx={{ m: 'auto' }}>
-          {isConfirming ? t('Confirmation') : t('Review')}
-        </Grid>
-        <Grid item>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
-        </Grid>
-      </Grid>
+      <SubTitle label={t('Review')} />
       <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
         <Info data1={state?.accountName} data2={formatted} label={t('From')} pt1={state?.selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
         <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
