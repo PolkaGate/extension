@@ -20,7 +20,7 @@ export default function FailSuccessIcon({ showLabel = true, style = { fontSize: 
   return (
     <Container
       disableGutters
-      sx={{ ...style }}
+      sx={{ height: '105px', ...style }}
     >
       {
         success
@@ -45,7 +45,7 @@ export default function FailSuccessIcon({ showLabel = true, style = { fontSize: 
       {showLabel && <Typography
         fontSize='16px'
         fontWeight={500}
-        mt='10px'
+        // mt='10px'
       >
         {success ? t<string>('Completed') : t<string>('Failed')}
       </Typography>
