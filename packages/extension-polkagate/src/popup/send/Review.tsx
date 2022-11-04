@@ -24,12 +24,13 @@ import { BN } from '@polkadot/util';
 import { ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, ShortAddress } from '../../components';
 import { useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
+// import Receipt from './Receipt';
+import Confirmation from '../../partials/Confirmation';
+import ThroughProxy from '../../partials/ThroughProxy';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState, NameAddress, TransferTxInfo } from '../../util/types';
-// import Receipt from './Receipt';
-import Confirmation from '../../partials/Confirmation';
 import SendTxDetail from './partial/SendTxDetail';
 
 type TransferType = 'All' | 'Max' | 'Normal';
@@ -138,41 +139,6 @@ export default function Review(): React.ReactElement {
     });
   }, [history, state]);
 
-  const AsProxy = ({ address, name }: { name: string | Element, address: string }) => (
-    <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '12px' }} xs={2}>
-        {t('Through')}
-      </Grid>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
-      <Grid alignItems='center' container item justifyContent='center' sx={{ width: 'fit-content', px: '2px', maxWidth: '65%' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
-          {state?.chain &&
-            <Grid item>
-              <Identicon
-                iconTheme={state?.chain?.icon || 'polkadot'}
-                prefix={state?.chain?.ss58Format ?? 42}
-                size={25}
-                value={address}
-              />
-            </Grid>
-          }
-          <Grid container item sx={{ fontSize: '16px', fontWeight: 400, maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pl: '7px' }}>
-            <Grid item sx={{ lineHeight: '16px' }}>
-              {name}
-            </Grid>
-            <Grid item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '12px', width: 'fit-content' }}>
-              <ShortAddress address={address} />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
-      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2}>
-        {t('as proxy')}
-      </Grid>
-    </Grid>
-  );
-
   const Info = ({ pt1 = 0, pt2 = 5, mb = 10, data1, data2, fontSize1 = 28, label, noDivider = false, showIdenticon, showProxy }: { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, showIdenticon?: boolean, showProxy?: boolean }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
@@ -204,7 +170,11 @@ export default function Review(): React.ReactElement {
         </>
       }
       {state?.selectedProxyAddress && showProxy &&
-        <AsProxy address={state?.selectedProxyAddress} name={state?.selectedProxyName} />
+        <ThroughProxy
+          address={state?.selectedProxyAddress}
+          chain={chain}
+          name={state?.selectedProxyName}
+        />
       }
       {!noDivider &&
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
