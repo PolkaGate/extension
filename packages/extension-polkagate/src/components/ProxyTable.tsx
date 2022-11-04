@@ -115,8 +115,8 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
   const fade = (toCheck: ProxyItem) => {
     if (mode === 'Delete') {
       return (toCheck.status === 'remove');
-    } else if (mode === 'Availability') {
-      return (isAvailable(toCheck.proxy));
+    } else if (mode === 'Availability' || mode === 'Select') {
+      return !(isAvailable(toCheck.proxy));
     }
 
     return false;
