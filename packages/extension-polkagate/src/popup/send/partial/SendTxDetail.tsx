@@ -83,7 +83,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
             fontSize='16px'
             fontWeight={400}
             lineHeight='23px'
-            maxWidth='45%'
+            maxWidth='23%'
             overflow='hidden'
             pl='5px'
             textOverflow='ellipsis'
@@ -96,7 +96,6 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
             fontWeight={400}
             item
             lineHeight='22px'
-            pl='5px'
           >
             <ShortAddress
               address={txInfo.throughProxy.address}
@@ -108,6 +107,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
             fontSize='16px'
             fontWeight={400}
             lineHeight='23px'
+            pl='2px'
           >
             {t<string>('as proxy')}
           </Typography>
