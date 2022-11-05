@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -28,6 +28,13 @@ interface Props {
 export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash, true);
+  const [proxiesToSelect, setproxiesToSelect] = useState<ProxyItem[] | undefined>();
+
+  useEffect(() => {
+    const toSelect = proxies?.filter((item) => item.status !== 'new');
+
+    setproxiesToSelect(toSelect);
+  }, [proxies]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -67,7 +74,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
         maxHeight='50%'
         mode='Select'
         onSelect={onSelect}
-        proxies={proxies}
+        proxies={proxiesToSelect}
         proxyTypeFilter={proxyTypeFilter}
         style={{
           m: '20px auto',
