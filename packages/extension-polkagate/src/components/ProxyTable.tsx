@@ -32,6 +32,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const [wanrningText, setWanrningText] = useState<string>();
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const theme = useTheme();
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
+    proxies && onSelect && setSelectedProxy(proxies[Number(event.target.value)].proxy);
   }, [onSelect, proxies]);
 
   const handleDelete = useCallback((proxy: Proxy) => {
@@ -52,15 +54,16 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
 
   const Select = ({ proxy, index }: { proxy: Proxy, index: number }) => (
     <FormControlLabel
+      checked={proxy === selectedProxy}
       control={
         <Radio
-          disabled={!isAvailable(proxy)}
+          sx={{ color: 'secondary.main', '&.Mui-disabled': { color: 'text.disabled' } }}
           onChange={handleSelect}
           size='small'
-          sx={{ color: 'red' }}
           value={index}
         />
       }
+      disabled={!isAvailable(proxy)}
       label=''
       sx={{ m: 'auto' }}
       value={index}
