@@ -17,7 +17,6 @@ import { useAccount } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
-import SelectProxy from '../../partials/SelectProxy';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress } from '../../util/utils';
@@ -37,10 +36,9 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>('');
-  const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(false);
+  const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(true);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfimation, setShowConfimation] = useState<boolean>(false);
-  const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
   const { t } = useTranslation();
@@ -57,7 +55,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const batchAll = api.tx.utility.batchAll;
 
   const goToMyAccounts = useCallback(() => {
-    setShowSelectProxy(false);
     setShowConfimation(false);
     setShowWaitScreen(false);
     onAction('/');
@@ -149,6 +146,10 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
 
     setProxiesToChange(toChange);
   }, [proxies]);
+
+  useEffect(() => {
+    setNextButtonDisalbe(!password);
+  }, [password]);
 
   return (
     <>
@@ -251,11 +252,13 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         onChange={setPassword}
         proxiedAddress={address}
         proxies={proxies}
-        setShowSelectProxy={setShowSelectProxy}
+        proxyTypeFilter={['Any']}
+        selectedProxy={selectedProxy}
+        setSelectedProxy={setSelectedProxy}
         style={{
           bottom: '80px',
-          position: 'absolute',
           left: '4%',
+          position: 'absolute',
           width: '92%'
         }}
       />
@@ -282,18 +285,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
             proxies={proxiesToChange}
           />
         </Confirmation>
-      }
-      {showSelectProxy &&
-        <SelectProxy
-          genesisHash={account?.genesisHash}
-          proxiedAddress={formatted}
-          proxies={proxies}
-          proxyTypeFilter={['Any']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          setShow={setShowSelectProxy}
-          show={showSelectProxy}
-        />
       }
     </>
   );

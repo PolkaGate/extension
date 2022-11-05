@@ -14,9 +14,10 @@ interface Props {
   name?: string;
   style?: SxProps<Theme>;
   showChainLogo?: boolean;
+  identiconSize?: number;
 }
 
-export default function Identity({ address, name, showChainLogo = false, style }: Props): React.ReactElement<Props> {
+export default function Identity({ address, name, showChainLogo = false, style, identiconSize = 40 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const account = useAccount(address);
   const chain = useMetadata(account?.genesisHash, true);
@@ -36,6 +37,7 @@ export default function Identity({ address, name, showChainLogo = false, style }
       sx={{ ...style }}
     >
       <Grid
+        alignItems='center'
         container
         item
         xs={showChainLogo ? 11 : 12}
@@ -47,7 +49,7 @@ export default function Identity({ address, name, showChainLogo = false, style }
           <Identicon
             iconTheme={chain?.icon ?? 'polkadot'}
             prefix={chain?.ss58Format ?? 42}
-            size={40}
+            size={identiconSize}
             value={formatted ?? account?.address}
           />
         </Grid>
@@ -56,7 +58,7 @@ export default function Identity({ address, name, showChainLogo = false, style }
           maxWidth={'82%'}
         >
           <Typography
-            fontSize='28px'
+            fontSize={style?.fontSize ?? '28px'}
             fontWeight={400}
             overflow='hidden'
             textOverflow='ellipsis'

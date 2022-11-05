@@ -26,13 +26,13 @@ interface Props {
   maxHeight?: string;
   proxyTypeFilter?: string[];
   notFoundText?: string;
+  selected?: Proxy;
 }
 
-export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
+export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const [wanrningText, setWanrningText] = useState<string>();
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const theme = useTheme();
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
-    proxies && onSelect && setSelectedProxy(proxies[Number(event.target.value)].proxy);
   }, [onSelect, proxies]);
 
   const handleDelete = useCallback((proxy: Proxy) => {
@@ -54,12 +53,12 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
 
   const Select = ({ proxy, index }: { proxy: Proxy, index: number }) => (
     <FormControlLabel
-      checked={proxy === selectedProxy}
+      checked={proxy === selected}
       control={
         <Radio
-          sx={{ color: 'secondary.main', '&.Mui-disabled': { color: 'text.disabled' } }}
           onChange={handleSelect}
           size='small'
+          sx={{ '&.Mui-disabled': { color: 'text.disabled' }, color: 'secondary.main' }}
           value={index}
         />
       }
@@ -72,8 +71,8 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
 
   const Delete = ({ proxyItem }: { proxyItem: ProxyItem }) => (
     <Grid
-      onClick={() => handleDelete(proxyItem.proxy)}
       height={25}
+      onClick={() => handleDelete(proxyItem.proxy)}
     >
       {proxyItem.status === 'new'
         ? (
