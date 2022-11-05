@@ -37,7 +37,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>('');
-  const [nextButtonDisabe, setNextButtonDisabe] = useState<boolean>(false);
+  const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(false);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfimation, setShowConfimation] = useState<boolean>(false);
   const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
@@ -76,7 +76,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
     return temp;
   }, [addProxy, proxiesToChange, removeProxy]);
 
-  const tx = calls.length !== 0 && calls.length > 1 ? batchAll(calls) : calls[0];
+  const tx = useMemo(() => calls.length !== 0 && calls.length > 1 ? batchAll(calls) : calls[0], [batchAll, calls]);
 
   useEffect(() => {
     if (!tx) { return; }
@@ -134,14 +134,14 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       // setConfirmingState('');
     }
   }, [api, chain, estimatedFee, formatted, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
-  console.log('txxxxx:', txInfo)
+
   useEffect(() => {
     const addingLength = proxies.filter((item) => item.status === 'new').length;
     const removingLength = proxies.filter((item) => item.status === 'remove').length;
 
-    addingLength && setHelperText(t<string>(`You are adding ${addingLength} Proxy(ies)`));
-    removingLength && setHelperText(t<string>(`You are removing ${removingLength} Proxy(ies)`));
-    addingLength && removingLength && setHelperText(t<string>(`Adding ${addingLength} and removing ${removingLength} Proxy(ies)`));
+    addingLength && setHelperText(t<string>(`You are adding ${addingLength} Prox${addingLength > 1 ? 'ies' : 'y'}`));
+    removingLength && setHelperText(t<string>(`You are removing ${removingLength} Prox${removingLength > 1 ? 'ies' : 'y'}`));
+    addingLength && removingLength && setHelperText(t<string>(`Adding ${addingLength} and removing ${removingLength} Proxies`));
   }, [proxies, t]);
 
   useEffect(() => {
