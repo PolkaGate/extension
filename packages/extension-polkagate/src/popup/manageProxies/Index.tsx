@@ -25,6 +25,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
   const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
   const [formatted, setFormatted] = useState<string | undefined>();
+  const [helperText, setHelperText] = useState<string>();
   const [depositValue, setDepositValue] = useState<BN | undefined>();
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
@@ -105,6 +106,12 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   }, [account?.isExternal, checkForChanges, proxyItems]);
 
   useEffect(() => {
+    setHelperText(t<string>('Add new or select to remove proxies for this account, consider the deposit that will be reserved.'));
+    proxyItems !== undefined && disableAddProxyButton && setHelperText(t<string>('This is Address Only and cannot sign transaction and there is no proxy for this account.'));
+    !disableToConfirmButton && setHelperText(t<string>('You still can modify proxies you’re adding, add new proxies, or select existing proxies to remove them, and click on Next to confirm all transactions.'));
+  }, [disableAddProxyButton, disableToConfirmButton, proxyItems, t]);
+
+  useEffect(() => {
     formatted && api && api.query.proxy?.proxies(formatted).then((proxies) => {
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -128,7 +135,8 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
             textAlign='left'
             width='90%'
           >
-            {t<string>('Add new or select to remove proxies for this account, consider the deposit that will be reserved.')}
+            {/* {t<string>('Add new or select to remove proxies for this account, consider the deposit that will be reserved.')} */}
+            {helperText}
           </Typography>
           <Grid
             container
@@ -170,7 +178,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
           <ProxyTable
             chain={chain}
             label={t<string>('Proxies')}
-            maxHeight={window.innerHeight / 2.3}
+            maxHeight={window.innerHeight / 2.5}
             notFoundText={t<string>('No proxies found.')}
             mode='Delete'
             onSelect={onSelect}

@@ -168,7 +168,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  {t('Address')}
+                  {t('Identity')}
                 </Typography>
               </Grid>
               <Grid
