@@ -43,16 +43,16 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   // const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
 
   const _onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+    showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');
+  }, [onAction, showReviewProxy]);
 
   const _openAddProxy = useCallback(() => {
     !disableAddProxyButton && setShowAddProxy(!showAddProxy);
   }, [disableAddProxyButton, showAddProxy]);
 
   const _toConfirm = useCallback(() => {
-    setShowReviewProxy(!showAddProxy);
-  }, [showAddProxy]);
+    setShowReviewProxy(!showReviewProxy);
+  }, [showReviewProxy]);
 
   const checkForChanges = useCallback(() => {
     if (!disableAddProxyButton) {
@@ -61,7 +61,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       !anyChanges && setEnableToConfirmButton(false);
       anyChanges && setEnableToConfirmButton(true);
     }
-    
+
     setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length);
   }, [disableAddProxyButton, proxyItems]);
 
