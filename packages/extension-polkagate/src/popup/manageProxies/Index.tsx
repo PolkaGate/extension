@@ -150,7 +150,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
                 sx={{
                   bgcolor: 'primary.main',
                   borderRadius: '50px',
-                  color: 'background.default',
+                  color: '#fff',
                   fontSize: '36px'
                 }}
               />
