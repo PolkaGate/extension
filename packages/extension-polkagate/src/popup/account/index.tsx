@@ -361,8 +361,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
         noBorder
         onBackClick={gotToHome}
         paddingBottom={0}
-        showBackArrow
         showAccountMenu
+        showBackArrow
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief accountName={accountName} address={address} formatted={formatted} isHidden={account?.isHidden} theme={theme} />

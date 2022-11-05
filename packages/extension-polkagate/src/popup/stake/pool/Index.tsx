@@ -64,7 +64,7 @@ export default function Index(): React.ReactElement {
   const onAction = useContext(ActionContext);
   const theme = useTheme();
 
-  const { state } = useLocation();
+  const { pathname, state } = useLocation();
   const { formatted, genesisHash } = useParams<{ formatted: string, genesisHash: string }>();
   const address = useMemo(() => getSubstrateAddress(formatted), [formatted]);
   const chain = useMetadata(genesisHash, true);
@@ -73,7 +73,7 @@ export default function Index(): React.ReactElement {
   const api = useApi(endpoint);
 
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
-
+  const token = apiToUse && apiToUse.registry.chainTokens[0];
   const [stakingConsts, setStakingConsts] = useState<StakingConsts | undefined>();
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
   const [poolStakingOpen, setPoolStakingOpen] = useState<boolean>(false);
@@ -89,7 +89,6 @@ export default function Index(): React.ReactElement {
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
   const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-
 
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
 
@@ -371,10 +370,7 @@ export default function Index(): React.ReactElement {
           unlockingValue = unlockingValue.add(amount);
 
           const secToBeReleased = (remainingEras * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
-          console.log('sessionInfo.eraLength', sessionInfo.eraLength);
-          console.log('sessionInfo.eraProgres', sessionInfo.eraProgres);
-          console.log('remainingEras', remainingEras);
-          console.log('secToBeReleased', secToBeReleased);
+
           toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
         }
       }
@@ -387,7 +383,7 @@ export default function Index(): React.ReactElement {
 
   const onBackClick = useCallback(() => {
     onAction(state?.pathname ?? '/');
-  }, [onAction, state?.pathname]);
+  }, [onAction, state]);
 
   useEffect(() => {
     /**  get nominator staking info to consider rebag ,... */
@@ -402,10 +398,15 @@ export default function Index(): React.ReactElement {
     setMinToReceiveRewardsInSolo(minSolo);
   }, [nominatorInfo?.minNominated, stakingConsts]);
 
+
+  const goToIno = useCallback(() => {
+    setShowInfo(true);
+  }, []);
+
   const MenuItem = ({ icon, noDivider = false, onClick, title }: { icon: any, title: string, noDivider?: boolean, onClick: () => void }) => (
     <>
       <Grid container direction='column' item justifyContent='center' mt='5px' xs={2}>
-        <Grid item width='fit-content' mx='5px'>
+        <Grid item mx='5px' width='fit-content'>
           <IconButton
             onClick={onClick}
             sx={{ alignSelf: 'center', transform: 'scale(0.9)', py: 0 }}
@@ -413,37 +414,38 @@ export default function Index(): React.ReactElement {
             {icon}
           </IconButton>
         </Grid>
-        <Grid item textAlign='center' sx={{ fontSize: '12px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+        <Grid item sx={{ fontSize: '12px', fontWeight: 300, letterSpacing: '-0.015em' }} textAlign='center'>
           {title}
         </Grid>
       </Grid>
       {!noDivider &&
-        <Grid alignItems='center' item justifyContent='center' mx='6px'>
+        <Grid alignItems='center' item justifyContent='center' mx='18px'>
           <Divider orientation='vertical' sx={{ borderColor: 'text.primary', height: '30px', mt: '5px', width: '2px' }} />
         </Grid>
       }
     </>
   );
 
-  const goToIno = useCallback(() => {
-    setShowInfo(true);
-  }, []);
-
   const Menu = () => (
     <Grid container item sx={{ bottom: '10px', position: 'absolute' }}>
-      <Grid item container justifyContent='center' xs={12}>
+      <Grid container item justifyContent='center' xs={12}>
         <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1.5px', mb: '5px', px: '15px', width: '90%' }} />
       </Grid>
-      <Grid item container flexWrap='nowrap'>
+      <Grid container flexWrap='nowrap' item>
         <MenuItem
           icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           // onClick={goToSend}
           title={'Stake'}
         />
-        <MenuItem
+        {/* <MenuItem
           icon={<vaadin-icon icon='vaadin:minus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           // onClick={goToSend}
           title={'Unstake'}
+        /> */}
+        <MenuItem
+          icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          // onClick={goToStaking}
+          title={'Nomination'}
         />
         <MenuItem
           icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
@@ -451,13 +453,8 @@ export default function Index(): React.ReactElement {
           title={'Pool'}
         />
         <MenuItem
-          icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToStaking}
-          title={'Nomination'}
-        />
-        <MenuItem
-          noDivider
           icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          noDivider
           onClick={goToIno}
           title={'Info'}
         />
@@ -467,19 +464,19 @@ export default function Index(): React.ReactElement {
 
   const ToBeReleased = () => (
     <Grid container sx={{ fontSize: '16px', fontWeight: 500, ml: '35px' }}>
-      <Grid item container>
+      <Grid container item>
         <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '85%' }} />
       </Grid>
       <Grid item pt='10px' xs={12}>
         {t('To be released')}
       </Grid>
       {toBeReleased?.map(({ amount, date }) => (
-        <Grid container key={date} sx={{ fontSize: '16px', fontWeight: 500 }} spacing='15px' item>
-          <Grid item fontWeight={300}>
+        <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
+          <Grid fontWeight={300} item>
             {new Date(date).toLocaleDateString(undefined, options)}
           </Grid>
-          <Grid item fontWeight={400}>
-            <FormatBalance api={api} value={amount} decimalPoint={2} />
+          <Grid fontWeight={400} item>
+            <FormatBalance api={api} decimalPoint={2} value={amount} />
           </Grid>
         </Grid>))
       }
@@ -492,12 +489,12 @@ export default function Index(): React.ReactElement {
   const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
     return (
       <>
-        <Grid alignItems='center' p='10px 15px' container justifyContent='space-between'>
+        <Grid alignItems='center' container justifyContent='space-between' p='10px 15px'>
           <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={5}>
             {label}
           </Grid>
-          <Grid container item xs justifyContent='flex-end'>
-            <Grid container direction='column' item xs alignItems='flex-end'>
+          <Grid container item justifyContent='flex-end' xs>
+            <Grid alignItems='flex-end' container direction='column' item xs>
               <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
                 <ShowBalance api={api} balance={value} decimalPoint={2} />
               </Grid>
@@ -539,7 +536,7 @@ export default function Index(): React.ReactElement {
           <ToBeReleased />
         }
         {showDivider &&
-          <Grid item container justifyContent='center' xs={12}>
+          <Grid container item justifyContent='center' xs={12}>
             <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '90%' }} />
           </Grid>
         }
@@ -559,14 +556,14 @@ export default function Index(): React.ReactElement {
         disableGutters
         sx={{ pt: '5px' }}
       >
-        <Row label={t('Staked')} value={staked} />
-        <Row label={t('Rewards')} value={claimable} link1Text={t('Claim')} link2Text={t('Stake')} />
-        <Row label={t('Redeemable')} value={redeemable} link1Text={t('Withdraw')} />
-        <Row label={t('Unstaking')} value={unlockingAmount} link1Text={t('Restake')} />
-        <Row label={t('Available to stake')} value={getValue('available', balances)} showDivider={false} />
+        <Row label={t('Staked')} link1Text={t('Unstake')} value={staked} />
+        <Row label={t('Rewards')} link1Text={t('Claim')} link2Text={t('Stake')} value={claimable} />
+        <Row label={t('Redeemable')} link1Text={t('Withdraw')} value={redeemable} />
+        <Row label={t('Unstaking')} link1Text={t('Restake')} value={unlockingAmount} />
+        <Row label={t('Available to stake')} showDivider={false} value={getValue('available', balances)} />
         <Menu />
       </Container>
-      <Info showInfo={showInfo} backPath={location?.pathname} />
+      <Info api={apiToUse} setShowInfo={setShowInfo} info={poolStakingConsts} showInfo={showInfo} />
     </>
   );
 }
