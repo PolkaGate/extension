@@ -3,7 +3,7 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import DeleteIcon from '@mui/icons-material/Delete';
+import BackspaceIcon from '@mui/icons-material/Backspace';
 import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -73,14 +73,16 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
   const Delete = ({ proxyItem }: { proxyItem: ProxyItem }) => (
     <Grid
       onClick={() => handleDelete(proxyItem.proxy)}
+      height={25}
     >
       {proxyItem.status === 'new'
         ? (
-          <DeleteIcon
+          <BackspaceIcon
             sx={{
               color: 'secondary.main',
               cursor: 'pointer',
-              fontSize: '30px'
+              height: '25px',
+              width: '30px'
             }}
           />)
         : (
@@ -179,7 +181,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                   fontWeight={300}
                   lineHeight='25px'
                 >
-                  {t('Address')}
+                  {t('Identity')}
                 </Typography>
               </Grid>
               <Grid
