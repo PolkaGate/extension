@@ -7,6 +7,7 @@ import React from 'react';
 import { ShortAddress } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { TransferTxInfo } from '../../../util/types';
+import ThroughProxy from '../../../partials/ThroughProxy';
 
 interface Props {
   txInfo: TransferTxInfo;
@@ -62,63 +63,17 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
         </Grid>
       </Grid>
       {txInfo.throughProxy &&
-        <Grid
-          alignItems='end'
-          container
-          justifyContent='center'
-          sx={{
-            m: 'auto',
-            pt: '3px',
-            width: '90%'
+        <Grid container m='auto' maxWidth='92%'>
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+          <Divider sx={{
+            bgcolor: 'secondary.main',
+            height: '2px',
+            m: '5px auto',
+            width: '75%'
           }}
-        >
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            lineHeight='23px'
-          >
-            {t<string>('Through:')}
-          </Typography>
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            lineHeight='23px'
-            maxWidth='45%'
-            overflow='hidden'
-            pl='5px'
-            textOverflow='ellipsis'
-            whiteSpace='nowrap'
-          >
-            {txInfo.throughProxy.name}
-          </Typography>
-          <Grid
-            fontSize='16px'
-            fontWeight={400}
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
-            <ShortAddress
-              address={txInfo.throughProxy.address}
-              addressStyle={{ fontSize: '16px' }}
-              inParentheses
-            />
-          </Grid>
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            lineHeight='23px'
-          >
-            {t<string>('as proxy')}
-          </Typography>
-        </Grid>}
-      <Divider sx={{
-        bgcolor: 'secondary.main',
-        height: '2px',
-        m: '5px auto',
-        width: '75%'
-      }}
-      />
+          />
+        </Grid>
+      }
       <Grid
         alignItems='end'
         container

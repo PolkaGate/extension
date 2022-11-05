@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 
 import { useTranslation } from '../hooks';
-import { Proxy } from '../util/types';
+import { Proxy, ProxyItem } from '../util/types';
 import { Password } from './';
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
   proxyTypeFilter?: string[];
   style?: SxProps<Theme>;
   setShowSelectProxy: React.Dispatch<React.SetStateAction<boolean>>;
-  proxies: Proxy[] | undefined
+  proxies: ProxyItem[] | undefined
 }
 
 export default function PasswordWithUseProxy({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxies, setShowSelectProxy, style, withoutMargin }: Props): React.ReactElement<Props> {

@@ -8,14 +8,14 @@ import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../compo
 import { useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import getLogo from '../util/getLogo';
-import { TransferTxInfo } from '../util/types';
+import { TxInfo } from '../util/types';
 import { HeaderBrand } from '.';
 
 interface Props {
   showConfirmation: boolean;
   headerTitle: string;
   failReason?: string; // to be deleted
-  txInfo: TransferTxInfo;
+  txInfo: TxInfo;
   primaryBtnText: string;
   onPrimaryBtnClick: () => void;
   children: React.ReactNode;
@@ -26,9 +26,9 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
   const onAction = useContext(ActionContext);
 
   const network = txInfo.chain.name.replace(' Relay Chain', '');
-  const decimal = txInfo.api.registry.chainDecimals[0] as number;
-  const token = txInfo.api.registry.chainTokens[0];
-  const historyLink = `/history/${network}/${decimal}/${token}/${txInfo.from.address}`;
+  const decimal = txInfo?.api.registry.chainDecimals[0];
+  const token = txInfo?.api.registry.chainTokens[0];
+  const historyLink = `/history/${network}/${decimal}/${token}/${txInfo?.from.address}`;
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
 
   const goToHistory = useCallback(() => {
@@ -57,7 +57,7 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
         </Typography>
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: 'auto', pt: '30px', textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', m: '20px auto', textAlign: 'center', width: 'fit-content' }}
           success={txInfo.status === 'success'}
         />
         {failReason &&
@@ -96,7 +96,7 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
             lineHeight='22px'
             pl='5px'
           >
-            {txInfo.fee.toHuman()}
+            {txInfo?.fee.toHuman()}
           </Grid>
         </Grid>
         <Divider sx={{

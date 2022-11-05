@@ -1,19 +1,27 @@
 // Copyright 2019-2022 @polkadot/extension-plus authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
+import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { PasswordWithUseProxy, PButton, ProxyTable, ShowBalance } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
-import { ProxyItem } from '../../util/types';
-import { ApiPromise } from '@polkadot/api';
+import { AccountContext, ActionContext, PasswordWithUseProxy, PButton, ProxyTable, ShowBalance } from '../../components';
 import { useAccount } from '../../hooks';
+import useTranslation from '../../hooks/useTranslation';
+import { WaitScreen } from '../../partials';
+import Confirmation from '../../partials/Confirmation';
+import SelectProxy from '../../partials/SelectProxy';
+import { signAndSend } from '../../util/api';
+import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { getFormattedAddress, getSubstrateAddress } from '../../util/utils';
+import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
 interface Props {
   address: string;
@@ -27,16 +35,106 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [helperText, setHelperText] = useState<string | undefined>();
   const [proxiesToChange, setProxiesToChange] = useState<ProxyItem[] | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>('');
-  const [nextButtonDisabe, setNextButtonDisabe] = useState<boolean>(true);
+  const [nextButtonDisabe, setNextButtonDisabe] = useState<boolean>(false);
+  const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
+  const [showConfimation, setShowConfimation] = useState<boolean>(false);
+  const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
   const { t } = useTranslation();
   const account = useAccount(address);
+  const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
+  const onAction = useContext(ActionContext);
+  const { accounts } = useContext(AccountContext);
 
-  const onNext = useCallback(() => {
-    console.log('helllo');
-  }, []);
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
+  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
+  const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
+  const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
+  const batchAll = api.tx.utility.batchAll;
+
+  const goToMyAccounts = useCallback(() => {
+    setShowSelectProxy(false);
+    setShowConfimation(false);
+    setShowWaitScreen(false);
+    onAction('/');
+  }, [onAction]);
+
+  const calls = useMemo((): SubmittableExtrinsic<'promise'>[] => {
+    const temp: SubmittableExtrinsic<'promise'>[] = [];
+
+    proxiesToChange?.forEach((item: ProxyItem) => {
+      const p = item.proxy;
+
+      item.status === 'remove' && temp.push(removeProxy(p.delegate, p.proxyType, p.delay));
+      item.status === 'new' && temp.push(addProxy(p.delegate, p.proxyType, p.delay));
+    });
+
+    return temp;
+  }, [addProxy, proxiesToChange, removeProxy]);
+
+  const tx = calls.length !== 0 && calls.length > 1 ? batchAll(calls) : calls[0];
+
+  useEffect(() => {
+    if (!tx) { return; }
+
+    // eslint-disable-next-line no-void
+    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+  }, [formatted, tx]);
+
+  const onNext = useCallback(async (): Promise<void> => {
+    setShowWaitScreen(true);
+    // const localState = state;
+    // const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
+
+    try {
+      const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
+
+      signer.unlock(password);
+      // setPasswordStatus(PASS_MAP.CORRECT);
+
+      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+
+      const { block, failureText, fee, status, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
+
+      // history.push({
+      //   action: 'manage_proxies',
+      //   amount: '0',
+      //   block,
+      //   date: Date.now(),
+      //   fee: fee || estimatedFee?.toString(),
+      //   from: String(formatted),
+      //   hash: txHash || '',
+      //   status: failureText || status,
+      //   to: ''
+      // });
+
+      setTxInfo({
+        api,
+        block: block || 0,
+        chain,
+        from: { address: formatted, name: 'amiiir' },
+        failureText,
+        fee: estimatedFee || fee || '',
+        status,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        txHash: txHash || ''
+      });
+      // eslint-disable-next-line no-void
+      // void saveHistory(chain, hierarchy, formatted, history);
+      setShowWaitScreen(false);
+      setShowConfimation(true);
+    } catch (e) {
+      console.log('error:', e);
+      // setPasswordStatus(PASS_MAP.INCORRECT);
+      // setState(localState);
+      // setConfirmingState('');
+    }
+  }, [api, chain, estimatedFee, formatted, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
+  console.log('txxxxx:', txInfo)
   useEffect(() => {
     const addingLength = proxies.filter((item) => item.status === 'new').length;
     const removingLength = proxies.filter((item) => item.status === 'remove').length;
@@ -73,7 +171,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       <ProxyTable
         chain={chain}
         label={t<string>('Proxies')}
-        maxHeight={window.innerHeight / 2.3}
+        maxHeight={window.innerHeight / 3}
         mode='Status'
         proxies={proxiesToChange}
         style={{
@@ -115,7 +213,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         <Divider
           orientation='vertical'
           sx={{
-            backgroundColor: 'text.primary',
+            backgroundColor: 'secondary.main',
             height: '30px',
             mx: '5px',
             my: 'auto'
@@ -139,7 +237,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           >
             <ShowBalance
               api={api}
-              balance={depositValue}
+              balance={estimatedFee}
               decimalPoint={4}
               height={22}
             />
@@ -148,23 +246,55 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       </Grid>
       <PasswordWithUseProxy
         api={api}
-        label={`${t<string>('Password')} for ${account?.name}`}
+        genesisHash={account?.genesisHash}
+        label={`${t<string>('Password')} for ${selectedProxyName || account?.name}`}
+        onChange={setPassword}
         proxiedAddress={address}
         proxies={proxies}
-        onChange={setPassword}
-        genesisHash={account?.genesisHash}
+        setShowSelectProxy={setShowSelectProxy}
         style={{
-          position: 'absolute',
           bottom: '80px',
+          position: 'absolute',
           left: '4%',
           width: '92%'
         }}
       />
       <PButton
-        text={t<string>('Next')}
-        disabled={nextButtonDisabe}
         _onClick={onNext}
+        disabled={nextButtonDisabe}
+        text={t<string>('Next')}
       />
+      {<WaitScreen show={showWaitScreen} title={t('Manage Proxies')} />}
+      {txInfo &&
+        <Confirmation
+          headerTitle={t<string>('Manage Proxies')}
+          onPrimaryBtnClick={goToMyAccounts}
+          primaryBtnText={t<string>('My accounts')}
+          showConfirmation={showConfimation}
+          txInfo={txInfo}
+        >
+          <ManageProxiesTxDetail
+            address={selectedProxyAddress}
+            api={api}
+            chain={chain}
+            deposit={depositValue}
+            name={selectedProxyName}
+            proxies={proxiesToChange}
+          />
+        </Confirmation>
+      }
+      {showSelectProxy &&
+        <SelectProxy
+          genesisHash={account?.genesisHash}
+          proxiedAddress={formatted}
+          proxies={proxies}
+          proxyTypeFilter={['Any']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+          setShow={setShowSelectProxy}
+          show={showSelectProxy}
+        />
+      }
     </>
   );
 }

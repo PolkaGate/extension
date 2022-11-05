@@ -1,9 +1,9 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faClose,faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
@@ -18,6 +18,7 @@ interface Props {
   showBackArrow?: boolean;
   showBrand?: boolean;
   showMenu?: boolean;
+  showAccountMenu?: boolean;
   withSteps?: { currentStep: string | number, totalSteps: string | number } | null;
   text?: React.ReactNode;
   onBackClick?: () => void;
@@ -31,8 +32,8 @@ interface Props {
   accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
-  const [isMenuOpen, setShowMenu] = useState(false);
+function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+  const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
   const setMenuRef = useRef(null);
@@ -40,7 +41,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   const onAction = useContext(ActionContext);
 
   useOutsideClick([setIconRef, setMenuRef], (): void => {
-    isMenuOpen && setShowMenu(!isMenuOpen);
+    isMenuOpen && setOpenMenu(!isMenuOpen);
   });
 
   const _handleMenuClick = useCallback(
@@ -48,7 +49,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
       if (accountMenuInfo) {
         setShowAccountMenu((open) => !open);
       } else {
-        setShowMenu((open) => !open);
+        setOpenMenu((open) => !open);
       }
     },
     [accountMenuInfo]
@@ -115,7 +116,6 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   const RightItem = () => (
     <Grid
       item
-      // sx={{ height: '38px' }}
     >
       {!onRefresh && !showClose &&
         <IconButton
@@ -124,9 +124,10 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
           edge='start'
           onClick={_handleMenuClick}
           size='small'
-          sx={{ p: 0, visibility: showMenu ? 'visible' : 'hidden' }}
+          sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}
         >
-          <MenuIcon sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 38 }} />
+          {showMenu && <MenuIcon sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 38 }} />}
+          {showAccountMenu && <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />}
         </IconButton>
       }
       {!!onRefresh &&
@@ -172,7 +173,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
         <Menu
           isMenuOpen={isMenuOpen}
           reference={setMenuRef}
-          setShowMenu={setShowMenu}
+          setShowMenu={setOpenMenu}
           theme={theme}
         />
       }

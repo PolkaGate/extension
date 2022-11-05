@@ -4,14 +4,14 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
 import type { AccountsBalanceType, MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../util/types';
-import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
 import { faHistory, faMinusCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, IconButton, MenuItem, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -21,12 +21,13 @@ import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/type
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-import { ActionContext, PButton, ShowBalance } from '../../../components';
+import { ActionContext, FormatBalance, PButton, ShowBalance } from '../../../components';
 import { useApi, useEndpoint, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
 import { getValue } from '../../account/util';
+import Info from './Info';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -49,7 +50,13 @@ const OPT_ENTRIES = {
     }, {})
 };
 
+interface SessionIfo {
+  eraLength: number;
+  eraProgress: number;
+  currentEra: number;
+}
 
+const options = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 const workers: Worker[] = [];
 
 export default function Index(): React.ReactElement {
@@ -104,7 +111,10 @@ export default function Index(): React.ReactElement {
   const [redeemable, setRedeemable] = useState<BN | undefined>();
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
-
+  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
+  const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
+  const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
+  const [showInfo, setShowInfo] = useState<boolean>(false);
 
   const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
     /** 1- get some staking constant like min Nominator Bond ,... */
@@ -224,9 +234,21 @@ export default function Index(): React.ReactElement {
     };
   };
 
+  const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
+
   useEffect(() => {
     api && !apiToUse && setApiToUse(api);
   }, [api, apiToUse]);
+
+  useEffect(() => {
+    api && api.derive.session?.progress().then((sessionInfo) => {
+      setSessionInfo({
+        currentEra: Number(sessionInfo.currentEra),
+        eraLength: Number(sessionInfo.eraLength),
+        eraProgress: Number(sessionInfo.eraProgress)
+      });
+    }).catch(console.error);
+  }, [api]);
 
   useEffect(() => {
     /** get some staking constant like min Nominator Bond ,... */
@@ -329,26 +351,39 @@ export default function Index(): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
-    if (myPool === undefined || !api || !currentEraIndex) {
+    if (myPool === undefined || !api || !currentEraIndex || !sessionInfo) {
       return;
     }
 
     let unlockingValue = BN_ZERO;
     let redeemValue = BN_ZERO;
+    const toBeReleased = [];
 
     if (myPool !== null && myPool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
       for (const [era, unbondingPoint] of Object.entries(myPool.member?.unbondingEras)) {
-        if (currentEraIndex > Number(era)) {
+        const remainingEras = Number(era) - currentEraIndex;
+
+        if (remainingEras < 0) {
           redeemValue = redeemValue.add(new BN(unbondingPoint as string));
         } else {
-          unlockingValue = unlockingValue.add(new BN(unbondingPoint as string));
+          const amount = new BN(unbondingPoint as string);
+
+          unlockingValue = unlockingValue.add(amount);
+
+          const secToBeReleased = (remainingEras * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+          console.log('sessionInfo.eraLength', sessionInfo.eraLength);
+          console.log('sessionInfo.eraProgres', sessionInfo.eraProgres);
+          console.log('remainingEras', remainingEras);
+          console.log('secToBeReleased', secToBeReleased);
+          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
         }
       }
     }
 
+    setToBeReleased(toBeReleased);
     setRedeemable(redeemValue);
     setUnlockingAmount(unlockingValue);
-  }, [myPool, api, currentEraIndex]);
+  }, [myPool, api, currentEraIndex, sessionInfo]);
 
   const onBackClick = useCallback(() => {
     onAction(state?.pathname ?? '/');
@@ -390,6 +425,10 @@ export default function Index(): React.ReactElement {
     </>
   );
 
+  const goToIno = useCallback(() => {
+    setShowInfo(true);
+  }, []);
+
   const Menu = () => (
     <Grid container item sx={{ bottom: '10px', position: 'absolute' }}>
       <Grid item container justifyContent='center' xs={12}>
@@ -419,10 +458,31 @@ export default function Index(): React.ReactElement {
         <MenuItem
           noDivider
           icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToHistory}
+          onClick={goToIno}
           title={'Info'}
         />
       </Grid>
+    </Grid>
+  );
+
+  const ToBeReleased = () => (
+    <Grid container sx={{ fontSize: '16px', fontWeight: 500, ml: '35px' }}>
+      <Grid item container>
+        <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '85%' }} />
+      </Grid>
+      <Grid item pt='10px' xs={12}>
+        {t('To be released')}
+      </Grid>
+      {toBeReleased?.map(({ amount, date }) => (
+        <Grid container key={date} sx={{ fontSize: '16px', fontWeight: 500 }} spacing='15px' item>
+          <Grid item fontWeight={300}>
+            {new Date(date).toLocaleDateString(undefined, options)}
+          </Grid>
+          <Grid item fontWeight={400}>
+            <FormatBalance api={api} value={amount} decimalPoint={2} />
+          </Grid>
+        </Grid>))
+      }
     </Grid>
   );
 
@@ -430,8 +490,6 @@ export default function Index(): React.ReactElement {
   const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
 
   const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
-    const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
-
     return (
       <>
         <Grid alignItems='center' p='10px 15px' container justifyContent='space-between'>
@@ -466,14 +524,20 @@ export default function Index(): React.ReactElement {
                 alignItems='center'
                 container
                 item
-                xs={1}
+                onClick={_toggleShowUnlockings}
                 sx={{ ml: '25px' }}
+                xs={1}
               >
-                <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
+                <ArrowForwardIosIcon
+                  sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }}
+                />
               </Grid>
             }
           </Grid>
         </Grid>
+        {label === 'Unstaking' && showUnlockings && !!toBeReleased?.length &&
+          <ToBeReleased />
+        }
         {showDivider &&
           <Grid item container justifyContent='center' xs={12}>
             <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '90%' }} />
@@ -502,6 +566,7 @@ export default function Index(): React.ReactElement {
         <Row label={t('Available to stake')} value={getValue('available', balances)} showDivider={false} />
         <Menu />
       </Container>
+      <Info showInfo={showInfo} backPath={location?.pathname} />
     </>
   );
 }
