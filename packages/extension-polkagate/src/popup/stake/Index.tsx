@@ -24,7 +24,7 @@ export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const history = useHistory();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const { formatted, genesisHash } = useParams<{ formatted: string, genesisHash: string }>();
   const address = useMemo(() => getSubstrateAddress(formatted), [formatted]);
   const chain = useMetadata(genesisHash, true);
@@ -194,9 +194,9 @@ export default function Index(): React.ReactElement {
   const goToPoolStaking = useCallback(() => {
     genesisHash && formatted && history.push({
       pathname: `/pool/${genesisHash}/${formatted}/`,
-      state: { currentEraIndex }
+      state: { api: apiToUse, currentEraIndex, pathname }
     });
-  }, [currentEraIndex, formatted, genesisHash, history]);
+  }, [apiToUse, currentEraIndex, formatted, genesisHash, history, pathname]);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -251,10 +251,10 @@ export default function Index(): React.ReactElement {
       >
         <Option
           balance={poolStakingConsts?.minJoinBond}
+          goToStake={goToPoolStaking}
           minText={t('Minimum to join a pool')}
           text={t('Stakers (members) with a small amount of tokens can pool their funds together and act as a single nominator. The earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
           title={t('Pool Staking')}
-          goToStake={goToPoolStaking}
         />
         <Option
           balance={minToReceiveRewardsInSolo}
