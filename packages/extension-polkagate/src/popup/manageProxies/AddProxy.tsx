@@ -56,8 +56,9 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const _addProxy = useCallback(() => {
     const proxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;
 
-    proxyItems?.push({ proxy, status: 'new' });
-    setProxyItems(proxyItems);
+    // proxyItems?.push({ proxy, status: 'new' });
+    // setProxyItems(proxyItems);
+    setProxyItems([{ proxy, status: 'new' }, ...proxyItems]);
     setShowAddProxy(!showAddProxy);
     onChange();
   }, [delay, onChange, proxyItems, realAddress, selectedProxyType, setProxyItems, setShowAddProxy, showAddProxy]);
