@@ -114,6 +114,16 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
     </Typography>
   );
 
+  const fade = (toCheck: ProxyItem) => {
+    if (mode === 'Delete') {
+      return (toCheck.status === 'remove');
+    } else if (mode === 'Availability' || mode === 'Select') {
+      return !(isAvailable(toCheck.proxy));
+    }
+
+    return false;
+  };
+
   return (
     <>
       <Grid
@@ -224,8 +234,9 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', onSelec
                             borderRight: '1px solid',
                             borderRightColor: 'secondary.light'
                           },
+                          bgcolor: fade(proxyItem) ? '#212121' : 'transparent',
                           height: '41px',
-                          // opacity: `${isAvailable(proxy) ? 1 : 0.5}`,
+                          opacity: fade(proxyItem) ? 0.7 : 1,
                           textAlign: 'center'
                         }}
                         xs={12}
