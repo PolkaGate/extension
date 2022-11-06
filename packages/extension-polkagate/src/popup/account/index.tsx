@@ -17,10 +17,10 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faQrcode,faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -28,10 +28,10 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, DropdownWithIcon, Identicon, Motion, Select, SettingsContext } from '../../components';
+import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
 import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
-import { AccMenuInside, HeaderBrand } from '../../partials';
+import { HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
@@ -246,85 +246,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     />
   );
 
-  const MenuItem = ({ icon, noDivider = false, onClick, title }: { icon: any, title: string, noDivider?: boolean, onClick: () => void }) => (
-    <>
-      <Grid container direction='column' item justifyContent='center' mt='5px' xs={2}>
-        <Grid item width='27px'>
-          <IconButton
-            onClick={onClick}
-            sx={{ alignSelf: 'center', transform: 'scale(0.9)', py: 0 }}
-          >
-            {icon}
-          </IconButton>
-        </Grid>
-        <Grid item textAlign='center'>
-          <Typography sx={{ fontSize: '12px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-            {title}
-          </Typography>
-        </Grid>
-      </Grid>
-      {!noDivider &&
-        <Grid alignItems='center' item justifyContent='center' mx='10px'>
-          <Divider orientation='vertical' sx={{ borderColor: 'text.primary', height: '30px', mt: '5px', width: '2px' }} />
-        </Grid>
-      }
-    </>
-  );
-
-  const Menu = () => (
-    <Grid container flexWrap='nowrap' item>
-      <MenuItem
-        icon={
-          <FontAwesomeIcon
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-            icon={faPaperPlane}
-            // onClick={goToSend}
-            size='lg'
-          />
-        }
-        onClick={goToSend}
-        title={'Send'}
-      />
-      <MenuItem
-        icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />
-        }
-        onClick={goToReceive}
-        title={'Receive'}
-      />
-      <MenuItem
-        icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-        onClick={goToStaking}
-        title={'Stake'}
-      />
-      <MenuItem
-        icon={
-          <FontAwesomeIcon
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-            icon={faHistory}
-            // onClick={goToSend}
-            size='lg'
-          />
-        }
-        onClick={goToHistory}
-        title={'History'}
-      />
-      <MenuItem
-        icon={
-          <FontAwesomeIcon
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-            icon={faRefresh}
-            spin={refresh}
-            // onClick={goToSend}
-            size='lg'
-          />
-        }
-        noDivider
-        onClick={onRefreshClick}
-        title={'Refresh'}
-      />
-    </Grid>
-  );
-
   const goToOthers = useCallback(() => {
     balances && account && chain && history.push({
       pathname: `/others/${address}/${formatted}`,
@@ -349,7 +270,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           </Grid>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '5px' }} />
     </>
   );
 
@@ -392,7 +312,65 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           <LabelBalancePrice api={apiToUse} balances={balances} label={'Reserved'} price={price} />
           {Others}
         </Grid>
-        <Menu />
+        <Grid
+          container
+          justifyContent='space-around'
+          sx={{
+            borderTop: '2px solid',
+            borderTopColor: 'secondary.main',
+            bottom: 0,
+            left: '4%',
+            position: 'absolute',
+            py: '10px',
+            width: '92%'
+          }}
+        >
+          <HorizontalMenuItem
+            divider
+            icon={
+              <FontAwesomeIcon
+                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+                icon={faPaperPlane}
+                size='lg'
+              />
+            }
+            onClick={goToSend}
+            title={t<string>('Send')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
+            onClick={goToReceive}
+            title={t<string>('Receive')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+            onClick={goToStaking}
+            title={t<string>('Stake')}
+          />
+          <HorizontalMenuItem
+            icon={
+              <FontAwesomeIcon
+                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+                icon={faHistory}
+                size='lg'
+              />}
+            onClick={goToHistory}
+            title={t<string>('History')}
+          />
+          <HorizontalMenuItem
+            icon={
+              <FontAwesomeIcon
+                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+                icon={faRefresh}
+                size='lg'
+                spin={refresh}
+              />}
+            onClick={onRefreshClick}
+            title={t<string>('Refresh')}
+          />
+        </Grid>
       </Container>
     </Motion>
 

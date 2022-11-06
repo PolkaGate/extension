@@ -4,15 +4,13 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { AccountsBalanceType, MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../util/types';
+import type { MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../util/types';
 
-import { faHistory, faMinusCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, IconButton, MenuItem, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
@@ -21,7 +19,7 @@ import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/type
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, PButton, ShowBalance } from '../../../components';
+import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
 import { useApi, useEndpoint, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
@@ -399,73 +397,14 @@ export default function Index(): React.ReactElement {
   }, [nominatorInfo?.minNominated, stakingConsts]);
 
 
-  const goToIno = useCallback(() => {
+  const goToInFo = useCallback(() => {
     setShowInfo(true);
   }, []);
-
-  const MenuItem = ({ icon, noDivider = false, onClick, title }: { icon: any, title: string, noDivider?: boolean, onClick: () => void }) => (
-    <>
-      <Grid container direction='column' item justifyContent='center' mt='5px' xs={2}>
-        <Grid item mx='5px' width='fit-content'>
-          <IconButton
-            onClick={onClick}
-            sx={{ alignSelf: 'center', transform: 'scale(0.9)', py: 0 }}
-          >
-            {icon}
-          </IconButton>
-        </Grid>
-        <Grid item sx={{ fontSize: '12px', fontWeight: 300, letterSpacing: '-0.015em' }} textAlign='center'>
-          {title}
-        </Grid>
-      </Grid>
-      {!noDivider &&
-        <Grid alignItems='center' item justifyContent='center' mx='18px'>
-          <Divider orientation='vertical' sx={{ borderColor: 'text.primary', height: '30px', mt: '5px', width: '2px' }} />
-        </Grid>
-      }
-    </>
-  );
-
-  const Menu = () => (
-    <Grid container item sx={{ bottom: '10px', position: 'absolute' }}>
-      <Grid container item justifyContent='center' xs={12}>
-        <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1.5px', mb: '5px', px: '15px', width: '90%' }} />
-      </Grid>
-      <Grid container flexWrap='nowrap' item>
-        <MenuItem
-          icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToSend}
-          title={'Stake'}
-        />
-        {/* <MenuItem
-          icon={<vaadin-icon icon='vaadin:minus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToSend}
-          title={'Unstake'}
-        /> */}
-        <MenuItem
-          icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToStaking}
-          title={'Nomination'}
-        />
-        <MenuItem
-          icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          // onClick={goToReceive}
-          title={'Pool'}
-        />
-        <MenuItem
-          icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-          noDivider
-          onClick={goToIno}
-          title={'Info'}
-        />
-      </Grid>
-    </Grid>
-  );
 
   const ToBeReleased = () => (
     <Grid container sx={{ fontSize: '16px', fontWeight: 500, ml: '35px' }}>
       <Grid container item>
-        <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '85%' }} />
+        <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '85%' }} />
       </Grid>
       <Grid item pt='10px' xs={12}>
         {t('To be released')}
@@ -507,7 +446,7 @@ export default function Index(): React.ReactElement {
                 {link2Text &&
                   <>
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
-                      <Divider orientation='vertical' sx={{ borderColor: 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
+                      <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
                     <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                       {link2Text}
@@ -537,7 +476,7 @@ export default function Index(): React.ReactElement {
         }
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '2px', px: '5px', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '90%' }} />
           </Grid>
         }
       </>
@@ -561,7 +500,43 @@ export default function Index(): React.ReactElement {
         <Row label={t('Redeemable')} link1Text={t('Withdraw')} value={redeemable} />
         <Row label={t('Unstaking')} link1Text={t('Restake')} value={unlockingAmount} />
         <Row label={t('Available to stake')} showDivider={false} value={getValue('available', balances)} />
-        <Menu />
+        <Grid
+          container
+          justifyContent='space-around'
+          sx={{
+            borderTop: '2px solid',
+            borderTopColor: 'secondary.main',
+            bottom: 0,
+            left: '4%',
+            position: 'absolute',
+            py: '10px',
+            width: '92%'
+          }}
+        >
+          <HorizontalMenuItem
+            divider
+            icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+            onClick={goToInFo}
+            title={t<string>('Stake')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
+            onClick={goToInFo}
+            title={t<string>('Nominations')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+            onClick={goToInFo}
+            title={t<string>('Pool')}
+          />
+          <HorizontalMenuItem
+            icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+            onClick={goToInFo}
+            title={t<string>('Info')}
+          />
+        </Grid>
       </Container>
       <Info api={apiToUse} setShowInfo={setShowInfo} info={poolStakingConsts} showInfo={showInfo} />
     </>

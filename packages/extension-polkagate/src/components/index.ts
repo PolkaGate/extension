@@ -19,6 +19,7 @@ export { default as ShortAddress } from './ShortAddress';
 export { default as Select } from './Select';
 export { default as Header } from './Header';
 export { default as ShowBalance } from './ShowBalance';
+export { default as HorizontalMenuItem } from './HorizontalMenuItem';
 export { default as Identity } from './goingToBeIdentity';
 export { default as To } from './To';
 export { default as ButtonWithCancel } from './ButtonWithCancel';
