@@ -35,7 +35,7 @@ interface Props {
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHash, isPasswordError, setIsPasswordError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHash, isFocused, isPasswordError, isReadOnly, label = '', onChange, onEnter, placeholder, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [password, setPassword] = useState<string>();
   const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
@@ -44,7 +44,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
   const _onChange = useCallback(
     (pass: string): void => {
       pass.length > 3 && pass && setPassword(pass);
-      pass.length > 3 && pass && setIsPasswordError(false);
+      pass.length > 3 && pass && setIsPasswordError && setIsPasswordError(false);
     }, [setIsPasswordError]
   );
 
@@ -56,7 +56,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
 
   useEffect(() => {
     onChange(password);
-  }, [password, isPasswordError, onChange]);
+  }, [password, onChange]);
 
   return (
     <>
