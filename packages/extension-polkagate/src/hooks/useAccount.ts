@@ -13,7 +13,7 @@ function findAccountByAddress(accounts: AccountJson[], _address: string): Accoun
   ) || undefined;
 }
 
-export default function useAccount(address: string): AccountJson | undefined {
+export default function useAccount(address: string | undefined): AccountJson | undefined {
   const [account, setAccount] = useState<AccountJson | undefined>();
   const { accounts } = useContext(AccountContext);
 
