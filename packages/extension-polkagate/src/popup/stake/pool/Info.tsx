@@ -73,7 +73,7 @@ export default function Info({ api, info, setShowInfo, showInfo }: Props): React
         </Grid>
         {showDivider &&
           <Grid item container justifyContent='center' xs={12}>
-            <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '1px', px: '5px', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'secondary.main', m: '1px auto', width: '90%' }} />
           </Grid>
         }
       </>
@@ -93,7 +93,7 @@ export default function Info({ api, info, setShowInfo, showInfo }: Props): React
         </Grid>
         {showDivider &&
           <Grid item container justifyContent='center' xs={12}>
-            <Divider sx={{ borderColor: 'secondary.main', borderWidth: '1px', mb: '1px', px: '5px', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'secondary.main', m: '1px auto', width: '90%' }} />
           </Grid>
         }
       </>
