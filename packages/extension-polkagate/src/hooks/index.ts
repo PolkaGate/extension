@@ -15,3 +15,5 @@ export { default as useOutsideClick } from './useOutsideClick';
 export { default as useProxies } from './useProxies';
 export { default as useAccount } from './useAccount';
 export { default as useRedirectOnRefresh } from './useRedirectOnRefresh';
+export { default as useChain } from './useChain';
+export { default as useFormatted } from './useFormatted';
