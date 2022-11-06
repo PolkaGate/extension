@@ -9,28 +9,28 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { KeyringPair } from '@polkadot/keyring/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
 import { Avatar, Container, Divider, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
+import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, ShortAddress } from '../../components';
-import { useMetadata, useTranslation } from '../../hooks';
+import { AccountContext, ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordWithUseProxy, ShortAddress, Warning } from '../../components';
+import { useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
-// import Receipt from './Receipt';
 import Confirmation from '../../partials/Confirmation';
 import ThroughProxy from '../../partials/ThroughProxy';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import getLogo from '../../util/getLogo';
-import { FormattedAddressState, NameAddress, TransferTxInfo } from '../../util/types';
+import { FormattedAddressState, Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { getSubstrateAddress } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
 type TransferType = 'All' | 'Max' | 'Normal';
@@ -45,29 +45,37 @@ interface LocationState {
   fee: Balance | undefined;
   recipientAddress: string | undefined;
   recipientName: string | undefined;
-  selectedProxyAddress: string | undefined;
-  selectedProxyName: string | undefined;
-  signer: KeyringPair;
   transfer: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   transferType: TransferType | undefined;
 }
 
 export default function Review(): React.ReactElement {
   const { t } = useTranslation();
-
-  // useRedirectOnRefresh('/');
-  const history = useHistory();
   const { state } = useLocation<LocationState>();
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
+
+  const proxies = useProxies(state.api, formatted);
+
+  const [password, setPassword] = useState<string | undefined>();
+  const [isPasswordError, setIsPasswordError] = useState(false);
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+
+  const history = useHistory();
   const onAction = useContext(ActionContext);
   const chain = useMetadata(genesisHash, true);
-  const [txInfo, setTxInfo] = useState<TransferTxInfo | undefined>();
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
-  const [showReceipt, setShowReceipt] = useState<boolean>(false);
+  const [showConfimation, setShowConfimation] = useState<boolean>(false);
 
   const prevUrl = `/send/${genesisHash}/${address}/${formatted}/`;
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
   const token = state?.api?.registry?.chainTokens[0] ?? '';
+
+  const { accounts } = useContext(AccountContext);
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
+  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const theme = useTheme();
 
   const goToMyAccounts = useCallback(() => {
     onAction('/');
@@ -82,6 +90,12 @@ export default function Review(): React.ReactElement {
     />
   );
 
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
+
   useEffect(() => {
     !state?.amount && onAction(prevUrl);
   }, [state, onAction, prevUrl]);
@@ -92,7 +106,10 @@ export default function Review(): React.ReactElement {
         return;
       }
 
-      const { accountName, amount, api, recipientAddress, recipientName, selectedProxyAddress, selectedProxyName, signer, transfer, transferType } = state;
+      const { accountName, amount, api, recipientAddress, recipientName, transfer, transferType } = state;
+      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+
+      signer.unlock(password);
 
       setShowWaitScreen(true);
       let params = [];
@@ -124,12 +141,12 @@ export default function Review(): React.ReactElement {
       });
 
       setShowWaitScreen(false);
-      setShowReceipt(true);
+      setShowConfimation(true);
     } catch (e) {
       console.log('error:', e);
-      setIsConfirming(false);
+      setIsPasswordError(true);
     }
-  }, [chain, decimals, formatted, state]);
+  }, [chain, decimals, formatted, password, selectedProxyAddress, selectedProxyName, state]);
 
   const _onBackClick = useCallback(() => {
     state?.backPath && history.push({
@@ -168,11 +185,11 @@ export default function Review(): React.ReactElement {
           }
         </>
       }
-      {state?.selectedProxyAddress && showProxy &&
+      {selectedProxyAddress && showProxy &&
         <ThroughProxy
-          address={state?.selectedProxyAddress}
+          address={selectedProxyAddress}
           chain={chain}
-          name={state?.selectedProxyName}
+          name={selectedProxyName}
         />
       }
       {!noDivider &&
@@ -204,9 +221,27 @@ export default function Review(): React.ReactElement {
           totalSteps: 2
         }}
       />
+      {isPasswordError &&
+        <Grid
+          color='red'
+          height='30px'
+          m='auto'
+          mt='-10px'
+          width='92%'
+        >
+          <Warning
+            fontWeight={400}
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('You’ve used an incorrect password. Try again.')}
+          </Warning>
+        </Grid>
+      }
       <SubTitle label={t('Review')} />
-      <Container disableGutters sx={{ px: '30px', pt: '10px' }}>
-        <Info data1={state?.accountName} data2={formatted} label={t('From')} pt1={state?.selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
+      <Container disableGutters sx={{ px: '30px' }}>
+        <Info data1={state?.accountName} data2={formatted} label={t('From')} pt1={selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
         <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
         <Info
           data1={
@@ -216,12 +251,12 @@ export default function Review(): React.ReactElement {
               </Grid>
               {state &&
                 <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-                  {token}
+                  {state?.amount} {token}
                 </Grid>
               }
             </Grid>
           }
-          label={t('Asset')}
+          label={t('Amount')}
           noDivider
           pt2={0}
         />
@@ -232,29 +267,42 @@ export default function Review(): React.ReactElement {
           fontSize1={20}
           label={t('Fee')}
           mb={0}
+          noDivider
           pt1={0}
           pt2={0}
         />
-        <Info
-          data1={state?.amount}
-          label={t('Amount')}
-          noDivider
-          pt2={0}
-        />
       </Container>
+      <PasswordWithUseProxy
+        api={state.api}
+        genesisHash={genesisHash}
+        isPasswordError={isPasswordError}
+        label={`${t<string>('Password')} for ${selectedProxyName || state?.accountName}`}
+        onChange={setPassword}
+        proxiedAddress={formatted}
+        proxies={proxyItems}
+        proxyTypeFilter={['Any']}
+        selectedProxy={selectedProxy}
+        setIsPasswordError={setIsPasswordError}
+        setSelectedProxy={setSelectedProxy}
+        style={{
+          bottom: '80px',
+          left: '4%',
+          position: 'absolute',
+          width: '92%'
+        }}
+      />
       <ButtonWithCancel
         _onClick={send}
         _onClickCancel={_onBackClick}
         text={t('Send')}
       />
       <WaitScreen show={showWaitScreen} title={t('Send Fund')} />
-      {/* {txInfo && <Receipt show={showReceipt} title={t('Send Fund')} info={txInfo} />} */}
       {txInfo && (
         <Confirmation
           headerTitle={t('Send Fund')}
           onPrimaryBtnClick={goToMyAccounts}
           primaryBtnText={t('My accounts')}
-          showConfirmation={showReceipt}
+          showConfirmation={showConfimation}
           txInfo={txInfo}
         ><SendTxDetail txInfo={txInfo} /></Confirmation>)
       }

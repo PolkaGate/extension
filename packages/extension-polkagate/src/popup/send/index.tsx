@@ -22,12 +22,12 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, PasswordWithUseProxy, SettingsContext, ShortAddress, To } from '../../components';
-import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../../hooks';
+import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, SettingsContext, ShortAddress, To } from '../../components';
+import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
-import { FormattedAddressState, Proxy, ProxyItem } from '../../util/types';
-import { amountToHuman, getFormattedAddress, getSubstrateAddress } from '../../util/utils';
+import { FormattedAddressState } from '../../util/types';
+import { amountToHuman, getFormattedAddress } from '../../util/utils';
 import BalanceFee from './BalanceFee';
 
 interface Props {
@@ -55,9 +55,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const endpoint = useEndpoint(address, chain);
   const api = useApi(endpoint);
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
-  const proxies = useProxies(apiToUse || api, formatted);
 
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
@@ -67,14 +65,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [transferType, setTransferType] = useState<TransferType | undefined>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
-  const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedProxy, setSelectedProxy] = useState<Proxy>();
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
-  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
   const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
   const recipientName = useMemo(
     (): string => {
@@ -86,7 +79,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     },
     [state?.recipientName, identity?.display, accounts, t, chain, settings?.prefix, recipientAddress]
   );
-  const myState = { amount, balances, recipientAddress, recipientName };
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -94,12 +86,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       setIdentity(info?.identity);
     });
   }, [apiToUse, recipientAddress]);
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
 
   useEffect((): void => {
     state?.recipientAddress && setRecipientAddress(state?.recipientAddress);
@@ -118,20 +104,13 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     setAllMaxAmount(allMaxAmount);
   }, [api, balances?.availableBalance, decimals, maxFee]);
 
-  const onChangePass = useCallback(
-    (pass: string): void => {
-      setPassword(pass);
-      setIsPasswordError(false);
-    }, []
-  );
-
   useEffect(() => {
     const amountAsBN = new BN(parseFloat(parseFloat(allMaxAmount ?? amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
     const isAmountGreaterThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
     // setButtonDisabled(!isValidAddress(recipientAddress) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
-    setButtonDisabled(!(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
-  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, password, recipientAddress]);
+    setButtonDisabled(!(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble);
+  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, recipientAddress]);
 
   useEffect(() => {
     api && !apiToUse && setApiToUse(api);
@@ -202,35 +181,23 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   }, [address, apiToUse, balances, formatted, genesisHash, history, state?.price]);
 
   const goToReview = useCallback(() => {
-    try {
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
-
-      signer.unlock(password);
-
-      balances && history.push({
-        pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-        state: {
-          accountName,
-          amount: allMaxAmount ?? amount,
-          api: apiToUse,
-          backPath: pathname,
-          balances,
-          chain,
-          fee,
-          recipientAddress,
-          recipientName,
-          selectedProxyAddress,
-          selectedProxyName,
-          signer,
-          transfer,
-          transferType
-        }
-      });
-    } catch (e) {
-      console.log('Password failed:', e);
-      setIsPasswordError(true);
-    }
-  }, [accountName, address, allMaxAmount, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, password, pathname, recipientAddress, recipientName, selectedProxyAddress, selectedProxyName, transfer, transferType]);
+    balances && history.push({
+      pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
+      state: {
+        accountName,
+        amount: allMaxAmount ?? amount,
+        api: apiToUse,
+        backPath: pathname,
+        balances,
+        chain,
+        fee,
+        recipientAddress,
+        recipientName,
+        transfer,
+        transferType
+      }
+    });
+  }, [accountName, address, allMaxAmount, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (parseInt(value).toString().length > decimals - 1) {
@@ -307,7 +274,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
             fontSize={28}
             fontWeight={400}
             height={50}
-            isFocused={!!recipientAddress && !password}
+            isFocused={!!recipientAddress}
             label={t('Amount')}
             onChange={_onChangeAmount}
             placeholder={'00.00'}
@@ -351,20 +318,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         />
         <Asset />
         <AmountWithMaxAll />
-        <PasswordWithUseProxy
-          api={apiToUse || api}
-          genesisHash={genesisHash}
-          isError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
-          onChange={onChangePass}
-          prevState={myState}
-          proxiedAddress={formatted}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          style={{ paddingTop: '10px' }}
-        />
       </Container>
       <ButtonWithCancel
         _onClick={goToReview}
