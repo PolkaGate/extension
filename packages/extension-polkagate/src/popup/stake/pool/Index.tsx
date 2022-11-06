@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi, useEndpoint, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
+import { useApi, useChain, useEndpoint, useFormatted, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
@@ -63,9 +63,9 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
 
   const { pathname, state } = useLocation();
-  const { formatted, genesisHash } = useParams<{ formatted: string, genesisHash: string }>();
-  const address = useMemo(() => getSubstrateAddress(formatted), [formatted]);
-  const chain = useMetadata(genesisHash, true);
+  const { address } = useParams<{ address: string }>();
+  const formatted = useFormatted(address);
+  const chain = useChain(address);
   const endpoint = useEndpoint(formatted, chain);
 
   const api = useApi(endpoint);
