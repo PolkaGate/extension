@@ -1,17 +1,16 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { useContext, useMemo } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { Chain } from '../../../extension-chains/src/types';
-import { AccountContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
+import { AccountContext, SettingsContext } from '../components/contexts';
+import { useChain } from '.';
 
-export default function useEncodedAddress(address: string, chain: Chain): string {
+export default function useFormatted(address: string): string | undefined {
   const { accounts } = useContext(AccountContext);
+  const chain = useChain(address);
   const settings = useContext(SettingsContext);
 
   const encodedAddress = useMemo(() => {
@@ -21,7 +20,7 @@ export default function useEncodedAddress(address: string, chain: Chain): string
       const selectedAddressJson = accounts.find((acc) => acc.address === address);
 
       if (!selectedAddressJson) {
-        throw new Error(' address not found in accounts!');
+        throw new Error('address not found in accounts!');
       }
 
       const publicKey = decodeAddress(selectedAddressJson.address);
@@ -29,7 +28,7 @@ export default function useEncodedAddress(address: string, chain: Chain): string
       return encodeAddress(publicKey, prefix);
     }
 
-    return '';
+    return undefined;
   }, [accounts, chain, address, settings]);
 
   return encodedAddress;

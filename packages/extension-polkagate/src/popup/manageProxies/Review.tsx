@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -12,12 +12,11 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, PasswordWithUseProxy, PButton, ProxyTable, ShowBalance } from '../../components';
+import { AccountContext, ActionContext, PasswordWithUseProxy, PButton, ProxyTable, ShowBalance, Warning } from '../../components';
 import { useAccount } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
-import SelectProxy from '../../partials/SelectProxy';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress } from '../../util/utils';
@@ -36,13 +35,14 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [proxiesToChange, setProxiesToChange] = useState<ProxyItem[] | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [password, setPassword] = useState<string>('');
-  const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(false);
+  const [password, setPassword] = useState<string>();
+  const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
+  const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(true);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfimation, setShowConfimation] = useState<boolean>(false);
-  const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
+  const theme = useTheme();
   const { t } = useTranslation();
   const account = useAccount(address);
   const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
@@ -57,7 +57,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const batchAll = api.tx.utility.batchAll;
 
   const goToMyAccounts = useCallback(() => {
-    setShowSelectProxy(false);
     setShowConfimation(false);
     setShowWaitScreen(false);
     onAction('/');
@@ -86,7 +85,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   }, [formatted, tx]);
 
   const onNext = useCallback(async (): Promise<void> => {
-    setShowWaitScreen(true);
     // const localState = state;
     // const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
@@ -94,7 +92,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
 
       signer.unlock(password);
-      // setPasswordStatus(PASS_MAP.CORRECT);
+      setShowWaitScreen(true);
 
       const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
 
@@ -129,7 +127,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       setShowConfimation(true);
     } catch (e) {
       console.log('error:', e);
-      // setPasswordStatus(PASS_MAP.INCORRECT);
+      setIsPasswordError(true);
       // setState(localState);
       // setConfirmingState('');
     }
@@ -150,8 +148,31 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
     setProxiesToChange(toChange);
   }, [proxies]);
 
+  useEffect(() => {
+    setNextButtonDisalbe(!password);
+  }, [password]);
+
   return (
     <>
+      {isPasswordError &&
+        <Grid
+          color='red'
+          height='30px'
+          m='auto'
+          pt='5px'
+          mb='-15px'
+          width='92%'
+        >
+          <Warning
+            fontWeight={400}
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('You’ve used an incorrect password. Try again.')}
+          </Warning>
+        </Grid>
+      }
       <Typography
         m='20px auto'
         sx={{
@@ -251,11 +272,15 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         onChange={setPassword}
         proxiedAddress={address}
         proxies={proxies}
-        setShowSelectProxy={setShowSelectProxy}
+        setIsPasswordError={setIsPasswordError}
+        isPasswordError={isPasswordError}
+        proxyTypeFilter={['Any']}
+        selectedProxy={selectedProxy}
+        setSelectedProxy={setSelectedProxy}
         style={{
           bottom: '80px',
-          position: 'absolute',
           left: '4%',
+          position: 'absolute',
           width: '92%'
         }}
       />
@@ -282,18 +307,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
             proxies={proxiesToChange}
           />
         </Confirmation>
-      }
-      {showSelectProxy &&
-        <SelectProxy
-          genesisHash={account?.genesisHash}
-          proxiedAddress={formatted}
-          proxies={proxies}
-          proxyTypeFilter={['Any']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          setShow={setShowSelectProxy}
-          show={showSelectProxy}
-        />
       }
     </>
   );

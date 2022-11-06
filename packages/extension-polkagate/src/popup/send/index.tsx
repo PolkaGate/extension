@@ -5,7 +5,7 @@
 
 /**
  * @description
- * this component opens 
+ * this component opens
  * */
 
 import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
@@ -25,10 +25,9 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, PasswordWithUseProxy, SettingsContext, ShortAddress, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import SelectProxy from '../../partials/SelectProxy';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState, Proxy, ProxyItem } from '../../util/types';
-import { amountToHuman, getFormattedAddress, getSubstrateAddress, isValidAddress } from '../../util/utils';
+import { amountToHuman, getFormattedAddress, getSubstrateAddress } from '../../util/utils';
 import BalanceFee from './BalanceFee';
 
 interface Props {
@@ -70,7 +69,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [showSelectProxy, setShowSelectProxy] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy>();
 
   const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
@@ -361,10 +359,11 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           onChange={onChangePass}
           prevState={myState}
           proxiedAddress={formatted}
-          proxies={proxies}
+          proxies={proxyItems}
+          proxyTypeFilter={['Any']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
           style={{ paddingTop: '10px' }}
-          setShowSelectProxy={setShowSelectProxy}
-        // isFocused
         />
       </Container>
       <ButtonWithCancel
@@ -373,17 +372,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         disabled={buttonDisabled}
         text={t('Next')}
       />
-      {showSelectProxy &&
-        <SelectProxy
-          genesisHash={genesisHash}
-          proxiedAddress={formatted}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          setShow={setShowSelectProxy}
-          show={showSelectProxy}
-        />}
     </Motion>
   );
 }

@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -29,6 +29,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash, true);
   const [proxiesToSelect, setproxiesToSelect] = useState<ProxyItem[] | undefined>();
+  const [change, setChange] = useState<boolean>(true);
 
   useEffect(() => {
     const toSelect = proxies?.filter((item) => item.status !== 'new');
@@ -46,12 +47,19 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
     , [setShow]);
 
   const handleNext = useCallback(() => {
+    setChange(true);
     _goBack();
   }, [_goBack]);
 
   const onSelect = useCallback((selected: Proxy) => {
+    setChange(!change);
     setSelectedProxy(selected);
-  }, [setSelectedProxy]);
+  }, [change, setSelectedProxy]);
+
+  const onDeselect = useCallback(() => {
+    selectedProxy && setChange(!change);
+    selectedProxy && setSelectedProxy(undefined);
+  }, [change, selectedProxy, setSelectedProxy]);
 
   return (
     <Popup show={show}>
@@ -76,15 +84,34 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
         onSelect={onSelect}
         proxies={proxiesToSelect}
         proxyTypeFilter={proxyTypeFilter}
+        selected={selectedProxy}
         style={{
-          m: '20px auto',
+          m: '20px auto 0',
           width: '92%'
         }}
       />
+      <Grid
+        m='auto'
+        onClick={onDeselect}
+        width='92%'
+      >
+        <Typography
+          fontSize='14px'
+          fontWeight={400}
+          lineHeight='36px'
+          sx={{
+            cursor: selectedProxy ? 'pointer' : 'default',
+            textAlign: 'right',
+            textDecoration: 'underline'
+          }}
+        >
+          {t<string>('Clear selection and use the proxied')}
+        </Typography>
+      </Grid>
       <PButton
         _onClick={handleNext}
-        disabled={!selectedProxy}
-        text={t('Next')}
+        disabled={change}
+        text={t('Confirm')}
       />
     </Popup>
   );

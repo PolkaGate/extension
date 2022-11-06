@@ -95,9 +95,7 @@ export default function ThroughProxy({ address, chain, name }: Props): React.Rea
             >
               <Grid
                 item
-                // maxWidth= '80%',
                 overflow='hidden'
-                pl='7px'
                 textOverflow='ellipsis'
                 whiteSpace='nowrap'
                 sx={{
