@@ -192,11 +192,11 @@ export default function Index(): React.ReactElement {
   }, [nominatorInfo?.minNominated, stakingConsts]);
 
   const goToPoolStaking = useCallback(() => {
-    genesisHash && formatted && history.push({
-      pathname: `/pool/${genesisHash}/${formatted}/`,
+    address && history.push({
+      pathname: `/pool/${address}/`,
       state: { api: apiToUse, currentEraIndex, pathname }
     });
-  }, [apiToUse, currentEraIndex, formatted, genesisHash, history, pathname]);
+  }, [address, apiToUse, currentEraIndex, history, pathname]);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void

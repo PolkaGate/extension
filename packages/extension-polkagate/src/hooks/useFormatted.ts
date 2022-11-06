@@ -20,7 +20,7 @@ export default function useFormatted(address: string): string | undefined {
       const selectedAddressJson = accounts.find((acc) => acc.address === address);
 
       if (!selectedAddressJson) {
-        throw new Error('address not found in accounts!');
+        return undefined;
       }
 
       const publicKey = decodeAddress(selectedAddressJson.address);
