@@ -9,9 +9,10 @@ interface Props {
   icon: any;
   divider?: boolean;
   onClick: () => void;
+  exceptionWidth?: number;
 }
 
-export default function HorizontalMenuItem({ divider = false, icon, onClick, title }: Props): React.ReactElement {
+export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0, icon, onClick, title }: Props): React.ReactElement {
   const itemRef = useRef(null);
   const [parentWidth, setParentWidth] = useState<number>(0);
   const [childCount, setChildCount] = useState<number>(0);
@@ -30,7 +31,7 @@ export default function HorizontalMenuItem({ divider = false, icon, onClick, tit
         direction='column'
         item
         justifyContent='center'
-        maxWidth={childWidth}
+        maxWidth={childWidth + exceptionWidth}
         ref={itemRef}
         width='fit-content'
       >
