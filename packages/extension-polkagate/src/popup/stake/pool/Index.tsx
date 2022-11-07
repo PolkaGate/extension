@@ -518,9 +518,10 @@ export default function Index(): React.ReactElement {
           />
           <HorizontalMenuItem
             divider
+            exceptionWidth={30}
             icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
             onClick={goToInFo}
-            title={t<string>('Nominations')}
+            title={t<string>('Selected Validators')}
           />
           <HorizontalMenuItem
             divider
