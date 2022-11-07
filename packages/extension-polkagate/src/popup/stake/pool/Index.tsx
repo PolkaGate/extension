@@ -402,10 +402,7 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const ToBeReleased = () => (
-    <Grid container sx={{ fontSize: '16px', fontWeight: 500, ml: '35px' }}>
-      <Grid container item>
-        <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '85%' }} />
-      </Grid>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '10%', width: '85%' }}>
       <Grid item pt='10px' xs={12}>
         {t('To be released')}
       </Grid>
