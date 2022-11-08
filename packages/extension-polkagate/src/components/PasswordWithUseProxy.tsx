@@ -60,7 +60,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
 
   return (
     <>
-      <Grid alignItems='end' container sx={{ ...style }}>
+      <Grid alignItems='center' container sx={{ ...style }}>
         <Grid
           item
           xs={proxies?.length ? 9 : 12}
@@ -126,6 +126,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
               item
               onClick={goToSelectProxy}
               pl='10px'
+              pt='10px'
               sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}
             >
               {t('Use proxy')}
