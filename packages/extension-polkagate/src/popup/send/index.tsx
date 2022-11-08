@@ -28,7 +28,7 @@ import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress } from '../../util/utils';
-import BalanceFee from './BalanceFee';
+import BalanceFee from './partial/BalanceFee';
 
 interface Props {
   className?: string;
