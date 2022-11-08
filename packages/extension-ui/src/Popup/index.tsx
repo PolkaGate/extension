@@ -47,7 +47,7 @@ import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { ErrorBoundary } from '../components';
-import ToastProvider from '../components/Toast/ToastProvider';
+import TemporaryStorageProvider from '../../../extension-polkagate/src/components/TemporaryStorageProvider';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
@@ -156,7 +156,7 @@ export default function Popup(): React.ReactElement {
                 <MediaContext.Provider value={cameraOn && mediaAllowed}>
                   <MetadataReqContext.Provider value={metaRequests}>
                     <SigningReqContext.Provider value={signRequests}>
-                      <ToastProvider>
+                      <TemporaryStorageProvider>
                         <Switch>
                           <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                           <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
@@ -193,7 +193,7 @@ export default function Popup(): React.ReactElement {
                             {Root}
                           </Route>
                         </Switch>
-                      </ToastProvider>
+                      </TemporaryStorageProvider>
                     </SigningReqContext.Provider>
                   </MetadataReqContext.Provider>
                 </MediaContext.Provider>

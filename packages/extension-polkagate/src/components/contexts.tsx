@@ -18,7 +18,7 @@ const MediaContext = React.createContext<boolean>(false);
 const MetadataReqContext = React.createContext<MetadataRequest[]>([]);
 const SettingsContext = React.createContext<SettingsStruct>(settings.get());
 const SigningReqContext = React.createContext<SigningRequest[]>([]);
-const ToastContext = React.createContext<({show: (message: string) => void})>({ show: noop });
+const TemporaryStorage = React.createContext<({ value: string, setValue: (val: string) => void })>({ value: null, setValue: noop });
 
 export {
   AccountContext,
@@ -28,5 +28,5 @@ export {
   MetadataReqContext,
   SettingsContext,
   SigningReqContext,
-  ToastContext
+  TemporaryStorage
 };
