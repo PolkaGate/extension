@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -30,9 +31,10 @@ interface Props {
   name: string | undefined;
 }
 
-function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
+function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const history = useHistory();
   const settings = useContext(SettingsContext);
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
@@ -68,6 +70,16 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   const _onExportAccount = useCallback(() => {
     address && name && onAction(`/export/${address}`);
   }, [address, name, onAction]);
+
+  const _onManageProxies = useCallback(() => {
+    address && onAction(`/manageProxies/${address}`);
+  }, [address, onAction]);
+
+  const goToPoolStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/pool/${address}/`
+    });
+  }, [address, history]);
 
   const movingParts = (
     <Grid
@@ -120,7 +132,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        // onClick={onnn}
+        onClick={_onManageProxies}
         text={t('Manage proxies')}
       />
       <MenuItem
@@ -140,11 +152,11 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         text={t('Solo staking')}
       />
       <MenuItem
-        pl='20px'
         iconComponent={
           <vaadin-icon icon='vaadin:group' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        // onClick={onnn}
+        onClick={goToPoolStaking}
+        pl='20px'
         text={t('Pool staking')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
@@ -232,4 +244,4 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   );
 }
 
-export default React.memo(AccMenu);
+export default React.memo(AccMenuInside);
