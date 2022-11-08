@@ -70,7 +70,7 @@ export default function Index(): React.ReactElement {
 
   const api = useApi(endpoint);
 
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(api || state?.api);
+  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(api || state?.api || state?.apiToUse);
   const token = apiToUse && apiToUse.registry.chainTokens[0];
   const [stakingConsts, setStakingConsts] = useState<StakingConsts | undefined>();
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
@@ -106,7 +106,7 @@ export default function Index(): React.ReactElement {
   const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
   const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
-  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
+  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
