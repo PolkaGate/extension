@@ -13,7 +13,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -61,7 +61,7 @@ export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
-
+  const history = useHistory();
   const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
@@ -383,6 +383,13 @@ export default function Index(): React.ReactElement {
     onAction(state?.pathname ?? '/');
   }, [onAction, state]);
 
+  const goToUnstake = useCallback(() => {
+    history.push({
+      pathname: `/pool/unstake/${address}`,
+      state: { api }
+    });
+  }, [address, api, history]);
+
   useEffect(() => {
     /**  get nominator staking info to consider rebag ,... */
     endpoint && getNominatorInfo(endpoint, formatted);
@@ -436,7 +443,7 @@ export default function Index(): React.ReactElement {
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
-                  <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                     {link1Text}
                   </Grid>
                 }
@@ -445,7 +452,7 @@ export default function Index(): React.ReactElement {
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
                       <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
-                    <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                       {link2Text}
                     </Grid>
                   </>
@@ -492,8 +499,8 @@ export default function Index(): React.ReactElement {
         disableGutters
         sx={{ pt: '5px' }}
       >
-        <Row label={t('Staked')} link1Text={t('Unstake')} value={staked} />
-        <Row label={t('Rewards')} link1Text={t('Claim')} link2Text={t('Stake')} value={claimable} />
+        <Row label={t('Staked')} link1Text={t('Unstake')} onLink1={goToUnstake} value={staked} />
+        <Row label={t('Rewards')} link1Text={t('Withdraw')} link2Text={t('Stake')} value={claimable} />
         <Row label={t('Redeemable')} link1Text={t('Withdraw')} value={redeemable} />
         <Row label={t('Unstaking')} link1Text={t('Restake')} value={unlockingAmount} />
         <Row label={t('Available to stake')} showDivider={false} value={getValue('available', balances)} />
