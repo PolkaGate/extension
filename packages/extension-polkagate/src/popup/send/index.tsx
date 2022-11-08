@@ -29,6 +29,7 @@ import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from 
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress } from '../../util/utils';
 import BalanceFee from './partial/BalanceFee';
+import Asset from './partial/Asset';
 
 interface Props {
   className?: string;
@@ -239,28 +240,28 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     </>
   );
 
-  const Asset = () => (
-    <Grid container item sx={{ pt: '10px' }} xs={12}>
-      <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-        {t('Asset')}
-      </div>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
-        <Grid container item xs={1.5}>
-          <ChainLogo genesisHash={genesisHash} size={31} />
-        </Grid>
-        <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
-          <Grid item>
-            {t('Available balance')}
-            <br />
-            {t('Fee')}
-          </Grid>
-        </Grid>
-        <Grid container item justifyContent='flex-end' xs>
-          <BalanceFee api={apiToUse} balances={balances} fee={fee} type='available' />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
+  // const Asset = () => (
+  //   <Grid container item sx={{ pt: '10px' }} xs={12}>
+  //     <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+  //       {t('Asset')}
+  //     </div>
+  //     <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
+  //       <Grid container item xs={1.5}>
+  //         <ChainLogo genesisHash={genesisHash} size={31} />
+  //       </Grid>
+  //       <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
+  //         <Grid item>
+  //           {t('Available balance')}
+  //           <br />
+  //           {t('Fee')}
+  //         </Grid>
+  //       </Grid>
+  //       <Grid container item justifyContent='flex-end' xs>
+  //         <BalanceFee api={apiToUse} balances={balances} fee={fee} type='available' />
+  //       </Grid>
+  //     </Grid>
+  //   </Grid>
+  // );
 
   return (
     <Motion>
@@ -284,7 +285,14 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           setAddress={setRecipientAddress}
           style={{ pt: '10px' }}
         />
-        <Asset />
+        <Asset
+          api={apiToUse}
+          balanceLabel={t('Available balance')}
+          balanceType='available'
+          balances={balances}
+          fee={fee}
+          genesisHash={genesisHash}
+        />
         <AmountWithOptions
           label={t<string>('Amount')}
           onChangeAmount={_onChangeAmount}
