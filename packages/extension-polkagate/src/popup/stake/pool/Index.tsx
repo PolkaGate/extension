@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
+import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
@@ -69,14 +69,27 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const endpoint = useEndpoint2(address);
   const api = useApi2(address);
+  const pool = usePool(address);
+  const stakingConsts = useStakingConsts(address);
+  const poolConsts = usePoolConsts(address);
+  
+  const myPool = (state?.myPool || pool) as MyPoolInfo | undefined | null;
+  const nominatedValidatorsId: string[] | undefined | null = myPool === null || myPool?.stashIdAccount?.nominators?.length === 0 ? null : myPool?.stashIdAccount?.nominators;
 
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(api || state?.api || state?.apiToUse);
+  const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
+  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
+  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
+  const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
+  const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
+  const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [showStake, setShowStake] = useState<boolean>(false);
+
   const token = apiToUse && apiToUse.registry.chainTokens[0];
-  const [stakingConsts, setStakingConsts] = useState<StakingConsts | undefined>();
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
   const [poolStakingOpen, setPoolStakingOpen] = useState<boolean>(false);
   const [soloStakingOpen, setSoloStakingOpen] = useState<boolean>(false);
-  const [poolStakingConsts, setPoolStakingConsts] = useState<PoolStakingConsts | undefined>();
   const [stakingType, setStakingType] = useState<string | undefined>(undefined);
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
   const [validatorsInfo, setValidatorsInfo] = useState<Validators | undefined>(); // validatorsInfo is all validators (current and waiting) information
@@ -91,7 +104,6 @@ export default function Index(): React.ReactElement {
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
 
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[] | undefined | null>(undefined);
-  const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>(state?.myPool);
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined>(); // new or edited Pool
   const [nextPoolId, setNextPoolId] = useState<BN | undefined>();
   const [showConfirmStakingModal, setConfirmStakingModalOpen] = useState<boolean>(false);
@@ -99,90 +111,15 @@ export default function Index(): React.ReactElement {
   const [amount, setAmount] = useState<BN>(BN_ZERO);
   const [currentlyStaked, setCurrentlyStaked] = useState<BN | undefined | null>();
   const [selectedValidators, setSelectedValidatorsAcounts] = useState<DeriveStakingQuery[] | null>(null);
-  const [nominatedValidatorsId, setNominatedValidatorsId] = useState<string[] | undefined>();
   const [noNominatedValidators, setNoNominatedValidators] = useState<boolean | undefined>();// if TRUE, shows that nominators are fetched but is empty
   const [nominatedValidators, setNominatedValidatorsInfo] = useState<DeriveStakingQuery[] | null>(null);
   const [tabValue, setTabValue] = useState(4);
   const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
   const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
-  const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
-  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
-  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
-  const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
-  const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
-  const [showInfo, setShowInfo] = useState<boolean>(false);
-  const [showStake, setShowStake] = useState<boolean>(false);
+
 
   const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
   const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
-
-  const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
-    /** 1- get some staking constant like min Nominator Bond ,... */
-    const getStakingConstsWorker: Worker = new Worker(new URL('../../../util/workers/getStakingConsts.js', import.meta.url));
-
-    workers.push(getStakingConstsWorker);
-
-    getStakingConstsWorker.postMessage({ endpoint });
-
-    getStakingConstsWorker.onerror = (err) => {
-      console.log(err);
-    };
-
-    getStakingConstsWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const c: StakingConsts = e.data;
-
-      if (c) {
-        c.existentialDeposit = new BN(c.existentialDeposit);
-        c.minNominatorBond = new BN(c.minNominatorBond);
-        setStakingConsts(c);
-
-        if (formatted) {
-          // eslint-disable-next-line no-void
-          void updateMeta(address, prepareMetaData(chain, 'stakingConsts', JSON.stringify(c)));
-        }
-      }
-
-      getStakingConstsWorker.terminate();
-    };
-  }, [address, formatted]);
-
-  const getPoolStakingConsts = useCallback((endpoint: string) => {
-    const getPoolStakingConstsWorker: Worker = new Worker(new URL('../../../util/workers/getPoolStakingConsts.js', import.meta.url));
-
-    workers.push(getPoolStakingConstsWorker);
-
-    getPoolStakingConstsWorker.postMessage({ endpoint });
-
-    getPoolStakingConstsWorker.onerror = (err) => {
-      console.log(err);
-    };
-
-    getPoolStakingConstsWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const c: PoolStakingConsts = e.data;
-
-      if (c) {
-        c.lastPoolId = new BN(c.lastPoolId);
-        c.minCreateBond = new BN(c.minCreateBond);
-        c.minCreationBond = new BN(c.minCreationBond);
-        c.minJoinBond = new BN(c.minJoinBond);
-        c.minNominatorBond = new BN(c.minNominatorBond);
-
-        setPoolStakingConsts(c);
-
-        console.log('poolStakingConst:', c);
-
-        if (formatted) {
-          // eslint-disable-next-line no-void
-          void updateMeta(address, prepareMetaData(chain, 'poolStakingConsts', JSON.stringify(c)));
-        }
-      }
-
-      getPoolStakingConstsWorker.terminate();
-    };
-  }, [address, chain, formatted]);
 
   const getNominatorInfo = (endpoint: string, stakerAddress: string) => {
     const getNominatorInfoWorker: Worker = new Worker(new URL('../../../util/workers/getNominatorInfo.js', import.meta.url));
@@ -232,42 +169,6 @@ export default function Index(): React.ReactElement {
 
       setValidatorsInfoIsUpdated(true);
       getValidatorsInfoWorker.terminate();
-    };
-  };
-
-  /** get all information regarding the created/joined pool */
-  const getPoolInfo = (endpoint: string, stakerAddress: string, id: number | undefined = undefined) => {
-    const getPoolWorker: Worker = new Worker(new URL('../../../util/workers/getPool.js', import.meta.url));
-
-    workers.push(getPoolWorker);
-
-    getPoolWorker.postMessage({ endpoint, id, stakerAddress });
-
-    getPoolWorker.onerror = (err) => {
-      console.log(err);
-    };
-
-    getPoolWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const info: string = e.data;
-
-      if (!info) {
-        setNoNominatedValidators(true);
-        setMyPool(null);
-
-        return;
-      }
-
-      const parsedInfo = JSON.parse(info) as MyPoolInfo;
-
-      setNoNominatedValidators(!parsedInfo?.stashIdAccount?.nominators?.length);
-
-      console.log('*** My pool info returned from worker is:', parsedInfo);
-
-      // id ? setSelectedPool(parsedInfo) :
-      setMyPool(parsedInfo);
-      !id && setNominatedValidatorsId(parsedInfo?.stashIdAccount?.nominators);
-      getPoolWorker.terminate();
     };
   };
 
@@ -322,17 +223,10 @@ export default function Index(): React.ReactElement {
         eraLength: Number(sessionInfo.eraLength),
         eraProgress: Number(sessionInfo.eraProgress)
       });
-    }).catch(console.error);
+    });
   }, [api]);
 
   useEffect(() => {
-    /** get some staking constant like min Nominator Bond ,... */
-    endpoint && getStakingConsts(chain, endpoint);
-    endpoint && getPoolStakingConsts(endpoint);
-  }, [chain, endpoint, getPoolStakingConsts, getStakingConsts]);
-
-  useEffect(() => {
-    endpoint && getPoolInfo(endpoint, formatted);
 
     endpoint && getPools(endpoint);
   }, [endpoint, formatted]);
@@ -401,8 +295,8 @@ export default function Index(): React.ReactElement {
   }, [onAction, state]);
 
   const goToStake = useCallback(() => {
-    poolStakingConsts && setShowStake(true);
-  }, [poolStakingConsts]);
+    poolConsts && setShowStake(true);
+  }, [poolConsts]);
 
   const goToUnstake = useCallback(() => {
     history.push({
@@ -547,8 +441,8 @@ export default function Index(): React.ReactElement {
           />
         </Grid>
       </Container>
-      <Info api={apiToUse} setShowInfo={setShowInfo} info={poolStakingConsts} showInfo={showInfo} />
-      <Stake api={apiToUse} showStake={showStake} setShowStake={setShowStake} info={poolStakingConsts}/>
+      <Info api={apiToUse} info={poolConsts} setShowInfo={setShowInfo} showInfo={showInfo} />
+      <Stake api={apiToUse} info={poolConsts} setShowStake={setShowStake} showStake={showStake} />
     </>
   );
 }

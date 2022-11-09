@@ -7,7 +7,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import { useEndpoint2 } from '.';
 
-export function useApi2(address: string | undefined): ApiPromise | undefined {
+export default function useApi2(address: string | undefined): ApiPromise | undefined {
   const endpoint = useEndpoint2(address);
 
   const [api, setApi] = useState<ApiPromise | undefined>();

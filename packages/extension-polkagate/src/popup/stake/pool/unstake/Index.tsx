@@ -22,7 +22,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, PButton, Popup, ShowBalance, ShowValue } from '../../../../components';
-import { useApi, useEndpoint, useMapEntries, useMetadata, useTranslation } from '../../../../hooks';
+import { useApi, useEndpoint, useMapEntries, useMetadata, usePool, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand } from '../../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../../util/utils';
@@ -41,8 +41,8 @@ interface Props {
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation();
+  const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const onAction = useContext(ActionContext);
 
   const onBackClick = useCallback(() => {
     const backPath = state?.pathname ?? '/';
