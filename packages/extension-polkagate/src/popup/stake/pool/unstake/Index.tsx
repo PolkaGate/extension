@@ -26,7 +26,7 @@ import { useApi, useApi2, useChain, useEndpoint, useFormatted, useMapEntries, us
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { amountToHuman, getSubstrateAddress, prepareMetaData } from '../../../../util/utils';
+import { amountToHuman, amountToMachine, getSubstrateAddress, prepareMetaData } from '../../../../util/utils';
 import { getValue } from '../../../account/util';
 import Asset from '../../../send/partial/Asset';
 import SubTitle from '../../../send/partial/SubTitle';
@@ -64,7 +64,7 @@ export default function Index(): React.ReactElement {
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
 
   useEffect(() => {
-    const params = [formatted, amount];
+    const params = [formatted, amountToMachine(amount, decimals)];
     console.log('unlockingLen', unlockingLen); console.log('maxUnlockingChunks', maxUnlockingChunks);
 
     // eslint-disable-next-line no-void
@@ -80,7 +80,7 @@ export default function Index(): React.ReactElement {
         void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
       }
     });
-  }, [amount, api, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
+  }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
     const backPath = state?.pathname ?? '/';
@@ -92,7 +92,7 @@ export default function Index(): React.ReactElement {
   }, [history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
-    if (parseInt(value).toString().length > decimals - 1) {
+    if (value.length > decimals - 1) {
       console.log(`The amount digits is more than decimal:${decimals}`);
 
       return;
@@ -132,12 +132,13 @@ export default function Index(): React.ReactElement {
             value={amount}
           />
         </div>
-        <PButton
-          // _onClick={_onSave}
-          disabled={!amount || amount === '0'}
-          text={t<string>('Next')}
-        />
+
       </Grid>
+      <PButton
+        // _onClick={_onSave}
+        disabled={!amount || amount === '0'}
+        text={t<string>('Next')}
+      />
     </>
   );
 }
