@@ -26,6 +26,7 @@ import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import Info from './Info';
+import Stake from './Stake';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -111,6 +112,7 @@ export default function Index(): React.ReactElement {
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [showStake, setShowStake] = useState<boolean>(false);
 
   const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
   const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
@@ -398,6 +400,10 @@ export default function Index(): React.ReactElement {
     onAction(state?.pathname ?? '/');
   }, [onAction, state]);
 
+  const goToStake = useCallback(() => {
+    poolStakingConsts && setShowStake(true);
+  }, [poolStakingConsts]);
+
   const goToUnstake = useCallback(() => {
     history.push({
       pathname: `/pool/unstake/${address}`,
@@ -518,7 +524,7 @@ export default function Index(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToInfo}
+            onClick={goToStake}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem
@@ -542,6 +548,7 @@ export default function Index(): React.ReactElement {
         </Grid>
       </Container>
       <Info api={apiToUse} setShowInfo={setShowInfo} info={poolStakingConsts} showInfo={showInfo} />
+      <Stake api={apiToUse} showStake={showStake} setShowStake={setShowStake} info={poolStakingConsts}/>
     </>
   );
 }
