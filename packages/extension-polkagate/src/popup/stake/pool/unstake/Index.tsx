@@ -7,7 +7,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { AccountsBalanceType, MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../util/types';
+import type { AccountsBalanceType, MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../../util/types';
 
 import { faHistory, faMinusCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -132,6 +132,11 @@ export default function Index(): React.ReactElement {
             value={amount}
           />
         </div>
+        <PButton
+          // _onClick={_onSave}
+          disabled={!amount || amount === '0'}
+          text={t<string>('Next')}
+        />
       </Grid>
     </>
   );
