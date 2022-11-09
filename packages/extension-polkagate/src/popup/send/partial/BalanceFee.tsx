@@ -15,8 +15,8 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Grid } from '@mui/material';
 import React from 'react';
 
-import { ShowBalance } from '../../components';
-import { getValue } from '../account/util';
+import { ShowBalance } from '../../../components';
+import { getValue } from '../../account/util';
 
 interface Props {
   type: string;

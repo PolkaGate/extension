@@ -22,7 +22,6 @@ import SelectProxy from '../../../extension-polkagate/src/partials/SelectProxy';
 import Account from '../../../extension-polkagate/src/popup/account';
 import Others from '../../../extension-polkagate/src/popup/account/Others';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
-// import Authorize from './Authorize';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
@@ -37,14 +36,15 @@ import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
+import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import Receive from '../../../extension-polkagate/src/popup/receive/Receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
 import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Staking from '../../../extension-polkagate/src/popup/stake';
 import Pool from '../../../extension-polkagate/src/popup/stake/pool';
+import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
-import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { ErrorBoundary } from '../components';
 import TemporaryStorageProvider from '../../../extension-polkagate/src/components/TemporaryStorageProvider';
@@ -168,6 +168,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                           <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
                           <Route path='/staking/:genesisHash/:formatted'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route>
+                          <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
                           <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                           <Route exact path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                           <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

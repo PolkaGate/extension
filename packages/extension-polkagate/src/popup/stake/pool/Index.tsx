@@ -13,14 +13,14 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi, useChain, useEndpoint, useFormatted, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
+import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, useTranslation } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
@@ -61,16 +61,15 @@ export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
-
+  const history = useHistory();
   const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
-  const endpoint = useEndpoint(formatted, chain);
+  const endpoint = useEndpoint2(address);
+  const api = useApi2(address);
 
-  const api = useApi(endpoint);
-
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
+  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(api || state?.api || state?.apiToUse);
   const token = apiToUse && apiToUse.registry.chainTokens[0];
   const [stakingConsts, setStakingConsts] = useState<StakingConsts | undefined>();
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
@@ -91,7 +90,7 @@ export default function Index(): React.ReactElement {
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
 
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[] | undefined | null>(undefined);
-  const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>(undefined);
+  const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>(state?.myPool);
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined>(); // new or edited Pool
   const [nextPoolId, setNextPoolId] = useState<BN | undefined>();
   const [showConfirmStakingModal, setConfirmStakingModalOpen] = useState<boolean>(false);
@@ -105,13 +104,16 @@ export default function Index(): React.ReactElement {
   const [tabValue, setTabValue] = useState(4);
   const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
   const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
-  const [redeemable, setRedeemable] = useState<BN | undefined>();
-  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
+  const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
+  const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
+
+  const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
+  const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
 
   const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
     /** 1- get some staking constant like min Nominator Bond ,... */
@@ -231,28 +233,6 @@ export default function Index(): React.ReactElement {
     };
   };
 
-  const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
-
-  useEffect(() => {
-    api && !apiToUse && setApiToUse(api);
-  }, [api, apiToUse]);
-
-  useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
-      setSessionInfo({
-        currentEra: Number(sessionInfo.currentEra),
-        eraLength: Number(sessionInfo.eraLength),
-        eraProgress: Number(sessionInfo.eraProgress)
-      });
-    }).catch(console.error);
-  }, [api]);
-
-  useEffect(() => {
-    /** get some staking constant like min Nominator Bond ,... */
-    endpoint && getStakingConsts(chain, endpoint);
-    endpoint && getPoolStakingConsts(endpoint);
-  }, [chain, endpoint, getPoolStakingConsts, getStakingConsts]);
-
   /** get all information regarding the created/joined pool */
   const getPoolInfo = (endpoint: string, stakerAddress: string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../../../util/workers/getPool.js', import.meta.url));
@@ -327,6 +307,28 @@ export default function Index(): React.ReactElement {
     };
   };
 
+  const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
+
+  useEffect(() => {
+    api && !apiToUse && setApiToUse(api);
+  }, [api, apiToUse]);
+
+  useEffect(() => {
+    api && api.derive.session?.progress().then((sessionInfo) => {
+      setSessionInfo({
+        currentEra: Number(sessionInfo.currentEra),
+        eraLength: Number(sessionInfo.eraLength),
+        eraProgress: Number(sessionInfo.eraProgress)
+      });
+    }).catch(console.error);
+  }, [api]);
+
+  useEffect(() => {
+    /** get some staking constant like min Nominator Bond ,... */
+    endpoint && getStakingConsts(chain, endpoint);
+    endpoint && getPoolStakingConsts(endpoint);
+  }, [chain, endpoint, getPoolStakingConsts, getStakingConsts]);
+
   useEffect(() => {
     endpoint && getPoolInfo(endpoint, formatted);
 
@@ -379,10 +381,6 @@ export default function Index(): React.ReactElement {
     setUnlockingAmount(unlockingValue);
   }, [myPool, api, currentEraIndex, sessionInfo]);
 
-  const onBackClick = useCallback(() => {
-    onAction(state?.pathname ?? '/');
-  }, [onAction, state]);
-
   useEffect(() => {
     /**  get nominator staking info to consider rebag ,... */
     endpoint && getNominatorInfo(endpoint, formatted);
@@ -396,8 +394,18 @@ export default function Index(): React.ReactElement {
     setMinToReceiveRewardsInSolo(minSolo);
   }, [nominatorInfo?.minNominated, stakingConsts]);
 
+  const onBackClick = useCallback(() => {
+    onAction(state?.pathname ?? '/');
+  }, [onAction, state]);
 
-  const goToInFo = useCallback(() => {
+  const goToUnstake = useCallback(() => {
+    history.push({
+      pathname: `/pool/unstake/${address}`,
+      state: { api, balances, claimable, myPool, pathname, redeemable, unlockingAmount }
+    });
+  }, [address, api, balances, claimable, history, pathname, redeemable, myPool, unlockingAmount]);
+
+  const goToInfo = useCallback(() => {
     setShowInfo(true);
   }, []);
 
@@ -419,9 +427,6 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
-  const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
-
   const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
     return (
       <>
@@ -432,11 +437,11 @@ export default function Index(): React.ReactElement {
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
               <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
-                <ShowBalance api={api} balance={value} decimalPoint={2} />
+                <ShowBalance api={apiToUse} balance={value} decimalPoint={2} />
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
-                  <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                     {link1Text}
                   </Grid>
                 }
@@ -445,7 +450,7 @@ export default function Index(): React.ReactElement {
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
                       <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
-                    <Grid item sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                       {link2Text}
                     </Grid>
                   </>
@@ -492,8 +497,8 @@ export default function Index(): React.ReactElement {
         disableGutters
         sx={{ pt: '5px' }}
       >
-        <Row label={t('Staked')} link1Text={t('Unstake')} value={staked} />
-        <Row label={t('Rewards')} link1Text={t('Claim')} link2Text={t('Stake')} value={claimable} />
+        <Row label={t('Staked')} link1Text={t('Unstake')} onLink1={staked && !staked?.isZero() && goToUnstake} value={staked} />
+        <Row label={t('Rewards')} link1Text={t('Withdraw')} link2Text={t('Stake')} value={claimable} />
         <Row label={t('Redeemable')} link1Text={t('Withdraw')} value={redeemable} />
         <Row label={t('Unstaking')} link1Text={t('Restake')} value={unlockingAmount} />
         <Row label={t('Available to stake')} showDivider={false} value={getValue('available', balances)} />
@@ -513,25 +518,25 @@ export default function Index(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToInFo}
+            onClick={goToInfo}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem
             divider
             exceptionWidth={30}
             icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
-            onClick={goToInFo}
+            onClick={goToInfo}
             title={t<string>('Selected Validators')}
           />
           <HorizontalMenuItem
             divider
             icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToInFo}
+            onClick={goToInfo}
             title={t<string>('Pool')}
           />
           <HorizontalMenuItem
             icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToInFo}
+            onClick={goToInfo}
             title={t<string>('Info')}
           />
         </Grid>

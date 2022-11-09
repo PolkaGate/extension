@@ -22,13 +22,14 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, InputWithLabel, Motion, SettingsContext, ShortAddress, To } from '../../components';
+import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, AmountWithOptions, Motion, SettingsContext, ShortAddress, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress } from '../../util/utils';
-import BalanceFee from './BalanceFee';
+import BalanceFee from './partial/BalanceFee';
+import Asset from './partial/Asset';
 
 interface Props {
   className?: string;
@@ -59,8 +60,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
-  const [amount, setAmount] = useState<string>(state?.amount);
-  const [allMaxAmount, setAllMaxAmount] = useState<string | undefined>();
+  const [amount, setAmount] = useState<string>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const [transferType, setTransferType] = useState<TransferType | undefined>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
@@ -101,23 +101,22 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     const ED = type === 'Max' ? api.consts.balances.existentialDeposit as unknown as BN : BN_ZERO;
     const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimals);
 
-    setAllMaxAmount(allMaxAmount);
+    setAmount(allMaxAmount);
   }, [api, balances?.availableBalance, decimals, maxFee]);
 
   useEffect(() => {
-    const amountAsBN = new BN(parseFloat(parseFloat(allMaxAmount ?? amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
     const isAmountGreaterThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
     // setButtonDisabled(!isValidAddress(recipientAddress) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
-    setButtonDisabled(!(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble);
-  }, [allMaxAmount, amount, api, balances?.availableBalance, decimals, maxFee, recipientAddress]);
+    setButtonDisabled(!(amount) || (amount === '0') || isAmountGreaterThanAllTransferAble);
+  }, [amount, api, balances?.availableBalance, decimals, maxFee, recipientAddress]);
 
   useEffect(() => {
     api && !apiToUse && setApiToUse(api);
   }, [api, apiToUse]);
 
   useEffect(() => {
-    setAllMaxAmount(undefined);
     setTransferType('Normal');
   }, [amount]);
 
@@ -129,7 +128,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   }, [apiToUse, formatted, endpoint]);
 
   useEffect(() => {
-    if (!apiToUse || !transfer) {
+    if (!apiToUse || !transfer || amount) {
       return;
     }
 
@@ -148,7 +147,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     // eslint-disable-next-line no-void
     void transfer(...params).paymentInfo(formatted)
       .then((i) => setFee(i?.partialFee)).catch(console.error);
-  }, [apiToUse, formatted, transfer, amount, decimals, allMaxAmount, transferType]);
+  }, [apiToUse, formatted, transfer, amount, decimals, transferType]);
 
   useEffect(() => {
     if (!apiToUse || !transfer || !balances) { return; }
@@ -185,7 +184,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
       state: {
         accountName,
-        amount: allMaxAmount ?? amount,
+        amount,
         api: apiToUse,
         backPath: pathname,
         balances,
@@ -197,7 +196,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         transferType
       }
     });
-  }, [accountName, address, allMaxAmount, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
+  }, [accountName, address, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (parseInt(value).toString().length > decimals - 1) {
@@ -241,58 +240,28 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     </>
   );
 
-  const Asset = () => (
-    <Grid container item sx={{ pt: '10px' }} xs={12}>
-      <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-        {t('Asset')}
-      </div>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
-        <Grid container item xs={1.5}>
-          <ChainLogo genesisHash={genesisHash} size={31} />
-        </Grid>
-        <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
-          <Grid item>
-            {t('Available balance')}
-            <br />
-            {t('Fee')}
-          </Grid>
-        </Grid>
-        <Grid container item justifyContent='flex-end' xs>
-          <BalanceFee api={apiToUse} balances={balances} fee={fee} type='available' />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-
-  const AmountWithMaxAll = () => {
-    const value = state?.amount || allMaxAmount || amount;
-
-    return (
-      <Grid container item pt='10px' xs={12}>
-        <Grid item xs={8}>
-          <InputWithLabel
-            fontSize={28}
-            fontWeight={400}
-            height={50}
-            isFocused={!!recipientAddress}
-            label={t('Amount')}
-            onChange={_onChangeAmount}
-            placeholder={'00.00'}
-            value={value}
-            type='number'
-          />
-        </Grid>
-        <Grid alignItems='flex-end' container item sx={{ pl: '10px', pt: '20px' }} xs={4}>
-          <Grid item onClick={() => setWholeAmount('Max')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-            {t('Max amount')}
-          </Grid>
-          <Grid item onClick={() => setWholeAmount('All')} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-            {t('All amount')}
-          </Grid>
-        </Grid>
-      </Grid>
-    );
-  };
+  // const Asset = () => (
+  //   <Grid container item sx={{ pt: '10px' }} xs={12}>
+  //     <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
+  //       {t('Asset')}
+  //     </div>
+  //     <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
+  //       <Grid container item xs={1.5}>
+  //         <ChainLogo genesisHash={genesisHash} size={31} />
+  //       </Grid>
+  //       <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
+  //         <Grid item>
+  //           {t('Available balance')}
+  //           <br />
+  //           {t('Fee')}
+  //         </Grid>
+  //       </Grid>
+  //       <Grid container item justifyContent='flex-end' xs>
+  //         <BalanceFee api={apiToUse} balances={balances} fee={fee} type='available' />
+  //       </Grid>
+  //     </Grid>
+  //   </Grid>
+  // );
 
   return (
     <Motion>
@@ -316,8 +285,23 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           setAddress={setRecipientAddress}
           style={{ pt: '10px' }}
         />
-        <Asset />
-        <AmountWithMaxAll />
+        <Asset
+          api={apiToUse}
+          balanceLabel={t('Available balance')}
+          balanceType='available'
+          balances={balances}
+          fee={fee}
+          genesisHash={genesisHash}
+        />
+        <AmountWithOptions
+          label={t<string>('Amount')}
+          onChangeAmount={_onChangeAmount}
+          onPrimary={() => setWholeAmount('Max')}
+          onSecondary={() => setWholeAmount('All')}
+          primaryBtnText={t<string>('All amount')}
+          secondaryBtnText={t<string>('Max amount')}
+          value={amount}
+        />
       </Container>
       <ButtonWithCancel
         _onClick={goToReview}

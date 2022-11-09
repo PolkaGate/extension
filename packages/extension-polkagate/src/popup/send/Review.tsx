@@ -32,6 +32,7 @@ import getLogo from '../../util/getLogo';
 import { FormattedAddressState, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
+import SubTitle from './partial/SubTitle';
 
 type TransferType = 'All' | 'Max' | 'Normal';
 
@@ -195,17 +196,6 @@ export default function Review(): React.ReactElement {
       {!noDivider &&
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
       }
-    </Grid>
-  );
-
-  const SubTitle = ({ label }: { label: string }) => (
-    <Grid container direction='column' item justifyContent='center' sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '25px', px: '5px' }}>
-      <Grid item sx={{ m: 'auto' }}>
-        {label}
-      </Grid>
-      <Grid item>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
-      </Grid>
     </Grid>
   );
 
