@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
+import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
@@ -70,11 +70,15 @@ export default function Index(): React.ReactElement {
   const endpoint = useEndpoint2(address);
   const api = useApi2(address);
   const pool = usePool(address);
+  const pools = usePools(address);
+  const validatorsInfo = useValidators(address);
   const stakingConsts = useStakingConsts(address);
   const poolConsts = usePoolConsts(address);
-  
+
   const myPool = (state?.myPool || pool) as MyPoolInfo | undefined | null;
   const nominatedValidatorsId: string[] | undefined | null = myPool === null || myPool?.stashIdAccount?.nominators?.length === 0 ? null : myPool?.stashIdAccount?.nominators;
+  const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
+  const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
 
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(api || state?.api || state?.apiToUse);
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
@@ -92,7 +96,6 @@ export default function Index(): React.ReactElement {
   const [soloStakingOpen, setSoloStakingOpen] = useState<boolean>(false);
   const [stakingType, setStakingType] = useState<string | undefined>(undefined);
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
-  const [validatorsInfo, setValidatorsInfo] = useState<Validators | undefined>(); // validatorsInfo is all validators (current and waiting) information
   const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
   const [gettingNominatedValidatorsInfoFromChain, setGettingNominatedValidatorsInfoFromChain] = useState<boolean>(true);
   const [validatorsInfoIsUpdated, setValidatorsInfoIsUpdated] = useState<boolean>(false);
@@ -103,7 +106,6 @@ export default function Index(): React.ReactElement {
 
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
 
-  const [poolsInfo, setPoolsInfo] = useState<PoolInfo[] | undefined | null>(undefined);
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined>(); // new or edited Pool
   const [nextPoolId, setNextPoolId] = useState<BN | undefined>();
   const [showConfirmStakingModal, setConfirmStakingModalOpen] = useState<boolean>(false);
@@ -117,98 +119,6 @@ export default function Index(): React.ReactElement {
   const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
   const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
 
-
-  const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
-  const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
-
-  const getNominatorInfo = (endpoint: string, stakerAddress: string) => {
-    const getNominatorInfoWorker: Worker = new Worker(new URL('../../../util/workers/getNominatorInfo.js', import.meta.url));
-
-    workers.push(getNominatorInfoWorker);
-
-    getNominatorInfoWorker.postMessage({ endpoint, stakerAddress });
-
-    getNominatorInfoWorker.onerror = (err) => {
-      console.log(err);
-    };
-
-    getNominatorInfoWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const nominatorInfo: NominatorInfo = e.data;
-
-      console.log('nominatorInfo for solo:', nominatorInfo);
-
-      setNominatorInfo(nominatorInfo);
-      getNominatorInfoWorker.terminate();
-    };
-  };
-
-  const getValidatorsInfo = (chain: Chain, endpoint: string, validatorsInfoFromStore: SavedMetaData) => {
-    const getValidatorsInfoWorker: Worker = new Worker(new URL('../../../util/workers/getValidatorsInfo.js', import.meta.url));
-
-    workers.push(getValidatorsInfoWorker);
-
-    getValidatorsInfoWorker.postMessage({ endpoint });
-
-    getValidatorsInfoWorker.onerror = (err) => {
-      console.log(err);
-    };
-
-    getValidatorsInfoWorker.onmessage = (e) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const fetchedValidatorsInfo: Validators | null = e.data;
-
-      setGettingNominatedValidatorsInfoFromChain(false);
-
-      if (fetchedValidatorsInfo && JSON.stringify(validatorsInfoFromStore?.metaData) !== JSON.stringify(fetchedValidatorsInfo)) {
-        setValidatorsInfo(fetchedValidatorsInfo);
-
-        // eslint-disable-next-line no-void
-        void updateMeta(address, prepareMetaData(chain, 'validatorsInfo', fetchedValidatorsInfo));
-      }
-
-      setValidatorsInfoIsUpdated(true);
-      getValidatorsInfoWorker.terminate();
-    };
-  };
-
-  const getPools = (endpoint: string) => {
-    const getPoolsWorker: Worker = new Worker(new URL('../../../util/workers/getPools.js', import.meta.url));
-
-    workers.push(getPoolsWorker);
-
-    getPoolsWorker.postMessage({ endpoint });
-
-    getPoolsWorker.onerror = (err) => {
-      console.log(err);
-    };
-
-    getPoolsWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const poolsInfo: string = e.data;
-
-      if (!poolsInfo) {
-        return setPoolsInfo(null);// noo pools found, probably never happens
-      }
-
-      const parsedPoolsInfo = JSON.parse(poolsInfo);
-      const info = parsedPoolsInfo.info as PoolInfo[];
-
-      setNextPoolId(new BN(parsedPoolsInfo.nextPoolId));
-
-      info?.forEach((p: PoolInfo) => {
-        if (p?.bondedPool?.points) {
-          p.bondedPool.points = new BN(String(p.bondedPool.points));
-        }
-
-        p.poolId = new BN(p.poolId);
-      });
-
-      setPoolsInfo(info);
-
-      getPoolsWorker.terminate();
-    };
-  };
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -225,11 +135,6 @@ export default function Index(): React.ReactElement {
       });
     });
   }, [api]);
-
-  useEffect(() => {
-
-    endpoint && getPools(endpoint);
-  }, [endpoint, formatted]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -276,11 +181,6 @@ export default function Index(): React.ReactElement {
     setRedeemable(redeemValue);
     setUnlockingAmount(unlockingValue);
   }, [myPool, api, currentEraIndex, sessionInfo]);
-
-  useEffect(() => {
-    /**  get nominator staking info to consider rebag ,... */
-    endpoint && getNominatorInfo(endpoint, formatted);
-  }, [endpoint, formatted]);
 
   useEffect(() => {
     if (!stakingConsts || !nominatorInfo?.minNominated) { return; }
