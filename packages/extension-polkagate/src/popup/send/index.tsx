@@ -198,7 +198,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   }, [accountName, address, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
 
   const _onChangeAmount = useCallback((value: string) => {
-    if (parseInt(value).toString().length > decimals - 1) {
+    if (value.length > decimals - 1) {
       console.log(`The amount digits is more than decimal:${decimals}`);
 
       return;
