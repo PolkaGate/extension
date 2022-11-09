@@ -27,7 +27,7 @@ import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
-import { amountToHuman, getFormattedAddress } from '../../util/utils';
+import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
 import BalanceFee from './partial/BalanceFee';
 import Asset from './partial/Asset';
 
@@ -108,8 +108,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
     const isAmountGreaterThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
-    // setButtonDisabled(!isValidAddress(recipientAddress) || !(amount || allMaxAmount) || isAmountGreaterThanAllTransferAble || !password);
-    setButtonDisabled(!(amount) || (amount === '0') || isAmountGreaterThanAllTransferAble);
+    setButtonDisabled(!isValidAddress(recipientAddress) || !(amount) || (amount === '0') || isAmountGreaterThanAllTransferAble);
   }, [amount, api, balances?.availableBalance, decimals, maxFee, recipientAddress]);
 
   useEffect(() => {
@@ -240,29 +239,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     </>
   );
 
-  // const Asset = () => (
-  //   <Grid container item sx={{ pt: '10px' }} xs={12}>
-  //     <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
-  //       {t('Asset')}
-  //     </div>
-  //     <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
-  //       <Grid container item xs={1.5}>
-  //         <ChainLogo genesisHash={genesisHash} size={31} />
-  //       </Grid>
-  //       <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
-  //         <Grid item>
-  //           {t('Available balance')}
-  //           <br />
-  //           {t('Fee')}
-  //         </Grid>
-  //       </Grid>
-  //       <Grid container item justifyContent='flex-end' xs>
-  //         <BalanceFee api={apiToUse} balances={balances} fee={fee} type='available' />
-  //       </Grid>
-  //     </Grid>
-  //   </Grid>
-  // );
-
   return (
     <Motion>
       <HeaderBrand
@@ -298,8 +274,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           onChangeAmount={_onChangeAmount}
           onPrimary={() => setWholeAmount('Max')}
           onSecondary={() => setWholeAmount('All')}
-          primaryBtnText={t<string>('All amount')}
-          secondaryBtnText={t<string>('Max amount')}
+          primaryBtnText={t<string>('Max amount')}
+          secondaryBtnText={t<string>('All amount')}
           value={amount}
         />
       </Container>

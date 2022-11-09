@@ -8,10 +8,10 @@ import InputWithLabel from './InputWithLabel';
 
 interface Props {
   value?: string;
-  secondaryBtnText: string;
+  secondaryBtnText?: string;
   primaryBtnText: string;
   onChangeAmount: (value: string) => void;
-  onSecondary: () => void;
+  onSecondary?: () => void;
   onPrimary: () => void;
   label: string;
 }
@@ -44,7 +44,7 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
         container
         direction='column'
         item
-        justifyContent='flex-end'
+        justifyContent='center'
         sx={{
           pl: '10px',
           pt: '20px'
@@ -53,7 +53,7 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
       >
         <Grid
           item
-          onClick={onSecondary}
+          onClick={onPrimary}
           sx={{
             cursor: 'pointer',
             fontWeight: 400,
@@ -64,7 +64,7 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
         </Grid>
         <Grid
           item
-          onClick={onPrimary}
+          onClick={onSecondary}
           sx={{
             cursor: 'pointer',
             fontWeight: 400,
