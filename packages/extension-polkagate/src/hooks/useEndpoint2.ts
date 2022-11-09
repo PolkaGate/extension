@@ -4,14 +4,12 @@
 import { useContext, useMemo } from 'react';
 
 import { createWsEndpoints } from '@polkadot/apps-config';
-import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext } from '../components/contexts';
 import { SavedMetaData } from '../util/types';
-import { getSubstrateAddress } from '../util/utils';
 import { useChain } from '.';
 
-export function useEndpoint2(address: string | undefined): string | undefined {
+export default function useEndpoint2(address: string | undefined): string | undefined {
   const chain = useChain(address);
   const { accounts } = useContext(AccountContext);
 
