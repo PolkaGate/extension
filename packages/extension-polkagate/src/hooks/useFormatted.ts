@@ -6,7 +6,7 @@ import { useContext, useMemo } from 'react';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, SettingsContext } from '../components/contexts';
-import { useChain } from '.';
+import { useChain } from './';
 
 export default function useFormatted(address: string): string | undefined {
   const { accounts } = useContext(AccountContext);
