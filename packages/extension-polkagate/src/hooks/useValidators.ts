@@ -11,6 +11,11 @@ import { updateMeta } from '../messaging';
 import { prepareMetaData } from '../util/utils';
 import { useChain, useEndpoint2 } from '.';
 
+/**
+ * @description
+ * This hooks return a list of all available validators (current and waiting) on the chain which the address is already tied with.
+ */
+
 export default function useValidators(address: string, validatorsInfoFromStore?: SavedMetaData): Validators | null | undefined {
   const [info, setInfo] = useState<Validators | undefined | null>();
   const endpoint = useEndpoint2(address);
