@@ -19,13 +19,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AmountWithOptions, FormatBalance, PButton, Popup, ShowBalance, ShowValue } from '../../../../components';
-import { useApi, useApi2, useChain, useEndpoint, useFormatted, useMapEntries, useMetadata, usePool, useTranslation } from '../../../../hooks';
+import { ActionContext, AmountWithOptions, FormatBalance, PButton, Popup, ShowBalance, ShowValue, Warning } from '../../../../components';
+import { useApi, useApi2, useChain, useEndpoint, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, getSubstrateAddress, prepareMetaData } from '../../../../util/utils';
 import { getValue } from '../../../account/util';
 import Asset from '../../../send/partial/Asset';
@@ -43,14 +43,17 @@ interface State {
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
+  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
   const api = useApi2(address, state?.api);
   const chain = useChain(address);
   const pool = usePool(address);
   const formatted = useFormatted(address);
+  const consts = usePoolConsts(address, state?.consts);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
   const [amount, setAmount] = useState<string>();
+  const [alert, setAlert] = useState<string | undefined>();
 
   const myPool = (state?.myPool || pool);
   const staked = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0), [myPool]);
@@ -62,6 +65,27 @@ export default function Index(): React.ReactElement {
 
   const unbonded = api && api.tx.nominationPools.unbond;
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+
+  useEffect(() => {
+    if (!amount) {
+      return;
+    }
+
+    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+
+    if (amountAsBN.gt(staked ?? BN_ZERO)) {
+      return setAlert(t('It is more than already staked.'));
+    }
+
+    if (api && staked && consts && staked.sub(amountAsBN).lt(consts.minJoinBond)) {
+      const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
+      const min = api.createType('Balance', consts.minJoinBond).toHuman();
+
+      return setAlert(t('Remaining stake amount {{remained}} should not be less than {{min}} WND.', { replace: { min, remained } }));
+    }
+
+    setAlert(undefined);
+  }, [amount, api, consts, decimals, staked, t]);
 
   useEffect(() => {
     const params = [formatted, amountToMachine(amount, decimals)];
@@ -112,6 +136,24 @@ export default function Index(): React.ReactElement {
     setAmount(allMaxAmount);
   }, [decimals, staked]);
 
+  const Warn = ({ text }: { text: string }) => (
+    <Grid
+      color='red'
+      container
+      justifyContent='center'
+      py='15px'
+    >
+      <Warning
+        fontWeight={400}
+        isBelowInput
+        isDanger
+        theme={theme}
+      >
+        {text}
+      </Warning>
+    </Grid>
+  );
+
   return (
     < >
       <HeaderBrand
@@ -122,6 +164,9 @@ export default function Index(): React.ReactElement {
         text={t<string>('Pool Staking')}
       />
       <SubTitle label={t('Unstake')} />
+      {staked?.isZero() &&
+        <Warn text={t<string>('Nothing to unstake.')} />
+      }
       <Grid item xs={12} sx={{ mx: '15px' }} >
         <Asset api={api} balance={staked} balanceLabel={t('Staked')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
         <div style={{ paddingTop: '30px' }}>
@@ -132,6 +177,9 @@ export default function Index(): React.ReactElement {
             primaryBtnText={t<string>('All amount')}
             value={amount}
           />
+          {alert &&
+            <Warn text={alert} />
+          }
         </div>
 
       </Grid>
