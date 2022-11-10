@@ -167,7 +167,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                           <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                           <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
-                          <Route path='/staking/:genesisHash/:formatted'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route>
+                          <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route>
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
                           <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                           <Route exact path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
