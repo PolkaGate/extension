@@ -22,13 +22,12 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, ButtonWithCancel, ChainLogo, Identicon, AmountWithOptions, Motion, SettingsContext, ShortAddress, To } from '../../components';
+import { AccountContext, AmountWithOptions, ButtonWithCancel, Identicon, Motion, SettingsContext, ShortAddress, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
-import BalanceFee from './partial/BalanceFee';
 import Asset from './partial/Asset';
 
 interface Props {

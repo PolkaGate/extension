@@ -222,10 +222,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const goToStaking = useCallback(() => {
     history.push({
-      pathname: `/staking/${genesisHash}/${formatted}/`,
+      pathname: `/staking/${address}`,
       state: { api, pathname }
     });
-  }, [history, genesisHash, formatted, pathname, api]);
+  }, [history, address, api, pathname]);
 
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token &&

@@ -112,7 +112,7 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
           icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
           onClick={_goToAddProxied}
           py='4px'
-          text='Add proxied address'
+          text='Add address only'
         />
       </Grid>
     </>

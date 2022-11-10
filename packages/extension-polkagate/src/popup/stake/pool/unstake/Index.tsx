@@ -31,18 +31,18 @@ import { getValue } from '../../../account/util';
 import Asset from '../../../send/partial/Asset';
 import SubTitle from '../../../send/partial/SubTitle';
 
-interface Props {
+interface State {
   api: ApiPromise | undefined;
   backPath: string;
   showInfo: boolean;
   info: PoolStakingConsts;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
-
+  myPool: MyPoolInfo | null | undefined
 }
 
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation();
+  const { state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
   const api = useApi2(address, state?.api);
@@ -53,7 +53,7 @@ export default function Index(): React.ReactElement {
   const [amount, setAmount] = useState<string>();
 
   const myPool = (state?.myPool || pool);
-  const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
+  const staked = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0), [myPool]);
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
 
@@ -65,6 +65,7 @@ export default function Index(): React.ReactElement {
 
   useEffect(() => {
     const params = [formatted, amountToMachine(amount, decimals)];
+
     console.log('unlockingLen', unlockingLen); console.log('maxUnlockingChunks', maxUnlockingChunks);
 
     // eslint-disable-next-line no-void

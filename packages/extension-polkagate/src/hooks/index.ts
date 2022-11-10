@@ -14,6 +14,7 @@ export { default as useIsPopup } from './useIsPopup';
 export { useLedger } from './useLedger';
 export { useMapEntries } from './useMapEntries';
 export { default as useMetadata } from './useMetadata';
+export { default as useNominator } from './useNominator';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
