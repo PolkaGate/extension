@@ -36,7 +36,6 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
           placeholder={'00.00'}
           type='number'
           value={value}
-        // isFocused={!!recipientAddress}
         />
       </Grid>
       <Grid
