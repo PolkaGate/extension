@@ -17,7 +17,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faHistory, faPaperPlane, faQrcode,faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faQrcode, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, IconButton, useTheme } from '@mui/material';
@@ -350,6 +350,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem
+            divider
             icon={
               <FontAwesomeIcon
                 color={theme.palette.mode === 'dark' ? 'white' : 'black'}

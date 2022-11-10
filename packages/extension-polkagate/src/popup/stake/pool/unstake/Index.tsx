@@ -1,33 +1,21 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { Option, StorageKey } from '@polkadot/types';
-import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { AccountsBalanceType, MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../../util/types';
+import type { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
 
-import { faHistory, faMinusCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, IconButton, MenuItem, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Grid, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AmountWithOptions, FormatBalance, PButton, Popup, ShowBalance, ShowValue } from '../../../../components';
-import { useApi, useApi2, useChain, useEndpoint, useFormatted, useMapEntries, useMetadata, usePool, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
+import { AmountWithOptions, PButton, Warning } from '../../../../components';
+import { useApi2, useChain, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { amountToHuman, amountToMachine, getSubstrateAddress, prepareMetaData } from '../../../../util/utils';
-import { getValue } from '../../../account/util';
+import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import SubTitle from '../../../send/partial/SubTitle';
 
@@ -43,14 +31,17 @@ interface State {
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
+  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
   const api = useApi2(address, state?.api);
   const chain = useChain(address);
   const pool = usePool(address);
   const formatted = useFormatted(address);
+  const consts = usePoolConsts(address, state?.consts);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
   const [amount, setAmount] = useState<string>();
+  const [alert, setAlert] = useState<string | undefined>();
 
   const myPool = (state?.myPool || pool);
   const staked = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0), [myPool]);
@@ -64,9 +55,28 @@ export default function Index(): React.ReactElement {
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
 
   useEffect(() => {
-    const params = [formatted, amountToMachine(amount, decimals)];
+    if (!amount) {
+      return;
+    }
 
-    console.log('unlockingLen', unlockingLen); console.log('maxUnlockingChunks', maxUnlockingChunks);
+    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+
+    if (amountAsBN.gt(staked ?? BN_ZERO)) {
+      return setAlert(t('It is more than already staked.'));
+    }
+
+    if (api && staked && consts && !staked.sub(amountAsBN).isZero() && staked.sub(amountAsBN).lt(consts.minJoinBond)) {
+      const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
+      const min = api.createType('Balance', consts.minJoinBond).toHuman();
+
+      return setAlert(t('Remaining stake amount {{remained}} should not be less than {{min}} WND.', { replace: { min, remained } }));
+    }
+
+    setAlert(undefined);
+  }, [amount, api, consts, decimals, staked, t]);
+
+  useEffect(() => {
+    const params = [formatted, amountToMachine(amount, decimals)];
 
     // eslint-disable-next-line no-void
     poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
@@ -84,10 +94,8 @@ export default function Index(): React.ReactElement {
   }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
-    const backPath = state?.pathname ?? '/';
-
     history.push({
-      pathname: backPath,
+      pathname: state?.pathname ?? '/',
       state: { ...state }
     });
   }, [history, state]);
@@ -102,7 +110,7 @@ export default function Index(): React.ReactElement {
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimals]);
 
-  const setAllAmount = useCallback(() => {
+  const onAllAmount = useCallback(() => {
     if (!staked) {
       return;
     }
@@ -111,6 +119,24 @@ export default function Index(): React.ReactElement {
 
     setAmount(allMaxAmount);
   }, [decimals, staked]);
+
+  const Warn = ({ text }: { text: string }) => (
+    <Grid
+      color='red'
+      container
+      justifyContent='center'
+      py='15px'
+    >
+      <Warning
+        fontWeight={400}
+        isBelowInput
+        isDanger
+        theme={theme}
+      >
+        {text}
+      </Warning>
+    </Grid>
+  );
 
   return (
     < >
@@ -122,16 +148,22 @@ export default function Index(): React.ReactElement {
         text={t<string>('Pool Staking')}
       />
       <SubTitle label={t('Unstake')} />
-      <Grid item xs={12} sx={{ mx: '15px' }} >
+      {staked?.isZero() &&
+        <Warn text={t<string>('Nothing to unstake.')} />
+      }
+      <Grid item xs={12} sx={{ mx: '15px' }}>
         <Asset api={api} balance={staked} balanceLabel={t('Staked')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
             label={t<string>('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
-            onPrimary={setAllAmount}
+            onPrimary={onAllAmount}
             primaryBtnText={t<string>('All amount')}
             value={amount}
           />
+          {alert &&
+            <Warn text={alert} />
+          }
         </div>
 
       </Grid>

@@ -12,7 +12,7 @@ import { updateMeta } from '../messaging';
 import { prepareMetaData } from '../util/utils';
 import { useChain, useEndpoint2 } from '.';
 
-export default function usePoolConsts(address: string): PoolStakingConsts | null | undefined {
+export default function usePoolConsts(address: string, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
@@ -52,8 +52,12 @@ export default function usePoolConsts(address: string): PoolStakingConsts | null
   }, [address]);
 
   useEffect(() => {
+    if (stateConsts) {
+      return setConsts(stateConsts);
+    }
+
     endpoint && chain && getPoolStakingConsts(chain, endpoint);
-  }, [endpoint, chain, getPoolStakingConsts]);
+  }, [endpoint, chain, getPoolStakingConsts, stateConsts]);
 
   return consts;
 }
