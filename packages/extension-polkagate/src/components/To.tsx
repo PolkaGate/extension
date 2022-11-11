@@ -1,16 +1,17 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faPaste } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faPaste } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
-import isValidAddress from '../util/validateAddress';
-import { Identicon, Input } from './';
+// import isValidAddress from '../util/validateAddress';
+import { Identicon, InputWithLabelAndIdenticon, AccountContext, Identity } from './';
+import getAllAddressess from '../util/getAllAddresses';
 
 interface Props {
   address: string | undefined;
@@ -19,34 +20,18 @@ interface Props {
   name?: string;
   style?: SxProps<Theme>;
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  senderAddress: string
 }
 
-export default function To({ address, chain, label, name, setAddress, style }: Props): React.ReactElement<Props> {
-  const [offFocus, setOffFocus] = useState(false);
+export default function To({ address, chain, senderAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+  // const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const { t } = useTranslation();
+  const { accounts, hierarchy } = useContext(AccountContext);
+  const allAddresses = getAllAddressess(hierarchy, true, true, chain?.ss58Format, senderAddress);
+  const allAddr = getAllAddressess(hierarchy, true, true, chain?.ss58Format);
 
-  const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!value) {
-      setAddress(undefined);
-
-      return;
-    }
-
-    if (isValidAddress(value)) {
-      setAddress(value);
-    } else {
-      setAddress(null);
-    }
-  }, [setAddress]);
-
-  const _setOffFocus = useCallback(() => {
-    setOffFocus(true);
-  }, []);
-
-  const pasteAddress = useCallback(() => {
-    navigator.clipboard.readText().then((clipText) => isValidAddress(clipText) && setAddress(clipText)).catch(console.error);
-  }, [setAddress]);
+  const selectedAddrName = allAddr.find((acc) => acc[0] === address)?.[2];
 
   return (
     <Grid
@@ -55,92 +40,42 @@ export default function To({ address, chain, label, name, setAddress, style }: P
       justifyContent='space-between'
       sx={{ ...style }}
     >
-      <Grid
-        item
-        sx={{ position: 'relative' }}
-        xs={12}
-      >
-        <Typography sx={{ fontSize: '16px' }}>
-          {label}
-        </Typography>
-        <Input
-          autoCapitalize='off'
-          autoCorrect='off'
-          onBlur={_setOffFocus}
-          onChange={handleAddress}
-          placeholder={t('Paste the address here')}
-          style={{
-            borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,
-            borderWidth: address !== undefined && !isValidAddress(address) ? '3px' : '1px',
-            fontSize: '14px',
-            fontWeight: 300,
-            padding: 0,
-            paddingLeft: '10px',
-            paddingRight: '30px'
-          }}
-          theme={theme}
-          type='text'
-          value={address ?? ''}
-          withError={offFocus && address !== undefined && !isValidAddress(address)}
-        />
-        <IconButton
-          onClick={pasteAddress}
-          sx={{
-            bottom: '0',
-            position: 'absolute',
-            right: '0'
-          }}
-        >
-          <FontAwesomeIcon
-            color={theme.palette.secondary.light}
-            fontSize='15px'
-            icon={faPaste}
-          />
-        </IconButton>
-      </Grid>
+      <InputWithLabelAndIdenticon
+        address={address}
+        allAddresses={allAddresses}
+        chain={chain}
+        label={t<string>('To')}
+        placeHolder={t<string>('Paste the address here')}
+        setAddress={setAddress}
+        showIdenticon={false}
+      />
       {address && chain &&
         <Grid
           alignItems='center'
           container
           item
           sx={{
+            bgcolor: 'background.paper',
             border: 1,
-            borderBottomLeftRadius: '5%',
-            borderBottomRightRadius: '5%',
+            borderBottomLeftRadius: '5px',
+            borderBottomRightRadius: '5px',
             borderColor: theme.palette.secondary.light,
             borderTop: 0,
             fontSize: '28px',
             fontWeight: 400,
             // height: '38px',
             letterSpacing: '-0.015em',
-            py: '2px',
-            pl: '7px'
+            mt: '-4px',
+            pl: '7px',
+            pt: '8px'
           }}
           xs={12}
         >
-          <Grid
-            item
-            xs={1.3}
-          >
-            <Identicon
-              iconTheme={chain?.icon || 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={31}
-              value={address}
-            />
-          </Grid>
-          <Grid
-            item
-            sx={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              pl: '5px'
-            }}
-            xs
-          >
-            {name}
-          </Grid>
+          <Identity
+            address={address}
+            identiconSize={35}
+            name={selectedAddrName}
+          />
         </Grid>
       }
     </Grid>
