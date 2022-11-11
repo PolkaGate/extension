@@ -19,7 +19,7 @@ interface Props {
   toggleSettingSubMenu: () => void
 }
 
-export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -112,9 +112,11 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
           icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
           onClick={_goToAddProxied}
           py='4px'
-          text='Add proxied address'
+          text='Add address only'
         />
       </Grid>
     </>
   );
 }
+
+export default React.memo(ImportAccSubMenu);

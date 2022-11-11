@@ -32,7 +32,7 @@ import getLogo from '../../util/getLogo';
 import { FormattedAddressState, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
-import SubTitle from './partial/SubTitle';
+import SubTitle from '../../partials/SubTitle';
 
 type TransferType = 'All' | 'Max' | 'Normal';
 
@@ -286,7 +286,10 @@ export default function Review(): React.ReactElement {
         _onClickCancel={_onBackClick}
         text={t('Send')}
       />
-      <WaitScreen show={showWaitScreen} title={t('Send Fund')} />
+      <WaitScreen
+        show={showWaitScreen}
+        title={t('Send Fund')}
+      />
       {txInfo && (
         <Confirmation
           headerTitle={t('Send Fund')}
@@ -294,7 +297,9 @@ export default function Review(): React.ReactElement {
           primaryBtnText={t('My accounts')}
           showConfirmation={showConfimation}
           txInfo={txInfo}
-        ><SendTxDetail txInfo={txInfo} /></Confirmation>)
+        >
+          <SendTxDetail txInfo={txInfo} />
+        </Confirmation>)
       }
     </Motion>
   );

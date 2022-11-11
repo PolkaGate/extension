@@ -73,7 +73,7 @@ export default function Index(): React.ReactElement {
   const pools = usePools(address);
   const validatorsInfo = useValidators(address);
   const stakingConsts = useStakingConsts(address);
-  const poolConsts = usePoolConsts(address);
+  const consts = usePoolConsts(address);
 
   const myPool = (state?.myPool || pool) as MyPoolInfo | undefined | null;
   const nominatedValidatorsId: string[] | undefined | null = myPool === null || myPool?.stashIdAccount?.nominators?.length === 0 ? null : myPool?.stashIdAccount?.nominators;
@@ -195,15 +195,15 @@ export default function Index(): React.ReactElement {
   }, [onAction, state]);
 
   const goToStake = useCallback(() => {
-    poolConsts && setShowStake(true);
-  }, [poolConsts]);
+    consts && setShowStake(true);
+  }, [consts]);
 
   const goToUnstake = useCallback(() => {
     history.push({
       pathname: `/pool/unstake/${address}`,
-      state: { api, balances, claimable, myPool, pathname, redeemable, unlockingAmount }
+      state: { api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount }
     });
-  }, [address, api, balances, claimable, history, pathname, redeemable, myPool, unlockingAmount]);
+  }, [history, address, api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount]);
 
   const goToInfo = useCallback(() => {
     setShowInfo(true);
@@ -341,8 +341,8 @@ export default function Index(): React.ReactElement {
           />
         </Grid>
       </Container>
-      <Info api={apiToUse} info={poolConsts} setShowInfo={setShowInfo} showInfo={showInfo} />
-      <Stake api={apiToUse} info={poolConsts} setShowStake={setShowStake} showStake={showStake} />
+      <Info api={apiToUse} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
+      <Stake api={apiToUse} info={consts} setShowStake={setShowStake} showStake={showStake} />
     </>
   );
 }

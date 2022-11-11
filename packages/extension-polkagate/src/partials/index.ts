@@ -8,3 +8,4 @@ export { default as Passwords } from './Passwords';
 export { default as AccMenu } from './AccMenu';
 export { default as AccMenuInside } from './AccMenuInside';
 export { default as WaitScreen } from './WaitScreen';
+export { default as SubTitle } from './SubTitle';

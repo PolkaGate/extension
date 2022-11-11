@@ -17,8 +17,6 @@ interface Props {
 }
 
 export default function AmountWithOptions({ label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, value }: Props): React.ReactElement {
-  console.log('valuevalue:', value)
-
   return (
     <Grid
       container
@@ -36,7 +34,6 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
           placeholder={'00.00'}
           type='number'
           value={value}
-        // isFocused={!!recipientAddress}
         />
       </Grid>
       <Grid

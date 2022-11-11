@@ -44,7 +44,7 @@
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
     "@polkadot/api": "latest",
-    "@polkadot/apps-config": "^0.118.1",
+    "@polkadot/apps-config": "^0.122.2",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
     "better-react-spinkit": "^2.0.4",
@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
-    "@polkadot/dev": "^0.67.151",
+    "@polkadot/dev": "^0.67.155",
     "@testing-library/react": "^13.3.0",
     "@types/jest": "^28.1.1",
     "i18next-scanner": "^3.1.0",
@@ -68,10 +68,10 @@
     "sinon-chrome": "^3.0.1"
   },
   "resolutions": {
-    "@polkadot/api": "^9.6.2",
+    "@polkadot/api": "^9.7.1",
     "@polkadot/keyring": "^10.1.11",
     "@polkadot/networks": "^10.1.11",
-    "@polkadot/types": "^9.6.2",
+    "@polkadot/types": "^9.7.1",
     "@polkadot/util": "^10.1.11",
     "@polkadot/util-crypto": "^10.1.11",
     "@polkadot/x-fetch": "^10.1.11",

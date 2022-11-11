@@ -6,8 +6,8 @@ import React from 'react';
 
 import { ShortAddress } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { TransferTxInfo } from '../../../util/types';
 import ThroughProxy from '../../../partials/ThroughProxy';
+import { TransferTxInfo } from '../../../util/types';
 
 interface Props {
   txInfo: TransferTxInfo;

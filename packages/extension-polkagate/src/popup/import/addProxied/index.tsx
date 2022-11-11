@@ -90,7 +90,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
       <HeaderBrand
         onBackClick={_goHome}
         showBackArrow
-        text={t<string>('Add Proxied Account')}
+        text={t<string>('Add Address Only')}
       />
       <Typography
         fontSize='14px'
