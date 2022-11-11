@@ -75,6 +75,9 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
 
   useEffect(() => {
     if (!realAddress || !selectedProxyType) {
+      setAddButtonDisabled(true);
+      setAccountInfo(undefined);
+
       return;
     }
 
@@ -93,7 +96,6 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   useEffect(() => {
     realAddress && api && api.derive.accounts.info(realAddress).then((info) => {
       if (info.identity.display) {
-
         setAccountInfo(info.identity);
       } else {
         setAccountInfo(null);
