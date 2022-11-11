@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
+export { default as useAccountName } from './useAccountName';
 export { default as useApi2 } from './useApi2';
 export { default as useApi } from './useApi';
 export { default as useChain } from './useChain';

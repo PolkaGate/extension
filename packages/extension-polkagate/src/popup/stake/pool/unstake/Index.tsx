@@ -11,13 +11,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, PButton, Warning } from '../../../../components';
-import { useApi2, useChain, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
-import { HeaderBrand } from '../../../../partials';
+import { AmountWithOptions, Motion, PButton, Popup, Warning } from '../../../../components';
+import { useAccountName, useApi2, useChain, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
+import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
-import SubTitle from '../../../send/partial/SubTitle';
+import Review from './Review';
 
 interface State {
   api: ApiPromise | undefined;
@@ -42,6 +42,8 @@ export default function Index(): React.ReactElement {
   const [estimatedFee, setEstimatedFee] = useState<BN>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
+  const [showReview, setShowReview] = useState<boolean>(false);
+  const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
   const myPool = (state?.myPool || pool);
   const staked = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0), [myPool]);
@@ -65,7 +67,7 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than already staked.'));
     }
 
-    if (api && staked && consts && !staked.sub(amountAsBN).isZero() && staked.sub(amountAsBN).lt(consts.minJoinBond)) {
+    if (api && staked && consts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(consts.minJoinBond)) {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', consts.minJoinBond).toHuman();
 
@@ -73,25 +75,25 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amount, api, consts, decimals, staked, t]);
+  }, [amount, api, consts, decimals, staked, t, unstakeAllAmount]);
 
-  useEffect(() => {
-    const params = [formatted, amountToMachine(amount, decimals)];
+  // useEffect(() => {
+  //   const params = [formatted, amountToMachine(amount, decimals)];
 
-    // eslint-disable-next-line no-void
-    poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
-      const fee = i?.partialFee;
+  //   // eslint-disable-next-line no-void
+  //   poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
+  //     const fee = i?.partialFee;
 
-      if (unlockingLen < maxUnlockingChunks) {
-        setEstimatedFee(fee);
-      } else {
-        const dummyParams = [1, 1];
+  //     if (unlockingLen < maxUnlockingChunks) {
+  //       setEstimatedFee(fee);
+  //     } else {
+  //       const dummyParams = [1, 1];
 
-        // eslint-disable-next-line no-void
-        void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
-      }
-    });
-  }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
+  //       // eslint-disable-next-line no-void
+  //       void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
+  //     }
+  //   });
+  // }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -101,6 +103,8 @@ export default function Index(): React.ReactElement {
   }, [history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
+    setUnstakeAllAmount(false);
+
     if (value.length > decimals - 1) {
       console.log(`The amount digits is more than decimal:${decimals}`);
 
@@ -115,10 +119,15 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    const allMaxAmount = amountToHuman(staked.toString(), decimals);
+    const allToShow = amountToHuman(staked.toString(), decimals);
 
-    setAmount(allMaxAmount);
+    setUnstakeAllAmount(true);
+    setAmount(allToShow);
   }, [decimals, staked]);
+
+  const goToReview = useCallback(() => {
+    setShowReview(true);
+  }, []);
 
   const Warn = ({ text }: { text: string }) => (
     <Grid
@@ -139,7 +148,7 @@ export default function Index(): React.ReactElement {
   );
 
   return (
-    < >
+    <Motion>
       <HeaderBrand
         onBackClick={onBackClick}
         shortBorder
@@ -168,10 +177,26 @@ export default function Index(): React.ReactElement {
 
       </Grid>
       <PButton
-        // _onClick={_onSave}
+        _onClick={goToReview}
         disabled={!amount || amount === '0'}
         text={t<string>('Next')}
       />
-    </>
+      {showReview &&
+        <Review
+          address={address}
+          amount={amount}
+          api={api}
+          chain={chain}
+          fee={estimatedFee || '0'}
+          formatted={formatted}
+          maxUnlockingChunks={maxUnlockingChunks}
+          poolWithdrawUnbonded={poolWithdrawUnbonded}
+          setShow={setShowReview}
+          show={showReview}
+          unbonded={unbonded}
+          unlockingLen={unlockingLen}
+        />
+      }
+    </Motion>
   );
 }

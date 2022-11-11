@@ -14,7 +14,7 @@ interface Props {
   show: boolean;
 }
 
-export default function WaitScreen({ show, title }: Props): React.ReactElement {
+function WaitScreen({ show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -56,3 +56,5 @@ export default function WaitScreen({ show, title }: Props): React.ReactElement {
     </Popup>
   );
 }
+
+export default React.memo(WaitScreen);

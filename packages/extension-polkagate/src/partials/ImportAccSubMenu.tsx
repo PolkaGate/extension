@@ -19,7 +19,7 @@ interface Props {
   toggleSettingSubMenu: () => void
 }
 
-export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -118,3 +118,5 @@ export default function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React
     </>
   );
 }
+
+export default React.memo(ImportAccSubMenu);

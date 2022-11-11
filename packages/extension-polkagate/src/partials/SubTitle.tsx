@@ -15,7 +15,7 @@ interface Props {
   label: string;
 }
 
-export default function SubTitle({ label }: Props) {
+function SubTitle({ label }: Props) {
   return (
     <Grid
       container
@@ -38,3 +38,5 @@ export default function SubTitle({ label }: Props) {
     </Grid>
   );
 }
+
+export default React.memo(SubTitle);

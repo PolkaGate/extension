@@ -32,7 +32,7 @@ import getLogo from '../../util/getLogo';
 import { FormattedAddressState, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
-import SubTitle from './partial/SubTitle';
+import SubTitle from '../../partials/SubTitle';
 
 type TransferType = 'All' | 'Max' | 'Normal';
 

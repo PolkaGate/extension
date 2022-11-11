@@ -60,7 +60,10 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   }, [onAction]);
 
   const LeftIcon = () => (
-    <Grid item>
+    <Grid
+      item
+      xs={1}
+    >
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
@@ -116,6 +119,8 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   const RightItem = () => (
     <Grid
       item
+      textAlign='right'
+      xs={1}
     >
       {!onRefresh && !showClose &&
         <IconButton
