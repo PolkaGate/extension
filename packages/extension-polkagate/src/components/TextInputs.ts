@@ -19,6 +19,12 @@ const TextBox = css(({ fontSize, theme, withError }: Props) => `
   min-height: 31px;
   padding: 12px;
   font-weight: 400;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+    -moz-appearance: textfield;
   resize: none;
   width: 100%;
   font-family: ${theme.typography.allVariants.fontFamily};
