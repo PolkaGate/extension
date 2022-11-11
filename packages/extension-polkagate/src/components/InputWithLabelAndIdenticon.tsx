@@ -25,9 +25,10 @@ interface Props {
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
+  placeHolder?: string;
 }
 
-export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = undefined, setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = undefined, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -74,7 +75,7 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
       <Grid
         item
         onClick={_toggleDropdown}
-        xs={10.5}
+        xs={showIdenticon ? 10.5 : 12}
       >
         <Label
           helperText={helperText}
@@ -86,6 +87,7 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
             autoCorrect='off'
             onBlur={_setOffFocus}
             onChange={handleAddress}
+            placeholder={placeHolder}
             ref={ref}
             style={{
               borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,

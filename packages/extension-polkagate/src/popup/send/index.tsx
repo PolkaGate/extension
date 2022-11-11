@@ -257,6 +257,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           chain={chain}
           label={t('To')}
           name={recipientName}
+          senderAddress={formatted}
           setAddress={setRecipientAddress}
           style={{ pt: '10px' }}
         />
