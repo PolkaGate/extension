@@ -40,4 +40,4 @@ function ChainLogo({ genesisHash, showDefault = true, size = 25 }: Props): React
   );
 }
 
-export default (ChainLogo);
+export default React.memo(ChainLogo);
