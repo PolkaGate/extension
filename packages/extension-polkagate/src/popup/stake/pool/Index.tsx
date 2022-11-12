@@ -21,6 +21,7 @@ import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
 import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
+import { DATE_OPTIONS } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import Info from './Info';
 
@@ -67,8 +68,8 @@ export default function Index(): React.ReactElement {
   const pool = usePool(address);
   // const pools = usePools(address);
   const validatorsInfo = useValidators(address);
-  const stakingConsts = useStakingConsts(address);
-  const consts = usePoolConsts(address,state?.poolConsts);
+  const stakingConsts = useStakingConsts(address, state?.stakingConsts);
+  const consts = usePoolConsts(address, state?.poolConsts);
 
   const myPool = pool as MyPoolInfo | undefined | null;
   const nominatedValidatorsId: string[] | undefined | null = myPool === null || myPool?.stashIdAccount?.nominators?.length === 0 ? null : myPool?.stashIdAccount?.nominators;

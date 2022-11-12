@@ -11,12 +11,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, PButton, ShowBalance, PoolsTable } from '../../../../components';
+import { AmountWithOptions, PButton, ShowBalance } from '../../../../components';
 import { useApi, useFormatted, usePoolConsts, usePools, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFERED_POOL_NAME } from '../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
+import PoolsTable from './partials/PoolsTable';
 
 interface State {
   api?: ApiPromise;

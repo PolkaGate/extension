@@ -55,9 +55,9 @@ export default function Index(): React.ReactElement {
   const goToPoolStaking = useCallback(() => {
     address && history.push({
       pathname: `/pool/${address}/`,
-      state: { api, pathname, poolConsts }
+      state: { api, pathname, poolConsts, stakingConsts }
     });
-  }, [address, api, history, pathname, poolConsts]);
+  }, [address, api, history, pathname, poolConsts, stakingConsts]);
 
   return (
     <>
