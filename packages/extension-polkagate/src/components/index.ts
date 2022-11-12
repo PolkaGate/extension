@@ -10,6 +10,7 @@ export { default as Button } from './Button';
 export { default as ChainLogo } from './ChainLogo';
 export { default as Checkbox } from './Checkbox';
 export { default as ColorContext } from './ColorContext';
+export { default as PoolsTable } from './PoolsTable';
 export { default as CopyAddressButton } from './CopyAddressButton';
 export { default as DropdownWithIcon } from './DropdownWithIcon';
 export { default as FormatBalance } from './FormatBalance';
