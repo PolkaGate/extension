@@ -267,7 +267,7 @@ export default function Index(): React.ReactElement {
                 xs={1}
               >
                 <ArrowForwardIosIcon
-                  sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }}
+                  sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }}
                 />
               </Grid>
             }
@@ -326,7 +326,7 @@ export default function Index(): React.ReactElement {
             exceptionWidth={30}
             icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
             onClick={goToInfo}
-            title={t<string>('Selected Validators')}
+            title={t<string>('Validators')}
           />
           <HorizontalMenuItem
             divider
