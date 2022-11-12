@@ -12,7 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../components';
-import { useApi2, useFormatted, usePoolConsts, useTranslation } from '../../../../hooks';
+import { useApi, useFormatted, usePoolConsts, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { PoolStakingConsts } from '../../../../util/types';
@@ -32,7 +32,7 @@ export default function JoinPool(): React.ReactElement {
   const { pathname, state } = useLocation<State>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const formatted = useFormatted(address);
-  const api = useApi2(address, state?.api);
+  const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const history = useHistory();
 

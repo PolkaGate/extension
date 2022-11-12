@@ -10,7 +10,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ApiPromise } from '@polkadot/api';
 import { Balance } from '@polkadot/types/interfaces';
 
-import { useApi2, useFormatted, usePoolConsts, useTranslation } from '../../../hooks';
+import { useApi, useFormatted, usePoolConsts, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { MyPoolInfo, PoolStakingConsts } from '../../../util/types';
 import Option from '../partial/Option';
@@ -28,7 +28,7 @@ export default function Stake(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const { pathname, state } = useLocation<State>();
-  const api = useApi2(address, state?.api);
+  const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const history = useHistory();
 
