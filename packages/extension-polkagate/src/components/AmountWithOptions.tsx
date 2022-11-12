@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
+import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import InputWithLabel from './InputWithLabel';
@@ -14,9 +14,10 @@ interface Props {
   onSecondary?: () => void;
   onPrimary: () => void;
   label: string;
+  style?: SxProps<Theme> | undefined;
 }
 
-export default function AmountWithOptions({ label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, value }: Props): React.ReactElement {
+export default function AmountWithOptions({ label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
   const _onChange = useCallback((value: string) => {
     onChangeAmount(Math.abs(parseFloat(value)).toString());
   }, [onChangeAmount]);
@@ -24,6 +25,7 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
   return (
     <Grid
       container
+      sx={style}
     >
       <Grid
         item
