@@ -67,7 +67,7 @@ export default function Review(): React.ReactElement {
   const chain = useMetadata(genesisHash, true);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
-  const [showConfimation, setShowConfimation] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const prevUrl = `/send/${genesisHash}/${address}/${formatted}/`;
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
@@ -103,7 +103,7 @@ export default function Review(): React.ReactElement {
 
   const send = useCallback(async () => {
     try {
-      if (!state || !formatted) {
+      if (!state || !formatted ) {
         return;
       }
 
@@ -125,7 +125,7 @@ export default function Review(): React.ReactElement {
         params = [recipientAddress, amountAsBN];
       }
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxyAddress);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxy);
 
       setTxInfo({
         api,
@@ -142,12 +142,12 @@ export default function Review(): React.ReactElement {
       });
 
       setShowWaitScreen(false);
-      setShowConfimation(true);
+      setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [chain, decimals, formatted, password, selectedProxyAddress, selectedProxyName, state]);
+  }, [chain, decimals, formatted, password, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
 
   const _onBackClick = useCallback(() => {
     state?.backPath && history.push({
@@ -295,7 +295,7 @@ export default function Review(): React.ReactElement {
           headerTitle={t('Send Fund')}
           onPrimaryBtnClick={goToMyAccounts}
           primaryBtnText={t('My accounts')}
-          showConfirmation={showConfimation}
+          showConfirmation={showConfirmation}
           txInfo={txInfo}
         >
           <SendTxDetail txInfo={txInfo} />
