@@ -12,34 +12,37 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../components';
-import { useApi, useFormatted, usePoolConsts, useTranslation } from '../../../../hooks';
+import { useApi, useFormatted, usePoolConsts, usePools, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { PoolStakingConsts } from '../../../../util/types';
+import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFERED_POOL_NAME } from '../../../../util/constants';
+import { PoolInfo, PoolStakingConsts } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
+import PoolsTable from './partials/PoolsTable';
 
 interface State {
   api?: ApiPromise;
   availableBalance: Balance;
   poolStakingConsts: PoolStakingConsts;
-  pathname: string;
 }
 
 export default function JoinPool(): React.ReactElement {
   const { t } = useTranslation();
 
   const { address } = useParams<{ address: string }>();
-  const { pathname, state } = useLocation<State>();
+  const { state } = useLocation<State>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const formatted = useFormatted(address);
   const api = useApi(address, state?.api);
-  const poolStakingConsts = usePoolConsts(address, state?.consts);
+  const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
+  const pools = usePools(address);
 
+  const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>(pools);
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
+  const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
 
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
@@ -80,6 +83,21 @@ export default function JoinPool(): React.ReactElement {
   const toReview = useCallback(() => {
     console.log('Go to review clicked!');
   }, []);
+
+  useEffect(() => {
+    if (!pools) { return; }
+
+    if (selectedPool === undefined) {
+      const PLUS_POOL = pools?.find((pool) => pool.metadata?.includes(PREFERED_POOL_NAME));
+
+      setSelectedPool(PLUS_POOL);
+    } else {
+      const bringFront = pools.filter((pool) => pool.poolId === selectedPool.poolId)[0];
+      const restOf = pools.filter((pool) => pool.poolId !== selectedPool.poolId);
+
+      setSortedPools([bringFront, ...restOf]);
+    }
+  }, [pools, selectedPool]);
 
   useEffect(() => {
     if (!api || !availableBalance || !formatted) { return; }
@@ -154,6 +172,17 @@ export default function JoinPool(): React.ReactElement {
           />
         </Grid>
       </Grid>
+      <PoolsTable
+        api={api}
+        label={t<string>('Choose a pool to join')}
+        pools={sortedPools}
+        selected={selectedPool}
+        setSelected={setSelectedPool}
+        style={{
+          m: '15px auto 0',
+          width: '92%'
+        }}
+      />
       <PButton
         _onClick={toReview}
         disabled={nextBtnDisabled}
