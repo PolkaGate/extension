@@ -18,7 +18,7 @@ import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { useApi, useEndpoint, useMetadata, useProxies, useTranslation } from '../hooks';
+import { useApi, useChain, useEndpoint, useMetadata, useProxies, useTranslation } from '../hooks';
 import { showAccount, updateMeta } from '../messaging';
 import { AccMenu } from '../partials';
 import AccountDetail from '../partials/AccountDetail';
@@ -69,9 +69,8 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
   const { t } = useTranslation();
   const history = useHistory();
   const settings = useContext(SettingsContext);
-  const chain = useMetadata(genesisHash, true);
-  const endpoint = useEndpoint(address, chain);
-  const api = useApi(endpoint);
+  const chain = useChain(address);
+  const api = useApi(address);
   const [formatted, setFormatted] = useState<string>();
   const proxies = useProxies(api, formatted);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
@@ -129,6 +128,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
     const temp = allPrices ?? {};
 
     temp[String(balances.accountId)] = { balances, decimals, price };
+    console.log({ ...temp })
     setAllPrices({ ...temp });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, balances, price, setAllPrices]);

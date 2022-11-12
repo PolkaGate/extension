@@ -24,7 +24,7 @@ export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const history = useHistory();
-  const { state, pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address);
@@ -55,9 +55,9 @@ export default function Index(): React.ReactElement {
   const goToPoolStaking = useCallback(() => {
     address && history.push({
       pathname: `/pool/${address}/`,
-      state: { api, pathname }
+      state: { api, pathname, poolConsts, stakingConsts }
     });
-  }, [address, api, history, pathname]);
+  }, [address, api, history, pathname, poolConsts, stakingConsts]);
 
   return (
     <>

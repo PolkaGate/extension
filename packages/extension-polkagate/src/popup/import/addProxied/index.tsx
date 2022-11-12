@@ -29,23 +29,8 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
-  const endpoint = useEndpoint(realAddress, chain);
-  const api = useApi(endpoint);
+  const api = useApi(realAddress);
   const genesisOptions = useGenesisHashOptions();
-
-  const addressesOnThisChain = useMemo((): NameAddress[] | undefined => {
-    if (chain?.ss58Format === undefined) {
-      return undefined;
-    }
-
-    return accounts.reduce(function (result: NameAddress[], acc): NameAddress[] {
-      const publicKey = decodeAddress(acc.address);
-
-      result.push({ address: encodeAddress(publicKey, chain.ss58Format), name: acc?.name });
-
-      return result;
-    }, []);
-  }, [accounts, chain?.ss58Format]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
