@@ -34,7 +34,6 @@ export default function useStakingConsts(address: string, stateConsts: StakingCo
         c.existentialDeposit = new BN(c.existentialDeposit);
         c.minNominatorBond = new BN(c.minNominatorBond);
         setConsts(c);
-
         // eslint-disable-next-line no-void
         void updateMeta(address, prepareMetaData(chain, 'stakingConsts', JSON.stringify(c)));
       } else {
