@@ -53,7 +53,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const chain = useMetadata(genesisHash, true);
   const endpoint = useEndpoint(address, chain);
-  const api = useApi(endpoint);
+  const api = useApi(address);
   const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
 
   const [fee, setFee] = useState<Balance>();

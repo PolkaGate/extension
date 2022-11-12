@@ -5,52 +5,38 @@
 
 /**
  * @description
- * this component shows an account information in detail
+ * this component shows an account balances information in detail
  * */
 
 import '@vaadin/icons';
 
-import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
-import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Container, Divider, Grid, Skeleton, Typography } from '@mui/material';
+import React, { useCallback } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
+import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, ChainLogo, Header, Identicon, Motion, Select, SettingsContext, ShowBalance } from '../../components';
-import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
-import { getMetadata, tieAccount, updateMeta } from '../../messaging';// added for plus, updateMeta
-import { getPrice } from '../../util/api/getPrice';
-import { DEFAULT_TYPE } from '../../util/defaultType';
-import { FormattedAddressState } from '../../util/types';
-import { prepareMetaData } from '../../util/utils';// added for plus
-import AccountBrief from './AccountBrief';
+import { Identicon, Motion, Popup, ShowBalance } from '../../components';
+import { useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getValue } from './util';
 
-interface AddressFormatted {
-  address: string;
+interface Props {
+  account: AccountJson | null;
+  api: ApiPromise;
+  show: boolean;
+  chain: Chain;
+  price: number | undefined;
+  balances: DeriveBalancesAll;
   formatted: string;
+  setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
-export default function Others(): React.ReactElement<void> {
+export default function Others({ account, api, balances, chain, formatted, price, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
-  const history = useHistory();
-  const theme = useTheme();
-  const { state: { account, chain, price, balances, apiToUse } } = useLocation();
-  const { address, formatted } = useParams<AddressFormatted>();
 
   const identicon = (
     <Identicon
@@ -63,20 +49,13 @@ export default function Others(): React.ReactElement<void> {
     />
   );
 
-  console.log('balancesbalances:', balances);
-  console.log('namedReserved:', balances?.namedReserved);
-  console.log('lockedBreakdown:', balances?.lockedBreakdown);
-
   const goToAccount = useCallback(() => {
-    chain?.genesisHash && address && formatted && history.push({
-      pathname: `/account/${chain?.genesisHash}/${address}/${formatted}/`,
-      state: { apiToUse, balances }
-    });
-  }, [balances, history, chain?.genesisHash, address, formatted, apiToUse]);
+    setShow(false);
+  }, [setShow]);
 
   const Balance = ({ balances, type }: { type: string, balances: DeriveBalancesAll | undefined }) => {
     const value = getValue(type, balances);
-    const balanceInUSD = price && value && apiToUse && Number(value) / (10 ** apiToUse.registry.chainDecimals[0]) * price;
+    const balanceInUSD = price && value && api && Number(value) / (10 ** api.registry.chainDecimals[0]) * price;
 
     return (
       <>
@@ -89,7 +68,7 @@ export default function Others(): React.ReactElement<void> {
           <Grid container direction='column' item justifyContent='flex-end' xs>
             <Grid item textAlign='right'>
               <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
-                <ShowBalance api={apiToUse} balance={value} />
+                <ShowBalance api={api} balance={value} />
               </Typography>
             </Grid>
             <Grid item pt='6px' textAlign='right'>
@@ -109,42 +88,42 @@ export default function Others(): React.ReactElement<void> {
 
   return (
     <Motion>
-      <HeaderBrand
-        _centerItem={identicon}
-        noBorder
-        onBackClick={goToAccount}
-        paddingBottom={0}
-        showBackArrow
-      />
-      <Container disableGutters sx={{ px: '15px' }}>
-        <Grid container item justifyContent='center' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          <Typography sx={{ fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em' }}>
-            {account?.name}
-          </Typography>
-        </Grid>
-        <Grid container item justifyContent='center'>
-          <Typography sx={{ fontSize: '36px', fontWeight: 400, letterSpacing: '-0.015em' }}>
-            {t('Others')}
-          </Typography>
-        </Grid>
-        <Grid alignItems='center' item justifyContent='center'>
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px' }} />
-        </Grid>
-      </Container>
-      <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
-        {/* <Balance balances={balances} type={'Free Balance'} /> */}
-        {/* <Balance balances={balances} type={'Reserved Balance'} /> */}
-        <Balance balances={balances} type={'Frozen Misc'} />
-        <Balance balances={balances} type={'Frozen Fee'} />
-        <Balance balances={balances} type={'Locked Balance'} />
-        <Balance balances={balances} type={'Vested Balance'} />
-        <Balance balances={balances} type={'Vested Claimable'} />
-        <Balance balances={balances} type={'Vesting Locked'} />
-        <Balance balances={balances} type={'Vesting Total'} />
-        {/* <Balance balances={balances} type={'Voting Balance'} /> */}
-
-      </Container>
+      <Popup show={show}>
+        <HeaderBrand
+          _centerItem={identicon}
+          noBorder
+          onBackClick={goToAccount}
+          paddingBottom={0}
+          showBackArrow
+        />
+        <Container disableGutters sx={{ px: '15px' }}>
+          <Grid container item justifyContent='center' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Typography sx={{ fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+              {account?.name}
+            </Typography>
+          </Grid>
+          <Grid container item justifyContent='center'>
+            <Typography sx={{ fontSize: '36px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+              {t('Others')}
+            </Typography>
+          </Grid>
+          <Grid alignItems='center' item justifyContent='center'>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px' }} />
+          </Grid>
+        </Container>
+        <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
+          {/* <Balance balances={balances} type={'Free Balance'} /> */}
+          {/* <Balance balances={balances} type={'Reserved Balance'} /> */}
+          <Balance balances={balances} type={'Frozen Misc'} />
+          <Balance balances={balances} type={'Frozen Fee'} />
+          <Balance balances={balances} type={'Locked Balance'} />
+          <Balance balances={balances} type={'Vested Balance'} />
+          <Balance balances={balances} type={'Vested Claimable'} />
+          <Balance balances={balances} type={'Vesting Locked'} />
+          <Balance balances={balances} type={'Vesting Total'} />
+          {/* <Balance balances={balances} type={'Voting Balance'} /> */}
+        </Container>
+      </Popup>
     </Motion>
-
   );
 }

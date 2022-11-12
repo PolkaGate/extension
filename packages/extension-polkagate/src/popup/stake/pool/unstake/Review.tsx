@@ -3,37 +3,33 @@
 
 /**
  * @description
- * this component opens send review page
+ * this component opens unstake review page
  * */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
-import { Avatar, Container, Divider, Grid, useTheme } from '@mui/material';
+import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
 
+import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext, ButtonWithCancel, ChainLogo, FormatBalance, Identicon, Motion, PasswordWithUseProxy, Popup, ShortAddress, Warning } from '../../../../components';
-import { useAccountName, useMetadata, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import ThroughProxy from '../../../../partials/ThroughProxy';
+import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import getLogo from '../../../../util/getLogo';
-import { FormattedAddressState, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
+import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import { signAndSend } from '../../../../util/api';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { updateMeta } from '../../../../messaging';
 // import SendTxDetail from './partial/SendTxDetail';
 
 interface Props {
@@ -267,7 +263,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
                 </Grid>
               </Grid>
             }
-            label={t('Unstaking amount')}
+            label={t('Amount')}
             noDivider
             pt2={0}
           />
@@ -283,6 +279,9 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             pt2={0}
           />
         </Container>
+        <Grid item sx={{ fontSize: '18px' }}>
+          {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
+        </Grid>
         <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}

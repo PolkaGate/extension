@@ -36,8 +36,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
   const { address } = useParams<{ address: string; }>();
   const account = useAccount(address);
   const chain = useMetadata(account?.genesisHash, true);
-  const endpoint = useEndpoint(account?.address, chain);
-  const api = useApi(endpoint);
+  const api = useApi(account?.address);
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor : BN_ZERO;
