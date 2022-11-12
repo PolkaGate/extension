@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import InputWithLabel from './InputWithLabel';
 
@@ -17,6 +17,10 @@ interface Props {
 }
 
 export default function AmountWithOptions({ label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, value }: Props): React.ReactElement {
+  const _onChange = useCallback((value: string) => {
+    onChangeAmount(Math.abs(parseFloat(value)).toString());
+  }, [onChangeAmount]);
+
   return (
     <Grid
       container
@@ -30,7 +34,7 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
           fontWeight={400}
           height={50}
           label={label}
-          onChange={onChangeAmount}
+          onChange={_onChange}
           placeholder={'00.00'}
           type='number'
           value={value}
