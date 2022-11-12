@@ -28,6 +28,6 @@ export default async function broadcast (
   } catch (e) {
     console.log('something went wrong while broadcasting', e);
 
-    return { status: 'failed' };
+    return { status: 'fail' };
   }
 }
