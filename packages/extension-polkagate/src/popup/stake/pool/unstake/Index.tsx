@@ -22,10 +22,11 @@ import Review from './Review';
 interface State {
   api: ApiPromise | undefined;
   backPath: string;
+  consts: PoolStakingConsts | null | undefined;
   showInfo: boolean;
   info: PoolStakingConsts;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
-  myPool: MyPoolInfo | null | undefined
+  myPool: MyPoolInfo | undefined;
 }
 
 export default function Index(): React.ReactElement {
@@ -36,7 +37,7 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi2(address, state?.api);
   const chain = useChain(address);
-  const pool = usePool(address);
+  const pool = usePool(address, undefined, state?.myPool);
   const formatted = useFormatted(address);
   const consts = usePoolConsts(address, state?.consts);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
@@ -190,6 +191,7 @@ export default function Index(): React.ReactElement {
           fee={estimatedFee || '0'}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
+          poolId={pool?.poolId}
           poolWithdrawUnbonded={poolWithdrawUnbonded}
           setShow={setShowReview}
           show={showReview}
