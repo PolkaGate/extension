@@ -1,84 +1,107 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useState } from 'react';
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+
+import React, { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
+import { Balance } from '@polkadot/types/interfaces';
 
-import { Popup, Warning } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useApi2, useFormatted, usePoolConsts, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
-import { PoolStakingConsts } from '../../../util/types';
+import { MyPoolInfo, PoolStakingConsts } from '../../../util/types';
 import Option from '../partial/Option';
-import JoinPool from './joinPool/JoinPool'
-import { Grid, useTheme } from '@mui/material';
 
-interface Props {
+interface State {
   api?: ApiPromise;
-  showStake: boolean;
-  setShowStake: React.Dispatch<React.SetStateAction<boolean>>;
-  info?: PoolStakingConsts;
+  consts?: PoolStakingConsts;
+  myPool: MyPoolInfo | null | undefined;
+  balances: DeriveBalancesAll | undefined;
+  pathname: string;
 }
 
-export default function Stake({ api, showStake, info }: Props): React.ReactElement {
+export default function Stake(): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
+  const { address } = useParams<{ address: string }>();
+  const formatted = useFormatted(address);
+  const { pathname, state } = useLocation<State>();
+  const api = useApi2(address, state?.api);
+  const poolStakingConsts = usePoolConsts(address, state?.consts);
+  const history = useHistory();
 
-  const [showJoinPool, setShowJoinPool] = useState<boolean>(false);
-
-  const [notEnoughFund, setNotEnoughFund] = useState<boolean>(false);
-  const [joinDisabled, setJoinDisabled] = useState<boolean>(false);
-  const [createDisabled, setCreateDisabled] = useState<boolean>(false);
-  const [warningText, setWarningText] = useState<string | undefined>();
+  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
+  const [joinDisabled, setJoinDisabled] = useState<boolean>(true);
+  const [createDisabled, setCreateDisabled] = useState<boolean>(true);
+  const [createWarningText, setCreateWarningText] = useState<string | undefined>();
   const [joinWarningText, setJoinWarningText] = useState<string | undefined>();
 
-  // const backToIndex = useCallback(() => {
-  //   history.push({
-  //     pathname: `/pool/${genesisHash}/${formatted}/`,
-  //     state: { api: apiToUse, pathname }
-  //   });
-  // }, []);
+  const backToIndex = useCallback(() => {
+    history.push({
+      pathname: `/pool/${address}`,
+      state: { ...state }
+    });
+  }, [address, history, state]);
 
   const joinPool = useCallback(() => {
-    setShowJoinPool(true)
-  }, []);
+    history.push({
+      pathname: `/pool/join/${address}`,
+      state: { api, availableBalance, pathname, poolStakingConsts }
+    });
+  }, [address, api, availableBalance, history, pathname, poolStakingConsts]);
 
-  const createPool = useCallback(() => {
-    console.log('create pool');
-  }, []);
+  // const createPool = useCallback(() => {
+  //   address && onAction(`/pool/create/${address}`);
+  // }, [address, onAction]);
+
+  useEffect(() => {
+    // eslint-disable-next-line no-void
+    !state?.balances?.availableBalance && api && formatted && void api.derive.balances?.all(formatted).then((b) => {
+      setAvailableBalance(b.availableBalance);
+    });
+    state?.balances?.availableBalance && setAvailableBalance(state?.balances?.availableBalance);
+  }, [formatted, api, state?.balances?.availableBalance]);
+
+  useEffect(() => {
+    if (!poolStakingConsts || !availableBalance) {
+      return;
+    }
+
+    if (poolStakingConsts?.minCreateBond.gt(availableBalance) && poolStakingConsts?.minJoinBond.gt(availableBalance)) {
+      setJoinDisabled(true);
+      setCreateDisabled(true);
+      setCreateWarningText(t<string>('You don’t have enough fund.'));
+      setJoinWarningText(t<string>('You don’t have enough fund.'));
+    } else if (poolStakingConsts?.minCreateBond.gt(availableBalance)) {
+      setCreateDisabled(true);
+      setJoinDisabled(false);
+      setCreateWarningText(t<string>('You don’t have enough fund.'));
+    } else if (poolStakingConsts?.minJoinBond.gt(availableBalance)) {
+      setCreateDisabled(false);
+      setJoinDisabled(true);
+      setJoinWarningText(t<string>('You don’t have enough fund.'));
+    }
+
+    if (poolStakingConsts.maxPools === poolStakingConsts.lastPoolId.toNumber()) {
+      setCreateDisabled(true);
+      setCreateWarningText(t<string>('Pools are full.'));
+    }
+  }, [availableBalance, poolStakingConsts, t]);
 
   return (
-    <Popup show={showStake}>
+    <>
       <HeaderBrand
-        // onBackClick={backToIndex}
+        onBackClick={backToIndex}
         shortBorder
         showBackArrow
         showClose
         text={t<string>('Pool Staking')}
       />
-      {notEnoughFund &&
-        <Grid
-          color='red'
-          container
-          height='30px'
-          item
-          justifyContent='center'
-          mb='5px'
-          mt='10px'
-        >
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You don’t have enough fund.')}
-          </Warning>
-        </Grid>
-      }
       <Option
         api={api}
-        balance={info?.minJoinBond}
+        balance={poolStakingConsts?.minJoinBond}
         balanceText={t<string>('Minimum to join')}
         buttonText={t<string>('Join')}
         isDisabled={joinDisabled}
@@ -92,19 +115,18 @@ export default function Stake({ api, showStake, info }: Props): React.ReactEleme
       />
       <Option
         api={api}
-        balance={info?.minCreateBond}
+        balance={poolStakingConsts?.minCreateBond}
         balanceText={t<string>('Minimum to create')}
         buttonText={t<string>('Create')}
         isDisabled={createDisabled}
-        onClick={createPool}
+        onClick={joinPool}
         style={{
           m: 'auto',
           width: '92%'
         }}
         title={t<string>('Create Pool')}
-        warningText={warningText}
+        warningText={createWarningText}
       />
-      <JoinPool setShowJoinPool={setShowJoinPool} showJoinPool={showJoinPool} />
-    </Popup>
+    </>
   );
 }
