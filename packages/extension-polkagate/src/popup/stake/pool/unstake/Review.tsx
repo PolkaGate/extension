@@ -27,8 +27,8 @@ import Confirmation from '../../../../partials/Confirmation';
 import ThroughProxy from '../../../../partials/ThroughProxy';
 import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
-import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
+import { DATE_OPTIONS, FLOATING_POINT_DIGIT } from '../../../../util/constants';
+import { Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 // import SendTxDetail from './partial/SendTxDetail';
 
@@ -45,10 +45,11 @@ interface Props {
   unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   poolId: BN | undefined;
   poolWithdrawUnbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, stakingConsts, poolWithdrawUnbonded, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -69,6 +70,14 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+
+  const redeemDate = useMemo(() => {
+    if (stakingConsts) {
+      const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
+
+      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)
+    }
+  }, [stakingConsts]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -279,8 +288,9 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             pt2={0}
           />
         </Container>
-        <Grid item sx={{ fontSize: '18px' }}>
+        <Grid item container justifyContent='center' sx={{ fontSize: '18px', textAlign: 'center', p: '10px 35px' }}>
           {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
         </Grid>
         <PasswordWithUseProxy
           api={api}
