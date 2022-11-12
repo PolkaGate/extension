@@ -116,29 +116,22 @@ interface stashAccountDisplay {
 }
 
 export interface TransactionDetail {
-  action: string; // send, bond, bond_extra, unbound, nominate ...
+  action?: string; // send, bond, bond_extra, unbound, nominate ...
   block?: number;
-  from: string;
+  from: NameAddress;
   amount?: string;
   date: number;
-  hash: string;
-  fee: string;
-  to: string;
-  status: string; // failed, success
+  txHhash?: string;
+  fee?: string;
+  to?: string;
+  status: 'fail' | 'success',
+  failureText?: string;
+  throughProxy?: NameAddress;
 }
 
-export interface TxInfo {
-  amount?: string;
+export interface TxInfo extends TransactionDetail {
   api?: ApiPromise;
-  block: number;
-  chain: Chain;
-  from?: NameAddress;
-  fee: string;
-  status: string;
-  txHash: string;
-  to?: NameAddress;
-  throughProxy?: NameAddress | null;
-  failureText?: string
+  chain?: Chain;
   token?: string;
 }
 

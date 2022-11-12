@@ -14,7 +14,8 @@ export async function signAndSend(
   api: ApiPromise,
   submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
   _signer: KeyringPair,
-  senderAddress: string | AccountId): Promise<TxInfo> {
+  senderAddress: string | AccountId
+): Promise<TxInfo> {
   return new Promise((resolve) => {
     console.log('signing and sending a tx ...');
     // eslint-disable-next-line no-void
@@ -59,14 +60,14 @@ export async function signAndSend(
 
         const fee = undefined; //queryInfo.partialFee.toString();
 
-        resolve({ block: Number(blockNumber), failureText, fee, status: txFailed ? 'failed' : 'success', txHash });
+        resolve({ block: Number(blockNumber), failureText, fee, status: txFailed ? 'fail' : 'success', txHash });
         //     }
         //   }
         // });
       }
     }).catch((e) => {
       console.log('catch error', e);
-      resolve({ block: 0, failureText: String(e), fee: '', status: 'failed', txHash: '' });
+      resolve({ block: 0, failureText: String(e), fee: '', status: 'fail', txHash: '' });
     });
   });
 }

@@ -12,7 +12,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Popup, Warning } from '../../../../components';
-import { useAccountName, useApi2, useChain, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
+import { useAccountName, useApi, useChain, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
@@ -22,10 +22,11 @@ import Review from './Review';
 interface State {
   api: ApiPromise | undefined;
   backPath: string;
+  consts: PoolStakingConsts | null | undefined;
   showInfo: boolean;
   info: PoolStakingConsts;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
-  myPool: MyPoolInfo | null | undefined
+  myPool: MyPoolInfo | undefined;
 }
 
 export default function Index(): React.ReactElement {
@@ -34,9 +35,9 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const history = useHistory();
-  const api = useApi2(address, state?.api);
+  const api = useApi(address, state?.api);
   const chain = useChain(address);
-  const pool = usePool(address);
+  const pool = usePool(address, undefined, state?.myPool);
   const formatted = useFormatted(address);
   const consts = usePoolConsts(address, state?.consts);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
@@ -190,6 +191,7 @@ export default function Index(): React.ReactElement {
           fee={estimatedFee || '0'}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
+          poolId={pool?.poolId}
           poolWithdrawUnbonded={poolWithdrawUnbonded}
           setShow={setShowReview}
           show={showReview}

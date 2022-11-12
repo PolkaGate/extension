@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
@@ -28,6 +28,6 @@ export default async function broadcast (
   } catch (e) {
     console.log('something went wrong while broadcasting', e);
 
-    return { status: 'failed' };
+    return { status: 'fail' };
   }
 }

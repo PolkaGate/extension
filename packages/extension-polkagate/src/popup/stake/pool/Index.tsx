@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
+import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
@@ -68,7 +68,7 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const endpoint = useEndpoint2(address);
-  const api = useApi2(address);
+  const api = useApi(address);
   const pool = usePool(address);
   const pools = usePools(address);
   const validatorsInfo = useValidators(address);
@@ -269,7 +269,7 @@ export default function Index(): React.ReactElement {
                 xs={1}
               >
                 <ArrowForwardIosIcon
-                  sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }}
+                  sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }}
                 />
               </Grid>
             }
@@ -328,7 +328,7 @@ export default function Index(): React.ReactElement {
             exceptionWidth={30}
             icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
             onClick={goToInfo}
-            title={t<string>('Selected Validators')}
+            title={t<string>('Validators')}
           />
           <HorizontalMenuItem
             divider
