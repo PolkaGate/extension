@@ -7,7 +7,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, MyPoolInfo, NominatorInfo, PoolInfo, PoolStakingConsts, SavedMetaData, StakingConsts, Validators } from '../../../util/types';
+import type { MembersMapEntry, MyPoolInfo, NominatorInfo } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -16,14 +16,12 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
-import { updateMeta } from '../../../messaging';
+import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
-import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
+import { DATE_OPTIONS } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import Info from './Info';
 import Stake from './Stake';
@@ -55,7 +53,6 @@ interface SessionIfo {
   currentEra: number;
 }
 
-const options = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 const workers: Worker[] = [];
 
 export default function Index(): React.ReactElement {
@@ -219,7 +216,7 @@ export default function Index(): React.ReactElement {
       {toBeReleased?.map(({ amount, date }) => (
         <Grid container item key={date} spacing='15px' sx={{ fontSize: '16px', fontWeight: 500 }}>
           <Grid fontWeight={300} item>
-            {new Date(date).toLocaleDateString(undefined, options)}
+            {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
           </Grid>
           <Grid fontWeight={400} item>
             <FormatBalance api={api} decimalPoint={2} value={amount} />

@@ -3,37 +3,33 @@
 
 /**
  * @description
- * this component opens send review page
+ * this component opens unstake review page
  * */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
-import { Avatar, Container, Divider, Grid, useTheme } from '@mui/material';
+import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
 
+import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext, ButtonWithCancel, ChainLogo, FormatBalance, Identicon, Motion, PasswordWithUseProxy, Popup, ShortAddress, Warning } from '../../../../components';
-import { useAccountName, useMetadata, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import ThroughProxy from '../../../../partials/ThroughProxy';
-import broadcast from '../../../../util/api/broadcast';
-import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import getLogo from '../../../../util/getLogo';
-import { FormattedAddressState, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import { signAndSend } from '../../../../util/api';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { updateMeta } from '../../../../messaging';
+import broadcast from '../../../../util/api/broadcast';
+import { DATE_OPTIONS, FLOATING_POINT_DIGIT } from '../../../../util/constants';
+import { Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo } from '../../../../util/types';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 // import SendTxDetail from './partial/SendTxDetail';
 
 interface Props {
@@ -49,10 +45,11 @@ interface Props {
   unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   poolId: BN | undefined;
   poolWithdrawUnbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, stakingConsts, poolWithdrawUnbonded, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -73,6 +70,14 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+
+  const redeemDate = useMemo(() => {
+    if (stakingConsts) {
+      const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
+
+      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)
+    }
+  }, [stakingConsts]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -267,7 +272,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
                 </Grid>
               </Grid>
             }
-            label={t('Unstaking amount')}
+            label={t('Amount')}
             noDivider
             pt2={0}
           />
@@ -283,6 +288,10 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             pt2={0}
           />
         </Container>
+        <Grid item container justifyContent='center' sx={{ fontSize: '18px', textAlign: 'center', p: '10px 35px' }}>
+          {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
+        </Grid>
         <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}

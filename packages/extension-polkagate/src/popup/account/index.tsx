@@ -39,6 +39,7 @@ import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
+import Others from './Others';
 
 interface Props extends ThemeProps {
   className?: string;
@@ -90,7 +91,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const settings = useContext(SettingsContext);
   const onAction = useContext(ActionContext);// added for plus
   const theme = useTheme();
-  const { state, pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const { accounts } = useContext(AccountContext);
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const [{ account, newFormattedAddress, newGenesisHash, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
@@ -106,20 +107,17 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const endpoint = useEndpoint(address, currentChain);
 
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
-  const api = useApi(newEndpoint || endpoint);
+  const api = useApi(address, state?.api);
 
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api || state?.apiToUse);
   const [price, setPrice] = useState<number | undefined>();
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined | null>(state?.balances as DeriveBalancesAll);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
-  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
-  const decimal = apiToUse && apiToUse.registry.chainDecimals[0];
-  const token = apiToUse && apiToUse.registry.chainTokens[0];
+  const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
 
-  useEffect(() => {
-    api && setApiToUse(api);
-  }, [api]);
+  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
+  const decimal = api && api.registry.chainDecimals[0];
+  const token = api && api.registry.chainTokens[0];
 
   const resetToDefaults = useCallback(() => {
     setBalances(undefined);
@@ -169,17 +167,17 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
 
   const getBalances = useCallback(() => {
-    apiToUse && formatted &&
-      apiToUse.derive.balances?.all(formatted).then((b) => {
+    api && formatted &&
+      api.derive.balances?.all(formatted).then((b) => {
         setBalances(b);
         setRefresh(false);
       }).catch(console.error);
-  }, [apiToUse, formatted]);
+  }, [api, formatted]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    (endpoint || newEndpoint) && apiToUse && (newFormattedAddress === formatted) && String(apiToUse.genesisHash) === genesis && !balances && getBalances();
-  }, [apiToUse, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint, balances]);
+    (endpoint || newEndpoint) && api && (newFormattedAddress === formatted) && String(api.genesisHash) === genesis && !balances && getBalances();
+  }, [api, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint, balances]);
 
   useEffect(() => {
     if (refresh) {
@@ -209,9 +207,9 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     // balances && 
     history.push({
       pathname: `/send/${genesisHash}/${address}/${formatted}/`,
-      state: { balances, api: apiToUse, price }
+      state: { balances, api, price }
     });
-  }, [balances, history, genesisHash, address, formatted, apiToUse, price]);
+  }, [balances, history, genesisHash, address, formatted, api, price]);
 
   const goToReceive = useCallback(() => {
     history.push({
@@ -247,13 +245,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   );
 
   const goToOthers = useCallback(() => {
-    balances && account && chain && history.push({
-      pathname: `/others/${address}/${formatted}`,
-      state: { account, apiToUse, balances, chain, price }
-    });
-  }, [balances, account, chain, history, address, formatted, apiToUse, price]);
+    setShowOthers(true);
+  }, []);
 
-  const Others = (
+  const OthersRow = (
     <>
       <Grid item py='5px'>
         <Grid alignItems='center' container justifyContent='space-between'>
@@ -307,10 +302,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           }
         </Grid>
         <Grid item pt='50px' xs>
-          <LabelBalancePrice api={apiToUse} balances={balances} label={'Total'} price={price} />
-          <LabelBalancePrice api={apiToUse} balances={balances} label={'Available'} price={price} />
-          <LabelBalancePrice api={apiToUse} balances={balances} label={'Reserved'} price={price} />
-          {Others}
+          <LabelBalancePrice api={api} balances={balances} label={'Total'} price={price} />
+          <LabelBalancePrice api={api} balances={balances} label={'Available'} price={price} />
+          <LabelBalancePrice api={api} balances={balances} label={'Reserved'} price={price} />
+          {OthersRow}
         </Grid>
         <Grid
           container
@@ -373,7 +368,18 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           />
         </Grid>
       </Container>
+      {showOthers && balances && chain && api &&
+        <Others
+          account={account}
+          api={api}
+          balances={balances}
+          chain={chain}
+          price={price}
+          show={showOthers}
+          setShow={setShowOthers}
+          formatted={formatted}
+        />
+      }
     </Motion>
-
   );
 }

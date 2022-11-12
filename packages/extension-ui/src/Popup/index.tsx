@@ -189,7 +189,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                           <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                           <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
-                          <Route exact path='/others/:address/:formatted'>{wrapWithErrorBoundary(<Others />, 'others')}</Route>
+                          <Route exact path='/others/:address'>{wrapWithErrorBoundary(<Others />, 'others')}</Route>
                           <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
                           <Route
                             exact

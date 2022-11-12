@@ -12,7 +12,7 @@ import { updateMeta } from '../messaging';
 import { prepareMetaData } from '../util/utils';
 import { useChain, useEndpoint2 } from '.';
 
-export default function useStakingConsts(address: string): StakingConsts | null | undefined {
+export default function useStakingConsts(address: string, stateConsts: StakingConsts): StakingConsts | null | undefined {
   const [consts, setConsts] = useState<StakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
@@ -34,7 +34,6 @@ export default function useStakingConsts(address: string): StakingConsts | null 
         c.existentialDeposit = new BN(c.existentialDeposit);
         c.minNominatorBond = new BN(c.minNominatorBond);
         setConsts(c);
-
         // eslint-disable-next-line no-void
         void updateMeta(address, prepareMetaData(chain, 'stakingConsts', JSON.stringify(c)));
       } else {
@@ -46,8 +45,12 @@ export default function useStakingConsts(address: string): StakingConsts | null 
   }, [address]);
 
   useEffect(() => {
+    if (stateConsts) {
+      return setConsts(stateConsts);
+    }
+
     endpoint && chain && getStakingConsts(chain, endpoint);
-  }, [endpoint, chain, getStakingConsts]);
+  }, [endpoint, chain, getStakingConsts, stateConsts]);
 
   return consts;
 }

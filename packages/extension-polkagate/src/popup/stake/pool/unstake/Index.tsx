@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
+import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,8 +11,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, Motion, PButton, Popup, Warning } from '../../../../components';
-import { useAccountName, useApi, useChain, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
+import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
+import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
@@ -21,11 +21,9 @@ import Review from './Review';
 
 interface State {
   api: ApiPromise | undefined;
-  backPath: string;
-  consts: PoolStakingConsts | null | undefined;
-  showInfo: boolean;
-  info: PoolStakingConsts;
-  setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
+  pathname: string;
+  poolConsts: PoolStakingConsts | undefined;
+  stakingConsts: StakingConsts | undefined
   myPool: MyPoolInfo | undefined;
 }
 
@@ -39,7 +37,8 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const pool = usePool(address, undefined, state?.myPool);
   const formatted = useFormatted(address);
-  const consts = usePoolConsts(address, state?.consts);
+  const poolConsts = usePoolConsts(address, state?.poolConsts);
+  const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
@@ -68,33 +67,37 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than already staked.'));
     }
 
-    if (api && staked && consts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(consts.minJoinBond)) {
+    if (api && staked && poolConsts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(poolConsts.minJoinBond)) {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
-      const min = api.createType('Balance', consts.minJoinBond).toHuman();
+      const min = api.createType('Balance', poolConsts.minJoinBond).toHuman();
 
       return setAlert(t('Remaining stake amount {{remained}} should not be less than {{min}} WND.', { replace: { min, remained } }));
     }
 
     setAlert(undefined);
-  }, [amount, api, consts, decimals, staked, t, unstakeAllAmount]);
+  }, [amount, api, poolConsts, decimals, staked, t, unstakeAllAmount]);
 
-  // useEffect(() => {
-  //   const params = [formatted, amountToMachine(amount, decimals)];
+  useEffect(() => {
+    const params = [formatted, amountToMachine(amount, decimals)];
 
-  //   // eslint-disable-next-line no-void
-  //   poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
-  //     const fee = i?.partialFee;
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(BN_ZERO);
+    }
 
-  //     if (unlockingLen < maxUnlockingChunks) {
-  //       setEstimatedFee(fee);
-  //     } else {
-  //       const dummyParams = [1, 1];
+    // eslint-disable-next-line no-void
+    poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
+      const fee = i?.partialFee;
 
-  //       // eslint-disable-next-line no-void
-  //       void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
-  //     }
-  //   });
-  // }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
+      if (unlockingLen < maxUnlockingChunks) {
+        setEstimatedFee(fee);
+      } else {
+        const dummyParams = [1, 1];
+
+        // eslint-disable-next-line no-void
+        void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
+      }
+    }).catch(console.error);
+  }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -195,6 +198,7 @@ export default function Index(): React.ReactElement {
           poolWithdrawUnbonded={poolWithdrawUnbonded}
           setShow={setShowReview}
           show={showReview}
+          stakingConsts={stakingConsts}
           unbonded={unbonded}
           unlockingLen={unlockingLen}
         />
