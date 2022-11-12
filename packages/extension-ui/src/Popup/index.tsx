@@ -51,6 +51,8 @@ import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
+import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/joinPool/JoinPool';
+import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/Stake';
 
 const startSettings = uiSettings.get();
 
@@ -168,7 +170,9 @@ export default function Popup(): React.ReactElement {
                           {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                           {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
                           <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route>
+                          <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
+                          <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                           <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                           <Route exact path='/account/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                           <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

@@ -85,7 +85,6 @@ export default function Index(): React.ReactElement {
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
-  const [showStake, setShowStake] = useState<boolean>(false);
 
   const token = apiToUse && apiToUse.registry.chainTokens[0];
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
@@ -192,8 +191,11 @@ export default function Index(): React.ReactElement {
   }, [onAction, state]);
 
   const goToStake = useCallback(() => {
-    consts && setShowStake(true);
-  }, [consts]);
+    history.push({
+      pathname: `/pool/stake/${address}`,
+      state: { api, balances, consts, myPool, pathname }
+    });
+  }, [address, api, balances, consts, history, myPool, pathname]);
 
   const goToUnstake = useCallback(() => {
     history.push({
@@ -339,7 +341,6 @@ export default function Index(): React.ReactElement {
         </Grid>
       </Container>
       <Info api={apiToUse} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
-      <Stake api={apiToUse} info={consts} setShowStake={setShowStake} showStake={showStake} />
     </>
   );
 }
