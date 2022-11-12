@@ -1,11 +1,11 @@
-// Copyright 2019-2022 @polkadot/extension-plus authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Button, { ButtonProps } from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import { purple } from '@mui/material/colors';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import * as React from 'react';
 
 const BootstrapButton = styled(Button)({
   boxShadow: 'none',

@@ -21,6 +21,6 @@
     "skipLibCheck": true
 	},
   "include": [// added for plus
-    "packages/extension-plus/*"
+    "packages/extension-polkagate/*"
   ]
  }

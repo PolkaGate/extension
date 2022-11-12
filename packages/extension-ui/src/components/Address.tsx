@@ -18,7 +18,7 @@ import styled from 'styled-components';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { Plus } from '../../../extension-plus/src/components'; // added for Plus
+// import { Plus } from '../../../extension-polkagate/src/components'; // added for Plus
 
 import details from '../assets/details.svg';
 import useMetadata from '../../../extension-polkagate/src/hooks/useMetadata';
@@ -307,7 +307,7 @@ function Address({ actions, address, children, className, genesisHash, isExterna
         )}
       </div>
       {/* // added for plus */}
-      {
+      {/* {
         (formatted || address) && showPlus &&
         <Plus
           address={address}
@@ -317,7 +317,7 @@ function Address({ actions, address, children, className, genesisHash, isExterna
           name={name || account?.name || t('<unknown>')}
           t={t}
         />
-      }
+      } */}
       {children}
     </div>
   );
