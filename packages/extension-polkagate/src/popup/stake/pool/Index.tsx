@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi2, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
+import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, useMetadata, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { updateMeta } from '../../../messaging';
 import { HeaderBrand } from '../../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../../util/utils';
@@ -68,7 +68,7 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const endpoint = useEndpoint2(address);
-  const api = useApi2(address);
+  const api = useApi(address);
   const pool = usePool(address);
   const pools = usePools(address);
   const validatorsInfo = useValidators(address);

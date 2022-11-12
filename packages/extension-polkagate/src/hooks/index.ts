@@ -3,7 +3,6 @@
 
 export { default as useAccount } from './useAccount';
 export { default as useAccountName } from './useAccountName';
-export { default as useApi2 } from './useApi2';
 export { default as useApi } from './useApi';
 export { default as useChain } from './useChain';
 export { default as useEndpoint2 } from './useEndpoint2';

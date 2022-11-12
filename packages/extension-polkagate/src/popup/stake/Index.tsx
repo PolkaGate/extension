@@ -12,7 +12,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, bnMax } from '@polkadot/util';
 
 import { ActionContext } from '../../components';
-import { useApi, useApi2, useChain, useEndpoint, useEndpoint2, useFormatted, useMetadata, useNominator, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
+import { useApi, useChain, useEndpoint, useEndpoint2, useFormatted, useMetadata, useNominator, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
 import { updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../util/utils';
@@ -26,7 +26,7 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const { state, pathname } = useLocation();
   const { address } = useParams<{ address: string }>();
-  const api = useApi2(address, state?.api);
+  const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address);
   const poolConsts = usePoolConsts(address);
   const nominatorInfo = useNominator(address);
