@@ -24,7 +24,6 @@ import { HeaderBrand } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import Info from './Info';
-import Stake from './Stake';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -67,12 +66,12 @@ export default function Index(): React.ReactElement {
   const endpoint = useEndpoint2(address);
   const api = useApi(address);
   const pool = usePool(address);
-  const pools = usePools(address);
+  // const pools = usePools(address);
   const validatorsInfo = useValidators(address);
-  const stakingConsts = useStakingConsts(address);
-  const consts = usePoolConsts(address);
+  const stakingConsts = useStakingConsts(address, state?.stakingConsts);
+  const consts = usePoolConsts(address, state?.poolConsts);
 
-  const myPool = (state?.myPool || pool) as MyPoolInfo | undefined | null;
+  const myPool = pool as MyPoolInfo | undefined | null;
   const nominatedValidatorsId: string[] | undefined | null = myPool === null || myPool?.stashIdAccount?.nominators?.length === 0 ? null : myPool?.stashIdAccount?.nominators;
   const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
   const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
