@@ -3,6 +3,7 @@
 
 import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback } from 'react';
+import { fixFloatingPoint } from '../util/utils';
 
 import InputWithLabel from './InputWithLabel';
 
@@ -19,7 +20,7 @@ interface Props {
 
 export default function AmountWithOptions({ label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
   const _onChange = useCallback((value: string) => {
-    onChangeAmount(Math.abs(parseFloat(value)).toString());
+    onChangeAmount(fixFloatingPoint(value));
   }, [onChangeAmount]);
 
   return (

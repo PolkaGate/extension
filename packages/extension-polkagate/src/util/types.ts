@@ -541,3 +541,4 @@ export interface TransferTxInfo {
   token: string;
 }
 
+export interface Step { current: string | number, total: string | number }

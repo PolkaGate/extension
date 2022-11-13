@@ -131,8 +131,8 @@ export default function AttachQR({ className }: Props): React.ReactElement {
         showBackArrow
         text={t<string>('Attach QR-signer')}
         withSteps={{
-          currentStep: `${stepOne ? 1 : 2}`,
-          totalSteps: 2
+          current: `${stepOne ? 1 : 2}`,
+          total: 2
         }}
       />
       {stepOne &&

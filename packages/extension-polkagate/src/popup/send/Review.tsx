@@ -207,8 +207,8 @@ export default function Review(): React.ReactElement {
         showBackArrow
         text={t<string>('Send Fund')}
         withSteps={{
-          currentStep: 2,
-          totalSteps: 2
+          current: 2,
+          total: 2
         }}
       />
       {isPasswordError &&

@@ -246,8 +246,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         showBackArrow
         text={t<string>('Send Fund')}
         withSteps={{
-          currentStep: 1,
-          totalSteps: 2
+          current: 1,
+          total: 2
         }}
       />
       <Container disableGutters sx={{ px: '15px' }}>

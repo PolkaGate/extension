@@ -85,8 +85,8 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
         showBackArrow
         text={t<string>('Derive Account')}
         withSteps={{
-          currentStep: `${stepOne ? '1' : '2'}`,
-          totalSteps: 2
+          current: `${stepOne ? '1' : '2'}`,
+          total: 2
         }}
       />
       <Typography

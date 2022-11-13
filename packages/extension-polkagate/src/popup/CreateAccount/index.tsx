@@ -105,8 +105,8 @@ function CreateAccount({ className }: Props): React.ReactElement {
         showBackArrow
         text={t<string>('Create an Account')}
         withSteps={{
-          currentStep: `${step}`,
-          totalSteps: 2
+          current: `${step}`,
+          total: 2
         }}
       />
       <Loading>

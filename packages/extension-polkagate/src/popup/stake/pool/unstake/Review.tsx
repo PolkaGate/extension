@@ -236,8 +236,8 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
           showBackArrow
           text={t<string>('Unstaking')}
           withSteps={{
-            currentStep: 2,
-            totalSteps: 2
+            current: 2,
+            total: 2
           }}
         />
         {isPasswordError &&

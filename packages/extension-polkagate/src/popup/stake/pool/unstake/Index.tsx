@@ -159,8 +159,12 @@ export default function Index(): React.ReactElement {
         showBackArrow
         showClose
         text={t<string>('Pool Staking')}
+        paddingBottom={0}
       />
-      <SubTitle label={t('Unstake')} />
+      <SubTitle
+        label={t('Unstake')}
+        withSteps={{ current: 1, total: 2 }}
+      />
       {staked?.isZero() &&
         <Warn text={t<string>('Nothing to unstake.')} />
       }
