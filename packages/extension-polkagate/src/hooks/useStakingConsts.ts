@@ -12,7 +12,7 @@ import { updateMeta } from '../messaging';
 import { prepareMetaData } from '../util/utils';
 import { useChain, useEndpoint2 } from '.';
 
-export default function useStakingConsts(address: string, stateConsts: StakingConsts): StakingConsts | null | undefined {
+export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
   const [consts, setConsts] = useState<StakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);

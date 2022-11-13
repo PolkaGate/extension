@@ -172,10 +172,10 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
   const _onBackClick = useCallback(() => {
     history.push({
-      pathname: `/account/${genesisHash}/${address}/${formatted}/`,
+      pathname: `/account/${genesisHash}/${address}/`,
       state: { balances, api: apiToUse, price: state?.price as number | undefined }
     });
-  }, [address, apiToUse, balances, formatted, genesisHash, history, state?.price]);
+  }, [address, apiToUse, balances, genesisHash, history, state?.price]);
 
   const goToReview = useCallback(() => {
     balances && history.push({

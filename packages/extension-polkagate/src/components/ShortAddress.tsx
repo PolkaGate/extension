@@ -20,7 +20,7 @@ interface Props {
   clipped?: boolean;
 }
 
-export default function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, addressStyle, showCopy = false, inParentheses = false }: Props): React.ReactElement {
+function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, addressStyle, showCopy = false, inParentheses = false }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(1);
   const pRef = useRef(null);
   const cRef = useRef(null);
@@ -63,3 +63,5 @@ export default function ShortAddress({ address, clipped = false, charsCount = SH
     </Grid>
   );
 }
+
+export default React.memo(ShortAddress);

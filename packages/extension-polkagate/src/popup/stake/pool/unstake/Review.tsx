@@ -28,7 +28,7 @@ import ThroughProxy from '../../../../partials/ThroughProxy';
 import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { DATE_OPTIONS, FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import { Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo } from '../../../../util/types';
+import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 // import SendTxDetail from './partial/SendTxDetail';
 
@@ -46,10 +46,10 @@ interface Props {
   poolId: BN | undefined;
   poolWithdrawUnbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  stakingConsts: StakingConsts | null | undefined;
+  redeemDate: string | undefined
 }
 
-export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, stakingConsts, poolWithdrawUnbonded, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -70,14 +70,6 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-
-  const redeemDate = useMemo(() => {
-    if (stakingConsts) {
-      const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
-
-      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)
-    }
-  }, [stakingConsts]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {

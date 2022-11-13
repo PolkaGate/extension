@@ -18,8 +18,6 @@ import { HeaderBrand } from '../../partials';
 import { getSubstrateAddress, prepareMetaData } from '../../util/utils';
 import Option from './partial/Option';
 
-const workers: Worker[] = [];
-
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -41,8 +39,10 @@ export default function Index(): React.ReactElement {
   const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
 
   const onBackClick = useCallback(() => {
-    onAction(state?.pathname ?? '/');
-  }, [onAction, state?.pathname]);
+    const url = api?.genesisHash ? `/account/${api.genesisHash}/${address}/` : '/';
+
+    onAction(url);
+  }, [address, api?.genesisHash, onAction]);
 
   useEffect(() => {
     if (!stakingConsts || !nominatorInfo?.minNominated) { return; }
