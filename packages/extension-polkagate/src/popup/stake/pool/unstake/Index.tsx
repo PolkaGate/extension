@@ -14,7 +14,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import Review from './Review';
@@ -55,6 +55,13 @@ export default function Index(): React.ReactElement {
 
   const unbonded = api && api.tx.nominationPools.unbond;
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
+  const redeemDate = useMemo(() => {
+    if (stakingConsts) {
+      const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
+
+      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)
+    }
+  }, [stakingConsts]);
 
   useEffect(() => {
     if (!amount) {
@@ -155,11 +162,11 @@ export default function Index(): React.ReactElement {
     <Motion>
       <HeaderBrand
         onBackClick={onBackClick}
+        paddingBottom={0}
         shortBorder
         showBackArrow
         showClose
         text={t<string>('Pool Staking')}
-        paddingBottom={0}
       />
       <SubTitle
         label={t('Unstake')}
@@ -200,6 +207,7 @@ export default function Index(): React.ReactElement {
           maxUnlockingChunks={maxUnlockingChunks}
           poolId={pool?.poolId}
           poolWithdrawUnbonded={poolWithdrawUnbonded}
+          redeemDate={redeemDate}
           setShow={setShowReview}
           show={showReview}
           stakingConsts={stakingConsts}
