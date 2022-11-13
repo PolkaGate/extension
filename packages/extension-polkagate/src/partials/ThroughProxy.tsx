@@ -65,7 +65,8 @@ export default function ThroughProxy({ address, chain, name }: Props): React.Rea
             item
             justifyContent='center'
             sx={{
-              lineHeight: '28px'
+              lineHeight: '28px',
+              px: '3px'
             }}
           >
             {chain &&
@@ -84,13 +85,15 @@ export default function ThroughProxy({ address, chain, name }: Props): React.Rea
               container
               item
               sx={{
+                display: 'block',
                 fontSize: '16px',
                 fontWeight: 400,
                 maxWidth: '80%',
                 overflow: 'hidden',
                 pl: '7px',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                width: 'fit-content'
               }}
             >
               <Grid
@@ -109,8 +112,7 @@ export default function ThroughProxy({ address, chain, name }: Props): React.Rea
                 sx={{
                   fontSize: '12px',
                   fontWeight: 300,
-                  lineHeight: '12px',
-                  width: 'fit-content'
+                  lineHeight: '12px'
                 }}
               >
                 <ShortAddress address={address} />
