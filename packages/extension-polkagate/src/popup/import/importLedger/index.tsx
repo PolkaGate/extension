@@ -135,8 +135,8 @@ function ImportLedger(): React.ReactElement {
         showBackArrow
         text={t<string>('Import Account')}
         withSteps={{
-          currentStep: `${step1 ? 1 : 2}`,
-          totalSteps: 2
+          current: `${step1 ? 1 : 2}`,
+          total: 2
         }}
       />
       <Typography

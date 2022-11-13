@@ -131,8 +131,8 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         showBackArrow
         text={t<string>('Restore From JSON')}
         withSteps={{
-          currentStep: `${stepOne ? 1 : 2}`,
-          totalSteps: 2
+          current: `${stepOne ? 1 : 2}`,
+          total: 2
         }}
       />
       {isPasswordError && !stepOne &&

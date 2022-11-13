@@ -37,8 +37,8 @@ function TransactionIndex ({ className, index, onNextClick, onPreviousClick, tot
   return (
     <div className={className}>
       <div>
-        <span className='currentStep'>{index + 1}</span>
-        <span className='totalSteps'>/{totalItems}</span>
+        <span className='current'>{index + 1}</span>
+        <span className='total'>/{totalItems}</span>
       </div>
       <div>
         <FontAwesomeIcon
@@ -79,14 +79,14 @@ export default styled(TransactionIndex)(({ theme }: ThemeProps) => `
     margin-left: 0.5rem;
   }
 
-  .currentStep {
+  .current {
     color: ${theme.primaryColor};
     font-size: ${theme.labelFontSize};
     line-height: ${theme.labelLineHeight};
     margin-left: 10px;
   }
 
-  .totalSteps {
+  .total {
     font-size: ${theme.labelFontSize};
     line-height: ${theme.labelLineHeight};
     color: ${theme.textColor};
