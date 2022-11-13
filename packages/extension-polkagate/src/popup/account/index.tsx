@@ -29,7 +29,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
-import { useApi, useEndpoint, useEndpoints, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
+import { useApi, useEndpoint, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
@@ -93,7 +93,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const theme = useTheme();
   const { pathname, state } = useLocation();
   const { accounts } = useContext(AccountContext);
-  const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
+  const { address, genesisHash } = useParams<FormattedAddressState>();
+  const formatted = useFormatted(address);
   const [{ account, newFormattedAddress, newGenesisHash, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash, true);
 

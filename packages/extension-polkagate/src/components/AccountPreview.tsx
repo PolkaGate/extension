@@ -209,7 +209,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
 
   const goToAccount = useCallback(() => {
     genesisHash && address && formatted && history.push({
-      pathname: `/account/${genesisHash}/${address}/${formatted}/`,
+      pathname: `/account/${genesisHash}/${address}/`,
       state: { api, balances, identity }
     });
   }, [balances, history, genesisHash, address, formatted, api, identity]);
