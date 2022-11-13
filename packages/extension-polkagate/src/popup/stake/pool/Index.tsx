@@ -52,8 +52,6 @@ interface SessionIfo {
   currentEra: number;
 }
 
-const workers: Worker[] = [];
-
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -101,8 +99,6 @@ export default function Index(): React.ReactElement {
 
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
 
-  const [newPool, setNewPool] = useState<MyPoolInfo | undefined>(); // new or edited Pool
-  const [nextPoolId, setNextPoolId] = useState<BN | undefined>();
   const [showConfirmStakingModal, setConfirmStakingModalOpen] = useState<boolean>(false);
   const [showSelectValidatorsModal, setSelectValidatorsModalOpen] = useState<boolean>(false);
   const [amount, setAmount] = useState<BN>(BN_ZERO);
@@ -110,10 +106,8 @@ export default function Index(): React.ReactElement {
   const [selectedValidators, setSelectedValidatorsAcounts] = useState<DeriveStakingQuery[] | null>(null);
   const [noNominatedValidators, setNoNominatedValidators] = useState<boolean | undefined>();// if TRUE, shows that nominators are fetched but is empty
   const [nominatedValidators, setNominatedValidatorsInfo] = useState<DeriveStakingQuery[] | null>(null);
-  const [tabValue, setTabValue] = useState(4);
   const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
   const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
-
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -186,22 +180,24 @@ export default function Index(): React.ReactElement {
   }, [nominatorInfo?.minNominated, stakingConsts]);
 
   const onBackClick = useCallback(() => {
-    onAction(state?.pathname ?? '/');
-  }, [onAction, state]);
+    const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
+
+    onAction(url);
+  }, [address, chain?.genesisHash, onAction]);
 
   const goToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,
-      state: { api, balances, consts, myPool, pathname }
+      state: { api, balances, consts, myPool, pathname, stakingConsts }
     });
-  }, [address, api, balances, consts, history, myPool, pathname]);
+  }, [address, api, balances, consts, history, myPool, pathname, stakingConsts]);
 
   const goToUnstake = useCallback(() => {
     history.push({
       pathname: `/pool/unstake/${address}`,
-      state: { api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount }
+      state: { api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount, stakingConsts }
     });
-  }, [history, address, api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount]);
+  }, [history, address, api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount, stakingConsts]);
 
   const goToInfo = useCallback(() => {
     setShowInfo(true);
