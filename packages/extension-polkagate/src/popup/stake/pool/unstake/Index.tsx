@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
@@ -81,7 +81,7 @@ export default function Index(): React.ReactElement {
     const params = [formatted, amountToMachine(amount, decimals)];
 
     if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(BN_ZERO);
+      return setEstimatedFee(BN_ONE);
     }
 
     // eslint-disable-next-line no-void
