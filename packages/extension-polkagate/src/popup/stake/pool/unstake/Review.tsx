@@ -27,7 +27,7 @@ import Confirmation from '../../../../partials/Confirmation';
 import ThroughProxy from '../../../../partials/ThroughProxy';
 import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
-import { DATE_OPTIONS, FLOATING_POINT_DIGIT } from '../../../../util/constants';
+import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 // import SendTxDetail from './partial/SendTxDetail';
