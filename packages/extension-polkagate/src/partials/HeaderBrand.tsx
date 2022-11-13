@@ -8,9 +8,9 @@ import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from 
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
-import { ActionContext } from '../components';
+import { ActionContext, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { AccountMenuInfo } from '../util/types';
+import { AccountMenuInfo, Step } from '../util/types';
 import AccMenuInside from './AccMenuInside';
 import Menu from './Menu';
 
@@ -19,7 +19,7 @@ interface Props {
   showBrand?: boolean;
   showMenu?: boolean;
   showAccountMenu?: boolean;
-  withSteps?: { currentStep: string | number, totalSteps: string | number } | null;
+  withSteps?: Step | null;
   text?: React.ReactNode;
   onBackClick?: () => void;
   onRefresh?: () => void;
@@ -100,18 +100,10 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
         {text}
       </Typography>
       {withSteps &&
-        <Typography
-          color={showBrand ? '#ffffff' : 'text.primary'}
-          fontFamily='inherit'
-          fontSize='20px'
-          fontWeight={400}
-          letterSpacing='-0.015em'
-          p='5px'
-        >
-          <span>(</span>
-          <span style={{ color: theme.palette.secondary.light }}>{withSteps.currentStep}</span>
-          <span>{'/' + withSteps.totalSteps.toString() + ')'}</span>
-        </Typography>
+        <Steps
+          current={withSteps.current}
+          total={withSteps.total}
+        />
       }
     </Grid>
   );

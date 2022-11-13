@@ -41,6 +41,7 @@ export { default as ProxyTable } from './ProxyTable';
 export { default as PButton } from './PButton';
 export { default as Progress } from './Progress';
 export { default as ShowValue } from './ShowValue';
+export { default as Steps } from './Steps';
 export { default as AmountWithOptions } from './AmountWithOptions';
 export { Input } from './TextInputs';
 export { default as ValidatedInput } from './ValidatedInput';
