@@ -37,7 +37,7 @@ export default function JoinPool(): React.ReactElement {
   const history = useHistory();
   const pools = usePools(address);
 
-  const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>(pools);
+  const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
@@ -92,10 +92,10 @@ export default function JoinPool(): React.ReactElement {
 
       setSelectedPool(PLUS_POOL);
     } else {
-      const bringFront = pools.filter((pool) => pool.poolId === selectedPool.poolId)[0];
-      const restOf = pools.filter((pool) => pool.poolId !== selectedPool.poolId);
+      // const bringFront = pools.filter((pool) => pool.poolId === selectedPool.poolId)[0];
+      const restOf = pools.filter((pool) => pool.poolId !== selectedPool.poolId && pool.bondedPool?.state.toString() === 'Open');
 
-      setSortedPools([bringFront, ...restOf]);
+      setSortedPools([selectedPool, ...restOf]);
     }
   }, [pools, selectedPool]);
 
