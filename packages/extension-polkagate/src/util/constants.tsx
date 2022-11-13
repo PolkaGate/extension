@@ -5,13 +5,13 @@
 import { BN } from '@polkadot/util';
 
 export const EXTENSION_NAME = 'Polkadot js plus ❤️';
-export const PREFERED_POOL_NAME = EXTENSION_NAME;
+export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const PLUS_VERSION = '0.44.1.19';
 export const ENVIREONMENT = 'production'; //developement or production
-export const PPREFERED_POOL_ID_ON_WESTEND = new BN(6)
-export const PPREFERED_POOL_ID_ON_KUSAMA = undefined;
-export const PPREFERED_POOL_ID_ON_POLKADOT = undefined;
+export const PREFERRED_POOL_ID_ON_WESTEND = new BN(6)
+export const PREFERRED_POOL_ID_ON_KUSAMA = undefined;
+export const PREFERRED_POOL_ID_ON_POLKADOT = undefined;
 export const DEVELOPEMENT_ENDPOINT = 'wss://109.109.36.23:443'
 export const SELECTED_COLOR = '#fffbed';
 export const POLKADOT_COLOR = '#E6007A';

@@ -69,25 +69,27 @@ export default function Stake(): React.ReactElement {
       return;
     }
 
-    if (poolStakingConsts?.minCreateBond.gt(availableBalance) && poolStakingConsts?.minJoinBond.gt(availableBalance)) {
-      setJoinDisabled(true);
-      setCreateDisabled(true);
-      setCreateWarningText(t<string>('You don’t have enough fund.'));
-      setJoinWarningText(t<string>('You don’t have enough fund.'));
-    } else if (poolStakingConsts?.minCreateBond.gt(availableBalance)) {
-      setCreateDisabled(true);
-      setJoinDisabled(false);
-      setCreateWarningText(t<string>('You don’t have enough fund.'));
-    } else if (poolStakingConsts?.minJoinBond.gt(availableBalance)) {
-      setCreateDisabled(false);
-      setJoinDisabled(true);
-      setJoinWarningText(t<string>('You don’t have enough fund.'));
+    if (poolStakingConsts?.minJoinBond.gt(availableBalance)) {
+      return setJoinWarningText(t<string>('You don’t have enough fund.'));
+    }
+
+    setJoinDisabled(false);
+  }, [availableBalance, poolStakingConsts, t]);
+
+  useEffect(() => {
+    if (!poolStakingConsts || !availableBalance) {
+      return;
     }
 
     if (poolStakingConsts.maxPools === poolStakingConsts.lastPoolId.toNumber()) {
-      setCreateDisabled(true);
-      setCreateWarningText(t<string>('Pools are full.'));
+      return setCreateWarningText(t<string>('Pools are full.'));
     }
+
+    if (poolStakingConsts?.minCreateBond.gt(availableBalance)) {
+      return setCreateWarningText(t<string>('You don’t have enough fund.'));
+    }
+
+    setCreateDisabled(false);
   }, [availableBalance, poolStakingConsts, t]);
 
   return (

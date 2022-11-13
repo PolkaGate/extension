@@ -14,7 +14,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../components';
 import { useApi, useFormatted, usePoolConsts, usePools, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFERED_POOL_NAME } from '../../../../util/constants';
+import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
@@ -88,7 +88,7 @@ export default function JoinPool(): React.ReactElement {
     if (!pools) { return; }
 
     if (selectedPool === undefined) {
-      const PLUS_POOL = pools?.find((pool) => pool.metadata?.includes(PREFERED_POOL_NAME));
+      const PLUS_POOL = pools?.find((pool) => pool.metadata?.includes(PREFERRED_POOL_NAME));
 
       setSelectedPool(PLUS_POOL);
     } else {
@@ -101,6 +101,10 @@ export default function JoinPool(): React.ReactElement {
 
   useEffect(() => {
     if (!api || !availableBalance || !formatted) { return; }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api.createType('Balance', BN_ONE));
+    }
 
     const amountAsBN = new BN(parseFloat(parseFloat(stakeAmount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
 
