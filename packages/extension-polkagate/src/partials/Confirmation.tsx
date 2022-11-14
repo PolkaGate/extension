@@ -30,9 +30,8 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
   const token = txInfo?.api.registry.chainTokens[0];
   const historyLink = `/history/${network}/${decimal}/${token}/${txInfo?.from.address}`;
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
+  const fee = txInfo.api.createType('Balance', txInfo.fee);
 
-  console.log('txInfo:',txInfo);
-  
   const goToHistory = useCallback(() => {
     onAction(historyLink);
   }, [historyLink, onAction]);
@@ -98,7 +97,7 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
             lineHeight='22px'
             pl='5px'
           >
-            {txInfo?.fee?.toHuman() ?? '00.00'}
+            {fee?.toHuman() ?? '00.00'}
           </Grid>
         </Grid>
         <Divider sx={{
