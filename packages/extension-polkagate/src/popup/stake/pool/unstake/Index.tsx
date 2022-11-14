@@ -205,7 +205,7 @@ export default function Index(): React.ReactElement {
           amount={amount}
           api={api}
           chain={chain}
-          fee={estimatedFee}
+          estimatedFee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
           poolId={pool?.poolId}

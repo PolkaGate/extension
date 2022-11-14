@@ -29,7 +29,8 @@ import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import TxDetail from './partials/TxDetail';
 // import SendTxDetail from './partial/SendTxDetail';
 
 interface Props {
@@ -39,7 +40,7 @@ interface Props {
   api: ApiPromise;
   amount: string;
   chain: Chain | null;
-  fee: Balance | undefined;
+  estimatedFee: Balance | undefined;
   unlockingLen: number;
   maxUnlockingChunks: number
   unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
@@ -50,7 +51,7 @@ interface Props {
   total: BN | undefined;
 }
 
-export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -122,10 +123,10 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
           block,
           date: Date.now(),
           failureText,
-          fee,
+          fee: fee || estimatedFee,
           from: { address: formatted, name },
-          txHash,
           status,
+          txHash,
           throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
         };
 
@@ -149,10 +150,10 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
           block,
           date: Date.now(),
           failureText,
-          fee,
+          fee: fee || estimatedFee,
           from: { address: formatted, name },
-          txHash,
           status,
+          txHash,
           throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
         };
 
@@ -169,7 +170,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimals, formatted, hierarchy, maxUnlockingChunks, name, password, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
+  }, [amount, api, chain, decimals, estimatedFee, formatted, hierarchy, maxUnlockingChunks, name, password, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -214,12 +215,11 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             address={address}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
-            showProxy
           />
           <AmountFee
             address={address}
             amount={amount}
-            fee={fee}
+            fee={estimatedFee}
             label={t('Amount')}
             showDivider
             style={{ pt: '5px' }}
@@ -276,7 +276,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            {/* <SendTxDetail txInfo={txInfo} /> */}
+            <TxDetail txInfo={txInfo} />
           </Confirmation>)
         }
       </Popup>

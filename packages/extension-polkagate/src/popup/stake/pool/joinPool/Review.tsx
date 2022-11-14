@@ -130,7 +130,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, decimals, formatted, hierarchy, joinAmount, joined, name, password, poolToJoin.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, chain, decimals, estimatedFee, formatted, hierarchy, joinAmount, joined, name, password, poolToJoin.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
