@@ -89,7 +89,7 @@ export default function TxDetail({ label, txInfo }: Props): React.ReactElement {
           fontWeight={400}
           lineHeight='23px'
         >
-          {label}
+          {label}:
         </Typography>
         <Grid
           fontSize='16px'
