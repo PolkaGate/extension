@@ -3,12 +3,10 @@
 
 /**
  * @description
- * this component opens unstake review page
+ * this component opens withdraw rewards review page
  * */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import type { AnyTuple } from '@polkadot/types/types';
 
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -24,11 +22,9 @@ import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
-import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
-import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -36,20 +32,13 @@ interface Props {
   show: boolean;
   formatted: string;
   api: ApiPromise;
-  amount: string;
-  chain: Chain | null;
-  estimatedFee: Balance | undefined;
-  unlockingLen: number;
-  maxUnlockingChunks: number
-  unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  poolId: BN | undefined;
-  poolWithdrawUnbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
+  claimable: BN;
+  chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  redeemDate: string | undefined;
-  total: BN | undefined;
+  available: BN;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function RewardsWithdrawReview({ address, api, available, chain, claimable, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -63,11 +52,12 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const decimals = api?.registry?.chainDecimals[0] ?? 1;
-  const token = api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const claim = api.tx.nominationPools.claimPayout;
+  const decimal = api.registry.chainDecimals[0];
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -87,11 +77,11 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
   }
 
-  const goToMyAccounts = useCallback(() => {
+  const goToStakingHome = useCallback(() => {
     setShow(false);
 
-    onAction('/');
-  }, [onAction, setShow]);
+    onAction(`/pool/${address}`);
+  }, [address, onAction]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -99,11 +89,15 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const unstake = useCallback(async () => {
+  useEffect((): void => {
+    claim().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [claim, formatted]);
+
+  const withdraw = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !unbonded || !poolWithdrawUnbonded) {
+      if (!formatted) {
         return;
       }
 
@@ -111,55 +105,25 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
-      const params = [formatted, amountAsBN];
 
-      if (unlockingLen < maxUnlockingChunks) {
-        const { block, failureText, fee, status, txHash } = await broadcast(api, unbonded, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, claim, [], signer, formatted, selectedProxy);
 
-        const info = {
-          action: 'pool_unbond',
-          amount,
-          block,
-          date: Date.now(),
-          failureText,
-          fee: fee || String(estimatedFee),
-          from: { address: formatted, name },
-          status,
-          txHash,
-          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
-        };
+      const info = {
+        action: 'pool_withdraw_reward',
+        amount: amountToHuman(claimable, decimal),
+        block,
+        date: Date.now(),
+        failureText,
+        fee: fee || String(estimatedFee),
+        from: { address: formatted, name },
+        status,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        txHash
+      };
 
-        history.push(info);
-        setTxInfo({ ...info, api, chain });
-      } else { // hence a poolWithdrawUnbonded is needed
-        const optSpans = await api.query.staking.slashingSpans(formatted);
-        const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
+      history.push(info);
+      setTxInfo({ ...info, api, chain });
 
-        const batch = api.tx.utility.batchAll([
-          poolWithdrawUnbonded(poolId, spanCount),
-          unbonded(...params)
-        ]);
-
-        const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, batch) : batch;
-        const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
-
-        const info = {
-          action: 'pool_WithdrawUnbonded_unbond',
-          amount,
-          block,
-          date: Date.now(),
-          failureText,
-          fee: fee || String(estimatedFee),
-          from: { address: formatted, name },
-          status,
-          txHash,
-          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
-        };
-
-        history.push(info);
-        setTxInfo({ ...info, api, chain });
-      }
 
       // eslint-disable-next-line no-void
       void saveHistory(chain, hierarchy, formatted, history);
@@ -170,7 +134,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimals, estimatedFee, formatted, hierarchy, maxUnlockingChunks, name, password, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
+  }, [formatted, selectedProxyAddress, password, api, claim, selectedProxy, claimable, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -184,11 +148,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Unstaking')}
-          withSteps={{
-            current: 2,
-            total: 2
-          }}
+          text={t<string>('Withdraw Rewards')}
         />
         {isPasswordError &&
           <Grid
@@ -217,25 +177,24 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           />
           <AmountFee
             address={address}
-            amount={amount}
+            amount={
+              <FormatBalance
+                api={api}
+                value={claimable} />
+            }
             fee={estimatedFee}
-            label={t('Amount')}
+            label={t('Withdraw amount')}
             showDivider
             style={{ pt: '5px' }}
-            token={token}
-          >
-            <Grid container item justifyContent='center' sx={{ fontSize: '12px', textAlign: 'center', pt: '10px' }}>
-              {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
-            </Grid>
-          </AmountFee>
+          />
           <AmountFee
             address={address}
             amount={
               <FormatBalance
                 api={api}
-                value={total} />
+                value={claimable.add(available)} />
             }
-            label={t('Total stake')}
+            label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
         </Container>
@@ -259,23 +218,26 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           }}
         />
         <PButton
-          _onClick={unstake}
+          _onClick={withdraw}
           disabled={!password}
           text={t<string>('Confirm')}
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Unstaking')}
+          title={t('Withdraw Rewards')}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t('Unstaking')}
-            onPrimaryBtnClick={goToMyAccounts}
-            primaryBtnText={t('My accounts')}
+            headerTitle={t('Withdraw Rewards')}
+            onPrimaryBtnClick={goToStakingHome}
+            primaryBtnText={t('Staking Home')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail txInfo={txInfo} />
+            <TxDetail
+              label={t<string>('Withdrawn amount')}
+              txInfo={txInfo}
+            />
           </Confirmation>)
         }
       </Popup>
