@@ -19,10 +19,12 @@ import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/type
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, usePools, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
+import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
 import { getValue } from '../../account/util';
+import RewardsStakeReview from './rewards/Stake';
+import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
 
 const OPT_ENTRIES = {
@@ -82,13 +84,10 @@ export default function Index(): React.ReactElement {
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [showRewardStake, setShowRewardStake] = useState<boolean>(false);
+  const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
 
-  const token = apiToUse && apiToUse.registry.chainTokens[0];
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
-  const [poolStakingOpen, setPoolStakingOpen] = useState<boolean>(false);
-  const [soloStakingOpen, setSoloStakingOpen] = useState<boolean>(false);
-  const [stakingType, setStakingType] = useState<string | undefined>(undefined);
-  const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
   const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
   const [gettingNominatedValidatorsInfoFromChain, setGettingNominatedValidatorsInfoFromChain] = useState<boolean>(true);
   const [validatorsInfoIsUpdated, setValidatorsInfoIsUpdated] = useState<boolean>(false);
@@ -96,13 +95,7 @@ export default function Index(): React.ReactElement {
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
   const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-
   const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
-
-  const [showConfirmStakingModal, setConfirmStakingModalOpen] = useState<boolean>(false);
-  const [showSelectValidatorsModal, setSelectValidatorsModalOpen] = useState<boolean>(false);
-  const [amount, setAmount] = useState<BN>(BN_ZERO);
-  const [currentlyStaked, setCurrentlyStaked] = useState<BN | undefined | null>();
   const [selectedValidators, setSelectedValidatorsAcounts] = useState<DeriveStakingQuery[] | null>(null);
   const [noNominatedValidators, setNoNominatedValidators] = useState<boolean | undefined>();// if TRUE, shows that nominators are fetched but is empty
   const [nominatedValidators, setNominatedValidatorsInfo] = useState<DeriveStakingQuery[] | null>(null);
@@ -203,6 +196,14 @@ export default function Index(): React.ReactElement {
     setShowInfo(true);
   }, []);
 
+  const goToRewardWithdraw = useCallback(() => {
+    setShowRewardWithdraw(true);
+  }, []);
+
+  const goToRewardStake = useCallback(() => {
+    setShowRewardStake(true);
+  }, []);
+
   const ToBeReleased = () => (
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '10%', width: '85%' }}>
       <Grid item pt='10px' xs={12}>
@@ -291,11 +292,35 @@ export default function Index(): React.ReactElement {
         disableGutters
         sx={{ pt: '5px' }}
       >
-        <Row label={t('Staked')} link1Text={t('Unstake')} onLink1={staked && !staked?.isZero() && goToUnstake} value={staked} />
-        <Row label={t('Rewards')} link1Text={t('Withdraw')} link2Text={t('Stake')} value={claimable} />
-        <Row label={t('Redeemable')} link1Text={t('Withdraw')} value={redeemable} />
-        <Row label={t('Unstaking')} link1Text={t('Restake')} value={unlockingAmount} />
-        <Row label={t('Available to stake')} showDivider={false} value={getValue('available', balances)} />
+        <Row
+          label={t('Staked')}
+          link1Text={t('Unstake')}
+          onLink1={staked && !staked?.isZero() && goToUnstake}
+          value={staked}
+        />
+        <Row
+          label={t('Rewards')}
+          link1Text={t('Withdraw')}
+          link2Text={t('Stake')}
+          onLink1={claimable && !claimable?.isZero() && goToRewardWithdraw}
+          onLink2={claimable && !claimable?.isZero() && goToRewardStake}
+          value={claimable}
+        />
+        <Row
+          label={t('Redeemable')}
+          link1Text={t('Withdraw')}
+          value={redeemable}
+        />
+        <Row
+          label={t('Unstaking')}
+          //  link1Text={t('Restake')} 
+          value={unlockingAmount}
+        />
+        <Row
+          label={t('Available to stake')}
+          showDivider={false}
+          value={getValue('available', balances)}
+        />
         <Grid
           container
           justifyContent='space-around'
@@ -336,6 +361,28 @@ export default function Index(): React.ReactElement {
         </Grid>
       </Container>
       <Info api={apiToUse} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
+      {showRewardStake && formatted && api && claimable && staked &&
+        <RewardsStakeReview
+          address={address}
+          api={api}
+          chain={chain}
+          claimable={claimable}
+          formatted={formatted}
+          setShow={setShowRewardStake}
+          show={showRewardStake}
+          staked={staked}
+        />}
+      {showRewardWithdraw && formatted && api && getValue('available', balances) && staked &&
+        <RewardsWithdrawReview
+          address={address}
+          api={api}
+          chain={chain}
+          claimable={claimable}
+          formatted={formatted}
+          setShow={setShowRewardWithdraw}
+          show={showRewardWithdraw}
+          available={getValue('available', balances)}
+        />}
     </>
   );
 }
