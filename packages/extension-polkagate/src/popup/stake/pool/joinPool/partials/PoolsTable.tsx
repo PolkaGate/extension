@@ -257,6 +257,9 @@ export default function PoolsTable({ api, pools, style, label, selected, setSele
                       container
                       item
                       justifyContent='center'
+                      sx={{
+                        cursor: 'pointer'
+                      }}
                       width='8%'
                     >
                       <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />

@@ -4,7 +4,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFER
 import { PoolInfo, PoolStakingConsts } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
+import Review from './Review';
 
 interface State {
   api?: ApiPromise;
@@ -43,9 +44,11 @@ export default function JoinPool(): React.ReactElement {
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
+  const [showReview, setShowReview] = useState<boolean>(false);
 
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
+  const amountAsBN = useMemo(() => new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimals), [decimals, stakeAmount]);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -82,10 +85,12 @@ export default function JoinPool(): React.ReactElement {
 
   const toReview = useCallback(() => {
     console.log('Go to review clicked!');
-  }, []);
+    api && setShowReview(!showReview);
+  }, [api, showReview]);
 
   useEffect(() => {
     if (!pools) { return; }
+
 
     if (selectedPool === undefined) {
       const PLUS_POOL = pools?.find((pool) => pool.metadata?.includes(PREFERRED_POOL_NAME));
@@ -106,16 +111,14 @@ export default function JoinPool(): React.ReactElement {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    const amountAsBN = new BN(parseFloat(parseFloat(stakeAmount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
-
-    api && api.tx.nominationPools.join(amountAsBN.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+    api && amountAsBN && api.tx.nominationPools.join(amountAsBN.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
     api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
-  }, [formatted, api, availableBalance, stakeAmount, decimals]);
+  }, [formatted, api, availableBalance, stakeAmount, decimals, selectedPool, amountAsBN]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -124,6 +127,17 @@ export default function JoinPool(): React.ReactElement {
     });
     state?.availableBalance && setAvailableBalance(state?.availableBalance);
   }, [formatted, api, state?.availableBalance]);
+
+  useEffect(() => {
+    if (!stakeAmount || !amountAsBN || !poolStakingConsts?.minJoinBond) {
+      return;
+    }
+
+    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
+
+    console.log('selectedPool && stakeAmount && stakeAmount !== 0 && !isAmountGreaterThanAllTransferAble:', selectedPool && stakeAmount && stakeAmount !== '0' && !isAmountInRange)
+    setNextBtnDisabled(!(selectedPool && stakeAmount && stakeAmount !== '0' && !isAmountInRange));
+  }, [amountAsBN, availableBalance, decimals, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
   return (
     <>
@@ -192,6 +206,17 @@ export default function JoinPool(): React.ReactElement {
         disabled={nextBtnDisabled}
         text={t<string>('Next')}
       />
+      {showReview &&
+        <Review
+          address={address}
+          api={api}
+          estimatedFee={estimatedFee}
+          joinAmount={amountAsBN}
+          poolToJoin={selectedPool}
+          setShowReview={setShowReview}
+          showReview={showReview}
+        />
+      }
     </>
   );
 }
