@@ -4,6 +4,7 @@
 
 export { default as Address } from './Address';
 export { default as Amount } from './Amount';
+export { default as AmountFee } from './AmountFee';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
 export { default as AccountHolderWithProxy  } from './AccountHolderWithProxy';
 export { default as ActionText } from './ActionText';
