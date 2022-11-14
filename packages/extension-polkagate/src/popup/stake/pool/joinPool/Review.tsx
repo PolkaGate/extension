@@ -17,7 +17,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolder, ActionContext, ChainLogo, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolder, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -172,14 +172,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
         <SubTitle
           label={t<string>('Review')}
         />
-        <AccountHolder
-          address={address}
-          style={{
-            m: '8px auto 0',
-            width: '92%'
-          }}
-        />
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+        <AccountHolderWithProxy address={address} selectedProxyAddress={selectedProxyAddress} showDivider />
         <Typography
           fontSize='16px'
           fontWeight={300}
