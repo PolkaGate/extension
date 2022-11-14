@@ -19,7 +19,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolder, AccountHolderWithProxy, ActionContext, ButtonWithCancel, ChainLogo, FormatBalance, Motion, PasswordWithUseProxy, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolder, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, ChainLogo, FormatBalance, Motion, PasswordWithUseProxy, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -175,38 +175,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
     setShow(false);
   }, [setShow]);
 
-  const AmountFee = ({ amount, children, fee, fontSize1 = 28, label, mb = 10, pt1 = 0, pt2 = 5, showDivider = false, token }:
-    { amount: string | Element, children?: ReactElement, label: string, fee?: BN | undefined, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, token?: string, showDivider?: boolean }) => (
-    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
-        {label}
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${pt2}px`, lineHeight: '28px' }}>
-        <Grid item alignItems='center' container justifyContent='center' sx={{ fontSize: `${fontSize1}px`, fontWeight: 400 }}>
-          <Grid item>
-            <ChainLogo genesisHash={chain?.genesisHash} size={31} />
-          </Grid>
-          <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-            {amount} {token}
-          </Grid>
-        </Grid>
-        {fee &&
-          <Grid item alignItems='center' container justifyContent='center' >
-            <Grid item>
-              {t('Fee')}:
-            </Grid>
-            <Grid item sx={{ pl: '5px' }}>
-              {<FormatBalance api={api} value={fee} />}
-            </Grid>
-          </Grid>
-        }
-      </Grid>
-      {children}
-      {showDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
-      }
-    </Grid>
-  );
+
 
   return (
     <Motion>
@@ -248,13 +217,10 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             showProxy
           />
           <AmountFee
+            address={address}
             amount={amount}
             fee={fee}
-            fontSize1={20}
             label={t('Amount')}
-            mb={0}
-            pt1={0}
-            pt2={0}
             showDivider
             token={token}
           >
@@ -263,12 +229,13 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             </Grid>
           </AmountFee>
           <AmountFee
-            amount={<FormatBalance api={api} value={total} />}
-            fontSize1={20}
+            address={address}
+            amount={
+              <FormatBalance
+                api={api}
+                value={total} />
+            }
             label={t('Total stake')}
-            mb={0}
-            pt1={0}
-            pt2={0}
           />
         </Container>
         <PasswordWithUseProxy
