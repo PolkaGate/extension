@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef} from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
@@ -23,11 +23,13 @@ interface Props {
   setSelected: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
 }
 
-export default function PoolsTable({ api, pools, style, label, selected, setSelected }: Props): React.ReactElement {
+export default function PoolsTable({ api, label, pools, selected, setSelected, style }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const ref = useRef();
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     pools && setSelected && setSelected(pools[Number(event.target.value)]);
+    ref.current.scrollTop = 0;
   }, [pools, setSelected]);
 
   const Select = ({ index, pool }: { pool: PoolInfo, index: number }) => (
@@ -71,8 +73,10 @@ export default function PoolsTable({ api, pools, style, label, selected, setSele
         >
           <Grid
             container
-            direction='column'
+            direction='column' 
+            ref={ref}
             sx={{
+              scrollBehavior: 'smooth',
               '&::-webkit-scrollbar': {
                 display: 'none',
                 width: 0
@@ -127,7 +131,7 @@ export default function PoolsTable({ api, pools, style, label, selected, setSele
                           item
                           width='22px'
                         >
-                          <Select pool={pool} index={index} />
+                          <Select index={index} pool={pool} />
                         </Grid>
                         <Grid
                           item
@@ -203,8 +207,8 @@ export default function PoolsTable({ api, pools, style, label, selected, setSele
                             {t<string>('Index:')}
                           </Typography>
                           <Grid
-                            fontWeight={400}
                             fontSize='12px'
+                            fontWeight={400}
                             item
                             lineHeight='22px'
                             pl='5px'
@@ -241,8 +245,8 @@ export default function PoolsTable({ api, pools, style, label, selected, setSele
                             {t<string>('Members:')}
                           </Typography>
                           <Grid
-                            fontWeight={400}
                             fontSize='12px'
+                            fontWeight={400}
                             item
                             lineHeight='22px'
                             pl='5px'
@@ -300,7 +304,7 @@ export default function PoolsTable({ api, pools, style, label, selected, setSele
                     lineHeight='59px'
                     pl='10px'
                   >
-                    {t<string>('loading pools...')}
+                    {t<string>('Loading pools...')}
                   </Typography>
                 </Grid>
               )
