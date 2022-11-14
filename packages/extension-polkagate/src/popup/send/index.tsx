@@ -90,7 +90,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     state?.recipientAddress && setRecipientAddress(state?.recipientAddress);
   }, [state?.recipientAddress]);
 
-
   const setWholeAmount = useCallback((type: TransferType) => {
     if (!api || !balances?.availableBalance || !maxFee) {
       return;
@@ -113,10 +112,6 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   useEffect(() => {
     api && !apiToUse && setApiToUse(api);
   }, [api, apiToUse]);
-
-  useEffect(() => {
-    setTransferType('Normal');
-  }, [amount]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -202,6 +197,8 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
       return;
     }
+
+    setTransferType('Normal');
 
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimals]);
