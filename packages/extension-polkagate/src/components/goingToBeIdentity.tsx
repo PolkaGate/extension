@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-
-import { useAccount, useMetadata, useTranslation } from '../hooks';
+import { useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
 import { ChainLogo, Identicon } from '.';
 
 interface Props {
@@ -17,17 +15,11 @@ interface Props {
   identiconSize?: number;
 }
 
-export default function Identity({ address, name, showChainLogo = false, style, identiconSize = 40 }: Props): React.ReactElement<Props> {
+function Identity({ address, identiconSize = 40, name, showChainLogo = false, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const account = useAccount(address);
-  const chain = useMetadata(account?.genesisHash, true);
-  const [formatted, setFormatted] = useState<string | undefined>();
-
-  useEffect(() => {
-    const publicKey = decodeAddress(address);
-
-    setFormatted(encodeAddress(publicKey, chain?.ss58Format));
-  }, [address, chain]);
+  const accountName = useAccountName(address);
+  const chain = useChain(address);
+  const formatted = useFormatted(address);
 
   return (
     <Grid
@@ -50,7 +42,7 @@ export default function Identity({ address, name, showChainLogo = false, style, 
             iconTheme={chain?.icon ?? 'polkadot'}
             prefix={chain?.ss58Format ?? 42}
             size={identiconSize}
-            value={formatted ?? account?.address}
+            value={formatted}
           />
         </Grid>
         <Grid
@@ -64,7 +56,7 @@ export default function Identity({ address, name, showChainLogo = false, style, 
             textOverflow='ellipsis'
             whiteSpace='nowrap'
           >
-            {name || account?.name || t<string>('unknown')}
+            {name || accountName || t<string>('unknown')}
           </Typography>
         </Grid>
       </Grid>
@@ -73,10 +65,12 @@ export default function Identity({ address, name, showChainLogo = false, style, 
           item
         >
           <ChainLogo
-            genesisHash={account?.genesisHash}
+            genesisHash={chain?.genesisHash}
           />
         </Grid>
       }
     </Grid>
   );
 }
+
+export default React.memo(Identity);
