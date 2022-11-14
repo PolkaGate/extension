@@ -121,7 +121,7 @@ export interface TransactionDetail {
   from: NameAddress;
   amount?: string;
   date: number;
-  txHhash?: string;
+  txHash?: string;
   fee?: string;
   to?: string;
   status: 'fail' | 'success',

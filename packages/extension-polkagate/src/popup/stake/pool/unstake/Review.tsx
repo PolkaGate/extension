@@ -19,7 +19,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, ButtonWithCancel, ChainLogo, FormatBalance, Identicon, Motion, PasswordWithUseProxy, Popup, ShortAddress, Warning } from '../../../../components';
+import { AccountContext, AccountHolder, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, ChainLogo, FormatBalance, Motion, PasswordWithUseProxy, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -46,17 +46,17 @@ interface Props {
   poolId: BN | undefined;
   poolWithdrawUnbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  redeemDate: string | undefined
+  redeemDate: string | undefined;
+  total: BN | undefined;
 }
 
-export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, fee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts, hierarchy } = useContext(AccountContext);
-
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -67,7 +67,6 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
 
   const decimals = api?.registry?.chainDecimals[0] ?? 1;
   const token = api?.registry?.chainTokens[0] ?? '';
-
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -176,48 +175,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
     setShow(false);
   }, [setShow]);
 
-  const Info = ({ pt1 = 0, pt2 = 5, mb = 10, data1, data2, fontSize1 = 28, label, noDivider = false, showIdenticon, showProxy }: { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, showIdenticon?: boolean, showProxy?: boolean }) => (
-    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
-        {label}
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${pt2}px`, lineHeight: '28px' }}>
-        {showIdenticon && chain &&
-          <Grid item pr='10px'>
-            <Identicon
-              iconTheme={chain?.icon || 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={31}
-              value={data2}
-            />
-          </Grid>
-        }
-        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {data1}
-        </Grid>
-      </Grid>
-      {data2 &&
-        <>
-          {showIdenticon
-            ? <ShortAddress address={data2} />
-            : <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
-              {data2}
-            </Grid>
-          }
-        </>
-      }
-      {selectedProxyAddress && showProxy &&
-        <ThroughProxy
-          address={selectedProxyAddress}
-          chain={chain}
-          name={selectedProxyName}
-        />
-      }
-      {!noDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
-      }
-    </Grid>
-  );
+
 
   return (
     <Motion>
@@ -252,38 +210,36 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
-          <Info data1={name} data2={formatted} label={t('Account holder')} pt1={selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
-          <Info
-            data1={
-              <Grid alignItems='center' container item>
-                <Grid item>
-                  <ChainLogo genesisHash={chain?.genesisHash} />
-                </Grid>
-                <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-                  {amount} {token}
-                </Grid>
-              </Grid>
-            }
-            label={t('Amount')}
-            noDivider
-            pt2={0}
+          <AccountHolderWithProxy
+            address={address}
+            selectedProxyAddress={selectedProxyAddress}
+            showDivider
+            showProxy
           />
-          <Info
-            data1={
-              api && <FormatBalance api={api} decimalPoint={2} value={fee} />
+          <AmountFee
+            address={address}
+            amount={amount}
+            fee={fee}
+            label={t('Amount')}
+            showDivider
+            style={{ pt: '5px' }}
+            token={token}
+          >
+            <Grid container item justifyContent='center' sx={{ fontSize: '12px', textAlign: 'center', pt: '10px' }}>
+              {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
+            </Grid>
+          </AmountFee>
+          <AmountFee
+            address={address}
+            amount={
+              <FormatBalance
+                api={api}
+                value={total} />
             }
-            fontSize1={20}
-            label={t('Fee')}
-            mb={0}
-            noDivider
-            pt1={0}
-            pt2={0}
+            label={t('Total stake')}
+            style={{ pt: '5px' }}
           />
         </Container>
-        <Grid item container justifyContent='center' sx={{ fontSize: '18px', textAlign: 'center', p: '10px 35px' }}>
-          {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
-        </Grid>
         <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}
