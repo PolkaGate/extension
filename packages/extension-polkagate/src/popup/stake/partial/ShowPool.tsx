@@ -15,12 +15,12 @@ interface Props {
   api?: ApiPromise;
   pool: PoolInfo;
   label: string;
-  labelPosiotion?: 'right' | 'left' | 'center';
+  labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining';
   style?: SxProps<Theme> | undefined;
 }
 
-export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, pool, style }: Props): React.ReactElement {
+export default function ShowPool ({ api, label, labelPosition = 'left', mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const poolStaked = (points) => {
@@ -39,7 +39,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
           fontSize='16px'
           fontWeight={400}
           sx={{
-            textAlign: labelPosiotion
+            textAlign: labelPosition
           }}
           width='100%'
         >
@@ -105,7 +105,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
               lineHeight='30px'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'sencondary.main'
+                borderRightColor: 'secondary.main'
               }}
               textAlign='center'
               width='20%'
@@ -118,7 +118,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
               lineHeight='30px'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'sencondary.main'
+                borderRightColor: 'secondary.main'
               }}
               textAlign='center'
               width='34%'
@@ -131,7 +131,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
               lineHeight='30px'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'sencondary.main'
+                borderRightColor: 'secondary.main'
               }}
               textAlign='center'
               width='23%'
@@ -162,7 +162,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
               justifyContent='center'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'sencondary.main'
+                borderRightColor: 'secondary.main'
               }}
               width='20%'
             >
@@ -174,7 +174,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
               justifyContent='center'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'sencondary.main'
+                borderRightColor: 'secondary.main'
               }}
               width='34%'
             >
@@ -191,7 +191,7 @@ export default function ShowPool ({ api, label, labelPosiotion = 'left', mode, p
               justifyContent='center'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'sencondary.main'
+                borderRightColor: 'secondary.main'
               }}
               width='23%'
             >
