@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
@@ -39,7 +40,7 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const poolConsts = usePoolConsts(address, state?.poolConsts);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const [estimatedFee, setEstimatedFee] = useState<BN>();
+  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
@@ -90,7 +91,7 @@ export default function Index(): React.ReactElement {
     const params = [formatted, amountToMachine(amount, decimals)];
 
     if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(BN_ONE);
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
     // eslint-disable-next-line no-void
@@ -198,13 +199,13 @@ export default function Index(): React.ReactElement {
         disabled={!amount || amount === '0'}
         text={t<string>('Next')}
       />
-      {showReview &&
+      {showReview && amount && api && formatted && maxUnlockingChunks &&
         <Review
           address={address}
           amount={amount}
           api={api}
           chain={chain}
-          fee={estimatedFee || '0'}
+          fee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
           poolId={pool?.poolId}
@@ -212,7 +213,6 @@ export default function Index(): React.ReactElement {
           redeemDate={redeemDate}
           setShow={setShowReview}
           show={showReview}
-          stakingConsts={stakingConsts}
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen}

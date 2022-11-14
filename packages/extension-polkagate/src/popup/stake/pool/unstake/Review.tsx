@@ -222,9 +222,10 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
             fee={fee}
             label={t('Amount')}
             showDivider
+            style={{ pt: '5px' }}
             token={token}
           >
-            <Grid item container justifyContent='center' sx={{ fontSize: '12px', textAlign: 'center', pt: '10px' }}>
+            <Grid container item justifyContent='center' sx={{ fontSize: '12px', textAlign: 'center', pt: '10px' }}>
               {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
             </Grid>
           </AmountFee>
@@ -236,6 +237,7 @@ export default function Review({ address, amount, api, chain, fee, formatted, ma
                 value={total} />
             }
             label={t('Total stake')}
+            style={{ pt: '5px' }}
           />
         </Container>
         <PasswordWithUseProxy
