@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
@@ -69,9 +71,7 @@ function ThroughProxy({ address, style = {} }: Props): React.ReactElement {
           }}
         >
           {chain &&
-            <Grid
-              item
-            >
+            <Grid item>
               <Identicon
                 iconTheme={chain?.icon || 'polkadot'}
                 prefix={chain?.ss58Format ?? 42}
@@ -80,40 +80,11 @@ function ThroughProxy({ address, style = {} }: Props): React.ReactElement {
               />
             </Grid>
           }
-          <Grid
-            container
-            item
-            sx={{
-              display: 'block',
-              fontSize: '16px',
-              fontWeight: 400,
-              maxWidth: '80%',
-              overflow: 'hidden',
-              pl: '7px',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              width: 'fit-content'
-            }}
-          >
-            <Grid
-              item
-              overflow='hidden'
-              textOverflow='ellipsis'
-              whiteSpace='nowrap'
-              sx={{
-                lineHeight: '16px'
-              }}
-            >
+          <Grid container item justifyContent='flex-start' sx={{ display: 'block', fontSize: '16px', fontWeight: 400, maxWidth: '80%', overflow: 'hidden', pl: '7px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
+            <Grid item overflow='hidden' sx={{ lineHeight: '16px' }} textOverflow='ellipsis' whiteSpace='nowrap'>
               {name}
             </Grid>
-            <Grid
-              item
-              sx={{
-                fontSize: '12px',
-                fontWeight: 300,
-                lineHeight: '12px'
-              }}
-            >
+            <Grid item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '12px', width: 'fit-content' }}>
               <ShortAddress address={address} />
             </Grid>
           </Grid>
