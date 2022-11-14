@@ -1,11 +1,6 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/**
- * @description
- * this component opens join pool review page
- * */
-
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
@@ -17,7 +12,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function AccountHolder({ address, style }: Props): React.ReactElement {
+function AccountHolder({ address, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 
@@ -38,8 +33,10 @@ export default function AccountHolder({ address, style }: Props): React.ReactEle
       </Typography>
       <Identity
         address={address}
+        identiconSize={31}
         style={{
           minWidth: '35%',
+          maxWidth: '100%',
           width: 'fit-content'
         }}
       />
@@ -47,3 +44,5 @@ export default function AccountHolder({ address, style }: Props): React.ReactEle
     </Grid>
   );
 }
+
+export default React.memo(AccountHolder);

@@ -5,6 +5,7 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
+import { BN, BN_ZERO, BN_ONE } from '@polkadot/util';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -74,7 +75,7 @@ export function balanceToHuman(_balance: AccountsBalanceType | null, _type: stri
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
-export function amountToHuman(_amount: string | number | bigint | Compact<u128> | undefined, _decimals: number, decimalDigits?: number, commify?: boolean): string {
+export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number, decimalDigits?: number, commify?: boolean): string {
   if (!_amount) { return ''; }
 
   _amount = String(_amount).replace(/,/g, '');
@@ -84,8 +85,8 @@ export function amountToHuman(_amount: string | number | bigint | Compact<u128> 
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(_amount: string | undefined, _decimals: number): bigint {
-  if (!_amount || !Number(_amount) || !_decimals) { return BigInt(0); }
+export function amountToMachine(_amount: string | undefined, _decimals: number): BN {
+  if (!_amount || !Number(_amount) || !_decimals) { return BN_ZERO; }
 
   const dotIndex = _amount.indexOf('.');
 
@@ -96,13 +97,13 @@ export function amountToMachine(_amount: string | undefined, _decimals: number):
     _decimals -= decimalsOfAmount;
 
     if (_decimals < 0) {
-      throw new Error("_decimals should be more than _amount's decimals digits");
+      throw new Error("_decimals should be more than amount's decimals digits");
     }
   }
 
   const x = 10 ** _decimals;
 
-  return BigInt(_amount) * BigInt(x);
+  return new BN(_amount).mul(new BN(x));
 }
 
 export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
@@ -126,7 +127,7 @@ export function getSubstrateAddress(address: string | undefined): string | undef
   if (!address) {
     return undefined;
   }
-  
+
   const publicKey = decodeAddress(address);
 
   return encodeAddress(publicKey, 42);

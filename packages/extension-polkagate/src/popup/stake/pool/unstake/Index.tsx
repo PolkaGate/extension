@@ -49,7 +49,7 @@ export default function Index(): React.ReactElement {
   const staked = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0), [myPool]);
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
-
+  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimals)), [amount, decimals, staked]);
   const unlockingLen = myPool?.ledger?.unlocking?.length ?? 0;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
@@ -59,8 +59,10 @@ export default function Index(): React.ReactElement {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
 
-      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)
+      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS);
     }
+
+    return undefined;
   }, [stakingConsts]);
 
   useEffect(() => {
@@ -211,6 +213,7 @@ export default function Index(): React.ReactElement {
           setShow={setShowReview}
           show={showReview}
           stakingConsts={stakingConsts}
+          total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen}
         />
