@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Cancel as CancelIcon, Check as CheckIcon } from '@mui/icons-material';
+import { Close as CloseIcon, Check as CheckIcon } from '@mui/icons-material';
 import { Container, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
@@ -33,19 +33,20 @@ export default function FailSuccessIcon({ showLabel = true, style = { fontSize: 
               fontSize: style.fontSize
             }}
           />
-          : <CancelIcon
+          : <CloseIcon
             sx={{
-              bgcolor: '#fff',
               borderRadius: '50%',
-              color: 'warning.main',
-              fontSize: style.fontSize
+              bgcolor: 'warning.main',
+              color: '#fff',
+              fontSize: style.fontSize,
+              stroke: 'white'
             }}
           />
       }
       {showLabel && <Typography
         fontSize='16px'
         fontWeight={500}
-        // mt='10px'
+      // mt='10px'
       >
         {success ? t<string>('Completed') : t<string>('Failed')}
       </Typography>
