@@ -125,9 +125,7 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
       history.push(info);
       setTxInfo({ ...info, api, chain });
 
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
+      saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
