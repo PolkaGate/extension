@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
-export async function postData(url: string, data = {}) {
+export default async function postData(url: string, data = {}) {
   console.log('calling post data, url:', url);
 
   // Default options are marked with *
