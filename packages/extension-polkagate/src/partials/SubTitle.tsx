@@ -8,7 +8,7 @@
 
 import '@vaadin/icons';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { Steps } from '../components';
@@ -22,13 +22,14 @@ interface Props {
 function SubTitle({ label, withSteps }: Props) {
   return (
     <Grid
+      alignItems='center'
       container
       item
       justifyContent='center'
-      alignItems='center'
     >
-      <Grid item
-        sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '20px', pr: '5px' }}
+      <Grid
+        item
+        sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '20px', mb: '5px', pr: '5px' }}
       >
         {label}
       </Grid>
@@ -39,12 +40,13 @@ function SubTitle({ label, withSteps }: Props) {
             total={withSteps.total}
           />
         </Grid>
-
       }
-      <Grid item
+      <Grid
         container
+        item
         justifyContent='center'
-        xs={12}>
+        xs={12}
+      >
         <Divider
           sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }}
         />
