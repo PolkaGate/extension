@@ -23,11 +23,11 @@ interface Props {
   senderAddress: string
 }
 
-export default function To({ address, chain, senderAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function To({ address, chain, senderAddress, setAddress, style }: Props): React.ReactElement<Props> {
   // const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
   const allAddresses = getAllAddressess(hierarchy, true, true, chain?.ss58Format, senderAddress);
   const allAddr = getAllAddressess(hierarchy, true, true, chain?.ss58Format);
 
@@ -63,7 +63,6 @@ export default function To({ address, chain, senderAddress, label, name, setAddr
             borderTop: 0,
             fontSize: '28px',
             fontWeight: 400,
-            // height: '38px',
             letterSpacing: '-0.015em',
             mt: '-4px',
             pl: '7px',
@@ -72,7 +71,8 @@ export default function To({ address, chain, senderAddress, label, name, setAddr
           xs={12}
         >
           <Identity
-            address={address}
+            chain={chain}
+            formatted={address}
             identiconSize={35}
             name={selectedAddrName}
           />

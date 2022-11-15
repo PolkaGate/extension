@@ -5,8 +5,13 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { useAccount, useMetadata } from './';
 
-export default function useChain(address: string | undefined): Chain | null {
+export default function useChain(address: string | undefined, chain?: Chain): Chain | null {
   const account = useAccount(address);
+  const localChain = useMetadata(account?.genesisHash, true);
 
-  return useMetadata(account?.genesisHash, true);
+  if (chain) {
+    return chain;
+  }
+
+  return localChain;
 }

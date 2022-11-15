@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ActionContext, Identity } from '../../components';
-import { useAccount, useMetadata, useTranslation } from '../../hooks';
+import { useAccount, useFormatted, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 
 interface Props {
@@ -21,17 +21,8 @@ export default function Receive({ className }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const location = useLocation();
-  console.log(location?.state?.pathname)
   const { address } = useParams<{ address: string }>();
-  const account = useAccount(address);
-  const [formatted, setFormatted] = useState<string | undefined>();
-  const chain = useMetadata(account?.genesisHash, true);
-
-  useEffect(() => {
-    const publicKey = decodeAddress(address);
-
-    setFormatted(encodeAddress(publicKey, chain?.ss58Format));
-  }, [address, chain]);
+  const formatted = useFormatted(address);
 
   const _onBackClick = useCallback(() => {
     onAction(location?.state?.pathname ?? '/');

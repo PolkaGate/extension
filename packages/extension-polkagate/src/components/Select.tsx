@@ -59,21 +59,13 @@ export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, is
       sx={{ width: '100%', mt: `${_mt}` }}
       variant='standard'
     >
-      {/* <InputLabel
-        htmlFor='selectChain'
-        sx={{ color: 'text.primary', fontSize: '18px', fontWeight: 300, transformOrigin: 'left bottom', letterSpacing: '-0.015em' }}
-        variant='standard'
-
-      >
-        {label}
-      </InputLabel> */}
       <Label
-        label={label}
         helperText={helperText}
+        label={label}
+        style={{ fontSize: '14px' }}
       >
         <Select
           defaultValue={defaultValue}
-          value={value}
           id='selectChain'
           input={<BootstrapInput />}
           onChange={_onChange}
@@ -91,6 +83,7 @@ export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, is
             '> .MuiSvgIcon-root': { color: 'secondary.light', fontSize: '30px' },
             width: '100%'
           }}
+          value={value}
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem

@@ -6,10 +6,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { useTranslation } from '../hooks';
+import { useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
 import { Proxy, ProxyItem } from '../util/types';
 import { Identity, Password } from './';
+import { getSubstrateAddress } from '../util/utils';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -39,7 +40,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
   const { t } = useTranslation();
   const [password, setPassword] = useState<string>();
   const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
-  // const [isPasswordError, setIsPasswordError] = useState(false);
+  const chain = useMetadata(genesisHash, true);
 
   const _onChange = useCallback(
     (pass: string): void => {
@@ -114,7 +115,8 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
               <>
                 {selectedProxy &&
                   <Identity
-                    address={selectedProxy?.delegate}
+                    chain={chain}
+                    formatted={selectedProxy?.delegate}
                     identiconSize={30}
                     style={{ fontSize: '14px' }}
                   />

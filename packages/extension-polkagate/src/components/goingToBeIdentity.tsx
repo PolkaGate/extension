@@ -4,22 +4,27 @@
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
+import { Chain } from '@polkadot/extension-chains/types';
+
 import { useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
 import { ChainLogo, Identicon } from '.';
+import { getSubstrateAddress } from '../util/utils';
 
 interface Props {
-  address: string;
+  address?: string;
+  formatted?: string;
   name?: string;
   style?: SxProps<Theme>;
   showChainLogo?: boolean;
   identiconSize?: number;
+  chain?: Chain;
 }
 
-function Identity({ address, identiconSize = 40, name, showChainLogo = false, style }: Props): React.ReactElement<Props> {
+function Identity({ address, chain, formatted, identiconSize = 40, name, showChainLogo = false, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const accountName = useAccountName(address);
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
+  const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
+  const _chain = useChain(address, chain);
+  const _formatted = useFormatted(address, formatted);
 
   return (
     <Grid
@@ -39,10 +44,10 @@ function Identity({ address, identiconSize = 40, name, showChainLogo = false, st
           pr='8px'
         >
           <Identicon
-            iconTheme={chain?.icon ?? 'polkadot'}
-            prefix={chain?.ss58Format ?? 42}
+            iconTheme={_chain?.icon ?? 'polkadot'}
+            prefix={_chain?.ss58Format ?? 42}
             size={identiconSize}
-            value={formatted}
+            value={_formatted}
           />
         </Grid>
         <Grid
@@ -65,7 +70,7 @@ function Identity({ address, identiconSize = 40, name, showChainLogo = false, st
           item
         >
           <ChainLogo
-            genesisHash={chain?.genesisHash}
+            genesisHash={_chain?.genesisHash}
           />
         </Grid>
       }

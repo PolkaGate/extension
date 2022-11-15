@@ -131,7 +131,7 @@ export interface TransactionDetail {
 
 export interface TxInfo extends TransactionDetail {
   api: ApiPromise;
-  chain?: Chain;
+  chain: Chain;
   token?: string;
 }
 

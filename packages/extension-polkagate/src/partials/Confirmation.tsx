@@ -14,14 +14,13 @@ import { HeaderBrand } from '.';
 interface Props {
   showConfirmation: boolean;
   headerTitle: string;
-  failReason?: string; // to be deleted
   txInfo: TxInfo;
   primaryBtnText: string;
   onPrimaryBtnClick: () => void;
   children: React.ReactNode;
 }
 
-export default function Confirmation({ children, failReason = '', headerTitle, onPrimaryBtnClick, primaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, primaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
@@ -58,18 +57,26 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
         </Typography>
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: '20px auto', textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
           success={txInfo.status === 'success'}
         />
-        {failReason &&
+        {txInfo?.failureText &&
           <Typography
             fontSize='16px'
             fontWeight={400}
             m='auto'
+            sx={{
+              display: '-webkit-box',
+              overflow: 'hidden',
+              mb: '15px',
+              WebkitLineClamp: '2',
+              WebkitBoxOrient: 'vertical',
+              textOverflow: 'ellipsis'
+            }}
             textAlign='center'
             width='92%'
           >
-            {failReason}
+            {txInfo.failureText}
           </Typography>
         }
         {children}
@@ -107,82 +114,76 @@ export default function Confirmation({ children, failReason = '', headerTitle, o
           width: '70%'
         }}
         />
-        <Grid
-          alignItems='end'
-          container
-          justifyContent='center'
-        >
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            lineHeight='23px'
-          >
-            {t<string>('Block:')}
-          </Typography>
+        {!!txInfo?.block &&
           <Grid
-            fontSize='16px'
-            fontWeight={400}
-            item
-            lineHeight='22px'
-            pl='5px'
+            alignItems='end'
+            container
+            justifyContent='center'
           >
-            {txInfo.block ? `#${txInfo.block}` : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />}
-          </Grid>
-        </Grid>
-        <Grid
-          alignItems='end'
-          container
-          justifyContent='center'
-          sx={{
-            m: 'auto',
-            pt: '5px',
-            width: '75%'
-          }}
-        >
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            lineHeight='23px'
-          >
-            {t<string>('Hash:')}
-          </Typography>
-          <Grid
-            fontSize='16px'
-            fontWeight={400}
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
-            {txInfo.txHash
-              ? (
-                <ShortAddress
-                  address={txInfo.txHash}
-                  addressStyle={{ fontSize: '16px' }}
-                  charsCount={6}
-                  showCopy
-                />)
-              : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '70px' }} />}
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          justifyContent='center'
-          pt='5px'
-        >
-          <Link
-            href={`${subscanLink(txInfo?.txHash)}`}
-            rel='noreferrer'
-            target='_blank'
-            underline='none'
-          >
+            <Typography
+              fontSize='16px'
+              fontWeight={400}
+              lineHeight='23px'
+            >
+              {t<string>('Block:')}
+            </Typography>
             <Grid
-              alt={'subscan'}
-              component='img'
-              src={getLogo('subscan')}
-              sx={{ height: 44, width: 44 }}
-            />
-          </Link>
-        </Grid>
+              fontSize='16px'
+              fontWeight={400}
+              item
+              lineHeight='22px'
+              pl='5px'
+            >
+              #{txInfo.block}
+            </Grid>
+          </Grid>
+        }
+        {txInfo?.txHash &&
+          <Grid
+            alignItems='end'
+            container
+            justifyContent='center'
+            sx={{
+              m: 'auto',
+              pt: '5px',
+              width: '75%'
+            }}
+          >
+            <Typography
+              fontSize='16px'
+              fontWeight={400}
+              lineHeight='23px'
+            >
+              {t<string>('Hash:')}
+            </Typography>
+            <Grid
+              fontSize='16px'
+              fontWeight={400}
+              item
+              lineHeight='22px'
+              pl='5px'
+            >
+              <ShortAddress
+                address={txInfo.txHash}
+                addressStyle={{ fontSize: '16px' }}
+                charsCount={6}
+                showCopy
+              />
+            </Grid>
+          </Grid>
+        }
+        {txInfo?.txHash &&
+          <Grid container justifyContent='center' pt='5px'>
+            <Link
+              href={`${subscanLink(txInfo?.txHash)}`}
+              rel='noreferrer'
+              target='_blank'
+              underline='none'
+            >
+              <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 44, width: 44 }} />
+            </Link>
+          </Grid>
+        }
         <TwoButtons
           onPrimaryClick={onPrimaryBtnClick}
           onSecondaryClick={goToHistory}

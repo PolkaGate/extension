@@ -32,16 +32,18 @@ interface Props {
 export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const [wanrningText, setWanrningText] = useState<string>();
+  const [warningText, setWarningText] = useState<string>();
   const theme = useTheme();
 
   useEffect(() => {
-    setWanrningText(notFoundText || `No proxies found for the above account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
+    setWarningText(notFoundText || `No proxies found for the above account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
   }, [chain?.name, notFoundText, proxies?.length]);
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
     , [accounts, proxyTypeFilter]);
+
+  const getProxyName = useCallback((proxy: Proxy): string | undefined => accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate))?.name, [accounts]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
@@ -272,7 +274,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                             textOverflow='ellipsis'
                             whiteSpace='nowrap'
                           >
-                            {isAvailable(proxyItem.proxy)?.name || toShortAddress(proxyItem.proxy.delegate)}
+                            {getProxyName(proxyItem.proxy) || toShortAddress(proxyItem.proxy.delegate)}
                           </Typography>
                         </Grid>
                         <Grid
@@ -342,7 +344,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                         lineHeight='20px'
                         pl='8px'
                       >
-                        {wanrningText}
+                        {warningText}
                       </Typography>
                     </Grid>
                   )
