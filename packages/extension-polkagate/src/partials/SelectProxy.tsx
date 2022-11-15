@@ -28,13 +28,13 @@ interface Props {
 export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash, true);
-  const [proxiesToSelect, setproxiesToSelect] = useState<ProxyItem[] | undefined>();
+  const [proxiesToSelect, setProxiesToSelect] = useState<ProxyItem[] | undefined>();
   const [change, setChange] = useState<boolean>(true);
 
   useEffect(() => {
     const toSelect = proxies?.filter((item) => item.status !== 'new');
 
-    setproxiesToSelect(toSelect);
+    setProxiesToSelect(toSelect);
   }, [proxies]);
 
   useEffect(() => {

@@ -8,12 +8,16 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { AccountContext, SettingsContext } from '../components/contexts';
 import { useChain } from './';
 
-export default function useFormatted(address: string): string | undefined {
+export default function useFormatted(address?: string, formatted?: string): string | undefined {
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
   const chain = useChain(address);
 
   const encodedAddress = useMemo(() => {
+    if (formatted) {
+      return formatted;
+    }
+
     const prefix: number = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
     if (prefix !== undefined) {
@@ -31,7 +35,7 @@ export default function useFormatted(address: string): string | undefined {
     }
 
     return undefined;
-  }, [accounts, chain, address, settings]);
+  }, [formatted, chain, settings.prefix, accounts, address]);
 
   return encodedAddress;
 }
