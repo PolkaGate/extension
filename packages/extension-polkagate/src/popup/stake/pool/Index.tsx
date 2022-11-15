@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
@@ -26,6 +28,7 @@ import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
 import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
+import RedeemableWithdrawReview from './redeemable';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -86,6 +89,7 @@ export default function Index(): React.ReactElement {
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showRewardStake, setShowRewardStake] = useState<boolean>(false);
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
+  const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
 
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
   const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
@@ -197,12 +201,16 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const goToRewardWithdraw = useCallback(() => {
-    setShowRewardWithdraw(true);
-  }, []);
+    claimable && !claimable?.isZero() && setShowRewardWithdraw(true);
+  }, [claimable]);
 
   const goToRewardStake = useCallback(() => {
-    setShowRewardStake(true);
-  }, []);
+    claimable && !claimable?.isZero() && setShowRewardStake(true);
+  }, [claimable]);
+
+  const goToRedeemableWithdraw = useCallback(() => {
+    redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
+  }, [redeemable]);
 
   const ToBeReleased = () => (
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '10%', width: '85%' }}>
@@ -243,7 +251,7 @@ export default function Index(): React.ReactElement {
                 {link2Text &&
                   <>
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
-                      <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
+                      <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
                     <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                       {link2Text}
@@ -262,7 +270,15 @@ export default function Index(): React.ReactElement {
                 xs={1}
               >
                 <ArrowForwardIosIcon
-                  sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)' }}
+                  sx={{
+                    color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
+                    cursor: 'pointer',
+                    fontSize: 18,
+                    m: 'auto',
+                    stroke: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',//'#BA2882',
+                    strokeWidth: '2px',
+                    transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)'
+                  }}
                 />
               </Grid>
             }
@@ -302,13 +318,14 @@ export default function Index(): React.ReactElement {
           label={t('Rewards')}
           link1Text={t('Withdraw')}
           link2Text={t('Stake')}
-          onLink1={claimable && !claimable?.isZero() && goToRewardWithdraw}
-          onLink2={claimable && !claimable?.isZero() && goToRewardStake}
+          onLink1={goToRewardWithdraw}
+          onLink2={goToRewardStake}
           value={claimable}
         />
         <Row
           label={t('Redeemable')}
           link1Text={t('Withdraw')}
+          onLink1={goToRedeemableWithdraw}
           value={redeemable}
         />
         <Row
@@ -361,27 +378,38 @@ export default function Index(): React.ReactElement {
         </Grid>
       </Container>
       <Info api={apiToUse} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
-      {showRewardStake && formatted && api && claimable && staked &&
+      {showRewardStake && formatted && api && claimable && staked && chain &&
         <RewardsStakeReview
           address={address}
+          amount={claimable}
           api={api}
           chain={chain}
-          claimable={claimable}
           formatted={formatted}
           setShow={setShowRewardStake}
           show={showRewardStake}
           staked={staked}
         />}
-      {showRewardWithdraw && formatted && api && getValue('available', balances) && staked &&
+      {showRewardWithdraw && formatted && api && getValue('available', balances) && chain && claimable &&
         <RewardsWithdrawReview
           address={address}
+          amount={claimable}
           api={api}
+          available={getValue('available', balances)}
           chain={chain}
-          claimable={claimable}
           formatted={formatted}
           setShow={setShowRewardWithdraw}
           show={showRewardWithdraw}
+        />}
+      {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain &&
+        <RedeemableWithdrawReview
+          address={address}
+          amount={redeemable}
+          api={api}
           available={getValue('available', balances)}
+          chain={chain}
+          formatted={formatted}
+          setShow={setShowRedeemableWithdraw}
+          show={showRedeemableWithdraw}
         />}
     </>
   );
