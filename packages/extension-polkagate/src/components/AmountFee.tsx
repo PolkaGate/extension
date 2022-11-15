@@ -9,20 +9,21 @@ import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 import { useChain, useTranslation } from '../hooks';
-import { ChainLogo } from '.';
+import { ChainLogo, ShowValue } from '.';
 
 interface Props {
   address: string;
-  amount: string | Element;
+  amount: string | React.ReactNode;
   children?: React.ReactNode;
   label: string;
   fee?: Balance | undefined;
   style?: SxProps<Theme> | undefined;
   token?: string;
   showDivider?: boolean;
+  withFee?: boolean;
 }
 
-function AmountFee({ address, amount, children, fee, label, style = {}, showDivider = false, token }: Props): React.ReactElement {
+function AmountFee({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chain = useChain(address);
 
@@ -40,13 +41,13 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
             {amount} {token}
           </Grid>
         </Grid>
-        {fee &&
+        {withFee &&
           <Grid alignItems='center' container item justifyContent='center'>
             <Grid item>
               {t('Fee')}:
             </Grid>
             <Grid item sx={{ pl: '5px' }}>
-              {fee?.toHuman()}
+              <ShowValue value={fee?.toHuman()} height={16} />
             </Grid>
           </Grid>
         }

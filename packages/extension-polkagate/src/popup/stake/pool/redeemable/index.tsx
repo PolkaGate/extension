@@ -3,7 +3,7 @@
 
 /**
  * @description
- * this component opens stake rewards review page
+ * this component opens withdraw rewards review page
  * */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -17,7 +17,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -25,7 +25,7 @@ import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import TxDetail from './partials/TxDetail';
+import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
   address: string;
@@ -35,10 +35,10 @@ interface Props {
   amount: BN;
   chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  staked: BN;
+  available: BN;
 }
 
-export default function RewardsStakeReview({ address, amount, api, chain, formatted, setShow, show, staked }: Props): React.ReactElement {
+export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -56,8 +56,8 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const tx = api.tx.nominationPools.bondExtra;
-  const params = useMemo(() => ['Rewards'], []);
+  const tx = api.tx.nominationPools.withdrawUnbonded;
+
   const decimal = api.registry.chainDecimals[0];
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
@@ -91,8 +91,10 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   }, [proxies]);
 
   useEffect((): void => {
+    const params = [formatted, 100];/** 100 is a dummy spanCount */
+
     tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted, params]);
+  }, [tx, formatted]);
 
   const submit = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
@@ -106,11 +108,13 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
 
       signer.unlock(password);
       setShowWaitScreen(true);
-
+      const optSpans = await api.query.staking.slashingSpans(formatted);
+      const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
+      const params = [formatted, spanCount];
       const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_stake_reward',
+        action: 'pool_withdraw_redeemable',
         amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),
@@ -133,7 +137,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, tx, chain, amount, decimal, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -147,7 +151,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Stake Rewards')}
+          text={t<string>('Withdraw Redeemable')}
         />
         {isPasswordError &&
           <Grid
@@ -179,10 +183,11 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
             amount={
               <FormatBalance
                 api={api}
-                value={amount} />
+                value={amount}
+              />
             }
             fee={estimatedFee}
-            label={t('Amount')}
+            label={t('Withdraw amount')}
             showDivider
             style={{ pt: '5px' }}
             withFee
@@ -192,10 +197,10 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
             amount={
               <FormatBalance
                 api={api}
-                value={amount.add(staked).sub(estimatedFee ?? BN_ZERO)}
+                value={amount.add(available).sub(estimatedFee ?? BN_ZERO)}
               />
             }
-            label={t('Total stake after')}
+            label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
         </Container>
@@ -225,18 +230,18 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Stake Rewards')}
+          title={t('Withdraw Redeemable')}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t('Stake Rewards')}
+            headerTitle={t('Withdraw Redeemable')}
             onPrimaryBtnClick={goToStakingHome}
             primaryBtnText={t('Staking Home')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
             <TxDetail
-              label={t<string>('Staked')}
+              label={t<string>('Withdrawn amount')}
               txInfo={txInfo}
             />
           </Confirmation>)

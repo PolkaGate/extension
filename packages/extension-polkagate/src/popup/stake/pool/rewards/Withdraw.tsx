@@ -15,9 +15,9 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -32,13 +32,13 @@ interface Props {
   show: boolean;
   formatted: string;
   api: ApiPromise;
-  claimable: BN;
+  amount: BN;
   chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   available: BN;
 }
 
-export default function RewardsWithdrawReview({ address, api, available, chain, claimable, formatted, setShow, show }: Props): React.ReactElement {
+export default function RewardsWithdrawReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -56,7 +56,9 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const claim = api.tx.nominationPools.claimPayout;
+  const tx = api.tx.nominationPools.claimPayout;
+  const params = [];
+
   const decimal = api.registry.chainDecimals[0];
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
@@ -81,7 +83,7 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
     setShow(false);
 
     onAction(`/pool/${address}`);
-  }, [address, onAction]);
+  }, [address, onAction, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -90,10 +92,10 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
   }, [proxies]);
 
   useEffect((): void => {
-    claim().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [claim, formatted]);
+    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [tx, formatted, params]);
 
-  const withdraw = useCallback(async () => {
+  const submit = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
@@ -106,27 +108,25 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, claim, [], signer, formatted, selectedProxy);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
         action: 'pool_withdraw_reward',
-        amount: amountToHuman(claimable, decimal),
+        amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee),
         from: { address: formatted, name },
         status,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
       history.push(info);
       setTxInfo({ ...info, api, chain });
 
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
+      saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -134,7 +134,7 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, api, claim, selectedProxy, claimable, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [formatted, selectedProxyAddress, password, api, tx, params, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -180,11 +180,12 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
             amount={
               <FormatBalance
                 api={api}
-                value={claimable} />
+                value={amount} />
             }
             fee={estimatedFee}
             label={t('Withdraw amount')}
             showDivider
+            withFee
             style={{ pt: '5px' }}
           />
           <AmountFee
@@ -192,7 +193,8 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
             amount={
               <FormatBalance
                 api={api}
-                value={claimable.add(available)} />
+                value={amount.add(available).sub(estimatedFee ?? BN_ZERO)}
+              />
             }
             label={t('Available balance after')}
             style={{ pt: '5px' }}
@@ -218,7 +220,7 @@ export default function RewardsWithdrawReview({ address, api, available, chain, 
           }}
         />
         <PButton
-          _onClick={withdraw}
+          _onClick={submit}
           disabled={!password}
           text={t<string>('Confirm')}
         />
