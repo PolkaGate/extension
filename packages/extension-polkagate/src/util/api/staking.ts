@@ -5,14 +5,12 @@ import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { MyPoolInfo, TxInfo, ValidatorsFromSubscan, Proxy } from '../plusTypes';
+import type { MyPoolInfo, Proxy, TxInfo, ValidatorsFromSubscan } from '../types';
 
 import { KeyringPair } from '@polkadot/keyring/types';
 import { BN } from '@polkadot/util';
 
-import getChainInfo from '../getChainInfo';
-import { postData } from '../postData';
-import { signAndSend } from './signAndSend';
+import { postData, signAndSend } from './';
 
 export async function getAllValidatorsFromSubscan(_chain: Chain): Promise<{ current: ValidatorsFromSubscan[] | null, waiting: ValidatorsFromSubscan[] | null } | null> {
   if (!_chain) {
@@ -150,31 +148,6 @@ export async function getStakingReward(_chain: Chain | null | undefined, _staker
       resolve(null);
     }
   });
-}
-
-export async function getCurrentEraIndex(_chain: Chain | null | undefined): Promise<number | null> {
-  try {
-    console.log('getCurrentEraIndex is called!');
-
-    if (!_chain) {
-      console.log('no _chain in getCurrentEraIndex');
-
-      return null;
-    }
-
-    const { api } = await getChainInfo(_chain);
-
-    return new Promise((resolve) => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      api.query.staking.currentEra().then((index) => {
-        resolve(Number(index));
-      });
-    });
-  } catch (error) {
-    console.log('Something went wrong while bond/nominate', error);
-
-    return null;
-  }
 }
 
 export async function bondOrBondExtra(
