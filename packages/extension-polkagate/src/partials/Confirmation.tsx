@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Divider, Grid, Link, Skeleton, Typography } from '@mui/material';
+import { Divider, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../components';
@@ -17,10 +17,12 @@ interface Props {
   txInfo: TxInfo;
   primaryBtnText: string;
   onPrimaryBtnClick: () => void;
+  secondaryBtnText?: string;
+  onSecondaryBtnClick?: () => void;
   children: React.ReactNode;
 }
 
-export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, primaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, secondaryBtnText, onSecondaryBtnClick, primaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
@@ -186,9 +188,9 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
         }
         <TwoButtons
           onPrimaryClick={onPrimaryBtnClick}
-          onSecondaryClick={goToHistory}
+          onSecondaryClick={onSecondaryBtnClick || goToHistory}
           primaryBtnText={primaryBtnText}
-          secondaryBtnText={t<string>('History')}
+          secondaryBtnText={secondaryBtnText || t<string>('History')}
         />
       </Popup>
     </Motion>
