@@ -21,7 +21,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordWithUseProxy, ShortAddress, Warning } from '../../components';
+import { AccountContext, ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordWithUseProxy, PButton, ShortAddress, Warning } from '../../components';
 import { useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -103,7 +103,7 @@ export default function Review(): React.ReactElement {
 
   const send = useCallback(async () => {
     try {
-      if (!state || !formatted ) {
+      if (!state || !formatted) {
         return;
       }
 
@@ -281,10 +281,10 @@ export default function Review(): React.ReactElement {
           width: '92%'
         }}
       />
-      <ButtonWithCancel
+      <PButton
         _onClick={send}
-        _onClickCancel={_onBackClick}
-        text={t('Send')}
+        disabled={!password}
+        text={t<string>('Send')}
       />
       <WaitScreen
         show={showWaitScreen}
