@@ -87,6 +87,12 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
   }
 
+  const goToStakingHome = useCallback(() => {
+    setShow(false);
+
+    onAction(`/pool/${address}`);
+  }, [address, onAction, setShow]);
+
   const goToMyAccounts = useCallback(() => {
     setShow(false);
 
@@ -126,8 +132,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           fee: fee || String(estimatedFee),
           from: { address: formatted, name },
           status,
-          txHash,
-          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
+          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
+          txHash
         };
 
         history.push(info);
@@ -153,8 +159,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           fee: fee || String(estimatedFee),
           from: { address: formatted, name },
           status,
-          txHash,
-          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
+          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
+          txHash
         };
 
         history.push(info);
@@ -223,6 +229,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
             showDivider
             style={{ pt: '5px' }}
             token={token}
+            withFee
           >
             <Grid container item justifyContent='center' sx={{ fontSize: '12px', textAlign: 'center', pt: '10px' }}>
               {t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } })}
@@ -270,8 +277,10 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         {txInfo && (
           <Confirmation
             headerTitle={t('Unstaking')}
-            onPrimaryBtnClick={goToMyAccounts}
-            primaryBtnText={t('My accounts')}
+            onPrimaryBtnClick={goToStakingHome}
+            primaryBtnText={t('Staking Home')}
+            onSecondaryBtnClick={goToMyAccounts}
+            secondaryBtnText={t('My Accounts')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
