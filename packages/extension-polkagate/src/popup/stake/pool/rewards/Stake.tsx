@@ -15,7 +15,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
@@ -32,13 +32,13 @@ interface Props {
   show: boolean;
   formatted: string;
   api: ApiPromise;
-  claimable: BN;
+  amount: BN;
   chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   staked: BN;
 }
 
-export default function RewardsStakeReview({ address, api, chain, claimable, formatted, setShow, show, staked }: Props): React.ReactElement {
+export default function RewardsStakeReview({ address, amount, api, chain, formatted, setShow, show, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -53,11 +53,11 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const params = useMemo(() => ['Rewards'], []);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const bondExtra = api.tx.nominationPools.bondExtra;
+  const tx = api.tx.nominationPools.bondExtra;
+  const params = useMemo(() => ['Rewards'], []);
   const decimal = api.registry.chainDecimals[0];
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
@@ -91,10 +91,10 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
   }, [proxies]);
 
   useEffect((): void => {
-    bondExtra(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [bondExtra, formatted, params]);
+    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [tx, formatted, params]);
 
-  const stake = useCallback(async () => {
+  const submit = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
@@ -107,18 +107,18 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, bondExtra, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
         action: 'pool_stake_reward',
-        amount: amountToHuman(claimable, decimal),
+        amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee),
         from: { address: formatted, name },
         status,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
@@ -133,7 +133,7 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, bondExtra, chain, claimable, decimal, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, tx, chain, amount, decimal, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -179,19 +179,21 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
             amount={
               <FormatBalance
                 api={api}
-                value={claimable} />
+                value={amount} />
             }
             fee={estimatedFee}
             label={t('Amount')}
             showDivider
             style={{ pt: '5px' }}
+            withFee
           />
           <AmountFee
             address={address}
             amount={
               <FormatBalance
                 api={api}
-                value={claimable.add(staked)} />
+                value={amount.add(staked).sub(estimatedFee ?? BN_ZERO)}
+              />
             }
             label={t('Total stake after')}
             style={{ pt: '5px' }}
@@ -217,7 +219,7 @@ export default function RewardsStakeReview({ address, api, chain, claimable, for
           }}
         />
         <PButton
-          _onClick={stake}
+          _onClick={submit}
           disabled={!password}
           text={t<string>('Confirm')}
         />
