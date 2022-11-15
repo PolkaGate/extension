@@ -29,7 +29,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
-import { useApi, useEndpoint, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
+import { useApi, useEndpoint, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
@@ -109,6 +109,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const api = useApi(address, state?.api);
+  const availableProxiesForTransfer = useProxies(api, formatted, true, ['Any']);
+  console.log('availableProxiesForTransfer:', availableProxiesForTransfer);
 
   const [price, setPrice] = useState<number | undefined>();
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
@@ -205,12 +207,15 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [address, chainName]);
 
   const goToSend = useCallback(() => {
-    // balances && 
+    if (!availableProxiesForTransfer?.length && account?.isExternal) {
+      return; // Account is external and does not have any available proxy for transfer funds
+    }
+
     history.push({
       pathname: `/send/${genesisHash}/${address}/${formatted}/`,
       state: { balances, api, price }
     });
-  }, [balances, history, genesisHash, address, formatted, api, price]);
+  }, [availableProxiesForTransfer?.length, account?.isExternal, history, genesisHash, address, formatted, balances, api, price]);
 
   const goToReceive = useCallback(() => {
     history.push({
@@ -325,7 +330,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             divider
             icon={
               <FontAwesomeIcon
-                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? 'grey' : theme.palette.mode === 'dark' ? 'white' : 'black'}
                 icon={faPaperPlane}
                 size='lg'
               />
