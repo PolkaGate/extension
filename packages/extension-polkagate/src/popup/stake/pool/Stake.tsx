@@ -52,9 +52,12 @@ export default function Stake(): React.ReactElement {
     });
   }, [address, api, availableBalance, history, pathname, poolStakingConsts]);
 
-  // const createPool = useCallback(() => {
-  //   address && onAction(`/pool/create/${address}`);
-  // }, [address, onAction]);
+  const createPool = useCallback(() => {
+    history.push({
+      pathname: `/pool/create/${address}`,
+      state: { api, availableBalance, pathname, poolStakingConsts }
+    });
+  }, [address, api, availableBalance, history, pathname, poolStakingConsts]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -121,7 +124,7 @@ export default function Stake(): React.ReactElement {
         balanceText={t<string>('Minimum to create')}
         buttonText={t<string>('Create')}
         isDisabled={createDisabled}
-        onClick={joinPool}
+        onClick={createPool}
         style={{
           m: 'auto',
           width: '92%'

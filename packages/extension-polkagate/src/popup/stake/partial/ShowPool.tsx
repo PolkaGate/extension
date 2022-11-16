@@ -16,11 +16,11 @@ interface Props {
   pool: PoolInfo;
   label: string;
   labelPosition?: 'right' | 'left' | 'center';
-  mode: 'Joining';
+  mode: 'Joining' | 'Creating';
   style?: SxProps<Theme> | undefined;
 }
 
-export default function ShowPool ({ api, label, labelPosition = 'left', mode, pool, style }: Props): React.ReactElement {
+export default function ShowPool({ api, label, labelPosition = 'left', mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const poolStaked = (points) => {
@@ -121,7 +121,7 @@ export default function ShowPool ({ api, label, labelPosition = 'left', mode, po
                 borderRightColor: 'secondary.main'
               }}
               textAlign='center'
-              width='34%'
+              width='36%'
             >
               {t<string>('Staked')}
             </Typography>
@@ -134,7 +134,7 @@ export default function ShowPool ({ api, label, labelPosition = 'left', mode, po
                 borderRightColor: 'secondary.main'
               }}
               textAlign='center'
-              width='23%'
+              width='21%'
             >
               {t<string>('Members')}
             </Typography>
@@ -174,9 +174,10 @@ export default function ShowPool ({ api, label, labelPosition = 'left', mode, po
               justifyContent='center'
               sx={{
                 borderRight: '1px solid',
-                borderRightColor: 'secondary.main'
+                borderRightColor: 'secondary.main',
+                display: 'flex'
               }}
-              width='34%'
+              width='36%'
             >
               <ShowBalance
                 api={api}
@@ -184,6 +185,11 @@ export default function ShowPool ({ api, label, labelPosition = 'left', mode, po
                 decimalPoint={4}
                 height={22}
               />
+              {mode === 'Creating' &&
+                <Typography>
+                  *
+                </Typography>
+              }
             </Grid>
             <Grid
               alignItems='center'
@@ -193,7 +199,7 @@ export default function ShowPool ({ api, label, labelPosition = 'left', mode, po
                 borderRight: '1px solid',
                 borderRightColor: 'secondary.main'
               }}
-              width='23%'
+              width='21%'
             >
               {pool.bondedPool?.memberCounter?.toString()}
             </Grid>
