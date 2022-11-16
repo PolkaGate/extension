@@ -47,6 +47,7 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
             fontSize: '18px',
             fontWeight: 400,
             height: '36px',
+            px: 0,
             textTransform: 'none',
             width: '100%'
           }}
@@ -85,6 +86,7 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
               fontSize: '18px',
               fontWeight: 400,
               height: '36px',
+              px: 0,
               textTransform: 'none',
               width: '100%'
             }}
@@ -94,6 +96,6 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
           </Button>
         }
       </Grid>
-    </Grid>
+    </Grid >
   );
 }

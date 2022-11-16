@@ -26,9 +26,10 @@ interface Props {
   showIdenticon?: boolean;
   helperText?: string;
   placeHolder?: string;
+  disabled?: boolean;
 }
 
-export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = undefined, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -85,38 +86,42 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
           <Input
             autoCapitalize='off'
             autoCorrect='off'
+            disabled={disabled}
             onBlur={_setOffFocus}
             onChange={handleAddress}
             placeholder={placeHolder}
             ref={ref}
             style={{
+              backgroundColor: disabled ? '#212121' : theme.palette.background.paper,
               borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,
               borderWidth: address !== undefined && !isValidAddress(address) ? '3px' : '1px',
               fontSize: '18px',
               fontWeight: 300,
               padding: 0,
               paddingLeft: '10px',
-              paddingRight: '30px'
+              paddingRight: disabled ? '10px' : '30px'
             }}
             theme={theme}
             type='text'
             value={address ?? ''}
             withError={offFocus && address !== undefined && !isValidAddress(address)}
           />
-          <IconButton
-            onClick={pasteAddress}
-            sx={{
-              bottom: '0',
-              position: 'absolute',
-              right: '0'
-            }}
-          >
-            <FontAwesomeIcon
-              color={theme.palette.secondary.light}
-              fontSize='15px'
-              icon={address ? faXmarkCircle : faPaste}
-            />
-          </IconButton>
+          {!disabled &&
+            <IconButton
+              onClick={pasteAddress}
+              sx={{
+                bottom: '0',
+                position: 'absolute',
+                right: '0'
+              }}
+            >
+              <FontAwesomeIcon
+                color={theme.palette.secondary.light}
+                fontSize='15px'
+                icon={address ? faXmarkCircle : faPaste}
+              />
+            </IconButton>
+          }
         </Label>
       </Grid>
       {showIdenticon &&
