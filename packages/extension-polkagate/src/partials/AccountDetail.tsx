@@ -51,8 +51,10 @@ export default function AccountDetail({ address, api, balances, chain, formatted
     ? <FormatBalance
       api={api}
       decimalPoint={2}
-      value={balances.freeBalance.add(balances.reservedBalance)} />
-    : lastBalances && <FormatBalance2
+      value={balances.freeBalance.add(balances.reservedBalance)}
+    />
+    : lastBalances &&
+    <FormatBalance2
       decimalPoint={2}
       decimals={lastBalances.decimals}
       tokens={lastBalances.tokens}
@@ -78,11 +80,13 @@ export default function AccountDetail({ address, api, balances, chain, formatted
           height={22}
           sx={{ transform: 'none', my: '2.5px' }}
           variant='text'
-          width={90} />
+          width={90}
+        />
         : <FormatPrice
           amount={balances.freeBalance.add(balances.reservedBalance)}
           decimals={decimals}
-          price={price} />
+          price={price}
+        />
       }
     </>
   );

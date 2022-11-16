@@ -7,6 +7,7 @@ import { BN } from '@polkadot/util';
 export const EXTENSION_NAME = 'Polkadot js plus ❤️';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
+export const MILLISECONDS_TO_UPDATE = 30 * 1000;
 export const PLUS_VERSION = '0.44.1.19';
 export const ENVIREONMENT = 'production'; //developement or production
 export const PREFERRED_POOL_ID_ON_WESTEND = new BN(6)
@@ -105,4 +106,4 @@ export const PASS_MAP = {
   CORRECT: 1
 };
 
-export const  DATE_OPTIONS = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+export const DATE_OPTIONS = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };

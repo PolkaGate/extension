@@ -28,6 +28,7 @@ import { getFormattedAddress, prepareMetaData } from '../util/utils';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { SettingsContext } from '.';
+import usePrice from '../hooks/usePrice';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -77,7 +78,11 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
-  const [price, setPrice] = useState<number>();
+  // const [price, setPrice] = useState<number>();
+  const price = usePrice(address);
+
+  console.log('pprice:', price);
+
   const chainName = chain?.name?.replace(' Relay Chain', '');
 
   useEffect((): void => {
@@ -102,17 +107,17 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
     return undefined;
   }, [chainName, balancesOnLocalStorage]);
 
-  useEffect(() => {
-    if (!chain) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!chain) {
+  //     return;
+  //   }
 
-    setPrice(undefined);
-    // eslint-disable-next-line no-void
-    void getPrice(chain).then((p) => {
-      setPrice(p);
-    });
-  }, [chain]);
+  //   setPrice(undefined);
+  //   // eslint-disable-next-line no-void
+  //   void getPrice(chain).then((p) => {
+  //     setPrice(p);
+  //   });
+  // }, [chain]);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -128,7 +133,7 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
     const temp = allPrices ?? {};
 
     temp[String(balances.accountId)] = { balances, decimals, price };
-    console.log({ ...temp })
+
     setAllPrices({ ...temp });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, balances, price, setAllPrices]);

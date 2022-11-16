@@ -146,7 +146,7 @@ export const accountName = (accounts: AccountJson[], address: string): string | 
 export function prepareMetaData(chain: Chain | null | string, label: string, metaData: any): string {
   const chainName = (chain as Chain)?.name?.replace(' Relay Chain', '') ?? chain;
 
-  if (label === 'balancesOnLocalStorage') {
+  if (label === 'balances') {
     const { balances, decimals, tokens } = metaData as { balances: DeriveBalancesAll, tokens: string[], decimals: number[] };
 
     metaData = {
