@@ -53,7 +53,7 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
-      style={{ position: 'relative', letterSpacing: '-0.015em' }}
+      style={{ position: 'relative', letterSpacing: '-0.015em', width: '100%' }}
       helperText={helperText}
     >
       <Input
