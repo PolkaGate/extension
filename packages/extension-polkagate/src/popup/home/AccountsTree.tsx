@@ -22,6 +22,8 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
 
+  console.log(`${account?.name}`, account);
+
   const label = useMemo(
     (): string | undefined => {
       if (account?.isHardware) {
