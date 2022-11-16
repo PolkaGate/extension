@@ -250,7 +250,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       />
       {txInfo && (
         <Confirmation
-          headerTitle={t('Unstaking')}
+          headerTitle={t('Join Pool')}
           onPrimaryBtnClick={goToMyAccounts}
           primaryBtnText={t('My accounts')}
           showConfirmation={showConfirmation}
