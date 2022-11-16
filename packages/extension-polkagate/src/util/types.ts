@@ -542,3 +542,4 @@ export interface TransferTxInfo {
 }
 
 export interface Step { current: string | number, total: string | number }
+export interface TokenPrice { [x: string]: { price: number, date: number }; }
