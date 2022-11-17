@@ -3,8 +3,6 @@
 
 import '@vaadin/icons';
 
-import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React from 'react';
@@ -12,30 +10,26 @@ import React from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import CopyAddressButton from '../components/CopyAddressButton';
-import FormatBalance from '../components/FormatBalance';
 import FormatBalance2 from '../components/FormatBalance2';
 import FormatPrice from '../components/FormatPrice';
 import { useTranslation } from '../hooks';
-import { LastBalances } from '../util/types';
+import useBalances from '../hooks/useBalances';
+import usePrice from '../hooks/usePrice';
 
 interface Props {
-  api: ApiPromise | undefined
   address: string;
   formatted: string | undefined | null;
   name: string | undefined;
   toggleVisibility: () => void;
   chain: Chain | null;
-  price: number | undefined;
-  balances: DeriveBalancesAll | undefined
   isHidden: boolean | undefined;
-  lastBalances: LastBalances | undefined
-
 }
 
-export default function AccountDetail({ address, api, balances, chain, formatted, isHidden, lastBalances, name, price, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, formatted, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const decimals = api ? api.registry.chainDecimals[0] : undefined;
+  const balances = useBalances(address);
+  const price = usePrice(address);
 
   const NoChainAlert = () => (
     <Grid
@@ -47,71 +41,50 @@ export default function AccountDetail({ address, api, balances, chain, formatted
     </Grid>
   );
 
-  const formattedBalance = (balances && api)
-    ? <FormatBalance
-      api={api}
-      decimalPoint={2}
-      value={balances.freeBalance.add(balances.reservedBalance)} />
-    : lastBalances && <FormatBalance2
-      decimalPoint={2}
-      decimals={lastBalances.decimals}
-      tokens={lastBalances.tokens}
-      value={lastBalances.freeBalance.add(lastBalances.reservedBalance)} />;
-
   const Balance = () => (
     <>
-      {!formattedBalance
-        ? <Skeleton
+      {balances?.decimal
+        ? <FormatBalance2
+          decimalPoint={2}
+          decimals={[balances.decimal]}
+          tokens={[balances.token]}
+          value={balances.freeBalance.add(balances.reservedBalance)}
+        />
+        : <Skeleton
           height={22}
           sx={{ transform: 'none', my: '2.5px' }}
           variant='text'
-          width={103} />
-        : formattedBalance
+          width={103}
+        />
       }
     </>
   );
 
   const Price = () => (
     <>
-      {price === undefined || !balances || !decimals
+      {price === undefined || !balances || balances?.token !== price?.token
         ? <Skeleton
           height={22}
           sx={{ transform: 'none', my: '2.5px' }}
           variant='text'
-          width={90} />
+          width={90}
+        />
         : <FormatPrice
           amount={balances.freeBalance.add(balances.reservedBalance)}
-          decimals={decimals}
-          price={price} />
+          decimals={balances.decimal}
+          price={price.amount}
+        />
       }
     </>
   );
 
   const BalanceRow = () => (
-    <Grid
-      container
-      fontSize='18px'
-      letterSpacing='-1.5%'
-    >
-      <Grid
-        fontWeight={500}
-        item
-      >
+    <Grid container fontSize='18px' letterSpacing='-1.5%'    >
+      <Grid fontWeight={500} item      >
         <Balance />
       </Grid>
-      <Divider
-        orientation='vertical'
-        sx={{
-          backgroundColor: 'text.primary',
-          height: '19px',
-          mx: '5px',
-          my: 'auto'
-        }}
-      />
-      <Grid
-        fontWeight={300}
-        item
-      >
+      <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
+      <Grid fontWeight={300} item      >
         <Price />
       </Grid>
     </Grid>);
@@ -143,11 +116,11 @@ export default function AccountDetail({ address, api, balances, chain, formatted
         <Grid item>
           <IconButton
             onClick={toggleVisibility}
-            sx={{ height: '15px', mt: '13px', ml: '7px', p: 0, width: '24px' }}
+            sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}
           >
             <vaadin-icon
               icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'}
-              style={{ height: '20px', color: `${theme.palette.secondary.light}` }}
+              style={{ color: `${theme.palette.secondary.light}`, height: '20px' }}
             />
           </IconButton>
         </Grid>

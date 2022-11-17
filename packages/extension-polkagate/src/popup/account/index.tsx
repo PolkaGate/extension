@@ -110,7 +110,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const api = useApi(address, state?.api);
   const availableProxiesForTransfer = useProxies(api, formatted, true, ['Any']);
-  console.log('availableProxiesForTransfer:', availableProxiesForTransfer);
 
   const [price, setPrice] = useState<number | undefined>();
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);

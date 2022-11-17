@@ -542,3 +542,20 @@ export interface TransferTxInfo {
 }
 
 export interface Step { current: string | number, total: string | number }
+export interface TokenPrice {
+  [chainName: string]: Price;
+}
+export interface Price {
+  amount: number;
+  date?: number;
+  token: string;
+}
+
+export interface SavedBalances {
+  [chainName: string]: {
+    balances: Record<string, string>;
+    decimal: number;
+    token: string;
+    date: number;
+  }
+}

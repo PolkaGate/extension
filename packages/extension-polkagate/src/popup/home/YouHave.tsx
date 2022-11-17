@@ -2,34 +2,45 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Skeleton, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 
+import { BN } from '@polkadot/util';
+
+import { AccountContext } from '../../components';
 import FormatPrice from '../../components/FormatPrice';
 import useTranslation from '../../hooks/useTranslation';
-import { AddressPriceAll } from '../../util/types';
+import { SavedBalances, TokenPrice } from '../../util/types';
 
-interface Props {
-  allPrices: AddressPriceAll[] | undefined;
-}
-
-export default function YouHave({ allPrices }: Props): React.ReactElement {
+export default function YouHave(): React.ReactElement {
   const { t } = useTranslation();
-  const [price, setPrice] = useState<number>();
+  const { accounts } = useContext(AccountContext);
 
-  useEffect(() => {
-    if (!allPrices) {
-      return;
+  const allYouHaveAmount = useMemo((): number | undefined => {
+    if (!accounts) {
+      return undefined;
     }
 
-    let price = 0;
+    let value = 0;
 
-    Object.entries(allPrices).forEach((p) => {
-      const t = Number(p[1].balances.freeBalance.add(p[1].balances.reservedBalance));
+    accounts.forEach((acc) => {
+      if (!acc?.balances || !acc?.price) {
+        return;
+      }
 
-      price += (t * 10 ** -p[1].decimals) * p[1].price;
+      const prices = JSON.parse(acc.price) as TokenPrice;
+      const balances = JSON.parse(acc.balances) as SavedBalances;
+
+      Object.keys(prices).map((chainName) => {
+        if (balances[chainName] && prices[chainName]?.amount && balances[chainName].token === prices[chainName].token) {
+          const total = new BN(balances[chainName].balances.freeBalance).add(new BN(balances[chainName].balances.reservedBalance));
+
+          value += prices[chainName].amount * (Number(total) * 10 ** -balances[chainName].decimal);
+        }
+      });
     });
-    setPrice(price);
-  }, [allPrices]);
+
+    return value;
+  }, [accounts]);
 
   return (
     <Grid
@@ -56,14 +67,14 @@ export default function YouHave({ allPrices }: Props): React.ReactElement {
         <Typography
           sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}
         >
-          {price === undefined
+          {allYouHaveAmount === undefined
             ? <Skeleton
               height={38}
               sx={{ transform: 'none' }}
               variant='text'
               width={223}
             />
-            : <FormatPrice num={price} />
+            : <FormatPrice num={allYouHaveAmount} />
           }
         </Typography>
       </Grid>
