@@ -36,7 +36,7 @@ function nFormatter(num: number, digits: number) {
   return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
 }
 
-function FormatPrice({ num, amount, decimalPoint = 2, decimals, price }: Props): React.ReactElement<Props> {
+function FormatPrice({ amount, decimalPoint = 2, decimals, num, price }: Props): React.ReactElement<Props> {
   const total = num ?? (amount.toNumber() * 10 ** -decimals) * price;
 
   return (

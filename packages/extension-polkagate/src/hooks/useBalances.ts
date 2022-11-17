@@ -5,11 +5,12 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { useContext, useEffect, useState } from 'react';
 
+import { BN } from '@polkadot/util';
+
 import { AccountContext } from '../components';
 import { updateMeta } from '../messaging';
 import { MILLISECONDS_TO_UPDATE } from '../util/constants';
-import { TokenPrice } from '../util/types';
-import { prepareMetaData } from '../util/utils';
+import { SavedBalances } from '../util/types';
 import { useApi, useChain, useFormatted } from '.';
 
 export default function useBalances(address: string): DeriveBalancesAll | undefined {
@@ -20,49 +21,76 @@ export default function useBalances(address: string): DeriveBalancesAll | undefi
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const chainName = chain && chain.name.replace(' Relay Chain', '').toLocaleLowerCase();
+  const token = api && api.registry.chainTokens[0];
+  const decimal = api && api.registry.chainDecimals[0];
 
   useEffect(() => {
     // isChainApi(chain, api)
-    api && formatted && api.derive.balances?.all(formatted).then(setNewBalances).catch(console.error);
-  }, [api, formatted]);
+    api && formatted && api.derive.balances?.all(formatted).then((b) => {
+      b['token'] = token;
+      b['decimal'] = decimal;
+      b['chainName'] = chainName;
+
+      setNewBalances(b);
+    }).catch(console.error);
+  }, [api, chainName, decimal, formatted, token]);
 
   useEffect(() => {
-    if (!api || !newBalances) {
+    if (!api || !newBalances || !chainName || !token || !decimal) {
       return;
     }
 
-    // const savedBalances = JSON.parse(accounts?.find((acc) => acc.address === address)?.balances ?? '{}') as TokenPrice;
+    const savedBalances = JSON.parse(accounts?.find((acc) => acc.address === address)?.balances ?? '{}') as SavedBalances;
 
-    updateMeta(address,
-      prepareMetaData(
-        chain,
-        'balances',
-        {
-          balances,
-          decimals: api.registry.chainDecimals,
-          tokens: api.registry.chainTokens,
-          date: Date.now()
-        }))
-      .catch(console.error);
+    const balances = {
+      availableBalance: newBalances.availableBalance.toString(),
+      freeBalance: newBalances.freeBalance.toString(),
+      frozenFee: newBalances.frozenFee.toString(),
+      frozenMisc: newBalances.frozenMisc.toString(),
+      lockedBalance: newBalances.lockedBalance.toString(),
+      reservedBalance: newBalances.reservedBalance.toString(),
+      vestedBalance: newBalances.vestedBalance.toString(),
+      vestedClaimable: newBalances.vestedClaimable.toString(),
+      votingBalance: newBalances.votingBalance.toString()
+    };
 
+    savedBalances[chainName] = { balances, date: Date.now(), decimal, token };
+    const metaData = JSON.stringify({ ['balances']: JSON.stringify(savedBalances) });
+
+    updateMeta(address, metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts?.length, address, api, chain, newBalances]);
+  }, [accounts?.length, address, api, chain, chainName, newBalances]);
 
   useEffect(() => {
-    if (!chainName) {
+    if (!chainName || !accounts) {
       return;
     }
 
-    const savedBalances = JSON.parse(accounts?.find((acc) => acc.address === address)?.balances ?? '{}') as TokenPrice;
+    const savedBalances = JSON.parse(accounts.find((acc) => acc.address === address)?.balances ?? '{}') as SavedBalances;
 
-    if (savedBalances?.chainName === chainName) {
-      const balances = JSON.parse(savedBalances.metadata);
+    if (savedBalances[chainName]) {
+      const sb = savedBalances[chainName].balances;
 
-      if (Date.now() - balances.date < MILLISECONDS_TO_UPDATE) {
-        setBalances(savedPrice[chainName].price);
-      }
+      // if (Date.now() - sb.date < MILLISECONDS_TO_UPDATE) {
+      const lastBalances = {
+        availableBalance: new BN(sb.availableBalance),
+        chainName,
+        decimal: savedBalances[chainName].decimal,
+        freeBalance: new BN(sb.freeBalance),
+        frozenFee: new BN(sb.frozenFee),
+        frozenMisc: new BN(sb.frozenMisc),
+        lockedBalance: new BN(sb.lockedBalance),
+        reservedBalance: new BN(sb.reservedBalance),
+        token: savedBalances[chainName].token,
+        vestedBalance: new BN(sb.vestedBalance),
+        vestedClaimable: new BN(sb.vestedClaimable),
+        votingBalance: new BN(sb.votingBalance)
+      };
+
+      setBalances(lastBalances);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, address, chainName]);
 
   return newBalances ?? balances;

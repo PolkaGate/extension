@@ -9,20 +9,15 @@ import React, { useMemo } from 'react';
 import AccountPreview from '../../components/AccountPreview';
 import { useTranslation } from '../../hooks';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import { AddressPriceAll } from '../../util/types';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
-  setAllPrices: React.Dispatch<React.SetStateAction<AddressPriceAll[] | undefined>>
-  allPrices: AddressPriceAll[] | undefined;
 }
 
-export default function AccountsTree({ allPrices, parentName, setAllPrices, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree({ parentName, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
-
-  console.log(`${account?.name}`, account);
 
   const label = useMemo(
     (): string | undefined => {
@@ -62,9 +57,7 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
         </Grid>
         <AccountPreview
           {...account}
-          allPrices={allPrices}
           parentName={parentName}
-          setAllPrices={setAllPrices}
           suri={suri}
         />
       </Container>
@@ -72,9 +65,7 @@ export default function AccountsTree({ allPrices, parentName, setAllPrices, suri
         <AccountsTree
           key={`${index}:${child.address}`}
           {...child}
-          allPrices={allPrices}
           parentName={account.name}
-          setAllPrices={setAllPrices}
         />
       ))}
     </>

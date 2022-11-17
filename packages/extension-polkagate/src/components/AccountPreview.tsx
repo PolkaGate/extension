@@ -18,17 +18,16 @@ import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { useApi, useChain, useEndpoint, useMetadata, useProxies, useTranslation } from '../hooks';
+import { useApi, useChain, useProxies, useTranslation } from '../hooks';
+import usePrice from '../hooks/usePrice';
 import { showAccount, updateMeta } from '../messaging';
 import { AccMenu } from '../partials';
 import AccountDetail from '../partials/AccountDetail';
-import { getPrice } from '../util/api/getPrice';
 import { AddressPriceAll, LastBalances, SavedMetaData } from '../util/types';
 import { getFormattedAddress, prepareMetaData } from '../util/utils';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { SettingsContext } from '.';
-import usePrice from '../hooks/usePrice';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -43,30 +42,12 @@ export interface Props {
   suri?: string;
   toggleActions?: number;
   type?: KeypairType;
-  setAllPrices: React.Dispatch<React.SetStateAction<AddressPriceAll[] | undefined>>;
-  allPrices: AddressPriceAll[] | undefined;
   balancesOnLocalStorage?: string;
 }
 
 const isChainApi = (chain: Chain | null, api: ApiPromise | undefined) => (chain?.genesisHash && api?.genesisHash && chain.genesisHash === api.genesisHash?.toString());
 
-const prepareLastBalance = ({ availableBalance, decimals, freeBalance, frozenFee, frozenMisc, lockedBalance, reservedBalance, tokens, vestedBalance, vestedClaimable, votingBalance }): LastBalances => {
-  return {
-    availableBalance: new BN(availableBalance),
-    decimals,
-    tokens,
-    freeBalance: new BN(freeBalance),
-    reservedBalance: new BN(reservedBalance),
-    frozenMisc: new BN(frozenMisc),
-    frozenFee: new BN(frozenFee),
-    lockedBalance: new BN(lockedBalance),
-    vestedBalance: new BN(vestedBalance),
-    vestedClaimable: new BN(vestedClaimable),
-    votingBalance: new BN(votingBalance)
-  };
-};
-
-export default function AccountPreview({ address, allPrices, genesisHash, isExternal, isHardware, isHidden, name, setAllPrices, toggleActions, balancesOnLocalStorage, type }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, isExternal, isHardware, isHidden, name, toggleActions, type }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
   const settings = useContext(SettingsContext);
@@ -78,65 +59,11 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
-  // const [price, setPrice] = useState<number>();
-  const price = usePrice(address);
-
-  console.log('pprice:', price);
-
-  const chainName = chain?.name?.replace(' Relay Chain', '');
-
-  useEffect((): void => {
-    if (balances && chain && api) {
-      // eslint-disable-next-line no-void
-      void updateMeta(address, prepareMetaData(chain, 'balancesOnLocalStorage', { balances, decimals: api.registry.chainDecimals, tokens: api.registry.chainTokens }));
-    }
-  }, [address, balances, chain, api]);
-
-  const lastBalances = useMemo((): LastBalances | undefined => {
-    if (!balancesOnLocalStorage) {
-      return;
-    }
-
-    /** read balances saved in local storage */
-    const parsedLastBalances = JSON.parse(balancesOnLocalStorage) as SavedMetaData;
-
-    if (parsedLastBalances.chainName === chainName) {
-      return prepareLastBalance(parsedLastBalances.metaData);
-    }
-
-    return undefined;
-  }, [chainName, balancesOnLocalStorage]);
-
-  // useEffect(() => {
-  //   if (!chain) {
-  //     return;
-  //   }
-
-  //   setPrice(undefined);
-  //   // eslint-disable-next-line no-void
-  //   void getPrice(chain).then((p) => {
-  //     setPrice(p);
-  //   });
-  // }, [chain]);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
     api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
   }, [api, formatted]);
-
-  useEffect((): void => {
-    if (balances === undefined || price === undefined || !api) {
-      return;
-    }
-
-    const decimals = api.registry.chainDecimals[0];
-    const temp = allPrices ?? {};
-
-    temp[String(balances.accountId)] = { balances, decimals, price };
-
-    setAllPrices({ ...temp });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, balances, price, setAllPrices]);
 
   useEffect((): void => {
     if (address && chain && settings?.prefix) {
@@ -230,14 +157,10 @@ export default function AccountPreview({ address, allPrices, genesisHash, isExte
       />
       <AccountDetail
         address={address}
-        api={api}
-        balances={balances}
         chain={chain}
         formatted={formatted}
         isHidden={isHidden}
-        lastBalances={lastBalances}
         name={name}
-        price={price}
         toggleVisibility={_toggleVisibility}
       />
       <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} />

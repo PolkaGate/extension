@@ -29,7 +29,6 @@ export default function Home({ className }: Props): React.ReactElement {
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
   const networkMap = useMemo(() => getNetworkMap(), []);
-  const [allPrices, setAllPrices] = useState<AddressPriceAll[] | undefined>();
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -89,7 +88,7 @@ export default function Home({ className }: Props): React.ReactElement {
                 text={t<string>('Polkagate')}
               />
             </Grid>
-            <YouHave allPrices={allPrices} />
+            <YouHave  />
             <Container
               disableGutters
               sx={[{
@@ -114,9 +113,7 @@ export default function Home({ className }: Props): React.ReactElement {
               {sortedAccount.map((json, index): React.ReactNode => (
                 <AccountsTree
                   {...json}
-                  allPrices={allPrices}
                   key={`${index}:${json.address}`}
-                  setAllPrices={setAllPrices}
                 />
               ))}
             </Container>
