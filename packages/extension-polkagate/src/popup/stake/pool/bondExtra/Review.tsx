@@ -3,7 +3,7 @@
 
 /**
  * @description
- * this component opens create pool review page
+ * this component opens bondExtra review page
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
@@ -15,29 +15,28 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
-import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
-import { createPool } from '../../../../util/api';
-import { PoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
+import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
+import { broadcast } from '../../../../util/api';
+import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import ShowPool from '../../partial/ShowPool';
-import CreatePoolTxDetail from './partial/CreatePoolTxDetail';
+import BondExtraTxDetail from './partial/BondExtraTxDetail';
 
 interface Props {
   api: ApiPromise;
   address: string;
   showReview: boolean;
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
-  createAmount: BN;
+  bondAmount?: BN;
   estimatedFee?: Balance;
-  poolToCreate: PoolInfo;
+  myPool: MyPoolInfo;
 }
 
-export default function Review({ address, api, createAmount, estimatedFee, poolToCreate, setShowReview, showReview = false }: Props): React.ReactElement {
+export default function Review({ address, api, bondAmount, estimatedFee, myPool, setShowReview, showReview }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -47,8 +46,6 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const name = useAccountName(address);
   const proxies = useProxies(api, address);
   const decimals = api.registry.chainDecimals[0];
-
-  const create = api.tx.nominationPools.create;
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
@@ -61,14 +58,13 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const poolTotalStaked = new BN(myPool.stashIdAccount?.stakingLedger?.active?.toString());
+
+  const bondExtra = api.tx.nominationPools.bondExtra;
 
   const _onBackClick = useCallback(() => {
     setShowReview(!showReview);
   }, [setShowReview, showReview]);
-
-  const goToMyAccounts = useCallback(() => { //TODO ADD SELECT VALIDATORS URL
-    onAction('/');
-  }, [onAction]);
 
   const goToStakingHome = useCallback(() => {
     onAction(`pool/stake/${address}`);
@@ -92,16 +88,10 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
     updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
   }
 
-  useEffect(() => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
-
-  const goCreatePool = useCallback(async () => {
+  const BondExtra = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
-    if (!formatted || !create) {
+    if (!formatted || !bondExtra) {
       return;
     }
 
@@ -111,14 +101,13 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      // const params = [surAmount, rootId, nominatorId, stateTogglerId];
-      const nextPoolId = poolToCreate.poolId.toNumber();
+      const params = [{ FreeBalance: bondAmount }];
 
-      const { block, failureText, fee, status, txHash } = await createPool(api, address, signer, createAmount, nextPoolId, poolToCreate.bondedPool?.roles, poolToCreate.metadata ?? '', selectedProxy);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, bondExtra, params, signer, address, selectedProxy);
 
       const info = {
-        action: 'pool_create',
-        amount: amountToHuman(createAmount?.toString(), decimals),
+        action: 'pool_bondExtra',
+        amount: amountToHuman(bondAmount?.toString(), decimals),
         block,
         date: Date.now(),
         failureText,
@@ -141,7 +130,13 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, chain, create, createAmount, decimals, estimatedFee, formatted, hierarchy, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [address, api, bondAmount, bondExtra, chain, decimals, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+
+  useEffect(() => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
 
   useEffect(() => {
     setConfirmBtnDisabled(!password && !isPasswordError);
@@ -155,16 +150,10 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Create Pool')}
+          text={t<string>('Staking')}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -177,62 +166,40 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         }
         <SubTitle
           label={t<string>('Review')}
-          withSteps={{ current: 2, total: 2 }}
         />
-        {/* <AccountHolderWithProxy address={formatted} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} /> */}
-        {selectedProxyAddress &&
-          <>
-            <ThroughProxy
-              address={selectedProxyAddress}
-              style={{
-                pt: '10px'
-              }}
+        <AccountHolderWithProxy address={address} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} />
+        <AmountFee
+          address={address}
+          amount={
+            <FormatBalance
+              api={api}
+              value={bondAmount}
             />
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-          </>
-        }
-        <Grid
-          container
-          justifyContent='center'
-          pt='5px'
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
-            {t<string>('Fee:')}
-          </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
-            <FormatBalance api={api} decimalPoint={4} value={estimatedFee} />
-          </Grid>
+          }
+          fee={estimatedFee}
+          label={t('Amount')}
+          showDivider
+          style={{ pt: '5px' }}
+          withFee
+        />
+        <Typography fontSize='16px' fontWeight={300} lineHeight='30px' textAlign='center'>
+          {t<string>('Pool')}
+        </Typography>
+        <Grid fontSize='28px' fontWeight={400} textAlign='center' maxWidth='90%' m='auto' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+          {myPool?.metadata}
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-        <ShowPool
-          api={api}
-          label={t<string>('Pool')}
-          labelPosition='center'
-          mode='Creating'
-          pool={poolToCreate}
-          style={{
-            m: '8px auto 0',
-            width: '92%'
-          }}
+        <AmountFee
+          address={address}
+          amount={
+            <FormatBalance
+              api={api}
+              value={bondAmount?.add(poolTotalStaked)}
+            />
+          }
+          label={t('Total stake')}
+          style={{ pt: '2px' }}
         />
-        <Typography
-          fontSize='12px'
-          fontWeight={300}
-          sx={{
-            m: '20px auto 0',
-            width: '90%'
-          }}
-        >
-          {t<string>('* 0.0100 WND will be bonded in Reward Id, and will be returned back when unbound all.')}
-        </Typography>
         <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}
@@ -253,27 +220,26 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           }}
         />
         <PButton
-          _onClick={goCreatePool}
+          _onClick={BondExtra}
           disabled={confirmBtnDisabled}
           text={t<string>('Confirm')}
         />
       </Popup>
       <WaitScreen
         show={showWaitScreen}
-        title={t('Create Pool')}
+        title={t('Staking')}
       />
-      {txInfo && (
-        <Confirmation
-          headerTitle={t('Create Pool')}
-          onPrimaryBtnClick={goToMyAccounts}
-          primaryBtnText={t<string>('Select Validators')}
-          secondaryBtnText={t<string>('Staking Home')}
-          onSecondaryBtnClick={goToStakingHome}
-          showConfirmation={showConfirmation}
-          txInfo={txInfo}
-        >
-          <CreatePoolTxDetail pool={poolToCreate} txInfo={txInfo} />
-        </Confirmation>)
+      {
+        txInfo && (
+          <Confirmation
+            headerTitle={t('Pool Staking')}
+            onPrimaryBtnClick={goToStakingHome}
+            primaryBtnText={t('Staking Home')}
+            showConfirmation={showConfirmation}
+            txInfo={txInfo}
+          >
+            <BondExtraTxDetail pool={myPool} txInfo={txInfo} />
+          </Confirmation>)
       }
     </>
   );

@@ -77,7 +77,7 @@ export default function Index(): React.ReactElement {
   const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
   const nominatedValidatorsId: AccountId[] | undefined | null = pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators;
-  
+
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
@@ -160,6 +160,10 @@ export default function Index(): React.ReactElement {
   }, [address, chain?.genesisHash, onAction]);
 
   const goToStake = useCallback(() => {
+    // history.push({
+    //   pathname: `/pool/bondExtra/${address}`,
+    //   state: { api, consts, pool, pathname, stakingConsts }
+    // });
     history.push({
       pathname: `/pool/stake/${address}`,
       state: { api, balances, consts, pool, pathname, stakingConsts }

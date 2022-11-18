@@ -56,14 +56,14 @@ export default function CreatePool(): React.ReactElement {
 
   const backToStake = useCallback(() => {
     history.push({
-      pathname: `/ pool / stake / ${address} `,
+      pathname: `/pool/stake/${address}`,
       state: { ...state }
     });
   }, [address, history, state]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${ decimals } `);
+      console.log(`The amount digits is more than decimal:${decimals}`);
 
       return;
     }
@@ -108,16 +108,17 @@ export default function CreatePool(): React.ReactElement {
         },
         state: 'Creating'
       },
-      metadata: poolName ?? null,
+      metadata: poolName ?? DEFAULT_POOLNAME,
       poolId: poolStakingConsts?.lastPoolId?.addn(1),
       rewardPool: null
     });
     setShowReview(!showReview);
-  }, [amountAsBN, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, showReview, stateTogglerId]);
+  }, [DEFAULT_POOLNAME, amountAsBN, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, showReview, stateTogglerId]);
 
   useEffect(() => {
     !nominatorId && formatted && setNominatorId(formatted);
     !stateTogglerId && formatted && setStateTogglerId(formatted);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted]);
 
   useEffect(() => {
@@ -128,7 +129,7 @@ export default function CreatePool(): React.ReactElement {
     const goTo = !(formatted && nominatorId && stateTogglerId && createAmount);
     const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minCreationBond);
 
-    setToReviewDisabled(goTo || isAmountInRange || !poolName);
+    setToReviewDisabled(goTo || isAmountInRange);
   }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolName, poolStakingConsts?.minCreationBond, stateTogglerId]);
 
   useEffect(() => {

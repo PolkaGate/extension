@@ -54,6 +54,7 @@ import Signing from './Signing';
 import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/joinPool/JoinPool';
 import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/Stake';
 import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/createPool/CreatePool';
+import BondExtra from '../../../extension-polkagate/src/popup/stake/pool/bondExtra/BondExtra';
 
 const startSettings = uiSettings.get();
 
@@ -172,6 +173,7 @@ export default function Popup(): React.ReactElement {
                           {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
                           <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route>
                           <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
+                          <Route path='/pool/bondExtra/:address'>{wrapWithErrorBoundary(<BondExtra />, 'pool-bondExtra')}</Route>
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
                           <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                           <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
