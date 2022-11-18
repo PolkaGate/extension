@@ -28,45 +28,32 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
+  const [newNominatorId, setNewNominatorId] = useState<string | undefined>(formatted);
+  const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(formatted);
 
   const allAddresses = getAllAddressess(hierarchy, true, true, chain?.ss58Format, address);
 
   const closeMenu = useCallback(() => {
-    if (!formatted) {
+    setShow(!show);
+  }, [setShow, show]);
+
+  const onUpdateRoles = useCallback(() => {
+    if (!newNominatorId || !newStateTogglerId) {
       return;
     }
 
-    !nominatorId && setNominatorId(formatted);
-    !stateTogglerId && setStateTogglerId(formatted);
+    setNominatorId(newNominatorId);
+    setStateTogglerId(newStateTogglerId);
     setShow(!show);
-  }, [formatted, nominatorId, setNominatorId, setShow, setStateTogglerId, show, stateTogglerId]);
-
-  const onUpdateRoles = useCallback(() => {
-    nominatorId && stateTogglerId && setShow(!show);
-  }, [nominatorId, setShow, show, stateTogglerId]);
+  }, [newNominatorId, newStateTogglerId, setNominatorId, setShow, setStateTogglerId, show]);
 
   useEffect(() => {
     setUpdateBtnDisable(!(stateTogglerId && nominatorId));
   }, [nominatorId, stateTogglerId]);
 
   const movingParts = (
-    <Grid
-      alignItems='flex-start'
-      bgcolor='background.default'
-      container
-      display='block'
-      item
-      mt='46px'
-      px='10px'
-      sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }}
-      width='100%'
-    >
-      <Grid
-        container
-        justifyContent='center'
-        my='20px'
-        mb='0'
-      >
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='10px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+      <Grid container justifyContent='center' mb='0' my='20px'>
         <Typography
           fontSize='20px'
           fontWeight={400}
@@ -76,11 +63,11 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px', m: '30px auto 5px', width: '80%' }} />
       </Grid>
       <InputWithLabelAndIdenticon
-        address={nominatorId}
+        address={newNominatorId}
         allAddresses={allAddresses}
         chain={chain}
         label={'Nominator'}
-        setAddress={setNominatorId}
+        setAddress={setNewNominatorId}
         showIdenticon
         style={{
           m: '15px auto 0',
@@ -88,11 +75,11 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
         }}
       />
       <InputWithLabelAndIdenticon
-        address={stateTogglerId}
+        address={newStateTogglerId}
         allAddresses={allAddresses}
         chain={chain}
         label={'State toggler'}
-        setAddress={setStateTogglerId}
+        setAddress={setNewStateTogglerId}
         showIdenticon
         style={{
           m: '15px auto 0',
@@ -120,26 +107,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   );
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      ref={containerRef}
-      sx={[{
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        },
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        top: 0
-      }]}
-      width='357px'
-      zIndex={10}
-    >
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, mixBlendMode: 'normal', overflowY: 'scroll', position: 'fixed', scrollbarWidth: 'none', top: 0 }]} width='357px' zIndex={10}>
       <Slide
         container={containerRef.current}
         direction='up'
