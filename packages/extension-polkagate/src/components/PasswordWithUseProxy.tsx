@@ -10,7 +10,6 @@ import { useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
 import { Proxy, ProxyItem } from '../util/types';
 import { Identity, Password } from './';
-import { getSubstrateAddress } from '../util/utils';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -64,7 +63,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
       <Grid alignItems='center' container sx={{ ...style }}>
         <Grid
           item
-          xs={proxies?.length ? 9 : 12}
+          xs={proxies?.length ? 8 : 12}
         >
           <Password
             defaultValue={defaultValue}
@@ -131,7 +130,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
               pt='10px'
               sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}
             >
-              {t('Use proxy')}
+              {selectedProxy ? t('Update proxy') : t('Use proxy')}
             </Grid>
           </Tooltip>
         }
