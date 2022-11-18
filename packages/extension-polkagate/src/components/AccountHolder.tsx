@@ -10,9 +10,10 @@ import { Identity, ShortAddress } from '.';
 interface Props {
   address: string;
   style?: SxProps<Theme> | undefined;
+  title?: string;
 }
 
-function AccountHolder({ address, style }: Props): React.ReactElement {
+function AccountHolder({ address, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 
@@ -22,21 +23,24 @@ function AccountHolder({ address, style }: Props): React.ReactElement {
       container
       direction='column'
       justifyContent='center'
+      py='5px'
       sx={style}
     >
       <Typography
         fontSize='16px'
         fontWeight={300}
+        height='18px'
         textAlign='center'
       >
-        {t<string>('Account holder')}
+        {title ?? t<string>('Account holder')}
       </Typography>
       <Identity
         address={address}
         identiconSize={31}
         style={{
-          minWidth: '35%',
+          height: '38px',
           maxWidth: '100%',
+          minWidth: '35%',
           width: 'fit-content'
         }}
       />
