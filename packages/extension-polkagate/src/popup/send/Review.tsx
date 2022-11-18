@@ -251,7 +251,7 @@ export default function Review(): React.ReactElement {
           marginTop={15}
           theme={theme}
         >
-          {t('This an Address Only account. You must use a proxy to complete this transaction.')}
+          {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
         </Warning>
       }
       <PasswordWithUseProxy
