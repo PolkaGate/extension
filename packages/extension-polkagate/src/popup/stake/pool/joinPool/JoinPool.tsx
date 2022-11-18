@@ -31,13 +31,13 @@ export default function JoinPool(): React.ReactElement {
 
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
-  const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const formatted = useFormatted(address);
   const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
   const pools = usePools(address);
-
+  
+  const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
@@ -135,7 +135,6 @@ export default function JoinPool(): React.ReactElement {
 
     const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
 
-    console.log('selectedPool && stakeAmount && stakeAmount !== 0 && !isAmountGreaterThanAllTransferAble:', selectedPool && stakeAmount && stakeAmount !== '0' && !isAmountInRange)
     setNextBtnDisabled(!(selectedPool && stakeAmount && stakeAmount !== '0' && !isAmountInRange));
   }, [amountAsBN, availableBalance, decimals, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
