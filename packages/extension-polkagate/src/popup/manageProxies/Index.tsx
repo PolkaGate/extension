@@ -123,6 +123,7 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       <HeaderBrand
         onBackClick={showAddProxy ? _openAddProxy : _onBackClick}
         showBackArrow
+        showClose
         text={showAddProxy ? t<string>('Add Proxy') : t<string>('Manage Proxies')}
       />
       {!showAddProxy && !showReviewProxy &&

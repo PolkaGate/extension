@@ -39,7 +39,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(true);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
-  const [showConfimation, setShowConfimation] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
   const theme = useTheme();
@@ -57,7 +57,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const batchAll = api.tx.utility.batchAll;
 
   const goToMyAccounts = useCallback(() => {
-    setShowConfimation(false);
+    setShowConfirmation(false);
     setShowWaitScreen(false);
     onAction('/');
   }, [onAction]);
@@ -124,7 +124,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       // eslint-disable-next-line no-void
       // void saveHistory(chain, hierarchy, formatted, history);
       setShowWaitScreen(false);
-      setShowConfimation(true);
+      setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
@@ -268,14 +268,14 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       <PasswordWithUseProxy
         api={api}
         genesisHash={account?.genesisHash}
+        isPasswordError={isPasswordError}
         label={`${t<string>('Password')} for ${selectedProxyName || account?.name}`}
         onChange={setPassword}
         proxiedAddress={address}
         proxies={proxies}
-        setIsPasswordError={setIsPasswordError}
-        isPasswordError={isPasswordError}
         proxyTypeFilter={['Any']}
         selectedProxy={selectedProxy}
+        setIsPasswordError={setIsPasswordError}
         setSelectedProxy={setSelectedProxy}
         style={{
           bottom: '80px',
@@ -295,7 +295,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           headerTitle={t<string>('Manage Proxies')}
           onPrimaryBtnClick={goToMyAccounts}
           primaryBtnText={t<string>('My accounts')}
-          showConfirmation={showConfimation}
+          showConfirmation={showConfirmation}
           txInfo={txInfo}
         >
           <ManageProxiesTxDetail
