@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountContext } from '../components';
 import { updateMeta } from '../messaging';
@@ -16,8 +16,13 @@ export default function usePrice(address: string): Price | undefined {
   const [newPrice, setNewPrice] = useState<Price | undefined>();
   const api = useApi(address);
   const chain = useChain(address);
-  const chainName = chain && chain.name.replace(' Relay Chain', '').toLocaleLowerCase();
+  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
   const token = api && api.registry.chainTokens[0];
+
+  const savedPrice = useMemo(() =>
+    accounts && JSON.parse(accounts.find((acc) => acc.address === address)?.price ?? '{}') as TokenPrice
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  , [accounts?.length, address]);
 
   useEffect(() => {
     if (!chain || !token || !chainName) {
@@ -30,34 +35,28 @@ export default function usePrice(address: string): Price | undefined {
   }, [chain, chainName, token]);
 
   useEffect(() => {
-    if (newPrice === undefined || !chainName) {
+    if (newPrice === undefined || !chainName || !savedPrice) {
       return;
     }
-
-    const savedPrice = JSON.parse(accounts?.find((acc) => acc.address === address)?.price ?? '{}') as TokenPrice;
 
     savedPrice[chainName] = { ...newPrice, date: Date.now() };
 
     const metaData = JSON.stringify({ ['price']: JSON.stringify(savedPrice) });
 
     updateMeta(address, metaData).catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts?.length, address, api, chain, newPrice]);
+  }, [address, api, chain, chainName, newPrice, savedPrice]);
 
   useEffect(() => {
-    if (!chainName) {
+    if (!chainName || !savedPrice) {
       return;
     }
 
-    const savedPrice = JSON.parse(accounts?.find((acc) => acc.address === address)?.price ?? '{}') as TokenPrice;
-
-    if (savedPrice[chainName]) {
-      if (Date.now() - savedPrice[chainName]?.date < MILLISECONDS_TO_UPDATE) {
-        setPrice({ chainName, amount: savedPrice[chainName].amount, token: savedPrice[chainName].token });
+    if (savedPrice[chainName]?.date) {
+      if (Date.now() - savedPrice[chainName].date < MILLISECONDS_TO_UPDATE) {
+        setPrice({ amount: savedPrice[chainName].amount, chainName, token: savedPrice[chainName].token });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts?.length, address, chainName]);
+  }, [address, chainName, savedPrice]);
 
   return newPrice ?? price;
 }

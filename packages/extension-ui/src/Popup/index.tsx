@@ -44,6 +44,7 @@ import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Staking from '../../../extension-polkagate/src/popup/stake';
 import Pool from '../../../extension-polkagate/src/popup/stake/pool';
 import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
+import PoolNominations from '../../../extension-polkagate/src/popup/stake/pool/nominations';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { ErrorBoundary } from '../components';
@@ -177,6 +178,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
                           <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                           <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
+                          <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
                           <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                           <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                           <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

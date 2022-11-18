@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AccountContext } from '../components';
 
 function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | undefined {
-  return accounts.find(({ address }): boolean =>
+  return accounts.find(({ address }) =>
     address === _address
   ) || undefined;
 }

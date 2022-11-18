@@ -7,8 +7,8 @@ import React from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
-import { ChainLogo, Identicon } from '.';
 import { getSubstrateAddress } from '../util/utils';
+import { ChainLogo, Identicon, ShortAddress } from '.';
 
 interface Props {
   address?: string;
@@ -18,9 +18,10 @@ interface Props {
   showChainLogo?: boolean;
   identiconSize?: number;
   chain?: Chain;
+  showShortAddress?: boolean;
 }
 
-function Identity({ address, chain, formatted, identiconSize = 40, name, showChainLogo = false, style }: Props): React.ReactElement<Props> {
+function Identity({ address, chain, formatted, identiconSize = 40, name, showChainLogo = false, showShortAddress, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -50,22 +51,17 @@ function Identity({ address, chain, formatted, identiconSize = 40, name, showCha
             value={_formatted}
           />
         </Grid>
-        <Grid
-          item
-          maxWidth={'82%'}
-        >
-          <Typography
-            fontSize={style?.fontSize ?? '28px'}
-            fontWeight={400}
-            overflow='hidden'
-            textOverflow='ellipsis'
-            whiteSpace='nowrap'
-          >
-            {name || accountName || t<string>('unknown')}
-          </Typography>
+        <Grid item maxWidth={'82%'} sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {name || accountName || (!showShortAddress && t<string>('unknown'))}
         </Grid>
+        {!(name || accountName) && showShortAddress &&
+          <Grid item maxWidth={'82%'} sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <ShortAddress address={_formatted} />
+          </Grid>
+        }
       </Grid>
-      {showChainLogo &&
+      {
+        showChainLogo &&
         <Grid
           item
         >

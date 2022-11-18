@@ -30,13 +30,7 @@ export default function Index(): React.ReactElement {
   const nominatorInfo = useNominator(address);
 
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
-  const [validatorsInfo, setValidatorsInfo] = useState<Validators | undefined>(); // validatorsInfo is all validators (current and waiting) information
-  const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
-  const [gettingNominatedValidatorsInfoFromChain, setGettingNominatedValidatorsInfoFromChain] = useState<boolean>(true);
-  const [validatorsInfoIsUpdated, setValidatorsInfoIsUpdated] = useState<boolean>(false);
-  const [validatorsIdentitiesIsFetched, setValidatorsIdentitiesIsFetched] = useState<boolean>(false);
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
-  const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
 
   const onBackClick = useCallback(() => {
     const url = api?.genesisHash ? `/account/${api.genesisHash}/${address}/` : '/';

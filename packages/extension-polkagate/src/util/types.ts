@@ -546,6 +546,7 @@ export interface TokenPrice {
   [chainName: string]: Price;
 }
 export interface Price {
+  chainName?: string;
   amount: number;
   date?: number;
   token: string;

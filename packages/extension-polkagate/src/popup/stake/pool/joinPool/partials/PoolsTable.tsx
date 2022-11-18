@@ -65,14 +65,14 @@ export default function PoolsTable({ api, label, pools, selected, setSelected, s
   };
 
   const Div = () => (
-    <Grid alignItems='center' item justifyContent='center'    >
+    <Grid alignItems='center' item justifyContent='center' >
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 5px', width: '1px' }} />
     </Grid>
   );
 
   return (
     <Grid sx={{ ...style }}>
-      <Label label={label} style={{ position: 'relative' }}        >
+      <Label label={label} style={{ position: 'relative' }} >
         <Grid container direction='column' ref={ref} sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight / 2.4, minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}          >
           {pools
             ? pools.length

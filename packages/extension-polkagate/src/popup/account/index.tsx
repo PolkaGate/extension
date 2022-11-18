@@ -117,7 +117,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
 
-  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '');
+  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');;
   const decimal = api && api.registry.chainDecimals[0];
   const token = api && api.registry.chainTokens[0];
 
