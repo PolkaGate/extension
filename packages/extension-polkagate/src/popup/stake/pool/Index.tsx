@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
-import type { AccountId32 } from '@polkadot/types/interfaces';
+import type { AccountId, AccountId32 } from '@polkadot/types/interfaces';
 import type { MembersMapEntry, MyPoolInfo, NominatorInfo } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
@@ -21,7 +21,7 @@ import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/type
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
-import { useApi, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
+import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
 import { getValue } from '../../account/util';
@@ -67,22 +67,19 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const endpoint = useEndpoint2(address);
-  const api = useApi(address);
+  const api = useApi(address, state?.api);
   const pool = usePool(address);
-  // const pools = usePools(address);
-  const validatorsInfo = useValidators(address);
+  const validators = useValidators(address);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
+  const balances = useBalances(address);
 
-  const myPool = pool as MyPoolInfo | undefined | null;
-  const nominatedValidatorsId: string[] | undefined | null = myPool === null || myPool?.stashIdAccount?.nominators?.length === 0 ? null : myPool?.stashIdAccount?.nominators;
-  const staked = myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0);
-  const claimable = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.myClaimable ?? 0), [myPool]);
-
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(api || state?.api || state?.apiToUse);
+  const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
+  const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
+  const nominatedValidatorsId: AccountId[] | undefined | null = pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators;
+  
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
@@ -109,10 +106,6 @@ export default function Index(): React.ReactElement {
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
   useEffect(() => {
-    api && !apiToUse && setApiToUse(api);
-  }, [api, apiToUse]);
-
-  useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
       setSessionInfo({
         currentEra: Number(sessionInfo.currentEra),
@@ -122,22 +115,14 @@ export default function Index(): React.ReactElement {
     });
   }, [api]);
 
-  useEffect(() => {
-    // eslint-disable-next-line no-void
-    endpoint && apiToUse && void apiToUse.derive.balances?.all(formatted).then((b) => {
-      setBalances(b);
-    });
-  }, [apiToUse, formatted, endpoint]);
-
   useEffect((): void => {
-    // eslint-disable-next-line no-void
-    api && void api.query.staking.currentEra().then((ce) => {
+    api && api.query.staking.currentEra().then((ce) => {
       setCurrentEraIndex(Number(ce));
     });
   }, [api]);
 
   useEffect(() => {
-    if (myPool === undefined || !api || !currentEraIndex || !sessionInfo) {
+    if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
       return;
     }
 
@@ -145,8 +130,8 @@ export default function Index(): React.ReactElement {
     let redeemValue = BN_ZERO;
     const toBeReleased = [];
 
-    if (myPool !== null && myPool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
-      for (const [era, unbondingPoint] of Object.entries(myPool.member?.unbondingEras)) {
+    if (pool !== null && pool.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool===null
+      for (const [era, unbondingPoint] of Object.entries(pool.member?.unbondingEras)) {
         const remainingEras = Number(era) - currentEraIndex;
 
         if (remainingEras < 0) {
@@ -166,15 +151,7 @@ export default function Index(): React.ReactElement {
     setToBeReleased(toBeReleased);
     setRedeemable(redeemValue);
     setUnlockingAmount(unlockingValue);
-  }, [myPool, api, currentEraIndex, sessionInfo]);
-
-  useEffect(() => {
-    if (!stakingConsts || !nominatorInfo?.minNominated) { return; }
-
-    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), new BN(nominatorInfo.minNominated.toString()));
-
-    setMinToReceiveRewardsInSolo(minSolo);
-  }, [nominatorInfo?.minNominated, stakingConsts]);
+  }, [pool, api, currentEraIndex, sessionInfo]);
 
   const onBackClick = useCallback(() => {
     const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
@@ -185,16 +162,23 @@ export default function Index(): React.ReactElement {
   const goToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,
-      state: { api, balances, consts, myPool, pathname, stakingConsts }
+      state: { api, balances, consts, pool, pathname, stakingConsts }
     });
-  }, [address, api, balances, consts, history, myPool, pathname, stakingConsts]);
+  }, [address, api, balances, consts, history, pool, pathname, stakingConsts]);
 
   const goToUnstake = useCallback(() => {
     history.push({
       pathname: `/pool/unstake/${address}`,
-      state: { api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount, stakingConsts }
+      state: { api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts }
     });
-  }, [history, address, api, balances, claimable, consts, myPool, pathname, redeemable, unlockingAmount, stakingConsts]);
+  }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
+
+  const goToNominations = useCallback(() => {
+    history.push({
+      pathname: `/pool/nominations/${address}`,
+      state: { api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts }
+    });
+  }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
 
   const goToInfo = useCallback(() => {
     setShowInfo(true);
@@ -240,7 +224,7 @@ export default function Index(): React.ReactElement {
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
               <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
-                <ShowBalance api={apiToUse} balance={value} decimalPoint={2} />
+                <ShowBalance api={api} balance={value} decimalPoint={2} />
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
@@ -361,7 +345,7 @@ export default function Index(): React.ReactElement {
             divider
             exceptionWidth={30}
             icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
-            onClick={goToInfo}
+            onClick={goToNominations}
             title={t<string>('Validators')}
           />
           <HorizontalMenuItem
@@ -377,7 +361,7 @@ export default function Index(): React.ReactElement {
           />
         </Grid>
       </Container>
-      <Info api={apiToUse} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
+      <Info api={api} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
       {showRewardStake && formatted && api && claimable && staked && chain &&
         <RewardsStakeReview
           address={address}
