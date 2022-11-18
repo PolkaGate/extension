@@ -12,26 +12,42 @@ interface Props {
   showDivider?: boolean;
   style?: SxProps<Theme> | undefined;
   selectedProxyAddress?: string;
+  title?: string;
 }
 
-function AccountHolderWithProxy({ address, selectedProxyAddress, showDivider = false, style }: Props): React.ReactElement {
+function AccountHolderWithProxy({ address, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
   return (
     <Grid
       alignItems='center'
       container
       direction='column'
       justifyContent='center'
-      sx={{ fontWeight: 300, letterSpacing: '-0.015em', pt: '5px', ...style }}
+      sx={{
+        fontWeight: 300,
+        letterSpacing: '-0.015em',
+        pt: '5px',
+        ...style
+      }}
     >
-      <AccountHolder address={address} />
+      <AccountHolder
+        address={address}
+        title={title}
+      />
       {selectedProxyAddress &&
         <ThroughProxy
           address={selectedProxyAddress}
-          style={{ pt: '15px' }}
+          style={{ pt: '10px', pb: '5px' }}
         />
       }
       {showDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
+        <Divider
+          sx={{
+            bgcolor: 'secondary.main',
+            height: '2px',
+            mt: '5px',
+            width: '240px'
+          }}
+        />
       }
     </Grid>
   );

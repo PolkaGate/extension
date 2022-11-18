@@ -25,7 +25,7 @@ function Label({ children, helperText = '', label, style }: Props): React.ReactE
 
   return (
     <div
-      style={{ textAlign: 'left', ...style }}
+      style={{ fontSize: '14px', textAlign: 'left', ...style }}
     >
       <Grid ref={ref} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content', maxWidth: '100%' }}>
         {label}
