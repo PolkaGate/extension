@@ -154,6 +154,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           onBackClick={_onBackClick}
           shortBorder
           showBackArrow
+          showClose
           text={t<string>('Create Pool')}
         />
         {isPasswordError &&
