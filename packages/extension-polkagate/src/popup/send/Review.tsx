@@ -21,10 +21,11 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordWithUseProxy, PButton, ShortAddress, Warning } from '../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordWithUseProxy, PButton, ShortAddress, Warning } from '../../components';
 import { useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
+import SubTitle from '../../partials/SubTitle';
 import ThroughProxy from '../../partials/ThroughProxy';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
@@ -32,7 +33,6 @@ import getLogo from '../../util/getLogo';
 import { FormattedAddressState, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
-import SubTitle from '../../partials/SubTitle';
 
 type TransferType = 'All' | 'Max' | 'Normal';
 
@@ -54,17 +54,17 @@ export default function Review(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<LocationState>();
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
-
-  const proxies = useProxies(state.api, formatted);
+  const proxies = useProxies(state?.api, formatted);
+  const theme = useTheme();
+  const history = useHistory();
+  const onAction = useContext(ActionContext);
+  const chain = useMetadata(genesisHash, true);
+  const { accounts } = useContext(AccountContext);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
-
-  const history = useHistory();
-  const onAction = useContext(ActionContext);
-  const chain = useMetadata(genesisHash, true);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
@@ -72,11 +72,9 @@ export default function Review(): React.ReactElement {
   const prevUrl = `/send/${genesisHash}/${address}/${formatted}/`;
   const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
   const token = state?.api?.registry?.chainTokens[0] ?? '';
-
-  const { accounts } = useContext(AccountContext);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const theme = useTheme();
+  const needsWarning = useMemo(() => accounts?.find((a) => a.address === address && a.isExternal) && !selectedProxyAddress, [accounts, address, selectedProxyAddress]);
 
   const goToMyAccounts = useCallback(() => {
     onAction('/');
@@ -231,39 +229,33 @@ export default function Review(): React.ReactElement {
       }
       <SubTitle label={t('Review')} />
       <Container disableGutters sx={{ px: '30px' }}>
-        <Info data1={state?.accountName} data2={formatted} label={t('From')} pt1={selectedProxyAddress ? 0 : 20} showIdenticon showProxy />
-        <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
-        <Info
-          data1={
-            <Grid alignItems='center' container item>
-              <Grid item>
-                {ChainLogo}
-              </Grid>
-              {state &&
-                <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-                  {state?.amount} {token}
-                </Grid>
-              }
-            </Grid>
-          }
-          label={t('Amount')}
-          noDivider
-          pt2={0}
+        <AccountHolderWithProxy
+          address={address}
+          selectedProxyAddress={selectedProxyAddress}
+          showDivider
+          title={t('From')}
         />
-        <Info
-          data1={
-            state?.api && <FormatBalance api={state?.api} decimalPoint={2} value={state?.fee} />
-          }
-          fontSize1={20}
-          label={t('Fee')}
-          mb={0}
-          noDivider
-          pt1={0}
-          pt2={0}
+        <Info data1={state?.recipientName} data2={state?.recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
+        <AmountFee
+          address={address}
+          amount={state?.amount}
+          fee={state?.fee}
+          label={t('Amount')}
+          token={token}
+          withFee
         />
       </Container>
+      {needsWarning &&
+        <Warning
+          fontWeight={400}
+          marginTop={15}
+          theme={theme}
+        >
+          {t('This an Address Only account. You must use a proxy to complete this transaction.')}
+        </Warning>
+      }
       <PasswordWithUseProxy
-        api={state.api}
+        api={state?.api}
         genesisHash={genesisHash}
         isPasswordError={isPasswordError}
         label={`${t<string>('Password')} for ${selectedProxyName || state?.accountName}`}

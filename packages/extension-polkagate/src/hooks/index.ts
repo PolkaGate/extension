@@ -4,6 +4,7 @@
 export { default as useAccount } from './useAccount';
 export { default as useAccountName } from './useAccountName';
 export { default as useApi } from './useApi';
+export { default as useBalances } from './useBalances';
 export { default as useChain } from './useChain';
 export { default as useEndpoint2 } from './useEndpoint2';
 export { useEndpoint } from './useEndpoint';
@@ -16,6 +17,7 @@ export { useMapEntries } from './useMapEntries';
 export { default as useMetadata } from './useMetadata';
 export { default as useNominator } from './useNominator';
 export { default as useOutsideClick } from './useOutsideClick';
+export { default as usePrice } from './usePrice';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
 export { default as usePools } from './usePools';
