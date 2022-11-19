@@ -74,68 +74,66 @@ export default function ValidatorsTable({ allValidatorsInfo, api, chain, selecte
   return (
     <Grid sx={{ ...style }}>
       <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight - 200, minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
-        {selectedValidatorsInfo?.map((v: ValidatorInfo, index: number) => {
-
-          return (
-            <Grid container item key={index} sx={{
-              // bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent',
-              borderBottom: '1px solid',
-              borderBottomColor: 'secondary.main',
-              // opacity: unableToJoinPools(pool) ? 0.7 : 1
-            }}
-            >
-              <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='92%'>
-                <Grid container item lineHeight='30px'>
-                  {/* <Grid item width='22px'> */}
-                  {/* <Select index={index} pool={pool} /> */}
-                  {/* </Grid>  */}
-                  <Grid fontSize='12px' item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' xs>
-                    <Identity
-                      api={api}
-                      chain={chain}
-                      formatted={String(v.accountId)}
-                      identiconSize={24}
-                      showShortAddress
-                      style={{ fontSize: '12px' }} />
-                  </Grid>
-                </Grid>
-                <Grid container item>
-                  <Grid alignItems='center' container item maxWidth='50%' width='fit-content' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }}>
-                    {t<string>('Staked:')}
-                    <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                      {v.exposure.total
-                        ? <ShowBalance
-                          api={api}
-                          balance={v.exposure.total}
-                          decimalPoint={0}
-                          height={22}
-                        />
-                        : t('waiting')
-                      }
-                    </Grid>
-                  </Grid>
-                  <Div />
-                  <Grid alignItems='center' container item width='fit-content' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }}>
-                    {t<string>('Com.')}
-                    <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                      {Number(v.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(v.validatorPrefs.commission) / (10 ** 7)}%
-                    </Grid>
-                  </Grid>
-                  <Div />
-                  <Grid alignItems='end' container item width='fit-content' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }}>
-                    {t<string>('Nominators:')}
-                    <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                      {v.exposure.others.length || t('N/A')}
-                    </Grid>
-                  </Grid>
+        {selectedValidatorsInfo?.map((v: ValidatorInfo, index: number) => (
+          <Grid container item key={index} sx={{
+            // bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent',
+            borderBottom: '1px solid',
+            borderBottomColor: 'secondary.main',
+            // opacity: unableToJoinPools(pool) ? 0.7 : 1
+          }}
+          >
+            <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='92%'>
+              <Grid container item lineHeight='30px'>
+                {/* <Grid item width='22px'> */}
+                {/* <Select index={index} pool={pool} /> */}
+                {/* </Grid>  */}
+                <Grid fontSize='12px' item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' xs>
+                  <Identity
+                    api={api}
+                    chain={chain}
+                    formatted={String(v.accountId)}
+                    identiconSize={24}
+                    showShortAddress
+                    style={{ fontSize: '12px' }} />
                 </Grid>
               </Grid>
-              <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer' }} width='8%'>
-                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+              <Grid container item>
+                <Grid alignItems='center' container item maxWidth='50%' width='fit-content' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }}>
+                  {t<string>('Staked:')}
+                  <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                    {v.exposure.total
+                      ? <ShowBalance
+                        api={api}
+                        balance={v.exposure.total}
+                        decimalPoint={0}
+                        height={22}
+                        skeletonWidth={50}
+                      />
+                      : t('waiting')
+                    }
+                  </Grid>
+                </Grid>
+                <Div />
+                <Grid alignItems='center' container item width='fit-content' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }}>
+                  {t<string>('Com.')}
+                  <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                    {Number(v.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(v.validatorPrefs.commission) / (10 ** 7)}%
+                  </Grid>
+                </Grid>
+                <Div />
+                <Grid alignItems='end' container item width='fit-content' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }}>
+                  {t<string>('Nominators:')}
+                  <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                    {v.exposure.others.length || t('N/A')}
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
-          );
-        })}
+            <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer' }} width='8%'>
+              <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+            </Grid>
+          </Grid>
+        ))}
       </Grid>
     </Grid>
   );

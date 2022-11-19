@@ -72,7 +72,7 @@ export default function ManageProxiesTxDetail({ address, api, chain, deposit, na
                 >
                   <ShortAddress
                     address={proxy.proxy.delegate}
-                    addressStyle={{ fontSize: '16px' }}
+                    style={{ fontSize: '16px' }}
                     inParentheses
                   />
                 </Grid>)

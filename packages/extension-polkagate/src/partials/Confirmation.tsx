@@ -167,7 +167,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
             >
               <ShortAddress
                 address={txInfo.txHash}
-                addressStyle={{ fontSize: '16px' }}
+                style={{ fontSize: '16px' }}
                 charsCount={6}
                 showCopy
               />

@@ -14,13 +14,13 @@ import CopyAddressButton from './CopyAddressButton';
 interface Props {
   address: string | AccountId | undefined;
   charsCount?: number;
-  addressStyle?: SxProps<Theme> | undefined;
+  style?: SxProps<Theme> | undefined;
   showCopy?: boolean;
   inParentheses?: boolean;
   clipped?: boolean;
 }
 
-function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, addressStyle, showCopy = false, inParentheses = false }: Props): React.ReactElement {
+function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(1);
   const pRef = useRef(null);
   const cRef = useRef(null);
@@ -38,19 +38,8 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
   }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
 
   return (
-    <Grid
-      alignItems='center'
-      container
-      justifyContent='center'
-      ref={pRef}
-      sx={{ ...addressStyle }}
-      width='100%'
-    >
-      <Grid
-        item
-        ref={cRef}
-        width='fit-content'
-      >
+    <Grid lignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
+      <Grid item ref={cRef} width='fit-content' >
         {inParentheses ? '(' : ''}
         {!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
         {inParentheses ? ')' : ''}

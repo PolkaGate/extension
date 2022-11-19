@@ -3,18 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import { Email as EmailIcon, LaunchRounded as LaunchRoundedIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Box, Grid, Link, SxProps, Theme } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
+import { riot } from '../assets/icons';
 import { useAccountName, useChain, useFormatted, useIdentity, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';
 import { ChainLogo, Identicon, ShortAddress } from '.';
-import { grey } from '@mui/material/colors';
-import { riot } from '../assets/icons';
 
 interface Props {
   address?: string;
@@ -66,8 +68,8 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
           }
           {!(identity?.identity?.displayParent || identity?.identity?.display || identity?.nickname || name || accountName) &&
             <Grid item sx={{ textAlign: 'letf' }}>
-              {identity?.accountId && showShortAddress
-                ? <ShortAddress address={String(identity?.accountId)} fontSize={11} />
+              {showShortAddress
+                ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
                 : t('Unknown')
               }
             </Grid>
@@ -83,9 +85,9 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
               </Grid>
             }
             {identity?.identity?.web &&
-              <Grid item>
+              <Grid item pb='5px'>
                 <Link href={identity?.identity.web} rel='noreferrer' target='_blank'>
-                  <LaunchRoundedIcon sx={{ color: '#007CC4', fontSize: 15 }} />
+                  <vaadin-icon icon='vaadin:globe-wire' style={{ height: '15px', color: '#007CC4' }} />
                 </Link>
               </Grid>
             }

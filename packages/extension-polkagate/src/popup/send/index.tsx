@@ -229,7 +229,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           {accountName}
         </Grid>
         <Grid item>
-          <ShortAddress address={formatted} addressStyle={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', pt: '5px' }} />
+          <ShortAddress address={formatted} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', pt: '5px' }} />
         </Grid>
       </Grid>
     </>

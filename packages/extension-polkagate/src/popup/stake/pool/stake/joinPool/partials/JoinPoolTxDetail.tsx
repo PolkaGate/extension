@@ -58,7 +58,7 @@ export default function JoinPoolTxDetail({ pool, txInfo }: Props): React.ReactEl
         >
           <ShortAddress
             address={txInfo.from.address}
-            addressStyle={{ fontSize: '16px' }}
+            style={{ fontSize: '16px' }}
             inParentheses
           />
         </Grid>

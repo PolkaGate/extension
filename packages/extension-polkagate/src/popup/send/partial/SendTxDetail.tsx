@@ -57,7 +57,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
         >
           <ShortAddress
             address={txInfo.from.address}
-            addressStyle={{ fontSize: '16px' }}
+            style={{ fontSize: '16px' }}
             inParentheses
           />
         </Grid>
@@ -111,7 +111,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
         >
           <ShortAddress
             address={txInfo.to.address}
-            addressStyle={{ fontSize: '16px' }}
+            style={{ fontSize: '16px' }}
             inParentheses
             showCopy
           />
