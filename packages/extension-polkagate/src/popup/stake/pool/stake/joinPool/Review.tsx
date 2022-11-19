@@ -172,7 +172,13 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
         <SubTitle
           label={t<string>('Review')}
         />
-        <AccountHolderWithProxy address={address} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} />
+        <AccountHolderWithProxy
+          address={address}
+          chain={chain}
+          selectedProxyAddress={selectedProxyAddress}
+          showDivider
+          style={{ m: 'auto', width: '90%' }}
+        />
         <Typography
           fontSize='16px'
           fontWeight={300}

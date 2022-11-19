@@ -167,7 +167,13 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         <SubTitle
           label={t<string>('Review')}
         />
-        <AccountHolderWithProxy address={address} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} />
+        <AccountHolderWithProxy
+          address={address}
+          chain={chain}
+          selectedProxyAddress={selectedProxyAddress}
+          showDivider
+          style={{ m: 'auto', width: '90%' }
+          } />
         <AmountFee
           address={address}
           amount={

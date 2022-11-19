@@ -231,6 +231,7 @@ export default function Review(): React.ReactElement {
       <Container disableGutters sx={{ px: '30px' }}>
         <AccountHolderWithProxy
           address={address}
+          chain={chain}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           title={t('From')}
