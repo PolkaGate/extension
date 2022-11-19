@@ -185,7 +185,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
               ? (
                 <ShortAddress
                   address={formatted || address}
-                  addressStyle={{
+                  style={{
                     fontSize: '10px',
                     fontWeight: 300,
                     justifyContent: 'space-between',

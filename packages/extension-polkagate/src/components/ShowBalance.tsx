@@ -22,9 +22,10 @@ export interface Props {
   direction?: ResponsiveStyleValue<GridDirection> | undefined;
   decimalPoint?: number;
   height?: number;
+  skeletonWidth?: number;
 }
 
-export default function ShowBalance({ api, balance, decimalPoint, height = 20 }: Props): React.ReactElement<Props> {
+export default function ShowBalance({ api, balance, decimalPoint, height = 20, skeletonWidth = 90 }: Props): React.ReactElement<Props> {
   return (
     <>
       {balance !== undefined && api
@@ -34,7 +35,7 @@ export default function ShowBalance({ api, balance, decimalPoint, height = 20 }:
           value={balance} />
         : <Skeleton
           height={height}
-          sx={{ display: 'inline-block', transform: 'none', width: '90px' }}
+          sx={{ display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
         />
       }
     </>

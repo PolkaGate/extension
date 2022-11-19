@@ -47,7 +47,7 @@ export default function AccountBrief({ accountName, address, formatted, isHidden
           </IconButton>
         </span>
       </Grid>
-      <ShortAddress address={formatted} addressStyle={{ fontSize: '10px', fontWeight: 300, letterSpacing: '-0.015em' }} charsCount={0} showCopy />
+      <ShortAddress address={formatted} style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '-0.015em' }} charsCount={0} showCopy />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '10px' }} />
     </>
   );
