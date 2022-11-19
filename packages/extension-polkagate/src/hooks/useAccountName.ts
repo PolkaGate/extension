@@ -6,6 +6,7 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { useContext, useEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
+import { getSubstrateAddress } from '../util/utils';
 
 function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | undefined {
   return accounts.find(({ address }): boolean =>
@@ -19,10 +20,17 @@ export default function useAccountName(address: string | undefined): string | un
 
   useEffect((): void => {
     if (!address) {
-      setName(undefined);
+      return undefined;
     }
 
-    const acc = findAccountByAddress(accounts, address);
+    /** address can be a formatted address hence needs to find its substrate format first */
+    const sAddr = getSubstrateAddress(address);
+
+    if (!sAddr) {
+      return undefined;
+    }
+
+    const acc = findAccountByAddress(accounts, sAddr);
 
     setName(acc?.name);
   }, [accounts, address]);

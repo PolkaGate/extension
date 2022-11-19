@@ -4,6 +4,8 @@
 import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
+import { Chain } from '@polkadot/extension-chains/types';
+
 import ThroughProxy from '../partials/ThroughProxy';
 import { AccountHolder } from '.';
 
@@ -13,9 +15,10 @@ interface Props {
   style?: SxProps<Theme> | undefined;
   selectedProxyAddress?: string;
   title?: string;
+  chain: Chain | null;
 }
 
-function AccountHolderWithProxy({ address, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
+function AccountHolderWithProxy({ address, chain, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
   return (
     <Grid
       alignItems='center'
@@ -36,7 +39,8 @@ function AccountHolderWithProxy({ address, selectedProxyAddress, showDivider = f
       {selectedProxyAddress &&
         <ThroughProxy
           address={selectedProxyAddress}
-          style={{ pt: '10px', pb: '5px' }}
+          chain={chain}
+          style={{ pb: '5px', pt: '10px' }}
         />
       }
       {showDivider &&
