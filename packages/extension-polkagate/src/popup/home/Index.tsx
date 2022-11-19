@@ -13,7 +13,6 @@ import { AccountContext } from '../../components';
 import { useTranslation } from '../../hooks';
 import HeaderBrand from '../../partials/HeaderBrand';
 import getNetworkMap from '../../util/getNetworkMap';
-import { AddressPriceAll } from '../../util/types';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import YouHave from './YouHave';
@@ -88,7 +87,7 @@ export default function Home({ className }: Props): React.ReactElement {
                 text={t<string>('Polkagate')}
               />
             </Grid>
-            <YouHave  />
+            <YouHave />
             <Container
               disableGutters
               sx={[{
