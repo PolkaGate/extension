@@ -1,17 +1,16 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, AmountWithOptions, PButton } from '../../../../components';
-import { useAccount, useApi, useBalances, useFormatted, usePool, useTranslation } from '../../../../hooks';
+import { useAccount, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { MyPoolInfo } from '../../../../util/types';
@@ -20,21 +19,18 @@ import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
 import Review from './Review';
 
-interface State {
+interface Props {
   api?: ApiPromise;
-  pool: MyPoolInfo;
+  address: string;
+  balances?: DeriveBalancesAll | undefined;
+  formatted?: string;
+  myPool: MyPoolInfo;
 }
 
-export default function BondExtra(): React.ReactElement {
+export default function BondExtra({ address, api, balances, formatted, myPool }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { address } = useParams<{ address: string }>();
   const account = useAccount(address);
-  const { state } = useLocation<State>();
-  const formatted = useFormatted(address);
-  const api = useApi(address, state?.api);
-  const myPool = usePool(address, undefined, state?.pool);
-  const balances = useBalances(address);
 
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [bondAmount, setBondAmount] = useState<string | undefined>();
