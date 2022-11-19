@@ -4,6 +4,7 @@
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { ThemeProps } from '../types';
 
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -17,19 +18,36 @@ interface Props {
   prefix?: number;
   value?: string | null;
   size?: number;
+  judgement?: RegExpMatchArray | null | undefined
 }
 
-function Identicon({ className, iconTheme, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+function Identicon({ className, iconTheme, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
   return (
-    <div className={className}>
-      <Icon
-        className='icon'
-        onCopy={onCopy}
-        prefix={prefix}
-        size={size}
-        theme={iconTheme}
-        value={value}
-      />
+    <div style={{ position: 'relative' }}>
+      <div className={className}>
+        <Icon
+          className='icon'
+          onCopy={onCopy}
+          prefix={prefix}
+          size={size}
+          theme={iconTheme}
+          value={value}
+        />
+      </div>
+      {judgement?.length &&
+        <CheckCircleOutlineIcon
+          sx={{
+            bgcolor: 'success.main',
+            borderRadius: '50%',
+            color: 'white',
+            // stroke: 'white',
+            fontSize: 10,
+            left: '15px',
+            position: 'absolute',
+            top: 0
+          }}
+        />
+      }
     </div>
   );
 }
