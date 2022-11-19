@@ -6,9 +6,9 @@ import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/mat
 import { Chain } from '@substrate/connect';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { AccountContext, InputWithLabelAndIdenticon, PButton } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
-import getAllAddressess from '../../../../util/getAllAddresses';
+import { AccountContext, InputWithLabelAndIdenticon, PButton } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
+import getAllAddressess from '../../../../../util/getAllAddresses';
 
 interface Props {
   address: string;

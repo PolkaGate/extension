@@ -3,7 +3,7 @@
 
 /**
  * @description
- * this component opens join pool review page
+ * this component opens create pool review page
  * */
 
 import type { Balance } from '@polkadot/types/interfaces';
@@ -15,29 +15,29 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolder, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
-import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
-import { broadcast } from '../../../../util/api';
-import { PoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import ShowPool from '../../partial/ShowPool';
-import JoinPoolTxDetail from './partials/JoinPoolTxDetail';
+import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../../components';
+import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { updateMeta } from '../../../../../messaging';
+import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
+import { createPool } from '../../../../../util/api';
+import { PoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import ShowPool from '../../../partial/ShowPool';
+import CreatePoolTxDetail from './partial/CreatePoolTxDetail';
 
 interface Props {
   api: ApiPromise;
   address: string;
   showReview: boolean;
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
-  joinAmount?: BN;
+  createAmount: BN;
   estimatedFee?: Balance;
-  poolToJoin: PoolInfo;
+  poolToCreate: PoolInfo;
 }
 
-export default function Review({ address, api, estimatedFee, joinAmount, poolToJoin, setShowReview, showReview = false }: Props): React.ReactElement {
+export default function Review({ address, api, createAmount, estimatedFee, poolToCreate, setShowReview, showReview = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -48,7 +48,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   const proxies = useProxies(api, address);
   const decimals = api.registry.chainDecimals[0];
 
-  const joined = api.tx.nominationPools.join; // (amount, poolId)
+  const create = api.tx.nominationPools.create;
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
@@ -66,9 +66,13 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
     setShowReview(!showReview);
   }, [setShowReview, showReview]);
 
-  const goToMyAccounts = useCallback(() => {
+  const goToMyAccounts = useCallback(() => { //TODO ADD SELECT VALIDATORS URL
     onAction('/');
   }, [onAction]);
+
+  const goToStakingHome = useCallback(() => {
+    onAction(`pool/stake/${address}`);
+  }, [address, onAction]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -88,10 +92,16 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
     updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
   }
 
-  const joinPool = useCallback(async () => {
+  useEffect(() => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
+
+  const goCreatePool = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
-    if (!formatted || !joined) {
+    if (!formatted || !create) {
       return;
     }
 
@@ -101,13 +111,14 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const params = [joinAmount, poolToJoin.poolId];
+      // const params = [surAmount, rootId, nominatorId, stateTogglerId];
+      const nextPoolId = poolToCreate.poolId.toNumber();
 
-      const { block, failureText, status, txHash } = await broadcast(api, joined, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, status, txHash } = await createPool(api, address, signer, createAmount, nextPoolId, poolToCreate.bondedPool?.roles, poolToCreate.metadata ?? '', selectedProxy);
 
       const info = {
-        action: 'pool_join',
-        amount: amountToHuman(joinAmount?.toString(), decimals),
+        action: 'pool_create',
+        amount: amountToHuman(createAmount?.toString(), decimals),
         block,
         date: Date.now(),
         failureText,
@@ -130,13 +141,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, decimals, estimatedFee, formatted, hierarchy, joinAmount, joined, name, password, poolToJoin.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
-
-  useEffect(() => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
+  }, [address, api, chain, create, createAmount, decimals, estimatedFee, formatted, hierarchy, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     setConfirmBtnDisabled(!password && !isPasswordError);
@@ -149,7 +154,8 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           onBackClick={_onBackClick}
           shortBorder
           showBackArrow
-          text={t<string>('Join Pool')}
+          showClose
+          text={t<string>('Create Pool')}
         />
         {isPasswordError &&
           <Grid
@@ -171,26 +177,24 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
         }
         <SubTitle
           label={t<string>('Review')}
+          withSteps={{ current: 2, total: 2 }}
         />
-        <AccountHolderWithProxy address={address} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} />
-        <Typography
-          fontSize='16px'
-          fontWeight={300}
-          textAlign='center'
-        >
-          {t<string>('Amount')}
-        </Typography>
-        <Grid alignItems='center' container item justifyContent='center' >
-          <Grid item>
-            <ChainLogo genesisHash={chain?.genesisHash} />
-          </Grid>
-          <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-            <FormatBalance api={api} decimalPoint={2} value={joinAmount} />
-          </Grid>
-        </Grid>
+        {/* <AccountHolderWithProxy address={formatted} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} /> */}
+        {selectedProxyAddress &&
+          <>
+            <ThroughProxy
+              address={selectedProxyAddress}
+              style={{
+                pt: '10px'
+              }}
+            />
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+          </>
+        }
         <Grid
           container
           justifyContent='center'
+          pt='5px'
         >
           <Typography
             fontSize='14px'
@@ -212,13 +216,23 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           api={api}
           label={t<string>('Pool')}
           labelPosition='center'
-          mode='Joining'
-          pool={poolToJoin}
+          mode='Creating'
+          pool={poolToCreate}
           style={{
             m: '8px auto 0',
             width: '92%'
           }}
         />
+        <Typography
+          fontSize='12px'
+          fontWeight={300}
+          sx={{
+            m: '20px auto 0',
+            width: '90%'
+          }}
+        >
+          {t<string>('* 0.0100 WND will be bonded in Reward Id, and will be returned back when unbound all.')}
+        </Typography>
         <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}
@@ -239,24 +253,26 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           }}
         />
         <PButton
-          _onClick={joinPool}
+          _onClick={goCreatePool}
           disabled={confirmBtnDisabled}
           text={t<string>('Confirm')}
         />
       </Popup>
       <WaitScreen
         show={showWaitScreen}
-        title={t('Join Pool')}
+        title={t('Create Pool')}
       />
       {txInfo && (
         <Confirmation
-          headerTitle={t('Join Pool')}
+          headerTitle={t('Create Pool')}
           onPrimaryBtnClick={goToMyAccounts}
-          primaryBtnText={t('My accounts')}
+          primaryBtnText={t<string>('Select Validators')}
+          secondaryBtnText={t<string>('Staking Home')}
+          onSecondaryBtnClick={goToStakingHome}
           showConfirmation={showConfirmation}
           txInfo={txInfo}
         >
-          <JoinPoolTxDetail pool={poolToJoin} txInfo={txInfo} />
+          <CreatePoolTxDetail pool={poolToCreate} txInfo={txInfo} />
         </Confirmation>)
       }
     </>

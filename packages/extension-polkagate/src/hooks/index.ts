@@ -11,6 +11,7 @@ export { useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useFormatted } from './useFormatted';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';
+export { default as useIdentity } from './useIdentity';
 export { default as useIsPopup } from './useIsPopup';
 export { useLedger } from './useLedger';
 export { useMapEntries } from './useMapEntries';

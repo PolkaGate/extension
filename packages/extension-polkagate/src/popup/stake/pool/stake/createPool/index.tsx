@@ -11,12 +11,12 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, InputWithLabel, InputWithLabelAndIdenticon, PButton, ShowBalance } from '../../../../components';
-import { useApi, useChain, useFormatted, usePoolConsts, useTranslation } from '../../../../hooks';
-import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { PoolInfo, PoolStakingConsts } from '../../../../util/types';
-import { amountToHuman } from '../../../../util/utils';
+import { AmountWithOptions, InputWithLabel, InputWithLabelAndIdenticon, PButton, ShowBalance } from '../../../../../components';
+import { useApi, useChain, useFormatted, usePoolConsts, useTranslation } from '../../../../../hooks';
+import { HeaderBrand, SubTitle } from '../../../../../partials';
+import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
+import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
+import { amountToHuman } from '../../../../../util/utils';
 import UpdateRoles from './UpdateRoles';
 import Review from './Review';
 

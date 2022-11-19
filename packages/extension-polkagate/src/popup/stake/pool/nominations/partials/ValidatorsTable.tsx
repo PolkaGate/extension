@@ -87,10 +87,16 @@ export default function ValidatorsTable({ allValidatorsInfo, api, chain, selecte
               <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='92%'>
                 <Grid container item lineHeight='30px'>
                   {/* <Grid item width='22px'> */}
-                    {/* <Select index={index} pool={pool} /> */}
+                  {/* <Select index={index} pool={pool} /> */}
                   {/* </Grid>  */}
                   <Grid fontSize='12px' item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' xs>
-                    <Identity chain={chain} formatted={String(v.accountId)} identiconSize={24} showShortAddress />
+                    <Identity
+                      api={api}
+                      chain={chain}
+                      formatted={String(v.accountId)}
+                      identiconSize={24}
+                      showShortAddress
+                      style={{ fontSize: '12px' }} />
                   </Grid>
                 </Grid>
                 <Grid container item>
@@ -101,7 +107,7 @@ export default function ValidatorsTable({ allValidatorsInfo, api, chain, selecte
                         ? <ShowBalance
                           api={api}
                           balance={v.exposure.total}
-                          decimalPoint={2}
+                          decimalPoint={0}
                           height={22}
                         />
                         : t('waiting')

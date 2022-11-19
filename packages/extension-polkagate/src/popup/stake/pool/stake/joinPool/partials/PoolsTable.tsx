@@ -12,9 +12,9 @@ import React, { useCallback, useRef } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { Label, ShowBalance } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
-import { PoolInfo } from '../../../../../util/types';
+import { Label, ShowBalance } from '../../../../../../components';
+import { useTranslation } from '../../../../../../hooks';
+import { PoolInfo } from '../../../../../../util/types';
 
 interface Props {
   api?: ApiPromise;

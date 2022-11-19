@@ -4,10 +4,10 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { ShortAddress } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
-import { ThroughProxy } from '../../../../../partials';
-import { PoolInfo, TxInfo } from '../../../../../util/types';
+import { ShortAddress } from '../../../../../../components';
+import { useTranslation } from '../../../../../../hooks';
+import { ThroughProxy } from '../../../../../../partials';
+import { PoolInfo, TxInfo } from '../../../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;

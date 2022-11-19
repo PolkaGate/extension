@@ -43,8 +43,11 @@ import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Staking from '../../../extension-polkagate/src/popup/stake';
 import Pool from '../../../extension-polkagate/src/popup/stake/pool';
-import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
 import PoolNominations from '../../../extension-polkagate/src/popup/stake/pool/nominations';
+import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/stake';
+import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/stake/createPool';
+import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/stake/joinPool';
+import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { ErrorBoundary } from '../components';
@@ -52,9 +55,6 @@ import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
-import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/Stake';
-import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/joinPool/JoinPool';
-import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/createPool/CreatePool';
 
 const startSettings = uiSettings.get();
 

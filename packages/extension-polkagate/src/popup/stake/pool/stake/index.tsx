@@ -1,20 +1,22 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../hooks';
-import { HeaderBrand } from '../../../partials';
-import { MyPoolInfo, PoolStakingConsts } from '../../../util/types';
-import BondExtra from './bondExtra/BondExtra';
+import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation } from '../../../../hooks';
+import { HeaderBrand } from '../../../../partials';
+import { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
+import BondExtra from './bondExtra';
 import StakeInitialChoice from './StakeInitialChoice';
 
 interface State {
@@ -34,29 +36,11 @@ export default function Stake(): React.ReactElement {
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = state?.balances ?? useBalances(address);
 
-  const [notStaked, setNotStaked] = useState<boolean | undefined>();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [myPool, setMyPool] = useState<MyPoolInfo | null>();
-
-  const fetchMyPool = usePool(address, undefined, state?.pool);
-
-  useEffect(() => {
-    fetchMyPool !== undefined && setMyPool(fetchMyPool);
-  }, [fetchMyPool]);
-
-  useEffect(() => {
-    if (myPool === undefined) {
-      return;
-    }
-
-    setNotStaked(myPool === null);
-    setNotStaked(!myPool);
-    setLoading(false);
-  }, [myPool]);
+  const pool = usePool(address, undefined, state?.pool);
 
   return (
     <>
-      {loading &&
+      {pool === undefined &&
         <>
           <HeaderBrand
             shortBorder
@@ -89,11 +73,11 @@ export default function Stake(): React.ReactElement {
           </Typography>
         </>
       }
-      {notStaked && !loading &&
+      {pool === null &&
         <StakeInitialChoice address={address} api={api} balances={balances} consts={poolStakingConsts} />
       }
-      {!notStaked && !loading &&
-        <BondExtra address={address} api={api} balances={balances} formatted={formatted} myPool={myPool} />
+      {pool &&
+        <BondExtra address={address} api={api} balances={balances} formatted={formatted} pool={pool} />
       }
     </>
   );
