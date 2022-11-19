@@ -171,6 +171,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />

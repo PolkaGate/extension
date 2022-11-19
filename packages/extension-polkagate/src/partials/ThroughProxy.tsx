@@ -6,37 +6,27 @@
 import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
+import { Chain } from '@polkadot/extension-chains/types';
+
 import { Identicon, ShortAddress } from '../components';
 import { useAccountName, useChain, useTranslation } from '../hooks';
 
 interface Props {
   address: string;
+  chain: Chain | null;
   style?: SxProps<Theme> | undefined;
 }
 
-function ThroughProxy({ address, style = {} }: Props): React.ReactElement {
+function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const chain = useChain(address);
+  // const chain = useChain(address);
   const name = useAccountName(address);
 
+  console.log('chain in throuProxy:', chain);
+
   return (
-    <Grid
-      alignItems='center'
-      container
-      justifyContent='center'
-      sx={{
-        fontWeight: 300,
-        letterSpacing: '-0.015em',
-        ...style
-      }}
-    >
-      <Grid
-        item
-        sx={{
-          fontSize: '12px'
-        }}
-        xs={2}
-      >
+    <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', ...style }}>
+      <Grid item sx={{ fontSize: '12px' }} xs={2}>
         {t('Through')}
       </Grid>
       <Divider
@@ -49,27 +39,8 @@ function ThroughProxy({ address, style = {} }: Props): React.ReactElement {
           width: '1px'
         }}
       />
-      <Grid
-        alignItems='center'
-        container
-        item
-        justifyContent='center'
-        sx={{
-          maxWidth: '65%',
-          px: '2px',
-          width: 'fit-content'
-        }}
-      >
-        <Grid
-          alignItems='center'
-          container
-          item
-          justifyContent='center'
-          sx={{
-            lineHeight: '28px',
-            px: '3px'
-          }}
-        >
+      <Grid alignItems='center' container item justifyContent='center' sx={{ maxWidth: '65%', px: '2px', width: 'fit-content' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px', px: '3px' }}>
           {chain &&
             <Grid item>
               <Identicon
@@ -100,15 +71,7 @@ function ThroughProxy({ address, style = {} }: Props): React.ReactElement {
           width: '1px'
         }}
       />
-      <Grid
-        item
-        sx={{
-          fontSize: '12px',
-          fontWeight: 300,
-          textAlign: 'center'
-        }}
-        xs={2}
-      >
+      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2} >
         {t('as proxy')}
       </Grid>
     </Grid>

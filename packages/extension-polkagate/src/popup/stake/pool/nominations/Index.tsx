@@ -10,7 +10,7 @@ import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../u
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -25,6 +25,7 @@ import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ValidatorsTable from './partials/ValidatorsTable';
 import Review from './Review';
+import Accounts from '@polkadot/extension-base/page/Accounts';
 
 interface State {
   api: ApiPromise | undefined;
@@ -89,6 +90,32 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
+  const ValidatorsActions = () => (
+    <Grid container justifyContent='center' spacing={1} pt='15px'>
+      <Grid item>
+        <Typography sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          {t('Change Validators')}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Divider
+          orientation='vertical'
+          sx={{
+            bgcolor: 'text.primary',
+            height: '19px',
+            m: 'auto 2px',
+            width: '2px'
+          }}
+        />
+      </Grid>
+      <Grid item>
+        <Typography sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          {t('Remove Validators')}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+
   return (
     <Motion>
       <HeaderBrand
@@ -99,9 +126,9 @@ export default function Index(): React.ReactElement {
         text={t<string>('Pool Staking')}
       />
       <SubTitle
-        label={t('Selected validators ({{num}})', { replace: { num: selectedValidatorsId?.length ?? 0 } })}
+        label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')}
       />
-      {selectedValidatorsId === null &&
+      {(selectedValidatorsId === null || allValidatorsInfo === null) &&
         <>
           <Warn text={t<string>('No validator found.')} />
           <Grid alignItems='center' container direction='column' pt='98px'>
@@ -120,7 +147,7 @@ export default function Index(): React.ReactElement {
           </Grid>
         </>
       }
-      {selectedValidatorsId === undefined &&
+      {(selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
         <Progress
           pt='125px'
           size={125}
@@ -128,13 +155,17 @@ export default function Index(): React.ReactElement {
         />
       }
       <Grid item xs={12} sx={{ m: '20px 15px' }}>
-        {selectedValidatorsId &&
-          <ValidatorsTable
-            allValidatorsInfo={allValidatorsInfo}
-            api={api}
-            chain={chain}
-            selectedValidatorsId={selectedValidatorsId}
-          />
+        {selectedValidatorsId && allValidatorsInfo &&
+          <>
+            <ValidatorsTable
+              allValidatorsInfo={allValidatorsInfo}
+              api={api}
+              chain={chain}
+              selectedValidatorsId={selectedValidatorsId}
+              stashId={pool?.accounts?.stashId}
+            />
+            <ValidatorsActions />
+          </>
         }
       </Grid>
       {selectedValidatorsId === null &&
