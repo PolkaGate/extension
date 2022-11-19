@@ -43,6 +43,10 @@ import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Staking from '../../../extension-polkagate/src/popup/stake';
 import Pool from '../../../extension-polkagate/src/popup/stake/pool';
+import PoolNominations from '../../../extension-polkagate/src/popup/stake/pool/nominations';
+import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/stake';
+import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/stake/createPool';
+import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/stake/joinPool';
 import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
@@ -51,9 +55,6 @@ import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
-import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/Stake';
-import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/joinPool/JoinPool';
-import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/createPool/CreatePool';
 
 const startSettings = uiSettings.get();
 
@@ -175,6 +176,7 @@ export default function Popup(): React.ReactElement {
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
                           <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                           <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
+                          <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
                           <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                           <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                           <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>

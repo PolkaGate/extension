@@ -1,0 +1,148 @@
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { ApiPromise } from '@polkadot/api';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces';
+import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
+
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
+
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+
+import { AmountWithOptions, Motion, PButton, Progress, Warning } from '../../../../components';
+import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../../hooks';
+import { HeaderBrand, SubTitle } from '../../../../partials';
+import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import Asset from '../../../send/partial/Asset';
+import ValidatorsTable from './partials/ValidatorsTable';
+import Review from './Review';
+
+interface State {
+  api: ApiPromise | undefined;
+  pathname: string;
+  poolConsts: PoolStakingConsts | undefined;
+  stakingConsts: StakingConsts | undefined
+  pool: MyPoolInfo | undefined;
+}
+
+export default function Index(): React.ReactElement {
+  const { t } = useTranslation();
+  const { state } = useLocation<State>();
+  const theme = useTheme();
+  const { address } = useParams<{ address: string }>();
+  const history = useHistory();
+  const api = useApi(address, state?.api);
+  const chain = useChain(address);
+  const [refresh, setRefresh] = useState<boolean | undefined>(false);
+  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
+  const allValidatorsInfo = useValidators(address);
+
+  const pool = usePool(address, undefined, state?.pool, refresh);
+  const formatted = useFormatted(address);
+  const [showReview, setShowReview] = useState<boolean>(false);
+
+  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
+  const token = api?.registry?.chainTokens[0] ?? '...';
+
+  useEffect(() => {
+    setSelectedValidatorsId(pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators);
+    setRefresh(false);
+  }, [pool]);
+
+  const onBackClick = useCallback(() => {
+    history.push({
+      pathname: state?.pathname ?? '/',
+      state: { ...state }
+    });
+  }, [history, state]);
+
+  const goToSelectValidator = useCallback(() => {
+    setShowReview(true);
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    setSelectedValidatorsId(undefined);
+  }, []);
+
+  const Warn = ({ text }: { text: string }) => (
+    <Grid
+      container
+      justifyContent='center'
+      py='15px'
+    >
+      <Warning
+        fontWeight={400}
+        theme={theme}
+      >
+        {text}
+      </Warning>
+    </Grid>
+  );
+
+  return (
+    <Motion>
+      <HeaderBrand
+        onBackClick={onBackClick}
+        shortBorder
+        showBackArrow
+        showClose
+        text={t<string>('Pool Staking')}
+      />
+      <SubTitle
+        label={t('Selected validators ({{num}})', { replace: { num: selectedValidatorsId?.length ?? 0 } })}
+      />
+      {selectedValidatorsId === null &&
+        <>
+          <Warn text={t<string>('No validator found.')} />
+          <Grid alignItems='center' container direction='column' pt='98px'>
+            <Grid item>
+              <FontAwesomeIcon
+                color={`${theme.palette.primary.light}`}
+                icon={faRefresh}
+                onClick={onRefresh}
+                size='2x'
+                spin={refresh}
+              />
+            </Grid>
+            <Grid item sx={{ fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+              {t('Refresh')}
+            </Grid>
+          </Grid>
+        </>
+      }
+      {selectedValidatorsId === undefined &&
+        <Progress
+          pt='125px'
+          size={125}
+          title={t('Loading the validators\' list ...')}
+        />
+      }
+      <Grid item xs={12} sx={{ m: '20px 15px' }}>
+        {selectedValidatorsId &&
+          <ValidatorsTable
+            allValidatorsInfo={allValidatorsInfo}
+            api={api}
+            chain={chain}
+            selectedValidatorsId={selectedValidatorsId}
+          />
+        }
+      </Grid>
+      {selectedValidatorsId === null &&
+        <PButton
+          _onClick={goToSelectValidator}
+          text={t<string>('Select Validator')}
+        />
+      }
+    </Motion>
+  );
+}

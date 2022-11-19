@@ -17,13 +17,13 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
-import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
-import { broadcast } from '../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../../components';
+import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { updateMeta } from '../../../../../messaging';
+import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
+import { broadcast } from '../../../../../util/api';
+import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
 
 interface Props {
@@ -33,10 +33,10 @@ interface Props {
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
   bondAmount?: BN;
   estimatedFee?: Balance;
-  myPool: MyPoolInfo;
+  pool: MyPoolInfo;
 }
 
-export default function Review({ address, api, bondAmount, estimatedFee, myPool, setShowReview, showReview }: Props): React.ReactElement {
+export default function Review({ address, api, bondAmount, estimatedFee, pool, setShowReview, showReview }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -58,7 +58,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, myPool,
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const poolTotalStaked = new BN(myPool.stashIdAccount?.stakingLedger?.active?.toString());
+  const poolTotalStaked = new BN(pool.stashIdAccount?.stakingLedger?.active?.toString());
 
   const bondExtra = api.tx.nominationPools.bondExtra;
 
@@ -186,7 +186,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, myPool,
           {t<string>('Pool')}
         </Typography>
         <Grid fontSize='28px' fontWeight={400} textAlign='center' maxWidth='90%' m='auto' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {myPool?.metadata}
+          {pool?.metadata}
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <AmountFee
@@ -238,7 +238,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, myPool,
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <BondExtraTxDetail pool={myPool} txInfo={txInfo} />
+            <BondExtraTxDetail pool={pool} txInfo={txInfo} />
           </Confirmation>)
       }
     </>

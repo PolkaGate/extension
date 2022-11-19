@@ -9,14 +9,14 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AmountWithOptions, PButton } from '../../../../components';
-import { useAccount, useTranslation } from '../../../../hooks';
-import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { MyPoolInfo } from '../../../../util/types';
-import { amountToHuman } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
-import ShowPool from '../../partial/ShowPool';
+import { ActionContext, AmountWithOptions, PButton } from '../../../../../components';
+import { useAccount, useTranslation } from '../../../../../hooks';
+import { HeaderBrand, SubTitle } from '../../../../../partials';
+import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
+import { MyPoolInfo } from '../../../../../util/types';
+import { amountToHuman } from '../../../../../util/utils';
+import Asset from '../../../../send/partial/Asset';
+import ShowPool from '../../../partial/ShowPool';
 import Review from './Review';
 
 interface Props {
@@ -24,10 +24,10 @@ interface Props {
   address: string;
   balances?: DeriveBalancesAll | undefined;
   formatted?: string;
-  myPool: MyPoolInfo;
+  pool: MyPoolInfo;
 }
 
-export default function BondExtra({ address, api, balances, formatted, myPool }: Props): React.ReactElement {
+export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const account = useAccount(address);
@@ -105,8 +105,8 @@ export default function BondExtra({ address, api, balances, formatted, myPool }:
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const isAmountInRange = amountAsBN.gt(availableBalance?.sub(ED.muln(2)).sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO);
 
-    setNextBtnDisabled(!(bondAmount && bondAmount !== '0' && !isAmountInRange) && !myPool);
-  }, [amountAsBN, availableBalance, decimals, estimatedMaxFee, bondAmount, api, myPool]);
+    setNextBtnDisabled(!(bondAmount && bondAmount !== '0' && !isAmountInRange) && !pool);
+  }, [amountAsBN, availableBalance, decimals, estimatedMaxFee, bondAmount, api, pool]);
 
   return (
     <>
@@ -144,7 +144,7 @@ export default function BondExtra({ address, api, balances, formatted, myPool }:
         api={api}
         label={t<string>('Pool')}
         mode='Default'
-        pool={myPool}
+        pool={pool}
         style={{
           m: '20px auto 0',
           width: '92%'
@@ -157,7 +157,7 @@ export default function BondExtra({ address, api, balances, formatted, myPool }:
           api={api}
           bondAmount={amountAsBN}
           estimatedFee={estimatedFee}
-          myPool={myPool}
+          pool={pool}
           setShowReview={setShowReview}
           showReview={showReview}
         />

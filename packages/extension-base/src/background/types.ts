@@ -49,10 +49,11 @@ export interface AccountJson extends KeyringPair$Meta {
   poolStakingConsts?: string;
   nominatedValidators?: string;
   poolNominatedValidators?: string;
-  validatorsInfo?: string;
+  allValidatorsInfo?: string;
   validatorsIdentities?: string;
-  endpoint: string;
-  plusVersion: string;
+  endpoint?: string;
+  price?: string;
+  balance?: string;
 }
 
 export type AccountWithChildren = AccountJson & {
