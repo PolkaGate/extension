@@ -218,6 +218,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
