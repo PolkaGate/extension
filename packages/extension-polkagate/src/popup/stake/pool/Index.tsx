@@ -9,7 +9,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId, AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, MyPoolInfo, NominatorInfo } from '../../../util/types';
+import type { MembersMapEntry, MyPoolInfo, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -57,12 +57,18 @@ interface SessionIfo {
   currentEra: number;
 }
 
+interface State {
+  api?: ApiPromise;
+  stakingConsts?: StakingConsts;
+  poolConsts?: PoolStakingConsts;
+}
+
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
   const history = useHistory();
-  const { pathname, state } = useLocation();
+  const { pathname, state } = useLocation<State>();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -160,10 +166,6 @@ export default function Index(): React.ReactElement {
   }, [address, chain?.genesisHash, onAction]);
 
   const goToStake = useCallback(() => {
-    // history.push({
-    //   pathname: `/pool/bondExtra/${address}`,
-    //   state: { api, consts, pool, pathname, stakingConsts }
-    // });
     history.push({
       pathname: `/pool/stake/${address}`,
       state: { api, balances, consts, pool, pathname, stakingConsts }
