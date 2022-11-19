@@ -25,6 +25,7 @@ export { default as importIcon } from './importW.png';
 export { default as externalLink } from './externalLinkP.png';
 export { default as ManageAccess } from './ManageAccessW.png';
 export { default as ManageAccessB } from './ManageAccessB.png';
+export { default as riot } from './riot.png';
 export { default as importIconB } from './importB.png';
 export { default as eyeSlashP } from './eyeSlashP.png';
 export { default as eye } from './eyeP.png';
