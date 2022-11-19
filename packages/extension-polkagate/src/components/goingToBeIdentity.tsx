@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Email as EmailIcon, LaunchRounded as LaunchRoundedIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Grid, Link, SxProps, Theme } from '@mui/material';
+import { Box, Grid, Link, SxProps, Theme } from '@mui/material';
 import React, { useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -14,6 +14,7 @@ import { useAccountName, useChain, useFormatted, useIdentity, useTranslation } f
 import { getSubstrateAddress } from '../util/utils';
 import { ChainLogo, Identicon, ShortAddress } from '.';
 import { grey } from '@mui/material/colors';
+import { riot } from '../assets/icons';
 
 interface Props {
   address?: string;
@@ -72,61 +73,37 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
             </Grid>
           }
         </Grid>
-        {showSocial && 
-        <Grid container item id='socials' item justifyContent='flex-start' xs={hasSocial ? 3 : 0}>
-          {identity?.identity?.email &&
-            <Grid item>
-              <Link href={`mailto:${identity?.identity.email}`}>
-                <EmailIcon
-                  color='#1E5AEF'
-                  sx={{ fontSize: 15 }}
-                />
-              </Link>
-            </Grid>
-          }
-          {identity?.identity?.web &&
-            <Grid item>
-              <Link
-                href={identity?.identity.web}
-                rel='noreferrer'
-                target='_blank'
-              >
-                <LaunchRoundedIcon
-                  color='#007CC4'
-                  sx={{ fontSize: 15 }}
-                />
-              </Link>
-            </Grid>
-          }
-           {identity?.identity?.twitter &&
-            <Grid item>
-              <Link
-                href={`https://twitter.com/${identity?.identity.twitter}`}
-                rel='noreferrer'
-                target='_blank'
-              >
-                <TwitterIcon
-                  color='#2AA9E0'
-                  sx={{ fontSize: 15 }}
-                />
-              </Link>
-            </Grid>
-          }
-           {identity?.identity?.riot &&
-            <Grid item>
-              <Link
-                href={`https://twitter.com/${identity?.identity.twitter}`}
-                rel='noreferrer'
-                target='_blank'
-              >
-                <TwitterIcon
-                  color='#2AA9E0'
-                  sx={{ fontSize: 15 }}
-                />
-              </Link>
-            </Grid>
-          }
-        </Grid>
+        {showSocial &&
+          <Grid container item id='socials' item justifyContent='flex-end' xs={hasSocial ? 3 : 0}>
+            {identity?.identity?.email &&
+              <Grid item>
+                <Link href={`mailto:${identity?.identity.email}`}>
+                  <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
+                </Link>
+              </Grid>
+            }
+            {identity?.identity?.web &&
+              <Grid item>
+                <Link href={identity?.identity.web} rel='noreferrer' target='_blank'>
+                  <LaunchRoundedIcon sx={{ color: '#007CC4', fontSize: 15 }} />
+                </Link>
+              </Grid>
+            }
+            {identity?.identity?.twitter &&
+              <Grid item>
+                <Link href={`https://twitter.com/${identity?.identity.twitter}`} rel='noreferrer' target='_blank'>
+                  <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
+                </Link>
+              </Grid>
+            }
+            {identity?.identity?.riot &&
+              <Grid item>
+                <Link href={`https://matrix.to/#/${identity.identity.riot}`} rel='noreferrer' target='_blank'>
+                  <Box component='img' src={riot} sx={{ height: '12px', width: '12px' }} />
+                </Link>
+              </Grid>
+            }
+          </Grid>
         }
       </Grid>
       {showChainLogo &&
