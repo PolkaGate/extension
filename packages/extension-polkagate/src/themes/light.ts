@@ -30,7 +30,8 @@ export const lightTheme: ThemeOptions = {
   typography: {
     allVariants: {
       fontWeight: 400,
-      fontFamily: 'Roboto'
+      fontFamily: 'Roboto',
+      letterSpacing: '-0.015em'
     }
   }
 };
