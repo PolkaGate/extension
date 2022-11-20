@@ -173,7 +173,7 @@ export default function Index(): React.ReactElement {
               api={api}
               chain={chain}
               selectedValidatorsId={selectedValidatorsId}
-              staked={staked}
+              staked={new BN(pool?.ledger?.active ?? 0)}
               stakingConsts={stakingConsts}
               stashId={pool?.accounts?.stashId}
             />
