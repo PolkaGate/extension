@@ -111,7 +111,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
       <PButton
         _onClick={handleNext}
         disabled={change}
-        text={t('Confirm')}
+        text={t('Done')}
       />
     </Popup>
   );

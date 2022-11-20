@@ -1,44 +1,45 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
- * this component opens withdraw rewards review page
+ * this component opens unstake review page
  * */
 
-import type { ApiPromise } from '@polkadot/api';
-
-import { Container, Grid, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordWithUseProxy, PButton, Popup, ShowValue, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import TxDetail from '../nominations/partials/TxDetail';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import TxDetail from './partials/TxDetail';
 
 interface Props {
   address: string;
-  show: boolean;
-  formatted: string;
   api: ApiPromise;
-  amount: BN;
-  chain: Chain;
+  chain: Chain | null;
+  formatted: string;
+  title: string;
+  poolId: BN | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  available: BN;
+  show: boolean;
 }
 
-export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function RemoveValidators({ address, api, chain, formatted, poolId, setShow, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -54,11 +55,11 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
+  const chilled = api.tx.nominationPools.chill;
+  const params = useMemo(() => [poolId], [poolId]);
+
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const tx = api.tx.nominationPools.withdrawUnbonded;
-
-  const decimal = api.registry.chainDecimals[0];
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -84,6 +85,12 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
     onAction(`/pool/${address}`);
   }, [address, onAction, setShow]);
 
+  const goToMyAccounts = useCallback(() => {
+    setShow(false);
+
+    onAction('/');
+  }, [onAction, setShow]);
+
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -91,16 +98,14 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   }, [proxies]);
 
   useEffect((): void => {
-    const params = [formatted, 100];/** 100 is a dummy spanCount */
+    chilled(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [chilled, formatted, params, poolId]);
 
-    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted]);
-
-  const submit = useCallback(async () => {
+  const remove = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted) {
+      if (!formatted || !chilled) {
         return;
       }
 
@@ -108,14 +113,12 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const optSpans = await api.query.staking.slashingSpans(formatted);
-      const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
-      const params = [formatted, spanCount];
-      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
+
+      const { block, failureText, fee, status, txHash } = await broadcast(api, chilled, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_withdraw_redeemable',
-        amount: amountToHuman(amount, decimal),
+        action: 'pool_remove_validators',
+        // amount,
         block,
         date: Date.now(),
         failureText,
@@ -129,7 +132,8 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       history.push(info);
       setTxInfo({ ...info, api, chain });
 
-      saveHistory(chain, hierarchy, formatted, history);
+      // eslint-disable-next-line no-void
+      void saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -137,7 +141,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [api, chain, chilled, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -151,7 +155,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Withdraw Redeemable')}
+          text={title}
         />
         {isPasswordError &&
           <Grid
@@ -172,39 +176,20 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           </Grid>
         }
         <SubTitle label={t('Review')} />
-        <Container disableGutters sx={{ px: '30px' }}>
-          <AccountHolderWithProxy
-            address={address}
-            chain={chain}
-            selectedProxyAddress={selectedProxyAddress}
-            showDivider
-          />
-          <AmountFee
-            address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount}
-              />
-            }
-            fee={estimatedFee}
-            label={t('Withdraw amount')}
-            showDivider
-            style={{ pt: '5px' }}
-            withFee
-          />
-          <AmountFee
-            address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount.add(available).sub(estimatedFee ?? BN_ZERO)}
-              />
-            }
-            label={t('Available balance after')}
-            style={{ pt: '5px' }}
-          />
-        </Container>
+        <Grid container sx={{ p: '50px 35px', justifyContent: 'center' }}>
+          <Typography fontSize='18px' fontWeight={400} pb='33px' textAlign='center'>
+            {t('There will be no selected validators and you will not get any rewards after.')}
+          </Typography>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+          <Grid alignItems='center' container item justifyContent='center' pt='10px'>
+            <Grid item>
+              {t('Fee')}:
+            </Grid>
+            <Grid item sx={{ pl: '5px' }}>
+              <ShowValue value={estimatedFee?.toHuman()} height={16} />
+            </Grid>
+          </Grid>
+        </Grid>
         <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}
@@ -213,7 +198,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           onChange={setPassword}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -225,26 +210,25 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           }}
         />
         <PButton
-          _onClick={submit}
+          _onClick={remove}
           disabled={!password}
           text={t<string>('Confirm')}
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Withdraw Redeemable')}
+          title={title}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t('Withdraw Redeemable')}
+            headerTitle={title}
             onPrimaryBtnClick={goToStakingHome}
+            onSecondaryBtnClick={goToMyAccounts}
             primaryBtnText={t('Staking Home')}
+            secondaryBtnText={t('My Accounts')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail
-              label={t<string>('Withdrawn amount')}
-              txInfo={txInfo}
-            />
+            <TxDetail txInfo={txInfo} />
           </Confirmation>)
         }
       </Popup>

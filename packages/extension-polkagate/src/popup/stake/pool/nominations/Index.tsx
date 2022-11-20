@@ -15,17 +15,18 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import Accounts from '@polkadot/extension-base/page/Accounts';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, Motion, PButton, Progress, Warning } from '../../../../components';
+import { AmountWithOptions, Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ValidatorsTable from './partials/ValidatorsTable';
+import RemoveValidators from './RemoveValidators';
 import Review from './Review';
-import Accounts from '@polkadot/extension-base/page/Accounts';
 
 interface State {
   api: ApiPromise | undefined;
@@ -43,13 +44,17 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+  const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
+  const [showRemoveReview, setShowRemoveReview] = useState<boolean | undefined>(false);
   const allValidatorsInfo = useValidators(address);
 
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
   const [showReview, setShowReview] = useState<boolean>(false);
+
+  const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
 
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
@@ -73,6 +78,10 @@ export default function Index(): React.ReactElement {
   const onRefresh = useCallback(() => {
     setRefresh(true);
     setSelectedValidatorsId(undefined);
+  }, []);
+
+  const onRemoveValidators = useCallback(() => {
+    setShowRemoveReview(true);
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -109,9 +118,11 @@ export default function Index(): React.ReactElement {
         />
       </Grid>
       <Grid item>
-        <Typography sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
-          {t('Remove Validators')}
-        </Typography>
+        <Infotip text={t<string>('To unselect validators, you will not get any rewards after.')}>
+          <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            {t('Remove Validators')}
+          </Typography>
+        </Infotip>
       </Grid>
     </Grid>
   );
@@ -162,6 +173,8 @@ export default function Index(): React.ReactElement {
               api={api}
               chain={chain}
               selectedValidatorsId={selectedValidatorsId}
+              staked={staked}
+              stakingConsts={stakingConsts}
               stashId={pool?.accounts?.stashId}
             />
             <ValidatorsActions />
@@ -172,6 +185,18 @@ export default function Index(): React.ReactElement {
         <PButton
           _onClick={goToSelectValidator}
           text={t<string>('Select Validator')}
+        />
+      }
+      {showRemoveReview &&
+        <RemoveValidators
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={formatted}
+          poolId={pool?.poolId}
+          setShow={setShowReview}
+          show={setShowRemoveReview}
+          title={t('Remove Selected Validators')}
         />
       }
     </Motion>

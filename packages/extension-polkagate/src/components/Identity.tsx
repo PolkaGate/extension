@@ -36,7 +36,7 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
   const _formatted = useFormatted(address, formatted);
   const accountInfo = useAccountInfo(api, _formatted);
   const judgement = useMemo(() => accountInfo?.identity?.judgements && JSON.stringify(accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [accountInfo?.identity?.judgements]);
-  const hasSocial = !!(accountInfo?.identity?.twitter || accountInfo?.identity?.web || accountInfo?.identity?.email);
+  const socialIcons = (accountInfo?.identity?.twitter ? 1 : 0) + (accountInfo?.identity?.web ? 1 : 0) + (accountInfo?.identity?.email ? 1 : 0) + (accountInfo?.identity?.riot ? 1 : 0);
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
@@ -50,19 +50,19 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
             value={_formatted}
           />
         </Grid>
-        <Grid container item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, letterSpacing: '-1.5%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} xs>
+        <Grid container item sx={{ flexWrap: 'nowrap', fontSize: style?.fontSize ?? '28px', fontWeight: 400, width: 'fit-content', letterSpacing: '-1.5%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: `calc(100% - ${socialIcons * 30}px)` }}>
           {accountInfo?.identity?.displayParent &&
-            <Grid item sx={{ textOverflow: 'ellipsis' }}>
+            <Grid item >
               {accountInfo?.identity.displayParent} /
             </Grid>
           }
           {(accountInfo?.identity?.display || accountInfo?.nickname) &&
-            <Grid item sx={accountInfo?.identity?.displayParent && { color: grey[500], textOverflow: 'ellipsis' }}>
+            <Grid item sx={accountInfo?.identity?.displayParent && { color: grey[500] }}>
               {accountInfo?.identity?.display ?? accountInfo?.nickname}
             </Grid>
           }
           {!(accountInfo?.identity?.displayParent || accountInfo?.identity?.display || accountInfo?.nickname) && (name || accountName) &&
-            <Grid item sx={accountInfo?.identity?.displayParent && { color: grey[500], textOverflow: 'ellipsis' }}>
+            <Grid item sx={accountInfo?.identity?.displayParent && { color: grey[500] }}>
               {name || accountName}
             </Grid>
           }
@@ -76,7 +76,7 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
           }
         </Grid>
         {showSocial &&
-          <Grid alignItems='center' container id='socials' item justifyContent='flex-end' xs={hasSocial ? 3.5 : 0}>
+          <Grid alignItems='center' container id='socials' item justifyContent='flex-end' width='fit-content' pl='5px'>
             {accountInfo?.identity?.email &&
               <Grid item>
                 <Link href={`mailto:${accountInfo.identity.email}`}>
