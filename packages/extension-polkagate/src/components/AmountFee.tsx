@@ -42,7 +42,7 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
           </Grid>
         </Grid>
         {withFee &&
-          <Grid alignItems='center' container item justifyContent='center'>
+          <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
             <Grid item>
               {t('Fee')}:
             </Grid>

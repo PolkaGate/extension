@@ -188,10 +188,10 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
           style={{ pt: '5px' }}
           withFee
         />
-        <Typography fontSize='16px' fontWeight={300} lineHeight='30px' textAlign='center'>
+        <Typography fontSize='16px' fontWeight={300} lineHeight='25px' textAlign='center'>
           {t<string>('Pool')}
         </Typography>
-        <Grid fontSize='28px' fontWeight={400} textAlign='center' maxWidth='90%' m='auto' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+        <Grid fontSize='18px' fontWeight={400} textAlign='center' maxWidth='90%' m='auto' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
           {pool?.metadata}
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
