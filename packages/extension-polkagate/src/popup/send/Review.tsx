@@ -246,15 +246,6 @@ export default function Review(): React.ReactElement {
           withFee
         />
       </Container>
-      {needsWarning &&
-        <Warning
-          fontWeight={400}
-          marginTop={15}
-          theme={theme}
-        >
-          {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
-        </Warning>
-      }
       <PasswordWithUseProxy
         api={state?.api}
         genesisHash={genesisHash}
