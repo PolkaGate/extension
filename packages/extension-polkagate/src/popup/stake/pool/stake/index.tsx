@@ -23,7 +23,6 @@ interface State {
   api?: ApiPromise;
   consts?: PoolStakingConsts;
   pool: MyPoolInfo | null | undefined;
-  balances: DeriveBalancesAll | undefined;
   pathname: string;
 }
 
@@ -34,7 +33,7 @@ export default function Stake(): React.ReactElement {
   const { state } = useLocation<State>();
   const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.consts);
-  const balances = state?.balances ?? useBalances(address);
+  const balances = useBalances(address);
 
   const pool = usePool(address, undefined, state?.pool);
 
