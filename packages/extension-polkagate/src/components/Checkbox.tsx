@@ -8,8 +8,8 @@ import React, { useCallback, useState } from 'react';
 import Checkmark from '../assets/checkmark.svg';
 
 interface Props {
-  checked: boolean;
-  label: string;
+  checked?: boolean;
+  label?: string;
   onChange?: (checked: boolean) => void;
   onClick?: () => void;
   theme: Theme;
@@ -18,8 +18,8 @@ interface Props {
   width?: number;
 }
 
-export default function Checkbox({ checked = false, height = 20, label, theme, onChange, onClick, style, width = 20 }: Props): React.ReactElement<Props> {
-  const [getChecked, setChecked] = useState<Boolean>(checked);
+export default function Checkbox({ checked = false, height = 20, label, onChange, onClick, style, theme, width = 20 }: Props): React.ReactElement<Props> {
+  const [getChecked, setChecked] = useState<boolean>(checked);
 
   const _onChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => onChange && onChange(event.target.checked),
@@ -35,28 +35,9 @@ export default function Checkbox({ checked = false, height = 20, label, theme, o
   );
 
   return (
-    <Grid
-      alignItems='center'
-      container
-      position='relative'
-      sx={{ ...style }}
-    >
-      <Grid
-        item
-        display='inline-flex'
-        lineHeight='25px'
-      >
-        <Grid
-          sx={{
-            border: '1px solid',
-            borderColor: 'secondary.light',
-            borderRadius: '5px',
-            height,
-            m: 'auto',
-            mr: label.length ? '5px' : 0,
-            width
-          }}
-        >
+    <Grid alignItems='center' container position='relative' sx={{ ...style }}>
+      <Grid item display='inline-flex' lineHeight='25px'>
+        <Grid sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', height, m: 'auto', mr: label ? '5px' : 0, width }}>
           <img
             src={Checkmark}
             style={{
@@ -66,10 +47,7 @@ export default function Checkbox({ checked = false, height = 20, label, theme, o
             }}
           />
         </Grid>
-        <Typography
-          fontSize='inherit'
-          textAlign='left'
-        >
+        <Typography fontSize='inherit' textAlign='left'>
           {label}
         </Typography>
       </Grid>

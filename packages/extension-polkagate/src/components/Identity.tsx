@@ -41,7 +41,7 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
-        <Grid item pr='8px' sx={1}>
+        <Grid item pr='5px' sx={1}>
           <Identicon
             iconTheme={_chain?.icon ?? 'polkadot'}
             judgement={judgement}
@@ -50,10 +50,10 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
             value={_formatted}
           />
         </Grid>
-        <Grid container item sx={{ flexWrap: 'nowrap', fontSize: style?.fontSize ?? '28px', fontWeight: 400, width: 'fit-content', letterSpacing: '-1.5%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: `calc(100% - ${socialIcons * 30}px)` }}>
+        <Grid container item sx={{ flexWrap: 'nowrap', fontSize: style?.fontSize ?? '28px', fontWeight: 400, width: 'fit-content', letterSpacing: '-1.5%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: `calc(95% - ${(socialIcons * 20) + identiconSize}px)` }}>
           {accountInfo?.identity?.displayParent &&
             <Grid item >
-              {accountInfo?.identity.displayParent} /
+              {accountInfo?.identity.displayParent}/
             </Grid>
           }
           {(accountInfo?.identity?.display || accountInfo?.nickname) &&
