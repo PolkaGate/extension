@@ -551,8 +551,8 @@ export interface TokenPrice {
   [chainName: string]: Price;
 }
 export interface Price {
-  chainName?: string;
   amount: number;
+  chainName?: string;
   date?: number;
   token: string;
 }
@@ -564,4 +564,11 @@ export interface SavedBalances {
     token: string;
     date: number;
   }
+}
+
+export interface BalancesAll extends DeriveBalancesAll {
+  chainName: string;
+  decimal: number;
+  token: string;
+  date: number;
 }

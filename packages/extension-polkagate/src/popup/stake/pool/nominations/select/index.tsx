@@ -9,12 +9,13 @@
  * */
 
 import type { AccountId } from '@polkadot/types/interfaces';
-import SearchIcon from '@mui/icons-material/Search';
 
+import SearchIcon from '@mui/icons-material/Search';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
@@ -27,6 +28,7 @@ import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
+import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
 import { AllValidators, MyPoolInfo, Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
 import TxDetail from '../partials/TxDetail';
@@ -34,6 +36,7 @@ import ValidatorsTable from '../partials/ValidatorsTable';
 
 interface Props {
   address: string;
+  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
   api: ApiPromise;
   chain: Chain | null;
   formatted: string;
@@ -41,31 +44,54 @@ interface Props {
   poolId: BN | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  validatorsToList: ValidatorInfo[] | null | undefined
+  allValidatorsInfo: AllValidators | null | undefined
   selectedValidatorsId: AccountId[] | null | undefined
   stakingConsts: StakingConsts | undefined
   pool: MyPoolInfo | undefined;
 }
 
-export default function SelectValidators({ address, validatorsToList, api, chain, formatted, pool, poolId, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, poolId, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const [filteredValidatorList, setFilteredValidatorList] = useState<ValidatorInfo[] | null | undefined>();
   const [idOnly, setIdOnly] = useState<boolean>();
   const [noMoreThan20Comm, setNoMoreThan20Comm] = useState<boolean>();
   const [noOversubscribed, setNoOversubscribed] = useState<boolean>();
   const [noWaiting, setNoWaiting] = useState<boolean>();
+  const [validatorsToList, setValidatorsToList] = useState<ValidatorInfo[]>();
+  const [selectedValidators, setSelectedValidators] = useState<ValidatorInfo[]>([]);
 
   useEffect(() => {
-    let list = validatorsToList;
-
-    if (idOnly) {
-      list = list?.filter((v) => v.accountInfo?.identity.display);
+    if (!allValidatorsInfo || !allValidatorsIdentities) {
+      return;
     }
 
-    setFilteredValidatorList(list);
-  }, [idOnly, validatorsToList]);
+    let filteredValidators = allValidatorsInfo.current.concat(allValidatorsInfo.waiting);
+
+    // at first filtered blocked allValidatorsInfo
+    filteredValidators = filteredValidators?.filter((v) => !v.validatorPrefs.blocked);
+
+    filteredValidators = noWaiting ? filteredValidators?.filter((v) => v.exposure.others.length !== 0) : filteredValidators;
+    filteredValidators = noOversubscribed ? filteredValidators?.filter((v) => v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator) : filteredValidators;
+    filteredValidators = noMoreThan20Comm ? filteredValidators?.filter((v) => Number(v.validatorPrefs.commission) / (10 ** 7) <= DEFAULT_VALIDATOR_COMMISSION_FILTER) : filteredValidators;
+
+    if (idOnly && allValidatorsIdentities) {
+      filteredValidators = filteredValidators?.filter((v) =>
+        allValidatorsIdentities.find((i) => i.accountId === v.accountId && (i.identity.display || i.identity.displayParent)));
+    }
+
+    // remove filtered validators from the selected list
+    const selectedTemp = [...selectedValidators];
+
+    selectedValidators?.forEach((s, index) => {
+      if (!filteredValidators.find((f) => f.accountId === s.accountId)) {
+        selectedTemp.splice(index, 1);
+      }
+    });
+    setSelectedValidators([...selectedTemp]);
+
+    setValidatorsToList(filteredValidators);
+  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, selectedValidators]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -122,7 +148,7 @@ export default function SelectValidators({ address, validatorsToList, api, chain
                 showCheckbox
                 staked={new BN(pool?.ledger?.active ?? 0)}
                 stakingConsts={stakingConsts}
-                validatorsToList={filteredValidatorList}
+                validatorsToList={validatorsToList}
               />
             }
           </Grid>
