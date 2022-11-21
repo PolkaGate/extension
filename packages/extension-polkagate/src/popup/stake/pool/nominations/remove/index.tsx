@@ -18,15 +18,15 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordWithUseProxy, PButton, Popup, ShowValue, Warning } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
-import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
-import Confirmation from '../../../../partials/Confirmation';
-import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import TxDetail from './partials/TxDetail';
+import { AccountContext, ActionContext, Motion, PasswordWithUseProxy, PButton, Popup, ShowValue, Warning } from '../../../../../components';
+import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
+import { updateMeta } from '../../../../../messaging';
+import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
+import Confirmation from '../../../../../partials/Confirmation';
+import broadcast from '../../../../../util/api/broadcast';
+import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import TxDetail from '../partials/TxDetail';
 
 interface Props {
   address: string;

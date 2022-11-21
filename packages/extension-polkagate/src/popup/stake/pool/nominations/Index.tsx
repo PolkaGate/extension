@@ -4,9 +4,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
+import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,18 +15,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import Accounts from '@polkadot/extension-base/page/Accounts';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
-import { AmountWithOptions, Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../../hooks';
+import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
+import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import Asset from '../../../send/partial/Asset';
 import ValidatorsTable from './partials/ValidatorsTable';
-import RemoveValidators from './RemoveValidators';
-import Review from './Review';
+import RemoveValidators from './remove';
+import SelectValidators from './select';
 
 interface State {
   api: ApiPromise | undefined;
@@ -45,19 +41,22 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const chain = useChain(address);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const [refresh, setRefresh] = useState<boolean | undefined>(false);
-  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
-  const [showRemoveReview, setShowRemoveReview] = useState<boolean | undefined>(false);
   const allValidatorsInfo = useValidators(address);
-
+  const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
-  const [showReview, setShowReview] = useState<boolean>(false);
 
-  const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
+  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
+  const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
+  const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
-  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
+  const selectedValidatorsInfo = useMemo(() =>
+    allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
+      .concat(allValidatorsInfo.waiting)
+      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(String(v.accountId)))
+    , [allValidatorsInfo, selectedValidatorsId]);
+
+  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 
   useEffect(() => {
     setSelectedValidatorsId(pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators);
@@ -72,7 +71,7 @@ export default function Index(): React.ReactElement {
   }, [history, state]);
 
   const goToSelectValidator = useCallback(() => {
-    setShowReview(true);
+    setShowSelectValidator(true);
   }, []);
 
   const onRefresh = useCallback(() => {
@@ -81,8 +80,12 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onRemoveValidators = useCallback(() => {
-    setShowRemoveReview(true);
+    setShowRemoveValidator(true);
   }, []);
+
+  const onChangeValidators = useCallback(() => {
+    goToSelectValidator();
+  }, [goToSelectValidator]);
 
   const Warn = ({ text }: { text: string }) => (
     <Grid
@@ -102,20 +105,12 @@ export default function Index(): React.ReactElement {
   const ValidatorsActions = () => (
     <Grid container justifyContent='center' spacing={1} pt='15px'>
       <Grid item>
-        <Typography sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
           {t('Change Validators')}
         </Typography>
       </Grid>
       <Grid item>
-        <Divider
-          orientation='vertical'
-          sx={{
-            bgcolor: 'text.primary',
-            height: '19px',
-            m: 'auto 2px',
-            width: '2px'
-          }}
-        />
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
       </Grid>
       <Grid item>
         <Infotip text={t<string>('To unselect validators, you will not get any rewards after.')}>
@@ -169,13 +164,12 @@ export default function Index(): React.ReactElement {
         {selectedValidatorsId && allValidatorsInfo &&
           <>
             <ValidatorsTable
-              allValidatorsInfo={allValidatorsInfo}
+              activeValidators={activeValidators}
               api={api}
               chain={chain}
-              selectedValidatorsId={selectedValidatorsId}
               staked={new BN(pool?.ledger?.active ?? 0)}
               stakingConsts={stakingConsts}
-              stashId={pool?.accounts?.stashId}
+              validatorsToList={selectedValidatorsInfo}
             />
             <ValidatorsActions />
           </>
@@ -187,16 +181,32 @@ export default function Index(): React.ReactElement {
           text={t<string>('Select Validator')}
         />
       }
-      {showRemoveReview &&
+      {showRemoveValidator &&
         <RemoveValidators
           address={address}
           api={api}
           chain={chain}
           formatted={formatted}
           poolId={pool?.poolId}
-          setShow={setShowReview}
-          show={setShowRemoveReview}
+          setShow={setShowRemoveValidator}
+          show={showRemoveValidator}
           title={t('Remove Selected Validators')}
+        />
+      }
+      {showSelectValidator &&
+        <SelectValidators
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={formatted}
+          pool={pool}
+          poolId={pool?.poolId}
+          selectedValidatorsId={selectedValidatorsId}
+          setShow={setShowSelectValidator}
+          show={showSelectValidator}
+          stakingConsts={stakingConsts}
+          title={t('Select Validators')}
+          validatorsToList={allValidatorsInfo?.current?.concat(allValidatorsInfo?.waiting)}
         />
       }
     </Motion>

@@ -8,40 +8,32 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DirectionsRun as DirectionsRunIcon, MoreVert as MoreVertIcon } from '@mui/icons-material/';
-import { Divider, Grid, SxProps, Theme, Tooltip } from '@mui/material';
+import { Divider, Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Identity, ShowBalance } from '../../../../../components';
+import { Checkbox, Identity, ShowBalance } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { AllValidators, StakingConsts, ValidatorInfo } from '../../../../../util/types';
 
 interface Props {
   api?: ApiPromise;
-  allValidatorsInfo: AllValidators | null | undefined
+  activeValidators: ValidatorInfo[] | undefined;
   chain?: Chain;
-  stashId: string | undefined;
-  selectedValidatorsId: AccountId[] | null | undefined
   style?: SxProps<Theme> | undefined;
   staked: BN | undefined
-  stakingConsts: StakingConsts | null | undefined
+  stakingConsts: StakingConsts | null | undefined;
+  validatorsToList: ValidatorInfo[] | null | undefined
+  showCheckbox?: boolean;
 }
 
-export default function ValidatorsTable({ allValidatorsInfo, api, chain, selectedValidatorsId, staked, stakingConsts, stashId, style }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, validatorsToList, api, showCheckbox, chain, staked, stakingConsts, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef();
-
-  const selectedValidatorsInfo = useMemo(() =>
-    allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
-      .concat(allValidatorsInfo.waiting)
-      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(String(v.accountId)))
-    , [allValidatorsInfo, selectedValidatorsId]);
-
-  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === stashId)), [stashId, selectedValidatorsInfo]);
+  const theme = useTheme();
 
   const overSubscribed = useCallback((v: ValidatorInfo): { notSafe: boolean, safe: boolean } | undefined => {
     if (!stakingConsts) {
@@ -61,14 +53,14 @@ export default function ValidatorsTable({ allValidatorsInfo, api, chain, selecte
   /** put active validators at the top of the list **/
   React.useMemo(() => {
     activeValidators?.forEach((av) => {
-      const index = selectedValidatorsInfo?.findIndex((v) => v.accountId === av?.accountId);
+      const index = validatorsToList?.findIndex((v) => v.accountId === av?.accountId);
 
-      if (selectedValidatorsInfo && index && av && index !== -1) {
-        selectedValidatorsInfo.splice(index, 1);
-        selectedValidatorsInfo.unshift(av);
+      if (validatorsToList && index && av && index !== -1) {
+        validatorsToList.splice(index, 1);
+        validatorsToList.unshift(av);
       }
     });
-  }, [selectedValidatorsInfo, activeValidators]);
+  }, [validatorsToList, activeValidators]);
 
   // const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
   //   pools && setSelected && setSelected(pools[Number(event.target.value)]);
@@ -101,25 +93,24 @@ export default function ValidatorsTable({ allValidatorsInfo, api, chain, selecte
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight - 190, minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
-        {selectedValidatorsInfo?.map((v: ValidatorInfo, index: number) => {
+      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight - (showCheckbox ? 250 : 190), minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
+        {validatorsToList?.map((v: ValidatorInfo, index: number) => {
           const isActive = activeValidators?.find((av) => v.accountId === av?.accountId);
           const isOversubscribed = overSubscribed(v);
 
           return (
-            <Grid container item key={index} sx={{
-              // bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent',
-              borderBottom: '1px solid',
-              borderBottomColor: 'secondary.main',
-              // opacity: unableToJoinPools(pool) ? 0.7 : 1
-            }}
-            >
+            <Grid container item key={index} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
               <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
-                <Grid container item lineHeight='30px'>
-                  {/* <Grid item width='22px'> */}
-                  {/* <Select index={index} pool={pool} /> */}
-                  {/* </Grid>  */}
-                  <Grid container fontSize='12px' item overflow='hidden' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' >
+                <Grid container item lineHeight='30px' alignItems='center'>
+                  {showCheckbox && <Grid item width='10%'>
+                    <Checkbox
+                      // checked={camera}
+                      // onChange={setCamera}
+                      style={{ fontSize: '18px' }}
+                      theme={theme}
+                    />
+                  </Grid>}
+                  <Grid container width={showCheckbox ? '90%' : '100%'} fontSize='12px' item overflow='hidden' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' >
                     <Identity
                       api={api}
                       chain={chain}
@@ -183,6 +174,6 @@ export default function ValidatorsTable({ allValidatorsInfo, api, chain, selecte
           );
         })}
       </Grid>
-    </Grid>
+    </Grid >
   );
 }
