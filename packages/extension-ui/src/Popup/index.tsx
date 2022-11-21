@@ -44,6 +44,7 @@ import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Staking from '../../../extension-polkagate/src/popup/stake';
 import Pool from '../../../extension-polkagate/src/popup/stake/pool';
 import PoolNominations from '../../../extension-polkagate/src/popup/stake/pool/nominations';
+import PoolInformation from '../../../extension-polkagate/src/popup/stake/pool/pool';
 import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/stake';
 import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/stake/createPool';
 import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/stake/joinPool';
@@ -172,6 +173,7 @@ export default function Popup(): React.ReactElement {
                           {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                           {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
                           <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route>
+                          <Route path='/pool/stake/pool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                           <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
                           <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
