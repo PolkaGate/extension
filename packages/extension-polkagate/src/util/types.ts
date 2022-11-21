@@ -13,6 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
+import { SxProps, Theme } from '@mui/material';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -541,7 +542,11 @@ export interface TransferTxInfo {
   token: string;
 }
 
-export interface Step { current: string | number, total: string | number }
+export interface Step {
+  current: string | number;
+  total: string | number;
+  style?: SxProps<Theme> | undefined;
+}
 export interface TokenPrice {
   [chainName: string]: Price;
 }

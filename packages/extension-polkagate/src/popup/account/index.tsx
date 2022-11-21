@@ -29,7 +29,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
-import { useApi, useEndpoint, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, useProxies, useTranslation } from '../../hooks';
+import { useApi, useBalances, useChain, useEndpoint, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { getPrice } from '../../util/api/getPrice';
@@ -89,31 +89,30 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const { t } = useTranslation();
   const history = useHistory();
   const settings = useContext(SettingsContext);
-  const onAction = useContext(ActionContext);// added for plus
+  const genesisOptions = useGenesisHashOptions();
+  const onAction = useContext(ActionContext);
+  const { accounts } = useContext(AccountContext);
   const theme = useTheme();
   const { pathname, state } = useLocation();
-  const { accounts } = useContext(AccountContext);
   const { address, genesisHash } = useParams<FormattedAddressState>();
+  const price = usePrice(address);
+  const endpoint = useEndpoint2(address);
   const formatted = useFormatted(address);
   const [{ account, newFormattedAddress, newGenesisHash, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
-  const chain = useMetadata(genesisHash, true);
+  const chain = useChain(address);
+  const balances = useBalances(address);
 
   const [newChain, setNewChain] = useState<Chain | null>(chain);
-  const genesisOptions = useGenesisHashOptions();
 
   const genesis = newChain?.genesisHash ?? chain?.genesisHash;
   const endpointOptions = useEndpoints(genesis);
 
-  const currentChain = newChain ?? chain;
-  const endpoint = useEndpoint(address, currentChain);
-
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const api = useApi(address, state?.api);
+
   const availableProxiesForTransfer = useProxies(api, formatted, true, ['Any']);
 
-  const [price, setPrice] = useState<number | undefined>();
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined | null>(state?.balances as DeriveBalancesAll);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
 
@@ -122,27 +121,16 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const token = api && api.registry.chainTokens[0];
 
   const resetToDefaults = useCallback(() => {
-    setBalances(undefined);
     setNewEndpoint(undefined);
     setRecoded(defaultRecoded);
-    setPrice(undefined);
   }, []);
 
   const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
-
-  useEffect(() => {
-    chain && getPrice(chain).then((price) => {
-      console.log(`${chain?.name}  ${price}`);
-      setPrice(price ?? 0);
-    });
-  }, [chain]);
 
   useEffect((): void => {
     if (!address) {
       return setRecoded(defaultRecoded);
     }
-
-    // const account = findAccountByAddress(accounts, address);
 
     setRecoded(
       // (
@@ -161,33 +149,34 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [onAction]);
 
   const goToAccount = useCallback(() => {
-    newFormattedAddress && newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/${newFormattedAddress}/`);
-  }, [address, newFormattedAddress, newGenesisHash, onAction]);
+    newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/`);
+  }, [address, newGenesisHash, onAction]);
 
   useEffect(() => {
     newChain && newGenesisHash && newFormattedAddress && goToAccount();
   }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
 
-  const getBalances = useCallback(() => {
-    api && formatted &&
-      api.derive.balances?.all(formatted).then((b) => {
-        setBalances(b);
-        setRefresh(false);
-      }).catch(console.error);
-  }, [api, formatted]);
+  console.log('repeating issue');
 
-  useEffect(() => {
-    // eslint-disable-next-line no-void
-    (endpoint || newEndpoint) && api && (newFormattedAddress === formatted) && String(api.genesisHash) === genesis && !balances && getBalances();
-  }, [api, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint, balances]);
+  // const getBalances = useCallback(() => {
+  //   api && formatted && api.derive.balances?.all(formatted).then((b) => {
+  //     setBalances(b);
+  //     setRefresh(false);         TODO: ADD REFRESH TO USEBALANCES
+  //   }).catch(console.error);
+  // }, [api, formatted]);
 
-  useEffect(() => {
-    if (refresh) {
-      setBalances(null);
-      // eslint-disable-next-line no-void
-      // void getBalances();
-    }
-  }, [refresh, getBalances]);
+  // useEffect(() => {
+  //   // eslint-disable-next-line no-void
+  //   (endpoint || newEndpoint) && api && (newFormattedAddress === formatted) && String(api.genesisHash) === genesis && !balances && getBalances();
+  // }, [api, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint, balances]);
+
+  // useEffect(() => {
+  //   if (refresh) {
+  //     setBalances(null);
+  //     // eslint-disable-next-line no-void
+  //     // void getBalances();
+  //   }
+  // }, [refresh, getBalances]);
 
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     resetToDefaults();
@@ -212,7 +201,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
     history.push({
       pathname: `/send/${genesisHash}/${address}/${formatted}/`,
-      state: { balances, api, price }
+      state: { balances, api, price: price?.amount }
     });
   }, [availableProxiesForTransfer?.length, account?.isExternal, history, genesisHash, address, formatted, balances, api, price]);
 
@@ -379,10 +368,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           api={api}
           balances={balances}
           chain={chain}
-          price={price}
-          show={showOthers}
-          setShow={setShowOthers}
           formatted={formatted}
+          price={price?.amount}
+          setShow={setShowOthers}
+          show={showOthers}
         />
       }
     </Motion>

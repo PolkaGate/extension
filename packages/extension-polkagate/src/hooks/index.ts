@@ -28,3 +28,4 @@ export { default as useStakingConsts } from './useStakingConsts';
 export { default as useTranslation } from './useTranslation';
 export { default as useToast } from './useToast';
 export { default as useValidators } from './useValidators';
+export { default as useValidatorsIdentities } from './useValidatorsIdentities';

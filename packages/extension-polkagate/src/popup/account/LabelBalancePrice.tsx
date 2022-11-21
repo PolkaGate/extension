@@ -16,20 +16,22 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import { Divider, Grid, Skeleton, Typography } from '@mui/material';
 import React from 'react';
 
-import { ShowBalance } from '../../components';
+import { FormatBalance2, ShowBalance } from '../../components';
+import { Price } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   label: string;
   balances: DeriveBalancesAll | null | undefined;
-  price: number | undefined;
+  price: Price | undefined;
   api: ApiPromise | undefined;
   showLabel?: boolean;
 }
 
 export default function LabelBalancePrice({ api, balances, label, price, showLabel = true }: Props): React.ReactElement<Props> {
   const value = getValue(label, balances);
-  const balanceInUSD = price && value && api && Number(value) / (10 ** api.registry.chainDecimals[0]) * price;
+  const decimal = balances?.decimal || (api && api.registry.chainDecimals[0]);
+  const balanceInUSD = price && value && decimal && Number(value) / (10 ** decimal) * price.amount;
 
   return (
     <>
@@ -42,7 +44,10 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
           }
           <Grid container direction='column' item justifyContent='flex-end' xs>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={value} decimalPoint={2} />
+              {balances?.decimal && balances?.token
+                ? <FormatBalance2 decimals={[Number(balances?.decimal)]} tokens={[balances?.token]} value={value} />
+                : <ShowBalance api={api} balance={value} decimalPoint={2} />
+              }
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined

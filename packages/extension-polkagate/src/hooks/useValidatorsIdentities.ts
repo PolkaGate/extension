@@ -17,7 +17,7 @@ import { useAccount, useChain, useEndpoint2 } from '.';
  * This hooks return a list of all available validators (current and waiting) on the chain which the address is already tied with.
  */
 
-export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[]): DeriveAccountInfo[] | null | undefined {
+export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | undefined): DeriveAccountInfo[] | null | undefined {
   const endpoint = useEndpoint2(address);
   const account = useAccount(address);
   const chain = useChain(address);
@@ -26,7 +26,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
   const getValidatorsIdentities = useCallback((endpoint: string, validatorsAccountIds: AccountId[]) => {
     /** get validators identities */
-    const getValidatorsIdWorker: Worker = new Worker(new URL('../../util/workers/getValidatorsId.js', import.meta.url));
+    const getValidatorsIdWorker: Worker = new Worker(new URL('../util/workers/getValidatorsIdentities.js', import.meta.url));
 
     getValidatorsIdWorker.postMessage({ endpoint, validatorsAccountIds });
 
@@ -67,7 +67,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
     }
 
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
-    endpoint && getValidatorsIdentities(endpoint, allValidatorsIds);
+    endpoint && allValidatorsIds && getValidatorsIdentities(endpoint, allValidatorsIds);
   }, [endpoint, account, chainName, getValidatorsIdentities, allValidatorsIds]);
 
   return validatorsIdentities;

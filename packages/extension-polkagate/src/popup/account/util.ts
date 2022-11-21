@@ -16,7 +16,7 @@ export const getValue = (type: string, balances: DeriveBalancesAll | null | unde
   if (!balances) {
     return;
   }
-
+  
   switch (type.toLocaleLowerCase()) {
     case ('total'):
     case ('total balance'):

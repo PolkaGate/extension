@@ -8,12 +8,12 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../util/types';
 
-import { faPenToSquare, faPersonCircleXmark, faSquareArrowUpRight } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AutoDelete as AutoDeleteIcon, Block as BlockIcon } from '@mui/icons-material';
+import { AutoDelete as AutoDeleteIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -192,8 +192,8 @@ export default function Pool(): React.ReactElement {
                 <AutoDeleteIcon sx={{ color: poolState === 'Destroying' ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
               </Buttons>
               {poolState === 'Blocked'
-                ? (<Buttons disabled={poolState === 'Destroying'} onClick={goUnlock} showDivider text={t<string>('Unblock')}>
-                  <FontAwesomeIcon color={poolState === 'Destroying' ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faSquareArrowUpRight} />
+                ? (<Buttons onClick={goUnlock} showDivider text={t<string>('Unblock')}>
+                  <UnblockIcon sx={{ color: 'text.primary', fontSize: '18px' }} />
                 </Buttons>)
                 : (<Buttons disabled={poolState === 'Destroying'} onClick={goBlock} showDivider text={t<string>('Block')}>
                   <BlockIcon sx={{ color: poolState === 'Destroying' ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />

@@ -67,7 +67,7 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
             </Grid>
           }
           {!(accountInfo?.identity?.displayParent || accountInfo?.identity?.display || accountInfo?.nickname || name || accountName) &&
-            <Grid item sx={{ textAlign: 'letf' }}>
+            <Grid item sx={{ textAlign: 'left' }}>
               {showShortAddress
                 ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
                 : t('Unknown')
