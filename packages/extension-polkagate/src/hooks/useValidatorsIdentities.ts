@@ -17,12 +17,13 @@ import { useAccount, useChain, useEndpoint2 } from '.';
  * This hooks return a list of all available validators (current and waiting) on the chain which the address is already tied with.
  */
 
-export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | undefined): DeriveAccountInfo[] | null | undefined {
+export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined): DeriveAccountInfo[] | null | undefined {
   const endpoint = useEndpoint2(address);
   const account = useAccount(address);
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
+  const [newValidatorsIdentities, setNewValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
 
   const getValidatorsIdentities = useCallback((endpoint: string, validatorsAccountIds: AccountId[]) => {
     /** get validators identities */
@@ -44,7 +45,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       if (fetchedIdentities?.length && JSON.stringify(validatorsIdentities) !== JSON.stringify(fetchedIdentities)) {
         console.log(`setting new identities #old was: ${validatorsIdentities?.length ?? ''} `);
 
-        setValidatorsIdentities(fetchedIdentities);
+        setNewValidatorsIdentities(fetchedIdentities);
         updateMeta(address, prepareMetaData(chain, 'validatorsIdentities', fetchedIdentities)).catch(console.error);
       }
 
@@ -54,7 +55,12 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
   }, [address, chain]);
 
   useEffect(() => {
-    if (!chainName || !endpoint || !account) {
+    /** get validators info, including current and waiting, should be called after savedValidators gets value */
+    endpoint && allValidatorsIds && !newValidatorsIdentities && getValidatorsIdentities(endpoint, allValidatorsIds);
+  }, [endpoint, getValidatorsIdentities, allValidatorsIds, newValidatorsIdentities]);
+
+  useEffect(() => {
+    if (!chainName || !account) {
       return;
     }
 
@@ -65,10 +71,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
     if (savedValidatorsIdentities && savedValidatorsIdentities?.chainName === chainName) {
       setValidatorsIdentities(savedValidatorsIdentities.metaData as DeriveAccountInfo[]);
     }
+  }, [account, chainName]);
 
-    /** get validators info, including current and waiting, should be called after savedValidators gets value */
-    endpoint && allValidatorsIds && getValidatorsIdentities(endpoint, allValidatorsIds);
-  }, [endpoint, account, chainName, getValidatorsIdentities, allValidatorsIds]);
-
-  return validatorsIdentities;
+  return newValidatorsIdentities ?? validatorsIdentities;
 }
