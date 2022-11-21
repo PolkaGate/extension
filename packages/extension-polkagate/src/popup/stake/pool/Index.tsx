@@ -168,9 +168,9 @@ export default function Index(): React.ReactElement {
   const goToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,
-      state: { api, balances, consts, pool, pathname, stakingConsts }
+      state: { api, consts, pool, pathname, stakingConsts }
     });
-  }, [address, api, balances, consts, history, pool, pathname, stakingConsts]);
+  }, [address, api, consts, history, pool, pathname, stakingConsts]);
 
   const goToUnstake = useCallback(() => {
     history.push({
