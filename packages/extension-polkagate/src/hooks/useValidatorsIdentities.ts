@@ -1,13 +1,12 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId, StakingLedger } from '@polkadot/types/interfaces';
-import type { AllValidators, SavedMetaData, Validators } from '../util/types';
+import type { AccountId } from '@polkadot/types/interfaces';
+import type { SavedMetaData } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
 
 import { updateMeta } from '../messaging';
 import { prepareMetaData } from '../util/utils';

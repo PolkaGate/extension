@@ -23,7 +23,7 @@ export default function useValidators(address: string): AllValidators | null | u
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
-  console.log('account in useValidators:', account);
+  // console.log('account in useValidators:', account);
 
   const getValidatorsInfo = useCallback((chain: Chain, endpoint: string, savedValidators = []) => {
     const getValidatorsInfoWorker: Worker = new Worker(new URL('../util/workers/getValidatorsInfo.js', import.meta.url));
@@ -49,9 +49,6 @@ export default function useValidators(address: string): AllValidators | null | u
   }, [address]);
 
   useEffect(() => {
-    console.log('chain  endpoint:', chain,endpoint );
-
-
     if (!chain || !chainName || !endpoint || !account) {
       return;
     }
@@ -72,7 +69,8 @@ export default function useValidators(address: string): AllValidators | null | u
 
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
     endpoint && getValidatorsInfo(chain, endpoint, savedValidators);
-  }, [endpoint, chain, account, chainName, getValidatorsInfo]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoint, chain, account?.address, chainName, getValidatorsInfo]);
 
   return info;
 }

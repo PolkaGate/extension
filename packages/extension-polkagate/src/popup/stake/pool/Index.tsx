@@ -75,7 +75,7 @@ export default function Index(): React.ReactElement {
   const endpoint = useEndpoint2(address);
   const api = useApi(address, state?.api);
   const pool = usePool(address);
-  const validators = useValidators(address);
+  // const validators = useValidators(address);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
