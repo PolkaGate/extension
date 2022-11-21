@@ -28,7 +28,7 @@ export default function useEndpoint2(address: string | undefined): string | unde
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
-    return endpoints?.length ? endpoints[0].value : undefined;
+    return endpoints?.length ? endpoints[endpoints.length > 2 ? 1 : 0].value : undefined;
   }, [accounts, address, chain?.name]);
 
   return endpoint;
