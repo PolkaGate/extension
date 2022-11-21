@@ -4,7 +4,7 @@
 
 import getApi from '../getApi.ts';
 
-async function getAllValidatorsId (endpoint, _accountIds) {
+async function getAllValidatorsIdentities (endpoint, _accountIds) {
   try {
     const api = await getApi(endpoint);
     let accountInfo = [];
@@ -31,5 +31,5 @@ onmessage = (e) => {
   const { endpoint, validatorsAccountIds } = e.data;
 
   // eslint-disable-next-line no-void
-  void getAllValidatorsId(endpoint, validatorsAccountIds).then((info) => { postMessage(info); });
+  void getAllValidatorsIdentities(endpoint, validatorsAccountIds).then((info) => { postMessage(info); });
 };
