@@ -13,17 +13,6 @@ interface Props {
 }
 
 export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0, icon, onClick, title }: Props): React.ReactElement {
-  const itemRef = useRef(null);
-  const [parentWidth, setParentWidth] = useState<number>(0);
-  const [childCount, setChildCount] = useState<number>(0);
-  const [childWidth, setChildWidth] = useState<number>(0);
-
-  useEffect(() => {
-    setParentWidth(itemRef?.current.parentNode.offsetWidth);
-    parentWidth !== 0 && setChildCount(itemRef?.current.parentNode.childElementCount);
-    childCount !== 0 && setChildWidth((parentWidth / ((childCount + 1) / 2)) - 6);
-  }, [childCount, childWidth, itemRef, parentWidth]);
-
   return (
     <>
       <Grid
@@ -31,9 +20,7 @@ export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0
         direction='column'
         item
         justifyContent='center'
-        maxWidth={childWidth + exceptionWidth}
-        ref={itemRef}
-        width='fit-content'
+        maxWidth='fit-content'
       >
         <Grid
           container
