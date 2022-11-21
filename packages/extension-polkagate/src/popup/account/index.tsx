@@ -10,8 +10,6 @@
 
 import '@vaadin/icons';
 
-import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -32,7 +30,6 @@ import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Id
 import { useApi, useBalances, useChain, useEndpoint, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
-import { getPrice } from '../../util/api/getPrice';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
@@ -100,20 +97,15 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const formatted = useFormatted(address);
   const [{ account, newFormattedAddress, newGenesisHash, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useChain(address);
-  const balances = useBalances(address);
-
+  const [refresh, setRefresh] = useState<boolean | undefined>(false);
+  const balances = useBalances(address, refresh, setRefresh);
   const [newChain, setNewChain] = useState<Chain | null>(chain);
-
   const genesis = newChain?.genesisHash ?? chain?.genesisHash;
   const endpointOptions = useEndpoints(genesis);
-
-  const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const api = useApi(address, state?.api);
-
-  const availableProxiesForTransfer = useProxies(api, formatted, true, ['Any']);
-
+  const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
+  const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
-  const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
 
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');;
@@ -155,28 +147,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   useEffect(() => {
     newChain && newGenesisHash && newFormattedAddress && goToAccount();
   }, [goToAccount, newChain, newFormattedAddress, newGenesisHash]);
-
-  console.log('repeating issue');
-
-  // const getBalances = useCallback(() => {
-  //   api && formatted && api.derive.balances?.all(formatted).then((b) => {
-  //     setBalances(b);
-  //     setRefresh(false);         TODO: ADD REFRESH TO USEBALANCES
-  //   }).catch(console.error);
-  // }, [api, formatted]);
-
-  // useEffect(() => {
-  //   // eslint-disable-next-line no-void
-  //   (endpoint || newEndpoint) && api && (newFormattedAddress === formatted) && String(api.genesisHash) === genesis && !balances && getBalances();
-  // }, [api, formatted, genesis, newEndpoint, newFormattedAddress, setBalances, getBalances, endpoint, balances]);
-
-  // useEffect(() => {
-  //   if (refresh) {
-  //     setBalances(null);
-  //     // eslint-disable-next-line no-void
-  //     // void getBalances();
-  //   }
-  // }, [refresh, getBalances]);
 
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     resetToDefaults();
