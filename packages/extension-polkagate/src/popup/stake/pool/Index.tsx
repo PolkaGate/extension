@@ -190,6 +190,13 @@ export default function Index(): React.ReactElement {
     setShowInfo(true);
   }, []);
 
+  const goToPool = useCallback(() => {
+    history.push({
+      pathname: `/pool/stake/pool/${address}`,
+      state: { api, pool }
+    });
+  }, [address, api, history, pool]);
+
   const goToRewardWithdraw = useCallback(() => {
     claimable && !claimable?.isZero() && setShowRewardWithdraw(true);
   }, [claimable]);
@@ -357,7 +364,7 @@ export default function Index(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToInfo}
+            onClick={goToPool}
             title={t<string>('Pool')}
           />
           <HorizontalMenuItem

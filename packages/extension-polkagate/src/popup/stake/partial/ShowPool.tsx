@@ -15,7 +15,7 @@ import { MyPoolInfo, PoolInfo } from '../../../util/types';
 interface Props {
   api?: ApiPromise;
   pool?: MyPoolInfo | PoolInfo;
-  label: string;
+  label?: string;
   labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining' | 'Creating' | 'Default';
   style?: SxProps<Theme> | undefined;
