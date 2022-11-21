@@ -11,18 +11,17 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { Divider, Grid, Skeleton, Typography } from '@mui/material';
+import { Divider, Grid, Skeleton } from '@mui/material';
 import React from 'react';
 
 import { FormatBalance2, ShowBalance } from '../../components';
-import { Price } from '../../util/types';
+import { BalancesAll, Price } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   label: string;
-  balances: DeriveBalancesAll | null | undefined;
+  balances: BalancesAll | null | undefined;
   price: Price | undefined;
   api: ApiPromise | undefined;
   showLabel?: boolean;
@@ -30,7 +29,7 @@ interface Props {
 
 export default function LabelBalancePrice({ api, balances, label, price, showLabel = true }: Props): React.ReactElement<Props> {
   const value = getValue(label, balances);
-  const decimal = balances?.decimal || (api && api.registry.chainDecimals[0]);
+  const decimal = (balances?.chainName === price?.chainName && balances?.decimal) || (api && api.registry.chainDecimals[0]);
   const balanceInUSD = price && value && decimal && Number(value) / (10 ** decimal) * price.amount;
 
   return (
@@ -52,7 +51,7 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
             <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined
                 ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton sx={{ display: 'inline-block', fontWeight: 'bold', width: '90px', transform: 'none' }} height={15} />
+                : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
               }
             </Grid>
           </Grid>
