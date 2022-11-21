@@ -37,6 +37,7 @@ function SubTitle({ label, withSteps }: Props) {
         <Grid item>
           <Steps
             current={withSteps.current}
+            style={{ fontSize: '16px' }}
             total={withSteps.total}
           />
         </Grid>

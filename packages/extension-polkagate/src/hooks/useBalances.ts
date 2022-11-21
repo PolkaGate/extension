@@ -1,22 +1,21 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
 import { AccountContext } from '../components';
 import { updateMeta } from '../messaging';
 import { MILLISECONDS_TO_UPDATE } from '../util/constants';
-import { SavedBalances } from '../util/types';
+import { BalancesAll, SavedBalances } from '../util/types';
 import { useApi, useChain, useFormatted } from '.';
 
-export default function useBalances(address: string): DeriveBalancesAll | undefined {
+export default function useBalances(address: string, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>
+): BalancesAll | undefined {
   const { accounts } = useContext(AccountContext);
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
-  const [newBalances, setNewBalances] = useState<DeriveBalancesAll | undefined>();
+  const [balances, setBalances] = useState<BalancesAll | undefined>();
+  const [newBalances, setNewBalances] = useState<BalancesAll | undefined>();
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -24,16 +23,32 @@ export default function useBalances(address: string): DeriveBalancesAll | undefi
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
 
-  useEffect(() => {
-    // isChainApi(chain, api)
+  const getBalances = useCallback(() => {
+    if (!token || !decimal || !chainName) {
+      return;
+    }
+
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
       b['token'] = token;
       b['decimal'] = decimal;
       b['chainName'] = chainName;
 
       setNewBalances(b);
+      setRefresh && setRefresh(false);
     }).catch(console.error);
-  }, [api, chainName, decimal, formatted, token]);
+  }, [api, chainName, decimal, formatted, setRefresh, token]);
+
+  useEffect(() => {
+    getBalances();
+  }, [api, chainName, decimal, formatted, getBalances, token]);
+
+  useEffect(() => {
+    if (refresh) {
+      setBalances(undefined);
+      setNewBalances(undefined);
+      getBalances();
+    }
+  }, [api, chainName, decimal, formatted, getBalances, refresh, token]);
 
   useEffect(() => {
     if (!api || !newBalances || !chainName || !token || !decimal) {
@@ -90,7 +105,7 @@ export default function useBalances(address: string): DeriveBalancesAll | undefi
       setBalances(lastBalances);
     }
     // }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, address, chainName]);
 
   return newBalances ?? balances;

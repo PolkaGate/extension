@@ -22,15 +22,15 @@ export default function usePrice(address: string): Price | undefined {
   const savedPrice = useMemo(() =>
     accounts && JSON.parse(accounts.find((acc) => acc.address === address)?.price ?? '{}') as TokenPrice
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [accounts?.length, address]);
+    , [accounts?.length, address]);
 
   useEffect(() => {
     if (!chain || !token || !chainName) {
       return;
     }
 
-    getPrice(chain).then((p) => {
-      setNewPrice({ amount: p, token });
+    getPrice(chain).then((amount) => {
+      setNewPrice({ amount, chainName, date: Date.now(), token });
     }).catch(console.error);
   }, [chain, chainName, token]);
 
@@ -39,7 +39,7 @@ export default function usePrice(address: string): Price | undefined {
       return;
     }
 
-    savedPrice[chainName] = { ...newPrice, date: Date.now() };
+    savedPrice[chainName] = newPrice;
 
     const metaData = JSON.stringify({ ['price']: JSON.stringify(savedPrice) });
 

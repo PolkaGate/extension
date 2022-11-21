@@ -51,7 +51,7 @@ export default function Index(): React.ReactElement {
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
   const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimals)), [amount, decimals, staked]);
-  const unlockingLen = myPool?.ledger?.unlocking?.length ?? 0;
+  const unlockingLen = myPool?.ledger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
   const unbonded = api && api.tx.nominationPools.unbond;
@@ -95,7 +95,7 @@ export default function Index(): React.ReactElement {
     }
 
     // eslint-disable-next-line no-void
-    poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
+    poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
       const fee = i?.partialFee;
 
       if (unlockingLen < maxUnlockingChunks) {
@@ -215,7 +215,7 @@ export default function Index(): React.ReactElement {
           show={showReview}
           total={totalAfterUnstake}
           unbonded={unbonded}
-          unlockingLen={unlockingLen}
+          unlockingLen={unlockingLen ?? 0}
         />
       }
     </Motion>

@@ -6,7 +6,6 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
-import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,10 +14,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators } from '../../../../hooks';
+import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import ValidatorsTable from './partials/ValidatorsTable';
 import RemoveValidators from './remove';
@@ -42,6 +42,11 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const allValidatorsInfo = useValidators(address);
+  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
+  const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
+
+  console.log('allValidatorsIdentities:', allValidatorsIdentities);
+
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
@@ -206,7 +211,8 @@ export default function Index(): React.ReactElement {
           show={showSelectValidator}
           stakingConsts={stakingConsts}
           title={t('Select Validators')}
-          validatorsToList={allValidatorsInfo?.current?.concat(allValidatorsInfo?.waiting)}
+          allValidatorsInfo={allValidatorsInfo}
+          allValidatorsIdentities={allValidatorsIdentities}
         />
       }
     </Motion>
