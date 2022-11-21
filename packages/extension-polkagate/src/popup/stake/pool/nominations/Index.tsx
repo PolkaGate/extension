@@ -199,6 +199,8 @@ export default function Index(): React.ReactElement {
       {showSelectValidator &&
         <SelectValidators
           address={address}
+          allValidatorsIdentities={allValidatorsIdentities}
+          allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
           formatted={formatted}
@@ -209,8 +211,6 @@ export default function Index(): React.ReactElement {
           show={showSelectValidator}
           stakingConsts={stakingConsts}
           title={t('Select Validators')}
-          allValidatorsInfo={allValidatorsInfo}
-          allValidatorsIdentities={allValidatorsIdentities}
         />
       }
     </Motion>
