@@ -43,7 +43,6 @@ export interface AccountJson extends KeyringPair$Meta {
   whenCreated?: number;
 
   // added for polkagate
-  balancesOnLocalStorage?: string;
   txHistory?: string;
   stakingConsts?: string;
   poolStakingConsts?: string;
@@ -53,7 +52,7 @@ export interface AccountJson extends KeyringPair$Meta {
   validatorsIdentities?: string;
   endpoint?: string;
   price?: string;
-  balance?: string;
+  balances?: string;
 }
 
 export type AccountWithChildren = AccountJson & {
