@@ -13,7 +13,6 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import SearchIcon from '@mui/icons-material/Search';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -139,7 +138,8 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     filteredValidators.sort(getComparator(order, orderBy));
 
     setValidatorsToList(selectedTemp.concat(filteredValidators));
-  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, selectedValidators, order, orderBy]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, order, orderBy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
