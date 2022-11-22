@@ -18,7 +18,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordWithUseProxy, PButton, Popup, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, PButton, Popup, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
@@ -190,7 +190,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
             </Grid>
           </Grid>
         </Grid>
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -208,11 +208,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
             position: 'absolute',
             width: '92%'
           }}
-        />
-        <PButton
-          _onClick={remove}
-          disabled={!password}
-          text={t<string>('Confirm')}
+          onConfirmClick={remove}
         />
         <WaitScreen
           show={showWaitScreen}

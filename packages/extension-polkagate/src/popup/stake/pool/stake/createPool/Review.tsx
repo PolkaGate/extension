@@ -17,7 +17,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyConfirm, PButton, Popup, Warning } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
@@ -55,7 +55,6 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
-  const [confirmBtnDisabled, setConfirmBtnDisabled] = useState<boolean>(true);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
@@ -143,10 +142,6 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
     }
   }, [address, api, chain, create, createAmount, decimals, estimatedFee, formatted, hierarchy, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
-  useEffect(() => {
-    setConfirmBtnDisabled(!password && !isPasswordError);
-  }, [isPasswordError, password]);
-
   return (
     <>
       <Popup show={showReview}>
@@ -233,7 +228,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         >
           {t<string>('* 0.0100 WND will be bonded in Reward Id, and will be returned back when unbound all.')}
         </Typography>
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -251,11 +246,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
             position: 'absolute',
             width: '92%'
           }}
-        />
-        <PButton
-          _onClick={goCreatePool}
-          disabled={confirmBtnDisabled}
-          text={t<string>('Confirm')}
+          onConfirmClick={goCreatePool}
         />
       </Popup>
       <WaitScreen

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
@@ -133,13 +133,7 @@ export default function PasswordWithUseProxy({ defaultValue, disabled, genesisHa
                 </>
               }
             >
-              <Grid
-                item
-                onClick={goToSelectProxy}
-                pl='10px'
-                pt='10px'
-                sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}
-              >
+              <Grid item onClick={goToSelectProxy} pl='10px' pt='10px' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
                 {selectedProxy ? t('Update proxy') : t('Use proxy')}
               </Grid>
             </Tooltip>
