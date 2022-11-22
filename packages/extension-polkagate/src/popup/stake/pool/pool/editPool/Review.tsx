@@ -6,12 +6,14 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
+import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, Identicon, Identity, Motion, PasswordWithUseProxy, PButton, Popup, ShortAddress, ShowBalance, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, Identicon, Motion, PasswordWithUseProxy, PButton, Popup, ShortAddress, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
@@ -58,6 +60,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
 
   const batchAll = api.tx.utility.batchAll;
   const setMetadata = api.tx.nominationPools.setMetadata;
@@ -67,10 +70,33 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   }, [setShow, show]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    void setMetadata(pool.poolId, pool.metadata).paymentInfo(formatted).then((i) =>
-      setEstimatedFee(i?.partialFee));
-  }, [api, formatted, pool?.metadata, pool?.poolId, setMetadata]);
+    const calls = [];
+
+    const getRole = (role: string | undefined) => {
+      if (role === undefined) {
+        return 'Noop';
+      } else if (role === '') {
+        return 'Remove';
+      } else {
+        return { set: role };
+      }
+    };
+
+    changes?.newPoolName !== undefined &&
+      calls.push(setMetadata(pool.poolId, changes?.newPoolName));
+    changes?.newRoles !== undefined &&
+      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newStateToggler)));
+
+    setTxCalls(calls);
+
+    calls.length && calls[0].paymentInfo(formatted).then((i) => {
+      setEstimatedFee(api.createType('Balance', i?.partialFee));
+    });
+
+    calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
+      setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
+    });
+  }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.metadata, pool.poolId, setMetadata, setTxCalls]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -110,7 +136,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted) {
+      if (!formatted || !txCalls) {
         return;
       }
 
@@ -119,25 +145,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      // const { block, failureText, fee, status, txHash } = await editPool(api, formatted, signer, pool, basePool, proxy);
-      const calls = [];
-
-      const getRole = (role: string | undefined) => {
-        if (role === undefined) {
-          return 'Noop';
-        } else if (role === '') {
-          return 'Remove';
-        } else {
-          return { set: role };
-        }
-      };
-
-      changes?.newPoolName !== undefined &&
-        calls.push(setMetadata(pool.poolId, changes?.newPoolName));
-      changes?.newRoles !== undefined &&
-        calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newStateToggler)));
-
-      const updated = calls.length > 1 ? batchAll(calls) : calls[0];
+      const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
       const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
 
       const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
@@ -166,7 +174,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, changes?.newPoolName, changes?.newRoles, estimatedFee, formatted, hierarchy, name, password, pool.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, batchAll, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, txCalls]);
 
   const ShowPoolRole = ({ roleAddress, roleTitle, showDivider }: ShowRolesProps) => {
     const roleName = useAccountName(getSubstrateAddress(roleAddress)) ?? t<string>('Unknown');
