@@ -19,7 +19,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, PButton, Popup, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
@@ -247,7 +247,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
             style={{ pt: '5px' }}
           />
         </Container>
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -265,6 +265,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
             position: 'absolute',
             width: '92%'
           }}
+          onConfirmClick={unstake}
         />
         <PButton
           _onClick={unstake}

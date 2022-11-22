@@ -54,7 +54,7 @@
     "qrcode.react": "^3.0.2",
     "react-chartjs-2": "^4.2.0",
     "react-tooltip": "^4.2.21",
-    "react-window": "^1.8.7",
+    "react-window": "^1.8.8",
     "umi-request": "^1.4.0"
   },
   "devDependencies": {

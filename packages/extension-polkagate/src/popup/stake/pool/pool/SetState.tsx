@@ -11,7 +11,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordWithUseProxy, PButton, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, PButton, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
@@ -220,7 +220,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
         >
           {helperText}
         </Typography>
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -238,11 +238,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
             position: 'absolute',
             width: '92%'
           }}
-        />
-        <PButton
-          _onClick={changeState}
-          disabled={!password}
-          text={t<string>('Confirm')}
+          onConfirmClick={changeState}
         />
         <WaitScreen
           show={showWaitScreen}
