@@ -12,7 +12,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, PasswordWithUseProxy, PButton, ProxyTable, ShowBalance, Warning } from '../../components';
+import { AccountContext, ActionContext, PasswordUseProxyConfirm, PasswordWithUseProxy, PButton, ProxyTable, ShowBalance, Warning } from '../../components';
 import { useAccount } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { WaitScreen } from '../../partials';
@@ -37,7 +37,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
-  const [nextButtonDisabe, setNextButtonDisalbe] = useState<boolean>(true);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -147,10 +146,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
 
     setProxiesToChange(toChange);
   }, [proxies]);
-
-  useEffect(() => {
-    setNextButtonDisalbe(!password);
-  }, [password]);
 
   return (
     <>
@@ -265,12 +260,14 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           </Grid>
         </Grid>
       </Grid>
-      <PasswordWithUseProxy
+      <PasswordUseProxyConfirm
         api={api}
+        confirmText={t<string>('Next')}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}
         label={`${t<string>('Password')} for ${selectedProxyName || account?.name}`}
         onChange={setPassword}
+        onConfirmClick={onNext}
         proxiedAddress={address}
         proxies={proxies}
         proxyTypeFilter={['Any']}
@@ -283,11 +280,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           position: 'absolute',
           width: '92%'
         }}
-      />
-      <PButton
-        _onClick={onNext}
-        disabled={nextButtonDisabe}
-        text={t<string>('Next')}
       />
       {<WaitScreen show={showWaitScreen} title={t('Manage Proxies')} />}
       {txInfo &&

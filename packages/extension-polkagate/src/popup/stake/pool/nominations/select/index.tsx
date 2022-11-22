@@ -13,6 +13,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import SearchIcon from '@mui/icons-material/Search';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -50,6 +51,48 @@ interface Props {
   pool: MyPoolInfo | undefined;
 }
 
+interface Data {
+  name: string;
+  commission: number;
+  nominator: number;
+  staked: string;
+}
+
+type Order = 'asc' | 'desc';
+
+function descendingComparator<T>(a: ValidatorInfo, b: ValidatorInfo, orderBy: keyof T) {
+  let A, B;
+
+  switch (orderBy) {
+    case ('commission'):
+      A = a.validatorPrefs.commission;
+      B = b.validatorPrefs.commission;
+      break;
+    case ('nominator'):
+      A = a.exposure.others.length;
+      B = b.exposure.others.length;
+      break;
+    default:
+      A = a.accountId;
+      B = b.accountId;
+  }
+
+  if (B < A) {
+    return -1;
+  }
+
+  if (B > A) {
+    return 1;
+  }
+
+  return 0;
+}
+
+
+function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b: ValidatorInfo) => number {
+  return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
 export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, poolId, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -60,6 +103,8 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [noWaiting, setNoWaiting] = useState<boolean>();
   const [validatorsToList, setValidatorsToList] = useState<ValidatorInfo[]>();
   const [selectedValidators, setSelectedValidators] = useState<ValidatorInfo[]>([]);
+  const [order, setOrder] = useState<Order>('asc');
+  const [orderBy, setOrderBy] = useState<keyof Data>('name');
 
   useEffect(() => {
     if (!allValidatorsInfo || !allValidatorsIdentities) {
@@ -90,13 +135,23 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     });
     setSelectedValidators([...selectedTemp]);
 
-    setValidatorsToList(filteredValidators);
-  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, selectedValidators]);
+    selectedTemp.sort(getComparator(order, orderBy));
+    filteredValidators.sort(getComparator(order, orderBy));
+
+    setValidatorsToList(selectedTemp.concat(filteredValidators));
+  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, selectedValidators, order, orderBy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Data) => {
+    const isAsc = orderBy === property && order === 'asc';
+
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+  
   return (
     <Motion>
       <Popup show={show}>
@@ -112,7 +167,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           }}
         />
         <Grid container sx={{ justifyContent: 'center', p: '10px 15px' }}>
-          <Grid container item fontSize='14px' fontWeight='400' pb='15px'>
+          <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
             <Checkbox
               label={t<string>('ID only')}
               onChange={() => setIdOnly(!idOnly)}

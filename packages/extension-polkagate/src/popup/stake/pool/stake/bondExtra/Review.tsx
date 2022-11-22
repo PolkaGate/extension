@@ -17,7 +17,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordUseProxyConfirm, PButton, Popup, Warning } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
@@ -52,7 +52,6 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
-  const [confirmBtnDisabled, setConfirmBtnDisabled] = useState<boolean>(true);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
@@ -138,10 +137,6 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  useEffect(() => {
-    setConfirmBtnDisabled(!password && !isPasswordError);
-  }, [isPasswordError, password]);
-
   return (
     <>
       <Popup show={showReview}>
@@ -206,12 +201,13 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
           label={t('Total stake')}
           style={{ pt: '2px' }}
         />
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={BondExtra}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any']}
@@ -224,11 +220,6 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
             position: 'absolute',
             width: '92%'
           }}
-        />
-        <PButton
-          _onClick={BondExtra}
-          disabled={confirmBtnDisabled}
-          text={t<string>('Confirm')}
         />
       </Popup>
       <WaitScreen

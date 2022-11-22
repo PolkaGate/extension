@@ -17,7 +17,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordUseProxyConfirm, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -200,7 +200,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
             style={{ pt: '5px' }}
           />
         </Container>
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -218,11 +218,8 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
             position: 'absolute',
             width: '92%'
           }}
-        />
-        <PButton
-          _onClick={submit}
-          disabled={!password}
-          text={t<string>('Confirm')}
+          onConfirmClick={submit}
+          confirmText={t<string>('Confirm')}
         />
         <WaitScreen
           show={showWaitScreen}

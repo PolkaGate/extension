@@ -45,8 +45,6 @@ export default function Index(): React.ReactElement {
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
 
-  console.log('allValidatorsIdentities:', allValidatorsIdentities);
-
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
@@ -201,6 +199,8 @@ export default function Index(): React.ReactElement {
       {showSelectValidator &&
         <SelectValidators
           address={address}
+          allValidatorsIdentities={allValidatorsIdentities}
+          allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
           formatted={formatted}
@@ -211,8 +211,6 @@ export default function Index(): React.ReactElement {
           show={showSelectValidator}
           stakingConsts={stakingConsts}
           title={t('Select Validators')}
-          allValidatorsInfo={allValidatorsInfo}
-          allValidatorsIdentities={allValidatorsIdentities}
         />
       }
     </Motion>

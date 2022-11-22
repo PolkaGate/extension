@@ -21,7 +21,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordWithUseProxy, PButton, ShortAddress, Warning } from '../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordUseProxyConfirm, PButton, ShortAddress, Warning } from '../../components';
 import { useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -246,7 +246,7 @@ export default function Review(): React.ReactElement {
           withFee
         />
       </Container>
-      <PasswordWithUseProxy
+      <PasswordUseProxyConfirm
         api={state?.api}
         genesisHash={genesisHash}
         isPasswordError={isPasswordError}
@@ -264,11 +264,8 @@ export default function Review(): React.ReactElement {
           position: 'absolute',
           width: '92%'
         }}
-      />
-      <PButton
-        _onClick={send}
-        disabled={!password}
-        text={t<string>('Send')}
+        onConfirmClick={send}
+        confirmText={t<string>('Send')}
       />
       <WaitScreen
         show={showWaitScreen}
