@@ -23,6 +23,7 @@ import { HeaderBrand, SubTitle } from '../../../../partials';
 import ShowPool from '../../partial/ShowPool';
 import ShowRoles from '../../partial/ShowRoles';
 import SetState from './SetState';
+import EditPool from './editPool';
 
 interface State {
   api: ApiPromise | undefined;
@@ -52,9 +53,14 @@ export default function Pool(): React.ReactElement {
 
   const [goChange, setGoChange] = useState<boolean>(false);
   const [changeState, setChangeState] = useState<'Open' | 'Blocked' | 'Destroying'>();
+  const [showEdit, setShowEdit] = useState<boolean>(false);
 
-  const poolState = pool?.bondedPool?.state.toString();
+  const poolState = pool?.bondedPool?.state?.toString();
   const canChangeState = useMemo(() => pool?.bondedPool && formatted && [String(pool.bondedPool.roles.root), String(pool.bondedPool.roles.stateToggler)].includes(formatted), [pool, formatted]);
+
+  const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
+  const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
+  const unblockHelperText = t<string>('The pool state will be changed to Open, and any member will be able to join The pool.');
 
   const backToStake = useCallback(() => {
     history.push({
@@ -98,7 +104,7 @@ export default function Pool(): React.ReactElement {
   }, [poolState]);
 
   const goEdit = useCallback(() => {
-    console.log('goEdit')
+    setShowEdit(!showEdit);
   }, []);
 
   const goRemoveAll = useCallback(() => {
@@ -219,9 +225,12 @@ export default function Pool(): React.ReactElement {
           setShow={setGoChange}
           show={goChange}
           state={changeState}
-          helperText={t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.')}
-          headerText={'Block Pool'}
+          helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
+          headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
         />
+      }
+      {showEdit &&
+        <EditPool address={address} apiToUse={api} setShowEdit={setShowEdit} showEdit={showEdit} pool={pool} />
       }
     </>
   );
