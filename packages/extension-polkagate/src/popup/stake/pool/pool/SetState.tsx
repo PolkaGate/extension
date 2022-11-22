@@ -117,8 +117,8 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length ? chilled(pool.poolId) : undefined;
       const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
 
-      const tx = selectedProxy ? api.tx.proxy.proxy(address, selectedProxy.proxyType, calls) : calls;
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, address);
+      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
+      const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
 
       const action = state === 'Destroying' ? 'pool_destroy' : state === 'Open' ? 'pool_unblock' : 'block';
 
