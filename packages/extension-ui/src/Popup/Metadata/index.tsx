@@ -3,7 +3,7 @@
 
 import React, { useContext } from 'react';
 
-import { Loading, MetadataReqContext } from '../../components';
+import { Loading, MetadataReqContext } from '../../../../extension-polkagate/src/components';
 import useTranslation from '../../hooks/useTranslation';
 import { Header } from '../../partials';
 import Request from './Request';
