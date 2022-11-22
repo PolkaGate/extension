@@ -28,10 +28,10 @@ export default function ShowPool({ chainName, label, mode, pool, style }: Props)
     }
 
     mode === 'Roles' && setAccountsToShow([
-      { label: t<string>('Root'), address: pool.bondedPool?.roles?.root.toString() ?? '' },
+      { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
       { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
-      { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator.toString() ?? '' },
-      { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler.toString() ?? '' }
+      { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
+      { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
     ]);
 
     mode === 'Ids' && setAccountsToShow([
@@ -111,7 +111,10 @@ export default function ShowPool({ chainName, label, mode, pool, style }: Props)
                   }}
                   width='50%'
                 >
-                  {<ShortAddress address={acc.address} charsCount={6} showCopy />}
+                  {acc.address
+                    ? <ShortAddress address={acc.address} charsCount={6} showCopy />
+                    : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>{t<string>('Null')}</Typography>
+                  }
                 </Grid>
                 <Grid
                   alignItems='center'

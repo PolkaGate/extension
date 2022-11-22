@@ -6,35 +6,42 @@ import type { ApiPromise } from '@polkadot/api';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
+import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, PButton, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
-import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
-import Confirmation from '../../../../partials/Confirmation';
-import { signAndSend } from '../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import ShowPool from '../../partial/ShowPool';
+import { AccountContext, ActionContext, Identicon, Motion, PasswordWithUseProxy, PButton, Popup, ShortAddress, Warning } from '../../../../../components';
+import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
+import { updateMeta } from '../../../../../messaging';
+import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
+import Confirmation from '../../../../../partials/Confirmation';
+import { signAndSend } from '../../../../../util/api';
+import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import { ChangesProps } from '.';
 
 interface Props {
   address: string;
   api: ApiPromise;
   chain: Chain;
+  changes?: ChangesProps;
   formatted: string;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   state: string;
-  helperText: string;
-  headerText: string;
 }
 
-export default function SetState({ address, api, chain, formatted, headerText, helperText, pool, setShow, show, state }: Props): React.ReactElement {
+interface ShowRolesProps {
+  roleTitle: string;
+  roleAddress: string;
+  showDivider?: boolean
+}
+
+export default function Review({ address, api, chain, changes, formatted, pool, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -53,19 +60,43 @@ export default function SetState({ address, api, chain, formatted, headerText, h
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
 
   const batchAll = api.tx.utility.batchAll;
-  const chilled = api.tx.nominationPools.chill;
-  const poolSetState = api.tx.nominationPools.setState(pool.poolId.toString(), state); // (poolId, state)
+  const setMetadata = api.tx.nominationPools.setMetadata;
 
-  const backToStake = useCallback(() => {
-    setShow(false);
-  }, [setShow]);
+  const onBackClick = useCallback(() => {
+    setShow(!show);
+  }, [setShow, show]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    void poolSetState.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [formatted, poolSetState]);
+    const calls = [];
+
+    const getRole = (role: string | undefined) => {
+      if (role === undefined) {
+        return 'Noop';
+      } else if (role === '') {
+        return 'Remove';
+      } else {
+        return { set: role };
+      }
+    };
+
+    changes?.newPoolName !== undefined &&
+      calls.push(setMetadata(pool.poolId, changes?.newPoolName));
+    changes?.newRoles !== undefined &&
+      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newStateToggler)));
+
+    setTxCalls(calls);
+
+    calls.length && calls[0].paymentInfo(formatted).then((i) => {
+      setEstimatedFee(api.createType('Balance', i?.partialFee));
+    });
+
+    calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
+      setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
+    });
+  }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.metadata, pool.poolId, setMetadata, setTxCalls]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -101,11 +132,11 @@ export default function SetState({ address, api, chain, formatted, headerText, h
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const changeState = useCallback(async () => {
+  const goEditPool = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted) {
+      if (!formatted || !txCalls) {
         return;
       }
 
@@ -114,16 +145,13 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length ? chilled(pool.poolId) : undefined;
-      const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
+      const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
+      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
 
-      const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
       const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
 
-      const action = state === 'Destroying' ? 'pool_destroy' : state === 'Open' ? 'pool_unblock' : 'block';
-
       const info = {
-        action,
+        action: 'pool_edit',
         block,
         date: Date.now(),
         failureText,
@@ -146,17 +174,61 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, batchAll, chain, chilled, estimatedFee, formatted, hierarchy, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
+  }, [api, batchAll, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, txCalls]);
+
+  const ShowPoolRole = ({ roleAddress, roleTitle, showDivider }: ShowRolesProps) => {
+    const roleName = useAccountName(getSubstrateAddress(roleAddress)) ?? t<string>('Unknown');
+
+    return (
+      <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+        <Grid item>
+          <Typography
+            fontSize='16px'
+            fontWeight={300}
+            lineHeight='23px'
+          >
+            {roleTitle}
+          </Typography>
+        </Grid>
+        {roleAddress
+          ? (
+            <Grid item container direction='row' justifyContent='center'>
+              <Grid item container width='fit-content' alignItems='center'>
+                <Identicon
+                  iconTheme={chain?.icon ?? 'polkadot'}
+                  prefix={chain?.ss58Format ?? 42}
+                  size={25}
+                  value={roleAddress}
+                />
+              </Grid>
+              <Grid item container width='fit-content' alignItems='center' pl='5px' fontSize='28px' fontWeight={400} maxWidth='55%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{roleName}</Grid>
+              <Grid item container width='fit-content' alignItems='center' pl='5px'><ShortAddress address={roleAddress} charsCount={4} inParentheses /></Grid>
+            </Grid>)
+          : (
+            <Typography
+              fontSize='20px'
+              fontWeight={300}
+              lineHeight='23px'
+            >
+              {t<string>('To be Removed')}
+            </Typography>
+          )
+        }
+        {showDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />}
+      </Grid>
+    )
+  };
 
   return (
     <Motion>
       <Popup show={show}>
         <HeaderBrand
-          onBackClick={backToStake}
+          onBackClick={onBackClick}
           shortBorder
           showBackArrow
           showClose
-          text={headerText}
+          text={t<string>('Edit Pool')}
+          withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
           <Grid
@@ -177,50 +249,34 @@ export default function SetState({ address, api, chain, formatted, headerText, h
           </Grid>
         }
         <SubTitle label={t<string>('Review')} />
-        <ShowPool
-          api={api}
-          mode='Default'
-          pool={pool}
-          style={{
-            m: '20px auto',
-            width: '92%'
-          }}
-        />
-        <Grid
-          container
-          m='auto'
-          width='92%'
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
-            {t<string>('Fee:')}
-          </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
-            <ShowBalance
-              api={api}
-              balance={estimatedFee}
-              decimalPoint={4}
-              height={22}
-            />
-          </Grid>
-        </Grid>
-        <Typography
-          fontSize='12px'
-          fontWeight={300}
-          m='20px auto 0'
-          textAlign='left'
-          width='90%'
-        >
-          {helperText}
-        </Typography>
-        <PasswordUseProxyConfirm
+        {changes?.newPoolName !== undefined &&
+          <>
+            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
+              <Typography
+                fontSize='16px'
+                fontWeight={300}
+                lineHeight='23px'
+              >
+                {t<string>('Pool name')}
+              </Typography>
+              <Typography
+                fontSize='28px'
+                fontWeight={400}
+                lineHeight='30px'
+                maxWidth='100%'
+                overflow='hidden'
+                textOverflow='ellipsis'
+                whiteSpace='nowrap'
+              >
+                {changes?.newPoolName}
+              </Typography>
+            </Grid>
+            {changes?.newRoles && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />}
+          </>}
+        {changes?.newRoles?.newRoot !== undefined && <ShowPoolRole showDivider roleAddress={changes?.newRoles?.newRoot} roleTitle={t<string>('Root')} />}
+        {changes?.newRoles?.newNominator !== undefined && <ShowPoolRole showDivider roleAddress={changes?.newRoles?.newNominator} roleTitle={t<string>('Nominator')} />}
+        {changes?.newRoles?.newStateToggler !== undefined && <ShowPoolRole roleAddress={changes?.newRoles?.newStateToggler} roleTitle={t<string>('State toggler')} />}
+        <PasswordWithUseProxy
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -238,7 +294,11 @@ export default function SetState({ address, api, chain, formatted, headerText, h
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={changeState}
+        />
+        <PButton
+          _onClick={goEditPool}
+          disabled={!password}
+          text={t<string>('Confirm')}
         />
         <WaitScreen
           show={showWaitScreen}
