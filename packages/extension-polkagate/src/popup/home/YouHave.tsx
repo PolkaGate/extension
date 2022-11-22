@@ -58,15 +58,8 @@ export default function YouHave(): React.ReactElement {
           {t('You have')}
         </Typography>
       </Grid>
-      <Grid
-        container
-        item
-        justifyContent='center'
-        xs={12}
-      >
-        <Typography
-          sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}
-        >
+      <Grid container item justifyContent='center' xs={12}      >
+        <Typography sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}        >
           {allYouHaveAmount === undefined
             ? <Skeleton
               height={38}

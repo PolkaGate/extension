@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
-import { useEndpoint, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
+import { useEndpoint, useEndpoint2, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';
@@ -44,17 +44,17 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   const endpointOptions = useEndpoints(genesisHash || newChain?.genesisHash || chain?.genesisHash);
 
   const currentChain = newChain ?? chain;
-  const endpoint = useEndpoint(address, currentChain);
-  const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
+  const endpoint = useEndpoint2(address);
+  // const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
   const canDerive = !(isExternal || isHardware);
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
-  const resetToDefaults = () => {
-    setNewEndpoint(undefined);
-  };
+  // const resetToDefaults = () => {
+  //   setNewEndpoint(undefined);
+  // };
 
   const _onForgetAccount = useCallback(() => {
     onAction(`/forget/${address}/${isExternal}`);
@@ -66,10 +66,10 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     }, [address, onAction]
   );
 
-  useEffect(() => {
-    !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newEndpoint, genesisHash]);
+  // useEffect(() => {
+  //   !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [newEndpoint, genesisHash]);
 
   const _closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
@@ -85,7 +85,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
 
   const _onChangeNetwork = useCallback(
     (newGenesisHash: string) => {
-      resetToDefaults();
+      // resetToDefaults();
       address && tieAccount(address, newGenesisHash || null).catch(console.error);
       setGenesis(newGenesisHash);
     },
@@ -112,7 +112,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   }, [genesisHash]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    setNewEndpoint(newEndpoint);
+    // setNewEndpoint(newEndpoint);
     const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
     // eslint-disable-next-line no-void
@@ -219,13 +219,13 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         options={options}
         style={{ width: '100%' }}
       />
-      {newEndpoint &&
+      {endpoint &&
         <Select
           _mt='10px'
           label={t<string>('Remote node')}
           onChange={_onChangeEndpoint}
           options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
-          value={newEndpoint ?? 'No chain selected'}
+          value={endpoint ?? 'No chain selected'}
         />
       }
       <IconButton

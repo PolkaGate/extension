@@ -36,12 +36,12 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   const theme = useTheme();
 
   useEffect(() => {
-    setWarningText(notFoundText || `No proxies found for the above account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
+    setWarningText(notFoundText || `No proxies found for the account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
   }, [chain?.name, notFoundText, proxies?.length]);
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-    , [accounts, proxyTypeFilter]);
+  , [accounts, proxyTypeFilter]);
 
   const getProxyName = useCallback((proxy: Proxy): string | undefined => accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate))?.name, [accounts]);
 

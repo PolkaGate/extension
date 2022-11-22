@@ -22,7 +22,7 @@ export default function usePrice(address: string): Price | undefined {
   const savedPrice = useMemo(() =>
     accounts && JSON.parse(accounts.find((acc) => acc.address === address)?.price ?? '{}') as TokenPrice
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [accounts?.length, address]);
+  , [accounts?.length, address]);
 
   useEffect(() => {
     if (!chain || !token || !chainName) {
