@@ -63,8 +63,7 @@ export default function useValidators(address: string): AllValidators | null | u
 
       setValidatorsInfo(savedValidators.metaData as Validators);
 
-      console.log(`validatorsInfo in storage is from era: ${savedValidators.metaData.currentEraIndex}
-       on chain: ${savedValidators?.chainName}`);
+      console.log(`validatorsInfo in storage is from era: ${savedValidators.metaData.currentEraIndex} on chain: ${savedValidators?.chainName}`);
     }
 
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
