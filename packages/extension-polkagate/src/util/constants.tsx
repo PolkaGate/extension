@@ -7,7 +7,7 @@ import { BN } from '@polkadot/util';
 export const EXTENSION_NAME = 'Polkadot js plus ❤️';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
-export const MILLISECONDS_TO_UPDATE = 60 * 1000; // to update price
+export const MILLISECONDS_TO_UPDATE = 5 * 60 * 1000; // to update price
 export const PLUS_VERSION = '0.44.1.19';
 export const ENVIRONMENT = 'production'; // development or production
 export const PREFERRED_POOL_ID_ON_WESTEND = new BN(6)
