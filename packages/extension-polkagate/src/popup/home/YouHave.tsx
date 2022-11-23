@@ -9,7 +9,7 @@ import { BN } from '@polkadot/util';
 import { AccountContext } from '../../components';
 import FormatPrice from '../../components/FormatPrice';
 import useTranslation from '../../hooks/useTranslation';
-import { SavedBalances, TokenPrice } from '../../util/types';
+import { Price, SavedBalances } from '../../util/types';
 
 export default function YouHave(): React.ReactElement {
   const { t } = useTranslation();
@@ -23,18 +23,20 @@ export default function YouHave(): React.ReactElement {
     let value = 0;
 
     accounts.forEach((acc) => {
-      if (!acc?.balances || !acc?.price) {
+      if (!acc?.balances) {
         return;
       }
 
-      const prices = JSON.parse(acc.price) as TokenPrice;
       const balances = JSON.parse(acc.balances) as SavedBalances;
 
-      Object.keys(prices).map((chainName) => {
-        if (balances[chainName] && prices[chainName]?.amount && balances[chainName].token === prices[chainName].token) {
+      Object.keys(balances).forEach((chainName) => {
+        const localSavedPrice = window.localStorage.getItem(`${chainName}_price`);
+        const prices = JSON.parse(localSavedPrice) as Price;
+
+        if (balances[chainName] && prices && balances[chainName].token === prices.token) {
           const total = new BN(balances[chainName].balances.freeBalance).add(new BN(balances[chainName].balances.reservedBalance));
 
-          value += prices[chainName].amount * (Number(total) * 10 ** -balances[chainName].decimal);
+          value += prices.amount * (Number(total) * 10 ** -balances[chainName].decimal);
         }
       });
     });
@@ -58,8 +60,8 @@ export default function YouHave(): React.ReactElement {
           {t('You have')}
         </Typography>
       </Grid>
-      <Grid container item justifyContent='center' xs={12}      >
-        <Typography sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}        >
+      <Grid container item justifyContent='center' xs={12}>
+        <Typography sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
           {allYouHaveAmount === undefined
             ? <Skeleton
               height={38}
