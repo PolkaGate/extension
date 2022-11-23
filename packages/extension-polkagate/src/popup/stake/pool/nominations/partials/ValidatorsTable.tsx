@@ -5,20 +5,19 @@
 
 import '@vaadin/icons';
 
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DirectionsRun as DirectionsRunIcon, MoreVert as MoreVertIcon } from '@mui/icons-material/';
-import { Divider, Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
+import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox, Identity, ShowBalance } from '../../../../../components';
+import { Checkbox, Identity, Infotip, ShowBalance } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
-import { AllValidators, StakingConsts, ValidatorInfo } from '../../../../../util/types';
+import { StakingConsts, ValidatorInfo } from '../../../../../util/types';
 
 interface Props {
   api?: ApiPromise;
@@ -32,12 +31,16 @@ interface Props {
   handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
   isSelected: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
+  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
 }
 
-export default function ValidatorsTable({ activeValidators, api, chain, handleCheck, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, handleCheck, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();
+
+  const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
+  const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won’t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
   const overSubscribed = useCallback((v: ValidatorInfo): { notSafe: boolean, safe: boolean } | undefined => {
     if (!stakingConsts) {
@@ -106,7 +109,7 @@ export default function ValidatorsTable({ activeValidators, api, chain, handleCh
       <Grid container direction='column' ref={ref} sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
         {validatorsToList?.length &&
           <List
-            height={window.innerHeight - (showCheckbox ? 250 : 190)}
+            height={window.innerHeight - (showCheckbox ? 255 : 190)}
             itemCount={validatorsToList?.length}
             itemSize={55}
             width={'100%'}
@@ -115,6 +118,7 @@ export default function ValidatorsTable({ activeValidators, api, chain, handleCh
               const v = validatorsToList[index];
               const isActive = activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
+              const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
 
               return (
                 <Grid container key={key} item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', ...style }}>
@@ -132,6 +136,7 @@ export default function ValidatorsTable({ activeValidators, api, chain, handleCh
                       }
                       <Grid container fontSize='12px' item overflow='hidden' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width={showCheckbox ? '90%' : '100%'} >
                         <Identity
+                          accountInfo={accountInfo}
                           api={api}
                           chain={chain}
                           formatted={String(v.accountId)}
@@ -173,16 +178,14 @@ export default function ValidatorsTable({ activeValidators, api, chain, handleCh
                       </Grid>
                       <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '4px' }} width='fit-content'>
                         {isActive &&
-                          <Tooltip placement='left' title={t('Active')}>
+                          <Infotip text={t('Active')}>
                             <DirectionsRunIcon sx={{ color: '#1F7720', fontSize: '15px' }} />
-                          </Tooltip>
+                          </Infotip>
                         }
                         {(isOversubscribed?.safe || isOversubscribed?.notSafe) &&
-                          <FontAwesomeIcon
-                            color={isOversubscribed?.safe ? '#FFB800' : '#FF002B'}
-                            fontSize='12px'
-                            icon={faExclamationTriangle}
-                          />
+                          <Infotip text={isOversubscribed?.safe ? overSubscriptionAlert1 : overSubscriptionAlert2}>
+                            <WarningRoundedIcon sx={{ color: isOversubscribed?.safe ? '#FFB800' : '#FF002B', fontSize: '15px' }} />
+                          </Infotip>
                         }
                       </Grid>
                     </Grid>
@@ -199,6 +202,6 @@ export default function ValidatorsTable({ activeValidators, api, chain, handleCh
           </List>
         }
       </Grid>
-    </Grid>
+    </Grid >
   );
 }

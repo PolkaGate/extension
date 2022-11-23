@@ -11,27 +11,19 @@
 import type { AccountId } from '@polkadot/types/interfaces';
 
 import SearchIcon from '@mui/icons-material/Search';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Checkbox, Motion, PasswordWithUseProxy, PButton, Popup, ShowValue, Warning } from '../../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
-import { updateMeta } from '../../../../../messaging';
-import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
-import Confirmation from '../../../../../partials/Confirmation';
-import broadcast from '../../../../../util/api/broadcast';
+import { Checkbox, Motion, PButton, Popup } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
+import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
-import { AllValidators, MyPoolInfo, Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
-import TxDetail from '../partials/TxDetail';
+import { AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../partials/ValidatorsTable';
 
 interface Props {
@@ -86,7 +78,6 @@ function descendingComparator<T>(a: ValidatorInfo, b: ValidatorInfo, orderBy: ke
 
   return 0;
 }
-
 
 function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b: ValidatorInfo) => number {
   return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
@@ -265,6 +256,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           <Grid item xs={12}>
             {validatorsToList &&
               <ValidatorsTable
+                allValidatorsIdentities={allValidatorsIdentities}
                 api={api}
                 chain={chain}
                 handleCheck={handleCheck}
@@ -283,8 +275,8 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
         </Grid>
         <PButton
           // _onClick={remove}
-          // disabled={!password}
-          text={t<string>('Confirm')}
+          disabled={!newSelectedValidators?.length}
+          text={t<string>('Next')}
         />
       </Popup>
     </Motion>
