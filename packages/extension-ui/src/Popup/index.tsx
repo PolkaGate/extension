@@ -31,7 +31,7 @@ import ForgetAccount from '../../../extension-polkagate/src/popup/ForgetAccount'
 import Detail from '../../../extension-polkagate/src/popup/history/Detail';
 import History from '../../../extension-polkagate/src/popup/history/Index';
 import Accounts from '../../../extension-polkagate/src/popup/home';
-import AddProxy from '../../../extension-polkagate/src/popup/import/addProxied';
+import AddProxy from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
