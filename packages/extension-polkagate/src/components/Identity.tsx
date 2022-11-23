@@ -9,6 +9,7 @@ import { grey } from '@mui/material/colors';
 import React, { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { riot } from '../assets/icons';
@@ -17,6 +18,7 @@ import { getSubstrateAddress } from '../util/utils';
 import { ChainLogo, Identicon, ShortAddress } from '.';
 
 interface Props {
+  accountInfo?: DeriveAccountInfo;
   address?: string;
   api: ApiPromise | undefined;
   formatted?: string;
@@ -29,14 +31,14 @@ interface Props {
   showSocial?: boolean;
 }
 
-function Identity({ address, api, chain, formatted, identiconSize = 40, name, showChainLogo = false, showShortAddress, showSocial = true, style }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, name, showChainLogo = false, showShortAddress, showSocial = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
   const _formatted = useFormatted(address, formatted);
-  const accountInfo = useAccountInfo(api, _formatted);
-  const judgement = useMemo(() => accountInfo?.identity?.judgements && JSON.stringify(accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [accountInfo?.identity?.judgements]);
-  const socialIcons = (accountInfo?.identity?.twitter ? 1 : 0) + (accountInfo?.identity?.web ? 1 : 0) + (accountInfo?.identity?.email ? 1 : 0) + (accountInfo?.identity?.riot ? 1 : 0);
+  const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
+  const judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
+  const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
@@ -50,23 +52,23 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
             value={_formatted}
           />
         </Grid>
-        <Grid container item sx={{ flexWrap: 'nowrap', fontSize: style?.fontSize ?? '28px', fontWeight: 400, width: 'fit-content', letterSpacing: '-1.5%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: `calc(95% - ${(socialIcons * 20) + identiconSize}px)` }}>
-          {accountInfo?.identity?.displayParent &&
-            <Grid item >
-              {accountInfo?.identity.displayParent}/
+        <Grid container item sx={{ flexWrap: 'nowrap', fontSize: style?.fontSize ?? '28px', fontWeight: 400, width: 'fit-content', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: `calc(95% - ${(socialIcons * 20) + identiconSize}px)` }}>
+          {_accountInfo?.identity?.displayParent &&
+            <Grid item>
+              {_accountInfo?.identity.displayParent}/
             </Grid>
           }
-          {(accountInfo?.identity?.display || accountInfo?.nickname) &&
-            <Grid item sx={accountInfo?.identity?.displayParent && { color: grey[500] }}>
-              {accountInfo?.identity?.display ?? accountInfo?.nickname}
+          {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
+            <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+              {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
             </Grid>
           }
-          {!(accountInfo?.identity?.displayParent || accountInfo?.identity?.display || accountInfo?.nickname) && (name || accountName) &&
-            <Grid item sx={accountInfo?.identity?.displayParent && { color: grey[500] }}>
+          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
+            <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
               {name || accountName}
             </Grid>
           }
-          {!(accountInfo?.identity?.displayParent || accountInfo?.identity?.display || accountInfo?.nickname || name || accountName) &&
+          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
             <Grid item sx={{ textAlign: 'left' }}>
               {showShortAddress
                 ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
@@ -77,30 +79,30 @@ function Identity({ address, api, chain, formatted, identiconSize = 40, name, sh
         </Grid>
         {showSocial &&
           <Grid alignItems='center' container id='socials' item justifyContent='flex-end' width='fit-content' pl='5px'>
-            {accountInfo?.identity?.email &&
+            {_accountInfo?.identity?.email &&
               <Grid item>
-                <Link href={`mailto:${accountInfo.identity.email}`}>
+                <Link href={`mailto:${_accountInfo.identity.email}`}>
                   <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
                 </Link>
               </Grid>
             }
-            {accountInfo?.identity?.web &&
+            {_accountInfo?.identity?.web &&
               <Grid item pl='5px'>
-                <Link href={accountInfo?.identity.web} rel='noreferrer' target='_blank'>
+                <Link href={_accountInfo?.identity.web} rel='noreferrer' target='_blank'>
                   <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
                 </Link>
               </Grid>
             }
-            {accountInfo?.identity?.twitter &&
+            {_accountInfo?.identity?.twitter &&
               <Grid item pl='5px'>
-                <Link href={`https://twitter.com/${accountInfo.identity.twitter}`} rel='noreferrer' target='_blank'>
+                <Link href={`https://twitter.com/${_accountInfo.identity.twitter}`} rel='noreferrer' target='_blank'>
                   <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
                 </Link>
               </Grid>
             }
-            {accountInfo?.identity?.riot &&
+            {_accountInfo?.identity?.riot &&
               <Grid item pl='5px'>
-                <Link href={`https://matrix.to/#/${accountInfo.identity.riot}`} rel='noreferrer' target='_blank'>
+                <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} rel='noreferrer' target='_blank'>
                   <Box component='img' src={riot} sx={{ height: '12px', width: '12px' }} />
                 </Link>
               </Grid>
