@@ -75,7 +75,7 @@ function CopyAddressButton({ address, showAddress = false, size = 16 }: Props): 
           title={String(address)}
         >
           <CopyToClipboard text={String(address)}>
-            <vaadin-icon
+            <vaadin-icon 
               icon='vaadin:copy-o'
               style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }}
             />
