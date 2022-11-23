@@ -91,11 +91,7 @@ export default function Index(): React.ReactElement {
   }, [goToSelectValidator]);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid
-      container
-      justifyContent='center'
-      py='15px'
-    >
+    <Grid container justifyContent='center' py='15px'    >
       <Warning
         fontWeight={400}
         theme={theme}
@@ -116,7 +112,7 @@ export default function Index(): React.ReactElement {
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
       </Grid>
       <Grid item>
-        <Infotip text={t<string>('To unselect validators, you will not get any rewards after.')}>
+        <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
           <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
             {t('Remove Validators')}
           </Typography>

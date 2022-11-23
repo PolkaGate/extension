@@ -11,27 +11,19 @@
 import type { AccountId } from '@polkadot/types/interfaces';
 
 import SearchIcon from '@mui/icons-material/Search';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { Balance } from '@polkadot/types/interfaces';
-import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Checkbox, Motion, PasswordWithUseProxy, PButton, Popup, ShowValue, Warning } from '../../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
-import { updateMeta } from '../../../../../messaging';
-import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
-import Confirmation from '../../../../../partials/Confirmation';
-import broadcast from '../../../../../util/api/broadcast';
+import { Checkbox, Motion, PButton, Popup } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
+import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
-import { AllValidators, MyPoolInfo, Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
-import TxDetail from '../partials/TxDetail';
+import { AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../partials/ValidatorsTable';
 
 interface Props {
@@ -87,7 +79,6 @@ function descendingComparator<T>(a: ValidatorInfo, b: ValidatorInfo, orderBy: ke
   return 0;
 }
 
-
 function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b: ValidatorInfo) => number {
   return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -101,7 +92,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [noOversubscribed, setNoOversubscribed] = useState<boolean>();
   const [noWaiting, setNoWaiting] = useState<boolean>();
   const [validatorsToList, setValidatorsToList] = useState<ValidatorInfo[]>();
-  const [selectedValidators, setSelectedValidators] = useState<ValidatorInfo[]>([]);
+  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
 
@@ -125,20 +116,20 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     }
 
     // remove filtered validators from the selected list
-    const selectedTemp = [...selectedValidators];
+    const selectedTemp = [...newSelectedValidators];
 
-    selectedValidators?.forEach((s, index) => {
+    newSelectedValidators?.forEach((s, index) => {
       if (!filteredValidators.find((f) => f.accountId === s.accountId)) {
         selectedTemp.splice(index, 1);
       }
     });
-    setSelectedValidators([...selectedTemp]);
+    setNewSelectedValidators([...selectedTemp]);
 
     selectedTemp.sort(getComparator(order, orderBy));
     filteredValidators.sort(getComparator(order, orderBy));
 
     setValidatorsToList(selectedTemp.concat(filteredValidators));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, order, orderBy]);
 
   const _onBackClick = useCallback(() => {
@@ -151,7 +142,75 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  
+
+  const isSelected = useCallback((v: ValidatorInfo) => newSelectedValidators.indexOf(v) !== -1, [newSelectedValidators]);
+
+  const handleCheck = useCallback((checked: boolean, validator: ValidatorInfo) => {
+    if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
+      console.log('Max validators are selected !');
+
+      return;
+    }
+
+    const newSelected: ValidatorInfo[] = [...newSelectedValidators];
+
+    if (checked) {
+      newSelected.push(validator);
+    } else {
+      /** remove unchecked from the selection */
+      const selectedIndex = newSelectedValidators.indexOf(validator);
+
+      newSelected.splice(selectedIndex, 1);
+    }
+
+    setNewSelectedValidators([...newSelected]);
+  }, [newSelectedValidators, stakingConsts?.maxNominations]);
+
+  const Filters = () => (
+    <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
+      <Checkbox
+        label={t<string>('ID only')}
+        onChange={() => setIdOnly(!idOnly)}
+        style={{ pb: '5px', width: '30%' }}
+        theme={theme}
+      />
+      <Checkbox
+        label={t<string>('No more than 20 Commission')}
+        onChange={() => setNoMoreThan20Comm(!noMoreThan20Comm)}
+        style={{ width: '70%' }}
+        theme={theme}
+      />
+      <Checkbox
+        label={t<string>('No oversubscribed')}
+        onChange={() => setNoOversubscribed(!noOversubscribed)}
+        style={{ width: '50%' }}
+        theme={theme}
+      />
+      <Checkbox
+        label={t<string>('No waiting')}
+        onChange={() => setNoWaiting(!noWaiting)}
+        style={{ width: '40%' }}
+        theme={theme}
+      />
+      <SearchIcon sx={{ color: 'secondary.light', width: '10%' }} />
+    </Grid>
+  );
+
+  const TableSubInfoWithClear = () => (
+    <Grid container justifyContent='space-between' pt='5px'>
+      <Grid item>
+        <Typography sx={{ fontSize: '14px', fontWeight: 400 }}>
+          {t('{{selectedCount}} of {{maxSelectable}} is selected', { replace: { selectedCount: newSelectedValidators?.length, maxSelectable: stakingConsts?.maxNominations } })}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Typography onClick={() => setNewSelectedValidators([])} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          {t('Clear selection')}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+
   return (
     <Motion>
       <Popup show={show}>
@@ -197,9 +256,14 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           <Grid item xs={12}>
             {validatorsToList &&
               <ValidatorsTable
+                allValidatorsIdentities={allValidatorsIdentities}
                 api={api}
                 chain={chain}
+                handleCheck={handleCheck}
+                isSelected={isSelected}
+                maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                 selectedValidatorsId={selectedValidatorsId}
+                setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
                 staked={new BN(pool?.ledger?.active ?? 0)}
                 stakingConsts={stakingConsts}
@@ -207,13 +271,12 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               />
             }
           </Grid>
-
-
+          <TableSubInfoWithClear />
         </Grid>
         <PButton
           // _onClick={remove}
-          // disabled={!password}
-          text={t<string>('Confirm')}
+          disabled={!newSelectedValidators?.length}
+          text={t<string>('Next')}
         />
       </Popup>
     </Motion>

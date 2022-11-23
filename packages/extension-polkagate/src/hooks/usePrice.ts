@@ -19,11 +19,6 @@ export default function usePrice(address: string): Price | undefined {
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
   const token = api && api.registry.chainTokens[0];
 
-  const savedPrice = useMemo(() =>
-    accounts && JSON.parse(accounts.find((acc) => acc.address === address)?.price ?? '{}') as TokenPrice
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [accounts?.length, address]);
-
   useEffect(() => {
     if (!chain || !token || !chainName) {
       return;
@@ -35,28 +30,30 @@ export default function usePrice(address: string): Price | undefined {
   }, [chain, chainName, token]);
 
   useEffect(() => {
-    if (newPrice === undefined || !chainName || !savedPrice) {
+    if (newPrice === undefined || !chainName) {
       return;
     }
 
-    savedPrice[chainName] = newPrice;
+    window.localStorage.setItem(`${chainName}_price`, JSON.stringify(newPrice));
 
-    const metaData = JSON.stringify({ ['price']: JSON.stringify(savedPrice) });
-
-    updateMeta(address, metaData).catch(console.error);
-  }, [address, api, chain, chainName, newPrice, savedPrice]);
+    // updateMeta(address, metaData).catch(console.error);
+  }, [address, api, chain, chainName, newPrice]);
 
   useEffect(() => {
-    if (!chainName || !savedPrice) {
+    if (!chainName) {
       return;
     }
 
-    if (savedPrice[chainName]?.date) {
-      if (Date.now() - savedPrice[chainName].date < MILLISECONDS_TO_UPDATE) {
-        setPrice({ amount: savedPrice[chainName].amount, chainName, token: savedPrice[chainName].token });
+    const localSavedPrice = window.localStorage.getItem(`${chainName}_price`);
+
+    if (localSavedPrice) {
+      const parsedPrice = JSON.parse(localSavedPrice) as Price;
+
+      if ((Date.now() - parsedPrice.date) < MILLISECONDS_TO_UPDATE) {
+        setPrice({ amount: parsedPrice.amount, chainName, token: parsedPrice.token });
       }
     }
-  }, [address, chainName, savedPrice]);
+  }, [address, chainName]);
 
   return newPrice ?? price;
 }

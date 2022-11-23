@@ -552,7 +552,7 @@ export interface TokenPrice {
 }
 export interface Price {
   amount: number;
-  chainName?: string;
+  chainName: string;
   date?: number;
   token: string;
 }

@@ -22,8 +22,8 @@ import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../.
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import ShowPool from '../../partial/ShowPool';
 import ShowRoles from '../../partial/ShowRoles';
-import SetState from './SetState';
 import EditPool from './editPool';
+import SetState from './SetState';
 
 interface State {
   api: ApiPromise | undefined;
