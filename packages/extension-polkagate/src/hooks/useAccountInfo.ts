@@ -7,14 +7,18 @@ import { useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-export default function useAccountInfo(api: ApiPromise, formatted?: string): DeriveAccountInfo | undefined {
+export default function useAccountInfo(api: ApiPromise, formatted: string, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
   const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
 
   useEffect(() => {
+    if (accountInfo) {
+      return setInfo(accountInfo);
+    }
+
     api && formatted && api.derive.accounts.info(formatted).then((i) => {
       setInfo(i);
     });
-  }, [api, formatted]);
+  }, [accountInfo, api, formatted]);
 
   return info;
 }
