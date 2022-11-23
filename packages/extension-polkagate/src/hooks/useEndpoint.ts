@@ -1,23 +1,23 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext } from '../components/contexts';
 import { SavedMetaData } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
+import { useAccount } from '.';
 
 export function useEndpoint(addressOrFormatted: string | null | undefined, chain: Chain | null | undefined): string | undefined {
-  const { accounts } = useContext(AccountContext);
   const address = getSubstrateAddress(addressOrFormatted as string);
+  const account = useAccount(address);
 
   const endpoint = useMemo(() => {
     const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
-    const account = Array.isArray(accounts) ? accounts.find((account) => account.address === address) : accounts;
+    // const account = Array.isArray(accounts) ? accounts.find((account) => account.address === address) : accounts;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const endPointFromStore: SavedMetaData = account?.endpoint ? JSON.parse(account.endpoint) : null;
 
@@ -30,7 +30,7 @@ export function useEndpoint(addressOrFormatted: string | null | undefined, chain
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
     return endpoints?.length ? endpoints[0].value : undefined;
-  }, [accounts, address, chain?.name]);
+  }, [account, chain?.name]);
 
   return endpoint;
 }
