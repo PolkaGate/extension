@@ -2,15 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces';
-import type { SavedMetaData } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
-import { useAccount, useChain, useEndpoint2 } from '.';
+import { useChain, useEndpoint2 } from '.';
 
 /**
  * @description
@@ -19,7 +16,6 @@ import { useAccount, useChain, useEndpoint2 } from '.';
 
 export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined): DeriveAccountInfo[] | null | undefined {
   const endpoint = useEndpoint2(address);
-  const account = useAccount(address);
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
@@ -46,13 +42,13 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
         console.log(`setting new identities #old was: ${validatorsIdentities?.length ?? ''} `);
 
         setNewValidatorsIdentities(fetchedIdentities);
-        updateMeta(address, prepareMetaData(chain, 'validatorsIdentities', fetchedIdentities)).catch(console.error);
+
+        window.localStorage.setItem(`${chainName}_validatorsIdentities`, JSON.stringify(fetchedIdentities));
       }
 
       getValidatorsIdWorker.terminate();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, chain]);
+  }, [chain?.name, chainName, validatorsIdentities]);
 
   useEffect(() => {
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
@@ -60,18 +56,18 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
   }, [endpoint, getValidatorsIdentities, allValidatorsIds, newValidatorsIdentities]);
 
   useEffect(() => {
-    if (!chainName || !account) {
+    if (!chainName) {
       return;
     }
 
-    /** retrieve validatorInfo from local storage */
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const savedValidatorsIdentities: SavedMetaData = account?.validatorsIdentities ? JSON.parse(account.validatorsIdentities) : null;
+    const localSavedValidatorsIdentities = window.localStorage.getItem(`${chainName}_validatorsIdentities`);
 
-    if (savedValidatorsIdentities && savedValidatorsIdentities?.chainName === chainName) {
-      setValidatorsIdentities(savedValidatorsIdentities.metaData as DeriveAccountInfo[]);
+    if (localSavedValidatorsIdentities) {
+      const parsedLocalSavedValidatorsIdentities = JSON.parse(localSavedValidatorsIdentities) as DeriveAccountInfo[];
+
+      setValidatorsIdentities(parsedLocalSavedValidatorsIdentities);
     }
-  }, [account, chainName]);
+  }, [chainName]);
 
   return newValidatorsIdentities ?? validatorsIdentities;
 }

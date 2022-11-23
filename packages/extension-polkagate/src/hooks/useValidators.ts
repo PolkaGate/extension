@@ -1,15 +1,13 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AllValidators, SavedMetaData, Validators } from '../util/types';
+import type { AllValidators, Validators } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
-import { useAccount, useChain, useEndpoint2 } from '.';
+import { useChain, useEndpoint2 } from '.';
 
 /**
  * @description
@@ -19,7 +17,6 @@ import { useAccount, useChain, useEndpoint2 } from '.';
 export default function useValidators(address: string): AllValidators | null | undefined {
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
   const endpoint = useEndpoint2(address);
-  const account = useAccount(address);
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
@@ -38,38 +35,33 @@ export default function useValidators(address: string): AllValidators | null | u
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const fetchedValidatorsInfo: Validators | null = e.data;
 
-      if (fetchedValidatorsInfo && JSON.stringify(savedValidators?.metaData) !== JSON.stringify(fetchedValidatorsInfo)) {
+      if (fetchedValidatorsInfo && JSON.stringify(savedValidators) !== JSON.stringify(fetchedValidatorsInfo)) {
         setValidatorsInfo(fetchedValidatorsInfo);
 
-        updateMeta(address, prepareMetaData(chain, 'allValidatorsInfo', fetchedValidatorsInfo)).catch(console.error);
+        window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(fetchedValidatorsInfo));
       }
 
       getValidatorsInfoWorker.terminate();
     };
-  }, [address]);
+  }, [chainName]);
 
   useEffect(() => {
-    if (!chain || !chainName || !endpoint || !account) {
+    if (!chain || !chainName || !endpoint) {
       return;
     }
 
-    /** retrieve validatorInfo from local storage */
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const savedValidators: SavedMetaData = account.allValidatorsInfo ? JSON.parse(account.allValidatorsInfo) : null;
-    console.log('savedValidators in useValidators:', savedValidators);
+    const localSavedAllValidatorsInfo = window.localStorage.getItem(`${chainName}_allValidatorsInfo`);
 
-    if (savedValidators && savedValidators?.chainName === chainName) {
-      console.log(`validatorsInfo is set from local storage current:${savedValidators.metaData?.current?.length} waiting:${savedValidators.metaData?.waiting?.length}`);
+    if (localSavedAllValidatorsInfo) {
+      const parsedLocalSavedAllValidatorsInfo = JSON.parse(localSavedAllValidatorsInfo) as Validators;
 
-      setValidatorsInfo(savedValidators.metaData as Validators);
-
-      console.log(`validatorsInfo in storage is from era: ${savedValidators.metaData.currentEraIndex} on chain: ${savedValidators?.chainName}`);
+      setValidatorsInfo(parsedLocalSavedAllValidatorsInfo);
+      console.log(`validatorsInfo in storage is from era: ${parsedLocalSavedAllValidatorsInfo.currentEraIndex} on chain: ${chainName}`);
     }
 
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
-    endpoint && getValidatorsInfo(chain, endpoint, savedValidators);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoint, chain, account?.address, chainName, getValidatorsInfo]);
+    endpoint && getValidatorsInfo(chain, endpoint, localSavedAllValidatorsInfo);
+  }, [endpoint, chain, chainName, getValidatorsInfo]);
 
   return info;
 }
