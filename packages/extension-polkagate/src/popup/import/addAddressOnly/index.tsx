@@ -2,34 +2,29 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady, decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../../components'
-import { useApi, useEndpoint, useGenesisHashOptions, useTranslation } from '../../../hooks';
+import { ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../../components'
+import { useApiWithChain, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
-import { NameAddress, Proxy, ProxyItem } from '../../../util/types';
+import { Proxy, ProxyItem } from '../../../util/types';
 
-interface Props {
-  className?: string;
-}
-
-export default function AddProxy({ className }: Props): React.ReactElement<Props> {
+export default function AddProxy(): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
 
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
-  const api = useApi(realAddress);
+  const api = useApiWithChain(chain);
   const genesisOptions = useGenesisHashOptions();
 
   useEffect(() => {
@@ -42,6 +37,7 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
   useEffect(() => {
     (!realAddress || !chain) && setProxies(undefined);
   }, [realAddress, chain]);
+
   useEffect(() => {
     realAddress && api && api.query.proxy?.proxies(realAddress).then((proxies) => {
       const fetchedProxyItems = (JSON.parse(JSON.stringify(proxies[0])))?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -107,8 +103,8 @@ export default function AddProxy({ className }: Props): React.ReactElement<Props
       <ProxyTable
         chain={realAddress ? chain : undefined}
         label={t<string>('Proxies')}
-        proxies={proxies}
         mode='Availability'
+        proxies={proxies}
         style={{
           m: '20px auto',
           width: '92%'
