@@ -13,7 +13,9 @@ export default function useApi(address: string | undefined, stateApi?: ApiPromis
   const [api, setApi] = useState<ApiPromise | undefined>();
 
   useEffect(() => {
-    if (!endpoint) { return; }
+    if (!endpoint) {
+      return;
+    }
 
     if (stateApi) {
       return setApi(stateApi);

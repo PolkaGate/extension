@@ -95,7 +95,7 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
                   isReadOnly={isReadOnly}
                   label={label}
                   onChange={_onChange}
-                  onEnter={onEnter}
+                  onEnter={onConfirmClick}
                   placeholder={placeholder}
                   withoutMargin={withoutMargin}
                 />
