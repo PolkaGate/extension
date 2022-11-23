@@ -158,13 +158,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
           text={title}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
