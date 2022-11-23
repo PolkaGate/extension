@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { AccountId } from '@polkadot/types/interfaces';
+import '@vaadin/icons';
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DirectionsRun as DirectionsRunIcon, MoreVert as MoreVertIcon } from '@mui/icons-material/';
 import { Divider, Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
@@ -29,16 +29,15 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
   validatorsToList: ValidatorInfo[] | null | undefined
   showCheckbox?: boolean;
+  handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
+  isSelected: (v: ValidatorInfo) => boolean;
+  maxSelected?: boolean;
 }
 
-export default function ValidatorsTable({ activeValidators, validatorsToList, api, showCheckbox, chain, staked, stakingConsts, style }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, api, chain, handleCheck, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const ref = useRef();
   const theme = useTheme();
-
-  const handleCheck = useCallback((e) => {
-    console.log('e:', e)
-  }, []);
+  const ref = useRef();
 
   const overSubscribed = useCallback((v: ValidatorInfo): { notSafe: boolean, safe: boolean } | undefined => {
     if (!stakingConsts) {
@@ -54,6 +53,12 @@ export default function ValidatorsTable({ activeValidators, validatorsToList, ap
       safe: v.exposure.others.length > threshold && (maybeMyIndex < threshold || maybeMyIndex === -1)
     };
   }, [staked, stakingConsts]);
+
+  useEffect(() => {
+    if (maxSelected) {
+      ref.current.scrollTop = 0;
+    }
+  }, [maxSelected]);
 
   /** put active validators at the top of the list **/
   React.useMemo(() => {
@@ -98,11 +103,11 @@ export default function ValidatorsTable({ activeValidators, validatorsToList, ap
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
+      <Grid container direction='column' ref={ref} sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
         {validatorsToList?.length &&
           <List
-            height={500}//window.innerHeight - (showCheckbox ? 250 : 190)}
-            itemCount={validatorsToList.length}
+            height={window.innerHeight - (showCheckbox ? 250 : 190)}
+            itemCount={validatorsToList?.length}
             itemSize={55}
             width={'100%'}
           >
@@ -118,8 +123,8 @@ export default function ValidatorsTable({ activeValidators, validatorsToList, ap
                       {showCheckbox &&
                         <Grid item width='10%'>
                           <Checkbox
-                            // checked={true}
-                            onChange={handleCheck}
+                            checked={isSelected(v)}
+                            onChange={(checked) => handleCheck(checked, v)}
                             style={{ fontSize: '18px' }}
                             theme={theme}
                           />
@@ -183,7 +188,10 @@ export default function ValidatorsTable({ activeValidators, validatorsToList, ap
                     </Grid>
                   </Grid>
                   <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer' }} width='6%'>
-                    <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+                    <vaadin-icon
+                      icon='vaadin:ellipsis-dots-v'
+                      style={{ color: `${theme.palette.secondary.light}`, width: '33px' }}
+                    />
                   </Grid>
                 </Grid>
               );
