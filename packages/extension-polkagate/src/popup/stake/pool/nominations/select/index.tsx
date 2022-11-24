@@ -10,8 +10,9 @@
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
+import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Checkbox, FormControlLabel, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -19,12 +20,13 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox, Motion, PButton, Popup } from '../../../../../components';
+import { Checkbox2, Motion, PButton, Popup } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
 import { AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../partials/ValidatorsTable';
+import Review from './Review';
 
 interface Props {
   address: string;
@@ -83,7 +85,7 @@ function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b:
   return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, poolId, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -95,6 +97,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
+  const [showReview, setShowReview] = useState<boolean>(false);
 
   useEffect(() => {
     if (!allValidatorsInfo || !allValidatorsIdentities) {
@@ -145,7 +148,9 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
 
   const isSelected = useCallback((v: ValidatorInfo) => newSelectedValidators.indexOf(v) !== -1, [newSelectedValidators]);
 
-  const handleCheck = useCallback((checked: boolean, validator: ValidatorInfo) => {
+  const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
+    const checked = e.target.checked;
+
     if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
       console.log('Max validators are selected !');
 
@@ -165,36 +170,6 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
 
     setNewSelectedValidators([...newSelected]);
   }, [newSelectedValidators, stakingConsts?.maxNominations]);
-
-  const Filters = () => (
-    <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
-      <Checkbox
-        label={t<string>('ID only')}
-        onChange={() => setIdOnly(!idOnly)}
-        style={{ pb: '5px', width: '30%' }}
-        theme={theme}
-      />
-      <Checkbox
-        label={t<string>('No more than 20 Commission')}
-        onChange={() => setNoMoreThan20Comm(!noMoreThan20Comm)}
-        style={{ width: '70%' }}
-        theme={theme}
-      />
-      <Checkbox
-        label={t<string>('No oversubscribed')}
-        onChange={() => setNoOversubscribed(!noOversubscribed)}
-        style={{ width: '50%' }}
-        theme={theme}
-      />
-      <Checkbox
-        label={t<string>('No waiting')}
-        onChange={() => setNoWaiting(!noWaiting)}
-        style={{ width: '40%' }}
-        theme={theme}
-      />
-      <SearchIcon sx={{ color: 'secondary.light', width: '10%' }} />
-    </Grid>
-  );
 
   const TableSubInfoWithClear = () => (
     <Grid container justifyContent='space-between' pt='5px'>
@@ -227,29 +202,29 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
         />
         <Grid container sx={{ justifyContent: 'center', p: '10px 15px' }}>
           <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
-            <Checkbox
+            <Checkbox2
+              checked={idOnly}
               label={t<string>('ID only')}
               onChange={() => setIdOnly(!idOnly)}
-              style={{ pb: '5px', width: '30%' }}
-              theme={theme}
+              style={{ width: '30%', fontSize: '14px', fontWeight: '400' }}
             />
-            <Checkbox
+            <Checkbox2
+              checked={noMoreThan20Comm}
               label={t<string>('No more than 20 Commission')}
               onChange={() => setNoMoreThan20Comm(!noMoreThan20Comm)}
-              style={{ width: '70%' }}
-              theme={theme}
+              style={{ width: '70%', fontSize: '14px' }}
             />
-            <Checkbox
+            <Checkbox2
+              checked={noOversubscribed}
               label={t<string>('No oversubscribed')}
               onChange={() => setNoOversubscribed(!noOversubscribed)}
               style={{ width: '50%' }}
-              theme={theme}
             />
-            <Checkbox
+            <Checkbox2
+              checked={noWaiting}
               label={t<string>('No waiting')}
               onChange={() => setNoWaiting(!noWaiting)}
               style={{ width: '40%' }}
-              theme={theme}
             />
             <SearchIcon sx={{ color: 'secondary.light', width: '10%' }} />
           </Grid>
@@ -260,6 +235,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 api={api}
                 chain={chain}
                 handleCheck={handleCheck}
+                height={window.innerHeight - 255}
                 isSelected={isSelected}
                 maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                 selectedValidatorsId={selectedValidatorsId}
@@ -274,11 +250,24 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           <TableSubInfoWithClear />
         </Grid>
         <PButton
-          // _onClick={remove}
+          _onClick={() => setShowReview(true)}
           disabled={!newSelectedValidators?.length}
           text={t<string>('Next')}
         />
       </Popup>
+      {showReview && newSelectedValidators && api && formatted && pool &&
+        <Review
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={formatted}
+          newSelectedValidators={newSelectedValidators}
+          pool={pool}
+          setShow={setShowReview}
+          show={showReview}
+          stakingConsts={stakingConsts}
+        />
+      }
     </Motion>
   );
 }

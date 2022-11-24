@@ -11,6 +11,7 @@ export { default as ActionText } from './ActionText';
 export { default as Button } from './Button';
 export { default as ChainLogo } from './ChainLogo';
 export { default as Checkbox } from './Checkbox';
+export { default as Checkbox2 } from './Checkbox2';
 export { default as AccountHolder } from './AccountHolder';
 export { default as ColorContext } from './ColorContext';
 export { default as CopyAddressButton } from './CopyAddressButton';

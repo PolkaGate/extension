@@ -22,7 +22,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, secondaryBtnText, onSecondaryBtnClick, primaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

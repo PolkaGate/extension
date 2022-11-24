@@ -18,7 +18,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, PButton, Popup, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';

@@ -5,8 +5,9 @@
 
 import '@vaadin/icons';
 
+import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
-import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Checkbox, Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -15,7 +16,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox, Identity, Infotip, ShowBalance } from '../../../../../components';
+import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { StakingConsts, ValidatorInfo } from '../../../../../util/types';
 
@@ -29,12 +30,13 @@ interface Props {
   validatorsToList: ValidatorInfo[] | null | undefined
   showCheckbox?: boolean;
   handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
+  height?: number;
   isSelected: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, handleCheck, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();
@@ -74,30 +76,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
       }
     });
   }, [validatorsToList, activeValidators]);
-
-  // const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-  //   pools && setSelected && setSelected(pools[Number(event.target.value)]);
-  //   ref.current.scrollTop = 0;
-  // }, [pools, setSelected]);
-
-  // const Select = ({ index, pool }: { pool: PoolInfo, index: number }) => (
-  //   <FormControlLabel
-  //     checked={pool === selected}
-  //     control={
-  //       <Radio
-  //         onChange={handleSelect}
-  //         size='small'
-  //         sx={{ '&.Mui-disabled': { color: 'text.disabled' }, color: 'secondary.main' }}
-  //         value={index}
-  //       />
-  //     }
-  //     disabled={unableToJoinPools(pool)}
-  //     label=''
-  //     sx={{ '> span': { p: 0 }, m: 'auto' }}
-  //     value={index}
-  //   />
-  // );
-
+ 
   const Div = () => (
     <Grid alignItems='center' item justifyContent='center'>
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 5px', width: '1px' }} />
@@ -106,12 +85,13 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column' ref={ref} sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
+      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
         {validatorsToList?.length &&
           <List
-            height={window.innerHeight - (showCheckbox ? 255 : 190)}
+            height={height}
             itemCount={validatorsToList?.length}
             itemSize={55}
+            ref={ref}
             width={'100%'}
           >
             {({ index, key, style }) => {
@@ -119,6 +99,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
               const isActive = activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
+              const check = isSelected && isSelected(v);
 
               return (
                 <Grid container key={key} item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', ...style }}>
@@ -126,11 +107,9 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                     <Grid alignItems='center' container item lineHeight='30px'>
                       {showCheckbox &&
                         <Grid item width='10%'>
-                          <Checkbox
-                            checked={isSelected(v)}
-                            onChange={(checked) => handleCheck(checked, v)}
-                            style={{ fontSize: '18px' }}
-                            theme={theme}
+                          <Checkbox2
+                            checked={check}
+                            onChange={(e) => handleCheck(e, v)}
                           />
                         </Grid>
                       }

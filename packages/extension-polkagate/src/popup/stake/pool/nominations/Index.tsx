@@ -102,7 +102,7 @@ export default function Index(): React.ReactElement {
   );
 
   const ValidatorsActions = () => (
-    <Grid container justifyContent='center' spacing={1} pt='15px'>
+    <Grid container justifyContent='center' pt='15px' spacing={1}>
       <Grid item>
         <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
           {t('Change Validators')}
@@ -159,13 +159,14 @@ export default function Index(): React.ReactElement {
           title={t('Loading the validators\' list ...')}
         />
       }
-      <Grid item xs={12} sx={{ m: '20px 15px' }}>
+      <Grid item sx={{ m: '20px 15px' }} xs={12}>
         {selectedValidatorsId && allValidatorsInfo &&
           <>
             <ValidatorsTable
               activeValidators={activeValidators}
               api={api}
               chain={chain}
+              height={window.innerHeight - 190}
               staked={new BN(pool?.ledger?.active ?? 0)}
               stakingConsts={stakingConsts}
               validatorsToList={selectedValidatorsInfo}
