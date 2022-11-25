@@ -17,9 +17,10 @@ export interface Props {
   decimalPoint?: number;
   height?: number;
   unit?: string;
+  width?: string;
 }
 
-export default function ShowValue({ value, decimalPoint = 2, unit, height = 20 }: Props): React.ReactElement<Props> {
+export default function ShowValue({ value, decimalPoint = 2, unit, height = 20, width = '90px' }: Props): React.ReactElement<Props> {
   return (
     <>
       {value !== undefined
@@ -28,7 +29,7 @@ export default function ShowValue({ value, decimalPoint = 2, unit, height = 20 }
         </>
         : <Skeleton
           height={height}
-          sx={{ display: 'flex', transform: 'none', width: '90px' }}
+          sx={{ display: 'flex', transform: 'none', width: { width } }}
         />
       }
     </>

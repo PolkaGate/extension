@@ -9,11 +9,12 @@ import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMem
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
+import { SxProps, Theme } from '@mui/material';
+
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
-import { SxProps, Theme } from '@mui/material';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -571,4 +572,8 @@ export interface BalancesAll extends DeriveBalancesAll {
   decimal: number;
   token: string;
   date: number;
+}
+
+export interface AccountStakingInfo extends DeriveStakingAccount {
+  era: number;
 }

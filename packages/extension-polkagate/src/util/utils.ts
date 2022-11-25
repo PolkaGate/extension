@@ -123,7 +123,7 @@ export function handleAccountBalance(balance: any): { available: bigint, feeFroz
   };
 }
 
-export function getSubstrateAddress(address: string | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
