@@ -20,15 +20,16 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, HorizontalMenuItem, ShowBalance } from '../../../components';
+import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
-import { HeaderBrand } from '../../../partials';
+import { HeaderBrand, SubTitle } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
 import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeemable';
+import AccountBrief from '../../account/AccountBrief';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -230,7 +231,7 @@ export default function Index(): React.ReactElement {
   const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
     return (
       <>
-        <Grid alignItems='center' container justifyContent='space-between' p='10px 15px'>
+        <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
           <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }} xs={5}>
             {label}
           </Grid>
@@ -286,25 +287,35 @@ export default function Index(): React.ReactElement {
         }
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '100%' }} />
           </Grid>
         }
       </>
     );
   };
 
+  const identicon = (
+    <Identicon
+      iconTheme={chain?.icon || 'polkadot'}
+      prefix={chain?.ss58Format ?? 42}
+      size={40}
+      value={formatted}
+    />
+  );
+
   return (
     <>
       <HeaderBrand
+        _centerItem={identicon}
+        noBorder
         onBackClick={onBackClick}
+        paddingBottom={0}
         showBackArrow
         showClose
-        text={t<string>('Pool Staking')}
       />
-      <Container
-        disableGutters
-        sx={{ pt: '5px' }}
-      >
+      <Container disableGutters sx={{ px: '15px' }}>
+        <AccountBrief address={address} />
+        <SubTitle label={t<string>('Pool Staking')} mt='15px' style={{ fontSize: '20px' }} />
         <Row
           label={t('Staked')}
           link1Text={t('Unstake')}
@@ -335,45 +346,34 @@ export default function Index(): React.ReactElement {
           showDivider={false}
           value={getValue('available', balances)}
         />
-        <Grid
-          container
-          justifyContent='space-around'
-          sx={{
-            borderTop: '2px solid',
-            borderTopColor: 'secondary.main',
-            bottom: 0,
-            left: '4%',
-            position: 'absolute',
-            py: '10px',
-            width: '92%'
-          }}
-        >
-          <HorizontalMenuItem
-            divider
-            icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToStake}
-            title={t<string>('Stake')}
-          />
-          <HorizontalMenuItem
-            divider
-            exceptionWidth={30}
-            icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
-            onClick={goToNominations}
-            title={t<string>('Validators')}
-          />
-          <HorizontalMenuItem
-            divider
-            icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToPool}
-            title={t<string>('Pool')}
-          />
-          <HorizontalMenuItem
-            icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
-            onClick={goToInfo}
-            title={t<string>('Info')}
-          />
-        </Grid>
+
       </Container>
+      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}>
+        <HorizontalMenuItem
+          divider
+          icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          onClick={goToStake}
+          title={t<string>('Stake')}
+        />
+        <HorizontalMenuItem
+          divider
+          exceptionWidth={30}
+          icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
+          onClick={goToNominations}
+          title={t<string>('Validators')}
+        />
+        <HorizontalMenuItem
+          divider
+          icon={<vaadin-icon icon='vaadin:grid-small' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          onClick={goToPool}
+          title={t<string>('Pool')}
+        />
+        <HorizontalMenuItem
+          icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          onClick={goToInfo}
+          title={t<string>('Info')}
+        />
+      </Grid>
       <Info api={api} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
       {showRewardStake && formatted && api && claimable && staked && chain &&
         <RewardsStakeReview

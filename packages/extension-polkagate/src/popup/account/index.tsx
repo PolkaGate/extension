@@ -18,7 +18,7 @@ import type { ThemeProps } from '../../../../extension-ui/src/types';
 import { faHistory, faPaperPlane, faQrcode, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, IconButton, useTheme } from '@mui/material';
+import { Box, Collapse, Container, Divider, Grid, Grow, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -34,6 +34,7 @@ import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';
+import StakingOption from '../stake/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
@@ -107,6 +108,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
+  const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
 
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');;
   const decimal = api && api.registry.chainDecimals[0];
@@ -137,8 +139,12 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [accounts, address, chain, settings]);
 
   const gotToHome = useCallback(() => {
+    if (showStakingOptions) {
+      return setShowStakingOptions(false);
+    }
+
     onAction('/');
-  }, [onAction]);
+  }, [onAction, showStakingOptions]);
 
   const goToAccount = useCallback(() => {
     newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/`);
@@ -183,11 +189,15 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [history, address, pathname]);
 
   const goToStaking = useCallback(() => {
-    history.push({
-      pathname: `/staking/${address}`,
-      state: { api, pathname }
-    });
-  }, [history, address, api, pathname]);
+    setShowStakingOptions(!showStakingOptions);
+  }, [showStakingOptions]);
+
+  // const goToStaking = useCallback(() => {
+  //   history.push({
+  //     pathname: `/staking/${address}`,
+  //     state: { api, pathname }
+  //   });
+  // }, [history, address, api, pathname]);
 
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token &&
@@ -244,46 +254,39 @@ export default function AccountDetails({ className }: Props): React.ReactElement
         showBackArrow
       />
       <Container disableGutters sx={{ px: '15px' }}>
-        <AccountBrief accountName={accountName} address={address} formatted={formatted} isHidden={account?.isHidden} theme={theme} />
-        <Grid alignItems='flex-end' container pt='10px'>
-          <DropdownWithIcon
-            defaultValue={genesisHash}
-            icon={getLogo(newChain || chain || undefined)}
-            label={t<string>('Chain')}
-            onChange={_onChangeGenesis}
-            options={genesisOptions}
-            style={{ width: '100%' }}
-          />
-        </Grid>
-        <Grid height='20px' item mt='10px' xs>
-          {(newEndpoint || endpoint) &&
-            <Select
-              label={'Remote node'}
-              onChange={_onChangeEndpoint}
-              options={endpointOptions}
-              value={newEndpoint || endpoint}
-            />
-          }
-        </Grid>
-        <Grid item pt='50px' xs>
-          <LabelBalancePrice api={api} balances={balances} label={'Total'} price={price} />
-          <LabelBalancePrice api={api} balances={balances} label={'Available'} price={price} />
-          <LabelBalancePrice api={api} balances={balances} label={'Reserved'} price={price} />
-          {OthersRow}
-        </Grid>
-        <Grid
-          container
-          justifyContent='space-around'
-          sx={{
-            borderTop: '2px solid',
-            borderTopColor: 'secondary.main',
-            bottom: 0,
-            left: '4%',
-            position: 'absolute',
-            py: '10px',
-            width: '92%'
-          }}
-        >
+        <AccountBrief address={address} />
+        {!showStakingOptions
+          ? <>
+            <Grid alignItems='flex-end' container pt='10px'>
+              <DropdownWithIcon
+                defaultValue={genesisHash}
+                icon={getLogo(newChain || chain || undefined)}
+                label={t<string>('Chain')}
+                onChange={_onChangeGenesis}
+                options={genesisOptions}
+                style={{ width: '100%' }}
+              />
+            </Grid>
+            <Grid height='20px' item mt='10px' xs>
+              {(newEndpoint || endpoint) &&
+                <Select
+                  label={'Remote node'}
+                  onChange={_onChangeEndpoint}
+                  options={endpointOptions}
+                  value={newEndpoint || endpoint}
+                />
+              }
+            </Grid>
+            <Grid item pt='50px' xs>
+              <LabelBalancePrice api={api} balances={balances} label={'Total'} price={price} />
+              <LabelBalancePrice api={api} balances={balances} label={'Available'} price={price} />
+              <LabelBalancePrice api={api} balances={balances} label={'Reserved'} price={price} />
+              {OthersRow}
+            </Grid>
+          </>
+          : <StakingOption showStakingOptions={showStakingOptions} />
+        }
+        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}        >
           <HorizontalMenuItem
             divider
             icon={
@@ -304,7 +307,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           />
           <HorizontalMenuItem
             divider
-            icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+            icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${showStakingOptions ? theme.palette.primary.light : theme.palette.text.primary}` }} />}
             onClick={goToStaking}
             title={t<string>('Stake')}
           />
