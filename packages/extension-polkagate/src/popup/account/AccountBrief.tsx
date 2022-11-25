@@ -10,40 +10,41 @@
 
 import '@vaadin/icons';
 
-import { Divider, Grid, IconButton, Theme, Typography } from '@mui/material';
+import { Divider, Grid, IconButton, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ShortAddress } from '../../components';
+import { useAccount, useFormatted } from '../../hooks';
 import { showAccount } from '../../messaging';
 
 interface Props {
-  accountName: string | undefined;
   address: string
-  formatted: string
-  isHidden: boolean | undefined;
-  theme: Theme;
 }
 
-export default function AccountBrief({ accountName, address, formatted, isHidden, theme }: Props): React.ReactElement<Props> {
+export default function AccountBrief({ address }: Props): React.ReactElement<Props> {
+  const formatted = useFormatted(address);
+  const account = useAccount(address);
+  const theme = useTheme();
+
   const _toggleVisibility = useCallback(
     (): void => {
-      address && showAccount(address, isHidden || false).catch(console.error);
+      address && showAccount(address, account?.isHidden || false).catch(console.error);
     },
-    [address, isHidden]
+    [address, account?.isHidden]
   );
 
   return (
     < >
       <Grid alignItems='center' container justifyContent='center' xs={12}>
         <Typography sx={{ fontSize: '36px', fontWeight: 400, height: '50px', letterSpacing: '-0.015em', maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {accountName}
+          {account?.name}
         </Typography>
         <span>
           <IconButton
             onClick={_toggleVisibility}
             sx={{ height: '15px', ml: '10px', mt: '5px', p: 0, width: '24px' }}
           >
-            <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
+            <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
           </IconButton>
         </span>
       </Grid>
