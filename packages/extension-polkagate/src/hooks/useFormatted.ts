@@ -3,12 +3,13 @@
 
 import { useContext, useMemo } from 'react';
 
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, SettingsContext } from '../components/contexts';
 import { useChain } from './';
 
-export default function useFormatted(address?: string, formatted?: string): string | undefined {
+export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): AccountId | undefined {
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
   const chain = useChain(address);

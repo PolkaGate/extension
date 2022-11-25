@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Chain } from '@polkadot/extension-chains/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { getSubstrateAddress } from '../util/utils';
 import { useAccount, useMetadata } from './';
 
-export default function useChain(address: string | undefined, chain?: Chain): Chain | null {
+export default function useChain(address: AccountId | string | undefined, chain?: Chain): Chain | null {
   /** address can be a formatted address hence needs to find its substrate format first */
   const sAddr = getSubstrateAddress(address);
   const account = useAccount(sAddr);

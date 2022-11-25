@@ -1,17 +1,15 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Collapse, Paper, Slide } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Box, Slide } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, bnMax } from '@polkadot/util';
 
-import { ActionContext } from '../../components';
 import { useApi, useNominator, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
 import Option from './partial/Option';
-import zIndex from '@mui/material/styles/zIndex';
 
 interface Props {
   showStakingOptions: boolean
@@ -19,7 +17,6 @@ interface Props {
 
 export default function Options({ showStakingOptions }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const history = useHistory();
   const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
@@ -29,13 +26,6 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
   const nominatorInfo = useNominator(address);
 
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
-  const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
-
-  const onBackClick = useCallback(() => {
-    const url = api?.genesisHash ? `/account/${api.genesisHash}/${address}/` : '/';
-
-    onAction(url);
-  }, [address, api?.genesisHash, onAction]);
 
   useEffect(() => {
     if (!stakingConsts || !nominatorInfo?.minNominated) { return; }
@@ -51,6 +41,13 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
       state: { api, pathname, poolConsts, stakingConsts }
     });
   }, [address, api, history, pathname, poolConsts, stakingConsts]);
+  
+  const goToSoloStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/solo/${address}/`,
+      state: { api, pathname, stakingConsts }
+    });
+  }, [address, api, history, pathname, stakingConsts]);
 
   return (
     <Slide direction='up' mountOnEnter unmountOnExit in={showStakingOptions}>
@@ -73,7 +70,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           balance={minToReceiveRewardsInSolo}
           balanceText={t('Minimum to receive rewards')}
           buttonText={t<string>('Enter')}
-          onClick={goToPoolStaking}
+          onClick={goToSoloStaking}
           style={{
             m: 'auto',
             width: '100%'

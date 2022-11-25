@@ -19,10 +19,7 @@ interface Props {
 
 function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
-  // const chain = useChain(address);
   const name = useAccountName(address);
-
-  console.log('chain in throuProxy:', chain);
 
   return (
     <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', ...style }}>
