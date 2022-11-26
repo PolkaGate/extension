@@ -577,3 +577,7 @@ export interface BalancesAll extends DeriveBalancesAll {
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
 }
+export interface MemberPoints {
+  accountId: string;
+  points: BN;
+}
