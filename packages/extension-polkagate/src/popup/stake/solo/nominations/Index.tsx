@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces';
-import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
+import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,21 +15,20 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
+import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import ValidatorsTable from '../../solo/nominations/partials/ValidatorsTable';
+import ValidatorsTable from './partials/ValidatorsTable';
 import RemoveValidators from './remove';
 import SelectValidators from './select';
 
 interface State {
   api: ApiPromise | undefined;
   pathname: string;
-  poolConsts: PoolStakingConsts | undefined;
   stakingConsts: StakingConsts | undefined
-  pool: MyPoolInfo | undefined;
+  stakingAccount: AccountStakingInfo | undefined
 }
 
 export default function Index(): React.ReactElement {
@@ -44,27 +43,25 @@ export default function Index(): React.ReactElement {
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
-
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
-  const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
-
-  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
+  const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
+  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
-      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(String(v.accountId)))
-    , [allValidatorsInfo, selectedValidatorsId]);
+      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(v.accountId))
+  , [allValidatorsInfo, selectedValidatorsId]);
 
-  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
+  const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
   useEffect(() => {
-    setSelectedValidatorsId(pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators);
+    setSelectedValidatorsId(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));
     setRefresh(false);
-  }, [pool]);
+  }, [stakingAccount]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -91,7 +88,7 @@ export default function Index(): React.ReactElement {
   }, [goToSelectValidator]);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid container justifyContent='center' py='15px' >
+    <Grid container justifyContent='center' py='15px'    >
       <Warning
         fontWeight={400}
         theme={theme}
@@ -128,7 +125,7 @@ export default function Index(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Pool Staking')}
+        text={t<string>('Solo Staking')}
       />
       <SubTitle
         label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')}
@@ -167,7 +164,7 @@ export default function Index(): React.ReactElement {
               api={api}
               chain={chain}
               height={window.innerHeight - 190}
-              staked={new BN(pool?.ledger?.active ?? 0)}
+              staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
               stakingConsts={stakingConsts}
               validatorsToList={selectedValidatorsInfo}
             />
@@ -187,7 +184,6 @@ export default function Index(): React.ReactElement {
           api={api}
           chain={chain}
           formatted={formatted}
-          poolId={pool?.poolId}
           setShow={setShowRemoveValidator}
           show={showRemoveValidator}
           title={t('Remove Selected Validators')}
@@ -201,10 +197,9 @@ export default function Index(): React.ReactElement {
           api={api}
           chain={chain}
           formatted={formatted}
-          pool={pool}
-          poolId={pool?.poolId}
           selectedValidatorsId={selectedValidatorsId}
           setShow={setShowSelectValidator}
+          stakingAccount={stakingAccount}
           show={showSelectValidator}
           stakingConsts={stakingConsts}
           title={t('Select Validators')}

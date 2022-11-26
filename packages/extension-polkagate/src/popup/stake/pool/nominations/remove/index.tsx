@@ -26,7 +26,7 @@ import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
-import TxDetail from '../partials/TxDetail';
+import TxDetail from '../../../solo/nominations/partials/TxDetail';
 
 interface Props {
   address: string;
@@ -218,7 +218,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail txInfo={txInfo} />
+            <TxDetail txInfo={txInfo} validatorsCount={0} />
           </Confirmation>)
         }
       </Popup>

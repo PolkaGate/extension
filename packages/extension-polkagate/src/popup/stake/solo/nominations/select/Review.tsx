@@ -17,7 +17,7 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
@@ -25,10 +25,10 @@ import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
-import { MyPoolInfo, Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../../util/types';
+import { AccountStakingInfo, Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
-import TxDetail from '../../../solo/nominations/partials/TxDetail';
-import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
+import TxDetail from '../partials/TxDetail';
+import ValidatorsTable from '../partials/ValidatorsTable';
 
 interface Props {
   address: string;
@@ -36,13 +36,13 @@ interface Props {
   chain: Chain | null;
   formatted: string;
   newSelectedValidators: ValidatorInfo[]
-  pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  stakingConsts: StakingConsts | undefined
+  stakingConsts: StakingConsts | undefined;
+  stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Review({ address, api, chain, formatted, newSelectedValidators, pool, setShow, show, stakingConsts }: Props): React.ReactElement {
+export default function Review({ address, api, chain, formatted, newSelectedValidators, setShow, show, stakingAccount, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -58,12 +58,12 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const nominated = api.tx.nominationPools.nominate;
+  const nominated = api.tx.staking.nominate;
   const params = useMemo(() => {
     const selectedValidatorsAccountId = newSelectedValidators.map((v) => v.accountId);
 
-    return [pool.poolId, selectedValidatorsAccountId];
-  }, [newSelectedValidators, pool]);
+    return [selectedValidatorsAccountId];
+  }, [newSelectedValidators]);
 
   const decimals = api?.registry?.chainDecimals[0] ?? 1;
   const token = api?.registry?.chainTokens[0] ?? '';
@@ -91,7 +91,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
-    onAction(`/pool/${address}`);
+    onAction(`/solo/${address}`);
   }, [address, onAction, setShow]);
 
   const goToMyAccounts = useCallback(() => {
@@ -126,7 +126,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
       const { block, failureText, fee, status, txHash } = await broadcast(api, nominated, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_select_validator',
+        action: 'solo_select_validator',
         block,
         date: Date.now(),
         failureText,
@@ -195,7 +195,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
             api={api}
             chain={chain}
             height={window.innerHeight - 320}
-            staked={new BN(pool?.ledger?.active ?? 0)}
+            staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
             stakingConsts={stakingConsts}
             validatorsToList={newSelectedValidators}
           />
