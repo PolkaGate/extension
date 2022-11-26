@@ -105,7 +105,7 @@ export default function Pool(): React.ReactElement {
 
   const goEdit = useCallback(() => {
     setShowEdit(!showEdit);
-  }, []);
+  }, [showEdit]);
 
   const goRemoveAll = useCallback(() => {
     console.log('goRemoveAll')
