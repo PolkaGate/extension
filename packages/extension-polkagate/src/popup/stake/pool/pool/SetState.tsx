@@ -146,7 +146,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, batchAll, chain, chilled, estimatedFee, formatted, hierarchy, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
+  }, [api, batchAll, chain, chilled, estimatedFee, formatted, hierarchy, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
 
   return (
     <Motion>

@@ -13,7 +13,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Identicon, Motion, PasswordWithUseProxy, PButton, Popup, ShortAddress, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
@@ -31,6 +31,7 @@ interface Props {
   formatted: string;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMyPool: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   state: string;
 }
@@ -41,7 +42,7 @@ interface ShowRolesProps {
   showDivider?: boolean
 }
 
-export default function Review({ address, api, chain, changes, formatted, pool, setShow, show, state }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -123,8 +124,8 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   }, [address, onAction, setShow]);
 
   const goToMyPool = useCallback(() => {
-    onAction(`/pool/stake/pool/${address}`);
-  }, [address, onAction]);
+    setShowMyPool(false);
+  }, [setShowMyPool]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -182,18 +183,14 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     return (
       <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Grid item>
-          <Typography
-            fontSize='16px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
+          <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
             {roleTitle}
           </Typography>
         </Grid>
         {roleAddress
           ? (
-            <Grid item container direction='row' justifyContent='center'>
-              <Grid item container width='fit-content' alignItems='center'>
+            <Grid container direction='row' item justifyContent='center'>
+              <Grid alignItems='center' container item width='fit-content'>
                 <Identicon
                   iconTheme={chain?.icon ?? 'polkadot'}
                   prefix={chain?.ss58Format ?? 42}
@@ -201,15 +198,11 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
                   value={roleAddress}
                 />
               </Grid>
-              <Grid item container width='fit-content' alignItems='center' pl='5px' fontSize='28px' fontWeight={400} maxWidth='55%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{roleName}</Grid>
-              <Grid item container width='fit-content' alignItems='center' pl='5px'><ShortAddress address={roleAddress} charsCount={4} inParentheses /></Grid>
+              <Grid alignItems='center' container fontSize='28px' fontWeight={400} item maxWidth='55%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>{roleName}</Grid>
+              <Grid alignItems='center' container item pl='5px' width='fit-content'><ShortAddress address={roleAddress} charsCount={4} inParentheses /></Grid>
             </Grid>)
           : (
-            <Typography
-              fontSize='20px'
-              fontWeight={300}
-              lineHeight='23px'
-            >
+            <Typography fontSize='20px' fontWeight={300} lineHeight='23px'>
               {t<string>('To be Removed')}
             </Typography>
           )
@@ -231,13 +224,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -252,36 +239,25 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         {changes?.newPoolName !== undefined &&
           <>
             <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
-              <Typography
-                fontSize='16px'
-                fontWeight={300}
-                lineHeight='23px'
-              >
+              <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
                 {t<string>('Pool name')}
               </Typography>
-              <Typography
-                fontSize='28px'
-                fontWeight={400}
-                lineHeight='30px'
-                maxWidth='100%'
-                overflow='hidden'
-                textOverflow='ellipsis'
-                whiteSpace='nowrap'
-              >
+              <Typography fontSize='28px' fontWeight={400} lineHeight='30px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
                 {changes?.newPoolName}
               </Typography>
             </Grid>
             {changes?.newRoles && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />}
           </>}
-        {changes?.newRoles?.newRoot !== undefined && <ShowPoolRole showDivider roleAddress={changes?.newRoles?.newRoot} roleTitle={t<string>('Root')} />}
-        {changes?.newRoles?.newNominator !== undefined && <ShowPoolRole showDivider roleAddress={changes?.newRoles?.newNominator} roleTitle={t<string>('Nominator')} />}
+        {changes?.newRoles?.newRoot !== undefined && <ShowPoolRole roleAddress={changes?.newRoles?.newRoot} roleTitle={t<string>('Root')} showDivider />}
+        {changes?.newRoles?.newNominator !== undefined && <ShowPoolRole roleAddress={changes?.newRoles?.newNominator} roleTitle={t<string>('Nominator')} showDivider />}
         {changes?.newRoles?.newStateToggler !== undefined && <ShowPoolRole roleAddress={changes?.newRoles?.newStateToggler} roleTitle={t<string>('State toggler')} />}
-        <PasswordWithUseProxy
+        <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={goEditPool}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any']}
@@ -295,11 +271,6 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             width: '92%'
           }}
         />
-        <PButton
-          _onClick={goEditPool}
-          disabled={!password}
-          text={t<string>('Confirm')}
-        />
         <WaitScreen
           show={showWaitScreen}
           title={t(`${state} Pool`)}
@@ -308,53 +279,25 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           <Confirmation
             headerTitle={t('Pool Staking')}
             onPrimaryBtnClick={goToStakingHome}
-            primaryBtnText={t('Staking Home')}
             onSecondaryBtnClick={goToMyPool}
+            primaryBtnText={t('Staking Home')}
             secondaryBtnText={t('My pool')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
             <>
-              <Grid
-                alignItems='end'
-                container
-                justifyContent='center'
-                sx={{
-                  m: 'auto',
-                  pt: '5px',
-                  width: '90%'
-                }}
-              >
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                >
+              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Account holder:')}
                 </Typography>
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                  maxWidth='45%'
-                  overflow='hidden'
-                  pl='5px'
-                  textOverflow='ellipsis'
-                  whiteSpace='nowrap'
-                >
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {txInfo.from.name}
                 </Typography>
-                <Grid
-                  fontSize='16px'
-                  fontWeight={400}
-                  item
-                  lineHeight='22px'
-                  pl='5px'
-                >
+                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
                   <ShortAddress
                     address={txInfo.from.address}
-                    style={{ fontSize: '16px' }}
                     inParentheses
+                    style={{ fontSize: '16px' }}
                   />
                 </Grid>
               </Grid>
@@ -363,50 +306,16 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
                   <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
                 </Grid>
               }
-              <Divider sx={{
-                bgcolor: 'secondary.main',
-                height: '2px',
-                m: '5px auto',
-                width: '75%'
-              }}
-              />
-              <Grid
-                alignItems='end'
-                container
-                justifyContent='center'
-                sx={{
-                  m: 'auto',
-                  pt: '5px',
-                  width: '90%'
-                }}
-              >
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                >
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Pool:')}
                 </Typography>
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                  maxWidth='45%'
-                  overflow='hidden'
-                  pl='5px'
-                  textOverflow='ellipsis'
-                  whiteSpace='nowrap'
-                >
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {pool.metadata}
                 </Typography>
               </Grid>
-              <Divider sx={{
-                bgcolor: 'secondary.main',
-                height: '2px',
-                m: '5px auto',
-                width: '75%'
-              }}
-              />
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
             </>
           </Confirmation>)
         }
