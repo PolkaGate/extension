@@ -23,6 +23,7 @@ import { HeaderBrand, SubTitle } from '../../../../partials';
 import ShowPool from '../../partial/ShowPool';
 import ShowRoles from '../../partial/ShowRoles';
 import EditPool from './editPool';
+import RemoveAll from './removeAll';
 import SetState from './SetState';
 
 interface State {
@@ -54,6 +55,7 @@ export default function Pool(): React.ReactElement {
   const [goChange, setGoChange] = useState<boolean>(false);
   const [changeState, setChangeState] = useState<'Open' | 'Blocked' | 'Destroying'>();
   const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [showRemoveAll, setShowRemoveAll] = useState<boolean>(false);
 
   const poolState = pool?.bondedPool?.state?.toString();
   const canChangeState = useMemo(() => pool?.bondedPool && formatted && [String(pool.bondedPool.roles.root), String(pool.bondedPool.roles.stateToggler)].includes(formatted), [pool, formatted]);
@@ -108,8 +110,8 @@ export default function Pool(): React.ReactElement {
   }, [showEdit]);
 
   const goRemoveAll = useCallback(() => {
-    console.log('goRemoveAll')
-  }, []);
+    setShowRemoveAll(!showRemoveAll);
+  }, [showRemoveAll]);
 
   const Buttons = ({ children, disabled, onClick, showDivider, text }: ButtonsProps) => (
     <>
@@ -231,6 +233,9 @@ export default function Pool(): React.ReactElement {
       }
       {showEdit &&
         <EditPool address={address} apiToUse={api} setShowEdit={setShowEdit} showEdit={showEdit} pool={pool} />
+      }
+      {showRemoveAll &&
+        <RemoveAll address={address} api={api} setShowRemoveAll={setShowRemoveAll} showRemoveAll={showRemoveAll} pool={pool} />
       }
     </>
   );
