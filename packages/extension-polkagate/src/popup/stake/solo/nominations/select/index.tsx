@@ -18,14 +18,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Motion, PButton, Popup } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
-import { AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
-import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
+import { AccountStakingInfo, AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
+import ValidatorsTable from '../partials/ValidatorsTable';
 import Review from './Review';
 
 interface Props {
@@ -35,13 +35,12 @@ interface Props {
   chain: Chain | null;
   formatted: string;
   title: string;
-  poolId: BN | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   allValidatorsInfo: AllValidators | null | undefined
   selectedValidatorsId: AccountId[] | null | undefined
   stakingConsts: StakingConsts | undefined
-  pool: MyPoolInfo | undefined;
+  stakingAccount: AccountStakingInfo | undefined
 }
 
 interface Data {
@@ -85,7 +84,7 @@ function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b:
   return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, selectedValidatorsId, setShow, show, stakingAccount, stakingConsts, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -241,7 +240,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 selectedValidatorsId={selectedValidatorsId}
                 setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
-                staked={new BN(pool?.ledger?.active ?? 0)}
+                staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
                 stakingConsts={stakingConsts}
                 validatorsToList={validatorsToList}
               />
@@ -255,16 +254,16 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview && newSelectedValidators && api && formatted && pool &&
+      {showReview && newSelectedValidators && api && formatted &&
         <Review
           address={address}
           api={api}
           chain={chain}
           formatted={formatted}
           newSelectedValidators={newSelectedValidators}
-          pool={pool}
           setShow={setShowReview}
           show={showReview}
+          stakingAccount={stakingAccount}
           stakingConsts={stakingConsts}
         />
       }

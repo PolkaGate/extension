@@ -8,11 +8,10 @@
  * this component opens unstake review page
  * */
 
-import type { ApiPromise } from '@polkadot/api';
-
-import { Container, Grid, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
@@ -25,24 +24,21 @@ import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
-import { MyPoolInfo, Proxy, ProxyItem, StakingConsts, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../../util/types';
+import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
-import TxDetail from '../../../solo/nominations/partials/TxDetail';
-import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
+import TxDetail from '../partials/TxDetail';
 
 interface Props {
   address: string;
   api: ApiPromise;
   chain: Chain | null;
   formatted: string;
-  newSelectedValidators: ValidatorInfo[]
-  pool: MyPoolInfo;
+  title: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  stakingConsts: StakingConsts | undefined
 }
 
-export default function Review({ address, api, chain, formatted, newSelectedValidators, pool, setShow, show, stakingConsts }: Props): React.ReactElement {
+export default function RemoveValidators({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -58,15 +54,8 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const nominated = api.tx.nominationPools.nominate;
-  const params = useMemo(() => {
-    const selectedValidatorsAccountId = newSelectedValidators.map((v) => v.accountId);
+  const chilled = api.tx.staking.chill;
 
-    return [pool.poolId, selectedValidatorsAccountId];
-  }, [newSelectedValidators, pool]);
-
-  const decimals = api?.registry?.chainDecimals[0] ?? 1;
-  const token = api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -91,7 +80,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
-    onAction(`/pool/${address}`);
+    onAction(`/solo/${address}`);
   }, [address, onAction, setShow]);
 
   const goToMyAccounts = useCallback(() => {
@@ -101,20 +90,20 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   }, [onAction, setShow]);
 
   useEffect((): void => {
-    nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [nominated, formatted, params]);
-
-  useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const nominate = useCallback(async () => {
+  useEffect((): void => {
+    chilled().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [chilled, formatted]);
+
+  const remove = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !nominated) {
+      if (!formatted || !chilled) {
         return;
       }
 
@@ -123,10 +112,11 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, nominated, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, chilled, [], signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_select_validator',
+        action: 'pool_remove_validators',
+        // amount,
         block,
         date: Date.now(),
         failureText,
@@ -140,7 +130,8 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
       history.push(info);
       setTxInfo({ ...info, api, chain });
 
-      saveHistory(chain, hierarchy, formatted, history);
+      // eslint-disable-next-line no-void
+      void saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -148,7 +139,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, estimatedFee, formatted, hierarchy, name, nominated, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, chain, chilled, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -162,20 +153,10 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Select Validators')}
-          withSteps={{
-            current: 2,
-            total: 2
-          }}
+          text={title}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -187,34 +168,26 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
           </Grid>
         }
         <SubTitle label={t('Review')} />
-        <Container disableGutters sx={{ p: '15px 15px' }}>
-          <Grid item textAlign='center'>
-            {t('Validators ({{count}})', { replace: { count: newSelectedValidators.length } })}
-          </Grid>
-          <ValidatorsTable
-            api={api}
-            chain={chain}
-            height={window.innerHeight - 320}
-            staked={new BN(pool?.ledger?.active ?? 0)}
-            stakingConsts={stakingConsts}
-            validatorsToList={newSelectedValidators}
-          />
-          <Grid alignItems='center' container fontSize='14px' item justifyContent='flex-start' pt='10px'>
+        <Grid container sx={{ p: '50px 35px', justifyContent: 'center' }}>
+          <Typography fontSize='18px' fontWeight={400} pb='33px' textAlign='center'>
+            {t('There will be no selected validators and you will not get any rewards after.')}
+          </Typography>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+          <Grid alignItems='center' container item justifyContent='center' pt='10px'>
             <Grid item>
               {t('Fee')}:
             </Grid>
-            <Grid fontWeight={400} item pl='5px'>
-              <ShowValue height={16} value={estimatedFee?.toHuman()} />
+            <Grid item sx={{ pl: '5px' }}>
+              <ShowValue value={estimatedFee?.toHuman()} height={16} />
             </Grid>
           </Grid>
-        </Container>
+        </Grid>
         <PasswordUseProxyConfirm
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
-          onConfirmClick={nominate}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any']}
@@ -227,14 +200,15 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
             position: 'absolute',
             width: '92%'
           }}
+          onConfirmClick={remove}
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Select Validators')}
+          title={title}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t('Select Validators')}
+            headerTitle={title}
             onPrimaryBtnClick={goToStakingHome}
             onSecondaryBtnClick={goToMyAccounts}
             primaryBtnText={t('Staking Home')}
@@ -242,7 +216,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail txInfo={txInfo} validatorsCount={newSelectedValidators.length} />
+            <TxDetail txInfo={txInfo} validatorsCount={0} />
           </Confirmation>)
         }
       </Popup>

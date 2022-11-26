@@ -176,14 +176,14 @@ export default function Index(): React.ReactElement {
   const goToUnstake = useCallback(() => {
     history.push({
       pathname: `/pool/unstake/${address}`,
-      state: { api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts }
+      state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
 
   const goToNominations = useCallback(() => {
     history.push({
       pathname: `/pool/nominations/${address}`,
-      state: { api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts }
+      state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
 

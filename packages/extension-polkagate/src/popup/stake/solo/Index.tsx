@@ -79,6 +79,8 @@ export default function Index(): React.ReactElement {
   const balances = useBalances(address);
   const nominatorInfo = useNominator(address);
 
+  console.log('stakingAccount:', stakingAccount);
+
   const nominatedValidatorsId = useMemo(() => stakingAccount?.nominators, [stakingAccount?.nominators]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active?.unwrap(), [stakingAccount?.stakingLedger?.active]);
@@ -173,9 +175,9 @@ export default function Index(): React.ReactElement {
   const goToNominations = useCallback(() => {
     history.push({
       pathname: `/solo/nominations/${address}`,
-      state: { api, balances, pathname, redeemable, stakingConsts, unlockingAmount }
+      state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
     });
-  }, [history, address, api, balances, pathname, redeemable, unlockingAmount, stakingConsts]);
+  }, [history, address, api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
 
   const goToInfo = useCallback(() => {
     setShowInfo(true);

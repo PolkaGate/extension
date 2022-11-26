@@ -57,7 +57,7 @@ export default function Info({ api, info, nominatorInfo, setShowInfo, showInfo }
           <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em' }} >
             {BN.isBN(value)
               // ? <ShowBalance api={api} balance={value} decimalPoint={2} />
-              ? <>{amountToHuman(value, decimal)}</>
+              ? decimal && <>{amountToHuman(value, decimal)}</>
               : <ShowValue value={value} width='50px' />
             }
           </Grid>

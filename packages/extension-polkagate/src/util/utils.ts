@@ -76,7 +76,9 @@ export function balanceToHuman(_balance: AccountsBalanceType | null, _type: stri
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
 export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number, decimalDigits?: number, commify?: boolean): string {
-  if (!_amount) { return ''; }
+  if (!_amount) {
+    return '';
+  }
 
   _amount = String(_amount).replace(/,/g, '');
 
