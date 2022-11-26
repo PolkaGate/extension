@@ -105,12 +105,7 @@ export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdi
         <Grid container m='20px auto 10px' width='92%'>
           <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
         </Grid>
-        <Typography
-          fontSize='18px'
-          fontWeight={300}
-          m='30px auto 15px'
-          textAlign='center'
-        >
+        <Typography fontSize='18px' fontWeight={300} m='30px auto 15px' textAlign='center'>
           {t<string>('Roles')}
         </Typography>
         <InputWithLabelAndIdenticon
@@ -168,7 +163,7 @@ export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdi
         />
       </Popup>
       {showReview &&
-        <Review address={address} api={api} chain={chain} formatted={formatted} pool={myPool} setShow={setShowReview} show={showReview} changes={changes} />
+        <Review address={address} api={api} chain={chain} formatted={formatted} pool={myPool} setShow={setShowReview} setShowMyPool={setShowEdit} show={showReview} changes={changes} />
       }
     </>
   );
