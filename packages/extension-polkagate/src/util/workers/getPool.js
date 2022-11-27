@@ -7,7 +7,7 @@
  * get all information regarding a pool
  *
  * rewardPool.balance: The pool balance at the time of the last payout
- * rewardPpool.totalEarnings: The total earnings ever at the time of the last payout
+ * rewardPool.totalEarnings: The total earnings ever at the time of the last payout
  */
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
@@ -71,7 +71,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
   const unwrappedRewardPools = rewardPools.isSome ? rewardPools.unwrap() : null;
   const unwrappedBondedPool = bondedPools.isSome ? bondedPools.unwrap() : null;
   const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts.balances.existentialDeposit));
-  const myClaimable = await getMyPendingRewards(api, member, unwrappedBondedPool.points, unwrappedRewardPools, accounts.rewardId);
+  const myClaimable = !id && await getMyPendingRewards(api, member, unwrappedBondedPool.points, unwrappedRewardPools, accounts.rewardId);
   const rewardPool = {};
 
   if (unwrappedRewardPools) {
@@ -90,7 +90,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
         ? metadata.toUtf8()
         : metadata.toString()
       : null,
-    myClaimable: Number(myClaimable),
+    myClaimable: Number(myClaimable ?? '0'),
     // nominators: nominators.unwrapOr({ targets: [] }).targets.map((n) => n.toString()),
     poolId,
     redeemable: Number(stashIdAccount?.redeemable),
