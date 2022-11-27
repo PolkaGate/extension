@@ -230,7 +230,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
                 api={api}
                 value={total} />
             }
-            label={t('Total stake')}
+            label={t('Total stake after')}
             style={{ pt: '5px' }}
           />
         </Container>

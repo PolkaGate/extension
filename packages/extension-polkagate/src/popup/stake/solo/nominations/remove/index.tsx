@@ -188,6 +188,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={remove}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer']}
@@ -200,7 +201,6 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={remove}
         />
         <WaitScreen
           show={showWaitScreen}
