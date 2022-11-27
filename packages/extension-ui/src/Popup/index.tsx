@@ -51,6 +51,7 @@ import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/stake/
 import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/stake/joinPool';
 import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
 import SoloUnstake from '../../../extension-polkagate/src/popup/stake/solo/unstake';
+import SoloRestake from '../../../extension-polkagate/src/popup/stake/solo/restake';
 import Solo from '../../../extension-polkagate/src/popup/stake/solo';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
@@ -178,8 +179,9 @@ export default function Popup(): React.ReactElement {
                           {/* <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route> */}
                           <Route path='/pool/stake/pool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                           <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
-                          <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstaking')}</Route>
-                          <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstaking')}</Route>
+                          <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
+                          <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
+                          <Route path='/solo/restake/:address'>{wrapWithErrorBoundary(<SoloRestake />, 'solo-restake')}</Route>
                           <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
                           <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
                           <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
