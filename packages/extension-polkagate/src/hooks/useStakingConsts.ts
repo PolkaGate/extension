@@ -16,6 +16,7 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
   const [consts, setConsts] = useState<StakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
+  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
   const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
     const getStakingConstsWorker: Worker = new Worker(new URL('../util/workers/getStakingConsts.js', import.meta.url));
@@ -31,26 +32,37 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
       const c: StakingConsts = e.data;
 
       if (c) {
+        window.localStorage.setItem(`${chainName}_stakingConsts`, JSON.stringify(c));
+
         c.existentialDeposit = new BN(c.existentialDeposit);
         c.minNominatorBond = new BN(c.minNominatorBond);
         setConsts(c);
-        // eslint-disable-next-line no-void
-        void updateMeta(address, prepareMetaData(chain, 'stakingConsts', JSON.stringify(c)));
       } else {
         setConsts(null); // an issue while getting consts
       }
 
       getStakingConstsWorker.terminate();
     };
-  }, [address]);
+  }, [chainName]);
 
   useEffect(() => {
     if (stateConsts) {
       return setConsts(stateConsts);
     }
 
+    const localSavedStakingConsts = chainName && window.localStorage.getItem(`${chainName}_stakingConsts`);
+
+    if (localSavedStakingConsts) {
+      const parsedConsts = JSON.parse(localSavedStakingConsts) as StakingConsts;
+
+      parsedConsts.existentialDeposit = new BN(parsedConsts.existentialDeposit);
+      parsedConsts.minNominatorBond = new BN(parsedConsts.minNominatorBond);
+
+      setConsts(parsedConsts);
+    }
+
     endpoint && chain && getStakingConsts(chain, endpoint);
-  }, [endpoint, chain, getStakingConsts, stateConsts]);
+  }, [endpoint, chain, getStakingConsts, stateConsts, chainName]);
 
   return consts;
 }
