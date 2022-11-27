@@ -8,16 +8,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
 import { Label, ShowBalance } from '../../../../../../components';
-import { useTranslation } from '../../../../../../hooks';
-import { PoolInfo } from '../../../../../../util/types';
+import { useChain, usePool, useTranslation } from '../../../../../../hooks';
+import { MyPoolInfo, PoolInfo } from '../../../../../../util/types';
+import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
 
 interface Props {
   api?: ApiPromise;
+  address: string;
   pools: PoolInfo[] | null | undefined;
   style?: SxProps<Theme> | undefined;
   label: string;
@@ -25,9 +27,18 @@ interface Props {
   setSelected: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
 }
 
-export default function PoolsTable({ api, label, pools, selected, setSelected, style }: Props): React.ReactElement {
+export default function PoolsTable({ address, api, label, pools, selected, setSelected, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const ref = useRef();
+  const ref = useRef(null);
+  const chain = useChain(address);
+
+  const [showPoolMoreInfo, setShowPoolMoreInfo] = useState<boolean>(false);
+  const [poolId, setPoolId] = useState<number>();
+
+  const openPoolMoreInfo = useCallback((poolId: number) => {
+    setPoolId(poolId);
+    setShowPoolMoreInfo(!showPoolMoreInfo);
+  }, [showPoolMoreInfo]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     pools && setSelected && setSelected(pools[Number(event.target.value)]);
@@ -72,8 +83,8 @@ export default function PoolsTable({ api, label, pools, selected, setSelected, s
 
   return (
     <Grid sx={{ ...style }}>
-      <Label label={label} style={{ position: 'relative' }} >
-        <Grid container direction='column' ref={ref} sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight / 2.4, minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}          >
+      <Label label={label} style={{ position: 'relative' }}>
+        <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight / 2.4, minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
           {pools
             ? pools.length
               ? pools.map((pool, index) => (
@@ -210,6 +221,7 @@ export default function PoolsTable({ api, label, pools, selected, setSelected, s
                     container
                     item
                     justifyContent='center'
+                    onClick={() => openPoolMoreInfo(pool.poolId.toNumber())}
                     sx={{
                       cursor: 'pointer'
                     }}
@@ -260,6 +272,7 @@ export default function PoolsTable({ api, label, pools, selected, setSelected, s
           }
         </Grid>
       </Label>
+      {showPoolMoreInfo && <PoolMoreInfo address={address} api={api} chain={chain} poolId={poolId} setShowPoolInfo={setShowPoolMoreInfo} showPoolInfo={showPoolMoreInfo} />}
     </Grid>
   );
 }
