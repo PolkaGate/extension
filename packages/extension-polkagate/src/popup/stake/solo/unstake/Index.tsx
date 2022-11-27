@@ -45,14 +45,15 @@ export default function Index(): React.ReactElement {
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active.unwrap(), [stakingAccount]);
-  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
+  const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
-  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimals)), [amount, decimals, staked]);
+  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
   const unbonded = api && api.tx.staking.unbond;
   const redeem = api && api.tx.staking.withdrawUnbonded;
+  const chilled = api && api.tx.staking.chill;
   const redeemDate = useMemo(() => {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;
@@ -68,7 +69,8 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+    // const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+    const amountAsBN = amountToMachine(amount, decimal);
 
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
       return setAlert(t('It is more than already staked.'));
@@ -78,33 +80,46 @@ export default function Index(): React.ReactElement {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
 
-      return setAlert(t('Remaining stake amount {{remained}} should not be less than {{min}} WND.', { replace: { min, remained } }));
+      return setAlert(t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } }));
     }
 
     setAlert(undefined);
-  }, [amount, api, decimals, staked, stakingConsts, t, unstakeAllAmount]);
+  }, [amount, api, decimal, staked, stakingConsts, t, unstakeAllAmount]);
 
-  useEffect(() => {
-    const params = [amountToMachine(amount, decimals)];
+  const getFee = useCallback(async () => {
+    const amountAsBN = amountToMachine(amount ?? '0', decimal);
+    const txs = [];
 
-    if (!api?.call?.transactionPaymentApi) {
+    if (api && !api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    // eslint-disable-next-line no-void
-    redeem && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
-      const fee = i?.partialFee;
+    if (redeem && chilled && unbonded && maxUnlockingChunks !== undefined && unlockingLen !== undefined && formatted && staked) {
+      txs.push(unbonded(amountAsBN));
 
-      if (unlockingLen < maxUnlockingChunks) {
-        setEstimatedFee(fee);
-      } else {
+      if (unlockingLen >= maxUnlockingChunks) {
         const dummyParams = [100];
 
-        // eslint-disable-next-line no-void
-        void redeem(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
+        txs.push(redeem(...dummyParams));
       }
-    }).catch(console.error);
-  }, [amount, api, decimals, formatted, maxUnlockingChunks, redeem, unbonded, unlockingLen]);
+
+      if (amountAsBN.eq(staked)) {
+        txs.push(chilled());
+      }
+
+      const finalTx = txs.length > 1 ? api.tx.utility.batchAll(txs) : txs[0];
+
+      const partialFee = (await finalTx.paymentInfo(formatted))?.partialFee;
+
+      setEstimatedFee(api?.createType('Balance', partialFee));
+    }
+  }, [amount, api, chilled, decimal, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
+
+  useEffect(() => {
+    if (redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
+      getFee().catch(console.error);
+    }
+  }, [amount, api, chilled, decimal, formatted, getFee, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -116,37 +131,32 @@ export default function Index(): React.ReactElement {
   const onChangeAmount = useCallback((value: string) => {
     setUnstakeAllAmount(false);
 
-    if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+    if (value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
+  }, [decimal]);
 
   const onAllAmount = useCallback(() => {
     if (!staked) {
       return;
     }
 
-    const allToShow = amountToHuman(staked.toString(), decimals);
+    const allToShow = amountToHuman(staked.toString(), decimal);
 
     setUnstakeAllAmount(true);
     setAmount(allToShow);
-  }, [decimals, staked]);
+  }, [decimal, staked]);
 
   const goToReview = useCallback(() => {
     setShowReview(true);
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid
-      color='red'
-      container
-      justifyContent='center'
-      py='15px'
-    >
+    <Grid color='red' container justifyContent='center' py='15px'>
       <Warning
         fontWeight={400}
         isBelowInput
@@ -196,12 +206,13 @@ export default function Index(): React.ReactElement {
         disabled={!amount || amount === '0'}
         text={t<string>('Next')}
       />
-      {showReview && amount && api && formatted && maxUnlockingChunks &&
+      {showReview && amount && api && formatted && maxUnlockingChunks && staked && chain &&
         <Review
           address={address}
           amount={amount}
           api={api}
           chain={chain}
+          chilled={chilled}
           estimatedFee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
@@ -209,6 +220,7 @@ export default function Index(): React.ReactElement {
           redeemDate={redeemDate}
           setShow={setShowReview}
           show={showReview}
+          staked={staked}
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}
@@ -217,3 +229,4 @@ export default function Index(): React.ReactElement {
     </Motion>
   );
 }
+
