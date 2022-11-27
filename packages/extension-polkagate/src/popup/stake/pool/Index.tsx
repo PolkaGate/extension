@@ -211,7 +211,7 @@ export default function Index(): React.ReactElement {
   }, [redeemable]);
 
   const ToBeReleased = () => (
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '10%', width: '85%' }}>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
       <Grid item pt='10px' xs={12}>
         {t('To be released')}
       </Grid>
@@ -240,18 +240,18 @@ export default function Index(): React.ReactElement {
               <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
                 <ShowBalance api={api} balance={value} decimalPoint={2} />
               </Grid>
-              <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+              <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, mt: '5px' }}>
                 {link1Text &&
-                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', textDecorationLine: 'underline' }} >
                     {link1Text}
                   </Grid>
                 }
                 {link2Text &&
                   <>
-                    <Grid alignItems='center' item justifyContent='center' mx='6px'>
-                      <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
+                    <Grid alignItems='center' item justifyContent='center' mx='10px'>
+                      <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() ? 'text.disabled' : 'text.primary', height: '19px', mt: '3px', width: '2px' }} />
                     </Grid>
-                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', textDecorationLine: 'underline' }}>
                       {link2Text}
                     </Grid>
                   </>
@@ -259,21 +259,14 @@ export default function Index(): React.ReactElement {
               </Grid>
             </Grid>
             {label === 'Unstaking' &&
-              <Grid
-                alignItems='center'
-                container
-                item
-                onClick={_toggleShowUnlockings}
-                sx={{ ml: '25px' }}
-                xs={1}
-              >
+              <Grid alignItems='center' container item onClick={_toggleShowUnlockings} sx={{ ml: '25px' }} xs={1}>
                 <ArrowForwardIosIcon
                   sx={{
                     color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
                     cursor: 'pointer',
                     fontSize: 18,
                     m: 'auto',
-                    stroke: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',//'#BA2882',
+                    stroke: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
                     strokeWidth: '2px',
                     transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)'
                   }}
@@ -287,7 +280,7 @@ export default function Index(): React.ReactElement {
         }
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '100%' }} />
+            <Divider sx={{ bgcolor: 'secondary.main', mt: '10px', width: '100%' }} />
           </Grid>
         }
       </>
@@ -316,37 +309,38 @@ export default function Index(): React.ReactElement {
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
         <SubTitle label={t<string>('Pool Staking')} mt='15px' style={{ fontSize: '20px' }} />
-        <Row
-          label={t('Staked')}
-          link1Text={t('Unstake')}
-          onLink1={staked && !staked?.isZero() && goToUnstake}
-          value={staked}
-        />
-        <Row
-          label={t('Rewards')}
-          link1Text={t('Withdraw')}
-          link2Text={t('Stake')}
-          onLink1={goToRewardWithdraw}
-          onLink2={goToRewardStake}
-          value={claimable}
-        />
-        <Row
-          label={t('Redeemable')}
-          link1Text={t('Withdraw')}
-          onLink1={goToRedeemableWithdraw}
-          value={redeemable}
-        />
-        <Row
-          label={t('Unstaking')}
-          //  link1Text={t('Restake')} 
-          value={unlockingAmount}
-        />
-        <Row
-          label={t('Available to stake')}
-          showDivider={false}
-          value={getValue('available', balances)}
-        />
-
+        <Grid container maxHeight={window.innerHeight - 254} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
+          <Row
+            label={t('Staked')}
+            link1Text={t('Unstake')}
+            onLink1={staked && !staked?.isZero() && goToUnstake}
+            value={staked}
+          />
+          <Row
+            label={t('Rewards')}
+            link1Text={t('Withdraw')}
+            link2Text={t('Stake')}
+            onLink1={goToRewardWithdraw}
+            onLink2={goToRewardStake}
+            value={claimable}
+          />
+          <Row
+            label={t('Redeemable')}
+            link1Text={t('Withdraw')}
+            onLink1={goToRedeemableWithdraw}
+            value={redeemable}
+          />
+          <Row
+            label={t('Unstaking')}
+            //  link1Text={t('Restake')} 
+            value={unlockingAmount}
+          />
+          <Row
+            label={t('Available to stake')}
+            showDivider={false}
+            value={getValue('available', balances)}
+          />
+        </Grid>
       </Container>
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}>
         <HorizontalMenuItem
