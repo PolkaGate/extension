@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, ShowBalance } from '../../../components';
+import { Identity, Progress, ShowBalance } from '../../../components';
 import { usePool, usePoolMembers, useTranslation } from '../../../hooks';
 import { MemberPoints, MyPoolInfo } from '../../../util/types';
 import ShowPool from './ShowPool';
@@ -188,24 +188,11 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
           <CollapseData mode='Reward' open={openReward} pool={poolToShow} show={showReward} title={t<string>('Rewards')} />
         </>)
         : (
-          <Grid
-            alignItems='center'
-            container
-            justifyContent='center'
-          >
-            <Grid
-              item
-            >
-              <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={100} />
-            </Grid>
-            <Typography
-              fontSize='13px'
-              lineHeight='40px'
-              pl='10px'
-            >
-              {t<string>('Loading pool information...')}
-            </Typography>
-          </Grid>
+          <Progress
+            pt='95px'
+            size={125}
+            title={t('Loading pool information...')}
+          />
         )
       }
       <IconButton

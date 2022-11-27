@@ -272,7 +272,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
           }
         </Grid>
       </Label>
-      {showPoolMoreInfo && <PoolMoreInfo address={address} api={api} chain={chain} poolId={poolId} setShowPoolInfo={setShowPoolMoreInfo} showPoolInfo={showPoolMoreInfo} />}
+      {showPoolMoreInfo && <Grid ml='-15px'><PoolMoreInfo address={address} api={api} chain={chain} poolId={poolId} setShowPoolInfo={setShowPoolMoreInfo} showPoolInfo={showPoolMoreInfo} /></Grid>}
     </Grid>
   );
 }
