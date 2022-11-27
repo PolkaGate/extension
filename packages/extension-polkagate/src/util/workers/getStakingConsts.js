@@ -24,7 +24,7 @@ async function getStackingConsts(endpoint) {
       existentialDeposit,
       maxNominations,
       maxNominatorRewardedPerValidator,
-      minNominatorBond,
+      minNominatorBond: minNominatorBond.toString(),
       unbondingDuration: bondingDuration * sessionsPerEra * epochDurationInHours / 24 // unboundingDuration in days
     };
   } catch (error) {

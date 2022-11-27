@@ -81,7 +81,7 @@ export default function Index(): React.ReactElement {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', poolConsts.minJoinBond).toHuman();
 
-      return setAlert(t('Remaining stake amount {{remained}} should not be less than {{min}} WND.', { replace: { min, remained } }));
+      return setAlert(t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } }));
     }
 
     setAlert(undefined);

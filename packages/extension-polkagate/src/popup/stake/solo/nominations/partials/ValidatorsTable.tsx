@@ -85,7 +85,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
+      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', textAlign: 'center' }}>
         {validatorsToList?.length !== 0 &&
           <List
             height={height}
@@ -170,10 +170,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                     </Grid>
                   </Grid>
                   <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer' }} width='6%'>
-                    <vaadin-icon
-                      icon='vaadin:ellipsis-dots-v'
-                      style={{ color: `${theme.palette.secondary.light}`, width: '33px' }}
-                    />
+                    <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
                   </Grid>
                 </Grid>
               );

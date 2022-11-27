@@ -28,27 +28,29 @@ import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { amountToMachine, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
   address: string;
-  show: boolean;
-  formatted: string;
-  api: ApiPromise;
   amount: string;
-  chain: Chain | null;
+  api: ApiPromise;
+  chain: Chain;
+  chilled: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined
   estimatedFee: Balance | undefined;
-  unlockingLen: number;
+  formatted: string;
   maxUnlockingChunks: number
-  unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   redeem: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
   redeemDate: string | undefined;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
   total: BN | undefined;
+  unlockingLen: number;
+  unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
+  staked: BN;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, redeem, redeemDate, setShow, show, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, chilled, estimatedFee, formatted, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -63,7 +65,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const decimals = api?.registry?.chainDecimals[0] ?? 1;
+  const decimal = api?.registry?.chainDecimals[0] ?? 1;
   const token = api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
@@ -108,7 +110,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !unbonded || !redeem) {
+      if (!formatted || !unbonded || !redeem || !chilled) {
         return;
       }
 
@@ -116,55 +118,41 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
-      const params = [amountAsBN];
+      // const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+      const amountAsBN = amountToMachine(amount, decimal);
+      const txs = [];
 
-      if (unlockingLen < maxUnlockingChunks) {
-        const { block, failureText, fee, status, txHash } = await broadcast(api, unbonded, params, signer, formatted, selectedProxy);
-
-        const info = {
-          action: 'solo_unbond',
-          amount,
-          block,
-          date: Date.now(),
-          failureText,
-          fee: fee || String(estimatedFee),
-          from: { address: formatted, name },
-          status,
-          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-          txHash
-        };
-
-        history.push(info);
-        setTxInfo({ ...info, api, chain });
-      } else { // hence a  redeem is needed
+      if (unlockingLen >= maxUnlockingChunks) {
         const optSpans = await api.query.staking.slashingSpans(formatted);
         const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
 
-        const batch = api.tx.utility.batchAll([
-          redeem(spanCount),
-          unbonded(...params)
-        ]);
-
-        const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, batch) : batch;
-        const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
-
-        const info = {
-          action: 'solo_redeem_unbond',
-          amount,
-          block,
-          date: Date.now(),
-          failureText,
-          fee: fee || String(estimatedFee),
-          from: { address: formatted, name },
-          status,
-          throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-          txHash
-        };
-
-        history.push(info);
-        setTxInfo({ ...info, api, chain });
+        txs.push(redeem(spanCount));
       }
+
+      if (amountAsBN.eq(staked)) {
+        txs.push(chilled());
+      }
+
+      txs.push(unbonded(amountAsBN));
+      const mayBeBatchTxs = txs.length > 1 ? api.tx.utility.batchAll(txs) : txs[0];
+      const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, mayBeBatchTxs) : mayBeBatchTxs;
+      const { block, failureText, fee, status, txHash } = await signAndSend(api, mayBeProxiedTx, signer, formatted);
+
+      const info = {
+        action: 'solo_unbond',
+        amount,
+        block,
+        date: Date.now(),
+        failureText,
+        fee: fee || String(estimatedFee),
+        from: { address: formatted, name },
+        status,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
+        txHash
+      };
+
+      history.push(info);
+      setTxInfo({ ...info, api, chain });
 
       // eslint-disable-next-line no-void
       void saveHistory(chain, hierarchy, formatted, history);
@@ -175,7 +163,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimals, estimatedFee, formatted, hierarchy, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
+  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hierarchy, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, staked, unbonded, unlockingLen]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
