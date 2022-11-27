@@ -293,7 +293,7 @@ export default function Index(): React.ReactElement {
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
         <SubTitle label={t<string>('Solo Staking')} mt='15px' style={{ fontSize: '20px' }} />
-        <Grid container maxHeight={window.innerHeight - 250} sx={{ overflowY: 'scroll' }}>
+        <Grid container maxHeight={window.innerHeight - 250} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
