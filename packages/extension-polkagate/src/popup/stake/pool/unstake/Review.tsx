@@ -256,7 +256,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           onConfirmClick={unstake}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={['Any', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

@@ -226,9 +226,10 @@ export default function SetState({ address, api, chain, formatted, headerText, h
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={changeState}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={['Any', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -238,7 +239,6 @@ export default function SetState({ address, api, chain, formatted, headerText, h
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={changeState}
         />
         <WaitScreen
           show={showWaitScreen}
