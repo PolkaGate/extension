@@ -75,7 +75,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
       return;
     }
 
-    return poolMembrs.map((m) => ({ accountId: m.accountId, points: m.member.points })) as MemberPoints[];
+    return poolMembrs.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
   }, [poolMembrs]);
 
   const needsUnboundAll = useMemo(() => {
