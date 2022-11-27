@@ -35,7 +35,6 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
       const parsedInfo = JSON.parse(info) as MyPoolInfo;
 
-
       console.log('*** My pool info returned from worker is:', parsedInfo);
 
       // id ? setSelectedPool(parsedInfo) :
