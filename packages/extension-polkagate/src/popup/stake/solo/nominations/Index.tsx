@@ -115,6 +115,16 @@ export default function Index(): React.ReactElement {
           </Typography>
         </Infotip>
       </Grid>
+      <Grid item>
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
+      </Grid>
+      <Grid item>
+        <Infotip text={t<string>('If Tune UP is available, it will correct your account\'s position in voters\' list to be eligible for receiving rewards.')}>
+          <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            {t('Tune Up')}
+          </Typography>
+        </Infotip>
+      </Grid>
     </Grid>
   );
 
