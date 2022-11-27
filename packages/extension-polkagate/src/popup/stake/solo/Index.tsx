@@ -90,23 +90,7 @@ export default function Index(): React.ReactElement {
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
-  const [showRewardStake, setShowRewardStake] = useState<boolean>(false);
-  const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
-
-  const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
-  const [gettingNominatedValidatorsInfoFromChain, setGettingNominatedValidatorsInfoFromChain] = useState<boolean>(true);
-  const [validatorsInfoIsUpdated, setValidatorsInfoIsUpdated] = useState<boolean>(false);
-  const [validatorsIdentitiesIsFetched, setValidatorsIdentitiesIsFetched] = useState<boolean>(false);
-  const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
-  const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
-  const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-  const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
-  const [selectedValidators, setSelectedValidatorsAcounts] = useState<DeriveStakingQuery[] | null>(null);
-  const [noNominatedValidators, setNoNominatedValidators] = useState<boolean | undefined>();// if TRUE, shows that nominators are fetched but is empty
-  const [nominatedValidators, setNominatedValidatorsInfo] = useState<DeriveStakingQuery[] | null>(null);
-  const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
-  const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -117,12 +101,6 @@ export default function Index(): React.ReactElement {
         eraLength: Number(sessionInfo.eraLength),
         eraProgress: Number(sessionInfo.eraProgress)
       });
-    });
-  }, [api]);
-
-  useEffect((): void => {
-    api && api.query.staking.currentEra().then((ce) => {
-      setCurrentEraIndex(Number(ce));
     });
   }, [api]);
 
@@ -171,6 +149,13 @@ export default function Index(): React.ReactElement {
       state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, pathname, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
+ 
+  const goToRestake = useCallback(() => {
+    history.push({
+      pathname: `/solo/restake/${address}`,
+      state: { api, balances, pathname, stakingAccount, stakingConsts, unlockingAmount }
+    });
+  }, [history, address, api, balances, pathname, stakingConsts, unlockingAmount, stakingAccount]);
 
   const goToNominations = useCallback(() => {
     history.push({
@@ -314,6 +299,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Unstaking')}
             link1Text={t('Restake')}
+            onLink1={unlockingAmount && !unlockingAmount?.isZero() && goToRestake}
             value={unlockingAmount}
           />
           <Row

@@ -31,13 +31,19 @@ interface Props {
 
 export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
-  const [warningText, setWarningText] = useState<string>();
   const theme = useTheme();
+  const { accounts } = useContext(AccountContext);
+  const [warningText, setWarningTest] = useState<string>();
 
   useEffect(() => {
-    setWarningText(notFoundText || `No proxies found for the account’s address on ${chain?.name}. You can use it as Watch Only Account.`);
-  }, [chain?.name, notFoundText, proxies?.length]);
+    const text = notFoundText || (mode === 'Availability'
+      ? t('No proxies found for the above address on {{chainName}}. You can use it as a Watch Only Account.', { replace: { chainName: chain?.name } })
+      : t('No proxies found for the account’s address on {{chainName}}.', { replace: { chainName: chain?.name } }));
+
+      console.log('chain?.name:',chain?.name)
+      console.log('chain?.:',chain)
+    setWarningTest(text);
+  }, [chain?.name, mode, notFoundText, t]);
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
