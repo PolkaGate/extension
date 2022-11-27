@@ -145,6 +145,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         label={t<string>('Pool')}
         mode='Default'
         pool={pool}
+        showInfo
         style={{
           m: '20px auto 0',
           width: '92%'

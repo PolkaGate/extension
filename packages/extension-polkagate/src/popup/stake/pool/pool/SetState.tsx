@@ -181,6 +181,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
           api={api}
           mode='Default'
           pool={pool}
+          showInfo
           style={{
             m: '20px auto',
             width: '92%'

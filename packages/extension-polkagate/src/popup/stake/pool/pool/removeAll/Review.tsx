@@ -245,6 +245,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           label=''
           mode='Default'
           pool={pool}
+          showInfo
           style={{
             m: '15px auto',
             width: '92%'
