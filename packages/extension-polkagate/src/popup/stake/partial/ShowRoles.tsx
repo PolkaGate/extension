@@ -3,7 +3,9 @@
 
 import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+
+import { Chain } from '@polkadot/extension-chains/types';
 
 import { ShortAddress } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -11,33 +13,54 @@ import getLogo from '../../../util/getLogo';
 import { MyPoolInfo } from '../../../util/types';
 
 interface Props {
-  chainName?: string;
+  chain?: Chain;
   pool?: MyPoolInfo;
   label?: string;
   mode: 'Roles' | 'Ids';
   style?: SxProps<Theme> | undefined;
 }
 
-export default function ShowPool({ chainName, label, mode, pool, style }: Props): React.ReactElement {
+export default function ShowRoles({ chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const [accountsToShow, setAccountsToShow] = useState<{ label: string, address: string }[] | undefined>();
+  // const [accountsToShow, setAccountsToShow] = useState<{ label: string, address: string }[] | undefined>();
+  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   if (!pool) {
+  //     return;
+  //   }
+
+  //   mode === 'Roles' && setAccountsToShow([
+  //     { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
+  //     { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
+  //     { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
+  //     { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
+  //   ]);
+
+  //   mode === 'Ids' && setAccountsToShow([
+  //     { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
+  //     { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
+  //   ]);
+  // }, [mode, pool, t]);
+
+  const accountsToShow = useMemo(() => {
     if (!pool) {
       return;
     }
 
-    mode === 'Roles' && setAccountsToShow([
-      { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
-      { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
-      { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
-      { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
-    ]);
-
-    mode === 'Ids' && setAccountsToShow([
-      { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
-      { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
-    ]);
+    if (mode === 'Roles') {
+      return ([
+        { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
+        { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
+        { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
+        { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
+      ]);
+    } else {
+      return ([
+        { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
+        { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
+      ]);
+    }
   }, [mode, pool, t]);
 
   return (
@@ -61,8 +84,8 @@ export default function ShowPool({ chainName, label, mode, pool, style }: Props)
           direction='column'
           item
           sx={{
-            ':last-child': {
-              borderBottom: 'none'
+            '> :last-child': {
+              border: 'none'
             },
             bgcolor: 'background.paper',
             border: '1px solid',

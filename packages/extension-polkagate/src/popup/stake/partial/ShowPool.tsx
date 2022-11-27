@@ -4,25 +4,33 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { Chain } from '@polkadot/extension-chains/types';
 
 import { ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { MyPoolInfo, PoolInfo } from '../../../util/types';
+import PoolMoreInfo from './PoolMoreInfo';
 
 interface Props {
   api?: ApiPromise;
+  chain?: Chain;
   pool?: MyPoolInfo | PoolInfo;
   label?: string;
   labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining' | 'Creating' | 'Default';
   style?: SxProps<Theme> | undefined;
+  showInfo?: boolean;
 }
 
-export default function ShowPool({ api, label, labelPosition = 'left', mode, pool, style }: Props): React.ReactElement {
+export default function ShowPool({ api, chain, label, labelPosition = 'left', mode, pool, style, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
+
+  const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);
+
+  const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
   const poolStaked = (points) => {
     const staked = points ? api?.createType('Balance', points) : undefined;
@@ -79,22 +87,15 @@ export default function ShowPool({ api, label, labelPosition = 'left', mode, poo
                   textAlign='center'
                   textOverflow='ellipsis'
                   whiteSpace='nowrap'
-                  width='92%'
+                  width={showInfo ? '92%' : '100%'}
                 >
                   {pool.metadata}
                 </Grid>
-                <Grid
-                  alignItems='center'
-                  container
-                  item
-                  justifyContent='center'
-                  sx={{
-                    cursor: 'pointer'
-                  }}
-                  width='8%'
-                >
-                  <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
-                </Grid>
+                {showInfo &&
+                  <Grid alignItems='center' container item justifyContent='center' onClick={openPoolInfo} sx={{ cursor: 'pointer' }} width='8%'>
+                    <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+                  </Grid>
+                }
               </Grid>
               <Grid
                 container
@@ -235,6 +236,9 @@ export default function ShowPool({ api, label, labelPosition = 'left', mode, poo
           }
         </Grid>
       </Grid>
+      {isOpenPoolInfo &&
+        <PoolMoreInfo api={api} chain={chain} pool={pool} setShowPoolInfo={setOpenPoolInfo} showPoolInfo={isOpenPoolInfo} />
+      }
     </>
   );
 }

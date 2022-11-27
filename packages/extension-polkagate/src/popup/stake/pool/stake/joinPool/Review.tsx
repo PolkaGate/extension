@@ -88,6 +88,10 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   }
 
   const joinPool = useCallback(async () => {
+    if (!poolToJoin) {
+      return;
+    }
+
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     if (!formatted || !joined) {
@@ -129,7 +133,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, decimals, estimatedFee, formatted, hierarchy, joinAmount, joined, name, password, poolToJoin.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, chain, decimals, estimatedFee, formatted, hierarchy, joinAmount, joined, name, password, poolToJoin, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -147,13 +151,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           text={t<string>('Join Pool')}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -174,11 +172,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           showDivider
           style={{ m: 'auto', width: '90%' }}
         />
-        <Typography
-          fontSize='16px'
-          fontWeight={300}
-          textAlign='center'
-        >
+        <Typography fontSize='16px' fontWeight={300} textAlign='center'>
           {t<string>('Amount')}
         </Typography>
         <Grid alignItems='center' container item justifyContent='center' >
@@ -189,32 +183,23 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
             <FormatBalance api={api} decimalPoint={2} value={joinAmount} />
           </Grid>
         </Grid>
-        <Grid
-          container
-          justifyContent='center'
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
+        <Grid container justifyContent='center'>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
+          <Grid item lineHeight='22px' pl='5px'>
             <FormatBalance api={api} decimalPoint={4} value={estimatedFee} />
           </Grid>
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <ShowPool
           api={api}
+          chain={chain}
           label={t<string>('Pool')}
           labelPosition='center'
           mode='Joining'
           pool={poolToJoin}
+          showInfo
           style={{
             m: '8px auto 0',
             width: '92%'

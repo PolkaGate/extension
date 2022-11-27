@@ -12,7 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useFormatted, usePoolConsts, usePools, useTranslation } from '../../../../../hooks';
+import { useApi, useFormatted, usePool, usePoolConsts, usePools, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
@@ -36,7 +36,7 @@ export default function JoinPool(): React.ReactElement {
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
   const pools = usePools(address);
-  
+
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
@@ -49,6 +49,7 @@ export default function JoinPool(): React.ReactElement {
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
   const amountAsBN = useMemo(() => new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimals), [decimals, stakeAmount]);
+  const poolToJoin = usePool(address, selectedPool?.poolId?.toNumber());
 
   const backToStake = useCallback(() => {
     history.push({
@@ -84,13 +85,11 @@ export default function JoinPool(): React.ReactElement {
   }, [api, availableBalance, decimals, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
-    console.log('Go to review clicked!');
-    api && setShowReview(!showReview);
-  }, [api, showReview]);
+    api && selectedPool && setShowReview(!showReview);
+  }, [api, selectedPool, showReview]);
 
   useEffect(() => {
     if (!pools) { return; }
-
 
     if (selectedPool === undefined) {
       const PLUS_POOL = pools?.find((pool) => pool.metadata?.includes(PREFERRED_POOL_NAME));
@@ -190,6 +189,7 @@ export default function JoinPool(): React.ReactElement {
         </Grid>
       </Grid>
       <PoolsTable
+        address={address}
         api={api}
         label={t<string>('Choose a pool to join')}
         pools={sortedPools}
@@ -211,7 +211,7 @@ export default function JoinPool(): React.ReactElement {
           api={api}
           estimatedFee={estimatedFee}
           joinAmount={amountAsBN}
-          poolToJoin={selectedPool}
+          poolToJoin={poolToJoin}
           setShowReview={setShowReview}
           showReview={showReview}
         />

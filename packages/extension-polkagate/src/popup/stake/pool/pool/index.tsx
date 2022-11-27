@@ -186,6 +186,8 @@ export default function Pool(): React.ReactElement {
         <>
           <ShowPool
             api={api}
+            chain={chain}
+            showInfo
             mode='Default'
             pool={pool}
             style={{
