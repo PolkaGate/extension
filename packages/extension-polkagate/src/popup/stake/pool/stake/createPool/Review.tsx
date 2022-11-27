@@ -234,9 +234,10 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={goCreatePool}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={['Any', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -246,7 +247,6 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={goCreatePool}
         />
       </Popup>
       <WaitScreen

@@ -238,7 +238,7 @@ export default function UnstakeAllReview({ address, api, chain, formatted, pool,
           onChange={setPassword}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={['Any', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

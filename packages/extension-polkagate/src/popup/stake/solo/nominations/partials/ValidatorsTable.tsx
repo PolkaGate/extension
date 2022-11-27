@@ -85,12 +85,12 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
+      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', scrollbarWidth: 'none', textAlign: 'center' }}>
         {validatorsToList?.length !== 0 &&
           <List
             height={height}
             itemCount={validatorsToList?.length}
-            itemSize={55}
+            itemSize={60}
             ref={ref}
             width={'100%'}
           >

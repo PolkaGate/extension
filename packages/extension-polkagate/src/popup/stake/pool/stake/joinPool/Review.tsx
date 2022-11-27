@@ -229,7 +229,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           onConfirmClick={joinPool}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any']}
+          proxyTypeFilter={['Any', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
