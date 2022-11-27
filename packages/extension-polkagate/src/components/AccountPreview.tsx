@@ -163,7 +163,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
         name={name}
         toggleVisibility={_toggleVisibility}
       />
-      <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} />
+      <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} chain={chain}/>
       {
         showActionsMenu &&
         <AccMenu
