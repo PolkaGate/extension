@@ -55,8 +55,8 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimals);
-
-    maxToHuman && setBondAmount(maxToHuman);
+    
+      maxToHuman && setBondAmount(maxToHuman);
   }, [api, availableBalance, decimals, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
@@ -151,7 +151,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
           width: '92%'
         }}
       />
-      <PButton _onClick={toReview} text={t<string>('Next')} disabled={nextBtnDisabled} />
+      <PButton _onClick={toReview} disabled={nextBtnDisabled} text={t<string>('Next')} />
       {showReview &&
         <Review
           address={address}
