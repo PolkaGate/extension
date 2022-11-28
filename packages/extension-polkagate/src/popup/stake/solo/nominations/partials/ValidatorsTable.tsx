@@ -8,23 +8,26 @@ import '@vaadin/icons';
 import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
 import { Checkbox, Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { StakingConsts, ValidatorInfo } from '../../../../../util/types';
+import ValidatorInfoPage from '../../../partial/ValidatorInfo';
 
 interface Props {
   api?: ApiPromise;
   activeValidators: ValidatorInfo[] | undefined;
   chain?: Chain;
   style?: SxProps<Theme> | undefined;
+  formatted?: AccountId | string;
   staked: BN | undefined
   stakingConsts: StakingConsts | null | undefined;
   validatorsToList: ValidatorInfo[] | null | undefined
@@ -36,13 +39,22 @@ interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, formatted, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();
 
+  const [showValidatorInfo, setShowValidatorInfo] = useState<boolean>(false);
+  const [validatorToShowInfo, setValidatorToShowInfo] = useState<ValidatorInfo>();
+
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
   const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won’t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
+
+  const openValidatorInfo = useCallback((v: ValidatorInfo) => {
+    console.log('hellll yeahhh')
+    setValidatorToShowInfo(v);
+    setShowValidatorInfo(!showValidatorInfo);
+  }, [showValidatorInfo]);
 
   const overSubscribed = useCallback((v: ValidatorInfo): { notSafe: boolean, safe: boolean } | undefined => {
     if (!stakingConsts) {
@@ -104,7 +116,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
               return (
                 <Grid container key={key} item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', ...style }}>
                   <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
-                    <Grid alignItems='center' container item lineHeight='30px'>
+                    <Grid alignItems='center' container item>
                       {showCheckbox &&
                         <Grid item width='10%'>
                           <Checkbox2
@@ -169,7 +181,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer' }} width='6%'>
+                  <Grid alignItems='center' container onClick={() => openValidatorInfo(v)} item justifyContent='center' sx={{ cursor: 'pointer' }} width='6%'>
                     <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
                   </Grid>
                 </Grid>
@@ -178,6 +190,19 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           </List>
         }
       </Grid>
-    </Grid >
+      {showValidatorInfo && validatorToShowInfo &&
+        <Grid ml='-15px'>
+          <ValidatorInfoPage
+            address={formatted}
+            api={api}
+            chain={chain}
+            setShowValidatorInfo={setShowValidatorInfo}
+            showValidatorInfo={showValidatorInfo}
+            validatorInfo={validatorToShowInfo}
+            validatorsIdentities={allValidatorsIdentities}
+          />
+        </Grid>
+      }
+    </Grid>
   );
 }
