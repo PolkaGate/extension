@@ -40,8 +40,6 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
       ? t('No proxies found for the above address on {{chainName}}. You can use it as a Watch Only Account.', { replace: { chainName: chain?.name } })
       : t('No proxies found for the account’s address on {{chainName}}.', { replace: { chainName: chain?.name } }));
 
-      console.log('chain?.name:',chain?.name)
-      console.log('chain?.:',chain)
     setWarningTest(text);
   }, [chain?.name, mode, notFoundText, t]);
 

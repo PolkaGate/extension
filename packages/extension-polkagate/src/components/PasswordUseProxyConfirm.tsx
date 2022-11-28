@@ -10,7 +10,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { useAccount, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
-import { Proxy, ProxyItem } from '../util/types';
+import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 import { Identity, Password, PButton, Warning } from '.';
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
   withoutMargin?: boolean;
   genesisHash: string;
   prevState?: Record<string, any>;
-  proxyTypeFilter: string[];
+  proxyTypeFilter: ProxyTypes[];
   style?: SxProps<Theme>;
   proxies: ProxyItem[] | undefined
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;

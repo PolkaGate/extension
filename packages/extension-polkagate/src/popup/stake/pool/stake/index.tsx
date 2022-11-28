@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-
 import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
@@ -34,7 +32,6 @@ export default function Stake(): React.ReactElement {
   const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = useBalances(address);
-
   const pool = usePool(address, undefined, state?.pool);
 
   return (
