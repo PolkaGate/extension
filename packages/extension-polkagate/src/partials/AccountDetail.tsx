@@ -1,11 +1,12 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
-
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -15,6 +16,7 @@ import FormatPrice from '../components/FormatPrice';
 import { useTranslation } from '../hooks';
 import useBalances from '../hooks/useBalances';
 import usePrice from '../hooks/usePrice';
+import { BALANCES_VALIDITY_PERIOD } from '../util/constants';
 
 interface Props {
   address: string;
@@ -30,13 +32,10 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   const theme = useTheme();
   const balances = useBalances(address);
   const price = usePrice(address);
+  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
 
   const NoChainAlert = () => (
-    <Grid
-      color='text.primary'
-      fontSize={'14px'}
-      fontWeight={500}
-      letterSpacing='-1.5%'>
+    <Grid color='text.primary' fontSize='14px' fontWeight={500}>
       {t('Select a chain to view balance')}
     </Grid>
   );
@@ -44,15 +43,17 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   const Balance = () => (
     <>
       {balances?.decimal
-        ? <FormatBalance2
-          decimalPoint={2}
-          decimals={[balances.decimal]}
-          tokens={[balances.token]}
-          value={balances.freeBalance.add(balances.reservedBalance)}
-        />
+        ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary' }}>
+          <FormatBalance2
+            decimalPoint={2}
+            decimals={[balances.decimal]}
+            tokens={[balances.token]}
+            value={balances.freeBalance.add(balances.reservedBalance)}
+          />
+        </Grid>
         : <Skeleton
           height={22}
-          sx={{ transform: 'none', my: '2.5px' }}
+          sx={{ my: '2.5px', transform: 'none' }}
           variant='text'
           width={103}
         />
@@ -79,55 +80,30 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   );
 
   const BalanceRow = () => (
-    <Grid container fontSize='18px' letterSpacing='-1.5%'    >
-      <Grid fontWeight={500} item      >
+    <Grid container fontSize='18px' letterSpacing='-1.5%'>
+      <Grid fontWeight={500} item>
         <Balance />
       </Grid>
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
-      <Grid fontWeight={300} item      >
+      <Grid fontWeight={300} item>
         <Price />
       </Grid>
     </Grid>);
 
   return (
-    <Grid
-      container
-      direction='column'
-      xs={7.5}
-    >
-      <Grid
-        container
-        direction='row'
-        item
-      >
-        <Grid
-          item
-          maxWidth='65%'
-        >
-          <Typography
-            fontSize='28px'
-            overflow='hidden'
-            textOverflow='ellipsis'
-            whiteSpace='nowrap'
-          >
+    <Grid container direction='column' xs={7.5}>
+      <Grid container direction='row' item>
+        <Grid item maxWidth='65%'>
+          <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {name}
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton
-            onClick={toggleVisibility}
-            sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}
-          >
-            <vaadin-icon
-              icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'}
-              style={{ color: `${theme.palette.secondary.light}`, height: '20px' }}
-            />
+          <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
+            <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
           </IconButton>
         </Grid>
-        <Grid
-          item
-          sx={{ m: '10px 0' }}
-        >
+        <Grid item sx={{ m: '10px 0' }}>
           <CopyAddressButton
             address={formatted || address}
             showAddress
@@ -135,11 +111,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
           />
         </Grid>
       </Grid>
-      <Grid
-        alignItems='center'
-        container
-        item
-      >
+      <Grid alignItems='center' container item>
         {!chain
           ? <NoChainAlert />
           : <BalanceRow />

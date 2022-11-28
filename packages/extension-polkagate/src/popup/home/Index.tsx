@@ -76,11 +76,7 @@ export default function Home({ className }: Props): React.ReactElement {
         ? <AddAccount />
         : (
           <>
-            <Grid
-              padding='0px'
-              textAlign='center'
-              xs={12}
-            >
+            <Grid padding='0px' textAlign='center' xs={12} >
               <HeaderBrand
                 showBrand
                 showMenu
