@@ -20,7 +20,6 @@ import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   api: ApiPromise | undefined;
-  backPath: string;
   showInfo: boolean;
   info: StakingConsts | null | undefined;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>

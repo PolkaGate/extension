@@ -198,7 +198,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
               value={bondAmount?.add(poolTotalStaked)}
             />
           }
-          label={t('Total stake')}
+          label={t('Total stake after')}
           style={{ pt: '2px' }}
         />
         <PasswordUseProxyConfirm
