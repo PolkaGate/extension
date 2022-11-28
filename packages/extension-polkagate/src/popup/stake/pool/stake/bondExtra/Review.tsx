@@ -65,8 +65,9 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
   }, [setShowReview, showReview]);
 
   const goToStakingHome = useCallback(() => {
+    setShowReview(!showReview);
     onAction(`pool/stake/${address}`);
-  }, [address, onAction]);
+  }, [address, onAction, setShowReview, showReview]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -107,6 +108,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         action: 'pool_bondExtra',
         amount: amountToHuman(bondAmount?.toString(), decimals),
         block,
+        chain,
         date: Date.now(),
         failureText,
         fee: estimatedFee,
@@ -167,7 +169,8 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }
-          } />
+          }
+        />
         <AmountFee
           address={address}
           amount={
@@ -226,16 +229,16 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         title={t('Staking')}
       />
       {
-        txInfo && (
-          <Confirmation
-            headerTitle={t('Pool Staking')}
-            onPrimaryBtnClick={goToStakingHome}
-            primaryBtnText={t('Staking Home')}
-            showConfirmation={showConfirmation}
-            txInfo={txInfo}
-          >
-            <BondExtraTxDetail pool={pool} txInfo={txInfo} />
-          </Confirmation>)
+        txInfo &&
+        <Confirmation
+          headerTitle={t('Pool Staking')}
+          onPrimaryBtnClick={goToStakingHome}
+          primaryBtnText={t('Staking Home')}
+          showConfirmation={showConfirmation}
+          txInfo={txInfo}
+        >
+          <BondExtraTxDetail pool={pool} txInfo={txInfo} />
+        </Confirmation>
       }
     </>
   );

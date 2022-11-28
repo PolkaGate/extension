@@ -15,10 +15,10 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faHistory, faPaperPlane, faQrcode, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Box, Collapse, Container, Divider, Grid, Grow, IconButton, useTheme } from '@mui/material';
+import { Container, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -27,9 +27,10 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
-import { useApi, useBalances, useChain, useEndpoint, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMetadata, usePrice, useProxies, useTranslation } from '../../hooks';
+import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
+import { STAKING_CHAINS } from '../../util/constants';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
@@ -189,7 +190,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [history, address, pathname]);
 
   const goToStaking = useCallback(() => {
-    setShowStakingOptions(!showStakingOptions);
+    STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
   }, [showStakingOptions]);
 
   // const goToStaking = useCallback(() => {
@@ -217,6 +218,14 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       value={formatted}
     />
   );
+
+  const stakingIconColor = useMemo(() =>
+    !STAKING_CHAINS.includes(genesisHash)
+      ? theme.palette.action.disabledBackground
+      : showStakingOptions
+        ? theme.palette.primary.light
+        : theme.palette.text.primary
+    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.primary.light, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -291,7 +300,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             divider
             icon={
               <FontAwesomeIcon
-                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? 'grey' : theme.palette.mode === 'dark' ? 'white' : 'black'}
+                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground: theme.palette.text.primary}
                 icon={faPaperPlane}
                 size='lg'
               />
@@ -307,7 +316,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           />
           <HorizontalMenuItem
             divider
-            icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${showStakingOptions ? theme.palette.primary.light : theme.palette.text.primary}` }} />}
+            icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${stakingIconColor}` }} />}
             onClick={goToStaking}
             title={t<string>('Stake')}
           />
