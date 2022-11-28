@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid } from '@mui/material';
@@ -40,19 +42,8 @@ export default function AccountsTree({ parentName, suri, ...account }: Props): R
 
   return (
     <>
-      <Container
-        className='tree'
-        disableGutters
-        sx={{
-          borderColor: 'secondary.light',
-          borderTopStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderTopWidth: '1px',
-          position: 'relative'
-        }}
-      >
-        <Grid
-          item
-          sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
+      <Container className='tree' disableGutters sx={{ borderColor: 'secondary.light', borderTopStyle: account?.parentAddress ? 'dashed' : 'solid', borderTopWidth: '1px', position: 'relative' }}      >
+        <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
           {label}
         </Grid>
         <AccountPreview
