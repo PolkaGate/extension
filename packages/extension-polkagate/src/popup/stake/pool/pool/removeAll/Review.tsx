@@ -233,10 +233,10 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           </Typography>)
           : (<>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Unstaking all members of the pool except yourself forcefully.')}
+              {t<string>('Removing all mermbers from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Unstaking all members of the pool except yourself forcefully.')}
+              {t<string>('When you confirm you are able to unstake your tockens')}
             </Typography>
           </>)
         }
