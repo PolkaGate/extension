@@ -47,6 +47,7 @@ import PoolNominations from '../../../extension-polkagate/src/popup/stake/pool/n
 import SoloNominations from '../../../extension-polkagate/src/popup/stake/solo/nominations';
 import PoolInformation from '../../../extension-polkagate/src/popup/stake/pool/pool';
 import PoolStake from '../../../extension-polkagate/src/popup/stake/pool/stake';
+import SoloStake from '../../../extension-polkagate/src/popup/stake/solo/stake';
 import CreatePool from '../../../extension-polkagate/src/popup/stake/pool/stake/createPool';
 import JoinPool from '../../../extension-polkagate/src/popup/stake/pool/stake/joinPool';
 import PoolUnstake from '../../../extension-polkagate/src/popup/stake/pool/unstake';
@@ -179,6 +180,7 @@ export default function Popup(): React.ReactElement {
                           {/* <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route> */}
                           <Route path='/pool/stake/pool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                           <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
+                          <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
                           <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
                           <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
                           <Route path='/solo/restake/:address'>{wrapWithErrorBoundary(<SoloRestake />, 'solo-restake')}</Route>

@@ -21,16 +21,17 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function SubTitle({ label, mt, withSteps, style = { fontSize: '16px' } }: Props) {
+function SubTitle({ label, mt, withSteps, style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
   return (
     <Grid alignItems='center' container item justifyContent='center' mt={mt ?? 0} style={{ ...style }}>
-      <Grid item sx={{ fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '20px', mb: '5px', pr: '5px' }}>
+      <Grid item sx={{ lineHeight: '20px', pr: '5px' }}>
         {label}
       </Grid>
       {withSteps &&
         <Grid item>
           <Steps
             current={withSteps.current}
+            style={{ ...style }}
             total={withSteps.total}
           />
         </Grid>
