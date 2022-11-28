@@ -28,10 +28,11 @@ interface Props {
   identiconSize?: number;
   chain?: Chain;
   showShortAddress?: boolean;
+  withShortAddress?: boolean;
   showSocial?: boolean;
 }
 
-function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, name, showChainLogo = false, showShortAddress, showSocial = true, style }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, name, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -43,7 +44,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
-        <Grid item pr='5px' sx={1}>
+        <Grid item pr='5px'>
           <Identicon
             iconTheme={_chain?.icon ?? 'polkadot'}
             judgement={judgement}
@@ -52,33 +53,40 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
             value={_formatted}
           />
         </Grid>
-        <Grid container item sx={{ flexWrap: 'nowrap', fontSize: style?.fontSize ?? '28px', fontWeight: 400, width: 'fit-content', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: `calc(95% - ${(socialIcons * 20) + identiconSize}px)` }}>
-          {_accountInfo?.identity?.displayParent &&
-            <Grid item>
-              {_accountInfo?.identity.displayParent}/
-            </Grid>
-          }
-          {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
-            <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
-              {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
-            </Grid>
-          }
-          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
-            <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
-              {name || accountName}
-            </Grid>
-          }
-          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
-            <Grid item sx={{ textAlign: 'left' }}>
-              {showShortAddress
-                ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
-                : t('Unknown')
-              }
+        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(95% - ${(socialIcons * 20) + identiconSize}px)`, width: 'max-content' }}>
+          <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
+            {_accountInfo?.identity?.displayParent &&
+              <Grid item>
+                {_accountInfo?.identity.displayParent}/
+              </Grid>
+            }
+            {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
+              <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+                {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
+              </Grid>
+            }
+            {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
+              <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+                {name || accountName}
+              </Grid>
+            }
+            {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
+              <Grid item sx={{ textAlign: 'left' }}>
+                {showShortAddress
+                  ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
+                  : t('Unknown')
+                }
+              </Grid>
+            }
+          </Grid>
+          {withShortAddress &&
+            <Grid container item>
+              <ShortAddress address={formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
         {showSocial &&
-          <Grid alignItems='center' container id='socials' item justifyContent='flex-end' width='fit-content' pl='5px'>
+          <Grid container id='socials' item justifyContent='flex-end' pl='5px' width='fit-content'>
             {_accountInfo?.identity?.email &&
               <Grid item>
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
