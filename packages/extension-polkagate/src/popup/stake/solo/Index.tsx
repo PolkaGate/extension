@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { MembersMapEntry, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -16,18 +16,17 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, useNominator, usePoolConsts, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import Info from './Info';
-import RedeemableWithdrawReview from './redeemable';
+import RedeemableWithdrawReview from './redeem';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -72,16 +71,12 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const stakingAccount = useStakingAccount(formatted);
   const chain = useChain(address);
-  const endpoint = useEndpoint2(address);
   const rewards = useStakingRewards(formatted);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const balances = useBalances(address);
   const nominatorInfo = useNominator(address);
 
-  console.log('stakingAccount:', stakingAccount);
-
-  const nominatedValidatorsId = useMemo(() => stakingAccount?.nominators, [stakingAccount?.nominators]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active?.unwrap(), [stakingAccount?.stakingLedger?.active]);
 
@@ -149,7 +144,7 @@ export default function Index(): React.ReactElement {
       state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
     });
   }, [history, address, api, balances, pathname, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
- 
+
   const goToRestake = useCallback(() => {
     history.push({
       pathname: `/solo/restake/${address}`,
@@ -221,14 +216,7 @@ export default function Index(): React.ReactElement {
               </Grid>
             </Grid>
             {label === 'Unstaking' &&
-              <Grid
-                alignItems='center'
-                container
-                item
-                onClick={_toggleShowUnlockings}
-                sx={{ ml: '25px' }}
-                xs={1}
-              >
+              <Grid alignItems='center' container item onClick={_toggleShowUnlockings} sx={{ ml: '25px' }} xs={1}>
                 <ArrowForwardIosIcon
                   sx={{
                     color: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',

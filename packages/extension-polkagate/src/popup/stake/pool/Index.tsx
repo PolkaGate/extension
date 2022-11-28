@@ -28,7 +28,7 @@ import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
 import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
-import RedeemableWithdrawReview from './redeemable';
+import RedeemableWithdrawReview from './redeem';
 import AccountBrief from '../../account/AccountBrief';
 
 const OPT_ENTRIES = {

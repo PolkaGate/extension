@@ -14,6 +14,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -28,7 +29,7 @@ import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStora
 import TxDetail from '../partials/TxDetail';
 
 interface Props {
-  address: string;
+  address: AccountId;
   show: boolean;
   formatted: string;
   api: ApiPromise;
@@ -56,7 +57,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const tx = api.tx.nominationPools.withdrawUnbonded;
+  const tx = api.tx.staking.withdrawUnbonded; // sign by controller
 
   const decimal = api.registry.chainDecimals[0];
 
@@ -81,7 +82,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
-    onAction(`/pool/${address}`);
+    onAction(`/solo/${address}`);
   }, [address, onAction, setShow]);
 
   useEffect((): void => {
@@ -91,7 +92,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   }, [proxies]);
 
   useEffect((): void => {
-    const params = [formatted, 100];/** 100 is a dummy spanCount */
+    const params = [100];/** 100 is a dummy spanCount */
 
     tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [tx, formatted]);
@@ -110,11 +111,11 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       setShowWaitScreen(true);
       const optSpans = await api.query.staking.slashingSpans(formatted);
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
-      const params = [formatted, spanCount];
+      const params = [spanCount];
       const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_withdraw_redeemable',
+        action: 'solo_withdraw_redeemable',
         amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),

@@ -243,7 +243,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
                 api={api}
                 value={total} />
             }
-            label={t('Total stake')}
+            label={t('Total stake after')}
             style={{ pt: '5px' }}
           />
         </Container>
@@ -275,8 +275,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           <Confirmation
             headerTitle={t('Unstaking')}
             onPrimaryBtnClick={goToStakingHome}
-            primaryBtnText={t('Staking Home')}
             onSecondaryBtnClick={goToMyAccounts}
+            primaryBtnText={t('Staking Home')}
             secondaryBtnText={t('My Accounts')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
