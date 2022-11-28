@@ -45,7 +45,7 @@ export default function Index(): React.ReactElement {
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const formatted = useFormatted(address);
-  const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
+  const stakingAccount = useStakingAccount(formatted, state?.stakingAccount, refresh, setRefresh);
   const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
@@ -54,13 +54,12 @@ export default function Index(): React.ReactElement {
     allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(v.accountId))
-  , [allValidatorsInfo, selectedValidatorsId]);
+    , [allValidatorsInfo, selectedValidatorsId]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
   useEffect(() => {
     setSelectedValidatorsId(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));
-    setRefresh(false);
   }, [stakingAccount]);
 
   const onBackClick = useCallback(() => {
@@ -88,7 +87,7 @@ export default function Index(): React.ReactElement {
   }, [goToSelectValidator]);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid container justifyContent='center' py='15px'    >
+    <Grid container justifyContent='center' py='15px' >
       <Warning
         fontWeight={400}
         theme={theme}
@@ -137,14 +136,12 @@ export default function Index(): React.ReactElement {
         showClose
         text={t<string>('Solo Staking')}
       />
-      <SubTitle
-        label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')}
-      />
+      <SubTitle label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')} />
       {(selectedValidatorsId === null || allValidatorsInfo === null) &&
         <>
           <Warn text={t<string>('No validator found.')} />
-          <Grid alignItems='center' container direction='column' pt='98px'>
-            <Grid item>
+          <Grid alignItems='center' container direction='column' pt='98px' >
+            <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
                 color={`${theme.palette.primary.light}`}
                 icon={faRefresh}
@@ -153,7 +150,7 @@ export default function Index(): React.ReactElement {
                 spin={refresh}
               />
             </Grid>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            <Grid item sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
               {t('Refresh')}
             </Grid>
           </Grid>

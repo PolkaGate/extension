@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Divider, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
@@ -44,17 +46,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <Typography
-          fontSize='16px'
-          fontWeight={500}
-          m='auto'
-          sx={{
-            borderBottom: '2px solid',
-            borderBottomColor: 'secondary.main'
-          }}
-          textAlign='center'
-          width='39%'
-        >
+        <Typography fontSize='16px' fontWeight={500} m='auto' sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.main' }} textAlign='center' width='39%' >
           {txInfo.status === 'success' ? t<string>('Completed') : t<string>('Failed')}
         </Typography>
         <FailSuccessIcon
@@ -82,94 +74,36 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           </Typography>
         }
         {children}
-        <Grid
-          alignItems='end'
-          container
-          justifyContent='center'
-          sx={{
-            m: 'auto',
-            pt: '5px',
-            width: '75%'
-          }}
-        >
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            lineHeight='23px'
-          >
+        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}        >
+          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'          >
             {t<string>('Fee:')}
           </Typography>
-          <Grid
-            fontSize='16px'
-            fontWeight={400}
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
+          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'          >
             {fee?.toHuman() ?? '00.00'}
           </Grid>
         </Grid>
-        <Divider sx={{
-          bgcolor: 'secondary.main',
-          height: '2px',
-          m: '5px auto',
-          width: '70%'
-        }}
-        />
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '70%' }} />
         {!!txInfo?.block &&
-          <Grid
-            alignItems='end'
-            container
-            justifyContent='center'
-          >
-            <Typography
-              fontSize='16px'
-              fontWeight={400}
-              lineHeight='23px'
-            >
+          <Grid alignItems='end' container justifyContent='center'>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Block:')}
             </Typography>
-            <Grid
-              fontSize='16px'
-              fontWeight={400}
-              item
-              lineHeight='22px'
-              pl='5px'
-            >
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               #{txInfo.block}
             </Grid>
           </Grid>
         }
         {txInfo?.txHash &&
-          <Grid
-            alignItems='end'
-            container
-            justifyContent='center'
-            sx={{
-              m: 'auto',
-              pt: '5px',
-              width: '75%'
-            }}
-          >
-            <Typography
-              fontSize='16px'
-              fontWeight={400}
-              lineHeight='23px'
-            >
+          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Hash:')}
             </Typography>
-            <Grid
-              fontSize='16px'
-              fontWeight={400}
-              item
-              lineHeight='22px'
-              pl='5px'
-            >
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               <ShortAddress
                 address={txInfo.txHash}
-                style={{ fontSize: '16px' }}
                 charsCount={6}
                 showCopy
+                style={{ fontSize: '16px' }}
               />
             </Grid>
           </Grid>
