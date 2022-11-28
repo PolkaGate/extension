@@ -57,8 +57,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const poolTotalStaked = new BN(pool.stashIdAccount?.stakingLedger?.active?.toString());
-
+  const totalStaked = (new BN(pool.member.points).mul(new BN(pool.ledger.active))).div(new BN(pool.bondedPool.points));
   const bondExtra = api.tx.nominationPools.bondExtra;
 
   const _onBackClick = useCallback(() => {
@@ -195,7 +194,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
           amount={
             <FormatBalance
               api={api}
-              value={bondAmount?.add(poolTotalStaked)}
+              value={bondAmount?.add(totalStaked)}
             />
           }
           label={t('Total stake after')}
