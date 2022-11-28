@@ -16,8 +16,9 @@ export default function usePoolConsts(address: string, stateConsts?: PoolStaking
   const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
+  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
-  const getPoolStakingConsts = useCallback((chain: Chain, endpoint: string) => {
+  const getPoolStakingConsts = useCallback((endpoint: string) => {
     const getPoolStakingConstsWorker: Worker = new Worker(new URL('../util/workers/getPoolStakingConsts.js', import.meta.url));
 
     getPoolStakingConstsWorker.postMessage({ endpoint });
@@ -31,6 +32,8 @@ export default function usePoolConsts(address: string, stateConsts?: PoolStaking
       const c: PoolStakingConsts = e.data;
 
       if (c) {
+        window.localStorage.setItem(`${chainName}_poolConsts`, JSON.stringify(c));
+
         c.lastPoolId = new BN(c.lastPoolId);
         c.minCreateBond = new BN(c.minCreateBond);
         c.minCreationBond = new BN(c.minCreationBond);
@@ -38,25 +41,40 @@ export default function usePoolConsts(address: string, stateConsts?: PoolStaking
         c.minNominatorBond = new BN(c.minNominatorBond);
 
         setConsts(c);
-
-        console.log('poolStakingConst:', c);
-
-        // eslint-disable-next-line no-void
-        void updateMeta(address, prepareMetaData(chain, 'poolStakingConsts', JSON.stringify(c)));
       } else {
         setConsts(null);
       }
 
       getPoolStakingConstsWorker.terminate();
     };
-  }, [address]);
+  }, [chainName]);
+
+  useEffect(() => {
+    if (!chainName) {
+      return;
+    }
+
+    const localSavedPoolConsts = chainName && window.localStorage.getItem(`${chainName}_poolConsts`);
+
+    if (localSavedPoolConsts) {
+      const parsedConsts = JSON.parse(localSavedPoolConsts) as PoolStakingConsts;
+
+      parsedConsts.lastPoolId = new BN(parsedConsts.lastPoolId);
+      parsedConsts.minCreateBond = new BN(parsedConsts.minCreateBond);
+      parsedConsts.minCreationBond = new BN(parsedConsts.minCreationBond);
+      parsedConsts.minJoinBond = new BN(parsedConsts.minJoinBond);
+      parsedConsts.minNominatorBond = new BN(parsedConsts.minNominatorBond);
+
+      setConsts(parsedConsts);
+    }
+  }, [chainName]);
 
   useEffect(() => {
     if (stateConsts) {
       return setConsts(stateConsts);
     }
 
-    endpoint && chain && getPoolStakingConsts(chain, endpoint);
+    endpoint && chain && getPoolStakingConsts(endpoint);
   }, [endpoint, chain, getPoolStakingConsts, stateConsts]);
 
   return consts;
