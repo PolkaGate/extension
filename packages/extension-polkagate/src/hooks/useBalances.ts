@@ -55,10 +55,12 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       return;
     }
 
+    // load save balances of different chaines
     const savedBalances = JSON.parse(accounts?.find((acc) => acc.address === address)?.balances ?? '{}') as SavedBalances;
 
     const balances = {
       availableBalance: newBalances.availableBalance.toString(),
+      date: Date.now(),
       freeBalance: newBalances.freeBalance.toString(),
       frozenFee: newBalances.frozenFee.toString(),
       frozenMisc: newBalances.frozenMisc.toString(),
@@ -69,6 +71,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       votingBalance: newBalances.votingBalance.toString()
     };
 
+    // add this chain balances
     savedBalances[chainName] = { balances, date: Date.now(), decimal, token };
     const metaData = JSON.stringify({ ['balances']: JSON.stringify(savedBalances) });
 
@@ -90,6 +93,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       const lastBalances = {
         availableBalance: new BN(sb.availableBalance),
         chainName,
+        date: sb.date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
         frozenFee: new BN(sb.frozenFee),
