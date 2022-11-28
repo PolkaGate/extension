@@ -8,8 +8,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
 import { useChain, useEndpoint2 } from '.';
 
 export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
@@ -46,8 +44,8 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
   }, [chainName]);
 
   useEffect(() => {
-    if (stateConsts) {
-      return setConsts(stateConsts);
+    if (!chainName) {
+      return;
     }
 
     const localSavedStakingConsts = chainName && window.localStorage.getItem(`${chainName}_stakingConsts`);
@@ -60,9 +58,15 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
 
       setConsts(parsedConsts);
     }
+  }, [chainName]);
+
+  useEffect(() => {
+    if (stateConsts) {
+      return setConsts(stateConsts);
+    }
 
     endpoint && chain && getStakingConsts(chain, endpoint);
-  }, [endpoint, chain, getStakingConsts, stateConsts, chainName]);
+  }, [endpoint, chain, getStakingConsts, stateConsts]);
 
   return consts;
 }
