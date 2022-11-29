@@ -194,6 +194,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
           <ValidatorsTable
             api={api}
             chain={chain}
+            formatted={formatted}
             height={window.innerHeight - 320}
             staked={new BN(pool?.ledger?.active ?? 0)}
             stakingConsts={stakingConsts}
