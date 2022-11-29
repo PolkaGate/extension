@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material';
+import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
 import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
@@ -13,7 +13,6 @@ import { FixedSizeList as List } from 'react-window';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../../components';
@@ -24,18 +23,18 @@ import ValidatorInfoPage from '../../../partial/ValidatorInfo';
 interface Props {
   api?: ApiPromise;
   activeValidators: ValidatorInfo[] | undefined;
+  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
   chain?: Chain;
-  style?: SxProps<Theme> | undefined;
-  formatted?: AccountId | string;
-  staked: BN | undefined
-  stakingConsts: StakingConsts | null | undefined;
-  validatorsToList: ValidatorInfo[] | null | undefined
-  showCheckbox?: boolean;
+  formatted?: string;
   handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
   height?: number;
   isSelected: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
-  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
+  style?: SxProps<Theme> | undefined;
+  staked: BN | undefined;
+  stakingConsts: StakingConsts | null | undefined;
+  showCheckbox?: boolean;
+  validatorsToList: ValidatorInfo[] | null | undefined;
 }
 
 export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, formatted, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
@@ -112,7 +111,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
               const check = isSelected && isSelected(v);
 
               return (
-                <Grid container item key={key} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', ...style }}>
+                <Grid container key={key} item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, ...style }}>
                   <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
                     <Grid alignItems='center' container item>
                       {showCheckbox &&
@@ -191,11 +190,12 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
       {showValidatorInfo && validatorToShowInfo &&
         <Grid ml='-15px'>
           <ValidatorInfoPage
-            address={formatted}
             api={api}
             chain={chain}
             setShowValidatorInfo={setShowValidatorInfo}
             showValidatorInfo={showValidatorInfo}
+            staked={staked}
+            stakerAddress={formatted}
             validatorInfo={validatorToShowInfo}
             validatorsIdentities={allValidatorsIdentities}
           />
