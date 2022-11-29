@@ -35,7 +35,7 @@ import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import { FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';
-import StakingOption from '../stake/Options';
+import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
