@@ -83,7 +83,8 @@ export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, is
             '> .MuiSvgIcon-root': {
               color: 'secondary.light',
               fontSize: '30px'
-            }
+            },
+            width: '100%'
           }}
           value={value}
         >
