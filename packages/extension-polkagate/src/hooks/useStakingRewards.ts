@@ -37,8 +37,6 @@ export async function getStakingReward(_chain: Chain | null | undefined, _staker
           if (data.message === 'Success') {
             const reward = data.data.sum;
 
-            console.log('# reward:', reward);
-
             resolve(reward);
           } else {
             console.log(`Fetching message ${data.message}`);

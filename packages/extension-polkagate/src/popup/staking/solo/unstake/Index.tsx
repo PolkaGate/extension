@@ -215,6 +215,7 @@ export default function Index(): React.ReactElement {
           chilled={chilled}
           estimatedFee={estimatedFee}
           formatted={formatted}
+          hasNominator={!!stakingAccount?.nominators?.length}
           maxUnlockingChunks={maxUnlockingChunks}
           redeem={redeem}
           redeemDate={redeemDate}

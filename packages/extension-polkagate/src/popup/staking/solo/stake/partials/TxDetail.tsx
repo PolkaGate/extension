@@ -20,23 +20,10 @@ export default function TxDetail({ txInfo }: Props): React.ReactElement {
   return (
     <>
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-        >
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
           {t<string>('Account holder')}:
         </Typography>
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-          maxWidth='45%'
-          overflow='hidden'
-          pl='5px'
-          textOverflow='ellipsis'
-          whiteSpace='nowrap'
-        >
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
@@ -59,7 +46,7 @@ export default function TxDetail({ txInfo }: Props): React.ReactElement {
         width: '75%'
       }}
       />
-      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }} >
+      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
         <Typography
           fontSize='16px'
           fontWeight={400}
@@ -67,7 +54,7 @@ export default function TxDetail({ txInfo }: Props): React.ReactElement {
         >
           {t<string>('Staked')}:
         </Typography>
-        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px' >
+        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           {`${txInfo.amount} ${token}`}
         </Grid>
       </Grid>
