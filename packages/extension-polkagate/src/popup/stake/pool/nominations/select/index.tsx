@@ -234,6 +234,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 allValidatorsIdentities={allValidatorsIdentities}
                 api={api}
                 chain={chain}
+                formatted={pool?.stashIdAccount?.accountId?.toString()}
                 handleCheck={handleCheck}
                 height={window.innerHeight - 255}
                 isSelected={isSelected}

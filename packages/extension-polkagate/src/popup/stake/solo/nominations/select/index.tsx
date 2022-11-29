@@ -233,6 +233,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 allValidatorsIdentities={allValidatorsIdentities}
                 api={api}
                 chain={chain}
+                formatted={formatted}
                 handleCheck={handleCheck}
                 height={window.innerHeight - 255}
                 isSelected={isSelected}

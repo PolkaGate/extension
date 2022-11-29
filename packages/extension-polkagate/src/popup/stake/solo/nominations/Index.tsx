@@ -170,6 +170,7 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               api={api}
               chain={chain}
+              formatted={formatted}
               height={window.innerHeight - 190}
               staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
               stakingConsts={stakingConsts}

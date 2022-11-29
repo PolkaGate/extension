@@ -1,29 +1,33 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { Chain } from '@polkadot/extension-chains/types';
-
-import { Identity, Label, Progress, ShowBalance } from '../../../components';
-import { useTranslation } from '../../../hooks';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import { Chain } from '@polkadot/extension-chains/types';
+import { BN } from '@polkadot/util';
+
+import { Identity, Label, ShowBalance } from '../../../components';
+import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 
 interface Props {
-  address: string;
   api: ApiPromise;
+  stakerAddress?: string;
   chain: Chain;
+  staked: BN | undefined;
   showValidatorInfo: boolean;
   validatorInfo?: DeriveStakingQuery;
   validatorsIdentities?: DeriveAccountInfo[];
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfo({ address, api, chain, setShowValidatorInfo, showValidatorInfo, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const ValidatorInfoRef = React.useRef(null);
@@ -36,7 +40,8 @@ export default function ValidatorInfo({ address, api, chain, setShowValidatorInf
   const own = api.createType('Balance', validatorInfo?.exposure.own || validatorInfo?.stakingLedger.active);
   const total = api.createType('Balance', validatorInfo?.exposure.total);
   const commission = Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7);
-  const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === address);
+  const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
+  const myPossibleIndex = staked && myIndex === -1 ? sortedNominators?.findIndex((n) => n.value < staked.toNumber()) : -1;
 
   const _closeMenu = useCallback(
     () => setShowValidatorInfo(false),
@@ -51,16 +56,16 @@ export default function ValidatorInfo({ address, api, chain, setShowValidatorInf
     }
 
     // eslint-disable-next-line no-void
-    void api.derive.accounts.info(validatorInfo.accountId).then((info) => {
+    void api.derive.accounts.info(validatorInfo?.accountId).then((info) => {
       setAccountInfo(info);
     });
   }, [api, validatorInfo, validatorsIdentities]);
 
   const ValidatorInformation = () => (
-    <Grid container direction='column' sx={{ bgcolor: 'backgroung.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', p: '10px', pb: '5px', m: '20px auto', width: '92%' }}>
-      <Grid container justifyContent='space-between' item sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
-        <Grid item width='85%' lineHeight={1}>
-          <Identity api={api} accountInfo={accountInfo} address={validatorInfo?.accountId} chain={chain} formatted={validatorInfo?.accountId} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
+    <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
+      <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
+        <Grid item lineHeight={1} width='85%'>
+          <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
         <Grid item width='15%'>
           <Link
@@ -81,8 +86,8 @@ export default function ValidatorInfo({ address, api, chain, setShowValidatorInf
       </Grid>
       <Grid container item>
         <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
-          <Grid item display='inline-flex'>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='22px' pr='5px'>
+          <Grid display='inline-flex' item>
+            <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Own')}:
             </Typography>
             <ShowBalance
@@ -92,94 +97,102 @@ export default function ValidatorInfo({ address, api, chain, setShowValidatorInf
               height={22}
             />
           </Grid>
-          <Grid item display='inline-flex'>
+          <Grid display='inline-flex' item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
               {t<string>('Commission')}:
             </Typography>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='16px'>
-              {commission}
+            <Typography fontSize='12px' fontWeight={400} lineHeight='16px'>
+              {commission} %
             </Typography>
           </Grid>
         </Grid>
-        <Grid container direction='column' item width='50%'>
-          <Grid item display='inline-flex' justifyContent='end'>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='22px' pr='5px'>
+        <Grid container direction='column' justifyContent='center' item width='50%'>
+          <Grid display='inline-flex' item justifyContent='end'>
+            <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Total')}:
             </Typography>
-            <ShowBalance
-              api={api}
-              balance={total}
-              decimalPoint={4}
-              height={22}
-            />
+            {total.isZero()
+              ? (
+                <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
+                  {t<string>('N/A')}
+                </Typography>)
+              : (
+                <ShowBalance
+                  api={api}
+                  balance={total}
+                  decimalPoint={4}
+                  height={22}
+                />)}
           </Grid>
-          <Grid item display='inline-flex' justifyContent='end'>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
-              {t<string>('My rank')}:
-            </Typography>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='16px'>
-              {myIndex}
-            </Typography>
-          </Grid>
+          {!staked?.isZero() &&
+            <Grid display='inline-flex' item justifyContent='end'>
+              <Typography fontSize='12px' fontWeight={300} lineHeight='16px' pr='5px'>
+                {t<string>(`${myIndex !== -1 ? 'My rank' : 'My possible rank'}`)}:
+              </Typography>
+              <Typography fontSize='12px' fontWeight={400} lineHeight='16px'>
+                {myIndex !== -1 ? (myIndex + 1) : myPossibleIndex !== -1 ? (myPossibleIndex + 1) : 'N/A'}
+              </Typography>
+            </Grid>}
         </Grid>
       </Grid>
     </Grid>
   );
 
-  const stakedValue = (value: Compact<u128>) => {
+  const stakedValue = (value: string) => {
     const valueToShow = api.createType('Balance', value);
 
     return valueToShow;
   };
 
-  const percent = (value: Compact<u128>) => {
-    const percentToShow = (Number(value.toString()) * 100 / Number(total.toString())).toFixed(2);
+  const percent = (value: string) => {
+    const percentToShow = (Number(value) * 100 / Number(total.toString())).toFixed(2);
 
     return percentToShow;
   };
 
   const NominatorTableWithLabel = () => (
     <Label label={`Nominators (${validatorInfo?.exposure?.others?.length})`} style={{ margin: '20px auto', width: '92%' }}>
-      <Grid display='block' direction='column' item container sx={{ border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: '200px', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
-        <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-          <Grid container item width='50%' justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }}>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-              {t<string>('Account')}
-            </Typography>
-          </Grid>
-          <Grid container item width='30%' justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }}>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-              {t<string>('Staked')}
-            </Typography>
-          </Grid>
-          <Grid container item width='20%' justifyContent='center'>
-            <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
-              {t<string>('Percent')}
-            </Typography>
-          </Grid>
-        </Grid>
+      <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
         {sortedNominators?.length
-          ? (
-            sortedNominators?.map(({ value, who }, index) => (
-              <Grid key={index} container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
-                <Grid container item width='50%' justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }}>
-                  <Identity api={api} formatted={who.toString()} chain={chain} identiconSize={25} showShortAddress style={{ fontSize: '16px' }} />
+          ? (<>
+            <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+              <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
+                <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
+                  {t<string>('Account')}
+                </Typography>
+              </Grid>
+              <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
+                <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
+                  {t<string>('Staked')}
+                </Typography>
+              </Grid>
+              <Grid container item justifyContent='center' width='20%'>
+                <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
+                  {t<string>('Percent')}
+                </Typography>
+              </Grid>
+            </Grid>
+            {sortedNominators?.map(({ value, who }, index) => (
+              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'background.default' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
+                <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
+                  <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress style={{ fontSize: '16px' }} />
                 </Grid>
-                <Grid container item width='30%' justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }}>
+                <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                   <ShowBalance
                     api={api}
-                    balance={stakedValue(value)}
+                    balance={stakedValue(String(value))}
                     decimalPoint={2}
                     height={22}
                   />
                 </Grid>
-                <Grid container item width='20%' justifyContent='center'>
-                  {percent(value)}%
+                <Grid container item justifyContent='center' width='20%'>
+                  {percent(String(value))}%
                 </Grid>
               </Grid>
-            ))
+            ))}
+          </>
           )
-          : (<Typography fontSize='18px' fontWeight={300} lineHeight='40px' textAlign='center'>{t<string>('No nominator found!')}</Typography>)
+          : (<Typography fontSize='18px' fontWeight={300} m='auto' py='20px' textAlign='center' width='92%'>{t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}</Typography>)
         }
       </Grid>
     </Label>

@@ -68,10 +68,10 @@ export default function Index(): React.ReactElement {
 
   const onBackClick = useCallback(() => {
     history.push({
-      pathname: state?.pathname ?? '/',
+      pathname: state?.pathname ?? `/pool/${address}`,
       state: { ...state }
     });
-  }, [history, state]);
+  }, [address, history, state]);
 
   const goToSelectValidator = useCallback(() => {
     setShowSelectValidator(true);
@@ -166,6 +166,7 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               api={api}
               chain={chain}
+              formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - 190}
               staked={new BN(pool?.ledger?.active ?? 0)}
               stakingConsts={stakingConsts}
