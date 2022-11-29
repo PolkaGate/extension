@@ -39,6 +39,8 @@ interface Props {
   chilled: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined
   estimatedFee: Balance | undefined;
   formatted: string;
+  hasNominator: boolean;
+  ç: boolean;
   maxUnlockingChunks: number
   redeem: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   redeemDate: string | undefined;
@@ -50,7 +52,7 @@ interface Props {
   staked: BN;
 }
 
-export default function Review({ address, amount, api, chain, chilled, estimatedFee, formatted, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, chilled, estimatedFee, formatted, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -110,7 +112,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !unbonded || !redeem || !chilled) {
+      if (!formatted || !unbonded || !redeem || !chilled || hasNominator === undefined) {
         return;
       }
 
@@ -128,8 +130,8 @@ export default function Review({ address, amount, api, chain, chilled, estimated
 
         txs.push(redeem(spanCount));
       }
-
-      if (amountAsBN.eq(staked)) {
+      console.log('hasNominator:', hasNominator)
+      if (amountAsBN.eq(staked) && hasNominator) {
         txs.push(chilled());
       }
 
@@ -184,13 +186,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
           }}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput

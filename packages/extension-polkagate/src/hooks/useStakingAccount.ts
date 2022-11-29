@@ -18,7 +18,7 @@ export default function useStakingAccount(
   stashId: AccountId | undefined,
   stateInfo?: AccountStakingInfo,
   refresh?: boolean | undefined,
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>
+  setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>
 ): AccountStakingInfo | undefined {
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo>();
   const api = useApi(stashId);
@@ -34,7 +34,7 @@ export default function useStakingAccount(
     ]);
 
     setStakingInfo({ ...accountInfo, era: Number(era) });
-    refresh && setRefresh(false);
+    refresh && setRefresh && setRefresh(false);
   }, [api, refresh, setRefresh, stashId]);
 
   useEffect(() => {

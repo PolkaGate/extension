@@ -25,7 +25,7 @@ export default function TxDetail({ txInfo, validatorsCount }: Props): React.Reac
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
           {t<string>('Account holder')}:
         </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>

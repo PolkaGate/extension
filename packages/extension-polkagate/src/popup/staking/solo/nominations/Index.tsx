@@ -143,14 +143,14 @@ export default function Index(): React.ReactElement {
           <Grid alignItems='center' container direction='column' pt='98px' >
             <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
-                color={`${theme.palette.primary.light}`}
+                color={`${theme.palette.secondary.light}`}
                 icon={faRefresh}
                 onClick={onRefresh}
                 size='2x'
                 spin={refresh}
               />
             </Grid>
-            <Grid item sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            <Grid item onClick={onRefresh} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
               {t('Refresh')}
             </Grid>
           </Grid>

@@ -19,8 +19,8 @@ export default function Checkbox2({ checked = false, label, labelStyle = { fontS
       control={
         <Checkbox
           checked={checked}
-          checkedIcon={<CheckBoxOutlinedIcon sx={{ color: 'primary.light' }} />}
-          icon={<CheckBoxOutlineBlankRoundedIcon sx={{ color: 'primary.light' }} />}
+          checkedIcon={<CheckBoxOutlinedIcon sx={{ color: 'secondary.light' }} />}
+          icon={<CheckBoxOutlineBlankRoundedIcon sx={{ color: 'secondary.light' }} />}
           onChange={onChange}
           sx={{ p: 0, pr: label && '5px' }}
         />
