@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Grid, useTheme } from '@mui/material';
+import { Avatar, Grid } from '@mui/material';
 import React from 'react';
 
 import allChains from '../util/chains';

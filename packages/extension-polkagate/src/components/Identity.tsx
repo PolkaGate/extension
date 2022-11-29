@@ -20,7 +20,7 @@ import { ChainLogo, Identicon, ShortAddress } from '.';
 interface Props {
   accountInfo?: DeriveAccountInfo;
   address?: string;
-  api: ApiPromise | undefined;
+  api?: ApiPromise;
   formatted?: string;
   name?: string;
   style?: SxProps<Theme>;

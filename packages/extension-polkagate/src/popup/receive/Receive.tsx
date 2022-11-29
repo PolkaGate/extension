@@ -3,21 +3,15 @@
 
 import { Grid, Typography } from '@mui/material';
 import QRCode from 'qrcode.react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-
 import { ActionContext, Identity } from '../../components';
-import { useAccount, useFormatted, useMetadata, useTranslation } from '../../hooks';
+import { useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 
-interface Props {
-  className?: string;
-}
-
-export default function Receive({ className }: Props): React.ReactElement {
+export default function Receive(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const location = useLocation();
@@ -35,14 +29,7 @@ export default function Receive({ className }: Props): React.ReactElement {
         showBackArrow
         text={t<string>('Receive')}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        sx={{
-          m: '20px auto',
-          width: 'fit-content'
-        }}
-      >
+      <Typography fontSize='14px' fontWeight={300} sx={{ m: '20px auto', width: 'fit-content' }}>
         {t<string>('Scan the QR code with a camera to get the address.')}
       </Typography>
       <Identity
@@ -53,30 +40,14 @@ export default function Receive({ className }: Props): React.ReactElement {
           width: '90%'
         }}
       />
-      <Grid
-        sx={{
-          bgcolor: '#fff',
-          borderRadius: '5px',
-          height: '328px',
-          m: 'auto',
-          p: '25px',
-          width: '92%'
-        }}
-      >
+      <Grid sx={{ bgcolor: '#fff', borderRadius: '5px', height: '328px', m: 'auto', p: '25px', width: '92%' }}>
         <QRCode
           level='H'
           size={275}
           value={formatted}
         />
       </Grid>
-      <Typography
-        fontSize='10px'
-        fontWeight={300}
-        sx={{
-          m: '20px auto 0',
-          width: 'fit-content'
-        }}
-      >
+      <Typography fontSize='10px' fontWeight={300} sx={{ m: '20px auto 0', width: 'fit-content' }}>
         {formatted}
       </Typography>
     </>
