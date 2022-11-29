@@ -3,7 +3,7 @@
 
 /**
  * @description
- * this component opens unstake review page
+ * this component opens stake review page
  * */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -100,7 +100,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const unstake = useCallback(async () => {
+  const stake = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
@@ -201,7 +201,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
-          onConfirmClick={unstake}
+          onConfirmClick={stake}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
