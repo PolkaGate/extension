@@ -4,6 +4,7 @@
 import { FormControl, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
+
 import Label from './Label';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -27,7 +28,6 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     fontWeight: '300',
     letterSpacing: '-0.015em'
   }
-
 }));
 
 interface DropdownOption {
@@ -41,12 +41,12 @@ interface Props {
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;
-  isDdisabled?: boolean;
+  isDisabled?: boolean;
   _mt?: string | number;
   helperText?: string;
 }
 
-export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, isDdisabled = false, label, onChange, options, value }: Props) {
+export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, isDisabled = false, label, onChange, options, value }: Props) {
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) =>
       onChange && onChange(typeof value === 'string' ? value.trim() : value),
@@ -55,7 +55,7 @@ export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, is
 
   return (
     <FormControl
-      disabled={isDdisabled}
+      disabled={isDisabled}
       sx={{ width: '100%', mt: `${_mt}` }}
       variant='standard'
     >
@@ -80,8 +80,10 @@ export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, is
               pl: '10px',
               textAlign: 'left'
             },
-            '> .MuiSvgIcon-root': { color: 'secondary.light', fontSize: '30px' },
-            width: '100%'
+            '> .MuiSvgIcon-root': {
+              color: 'secondary.light',
+              fontSize: '30px'
+            }
           }}
           value={value}
         >

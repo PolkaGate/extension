@@ -177,7 +177,7 @@ function ImportLedger(): React.ReactElement {
         <Container disableGutters sx={{ p: '20px 15px' }}>
           <Select
             defaultValue={accOps.current[0].text}
-            isDdisabled={ledgerLoading}
+            isDisabled={ledgerLoading}
             label={t<string>('account type')}
             onChange={_onSetAccountIndex}
             options={accOps.current}
@@ -185,7 +185,7 @@ function ImportLedger(): React.ReactElement {
           <Select
             _mt='20px'
             defaultValue={addOps.current[0].text}
-            isDdisabled={ledgerLoading}
+            isDisabled={ledgerLoading}
             label={t<string>('address index')}
             onChange={_onSetAddressOffset}
             options={addOps.current}
