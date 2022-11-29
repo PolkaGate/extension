@@ -5,9 +5,8 @@
 
 import '@vaadin/icons';
 
-import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
-import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
-import { Checkbox, Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material';
+import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -51,7 +50,6 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
   const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won’t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
   const openValidatorInfo = useCallback((v: ValidatorInfo) => {
-    console.log('hellll yeahhh')
     setValidatorToShowInfo(v);
     setShowValidatorInfo(!showValidatorInfo);
   }, [showValidatorInfo]);
@@ -114,7 +112,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
               const check = isSelected && isSelected(v);
 
               return (
-                <Grid container key={key} item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', ...style }}>
+                <Grid container item key={key} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', ...style }}>
                   <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
                     <Grid alignItems='center' container item>
                       {showCheckbox &&
@@ -181,7 +179,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid alignItems='center' container onClick={() => openValidatorInfo(v)} item justifyContent='center' sx={{ cursor: 'pointer' }} width='6%'>
+                  <Grid alignItems='center' container item justifyContent='center' onClick={() => openValidatorInfo(v)} sx={{ cursor: 'pointer' }} width='6%'>
                     <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
                   </Grid>
                 </Grid>

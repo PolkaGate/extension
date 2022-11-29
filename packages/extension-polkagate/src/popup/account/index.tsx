@@ -295,7 +295,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}        >
+        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }} >
           <HorizontalMenuItem
             divider
             icon={
