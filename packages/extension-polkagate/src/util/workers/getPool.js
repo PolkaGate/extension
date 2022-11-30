@@ -39,7 +39,7 @@ async function getMyPendingRewards(api, member, poolPoints, rewardPool, rewardAc
 async function getPool(endpoint, stakerAddress, id = undefined) {
   console.log(`getPool is called for ${stakerAddress} id:${id}`);
   const api = await getApi(endpoint);
-
+  const token = api.registry.chainTokens[0];
   const members = !id && await api.query.nominationPools.poolMembers(stakerAddress);
   const member = members?.isSome ? members.unwrap() : undefined;
 
@@ -66,8 +66,6 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
     api.derive.staking.account(accounts.stashId)
   ]);
 
-  console.log('stashIdAccount:', stashIdAccount);
-
   const unwrappedRewardPools = rewardPools.isSome ? rewardPools.unwrap() : null;
   const unwrappedBondedPool = bondedPools.isSome ? bondedPools.unwrap() : null;
   const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts.balances.existentialDeposit));
@@ -93,11 +91,12 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
     myClaimable: Number(myClaimable ?? '0'),
     // nominators: nominators.unwrapOr({ targets: [] }).targets.map((n) => n.toString()),
     poolId,
-    redeemable: Number(stashIdAccount?.redeemable),
+    // redeemable: Number(stashIdAccount?.redeemable),
     rewardClaimable: Number(poolRewardClaimable),
     rewardIdBalance: rewardIdBalance.data,
     rewardPool: unwrappedRewardPools,
-    stashIdAccount
+    stashIdAccount,
+    token
   };
 
   return JSON.stringify(poolInfo);

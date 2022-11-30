@@ -110,11 +110,12 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
-
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');;
   const decimal = api && api.registry.chainDecimals[0];
   const token = api && api.registry.chainTokens[0];
 
+  console.log('balances:',balances);
+  
   const resetToDefaults = useCallback(() => {
     setNewEndpoint(undefined);
     setRecoded(defaultRecoded);
@@ -192,13 +193,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
   }, [showStakingOptions]);
-
-  // const goToStaking = useCallback(() => {
-  //   history.push({
-  //     pathname: `/staking/${address}`,
-  //     state: { api, pathname }
-  //   });
-  // }, [history, address, api, pathname]);
 
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token &&
@@ -300,7 +294,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             divider
             icon={
               <FontAwesomeIcon
-                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground: theme.palette.text.primary}
+                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
                 icon={faPaperPlane}
                 size='lg'
               />

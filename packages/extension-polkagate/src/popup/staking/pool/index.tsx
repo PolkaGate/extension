@@ -6,10 +6,9 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId, AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, MyPoolInfo, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { MembersMapEntry, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -18,18 +17,18 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
+import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
 import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
-import AccountBrief from '../../account/AccountBrief';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -73,10 +72,8 @@ export default function Index(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
-  const endpoint = useEndpoint2(address);
   const api = useApi(address, state?.api);
-  const pool = usePool(address);
-  // const validators = useValidators(address);
+  const pool = usePool(address, undefined, state?.pool);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
@@ -94,21 +91,7 @@ export default function Index(): React.ReactElement {
   const [showRewardStake, setShowRewardStake] = useState<boolean>(false);
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
-
-  const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
-  const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
-  const [gettingNominatedValidatorsInfoFromChain, setGettingNominatedValidatorsInfoFromChain] = useState<boolean>(true);
-  const [validatorsInfoIsUpdated, setValidatorsInfoIsUpdated] = useState<boolean>(false);
-  const [validatorsIdentitiesIsFetched, setValidatorsIdentitiesIsFetched] = useState<boolean>(false);
-  const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
-  const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-  const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
-  const [selectedValidators, setSelectedValidatorsAcounts] = useState<DeriveStakingQuery[] | null>(null);
-  const [noNominatedValidators, setNoNominatedValidators] = useState<boolean | undefined>();// if TRUE, shows that nominators are fetched but is empty
-  const [nominatedValidators, setNominatedValidatorsInfo] = useState<DeriveStakingQuery[] | null>(null);
-  const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
-  const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -169,7 +152,7 @@ export default function Index(): React.ReactElement {
   const goToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,
-      state: { api, consts, pool, pathname, stakingConsts }
+      state: { api, consts, pathname, pool, stakingConsts }
     });
   }, [address, api, consts, history, pool, pathname, stakingConsts]);
 

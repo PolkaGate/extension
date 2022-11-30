@@ -42,29 +42,13 @@ export default function Stake(): React.ReactElement {
             shortBorder
             text={t<string>('Pool Staking')}
           />
-          <Typography
-            fontSize='22px'
-            fontWeight={300}
-            m='25px auto 60px'
-            textAlign='center'
-            width='60%'
-          >
+          <Typography fontSize='22px' fontWeight={300} m='25px auto 60px' textAlign='center' width='60%'>
             {t<string>('We are pulling some information.')}
           </Typography>
-          <Grid
-            alignItems='center'
-            container
-            justifyContent='center'
-          >
+          <Grid alignItems='center' container justifyContent='center'>
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={125} />
           </Grid>
-          <Typography
-            fontSize='18px'
-            fontWeight={300}
-            m='60px auto 0'
-            textAlign='center'
-            width='80%'
-          >
+          <Typography fontSize='18px' fontWeight={300} m='60px auto 0' textAlign='center' width='80%'>
             {t<string>('Please wait a few seconds and don’t close the extension.')}
           </Typography>
         </>

@@ -10,17 +10,17 @@
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 export const getValue = (type: string, balances: DeriveBalancesAll | null | undefined): BN | undefined => {
   if (!balances) {
     return;
   }
-  
+
   switch (type.toLocaleLowerCase()) {
     case ('total'):
     case ('total balance'):
-      return balances.freeBalance.add(balances.reservedBalance);
+      return balances.freeBalance.add(balances.reservedBalance).add(balances?.poolBalance ?? BN_ZERO);
     case ('available'):
     case ('available balance'):
       return balances.availableBalance;

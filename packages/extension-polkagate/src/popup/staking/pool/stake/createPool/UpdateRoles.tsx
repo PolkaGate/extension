@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 
 import { AccountContext, InputWithLabelAndIdenticon, PButton } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
-import getAllAddressess from '../../../../../util/getAllAddresses';
+import getAllAddresses from '../../../../../util/getAllAddresses';
 
 interface Props {
   address: string;
@@ -31,7 +31,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const [newNominatorId, setNewNominatorId] = useState<string | undefined>(formatted);
   const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(formatted);
 
-  const allAddresses = getAllAddressess(hierarchy, true, true, chain?.ss58Format, address);
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
   const closeMenu = useCallback(() => {
     setShow(!show);

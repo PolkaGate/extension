@@ -17,6 +17,7 @@ import { useTranslation } from '../hooks';
 import useBalances from '../hooks/useBalances';
 import usePrice from '../hooks/usePrice';
 import { BALANCES_VALIDITY_PERIOD } from '../util/constants';
+import { getValue } from '../popup/account/util';
 
 interface Props {
   address: string;
@@ -48,7 +49,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
             decimalPoint={2}
             decimals={[balances.decimal]}
             tokens={[balances.token]}
-            value={balances.freeBalance.add(balances.reservedBalance)}
+            value={getValue('total', balances)}
           />
         </Grid>
         : <Skeleton
@@ -71,7 +72,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
           width={90}
         />
         : <FormatPrice
-          amount={balances.freeBalance.add(balances.reservedBalance)}
+          amount={getValue('total', balances)}
           decimals={balances.decimal}
           price={price.amount}
         />
