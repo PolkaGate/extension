@@ -64,19 +64,19 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
   const [mode, setMode] = useState<'UnbondAll' | 'RemoveAll' | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
-  const [kickEraIndex, setKickEraIndex] = useState<number>();
+  const [remainingEraToKick, setRemainingEraToKick] = useState<number>();
   const [remainingSecondsToKickAll, setRemainingSecondsToKickAll] = useState<number>();// in seconds
   const [remainingTimeCounter, setRemainingTimeCounter] = useState<RemainingTimeCounterProps>();
 
-  const poolMembrs = usePoolMembers(api, pool.poolId.toString());
+  const poolMembers = usePoolMembers(api, pool.poolId.toString());
 
   const members = useMemo(() => {
-    if (!poolMembrs) {
+    if (!poolMembers) {
       return;
     }
 
-    return poolMembrs.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
-  }, [poolMembrs]);
+    return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
+  }, [poolMembers]);
 
   const needsUnboundAll = useMemo(() => {
     if (!members) {
@@ -103,46 +103,34 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
     setShowReview(!showReview);
   }, [showReview]);
 
-  const RemoveAllBtnDisabled = needsUnboundAll || (!!sessionInfo && !!kickEraIndex && sessionInfo.currentEra < kickEraIndex);
+  const RemoveAllBtnDisabled = needsUnboundAll || (!!sessionInfo && remainingEraToKick > 0);
 
   useEffect(() => {
-    if (!members) {
+    if (!pool) {
       return;
     }
 
-    let latestEra = 0;
-    const aRandomMember = members.find((m) => m.accountId !== formatted);
+    const unlocking = pool.stashIdAccount.unlocking;
+    const remainingEras = unlocking.length ? unlocking[unlocking.length - 1].remainingEras : null;
 
-    aRandomMember && api && api.query.nominationPools.poolMembers(aRandomMember.accountId).then((m) => {
-      const member = m?.isSome ? m.unwrap() : undefined;
-
-      const unbondingEras = JSON.parse(JSON.stringify(member.unbondingEras));
-
-      for (const [era, _] of Object.entries(unbondingEras)) {
-        if (Number(era) > latestEra) {
-          latestEra = Number(era);
-        }
-      }
-
-      setKickEraIndex(latestEra);
-    });
-  }, [api, members, formatted]);
+    setRemainingEraToKick(remainingEras ? Number(remainingEras) : null);
+  }, [api, members, formatted, pool]);
 
   useEffect(() => {
     if (needsUnboundAll) {
       return setStep(1);
     }
 
-    if (sessionInfo && kickEraIndex && sessionInfo?.currentEra < kickEraIndex) {
+    if (sessionInfo && remainingEraToKick > 0) {
       return setStep(2);
     }
 
-    if (sessionInfo && kickEraIndex && sessionInfo?.currentEra >= kickEraIndex) {
+    if (sessionInfo && remainingEraToKick === 0) {
       return setStep(3);
     }
 
     members?.length <= 1 && setStep(4);
-  }, [kickEraIndex, needsUnboundAll, members, sessionInfo, sessionInfo?.currentEra]);
+  }, [remainingEraToKick, needsUnboundAll, members, sessionInfo, sessionInfo?.currentEra]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
@@ -155,18 +143,16 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
   }, [api]);
 
   useEffect(() => {
-    if (!sessionInfo || !kickEraIndex) {
+    if (!sessionInfo || remainingEraToKick === undefined) {
       return;
     }
 
-    if (sessionInfo.currentEra >= kickEraIndex) {
+    if (remainingEraToKick === null) {
       return setRemainingSecondsToKickAll(0);
     }
 
-    const diff = kickEraIndex - sessionInfo.currentEra;
-
-    setRemainingSecondsToKickAll(((diff - 1) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6);
-  }, [kickEraIndex, sessionInfo]);
+    setRemainingSecondsToKickAll(((remainingEraToKick - 1) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6);
+  }, [remainingEraToKick, sessionInfo]);
 
   useEffect(() => {
     if (!remainingSecondsToKickAll) {
@@ -181,7 +167,13 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
     <Grid container justifyContent='center'>
       <Typography fontSize='16px' fontWeight={300}>{t<string>('Time left to be able to remove all')}</Typography>
       <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: 'auto', py: '30px', width: '92%' }}>
-        {remainingTimeCounter?.dayCounter > 0 && <Typography fontSize='28px' fontWeight={400} textAlign='center'>{remainingTimeCounter?.dayCounter > 1 ? t<string>('days and') : t<string>('day and')}</Typography>}
+        {remainingTimeCounter?.dayCounter > 0 &&
+          <Typography fontSize='28px' fontWeight={400} textAlign='center'>
+            {remainingTimeCounter?.dayCounter > 1
+              ? t<string>('days and')
+              : t<string>('day and')}
+          </Typography>
+        }
         <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>{remainingTimeCounter?.hourCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
         <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>:</Typography>
         <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>{remainingTimeCounter?.minCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
@@ -190,8 +182,6 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
       </Grid>
     </Grid>
   );
-
-  console.log('sssss')
 
   return (
     <Popup show={showRemoveAll}>
@@ -220,7 +210,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Come back here, and remove all')}</Typography>
         </Grid>
       </Grid>
-      {!poolMembrs &&
+      {!poolMembers && step !== 2 &&
         <>
           <Grid alignItems='center' container justifyContent='center' mt='60px'>
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={75} />
@@ -236,7 +226,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
       <Grid bottom='25px' container direction='column' position='absolute'>
         {(step === 1) &&
           <Grid container item position='relative'>
-            <PButton _mt='0' _onClick={goUnstakeAll} disabled={!needsUnboundAll} text={t<string>(`Unstake All (${(poolMembrs && poolMembrs.length - 1) ?? '...'})`)} />
+            <PButton _mt='0' _onClick={goUnstakeAll} disabled={!needsUnboundAll} text={t<string>(`Unstake All (${(poolMembers && poolMembers.length - 1) ?? '...'})`)} />
           </Grid>}
         {(step !== 4) &&
           <Grid container item position='relative'>

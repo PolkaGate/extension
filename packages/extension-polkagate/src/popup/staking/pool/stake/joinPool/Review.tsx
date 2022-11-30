@@ -65,9 +65,9 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
     setShowReview(!showReview);
   }, [setShowReview, showReview]);
 
-  const goToMyAccounts = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const goToStakingHome = useCallback(() => {
+    onAction(`/pool/${address}`);
+  }, [address, onAction]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -88,13 +88,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   }
 
   const joinPool = useCallback(async () => {
-    if (!poolToJoin) {
-      return;
-    }
-
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
-    if (!formatted || !joined) {
+    if (!poolToJoin || !formatted || !joined) {
       return;
     }
 
@@ -106,7 +100,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
 
       const params = [joinAmount, poolToJoin.poolId];
 
-      const { block, failureText, status, txHash } = await broadcast(api, joined, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, status, txHash } = await broadcast(api, joined, params, signer, formatted, selectedProxy);
 
       const info = {
         action: 'pool_join',
@@ -114,19 +108,15 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
         block,
         date: Date.now(),
         failureText,
-        fee: estimatedFee,
+        fee: fee || String(estimatedFee),
         from: { address: formatted, name },
-        txHash,
         status,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
-
+      saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
@@ -233,8 +223,8 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       {txInfo && (
         <Confirmation
           headerTitle={t('Join Pool')}
-          onPrimaryBtnClick={goToMyAccounts}
-          primaryBtnText={t('My accounts')}
+          onPrimaryBtnClick={goToStakingHome}
+          primaryBtnText={t('Staking Home')}
           showConfirmation={showConfirmation}
           txInfo={txInfo}
         >

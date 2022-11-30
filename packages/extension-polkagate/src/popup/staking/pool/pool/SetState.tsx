@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -11,7 +13,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, PButton, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
@@ -92,8 +94,11 @@ export default function SetState({ address, api, chain, formatted, headerText, h
   }, [address, onAction, setShow]);
 
   const goToMyPool = useCallback(() => {
+    setShowConfirmation(false);
+    setShow(false);
+
     onAction(`/pool/stake/pool/${address}`);
-  }, [address, onAction]);
+  }, [address, onAction, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -120,10 +125,11 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
       const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
 
-      const action = state === 'Destroying' ? 'pool_destroy' : state === 'Open' ? 'pool_unblock' : 'block';
+      const action = state === 'Destroying' ? 'pool_destroy' : state === 'Open' ? 'pool_unblock' : 'pool_block';
 
       const info = {
         action,
+        api,
         block,
         date: Date.now(),
         failureText,
@@ -159,13 +165,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
           text={headerText}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -187,23 +187,11 @@ export default function SetState({ address, api, chain, formatted, headerText, h
             width: '92%'
           }}
         />
-        <Grid
-          container
-          m='auto'
-          width='92%'
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
+        <Grid container m='auto' width='92%'>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
+          <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance
               api={api}
               balance={estimatedFee}
@@ -249,49 +237,21 @@ export default function SetState({ address, api, chain, formatted, headerText, h
           <Confirmation
             headerTitle={t('Pool Staking')}
             onPrimaryBtnClick={goToStakingHome}
-            primaryBtnText={t('Staking Home')}
             onSecondaryBtnClick={goToMyPool}
+            primaryBtnText={t('Staking Home')}
             secondaryBtnText={t('My pool')}
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
             <>
-              <Grid
-                alignItems='end'
-                container
-                justifyContent='center'
-                sx={{
-                  m: 'auto',
-                  pt: '5px',
-                  width: '90%'
-                }}
-              >
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                >
+              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Account holder:')}
                 </Typography>
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                  maxWidth='45%'
-                  overflow='hidden'
-                  pl='5px'
-                  textOverflow='ellipsis'
-                  whiteSpace='nowrap'
-                >
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {txInfo.from.name}
                 </Typography>
-                <Grid
-                  fontSize='16px'
-                  fontWeight={400}
-                  item
-                  lineHeight='22px'
-                  pl='5px'
-                >
+                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
                   <ShortAddress
                     address={txInfo.from.address}
                     style={{ fontSize: '16px' }}
@@ -304,50 +264,16 @@ export default function SetState({ address, api, chain, formatted, headerText, h
                   <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
                 </Grid>
               }
-              <Divider sx={{
-                bgcolor: 'secondary.main',
-                height: '2px',
-                m: '5px auto',
-                width: '75%'
-              }}
-              />
-              <Grid
-                alignItems='end'
-                container
-                justifyContent='center'
-                sx={{
-                  m: 'auto',
-                  pt: '5px',
-                  width: '90%'
-                }}
-              >
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                >
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Pool:')}
                 </Typography>
-                <Typography
-                  fontSize='16px'
-                  fontWeight={400}
-                  lineHeight='23px'
-                  maxWidth='45%'
-                  overflow='hidden'
-                  pl='5px'
-                  textOverflow='ellipsis'
-                  whiteSpace='nowrap'
-                >
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'                >
                   {pool.metadata}
                 </Typography>
               </Grid>
-              <Divider sx={{
-                bgcolor: 'secondary.main',
-                height: '2px',
-                m: '5px auto',
-                width: '75%'
-              }}
-              />
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
             </>
           </Confirmation>)
         }

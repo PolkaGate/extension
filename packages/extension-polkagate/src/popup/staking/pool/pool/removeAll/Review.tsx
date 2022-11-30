@@ -159,8 +159,6 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   }, [proxies]);
 
   const unstakeOrRemoveAll = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted || !txCalls) {
         return;
@@ -190,12 +188,8 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
-
+      saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
