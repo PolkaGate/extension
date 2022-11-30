@@ -29,8 +29,8 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
   const onAction = useContext(ActionContext);
 
   const network = txInfo.chain.name.replace(' Relay Chain', '');
-  const decimal = txInfo?.api.registry.chainDecimals[0];
-  const token = txInfo?.api.registry.chainTokens[0];
+  const decimal = txInfo.api.registry.chainDecimals[0];
+  const token = txInfo.api.registry.chainTokens[0];
   const historyLink = `/history/${network}/${decimal}/${token}/${txInfo?.from.address}`;
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
   const fee = txInfo.api.createType('Balance', txInfo.fee);

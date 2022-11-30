@@ -95,8 +95,6 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   }, [tx, formatted, params]);
 
   const submit = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted) {
         return;
@@ -122,10 +120,8 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      saveHistory(chain, hierarchy, formatted, history);
+      saveHistory(chain, hierarchy, formatted, [info]);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);

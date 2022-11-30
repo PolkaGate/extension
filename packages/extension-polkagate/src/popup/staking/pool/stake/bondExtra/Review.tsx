@@ -88,8 +88,6 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
   }
 
   const BondExtra = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     if (!formatted || !bondExtra) {
       return;
     }
@@ -111,19 +109,15 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         chain,
         date: Date.now(),
         failureText,
-        fee: estimatedFee,
+        fee: fee || String(estimatedFee),
         from: { address: formatted, name },
-        txHash,
         status,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
-
+      saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {

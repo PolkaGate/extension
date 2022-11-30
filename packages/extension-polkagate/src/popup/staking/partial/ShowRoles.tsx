@@ -3,7 +3,7 @@
 
 import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo,useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -22,26 +22,7 @@ interface Props {
 
 export default function ShowRoles({ chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-  // const [accountsToShow, setAccountsToShow] = useState<{ label: string, address: string }[] | undefined>();
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-
-  // useEffect(() => {
-  //   if (!pool) {
-  //     return;
-  //   }
-
-  //   mode === 'Roles' && setAccountsToShow([
-  //     { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
-  //     { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
-  //     { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
-  //     { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
-  //   ]);
-
-  //   mode === 'Ids' && setAccountsToShow([
-  //     { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
-  //     { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
-  //   ]);
-  // }, [mode, pool, t]);
 
   const accountsToShow = useMemo(() => {
     if (!pool) {

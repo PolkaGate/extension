@@ -17,6 +17,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { BN_ONE } from '@polkadot/util';
+
 import { PButton, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
@@ -39,6 +41,9 @@ interface ButtonsProps {
   onClick: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => { };
+
 export default function Pool(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -49,7 +54,6 @@ export default function Pool(): React.ReactElement {
   const pool = usePool(address, undefined, state?.pool);
   const history = useHistory();
   const chain = useChain(address);
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
   const formatted = useFormatted(address);
 
   const [goChange, setGoChange] = useState<boolean>(false);
@@ -63,6 +67,7 @@ export default function Pool(): React.ReactElement {
   const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
   const unblockHelperText = t<string>('The pool state will be changed to Open, and any member will be able to join The pool.');
+  const isRemoveAllDisabled = !['Destroying', 'Blocked'].includes(poolState ?? '') || pool?.bondedPool?.memberCounter === BN_ONE;
 
   const backToStake = useCallback(() => {
     history.push({
@@ -113,24 +118,17 @@ export default function Pool(): React.ReactElement {
     setShowRemoveAll(!showRemoveAll);
   }, [showRemoveAll]);
 
-  const Buttons = ({ children, disabled, onClick, showDivider, text }: ButtonsProps) => (
+  const ActionBtn = ({ children, disabled, onClick, showDivider, text }: ButtonsProps) => (
     <>
-      <Grid alignItems='center' container direction='row' item onClick={onClick} sx={{ cursor: disabled ? 'default' : 'pointer' }} width='fit-content'>
+      <Grid alignItems='center' container direction='row' item onClick={!disabled ? onClick : noop} sx={{ cursor: disabled ? 'default' : 'pointer' }} width='fit-content'>
         {children}
-        <Typography
-          fontSize='14px'
-          fontWeight={400}
-          sx={{
-            color: disabled ? 'action.disabledBackground' : 'text.primary',
-            pl: '5px',
-            textDecorationLine: 'underline'
-          }}
-          width='fit-content'
-        >
+        <Typography fontSize='14px' fontWeight={400} sx={{ color: disabled ? 'action.disabledBackground' : 'text.primary', pl: '5px', textDecorationLine: 'underline' }} width='fit-content'>
           {text}
         </Typography>
       </Grid>
-      {showDivider && <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />}
+      {showDivider &&
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
+      }
     </>
   );
 
@@ -146,12 +144,7 @@ export default function Pool(): React.ReactElement {
       <SubTitle label={t<string>('Pool')} />
       {pool === undefined &&
         <>
-          <Grid
-            alignItems='center'
-            container
-            justifyContent='center'
-            mt='100px'
-          >
+          <Grid alignItems='center' container justifyContent='center' mt='100px'>
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={125} />
           </Grid>
           <Typography
@@ -167,11 +160,7 @@ export default function Pool(): React.ReactElement {
       }
       {pool === null &&
         <>
-          <Grid
-            container
-            justifyContent='center'
-            py='15px'
-          >
+          <Grid container justifyContent='center' py='15px'>
             <Warning
               fontWeight={400}
               theme={theme}
@@ -187,57 +176,57 @@ export default function Pool(): React.ReactElement {
           <ShowPool
             api={api}
             chain={chain}
-            showInfo
             mode='Default'
             pool={pool}
+            showInfo
             style={{
               m: '20px auto',
               width: '92%'
             }}
           />
-          <ShowRoles chainName={chainName} label={t<string>('Roles')} mode='Roles' pool={pool} style={{ m: 'auto', width: '92%' }} />
+          <ShowRoles chain={chain} label={t<string>('Roles')} mode='Roles' pool={pool} style={{ m: 'auto', width: '92%' }} />
           {canChangeState &&
             <Grid alignItems='center' container justifyContent='space-between' m='20px auto' width='92%'>
-              <Buttons disabled={poolState === 'Destroying'} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
+              <ActionBtn disabled={poolState === 'Destroying'} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
                 <AutoDeleteIcon sx={{ color: poolState === 'Destroying' ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
-              </Buttons>
+              </ActionBtn>
               {poolState === 'Blocked'
-                ? (<Buttons onClick={goUnlock} showDivider text={t<string>('Unblock')}>
+                ? (<ActionBtn onClick={goUnlock} showDivider text={t<string>('Unblock')}>
                   <UnblockIcon sx={{ color: 'text.primary', fontSize: '18px' }} />
-                </Buttons>)
-                : (<Buttons disabled={poolState === 'Destroying'} onClick={goBlock} showDivider text={t<string>('Block')}>
+                </ActionBtn>)
+                : (<ActionBtn disabled={poolState === 'Destroying'} onClick={goBlock} showDivider text={t<string>('Block')}>
                   <BlockIcon sx={{ color: poolState === 'Destroying' ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
-                </Buttons>)
+                </ActionBtn>)
               }
-              <Buttons disabled={poolState !== 'Destroying'} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
-                <FontAwesomeIcon color={poolState !== 'Destroying' ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
-              </Buttons>
-              <Buttons disabled={poolState === 'Destroying'} onClick={goEdit} text={t<string>('Edit')}>
+              <ActionBtn disabled={isRemoveAllDisabled} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
+                <FontAwesomeIcon color={isRemoveAllDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
+              </ActionBtn>
+              <ActionBtn disabled={poolState === 'Destroying'} onClick={goEdit} text={t<string>('Edit')}>
                 <FontAwesomeIcon color={poolState === 'Destroying' ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />
-              </Buttons>
+              </ActionBtn>
             </Grid>
           }
         </>
       }
       {goChange && changeState &&
         <SetState
+          address={address}
           api={api}
           chain={chain}
           formatted={formatted}
+          headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
+          helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
           pool={pool}
-          address={address}
           setShow={setGoChange}
           show={goChange}
           state={changeState}
-          helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
-          headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
         />
       }
-      {showEdit &&
-        <EditPool address={address} apiToUse={api} setShowEdit={setShowEdit} showEdit={showEdit} pool={pool} />
+      {showEdit && pool &&
+        <EditPool address={address} apiToUse={api} pool={pool} setShowEdit={setShowEdit} showEdit={showEdit} />
       }
-      {showRemoveAll &&
-        <RemoveAll address={address} api={api} setShowRemoveAll={setShowRemoveAll} showRemoveAll={showRemoveAll} pool={pool} />
+      {showRemoveAll && pool &&
+        <RemoveAll address={address} api={api} pool={pool} setShowRemoveAll={setShowRemoveAll} showRemoveAll={showRemoveAll} />
       }
     </>
   );

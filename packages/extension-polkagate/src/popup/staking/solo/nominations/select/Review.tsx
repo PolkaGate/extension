@@ -111,8 +111,6 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   }, [proxies]);
 
   const nominate = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted || !nominated) {
         return;
@@ -137,11 +135,8 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      saveHistory(chain, hierarchy, formatted, history);
-
+      saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {

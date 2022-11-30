@@ -8,18 +8,20 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, PasswordUseProxyConfirm, PasswordWithUseProxy, PButton, ProxyTable, ShowBalance, Warning } from '../../components';
-import { useAccount } from '../../hooks';
+import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, Warning } from '../../components';
+import { useAccount, useAccountName } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
+import { updateMeta } from '../../messaging';
 import { WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getFormattedAddress, getSubstrateAddress } from '../../util/utils';
+import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../util/types';
+import { getFormattedAddress, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
 interface Props {
@@ -31,6 +33,13 @@ interface Props {
 }
 
 export default function Review({ address, api, chain, depositValue, proxies }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const name = useAccountName(address);
+  const account = useAccount(address);
+  const onAction = useContext(ActionContext);
+
+  const { accounts, hierarchy } = useContext(AccountContext);
   const [helperText, setHelperText] = useState<string | undefined>();
   const [proxiesToChange, setProxiesToChange] = useState<ProxyItem[] | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
@@ -41,19 +50,30 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
-  const theme = useTheme();
-  const { t } = useTranslation();
-  const account = useAccount(address);
   const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
-  const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
-
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-
   const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
   const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
   const batchAll = api.tx.utility.batchAll;
+
+  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
+    if (!history.length) {
+      return;
+    }
+
+    const accountSubstrateAddress = getSubstrateAddress(address);
+
+    if (!accountSubstrateAddress) {
+      return; // should not happen !
+    }
+
+    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
+
+    savedHistory.push(...history);
+
+    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
+  }
 
   const goToMyAccounts = useCallback(() => {
     setShowConfirmation(false);
@@ -84,9 +104,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   }, [formatted, tx]);
 
   const onNext = useCallback(async (): Promise<void> => {
-    // const localState = state;
-    // const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
 
@@ -97,40 +114,27 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
 
       const { block, failureText, fee, status, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
 
-      // history.push({
-      //   action: 'manage_proxies',
-      //   amount: '0',
-      //   block,
-      //   date: Date.now(),
-      //   fee: fee || estimatedFee?.toString(),
-      //   from: String(formatted),
-      //   hash: txHash || '',
-      //   status: failureText || status,
-      //   to: ''
-      // });
-
-      setTxInfo({
-        api,
+      const info = {
         block: block || 0,
         chain,
-        from: { address: formatted, name: 'amiiir' },
+        date: Date.now(),
         failureText,
-        fee: estimatedFee || fee || '',
+        fee: fee || String(estimatedFee),
+        from: { address: formatted, name },
         status,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash: txHash || ''
-      });
-      // eslint-disable-next-line no-void
-      // void saveHistory(chain, hierarchy, formatted, history);
+      };
+
+      setTxInfo({ ...info, api, chain });
+      saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
-      // setState(localState);
-      // setConfirmingState('');
     }
-  }, [api, chain, estimatedFee, formatted, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
+  }, [api, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
 
   useEffect(() => {
     const addingLength = proxies.filter((item) => item.status === 'new').length;
