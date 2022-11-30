@@ -66,8 +66,6 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
     api.derive.staking.account(accounts.stashId)
   ]);
 
-  console.log('stashIdAccount:', stashIdAccount);
-
   const unwrappedRewardPools = rewardPools.isSome ? rewardPools.unwrap() : null;
   const unwrappedBondedPool = bondedPools.isSome ? bondedPools.unwrap() : null;
   const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts.balances.existentialDeposit));
