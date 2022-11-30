@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
-import getAllAddressess from '../../../../../util/getAllAddresses';
+import getAllAddresses from '../../../../../util/getAllAddresses';
 import Review from './Review';
 
 interface Props {
@@ -51,7 +51,7 @@ export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdi
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | undefined>();
   const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | undefined>();
 
-  const allAddresses = getAllAddressess(hierarchy, true, true, chain?.ss58Format, address);
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
   const backToPool = useCallback(() => {
     setShowEdit(!showEdit);

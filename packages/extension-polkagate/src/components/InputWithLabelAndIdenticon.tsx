@@ -67,17 +67,8 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
   }, [address, setAddress]);
 
   return (
-    <Grid
-      alignItems='flex-end'
-      container
-      justifyContent='space-between'
-      sx={{ position: 'relative', ...style }}
-    >
-      <Grid
-        item
-        onClick={_toggleDropdown}
-        xs={showIdenticon ? 10.5 : 12}
-      >
+    <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ position: 'relative', ...style }}>
+      <Grid item onClick={_toggleDropdown} xs={showIdenticon ? 10.5 : 12}>
         <Label
           helperText={helperText}
           label={label}
@@ -125,31 +116,17 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
         </Label>
       </Grid>
       {showIdenticon &&
-        <Grid
-          item
-          xs={1.2}
-        >
+        <Grid item xs={1.2}>
           {isValidAddress(address)
-            ? (
-              <Identicon
-                iconTheme={chain?.icon || 'polkadot'}
-                prefix={chain?.ss58Format ?? 42}
-                size={31}
-                value={address}
-              />
-            )
-            : (
-              <Grid
-                sx={{
-                  bgcolor: 'action.disabledBackground',
-                  border: '1px solid',
-                  borderColor: 'secondary.light',
-                  borderRadius: '50%',
-                  height: '31px',
-                  width: '31px'
-                }}
-              >
-              </Grid>)
+            ? <Identicon
+              iconTheme={chain?.icon || 'polkadot'}
+              prefix={chain?.ss58Format ?? 42}
+              size={31}
+              value={address}
+            />
+
+            : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
+            </Grid>
           }
         </Grid>
       }
@@ -187,45 +164,17 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
               onClick={() => _selectAddress(address)}
               sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer', p: '5px' }}
             >
-              <Grid
-                container
-                item
-                xs={10.5}
-              >
-                <Grid
-                  item
-                  // xs={4}
-                  maxWidth='25%'
-                >
-                  <Typography
-                    fontSize='12px'
-                    fontWeight={400}
-                    lineHeight='25px'
-                    overflow='hidden'
-                    textOverflow='ellipsis'
-                    whiteSpace='nowrap'
-                  >
+              <Grid container item xs={10.5}>
+                <Grid item maxWidth='25%'>
+                  <Typography fontSize='12px' fontWeight={400} lineHeight='25px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
                     {name}:
                   </Typography>
                 </Grid>
-                <Grid
-                  item
-                  // width='max-content'
-                  // maxWidth='75%'
-                  // xs={8}
-                  xs
-                >
-                  <ShortAddress
-                    address={address}
-                    clipped
-                  />
+                <Grid item xs>
+                  <ShortAddress address={address} clipped />
                 </Grid>
               </Grid>
-              <Grid
-                item
-                xs={1.2}
-                justifyContent='center'
-              >
+              <Grid item xs={1.2} justifyContent='center'>
                 <Identicon
                   iconTheme={chain?.icon || 'polkadot'}
                   prefix={chain?.ss58Format ?? 42}

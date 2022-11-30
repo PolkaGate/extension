@@ -6,7 +6,7 @@ import { canDerive } from '@polkadot/extension-base/utils';
 
 import { getFormattedAddress } from './utils';
 
-export default function getAllAddressess(hierarchy: AccountWithChildren[], filterExternal = true, formatted = false, formatType: number | undefined, ignoredAddress: string | undefined): [string, string | null, string | undefined][] {
+export default function getAllAddresses(hierarchy: AccountWithChildren[], filterExternal = true, formatted = false, formatType: number | undefined, ignoredAddress?: string | undefined): [string, string | null, string | undefined][] {
   const allAddresses = hierarchy
     .filter(({ isExternal }) => filterExternal ? !isExternal : isExternal || !isExternal)
     .filter(({ type }) => canDerive(type))

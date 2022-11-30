@@ -6,6 +6,7 @@ export { default as useAccountName } from './useAccountName';
 export { default as useApi } from './useApi';
 export { default as useApiWithChain } from './useApiWithChain';
 export { default as useBalances } from './useBalances';
+export { default as useBalancesInPool } from './useBalancesInPool';
 export { default as useChain } from './useChain';
 export { usePoolMembers } from './usePoolMembers';
 export { default as useEndpoint2 } from './useEndpoint2';

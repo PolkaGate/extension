@@ -12,7 +12,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Select, ShowIdentity } from '../../components';
 import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
-import getAllAddressess from '../../util/getAllAddresses';
+import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
 
 interface Props {
@@ -51,7 +51,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
     value: type
   }));
 
-  const allAddresses = getAllAddressess(hierarchy, true, true, chain.ss58Format, address);
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain.ss58Format, address);
 
   const _addProxy = useCallback(() => {
     const proxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;

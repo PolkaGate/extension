@@ -10,6 +10,7 @@ import { AccountContext } from '../../components';
 import FormatPrice from '../../components/FormatPrice';
 import useTranslation from '../../hooks/useTranslation';
 import { Price, SavedBalances } from '../../util/types';
+import { getValue } from '../account/util';
 
 export default function YouHave(): React.ReactElement {
   const { t } = useTranslation();
@@ -32,11 +33,14 @@ export default function YouHave(): React.ReactElement {
       Object.keys(balances).forEach((chainName) => {
         const localSavedPrice = window.localStorage.getItem(`${chainName}_price`);
         const prices = JSON.parse(localSavedPrice) as Price;
+        const bal = balances[chainName];
 
-        if (balances[chainName] && prices && balances[chainName].token === prices.token) {
-          const total = new BN(balances[chainName].balances.freeBalance).add(new BN(balances[chainName].balances.reservedBalance));
+        if (bal && prices && bal.token === prices.token) {
+          const total = new BN(balances[chainName].balances.freeBalance)
+            .add(new BN(balances[chainName].balances.reservedBalance))
+            .add(new BN(balances[chainName].balances.poolBalance));
 
-          value += prices.amount * (Number(total) * 10 ** -balances[chainName].decimal);
+          value += prices.amount * (Number(total) * 10 ** -bal.decimal);
         }
       });
     });
@@ -45,30 +49,16 @@ export default function YouHave(): React.ReactElement {
   }, [accounts]);
 
   return (
-    <Grid
-      container
-      pt='15px'
-      textAlign='center'
-    >
-      <Grid
-        item
-        xs={12}
-      >
-        <Typography
-          sx={{ fontSize: '18px' }}
-        >
+    <Grid container pt='15px' textAlign='center'>
+      <Grid item xs={12}>
+        <Typography sx={{ fontSize: '18px' }}>
           {t('You have')}
         </Typography>
       </Grid>
       <Grid container item justifyContent='center' xs={12}>
         <Typography sx={{ fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
           {allYouHaveAmount === undefined
-            ? <Skeleton
-              height={38}
-              sx={{ transform: 'none' }}
-              variant='text'
-              width={223}
-            />
+            ? <Skeleton height={38} sx={{ transform: 'none' }} variant='text' width={223} />
             : <FormatPrice num={allYouHaveAmount} />
           }
         </Typography>

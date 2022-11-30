@@ -72,10 +72,8 @@ export default function Index(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
-  const endpoint = useEndpoint2(address);
   const api = useApi(address, state?.api);
-  const pool = usePool(address,undefined, state?.pool);
-  // const validators = useValidators(address);
+  const pool = usePool(address, undefined, state?.pool);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
@@ -93,21 +91,7 @@ export default function Index(): React.ReactElement {
   const [showRewardStake, setShowRewardStake] = useState<boolean>(false);
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
-
-  const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
-  const [currentEraIndexOfStore, setCurrentEraIndexOfStore] = useState<number | undefined>();
-  const [gettingNominatedValidatorsInfoFromChain, setGettingNominatedValidatorsInfoFromChain] = useState<boolean>(true);
-  const [validatorsInfoIsUpdated, setValidatorsInfoIsUpdated] = useState<boolean>(false);
-  const [validatorsIdentitiesIsFetched, setValidatorsIdentitiesIsFetched] = useState<boolean>(false);
-  const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
-  const [localStrorageIsUpdate, setStoreIsUpdate] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-  const poolsMembers: MembersMapEntry[] | undefined = useMapEntries(api?.query?.nominationPools?.poolMembers, OPT_ENTRIES);
-  const [selectedValidators, setSelectedValidatorsAcounts] = useState<DeriveStakingQuery[] | null>(null);
-  const [noNominatedValidators, setNoNominatedValidators] = useState<boolean | undefined>();// if TRUE, shows that nominators are fetched but is empty
-  const [nominatedValidators, setNominatedValidatorsInfo] = useState<DeriveStakingQuery[] | null>(null);
-  const [oversubscribedsCount, setOversubscribedsCount] = useState<number | undefined>();
-  const [activeValidator, setActiveValidator] = useState<DeriveStakingQuery>();
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 

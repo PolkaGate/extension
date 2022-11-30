@@ -366,6 +366,7 @@ export interface MyPoolInfo extends PoolInfo {
   ledger?: StakingLedger | null;
   rewardIdBalance?: DeriveStakingAccount;
   stashIdAccount?: DeriveStakingAccount;
+  token: string;
 }
 
 export interface PoolAccounts {
