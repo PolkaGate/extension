@@ -6,10 +6,9 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId, AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, MyPoolInfo, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { MembersMapEntry, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -18,18 +17,18 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
+import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
 import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
-import AccountBrief from '../../account/AccountBrief';
 
 const OPT_ENTRIES = {
   transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
@@ -75,7 +74,7 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const endpoint = useEndpoint2(address);
   const api = useApi(address, state?.api);
-  const pool = usePool(address);
+  const pool = usePool(address,undefined, state?.pool);
   // const validators = useValidators(address);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
@@ -169,7 +168,7 @@ export default function Index(): React.ReactElement {
   const goToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,
-      state: { api, consts, pool, pathname, stakingConsts }
+      state: { api, consts, pathname, pool, stakingConsts }
     });
   }, [address, api, consts, history, pool, pathname, stakingConsts]);
 

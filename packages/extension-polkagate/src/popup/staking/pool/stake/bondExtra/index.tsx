@@ -5,6 +5,7 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -31,6 +32,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const account = useAccount(address);
+  const history = useHistory();
 
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [bondAmount, setBondAmount] = useState<string | undefined>();
@@ -44,8 +46,11 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const amountAsBN = useMemo(() => new BN(parseFloat(bondAmount ?? '0') * 10 ** decimals), [decimals, bondAmount]);
 
   const onBackClick = useCallback(() => {
-    onAction(`pool/${address}`);
-  }, [address, onAction]);
+    history.push({
+      pathname: `/pool/${address}`,
+      state: { api, pool }
+    });
+  }, [address, api, history, pool]);
 
   const onMaxAmount = useCallback(() => {
     if (!api || !availableBalance || !estimatedMaxFee) {
@@ -55,8 +60,8 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimals);
-    
-      maxToHuman && setBondAmount(maxToHuman);
+
+    maxToHuman && setBondAmount(maxToHuman);
   }, [api, availableBalance, decimals, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
