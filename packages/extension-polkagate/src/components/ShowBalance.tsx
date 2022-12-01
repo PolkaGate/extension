@@ -31,7 +31,7 @@ export interface Props {
 export default function ShowBalance({ api, balance, decimalPoint, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
   return (
     <>
-      {balance === undefined && (!api || !(decimal || token))
+      {balance === undefined || !(api || (decimal && token))
         ? <Skeleton
           height={height}
           sx={{ display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
