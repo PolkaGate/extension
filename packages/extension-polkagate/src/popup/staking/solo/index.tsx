@@ -28,33 +28,11 @@ import { getValue } from '../../account/util';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
 
-const OPT_ENTRIES = {
-  transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
-    entries.reduce((all: MembersMapEntry[], [{ args: [accountId] }, optMember]) => {
-      if (optMember.isSome) {
-        const member = optMember.unwrap();
-        const poolId = member.poolId.toString();
-
-        if (!all[poolId]) {
-          all[poolId] = [];
-        }
-
-        all[poolId].push({
-          accountId: accountId.toString(),
-          member
-        });
-      }
-
-      return all;
-    }, {})
-};
-
 interface SessionIfo {
   eraLength: number;
   eraProgress: number;
   currentEra: number;
 }
-
 interface State {
   api?: ApiPromise;
   stakingConsts?: StakingConsts;
@@ -167,6 +145,13 @@ export default function Index(): React.ReactElement {
     redeemable && !redeemable?.isZero() && setShowRedeemableWithdraw(true);
   }, [redeemable]);
 
+  const goToDetail = useCallback(() => {
+    !rewards?.isZero() && history.push({
+      pathname: `/solo/reward/${String(address)}`,
+      state: { api, chain }
+    });
+  }, [rewards, history, address, api, chain]);
+
   const ToBeReleased = () => (
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '2px', width: '95%' }}>
       <Grid item pt='10px' xs={12}>
@@ -276,6 +261,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Rewards')}
             link1Text={t('Details')}
+            onLink1={goToDetail}
             value={rewards}
           />
           <Row
