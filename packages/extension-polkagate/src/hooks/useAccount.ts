@@ -5,6 +5,8 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useContext, useEffect, useState } from 'react';
 
+import { AccountId } from '@polkadot/types/interfaces/runtime';
+
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util/utils';
 
@@ -14,7 +16,7 @@ function findAccountByAddress(accounts: AccountJson[], _address: string): Accoun
   ) || undefined;
 }
 
-export default function useAccount(address: string | null | undefined): AccountJson | undefined {
+export default function useAccount(address: string | AccountId | null | undefined): AccountJson | undefined {
   const [account, setAccount] = useState<AccountJson | undefined>();
   const { accounts } = useContext(AccountContext);
 
