@@ -15,7 +15,7 @@ interface Props {
   size?: number;
 }
 
-function CopyAddressButton({ address, showAddress = false, size = 16 }: Props): React.ReactElement<Props> {
+function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -75,10 +75,7 @@ function CopyAddressButton({ address, showAddress = false, size = 16 }: Props): 
           title={String(address)}
         >
           <CopyToClipboard text={String(address)}>
-            <vaadin-icon 
-              icon='vaadin:copy-o'
-              style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }}
-            />
+            <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
           </CopyToClipboard>
         </IconButton>
       </Tooltip>
