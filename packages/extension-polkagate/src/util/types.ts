@@ -568,13 +568,13 @@ export interface SavedBalances {
   }
 }
 
-export interface BalancesAll extends DeriveBalancesAll {
+export interface BalancesInfo extends DeriveBalancesAll {
   chainName: string;
   decimal: number;
   token: string;
   date: number;
+  pooledBalance: BN;
 }
-
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
 }

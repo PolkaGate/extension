@@ -10,63 +10,27 @@ interface Props {
   divider?: boolean;
   onClick: () => void;
   exceptionWidth?: number;
+  textDisabled?: boolean;
 }
 
-export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0, icon, onClick, title }: Props): React.ReactElement {
+export default function HorizontalMenuItem({ textDisabled, divider = false, exceptionWidth = 0, icon, onClick, title }: Props): React.ReactElement {
   return (
     <>
-      <Grid
-        container
-        direction='column'
-        item
-        justifyContent='center'
-        maxWidth='fit-content'
-      >
-        <Grid
-          container
-          item
-          justifyContent='center'
-        >
-          <IconButton
-            onClick={onClick}
-            sx={{
-              alignSelf: 'center',
-              m: 'auto',
-              py: 0,
-              transform: 'scale(0.9)',
-              width: 'fit-content'
-            }}
-          >
+      <Grid container direction='column' item justifyContent='center' maxWidth='fit-content'>
+        <Grid container item justifyContent='center'>
+          <IconButton onClick={onClick} sx={{ alignSelf: 'center', m: 'auto', py: 0, transform: 'scale(0.9)', width: 'fit-content' }}>
             {icon}
           </IconButton>
         </Grid>
-        <Grid
-          item
-          textAlign='center'
-        >
-          <Typography
-            fontSize='12px'
-            fontWeight={300}
-          >
+        <Grid item textAlign='center'>
+          <Typography fontSize='12px' fontWeight={300} sx={{ color: textDisabled && 'action.disabledBackground' }}>
             {title}
           </Typography>
         </Grid>
       </Grid>
       {divider &&
-        <Grid
-          alignItems='center'
-          item
-          justifyContent='center'
-        >
-          <Divider
-            orientation='vertical'
-            sx={{
-              bgcolor: 'text.primary',
-              height: '30px',
-              m: 'auto 2px',
-              width: '2px'
-            }}
-          />
+        <Grid alignItems='center' item justifyContent='center'>
+          <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', m: 'auto 2px', width: '2px' }} />
         </Grid>
       }
     </>

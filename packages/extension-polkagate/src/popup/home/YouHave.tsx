@@ -38,7 +38,7 @@ export default function YouHave(): React.ReactElement {
         if (bal && prices && bal.token === prices.token) {
           const total = new BN(balances[chainName].balances.freeBalance)
             .add(new BN(balances[chainName].balances.reservedBalance))
-            .add(new BN(balances[chainName].balances.poolBalance));
+            .add(new BN(balances[chainName].balances.pooledBalance));
 
           value += prices.amount * (Number(total) * 10 ** -bal.decimal);
         }

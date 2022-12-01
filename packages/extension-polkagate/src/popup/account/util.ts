@@ -8,11 +8,11 @@
  * this component shows an account information in detail
  * */
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-
 import { BN, BN_ZERO } from '@polkadot/util';
 
-export const getValue = (type: string, balances: DeriveBalancesAll | null | undefined): BN | undefined => {
+import { BalancesInfo } from '../../util/types';
+
+export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
   if (!balances) {
     return;
   }
@@ -20,7 +20,9 @@ export const getValue = (type: string, balances: DeriveBalancesAll | null | unde
   switch (type.toLocaleLowerCase()) {
     case ('total'):
     case ('total balance'):
-      return balances.freeBalance.add(balances.reservedBalance).add(balances?.poolBalance ?? BN_ZERO);
+      return balances.freeBalance.add(balances.reservedBalance).add(balances?.pooledBalance ?? BN_ZERO);
+    case ('pooled balance'):
+      return balances?.pooledBalance ?? BN_ZERO;
     case ('available'):
     case ('available balance'):
       return balances.availableBalance;

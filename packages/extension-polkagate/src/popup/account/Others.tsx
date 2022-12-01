@@ -10,28 +10,28 @@
 
 import '@vaadin/icons';
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-
 import { Container, Divider, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Identicon, Motion, Popup, ShowBalance } from '../../components';
-import { useFormatted, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
+import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   account: AccountJson | null;
-  api: ApiPromise;
+  api?: ApiPromise;
   show: boolean;
   chain: Chain;
   price: number | undefined;
-  balances: DeriveBalancesAll;
-  formatted: string;
+  balances: BalancesInfo;
+  formatted: AccountId;
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
@@ -53,9 +53,9 @@ export default function Others({ account, api, balances, chain, formatted, price
     setShow(false);
   }, [setShow]);
 
-  const Balance = ({ balances, type }: { type: string, balances: DeriveBalancesAll | undefined }) => {
+  const Balance = ({ balances, type }: { type: string, balances: BalancesInfo | undefined }) => {
     const value = getValue(type, balances);
-    const balanceInUSD = price && value && api && Number(value) / (10 ** api.registry.chainDecimals[0]) * price;
+    const balanceInUSD = price && value && balances?.decimal && Number(value) / (10 ** balances.decimal) * price;
 
     return (
       <>
@@ -68,7 +68,7 @@ export default function Others({ account, api, balances, chain, formatted, price
           <Grid container direction='column' item justifyContent='flex-end' xs>
             <Grid item textAlign='right'>
               <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
-                <ShowBalance api={api} balance={value} />
+                <ShowBalance api={api} balance={value} decimal={balances?.decimal} token={balances?.token} />
               </Typography>
             </Grid>
             <Grid item pt='6px' textAlign='right'>
@@ -112,16 +112,15 @@ export default function Others({ account, api, balances, chain, formatted, price
           </Grid>
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
-          {/* <Balance balances={balances} type={'Free Balance'} /> */}
-          {/* <Balance balances={balances} type={'Reserved Balance'} /> */}
+          <Balance balances={balances} type={'Pooled Balance'} />
           <Balance balances={balances} type={'Frozen Misc'} />
           <Balance balances={balances} type={'Frozen Fee'} />
           <Balance balances={balances} type={'Locked Balance'} />
           <Balance balances={balances} type={'Vested Balance'} />
           <Balance balances={balances} type={'Vested Claimable'} />
-          <Balance balances={balances} type={'Vesting Locked'} />
-          <Balance balances={balances} type={'Vesting Total'} />
-          {/* <Balance balances={balances} type={'Voting Balance'} /> */}
+          {/* <Balance balances={balances} type={'Vesting Locked'} /> */}
+          {/* <Balance balances={balances} type={'Vesting Total'} /> */}
+          <Balance balances={balances} type={'Voting Balance'} />
         </Container>
       </Popup>
     </Motion>

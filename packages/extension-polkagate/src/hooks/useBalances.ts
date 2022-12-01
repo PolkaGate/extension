@@ -7,15 +7,15 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext } from '../components';
 import { updateMeta } from '../messaging';
-import { BalancesAll, SavedBalances } from '../util/types';
+import { BalancesInfo, SavedBalances } from '../util/types';
 import { useApi, useBalancesInPool, useChain, useFormatted } from '.';
 
 export default function useBalances(address: string, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>
-): BalancesAll | undefined {
+): BalancesInfo | undefined {
   const { accounts } = useContext(AccountContext);
   const balanceInPool = useBalancesInPool(address);
-  const [balances, setBalances] = useState<BalancesAll | undefined>();
-  const [newBalances, setNewBalances] = useState<BalancesAll | undefined>();
+  const [balances, setBalances] = useState<BalancesInfo | undefined>();
+  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -28,13 +28,13 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       return;
     }
 
-    const poolBalance = balanceInPool?.token && balanceInPool?.token === token ? balanceInPool.balance : BN_ZERO;
+    const pooledBalance = balanceInPool?.token && balanceInPool?.token === token ? balanceInPool.balance : BN_ZERO;
 
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
       b['token'] = token;
       b['decimal'] = decimal;
       b['chainName'] = chainName;
-      b['poolBalance'] = poolBalance;
+      b['pooledBalance'] = pooledBalance;
 
       setNewBalances(b);
       setRefresh && setRefresh(false);
@@ -58,8 +58,6 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       return;
     }
 
-    const poolBalance = balanceInPool?.token && balanceInPool?.token === token ? balanceInPool.balance : BN_ZERO;
-
     // load save balances of different chaines
     const savedBalances = JSON.parse(accounts?.find((acc) => acc.address === address)?.balances ?? '{}') as SavedBalances;
 
@@ -70,11 +68,11 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       frozenFee: newBalances.frozenFee.toString(),
       frozenMisc: newBalances.frozenMisc.toString(),
       lockedBalance: newBalances.lockedBalance.toString(),
+      pooledBalance: String(newBalances?.pooledBalance ?? 0),
       reservedBalance: newBalances.reservedBalance.toString(),
       vestedBalance: newBalances.vestedBalance.toString(),
       vestedClaimable: newBalances.vestedClaimable.toString(),
-      votingBalance: newBalances.votingBalance.toString(),
-      poolBalance: newBalances?.poolBalance?.toString() ?? '0'
+      votingBalance: newBalances.votingBalance.toString()
     };
 
     // add this chain balances
@@ -105,12 +103,12 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
         frozenFee: new BN(sb.frozenFee),
         frozenMisc: new BN(sb.frozenMisc),
         lockedBalance: new BN(sb.lockedBalance),
+        pooledBalance: new BN(sb.pooledBalance),
         reservedBalance: new BN(sb.reservedBalance),
         token: savedBalances[chainName].token,
         vestedBalance: new BN(sb.vestedBalance),
         vestedClaimable: new BN(sb.vestedClaimable),
-        votingBalance: new BN(sb.votingBalance),
-        poolBalance: new BN(sb.poolBalance)
+        votingBalance: new BN(sb.votingBalance)
       };
 
       setBalances(lastBalances);

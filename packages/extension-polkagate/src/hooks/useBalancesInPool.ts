@@ -13,7 +13,7 @@ interface Output {
 }
 
 export default function useBalancesInPool(address: string): Output | null | undefined {
-  const [poolBalance, setBalance] = useState<Output | undefined | null>();
+  const [pooledBalance, setBalance] = useState<Output | undefined | null>();
   const pool = usePool(address);
 
   useEffect(() => {
@@ -31,8 +31,11 @@ export default function useBalancesInPool(address: string): Output | null | unde
       }
     }
 
-    setBalance({ balance: active.add(rewards).add(unlockingValue), token: pool.token });
+    setBalance({
+      balance: active.add(rewards).add(unlockingValue),
+      token: pool.token
+    });
   }, [pool]);
 
-  return poolBalance;
+  return pooledBalance;
 }

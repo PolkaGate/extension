@@ -114,8 +114,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const decimal = api && api.registry.chainDecimals[0];
   const token = api && api.registry.chainTokens[0];
 
-  console.log('balances:',balances);
-  
+  console.log('balances:', balances);
+
   const resetToDefaults = useCallback(() => {
     setNewEndpoint(undefined);
     setRecoded(defaultRecoded);
@@ -179,7 +179,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
     history.push({
       pathname: `/send/${genesisHash}/${address}/${formatted}/`,
-      state: { balances, api, price: price?.amount }
+      state: { api, balances, price: price?.amount }
     });
   }, [availableProxiesForTransfer?.length, account?.isExternal, history, genesisHash, address, formatted, balances, api, price]);
 
@@ -192,7 +192,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
 
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
-  }, [showStakingOptions]);
+  }, [genesisHash, showStakingOptions]);
 
   const goToHistory = useCallback(() => {
     chainName && formatted && decimal && token &&
@@ -226,23 +226,21 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, []);
 
   const OthersRow = (
-    <>
-      <Grid item py='5px'>
-        <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
-            {t('Others')}
-          </Grid>
-          <Grid item textAlign='right' xs={1.5}>
-            <IconButton
-              onClick={goToOthers}
-              sx={{ p: 0 }}
-            >
-              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: '#BA2882', strokeWidth: 2 }} />
-            </IconButton>
-          </Grid>
+    <Grid item py='5px'>
+      <Grid alignItems='center' container justifyContent='space-between'>
+        <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
+          {t('Others')}
+        </Grid>
+        <Grid item textAlign='right' xs={1.5}>
+          <IconButton
+            onClick={goToOthers}
+            sx={{ p: 0 }}
+          >
+            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: '#BA2882', strokeWidth: 2 }} />
+          </IconButton>
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 
   return (
@@ -300,6 +298,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
               />
             }
             onClick={goToSend}
+            textDisabled={(!availableProxiesForTransfer?.length && account?.isExternal)}
             title={t<string>('Send')}
           />
           <HorizontalMenuItem
@@ -312,6 +311,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             divider
             icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${stakingIconColor}` }} />}
             onClick={goToStaking}
+            textDisabled={ !STAKING_CHAINS.includes(genesisHash)}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem
@@ -338,7 +338,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           />
         </Grid>
       </Container>
-      {showOthers && balances && chain && api &&
+      {showOthers && balances && chain && formatted &&
         <Others
           account={account}
           api={api}
