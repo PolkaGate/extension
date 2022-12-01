@@ -1,8 +1,6 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import '@vaadin/icons';
-
 import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -38,16 +36,14 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
   }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
 
   return (
-    <Grid lignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
-      <Grid item ref={cRef} width='fit-content' >
+    <Grid alignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
+      <Grid item ref={cRef} width='fit-content'>
         {inParentheses ? '(' : ''}
         {!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
         {inParentheses ? ')' : ''}
       </Grid>
       {showCopy &&
-        <CopyAddressButton
-          address={String(address)}
-        />
+        <CopyAddressButton address={String(address)} />
       }
     </Grid>
   );
