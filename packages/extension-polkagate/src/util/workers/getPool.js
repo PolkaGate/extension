@@ -58,9 +58,10 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
     return null;
   }
 
-  const [metadata, bondedPools, rewardPools, rewardIdBalance, stashIdAccount] = await Promise.all([
+  const [metadata, bondedPools, myClaimable, rewardPools, rewardIdBalance, stashIdAccount] = await Promise.all([
     api.query.nominationPools.metadata(poolId),
     api.query.nominationPools.bondedPools(poolId),
+    api.call.nominationPoolsApi.pendingRewards(stakerAddress),
     api.query.nominationPools.rewardPools(poolId),
     api.query.system.account(accounts.rewardId),
     api.derive.staking.account(accounts.stashId)
@@ -69,7 +70,6 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
   const unwrappedRewardPools = rewardPools.isSome ? rewardPools.unwrap() : null;
   const unwrappedBondedPool = bondedPools.isSome ? bondedPools.unwrap() : null;
   const poolRewardClaimable = bnMax(BN_ZERO, rewardIdBalance.data.free.sub(api.consts.balances.existentialDeposit));
-  const myClaimable = !id && await getMyPendingRewards(api, member, unwrappedBondedPool.points, unwrappedRewardPools, accounts.rewardId);
   const rewardPool = {};
 
   if (unwrappedRewardPools) {
@@ -81,7 +81,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
   const poolInfo = {
     accounts,
     bondedPool: unwrappedBondedPool,
-    ledger: stashIdAccount?.stakingLedger,
+    // ledger: stashIdAccount?.stakingLedger,
     member,
     metadata: metadata.length
       ? metadata.isUtf8
