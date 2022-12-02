@@ -25,6 +25,7 @@ export { default as usePrice } from './usePrice';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
 export { default as usePools } from './usePools';
+export { default as usePoolBalances } from './usePoolBalances';
 export { default as usePoolConsts } from './usePoolConsts';
 export { default as useRedirectOnRefresh } from './useRedirectOnRefresh';
 export { default as useStakingAccount } from './useStakingAccount';
