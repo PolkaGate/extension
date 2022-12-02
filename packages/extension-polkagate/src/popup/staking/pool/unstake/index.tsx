@@ -51,7 +51,7 @@ export default function Index(): React.ReactElement {
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
   const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimals)), [amount, decimals, staked]);
-  const unlockingLen = myPool?.ledger?.unlocking?.length;
+  const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
   const unbonded = api && api.tx.nominationPools.unbond;

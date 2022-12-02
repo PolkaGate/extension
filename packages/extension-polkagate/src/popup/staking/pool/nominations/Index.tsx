@@ -168,7 +168,7 @@ export default function Index(): React.ReactElement {
               chain={chain}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - 190}
-              staked={new BN(pool?.ledger?.active ?? 0)}
+              staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
               stakingConsts={stakingConsts}
               validatorsToList={selectedValidatorsInfo}
             />

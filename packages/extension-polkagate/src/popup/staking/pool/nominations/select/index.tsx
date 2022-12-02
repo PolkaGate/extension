@@ -242,7 +242,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 selectedValidatorsId={selectedValidatorsId}
                 setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
-                staked={new BN(pool?.ledger?.active ?? 0)}
+                staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
                 stakingConsts={stakingConsts}
                 validatorsToList={validatorsToList}
               />

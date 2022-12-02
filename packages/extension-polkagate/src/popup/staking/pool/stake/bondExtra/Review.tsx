@@ -57,7 +57,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const totalStaked = (new BN(pool.member.points).mul(new BN(pool.ledger.active))).div(new BN(pool.bondedPool.points));
+  const totalStaked = (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
   const bondExtra = api.tx.nominationPools.bondExtra;
 
   const _onBackClick = useCallback(() => {
