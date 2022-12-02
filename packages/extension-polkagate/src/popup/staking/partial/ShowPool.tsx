@@ -229,7 +229,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   lineHeight='59px'
                   pl='10px'
                 >
-                  {t<string>('Loading your pool information...')}
+                  {t<string>('Loading pool information...')}
                 </Typography>
               </Grid>
             )
