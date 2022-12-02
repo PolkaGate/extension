@@ -114,14 +114,6 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToDeriveAcc}
-          text={t('Derive from accounts')}
-        />
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-        <MenuItem
           icon={theme.palette.mode === 'dark' ? importIcon : importIconB}
           onClick={toggleImportSubMenu}
           showSubMenu={showImportSubMenu}
@@ -138,6 +130,14 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
           }
           onClick={_goToExportAll}
           text={t('Export all accounts')}
+        />
+        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+        <MenuItem
+          iconComponent={
+            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
+          onClick={_goToDeriveAcc}
+          text={t('Derive from accounts')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
