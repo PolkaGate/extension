@@ -44,7 +44,7 @@ export default function Index (): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active.unwrap(), [stakingAccount]);
+  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
   const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
   const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
@@ -123,10 +123,10 @@ export default function Index (): React.ReactElement {
 
   const onBackClick = useCallback(() => {
     history.push({
-      pathname: state?.pathname ?? '/',
+      pathname: `/solo/${address}`,
       state: { ...state }
     });
-  }, [history, state]);
+  }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
     setUnstakeAllAmount(false);

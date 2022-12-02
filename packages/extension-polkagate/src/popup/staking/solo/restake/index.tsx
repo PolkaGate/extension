@@ -49,7 +49,7 @@ export default function Index(): React.ReactElement {
   const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
 
-  const staked = useMemo(() => stakingAccount?.stakingLedger?.active?.unwrap(), [stakingAccount?.stakingLedger?.active]);
+  const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountToMachine(amount, decimal)), [amount, decimal, staked, unlockingAmount]);
 
   const rebonded = api && api.tx.staking.rebond;
@@ -99,10 +99,10 @@ export default function Index(): React.ReactElement {
 
   const onBackClick = useCallback(() => {
     history.push({
-      pathname: state?.pathname ?? '/',
+      pathname: `/solo/${address}`,
       state: { ...state }
     });
-  }, [history, state]);
+  }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
     setRestakeAllAmount(false);

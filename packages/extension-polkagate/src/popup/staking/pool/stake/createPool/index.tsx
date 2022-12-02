@@ -17,8 +17,8 @@ import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
-import UpdateRoles from './UpdateRoles';
 import Review from './Review';
+import UpdateRoles from './UpdateRoles';
 
 interface State {
   api?: ApiPromise;
@@ -56,7 +56,7 @@ export default function CreatePool(): React.ReactElement {
 
   const backToStake = useCallback(() => {
     history.push({
-      pathname: `/pool/stake/${address}`,
+      pathname: `/pool/stake/${address}`, // TODO: Need more check
       state: { ...state }
     });
   }, [address, history, state]);

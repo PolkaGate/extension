@@ -64,7 +64,7 @@ export default function Index(): React.ReactElement {
 
   const onBackClick = useCallback(() => {
     history.push({
-      pathname: state?.pathname ?? '/',
+      pathname: `/solo/${address}`,
       state: { ...state }
     });
   }, [history, state]);
@@ -172,7 +172,7 @@ export default function Index(): React.ReactElement {
               chain={chain}
               formatted={formatted}
               height={window.innerHeight - 190}
-              staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
+              staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
               stakingConsts={stakingConsts}
               validatorsToList={selectedValidatorsInfo}
             />
