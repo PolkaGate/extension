@@ -19,12 +19,13 @@ interface Props {
   withSteps?: Step;
   mt?: string;
   style?: React.CSSProperties;
+  lineHeight?: string;
 }
 
-function SubTitle({ label, mt, withSteps, style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
+function SubTitle({ label, mt, withSteps, lineHeight = '20px', style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
   return (
     <Grid alignItems='center' container item justifyContent='center' mt={mt ?? 0} style={{ ...style }}>
-      <Grid item sx={{ lineHeight: '20px', pr: '5px' }}>
+      <Grid item sx={{ lineHeight, pr: '5px' }} >
         {label}
       </Grid>
       {withSteps &&
