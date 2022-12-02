@@ -241,7 +241,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 selectedValidatorsId={selectedValidatorsId}
                 setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
-                staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
+                staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
                 stakingConsts={stakingConsts}
                 validatorsToList={validatorsToList}
               />
