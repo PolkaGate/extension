@@ -22,11 +22,12 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useFormatted, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
-import { DATE_OPTIONS } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
+import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 
 interface SessionIfo {
   eraLength: number;
@@ -56,7 +57,10 @@ export default function Index(): React.ReactElement {
   const nominatorInfo = useNominator(address);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
-  const staked = useMemo(() => stakingAccount?.stakingLedger?.active?.unwrap(), [stakingAccount?.stakingLedger?.active]);
+  const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
+  const decimal = stakingAccount?.decimal;
+  const token = stakingAccount?.token;
+  const isBalanceOutdated = useMemo(() => stakingAccount && Date.now() - stakingAccount.date > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
@@ -179,8 +183,8 @@ export default function Index(): React.ReactElement {
           </Grid>
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
-              <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
-                <ShowBalance api={api} balance={value} decimalPoint={2} />
+              <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} >
+                <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
@@ -208,7 +212,7 @@ export default function Index(): React.ReactElement {
                     cursor: 'pointer',
                     fontSize: 18,
                     m: 'auto',
-                    stroke: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',//'#BA2882',
+                    stroke: !toBeReleased?.length ? 'text.disabled' : 'secondary.light',
                     strokeWidth: '2px',
                     transform: showUnlockings ? 'rotate(-90deg)' : 'rotate(90deg)'
                   }}
@@ -250,8 +254,9 @@ export default function Index(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
-        <SubTitle label={t<string>('Solo Staking')} mt='15px' style={{ fontSize: '20px' }} />
-        <Grid container maxHeight={window.innerHeight - 250} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
+        {/* <SubTitle label={t<string>('Solo Staking')} mt='10px' lineHeight='35px' style={{ fontSize: '20px', fontWeight: 400 }} /> */}
+        <BouncingSubTitle label={t<string>('Solo Staking')} style={{ fontSize: '20px', fontWeight: 400 }} />
+        <Grid container maxHeight={window.innerHeight - 260} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
