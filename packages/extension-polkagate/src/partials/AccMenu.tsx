@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
-import { useEndpoint, useEndpoint2, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
+import { useEndpoint2, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';
