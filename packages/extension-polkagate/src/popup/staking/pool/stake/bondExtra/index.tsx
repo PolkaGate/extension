@@ -11,7 +11,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton } from '../../../../../components';
-import { useAccount, useTranslation } from '../../../../../hooks';
+import { useAccount, useChain, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { MyPoolInfo } from '../../../../../util/types';
@@ -31,6 +31,7 @@ interface Props {
 export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
+  const chain = useChain(address);
   const history = useHistory();
 
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
@@ -146,6 +147,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       />
       <ShowPool
         api={api}
+        chain={chain}
         label={t<string>('Pool')}
         mode='Default'
         pool={pool}

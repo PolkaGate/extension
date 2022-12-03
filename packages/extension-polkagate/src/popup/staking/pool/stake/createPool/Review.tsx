@@ -203,6 +203,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <ShowPool
           api={api}
+          chain={chain}
           label={t<string>('Pool')}
           labelPosition='center'
           mode='Creating'

@@ -236,6 +236,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         }
         <ShowPool
           api={api}
+          chain={chain}
           label=''
           mode='Default'
           pool={pool}
