@@ -291,8 +291,8 @@ export default function Index(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
-        <SubTitle label={t<string>('Pool Staking')} mt='15px' style={{ fontSize: '20px' }} />
-        <Grid container maxHeight={window.innerHeight - 254} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
+        <SubTitle label={t<string>('Pool Staking')} mt='10px' lineHeight='35px' style={{ fontSize: '20px', fontWeight: 400 }} />
+        <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}

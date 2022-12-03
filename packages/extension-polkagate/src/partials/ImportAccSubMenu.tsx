@@ -54,19 +54,6 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
     }, []
   );
 
-  const QrIcon = (
-    <vaadin-icon
-      icon='vaadin:qrcode'
-      style={{
-        height: '18px',
-        width: '18px',
-        color: `${settings.camera === 'on'
-          ? theme.palette.mode === 'dark' ? 'white' : 'black'
-          : 'theme.palette.text.disabled'}`
-      }}
-    />
-  );
-
   return (
     <>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
@@ -86,14 +73,19 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
           onClick={_goToImportAcc}
           py='4px'
           text={t('Import from mnemonic')}
-        // onClick={}
+        />
+        <MenuItem
+          icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
+          onClick={_goToAddProxied}
+          py='4px'
+          text='Add address only'
         />
         <MenuItem
           disabled={settings.camera !== 'on'}
+          iconComponent={<vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', width: '18px', color: `${settings.camera === 'on' ? theme.palette.mode === 'dark' ? 'white' : 'black' : 'theme.palette.text.disabled'}` }} />}
           onClick={_goToAttachQR}
           py='4px'
           text='Attach external QR-signer '
-          iconComponent={QrIcon}
         />
         {settings.camera !== 'on' &&
           <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} textAlign='left' sx={{ cursor: 'pointer' }}>
@@ -107,12 +99,6 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
           onClick={_goToImportLedger}
           py='4px'
           text='Attach ledger device'
-        />
-        <MenuItem
-          icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
-          onClick={_goToAddProxied}
-          py='4px'
-          text='Add address only'
         />
       </Grid>
     </>

@@ -66,7 +66,7 @@ export default function Pool(): React.ReactElement {
 
   const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
-  const unblockHelperText = t<string>('The pool state will be changed to Open, and any member will be able to join The pool.');
+  const unblockHelperText = t<string>('The pool state will be changed to Open, and any member will be able to join the pool.');
   const isRemoveAllDisabled = !['Destroying', 'Blocked'].includes(poolState ?? '') || pool?.bondedPool?.memberCounter === BN_ONE;
 
   const backToStake = useCallback(() => {
@@ -154,7 +154,7 @@ export default function Pool(): React.ReactElement {
             textAlign='center'
             width='80%'
           >
-            {t<string>('Loading your pool information...')}
+            {t<string>('Loading pool information...')}
           </Typography>
         </>
       }

@@ -46,12 +46,14 @@ export default function Index(): React.ReactElement {
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
 
-  const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 0 }, { text: t('Manual'), value: 1 }];
+  const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
 
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active.unwrap(), [stakingAccount]);
+  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
   const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const token = api?.registry?.chainTokens[0] ?? '...';
   const totalAfterStake = useMemo(() => staked && staked.add(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const isFirstTimeStaking = stakingAccount?.stakingLedger?.total?.isZero();
+
   const thresholds = useMemo(() => {
     if (!stakingConsts || !decimal || !balances || !stakingAccount) {
       return;
@@ -61,7 +63,7 @@ export default function Index(): React.ReactElement {
     let max = balances.availableBalance.sub(ED.muln(2));
     let min = stakingConsts?.minNominatorBond;
 
-    if (!stakingAccount.stakingLedger.active.unwrap().isZero()) {
+    if (!stakingAccount.stakingLedger.active.isZero()) {
       min = BN_ZERO;
     }
 
@@ -72,11 +74,9 @@ export default function Index(): React.ReactElement {
     return { max, min };
   }, [balances, decimal, stakingAccount, stakingConsts]);
 
-  console.log('stakingAccount:', stakingAccount);
-
   const bond = api && api.tx.staking.bond;// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
   const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
-  const tx = stakingAccount?.stakingLedger?.total?.unwrap()?.isZero() ? bond : bondExtra;
+  const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
   const payee = 'Staked';
   /** Staking is the default payee,can be changed in the advanced section **/
@@ -87,7 +87,7 @@ export default function Index(): React.ReactElement {
    * Controller - Pay into the controller account.
    */
 
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.unwrap()?.isZero() ? [formatted, amountAsBN, payee] : [amountAsBN], [amountAsBN, formatted, stakingAccount?.stakingLedger?.total]);
+  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [formatted, amountAsBN, payee] : [amountAsBN], [amountAsBN, formatted, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
     if (!tx || !api || !formatted) {
@@ -180,7 +180,7 @@ export default function Index(): React.ReactElement {
             onPrimary={() => onThresholdAmount('max')}
             onSecondary={() => onThresholdAmount('min')}
             primaryBtnText={t<string>('Max amount')}
-            secondaryBtnText={t<string>('Min amount')}
+            secondaryBtnText={isFirstTimeStaking ? t<string>('Min amount') : undefined}
             value={amount}
           />
           {alert &&
@@ -188,7 +188,7 @@ export default function Index(): React.ReactElement {
           }
         </div>
         <Grid item mt='20px' xs={12}>
-          {stakingAccount?.stakingLedger?.total?.unwrap()?.isZero() &&
+          {isFirstTimeStaking &&
             <Select
               label={'Validator selection method'}
               // onChange={_onChangeEndpoint}

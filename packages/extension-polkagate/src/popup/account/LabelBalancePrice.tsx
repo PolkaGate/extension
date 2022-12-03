@@ -16,12 +16,12 @@ import { Divider, Grid, Skeleton } from '@mui/material';
 import React from 'react';
 
 import { FormatBalance2, ShowBalance } from '../../components';
-import { BalancesAll, Price } from '../../util/types';
+import { BalancesInfo, Price } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   label: string;
-  balances: BalancesAll | null | undefined;
+  balances: BalancesInfo | null | undefined;
   price: Price | undefined;
   api: ApiPromise | undefined;
   showLabel?: boolean;

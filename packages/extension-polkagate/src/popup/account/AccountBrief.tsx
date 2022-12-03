@@ -48,7 +48,7 @@ export default function AccountBrief({ address }: Props): React.ReactElement<Pro
           </IconButton>
         </span>
       </Grid>
-      <ShortAddress address={formatted} style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '-0.015em' }} charsCount={0} showCopy />
+      <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300}} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '10px' }} />
     </>
   );

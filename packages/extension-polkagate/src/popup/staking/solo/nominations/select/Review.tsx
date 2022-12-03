@@ -191,7 +191,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
             chain={chain}
             formatted={formatted}
             height={window.innerHeight - 320}
-            staked={stakingAccount?.stakingLedger?.active?.unwrap() ?? BN_ZERO}
+            staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
             stakingConsts={stakingConsts}
             validatorsToList={newSelectedValidators}
           />

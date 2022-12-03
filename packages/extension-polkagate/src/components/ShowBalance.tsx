@@ -14,29 +14,41 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 
 import FormatBalance from './FormatBalance';
+import { FormatBalance2 } from '.';
 
 export interface Props {
   balance: Balance | string | BN | null | undefined;
-  api: ApiPromise | undefined;
+  api?: ApiPromise | undefined;
   title?: string;
   direction?: ResponsiveStyleValue<GridDirection> | undefined;
   decimalPoint?: number;
   height?: number;
   skeletonWidth?: number;
+  decimal?: number;
+  token?: string;
 }
 
-export default function ShowBalance({ api, balance, decimalPoint, height = 20, skeletonWidth = 90 }: Props): React.ReactElement<Props> {
+export default function ShowBalance({ api, balance, decimalPoint, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
   return (
     <>
-      {balance !== undefined && api
-        ? <FormatBalance
-          api={api}
-          decimalPoint={decimalPoint}
-          value={balance} />
-        : <Skeleton
+      {balance === undefined || !(api || (decimal && token))
+        ? <Skeleton
           height={height}
           sx={{ display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
         />
+        : api
+          ? <FormatBalance
+            api={api}
+            decimalPoint={decimalPoint}
+            value={balance}
+          />
+          : decimal && token &&
+          <FormatBalance2
+            decimalPoint={decimalPoint}
+            decimals={[decimal]}
+            tokens={[token]}
+            value={balance}
+          />
       }
     </>
   );

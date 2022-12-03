@@ -64,7 +64,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   const batchAll = api.tx.utility.batchAll;
   const redeem = api.tx.nominationPools.withdrawUnbonded;
 
-  const unlockingLen = pool?.ledger?.unlocking?.length ?? 0;
+  const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length ?? 0;
   const maxUnlockingChunks = api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
   const goToStakingHome = useCallback(() => {

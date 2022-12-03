@@ -159,7 +159,7 @@ export default function ShowRoles({ chain, label, mode, pool, style }: Props): R
                   lineHeight='59px'
                   pl='10px'
                 >
-                  {t<string>('Loading your pool information...')}
+                  {t<string>('Loading pool information...')}
                 </Typography>
               </Grid>
             )

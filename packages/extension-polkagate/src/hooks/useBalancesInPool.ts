@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { usePool } from '.';
+import { usePoolBalances } from '.';
 
 interface Output {
   balance: BN;
@@ -13,16 +13,16 @@ interface Output {
 }
 
 export default function useBalancesInPool(address: string): Output | null | undefined {
-  const [poolBalance, setBalance] = useState<Output | undefined | null>();
-  const pool = usePool(address);
+  const [pooledBalance, setBalance] = useState<Output | undefined | null>();
+  const pool = usePoolBalances(address);
 
   useEffect(() => {
     if (!pool) {
       return setBalance(pool);
     }
 
-    const active = (new BN(pool.member.points).mul(new BN(pool.ledger.active))).div(new BN(pool.bondedPool.points));
-    const rewards = new BN(pool.ledger.myClaimable);
+    const active = new BN(pool.member.points).isZero() ? BN_ZERO : (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
+    const rewards = new BN(pool.myClaimable);
     let unlockingValue = BN_ZERO;
 
     if (pool.member?.unbondingEras) {
@@ -31,8 +31,11 @@ export default function useBalancesInPool(address: string): Output | null | unde
       }
     }
 
-    setBalance({ balance: active.add(rewards).add(unlockingValue), token: pool.token });
+    setBalance({
+      balance: active.add(rewards).add(unlockingValue),
+      token: pool.token
+    });
   }, [pool]);
 
-  return poolBalance;
+  return pooledBalance;
 }

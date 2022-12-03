@@ -9,11 +9,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useContext } from 'react';
 import styled from 'styled-components';
 
+import { windowOpen } from '../../../extension-polkagate/src/messaging';
 import { AccountContext, Link, MediaContext, Menu, MenuDivider, MenuItem } from '../components';
 import useIsPopup from '../hooks/useIsPopup';
 import { useLedger } from '../hooks/useLedger';
 import useTranslation from '../hooks/useTranslation';
-import { windowOpen } from '../../../extension-polkagate/src/messaging';
 
 interface Props extends ThemeProps {
   className?: string;

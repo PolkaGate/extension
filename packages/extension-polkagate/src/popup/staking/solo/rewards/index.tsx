@@ -38,7 +38,7 @@ ChartJS.register(
 
 const MAX_REWARDS_INFO_TO_SHOW = 20;
 
-function sliceIntoChunks(arr: string[]) {
+function sliceIntoChunks (arr: string[]) {
   const res = [];
 
   for (let i = 0; i < arr.length; i += 7) {

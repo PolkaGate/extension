@@ -15,6 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -568,17 +569,28 @@ export interface SavedBalances {
   }
 }
 
-export interface BalancesAll extends DeriveBalancesAll {
+export interface BalancesInfo extends DeriveBalancesAll {
   chainName: string;
   decimal: number;
   token: string;
   date: number;
+  pooledBalance: BN;
 }
-
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;
+  decimal?: number;
+  token?: string;
+  date?: Date;
 }
 export interface MemberPoints {
   accountId: string;
   points: BN;
+}
+
+export type FetchContext = {
+  [formatted: string]: IsFetching;
+}
+
+export type IsFetching = {
+  [type: string]: boolean;
 }
