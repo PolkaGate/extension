@@ -36,9 +36,10 @@ interface Props {
   chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   available: BN;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsWithdrawReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function RewardsWithdrawReview({ address, setRefresh, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -122,6 +123,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
       };
 
       setTxInfo({ ...info, api, chain });
+      setRefresh(true);
       saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -129,7 +131,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, api, tx, params, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [api, formatted, selectedProxyAddress, password, setRefresh, tx, params, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

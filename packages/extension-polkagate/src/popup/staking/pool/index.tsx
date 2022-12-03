@@ -73,14 +73,15 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const api = useApi(address, state?.api);
-  const pool = usePool(address, undefined, state?.pool);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const pool = usePool(address, undefined, state?.pool, refresh);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
 
   const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const nominatedValidatorsId: AccountId[] | undefined | null = pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators;
+  // const nominatedValidatorsId: AccountId[] | undefined | null = pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators;
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -291,7 +292,7 @@ export default function Index(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
-        <SubTitle label={t<string>('Pool Staking')} mt='10px' lineHeight='35px' style={{ fontSize: '20px', fontWeight: 400 }} />
+        <SubTitle label={t<string>('Pool Staking')} lineHeight='35px' mt='10px' style={{ fontSize: '20px', fontWeight: 400 }} />
         <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
             label={t('Staked')}
@@ -359,6 +360,7 @@ export default function Index(): React.ReactElement {
           api={api}
           chain={chain}
           formatted={formatted}
+          setRefresh={setRefresh}
           setShow={setShowRewardStake}
           show={showRewardStake}
           staked={staked}
@@ -371,6 +373,7 @@ export default function Index(): React.ReactElement {
           available={getValue('available', balances)}
           chain={chain}
           formatted={formatted}
+          setRefresh={setRefresh}
           setShow={setShowRewardWithdraw}
           show={showRewardWithdraw}
         />}
@@ -382,6 +385,7 @@ export default function Index(): React.ReactElement {
           available={getValue('available', balances)}
           chain={chain}
           formatted={formatted}
+          setRefresh={setRefresh}
           setShow={setShowRedeemableWithdraw}
           show={showRedeemableWithdraw}
         />}

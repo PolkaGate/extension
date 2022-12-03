@@ -36,9 +36,10 @@ interface Props {
   chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   staked: BN;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsStakeReview({ address, amount, api, chain, formatted, setShow, show, staked }: Props): React.ReactElement {
+export default function RewardsStakeReview({ address, amount, setRefresh, api, chain, formatted, setShow, show, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -121,15 +122,15 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
       };
 
       setTxInfo({ ...info, api, chain });
+      setRefresh(true);
       saveHistory(chain, hierarchy, formatted, [info]);
-
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, tx, chain, amount, decimal, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, tx, chain, amount, decimal, setRefresh, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
