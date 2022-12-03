@@ -3,7 +3,7 @@
 
 import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useEffect, useMemo,useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -75,94 +75,50 @@ export default function ShowRoles({ chain, label, mode, pool, style }: Props): R
           }}
         >
           {accountsToShow?.length
-            ? (accountsToShow.map((acc, index) => (
-              <Grid
-                container
-                fontSize='14px'
-                fontWeight={400}
-                item
-                key={index}
-                lineHeight='37px'
-                textAlign='center'
-                sx={{
-                  borderBottom: '1px solid',
-                  borderBottomColor: 'secondary.light'
-                }}
-              >
-                <Grid
-                  alignItems='center'
-                  fontSize='12px'
-                  fontWeight={400}
-                  item
-                  justifyContent='center'
-                  pl='10px'
-                  sx={{
-                    borderRight: '1px solid',
-                    borderRightColor: 'secondary.main'
-                  }}
-                  textAlign='left'
-                  width='30%'
-                >
+            ? accountsToShow.map((acc, index) => (
+              <Grid container fontSize='14px' fontWeight={400} item key={index} lineHeight='37px' textAlign='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+                <Grid alignItems='center' fontSize='12px' fontWeight={400} item justifyContent='center' pl='10px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='left' width='30%'>
                   {acc.label}
                 </Grid>
-                <Grid
-                  alignItems='center'
-                  item
-                  justifyContent='center'
-                  sx={{
-                    borderRight: '1px solid',
-                    borderRightColor: 'secondary.main'
-                  }}
-                  width='50%'
-                >
+                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
                   {acc.address
                     ? <ShortAddress address={acc.address} charsCount={6} showCopy />
-                    : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>{t<string>('Null')}</Typography>
+                    : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
+                      {'—'}
+                    </Typography>
                   }
                 </Grid>
-                <Grid
-                  alignItems='center'
-                  item
-                  justifyContent='center'
-                  width='20%'
-                >
-                  <Link
-                    height='37px'
-                    href={`https://${chainName}.subscan.io/account/${acc.address}`}
-                    m='auto'
-                    rel='noreferrer'
-                    target='_blank'
-                    underline='none'
-                  >
-                    <Avatar
-                      alt={'subscan'}
-                      src={getLogo('subscan')}
-                      sx={{ height: 25, m: '6px auto', width: 25 }}
-                    />
-                  </Link>
+                <Grid alignItems='center' item justifyContent='center' width='20%'>
+                  {acc.address
+                    ? <Link
+                      height='37px'
+                      href={`https://${chainName}.subscan.io/account/${acc.address}`}
+                      m='auto'
+                      rel='noreferrer'
+                      target='_blank'
+                      underline='none'
+                    >
+                      <Avatar
+                        alt={'subscan'}
+                        src={getLogo('subscan')}
+                        sx={{ height: 25, m: '6px auto', width: 25 }}
+                      />
+                    </Link>
+                    : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
+                      {'—'}
+                    </Typography>
+                  }
                 </Grid>
               </Grid>
-            )))
-            : (
-              <Grid
-                alignItems='center'
-                container
-                justifyContent='center'
-              >
-                <Grid
-                  item
-                >
-                  <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
-                </Grid>
-                <Typography
-                  fontSize='13px'
-                  lineHeight='59px'
-                  pl='10px'
-                >
-                  {t<string>('Loading pool information...')}
-                </Typography>
+            ))
+            : <Grid alignItems='center' container justifyContent='center'>
+              <Grid item>
+                <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
               </Grid>
-            )
+              <Typography fontSize='13px' lineHeight='59px' pl='10px'>
+                {t<string>('Loading pool information...')}
+              </Typography>
+            </Grid>
           }
         </Grid>
       </Grid>

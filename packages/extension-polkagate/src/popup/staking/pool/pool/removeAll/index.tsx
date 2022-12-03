@@ -111,7 +111,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
     }
 
     const unlocking = pool.stashIdAccount.unlocking;
-    const remainingEras = unlocking.length ? unlocking[unlocking.length - 1].remainingEras : null;
+    const remainingEras = unlocking?.length ? unlocking[unlocking.length - 1].remainingEras : null;
 
     setRemainingEraToKick(remainingEras ? Number(remainingEras) : null);
   }, [api, members, formatted, pool]);
