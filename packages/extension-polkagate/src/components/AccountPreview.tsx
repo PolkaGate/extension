@@ -16,15 +16,11 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { BN } from '@polkadot/util';
-
 import { useApi, useChain, useProxies, useTranslation } from '../hooks';
-import usePrice from '../hooks/usePrice';
-import { showAccount, updateMeta } from '../messaging';
+import { showAccount } from '../messaging';
 import { AccMenu } from '../partials';
 import AccountDetail from '../partials/AccountDetail';
-import { AddressPriceAll, LastBalances, SavedMetaData } from '../util/types';
-import { getFormattedAddress, prepareMetaData } from '../util/utils';
+import { getFormattedAddress } from '../util/utils';
 import AccountFeatures from './AccountFeatures';
 import AccountIcons from './AccountIcons';
 import { SettingsContext } from '.';
