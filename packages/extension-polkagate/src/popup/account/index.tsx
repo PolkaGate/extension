@@ -107,14 +107,12 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const api = useApi(address, state?.api);
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
-  const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
+  // const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');;
   const decimal = api && api.registry.chainDecimals[0];
   const token = api && api.registry.chainTokens[0];
-
-  console.log('balances:', balances);
 
   const resetToDefaults = useCallback(() => {
     setNewEndpoint(undefined);
