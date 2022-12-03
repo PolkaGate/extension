@@ -14,7 +14,7 @@ export async function getPrice(chain: Chain, currency = 'usd'): Promise<number> 
 
   const price = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${chainName}&vs_currencies=${currency}`, {});
 
-  return price[chainName.toLocaleLowerCase()]?.usd ?? 0;
+  return price[chainName]?.usd ?? 0;
 }
 
 function getReq(api: string, data: Record<string, any> = {}, option?: Record<string, any>): Promise<Record<string, any>> {

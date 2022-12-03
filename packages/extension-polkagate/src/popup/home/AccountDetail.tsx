@@ -6,18 +6,19 @@
 import '@vaadin/icons';
 
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import CopyAddressButton from '../components/CopyAddressButton';
-import FormatBalance2 from '../components/FormatBalance2';
-import FormatPrice from '../components/FormatPrice';
-import { useTranslation } from '../hooks';
-import useBalances from '../hooks/useBalances';
-import usePrice from '../hooks/usePrice';
-import { BALANCES_VALIDITY_PERIOD } from '../util/constants';
-import { getValue } from '../popup/account/util';
+import CopyAddressButton from '../../components/CopyAddressButton';
+import FormatBalance2 from '../../components/FormatBalance2';
+import FormatPrice from '../../components/FormatPrice';
+import { useTranslation } from '../../hooks';
+import useBalances from '../../hooks/useBalances';
+import usePrice from '../../hooks/usePrice';
+import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
+import { BalancesInfo } from '../../util/types';
+import { getValue } from '../account/util';
 
 interface Props {
   address: string;
@@ -34,6 +35,16 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   const balances = useBalances(address);
   const price = usePrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
+  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
+  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+
+  useEffect(() => {
+    if (balances?.chainName === chainName?.toLowerCase()) {
+      return setBalanceToShow(balances);
+    }
+
+    setBalanceToShow(undefined);
+  }, [balances, chainName]);
 
   const NoChainAlert = () => (
     <Grid color='text.primary' fontSize='14px' fontWeight={500}>
@@ -43,13 +54,13 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
 
   const Balance = () => (
     <>
-      {balances?.decimal
+      {balanceToShow?.decimal
         ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary' }}>
           <FormatBalance2
             decimalPoint={2}
-            decimals={[balances.decimal]}
-            tokens={[balances.token]}
-            value={getValue('total', balances)}
+            decimals={[balanceToShow.decimal]}
+            tokens={[balanceToShow.token]}
+            value={getValue('total', balanceToShow)}
           />
         </Grid>
         : <Skeleton
@@ -64,7 +75,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
 
   const Price = () => (
     <>
-      {price === undefined || !balances || balances?.token !== price?.token
+      {price === undefined || !balanceToShow //|| balances?.token !== price?.token
         ? <Skeleton
           height={22}
           sx={{ transform: 'none', my: '2.5px' }}
@@ -72,8 +83,8 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
           width={90}
         />
         : <FormatPrice
-          amount={getValue('total', balances)}
-          decimals={balances.decimal}
+          amount={getValue('total', balanceToShow)}
+          decimals={balanceToShow.decimal}
           price={price.amount}
         />
       }

@@ -22,6 +22,7 @@ export { default as useMetadata } from './useMetadata';
 export { default as useNominator } from './useNominator';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePrice } from './usePrice';
+export { default as usePrices } from './usePrices';
 export { default as useProxies } from './useProxies';
 export { default as usePool } from './usePool';
 export { default as usePools } from './usePools';

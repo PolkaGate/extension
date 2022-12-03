@@ -16,18 +16,14 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { BN } from '@polkadot/util';
-
-import { useApi, useChain, useProxies, useTranslation } from '../hooks';
-import usePrice from '../hooks/usePrice';
-import { showAccount, updateMeta } from '../messaging';
-import { AccMenu } from '../partials';
-import AccountDetail from '../partials/AccountDetail';
-import { AddressPriceAll, LastBalances, SavedMetaData } from '../util/types';
-import { getFormattedAddress, prepareMetaData } from '../util/utils';
-import AccountFeatures from './AccountFeatures';
-import AccountIcons from './AccountIcons';
-import { SettingsContext } from '.';
+import { SettingsContext } from '../../components';
+import AccountFeatures from '../../components/AccountFeatures';
+import AccountIcons from '../../components/AccountIcons';
+import { useApi, useChain, useProxies, useTranslation } from '../../hooks';
+import { showAccount } from '../../messaging';
+import { AccMenu } from '../../partials';
+import AccountDetail from './AccountDetail';
+import { getFormattedAddress } from '../../util/utils';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -58,7 +54,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
+  // const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -71,11 +67,11 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
     }
   }, [address, chain, settings]);
 
-  useEffect(() => {
-    setBalances(undefined);
-    // eslint-disable-next-line no-void
-    isChainApi(chain, api) && formatted && void api.derive.balances?.all(formatted).then(setBalances).catch(console.error);
-  }, [api, chain, formatted]);
+  // useEffect(() => {
+  //   setBalances(undefined);
+  //   // eslint-disable-next-line no-void
+  //   isChainApi(chain, api) && formatted && void api.derive.balances?.all(formatted).then(setBalances).catch(console.error);
+  // }, [api, chain, formatted]);
 
   useEffect((): void => {
     setShowActionsMenu(false);
@@ -142,9 +138,9 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
   const goToAccount = useCallback(() => {
     genesisHash && address && formatted && history.push({
       pathname: `/account/${genesisHash}/${address}/`,
-      state: { api, balances, identity }
+      state: { api, identity }
     });
-  }, [balances, history, genesisHash, address, formatted, api, identity]);
+  }, [history, genesisHash, address, formatted, api, identity]);
 
   return (
     <Grid alignItems='center' container py='15px'>
@@ -163,7 +159,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
         name={name}
         toggleVisibility={_toggleVisibility}
       />
-      <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} chain={chain}/>
+      <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} chain={chain} />
       {
         showActionsMenu &&
         <AccMenu

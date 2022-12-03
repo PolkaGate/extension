@@ -8,9 +8,9 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { Container, Grid } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import AccountPreview from '../../components/AccountPreview';
 import { useTranslation } from '../../hooks';
 import getParentNameSuri from '../../util/getParentNameSuri';
+import AccountPreview from './AccountPreview';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
