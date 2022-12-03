@@ -36,15 +36,15 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
     }, [onAction]
   );
 
-  const _goToAddProxied = useCallback(
+  const _goToAddAddressOnly = useCallback(
     () => {
-      onAction('/account/proxy');
+      onAction('/import/add');
     }, [onAction]
   );
 
   const _goToAttachQR = useCallback(
     () => {
-      onAction('/account/attach-qr');
+      onAction('/import/attach-qr');
     }, [onAction]
   );
 
@@ -76,7 +76,7 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
         />
         <MenuItem
           icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
-          onClick={_goToAddProxied}
+          onClick={_goToAddAddressOnly}
           py='4px'
           text='Add address only'
         />
