@@ -56,10 +56,10 @@ export default function CreatePool(): React.ReactElement {
 
   const backToStake = useCallback(() => {
     history.push({
-      pathname: `/pool/stake/${address}`, // TODO: Need more check
-      state: { ...state }
+      pathname: `/pool/stake/${address}`,
+      state: { api, consts: poolStakingConsts, pool: null }
     });
-  }, [address, history, state]);
+  }, [address, api, history, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (value.length > decimals - 1) {
@@ -118,7 +118,7 @@ export default function CreatePool(): React.ReactElement {
   useEffect(() => {
     !nominatorId && formatted && setNominatorId(formatted);
     !stateTogglerId && formatted && setStateTogglerId(formatted);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted]);
 
   useEffect(() => {
@@ -163,7 +163,7 @@ export default function CreatePool(): React.ReactElement {
       <Grid container m='20px auto 10px' width='92%'>
         <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} placeholder={DEFAULT_POOLNAME} value={poolName} />
       </Grid>
-      <AmountWithOptions label={t<string>(`Amount(${ token ?? '...'})`)} onChangeAmount={stakeAmountChange} onPrimary={onMinAmount} onSecondary={onMaxAmount} primaryBtnText={t<string>('Min amount')} secondaryBtnText={t<string>('Max amount')} style={{ m: '10px auto', width: '92%' }} value={createAmount} />
+      <AmountWithOptions label={t<string>(`Amount(${token ?? '...'})`)} onChangeAmount={stakeAmountChange} onPrimary={onMinAmount} onSecondary={onMaxAmount} primaryBtnText={t<string>('Min amount')} secondaryBtnText={t<string>('Max amount')} style={{ m: '10px auto', width: '92%' }} value={createAmount} />
       <Grid alignItems='end' container sx={{ m: '0 auto 10px', width: '92%' }}>
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
