@@ -35,13 +35,18 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
     [onAction]
   );
 
+  const _goToAddAddressOnly = useCallback(
+    () => onAction('/import/add-address-only'),
+    [onAction]
+  );
+
   const _goToImport = useCallback(
     () => onAction('/account/import-seed'),
     [onAction]
   );
 
   const _goToAttachQR = useCallback(
-    () => onAction('/account/attach-qr'),
+    () => onAction('/import/attach-qr'),
     [onAction]
   );
 
@@ -53,35 +58,22 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
         text={t<string>('Polkagate')}
       />
       <div>
-        <Typography
-          component='p'
-          sx={{
-            fontSize: '36px',
-            fontWeight: theme.palette.mode === 'dark' ? 300 : 400,
-            pb: '20px',
-            pt: '25px',
-            textAlign: 'center'
-          }}
-        >
-          Welcome
+        <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}        >
+          {t('Welcome')}
         </Typography>
-        <Typography
-          component={'p'}
-          sx={{ fontSize: '14px', fontWeight: 300, px: '24px' }}
-        >
+        <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, px: '24px' }}        >
           {t<string>('You currently don’t have any account. Create your first account or import an existing one to get started.')}
         </Typography>
       </div>
       <PButton
-        _mt='38px'
+        _mt='30px'
         _onClick={_goToCreate}
         _variant={'contained'}
         text={t<string>('Create a new account')}
       />
-      <Typography
-        component={'p'}
-        sx={{ fontSize: '18px', fontWeight: 300, py: '25px', textAlign: 'center' }}
-      >{t<string>('Or')}</Typography>
+      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '20px', textAlign: 'center' }}      >
+        {t<string>('Or')}
+      </Typography>
       <PButton
         _mt='0'
         _onClick={_goToRestoreFromJson}
@@ -93,6 +85,12 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
         _onClick={_goToImport}
         _variant={'outlined'}
         text={t<string>('Import from mnemonic')}
+      />
+      <PButton
+        _mt='10px'
+        _onClick={_goToAddAddressOnly}
+        _variant={'outlined'}
+        text={t<string>('Add address only')}
       />
       <PButton
         _mt='10px'
