@@ -15,7 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordUseProxyConfirm, PButton, Popup, Warning } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
@@ -57,7 +57,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const totalStaked = (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
+  const totalStaked = new BN(pool.member.points).isZero() ? BN_ZERO : (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
   const bondExtra = api.tx.nominationPools.bondExtra;
 
   const _onBackClick = useCallback(() => {
