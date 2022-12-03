@@ -21,7 +21,7 @@ export default function useBalancesInPool(address: string): Output | null | unde
       return setBalance(pool);
     }
 
-    const active = (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
+    const active = new BN(pool.member.points).isZero() ? BN_ZERO : (new BN(pool.member.points).mul(new BN(pool.stashIdAccount.stakingLedger.active))).div(new BN(pool.bondedPool.points));
     const rewards = new BN(pool.myClaimable);
     let unlockingValue = BN_ZERO;
 
