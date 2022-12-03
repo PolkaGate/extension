@@ -54,7 +54,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
               <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
                 <Grid justifyContent='center' fontSize='16px' fontWeight={400} item overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>
                   {pool?.stashIdAccount?.accountId
-                    ? <Identity formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
+                    ? <Identity chain={chain} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
                     : <>
                       {pool?.metadata ?? t('Unknown')}
                     </>
