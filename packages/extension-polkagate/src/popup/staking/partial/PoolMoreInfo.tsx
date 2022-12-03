@@ -181,7 +181,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
       </Grid>
       {poolToShow
         ? (<>
-          <ShowPool api={api} mode='Default' pool={poolToShow} style={{ m: '20px auto', width: '92%' }} />
+          <ShowPool api={api} chain={chain} mode='Default' pool={poolToShow} style={{ m: '20px auto', width: '92%' }} />
           <CollapseData mode='Roles' open={openRoles} pool={poolToShow} show={showRoles} title={t<string>('Roles')} />
           <CollapseData mode='Ids' open={openIds} pool={poolToShow} show={showIds} title={t<string>('Ids')} />
           <CollapseData mode='Members' open={openMembers} pool={poolToShow} show={showMembers} title={t<string>('Members')} />
