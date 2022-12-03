@@ -3,7 +3,7 @@
 
 import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -36,12 +36,12 @@ export default function ShowRoles({ chain, label, mode, pool, style }: Props): R
         { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
         { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
       ]);
-    } else {
-      return ([
-        { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
-        { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
-      ]);
     }
+
+    return ([
+      { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
+      { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
+    ]);
   }, [mode, pool, t]);
 
   return (
