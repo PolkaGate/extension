@@ -553,6 +553,10 @@ export interface Step {
 export interface TokenPrice {
   [chainName: string]: Price;
 }
+export interface Prices {
+  prices: Record<string, Record<string, number>>;
+  date: number;
+}
 export interface Price {
   amount: number;
   chainName: string;

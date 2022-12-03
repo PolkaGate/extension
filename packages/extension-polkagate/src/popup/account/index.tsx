@@ -33,7 +33,7 @@ import { HeaderBrand } from '../../partials';
 import { STAKING_CHAINS } from '../../util/constants';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
-import { FormattedAddressState } from '../../util/types';
+import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
@@ -101,6 +101,8 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const chain = useChain(address);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
+  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
+
   const [newChain, setNewChain] = useState<Chain | null>(chain);
   const genesis = newChain?.genesisHash ?? chain?.genesisHash;
   const endpointOptions = useEndpoints(genesis);
@@ -110,7 +112,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   // const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
-  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');;
+  const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');
   const decimal = api && api.registry.chainDecimals[0];
   const token = api && api.registry.chainTokens[0];
 
@@ -149,6 +151,14 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const goToAccount = useCallback(() => {
     newGenesisHash && onAction(`/account/${newGenesisHash}/${address}/`);
   }, [address, newGenesisHash, onAction]);
+
+  useEffect(() => {
+    if (balances?.chainName === chainName?.toLowerCase()) {
+      return setBalanceToShow(balances);
+    }
+
+    setBalanceToShow(undefined);
+  }, [balances, chainName]);
 
   useEffect(() => {
     newChain && newGenesisHash && newFormattedAddress && goToAccount();
@@ -277,9 +287,9 @@ export default function AccountDetails({ className }: Props): React.ReactElement
               }
             </Grid>
             <Grid item pt='50px' xs>
-              <LabelBalancePrice api={api} balances={balances} label={'Total'} price={price} />
-              <LabelBalancePrice api={api} balances={balances} label={'Available'} price={price} />
-              <LabelBalancePrice api={api} balances={balances} label={'Reserved'} price={price} />
+              <LabelBalancePrice api={api} balances={balanceToShow} label={'Total'} price={price} />
+              <LabelBalancePrice api={api} balances={balanceToShow} label={'Available'} price={price} />
+              <LabelBalancePrice api={api} balances={balanceToShow} label={'Reserved'} price={price} />
               {OthersRow}
             </Grid>
           </>
@@ -309,7 +319,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             divider
             icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${stakingIconColor}` }} />}
             onClick={goToStaking}
-            textDisabled={ !STAKING_CHAINS.includes(genesisHash)}
+            textDisabled={!STAKING_CHAINS.includes(genesisHash)}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem

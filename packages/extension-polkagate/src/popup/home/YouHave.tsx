@@ -9,8 +9,7 @@ import { BN } from '@polkadot/util';
 import { AccountContext } from '../../components';
 import FormatPrice from '../../components/FormatPrice';
 import useTranslation from '../../hooks/useTranslation';
-import { Price, SavedBalances } from '../../util/types';
-import { getValue } from '../account/util';
+import { Prices, SavedBalances } from '../../util/types';
 
 export default function YouHave(): React.ReactElement {
   const { t } = useTranslation();
@@ -31,16 +30,18 @@ export default function YouHave(): React.ReactElement {
       const balances = JSON.parse(acc.balances) as SavedBalances;
 
       Object.keys(balances).forEach((chainName) => {
-        const localSavedPrice = window.localStorage.getItem(`${chainName}_price`);
-        const prices = JSON.parse(localSavedPrice) as Price;
+        const localSavedPrices = window.localStorage.getItem('prices');
+        const parsedPrices = localSavedPrices && JSON.parse(localSavedPrices) as Prices;
+        const price = parsedPrices?.prices[chainName]?.usd;
+
         const bal = balances[chainName];
 
-        if (bal && prices && bal.token === prices.token) {
+        if (bal && price) {//} && bal.token === prices.token) {
           const total = new BN(balances[chainName].balances.freeBalance)
             .add(new BN(balances[chainName].balances.reservedBalance))
             .add(new BN(balances[chainName].balances.pooledBalance));
 
-          value += prices.amount * (Number(total) * 10 ** -bal.decimal);
+          value += price * (Number(total) * 10 ** -bal.decimal);
         }
       });
     });

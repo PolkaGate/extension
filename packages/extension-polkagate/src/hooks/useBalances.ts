@@ -18,8 +18,8 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
-  
-  const chainName = chain && chain.name.replace(' Relay Chain', '');
+
+  const chainName = chain && chain.name.replace(' Relay Chain', '')?.replace(' Network', '').toLocaleLowerCase();
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
 
