@@ -11,6 +11,7 @@ import React, { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { riot } from '../assets/icons';
 import { useAccountInfo, useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
@@ -19,9 +20,9 @@ import { ChainLogo, Identicon, ShortAddress } from '.';
 
 interface Props {
   accountInfo?: DeriveAccountInfo;
-  address?: string;
+  address?: string | AccountId;
   api?: ApiPromise;
-  formatted?: string;
+  formatted?: string | AccountId;
   name?: string;
   style?: SxProps<Theme>;
   showChainLogo?: boolean;
