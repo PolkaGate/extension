@@ -219,13 +219,11 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       <div style={{ fontSize: '16px', fontWeight: 300 }}>
         {t('From')}
       </div>
-      <Grid alignItems='center' container justifyContent='felx-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px', mt: '2px' }}>
+      <Grid alignItems='center' container justifyContent='felx-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
         <Grid item mx='5px'>
           {identicon}
         </Grid>
-        <Grid
-          item
-          sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px', maxWidth: '50%', mr: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px', maxWidth: '50%', mr: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {accountName}
         </Grid>
         <Grid item>

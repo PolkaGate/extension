@@ -46,7 +46,7 @@ export default function To({ address, chain, senderAddress, setAddress, style }:
           <Identity
             chain={chain}
             formatted={address}
-            identiconSize={35}
+            identiconSize={31}
             name={selectedAddrName}
           />
         </Grid>
