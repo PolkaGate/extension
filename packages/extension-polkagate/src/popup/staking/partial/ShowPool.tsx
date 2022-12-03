@@ -1,15 +1,17 @@
 // Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useMemo,useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { ShowBalance } from '../../../components';
+import { Identity, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { MyPoolInfo, PoolInfo } from '../../../util/types';
 import PoolMoreInfo from './PoolMoreInfo';
@@ -50,7 +52,13 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
           {pool
             ? <>
               <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-                <Grid fontSize='16px' fontWeight={400} item overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>                  {pool.metadata}
+                <Grid justifyContent='center' fontSize='16px' fontWeight={400} item overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>
+                  {pool?.stashIdAccount?.accountId
+                    ? <Identity formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
+                    : <>
+                      {pool?.metadata ?? t('Unknown')}
+                    </>
+                  }
                 </Grid>
                 {showInfo &&
                   <Grid alignItems='center' container item justifyContent='center' onClick={openPoolInfo} sx={{ cursor: 'pointer' }} width='8%'>
@@ -58,17 +66,17 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   </Grid>
                 }
               </Grid>
-              <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-                <Typography fontSize='12px' fontWeight={400} lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='20%'>
+              <Grid container item sx={{ fontWeight: 400, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='20%'>
                   {t<string>('Index')}
                 </Typography>
-                <Typography fontSize='12px' fontWeight={400} lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='34%'>
+                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='34%'>
                   {t<string>('Staked')}
                 </Typography>
-                <Typography fontSize='12px' fontWeight={400} lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='23%'>
+                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='23%'>
                   {t<string>('Members')}
                 </Typography>
-                <Typography fontSize='12px' fontWeight={400} lineHeight='30px' textAlign='center' width='22%'>
+                <Typography fontSize='12px' lineHeight='30px' textAlign='center' width='22%'>
                   {t<string>('Status')}
                 </Typography>
               </Grid>
