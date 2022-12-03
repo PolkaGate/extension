@@ -44,7 +44,7 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
   }, []);
 
   useEffect(() => {
-    if (statePool) {
+    if (statePool !== undefined) {
       return setMyPool(statePool);
     }
 

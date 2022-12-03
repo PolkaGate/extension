@@ -54,9 +54,9 @@ export default function JoinPool(): React.ReactElement {
   const backToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,
-      state: { ...state }
+      state: { api, consts: poolStakingConsts, pool: null }
     });
-  }, [address, history, state]);
+  }, [address, api, history, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (value.length > decimals - 1) {
