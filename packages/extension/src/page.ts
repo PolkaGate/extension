@@ -12,7 +12,7 @@ import { packageInfo } from './packageInfo';
 
 function inject () {
   injectExtension(enable, {
-    name: 'polkadot-js',
+    name: 'polkagate', // added by polkagate
     version: packageInfo.version
   });
 }
