@@ -13,7 +13,7 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Skeleton } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { FormatBalance2, ShowBalance } from '../../components';
 import { BalancesInfo, Price } from '../../util/types';
@@ -29,20 +29,27 @@ interface Props {
 
 export default function LabelBalancePrice({ api, balances, label, price, showLabel = true }: Props): React.ReactElement<Props> {
   const value = getValue(label, balances);
-  const decimal = (balances?.chainName === price?.chainName && balances?.decimal) || (api && api.registry.chainDecimals[0]);
-  const balanceInUSD = price && value && decimal && Number(value) / (10 ** decimal) * price.amount;
+  const decimal = useMemo(() => (balances?.chainName === price?.chainName && balances?.decimal) || (api && api.registry.chainDecimals[0]), [api, balances?.chainName, balances?.decimal, price?.chainName]);
+
+  const [balanceInUSD, setBalanceInUSD] = useState<number>();
+
+  useEffect(() => {
+    if (price && value && decimal) {
+      setBalanceInUSD(Number(value) / (10 ** decimal) * price.amount);
+    }
+  }, [decimal, price, value]);
 
   return (
     <>
       <Grid item py='5px'>
         <Grid alignItems='center' container justifyContent='space-between'>
           {showLabel &&
-            <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={3}>
               {label}
             </Grid>
           }
-          <Grid container direction='column' item justifyContent='flex-end' xs>
-            <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} textAlign='right'>
+          <Grid alignItems='flex-end' container direction='column' item xs>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               {balances?.decimal && balances?.token
                 ? <FormatBalance2 decimals={[Number(balances?.decimal)]} tokens={[balances?.token]} value={value} />
                 : <ShowBalance api={api} balance={value} decimalPoint={2} />
@@ -63,4 +70,3 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
     </>
   );
 }
-

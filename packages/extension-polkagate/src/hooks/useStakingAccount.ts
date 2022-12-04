@@ -19,6 +19,15 @@ BN.prototype.toJSON = function () {
   return this.toString();
 };
 
+/**
+ * @description get all staking info for an account in solo staking
+ * 
+ * @param stashId 
+ * @param stateInfo 
+ * @param refresh 
+ * @param setRefresh 
+ * @returns account staking Info
+ */
 export default function useStakingAccount(stashId: AccountId | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean | undefined, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>): AccountStakingInfo | null | undefined {
   const account = useAccount(stashId);
   const chain = useChain(stashId);
@@ -122,7 +131,6 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
 
     if (savedStakingAccount[chainName]) {
       const sa = savedStakingAccount[chainName] as AccountStakingInfo;
-      console.log('sa:', sa);
 
       sa.redeemable = new BN(sa.redeemable);
       sa.stakingLedger.active = new BN(sa.stakingLedger.active);

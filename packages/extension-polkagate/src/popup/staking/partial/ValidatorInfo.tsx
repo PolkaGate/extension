@@ -107,22 +107,21 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
           </Grid>
         </Grid>
         <Grid container direction='column' justifyContent='center' item width='50%'>
-          <Grid display='inline-flex' item justifyContent='end'>
+          <Grid display='inline-flex' item justifyContent='flex-end'>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Total')}:
             </Typography>
             {total.isZero()
-              ? (
-                <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
-                  {t<string>('N/A')}
-                </Typography>)
-              : (
-                <ShowBalance
-                  api={api}
-                  balance={total}
-                  decimalPoint={4}
-                  height={22}
-                />)}
+              ? <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
+                {t<string>('N/A')}
+              </Typography>
+              : <ShowBalance
+                api={api}
+                balance={total}
+                decimalPoint={4}
+                height={22}
+              />
+            }
           </Grid>
           {!staked?.isZero() &&
             <Grid display='inline-flex' item justifyContent='end'>

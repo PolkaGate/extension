@@ -10,21 +10,20 @@
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
-import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
-import { Checkbox, FormControlLabel, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { Checkbox2, Motion, PButton, Popup } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
-import { AccountStakingInfo, AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
+import { AccountStakingInfo, AllValidators, StakingConsts, ValidatorInfo } from '../../../../../util/types';
 import ValidatorsTable from '../partials/ValidatorsTable';
 import Review from './Review';
 

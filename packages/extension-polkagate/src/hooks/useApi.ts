@@ -8,7 +8,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useEndpoint2 } from '.';
 
-export default function useApi(address: AccountId | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
+export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
   const endpoint = useEndpoint2(address);
 
   const [api, setApi] = useState<ApiPromise | undefined>();

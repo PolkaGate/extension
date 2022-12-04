@@ -42,9 +42,8 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
         console.log(`setting new identities #old was: ${validatorsIdentities?.length ?? ''} `);
 
         setNewValidatorsIdentities(fetchedIdentities);
-        const keyItem = `${chainName}_validatorsIdentities`;
 
-        chrome.storage.local.set({ keyItem: fetchedIdentities });
+        window.localStorage.setItem(`${chainName}_validatorsIdentities`, JSON.stringify(fetchedIdentities));
       }
 
       getValidatorsIdWorker.terminate();
@@ -61,32 +60,13 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       return;
     }
 
-    // const localSavedValidatorsIdentities = chrome.storage.local.get(`${chainName}_validatorsIdentities`);
+    const localSavedValidatorsIdentities = window.localStorage.getItem(`${chainName}_validatorsIdentities`);
 
-    // if (localSavedValidatorsIdentities) {
-    //   const parsedLocalSavedValidatorsIdentities = JSON.parse(localSavedValidatorsIdentities) as DeriveAccountInfo[];
+    if (localSavedValidatorsIdentities) {
+      const parsedLocalSavedValidatorsIdentities = JSON.parse(localSavedValidatorsIdentities) as DeriveAccountInfo[];
 
-    //   setValidatorsIdentities(parsedLocalSavedValidatorsIdentities);
-    // }
-
-    chrome.storage.local.get(`${chainName}_validatorsIdentities`, (localSavedValidatorsIdentities) => {
-      if (localSavedValidatorsIdentities) {
-        console.log('localSavedValidatorsIdentities:', localSavedValidatorsIdentities);
-        // const parsedLocalSavedValidatorsIdentities = JSON.parse(localSavedValidatorsIdentities) as DeriveAccountInfo[];
-
-        // setValidatorsIdentities(parsedLocalSavedValidatorsIdentities);
-      }
-    });
-
-    // chrome.storage.local.set({ key: value }).then(() => {
-    //   console.log("Value is set to " + value);
-    // });
-    
-    // chrome.storage.local.get(["key"]).then((result) => {
-    //   console.log("Value currently is " + result.key);
-    // });
-
-
+      setValidatorsIdentities(parsedLocalSavedValidatorsIdentities);
+    }
   }, [chainName]);
 
   return newValidatorsIdentities ?? validatorsIdentities;

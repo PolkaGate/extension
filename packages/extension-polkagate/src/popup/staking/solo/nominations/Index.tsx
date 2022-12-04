@@ -67,7 +67,7 @@ export default function Index(): React.ReactElement {
       pathname: `/solo/${address}`,
       state: { ...state }
     });
-  }, [history, state]);
+  }, [address, history, state]);
 
   const goToSelectValidator = useCallback(() => {
     setShowSelectValidator(true);

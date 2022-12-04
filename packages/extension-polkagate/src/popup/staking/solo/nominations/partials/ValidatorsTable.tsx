@@ -46,7 +46,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
   const [validatorToShowInfo, setValidatorToShowInfo] = useState<ValidatorInfo>();
 
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
-  const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won’t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
+  const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won\'t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
   const openValidatorInfo = useCallback((v: ValidatorInfo) => {
     setValidatorToShowInfo(v);
@@ -137,13 +137,13 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                     <Grid alignItems='center' container item>
                       <Grid alignItems='center' container item maxWidth='50%' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
                         {t<string>('Staked:')}
-                        <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='3px'>
+                        <Grid fontSize='12px' fontWeight={400} item pl='3px'>
                           {v.exposure.total
                             ? <ShowBalance
                               api={api}
                               balance={v.exposure.total}
                               decimalPoint={1}
-                              height={22}
+                              height={15}
                               skeletonWidth={50}
                             />
                             : t('waiting')
@@ -187,7 +187,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           </List>
         }
       </Grid>
-      {showValidatorInfo && validatorToShowInfo &&
+      {showValidatorInfo && validatorToShowInfo && api && chain &&
         <Grid ml='-15px'>
           <ValidatorInfoPage
             api={api}

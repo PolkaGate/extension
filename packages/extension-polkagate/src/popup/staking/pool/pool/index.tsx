@@ -17,8 +17,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN_ONE } from '@polkadot/util';
-
 import { PButton, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';

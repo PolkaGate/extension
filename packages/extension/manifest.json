@@ -6,20 +6,33 @@
   "short_name": "PG",
   "manifest_version": 2,
   "version": "0.44.1.1",
-  "permissions": [ "unlimitedStorage","storage", "tabs"],
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "tabs"
+  ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": true
   },
   "browser_action": {
     "default_title": "Polkagate",
     "default_popup": "index.html"
   },
-  "content_scripts": [{
-    "js": ["content.js"],
-    "matches": ["http://*/*", "https://*/*"],
-    "run_at": "document_start"
-  }],
+  "content_scripts": [
+    {
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    }
+  ],
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -27,6 +40,8 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "web_accessible_resources": ["page.js"],
+  "web_accessible_resources": [
+    "page.js"
+  ],
   "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
 }
