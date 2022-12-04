@@ -97,6 +97,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
           position: 'absolute',
           right: '0'
         }}
+        tabIndex={-1}
       >
         <Avatar
           alt={'logo'}
