@@ -40,6 +40,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
   console.log(`getPool is called for ${stakerAddress} id:${id}`);
   const api = await getApi(endpoint);
   const token = api.registry.chainTokens[0];
+  const decimal = api.registry.chainDecimals[0];
   const members = !id && await api.query.nominationPools.poolMembers(stakerAddress);
   const member = members?.isSome ? members.unwrap() : undefined;
 
@@ -81,6 +82,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
   const poolInfo = {
     accounts,
     bondedPool: unwrappedBondedPool,
+    decimal,
     member,
     metadata: metadata.length
       ? metadata.isUtf8
@@ -88,13 +90,12 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
         : metadata.toString()
       : null,
     myClaimable: Number(myClaimable ?? '0'),
-    // nominators: nominators.unwrapOr({ targets: [] }).targets.map((n) => n.toString()),
     poolId,
     rewardClaimable: Number(poolRewardClaimable),
     rewardIdBalance: rewardIdBalance.data,
     rewardPool: unwrappedRewardPools,
     stashIdAccount,
-    token
+    token,
   };
 
   return JSON.stringify(poolInfo);

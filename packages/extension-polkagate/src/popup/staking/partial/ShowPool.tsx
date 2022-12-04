@@ -84,7 +84,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='20%'>
                   {pool.poolId.toString()}
                 </Grid>
-                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='34%'>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='34%'>
                   <ShowBalance
                     api={api}
                     balance={poolStaked}

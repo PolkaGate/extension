@@ -225,9 +225,9 @@ export default function AccountDetails({ className }: Props): React.ReactElement
     !STAKING_CHAINS.includes(genesisHash)
       ? theme.palette.action.disabledBackground
       : showStakingOptions
-        ? theme.palette.primary.light
+        ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.primary.light, theme.palette.text.primary]);
+  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -319,7 +319,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
             divider
             icon={<vaadin-icon icon='vaadin:coin-piles' style={{ height: '28px', color: `${stakingIconColor}` }} />}
             onClick={goToStaking}
-            textDisabled={!STAKING_CHAINS.includes(genesisHash)}
+            // textDisabled={!STAKING_CHAINS.includes(genesisHash)}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem

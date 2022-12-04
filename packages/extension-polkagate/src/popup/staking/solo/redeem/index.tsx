@@ -37,9 +37,10 @@ interface Props {
   chain: Chain;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   available: BN;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -129,7 +130,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
       history.push(info);
       setTxInfo({ ...info, api, chain });
-
+      setRefresh(true);
       saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
@@ -138,7 +139,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, setRefresh, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -155,13 +156,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           text={t<string>('Withdraw Redeemable')}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -212,6 +207,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer']}
@@ -224,7 +220,6 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={submit}
         />
         <WaitScreen
           show={showWaitScreen}

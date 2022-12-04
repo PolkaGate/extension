@@ -19,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
+import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { DATE_OPTIONS } from '../../../util/constants';
@@ -78,6 +78,9 @@ export default function Index(): React.ReactElement {
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
+
+  const token = (api && api.registry.chainTokens[0]) || pool?.token;
+  const decimal = (api && api.registry.chainDecimals[0]) || pool?.decimal;
 
   const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
@@ -205,7 +208,7 @@ export default function Index(): React.ReactElement {
             {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
           </Grid>
           <Grid fontWeight={400} item>
-            <FormatBalance api={api} decimalPoint={2} value={amount} />
+            <FormatBalance api={api} decimalPoint={4} value={amount} />
           </Grid>
         </Grid>))
       }
@@ -222,7 +225,10 @@ export default function Index(): React.ReactElement {
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
               <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
-                <ShowBalance api={api} balance={value} decimalPoint={2} />
+                {value && token && decimal
+                  ? <FormatBalance2 decimalPoint={4} decimals={[decimal]} tokens={[token]} value={value} />
+                  : <ShowBalance api={api} balance={value} decimalPoint={2} />
+                }
               </Grid>
               <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, mt: '5px' }}>
                 {link1Text &&

@@ -12,7 +12,7 @@ async function getAllValidatorsIdentities (endpoint, _accountIds) {
     let totalFetched = 0;
 
     while (_accountIds.length > totalFetched) {
-      console.log(`_accountIds.length  :${_accountIds.length}  totalFetched :${totalFetched}`)
+      console.log(`Fetching validators identities : ${totalFetched}/${_accountIds.length}`)
       const info = await Promise.all(_accountIds.slice(totalFetched, totalFetched + page).map((i) => api.derive.accounts.info(i)));
 
       accountInfo = accountInfo.concat(info);

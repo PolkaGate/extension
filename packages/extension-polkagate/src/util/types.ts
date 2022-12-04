@@ -360,14 +360,15 @@ export interface PoolInfo {
 export interface MyPoolInfo extends PoolInfo {
   member?: PalletNominationPoolsPoolMember;
   accounts?: PoolAccounts;
-  nominators?: string[];
+  // nominators?: string[];
   myClaimable?: BN;
   redeemable?: BN;
   rewardClaimable?: BN;
-  ledger?: StakingLedger | null;
+  // ledger?: StakingLedger | null;
   rewardIdBalance?: DeriveStakingAccount;
   stashIdAccount?: DeriveStakingAccount;
   token: string;
+  decimal: number;
 }
 
 export interface PoolAccounts {
