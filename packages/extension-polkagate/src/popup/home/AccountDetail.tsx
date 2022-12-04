@@ -35,6 +35,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   const balances = useBalances(address);
   const price = usePrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
+  const isPriceOutdated = useMemo(() => price && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
@@ -55,7 +56,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   const Balance = () => (
     <>
       {balanceToShow?.decimal
-        ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary' }}>
+        ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
           <FormatBalance2
             decimalPoint={2}
             decimals={[balanceToShow.decimal]}
@@ -63,12 +64,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton
-          height={22}
-          sx={{ my: '2.5px', transform: 'none' }}
-          variant='text'
-          width={103}
-        />
+        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={103} />
       }
     </>
   );
@@ -76,30 +72,23 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
   const Price = () => (
     <>
       {price === undefined || !balanceToShow //|| balances?.token !== price?.token
-        ? <Skeleton
-          height={22}
-          sx={{ transform: 'none', my: '2.5px' }}
-          variant='text'
-          width={90}
-        />
-        : <FormatPrice
-          amount={getValue('total', balanceToShow)}
-          decimals={balanceToShow.decimal}
-          price={price.amount}
-        />
+        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+        : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
+          <FormatPrice
+            amount={getValue('total', balanceToShow)}
+            decimals={balanceToShow.decimal}
+            price={price.amount}
+          />
+        </Grid>
       }
     </>
   );
 
   const BalanceRow = () => (
-    <Grid container fontSize='18px' letterSpacing='-1.5%'>
-      <Grid fontWeight={500} item>
-        <Balance />
-      </Grid>
+    <Grid container fontSize='18px'>
+      <Balance />
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
-      <Grid fontWeight={300} item>
-        <Price />
-      </Grid>
+      <Price />
     </Grid>);
 
   return (
