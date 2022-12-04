@@ -28,7 +28,7 @@ export default function usePrice(address: string): Price | undefined {
       const priceInUsd = parsedPrices?.prices[chainName]?.usd;
 
       if (priceInUsd !== undefined) {
-        setPrice({ amount: priceInUsd, chainName });
+        setPrice({ amount: priceInUsd, chainName, date: parsedPrices.date });
       }
     }
   }, [address, chainName]);

@@ -560,8 +560,8 @@ export interface Prices {
 export interface Price {
   amount: number;
   chainName: string;
-  date?: number;
-  token: string;
+  date: number;
+  token?: string;
 }
 
 export interface SavedBalances {
