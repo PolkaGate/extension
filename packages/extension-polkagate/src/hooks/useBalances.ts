@@ -35,6 +35,10 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
   const decimal = api && api.registry.chainDecimals[0];
 
   const getPoolBalances = useCallback(() => {
+    if (api && !api.query.nominationPools) {
+      return setPooledBalance(BN_ZERO);
+    }
+
     api && formatted && api.query.nominationPools.poolMembers(formatted).then(async (res) => {
       const member = res.unwrapOr(undefined);
 
@@ -44,7 +48,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
 
-        return setPooledBalance(null); // user does not joined a pool yet. or pool id does not exist
+        return setPooledBalance(BN_ZERO); // user does not joined a pool yet. or pool id does not exist
       }
 
       const poolId = member?.poolId?.toNumber();
@@ -56,7 +60,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
 
-        return setPooledBalance(null);
+        return setPooledBalance(BN_ZERO);
       }
 
       const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
