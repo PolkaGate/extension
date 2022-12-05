@@ -64,11 +64,7 @@ export default function AuthManagement({ className }: Props): React.ReactElement
       >
         {t<string>('Allow or deny website(s) to request access to the extension\'s visible accounts')}
       </Typography>
-      <Grid
-        item
-        position='relative'
-        px='15px'
-      >
+      <Grid item position='relative' px='15px' >
         <InputFilter
           label={t<string>('Search')}
           onChange={_onChangeFilter}
@@ -102,18 +98,10 @@ export default function AuthManagement({ className }: Props): React.ReactElement
         >
           {
             !authList || !Object.entries(authList)?.length
-              ? (
-                <Grid
-                  alignItems='center'
-                  container
-                  item
-                  pl='10px'
-                  textAlign='left'
-                  xs={12}
-                >
-                  {t<string>('No website request yet!')}
-                </Grid>
-              )
+              ?
+              <Grid alignItems='center' container item pl='10px' textAlign='left' xs={12}>
+                {t<string>('No website request yet!')}
+              </Grid>
               : <>
                 {Object.entries(authList)
                   .filter(([url]: [string, AuthUrlInfo]) => url.includes(filter))
