@@ -10,15 +10,16 @@ import Label from './Label';
 import { Input } from './TextInputs';
 
 interface Props {
+  autoFocus?: boolean;
   onChange: (filter: string) => void;
-  label: string;
+  label?: string;
   placeholder: string;
   value: string;
   withReset?: boolean;
   theme: Theme;
 }
 
-export default function InputFilter({ label, onChange, placeholder, theme, value, withReset = false }: Props) {
+export default function InputFilter({ autoFocus = true, label, onChange, placeholder, theme, value, withReset = false }: Props) {
   const inputRef: React.RefObject<HTMLInputElement> | null = useRef(null);
 
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +39,7 @@ export default function InputFilter({ label, onChange, placeholder, theme, value
         <Input
           autoCapitalize='off'
           autoCorrect='off'
-          autoFocus
+          autoFocus={autoFocus}
           onChange={onChangeFilter}
           placeholder={placeholder}
           ref={inputRef}

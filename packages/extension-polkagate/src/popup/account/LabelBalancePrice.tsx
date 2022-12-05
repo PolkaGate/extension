@@ -36,6 +36,8 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
   useEffect(() => {
     if (price && value && decimal) {
       setBalanceInUSD(Number(value) / (10 ** decimal) * price.amount);
+    } else {
+      setBalanceInUSD(undefined);
     }
   }, [decimal, price, value]);
 

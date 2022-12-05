@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
-import { useEndpoint2, useEndpoints, useGenesisHashOptions, useToast, useTranslation } from '../hooks';
+import { useEndpoint2, useEndpoints, useGenesisHashOptions, useTranslation } from '../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';
@@ -37,7 +37,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   const { t } = useTranslation();
   const theme = useTheme();
   const settings = useContext(SettingsContext);
-  const { show } = useToast();
   const options = useGenesisHashOptions();
   const [newChain, setNewChain] = useState<Chain | null | undefined>();
   const [genesisHash, setGenesis] = useState<string | undefined>('');

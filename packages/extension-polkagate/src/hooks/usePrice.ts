@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { getPrices } from '../util/api';
 import { Price, Prices } from '../util/types';
 import { useChain } from '.';
 
@@ -11,10 +12,25 @@ import { useChain } from '.';
  * @param address : accounts substrate address
  * @returns price : price of the token which the address is already switched to
  */
-export default function usePrice(address: string): Price | undefined {
+export default function usePrice(address: string, currency = 'usd'): Price | undefined {
   const [price, setPrice] = useState<Price | undefined>();
+  const [newPrice, setNewPrice] = useState<Price | undefined>();
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.toLowerCase();
+
+  useEffect(() => {
+    if (!chainName) {
+      return;
+    }
+
+    getPrices([chainName]).then((res) => {
+      setNewPrice({
+        amount: res.prices[chainName.toLocaleLowerCase()][currency],
+        chainName,
+        date: res.date
+      });
+    }).catch(console.error);
+  }, [chainName, currency]);
 
   useEffect(() => {
     if (!chainName) {
@@ -33,5 +49,5 @@ export default function usePrice(address: string): Price | undefined {
     }
   }, [address, chainName]);
 
-  return price;
+  return newPrice || price;
 }

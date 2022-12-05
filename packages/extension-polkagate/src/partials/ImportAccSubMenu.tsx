@@ -38,7 +38,7 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
 
   const _goToAddAddressOnly = useCallback(
     () => {
-      onAction('/import/add');
+      onAction('/import/add-address-only');
     }, [onAction]
   );
 
@@ -89,9 +89,8 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
         />
         {settings.camera !== 'on' &&
           <Grid fontSize='10px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} textAlign='left' sx={{ cursor: 'pointer' }}>
-            Allow QR camera access in the extension’s setting in order to use this feature
+            {t('Allow QR camera access in the extension’s setting in order to use this feature')}
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: '#BA2882' }} />
-
           </Grid>
         }
         <MenuItem

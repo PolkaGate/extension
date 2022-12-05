@@ -57,6 +57,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           balance={poolConsts?.minJoinBond}
           balanceText={t('Minimum to join a pool')}
           buttonText={t<string>('Enter')}
+          helperText={t('All the members of a pool act as a single nominator and the earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
           onClick={goToPoolStaking}
           style={{
             m: '5px auto',
@@ -77,6 +78,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           }}
           text={t('Stakers (nominators) with sufficient amount of tokens can choose solo staking.')}
           title={t('Solo Staking')}
+          helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
         />
       </Box>
     </Slide>

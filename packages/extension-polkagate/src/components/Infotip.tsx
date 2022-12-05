@@ -1,16 +1,29 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Tooltip } from '@mui/material';
-import React from 'react';
+import { QuestionMarkRounded as QuestionMarkRoundedIcon } from '@mui/icons-material';
+import { Grid, Tooltip } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Props {
   text: string | null | undefined;
   children: React.ReactElement<any, any>;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
+  showQuestionMark?: boolean;
+  iconTop?: number;
+  iconLeft?: number;
 }
 
-function Infotip({ children, placement = 'top', text }: Props): React.ReactElement<Props> {
+function Infotip({ children, iconLeft = 10, iconTop = 4, placement = 'top', showQuestionMark = false, text }: Props): React.ReactElement<Props> {
+  const ref = useRef(null);
+  const [tpLocation, setTpLocation] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (ref) {
+      setTpLocation(`${ref.current?.offsetWidth + iconLeft}px`);
+    }
+  }, [iconLeft, ref.current?.offsetWidth, tpLocation]);
+
   return (
     <Tooltip
       arrow
@@ -44,7 +57,23 @@ function Infotip({ children, placement = 'top', text }: Props): React.ReactEleme
       placement={placement}
       title={text || ''}
     >
-      {children}
+      <div ref={ref} style={{ position: 'relative' }}>
+        {children}
+        {showQuestionMark &&
+          <QuestionMarkRoundedIcon
+            sx={{
+              bgcolor: 'secondary.light',
+              borderRadius: '50%',
+              color: 'background.default',
+              height: '15px',
+              left: tpLocation,
+              position: 'absolute',
+              top: `${iconTop}px`,
+              width: '15px'
+            }}
+          />
+        }
+      </div>
     </Tooltip>
   );
 }

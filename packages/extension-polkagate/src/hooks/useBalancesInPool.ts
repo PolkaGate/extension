@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { usePoolBalances } from '.';
+import { useFormatted, usePoolBalances } from '.';
 
 interface Output {
   balance: BN;
