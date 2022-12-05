@@ -36,22 +36,8 @@ ChartJS.register(
   Legend
 );
 
-const MAX_REWARDS_INFO_TO_SHOW = 20;
-const MAX_CHUNK_LENGTH = 4;
-
-function sliceIntoChunks(arr: string[]) {
-  const res = [];
-
-  const reveresedArr = [...arr].reverse();
-
-  for (let i = 0; i < reveresedArr.length; i += MAX_CHUNK_LENGTH) {
-    const chunk = reveresedArr.slice(i, i + MAX_CHUNK_LENGTH);
-
-    res.push(chunk.reverse());
-  }
-
-  return res;
-}
+const MAX_REWARDS_INFO_TO_SHOW = 50;
+const MAX_CHUNK_LENGTH = 7;
 
 interface ArrowsProps {
   onPrevious: () => void;
@@ -75,16 +61,17 @@ export default function RewardDetails(): React.ReactElement {
 
   const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
   const [pageIndex, setPageIndex] = useState<number>(0);
+  const [amountAndRewardsToShow, setAmountAndRewardsToShow] = useState<{ amount: string[][]; date: string[][]; }>();
 
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
   const decimal = api && api.registry.chainDecimals[0];
   const token = api && api.registry.chainTokens[0];
   const [expanded, setExpanded] = useState<number>(-1);
 
-  const formateDate = (date: number) => {
-    const options = { day: 'numeric', month: 'short' };
+  const dateOptions = useMemo(() => { return { day: 'numeric', month: 'short' } }, []);
 
-    return new Date(date * 1000).toLocaleDateString('en-GB', options);
+  const formateDate = (date: number) => {
+    return new Date(date * 1000).toLocaleDateString('en-GB', dateOptions);
   };
 
   const descSortedRewards = useMemo(() => {
@@ -109,7 +96,7 @@ export default function RewardDetails(): React.ReactElement {
     return newSorted;
   }, [rewardsInfo]);
 
-  const ascSortedLabels = useMemo(() => {
+  const ascSortedLabels = useMemo(() => {// soted labels with removed duplicates 
     const uDate = new Set();
 
     ascSortedRewards?.forEach((item) => {
@@ -119,37 +106,68 @@ export default function RewardDetails(): React.ReactElement {
     return Array.from(uDate) as string[];
   }, [ascSortedRewards]);
 
-  const labelsToShow = useMemo(() => {
-    if (!ascSortedLabels?.length) {
-      return;
-    }
-
-    return sliceIntoChunks(ascSortedLabels);
-  }, [ascSortedLabels]);
-
   const aggregatedRewards = useMemo(() => {
-    if (!ascSortedRewards?.length || !ascSortedLabels?.length) {
+    if (!ascSortedRewards?.length || !ascSortedLabels?.length || !decimal) {
       return;
     }
 
-    const tempToHuman: string[] = [];
+    const tempToHuman: { date: string, amount?: string }[] = [];
     const temp = new Array(ascSortedLabels.length).fill(BN_ZERO) as BN[];
     let index = 0;
 
     ascSortedRewards.forEach((item) => {
       if (item.date === ascSortedLabels[index]) {
         temp[index] = temp[index].add(item.amount);
-        tempToHuman[index] = amountToHuman(temp[index], decimal);
+        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: item.date });
       } else {
         index++;
         temp[index] = temp[index].add(item.amount);
-        tempToHuman[index] = amountToHuman(temp[index], decimal);
+        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: item.date });
       }
     });
 
-    return sliceIntoChunks(tempToHuman);
-    // return temp;
+    return tempToHuman;
   }, [ascSortedLabels, ascSortedRewards, decimal]);
+
+  const datesOfRewards = useMemo(() => {
+    if (!ascSortedRewards?.length || !aggregatedRewards?.length) {
+      return;
+    }
+
+    const dates: { amount?: string, date: string }[] = [];
+
+    const firstRewardDate = new Date(ascSortedRewards[0].timeStamp * 1000);
+    const lastRewardDate = new Date(ascSortedRewards[ascSortedRewards.length - 1].timeStamp * 1000);
+
+    while (firstRewardDate.getTime() < lastRewardDate.getTime()) {
+      dates.push({ date: new Date(firstRewardDate).toLocaleDateString('en-GB', dateOptions) });
+      firstRewardDate.setDate(firstRewardDate.getDate() + 1);
+    }
+
+    return dates;
+  }, [aggregatedRewards?.length, ascSortedRewards, dateOptions]);
+
+  const rewardsDate = useMemo(() => {
+    if (!aggregatedRewards?.length || !datesOfRewards?.length) {
+      return;
+    }
+
+    let counter = 0;
+
+    const finalData = datesOfRewards.map((rewardDate) => {
+      if (aggregatedRewards[counter]?.date === rewardDate.date) {
+        const amount = aggregatedRewards[counter].amount;
+
+        counter++;
+
+        return [[amount], [rewardDate.date]];
+      }
+
+      return [['0'], [rewardDate.date]];
+    });
+
+    return finalData;
+  }, [aggregatedRewards?.length, datesOfRewards?.length]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
@@ -167,12 +185,39 @@ export default function RewardDetails(): React.ReactElement {
   }, [pageIndex]);
 
   const onNext = useCallback(() => {
-    aggregatedRewards && pageIndex !== (aggregatedRewards.length - 1) && setPageIndex(pageIndex + 1);
-  }, [aggregatedRewards, pageIndex]);
+    amountAndRewardsToShow && pageIndex !== (amountAndRewardsToShow.date.length - 1) && setPageIndex(pageIndex + 1);
+  }, [amountAndRewardsToShow, pageIndex]);
 
   const dateRatio = (next?: boolean): string | undefined => {
-    return labelsToShow && labelsToShow[(next ? pageIndex + 1 : pageIndex - 1)] && `${labelsToShow[(next ? pageIndex + 1 : pageIndex - 1)][0]} - ${labelsToShow[(next ? pageIndex + 1 : pageIndex - 1)].at(-1)}`;
+    // return labelsToShow && labelsToShow[(next ? pageIndex + 1 : pageIndex - 1)] && `${labelsToShow[(next ? pageIndex + 1 : pageIndex - 1)][0]} - ${labelsToShow[(next ? pageIndex + 1 : pageIndex - 1)].at(-1)}`;
+    return 'hello';
   };
+
+  useEffect(() => {
+    if (!rewardsDate?.length) {
+      return;
+    }
+
+    const reveresedArr = [...rewardsDate].reverse();
+
+    const datesAndAmountsResult: { amount: string[][], date: string[][] } = { amount: [], date: [] };
+    const datesAndAmounts: { amount: string[], date: string[] } = { amount: [], date: [] };
+
+    reveresedArr.forEach((i) => {
+      datesAndAmounts.amount.push(i[0]);
+      datesAndAmounts.date.push(i[1]);
+    });
+
+    for (let i = 0; i < datesAndAmounts.amount.length; i += MAX_CHUNK_LENGTH) {
+      const amountChunk = datesAndAmounts.amount.slice(i, i + MAX_CHUNK_LENGTH);
+      const dateChunk = datesAndAmounts.date.slice(i, i + MAX_CHUNK_LENGTH);
+
+      datesAndAmountsResult.amount.push(amountChunk.reverse());
+      datesAndAmountsResult.date.push(dateChunk.reverse());
+    }
+
+    setAmountAndRewardsToShow(datesAndAmountsResult);
+  }, [rewardsDate]);
 
   useEffect((): void => {
     // TODO: to get rewrads info from subquery
@@ -197,7 +242,7 @@ export default function RewardDetails(): React.ReactElement {
     });
 
     // eslint-disable-next-line no-void
-    formatted && chainName && void getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(formatted)).then((r) => {
+    formatted && chainName && void getRewardsSlashes(chainName, 0, 60, String(formatted)).then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
       const rewardsFromSubscan: RewardInfo[] | undefined = list?.map((i: SubscanRewardInfo): RewardInfo => {
         return {
@@ -230,7 +275,7 @@ export default function RewardDetails(): React.ReactElement {
         bodyFont: {
           displayColors: false,
           family: 'Roboto',
-          size: 14,
+          size: 13,
           weight: 'bold'
         },
         displayColors: false,
@@ -271,11 +316,11 @@ export default function RewardDetails(): React.ReactElement {
         borderColor: '#3A0B63',
         borderRadius: 3,
         borderWidth: 1,
-        data: aggregatedRewards && aggregatedRewards[pageIndex],
+        data: amountAndRewardsToShow && amountAndRewardsToShow.amount[pageIndex],
         label: token
       }
     ],
-    labels: labelsToShow && labelsToShow[pageIndex]
+    labels: amountAndRewardsToShow && amountAndRewardsToShow.date[pageIndex]
   };
 
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
