@@ -172,7 +172,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
               </Grid>
             </Grid>
             {sortedNominators?.map(({ value, who }, index) => (
-              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'background.default' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
+              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
                 <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
                   <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress style={{ fontSize: '16px' }} />
                 </Grid>
