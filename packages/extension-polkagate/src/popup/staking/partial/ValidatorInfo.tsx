@@ -191,7 +191,9 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             ))}
           </>
           )
-          : (<Typography fontSize='18px' fontWeight={300} m='auto' py='20px' textAlign='center' width='92%'>{t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}</Typography>)
+          : (<Typography fontSize='16px' fontWeight={400} m='auto' py='20px' textAlign='center' width='92%'>
+            {t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
+          </Typography>)
         }
       </Grid>
     </Label>
