@@ -10,10 +10,9 @@
 
 import { ArrowBackIosNewRounded as BackIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Box, Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { ActionContext, SettingsContext } from '../../../extension-ui/src/components/contexts';
 import { logoBlack, logoWhite } from '../assets/logos/';
 
 interface Props {
