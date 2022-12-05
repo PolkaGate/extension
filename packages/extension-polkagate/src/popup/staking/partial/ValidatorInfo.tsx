@@ -149,8 +149,15 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
     return percentToShow;
   };
 
+  const label = validatorInfo?.exposure?.others?.length
+    ? t('Nominators (count)', { replace: { count: validatorInfo?.exposure?.others?.length } })
+    : t('Nominators');
+
   const NominatorTableWithLabel = () => (
-    <Label label={`Nominators (${validatorInfo?.exposure?.others?.length})`} style={{ margin: '20px auto', width: '92%' }}>
+    <Label
+      label={label}
+      style={{ margin: '20px auto', width: '92%' }}
+    >
       <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
         {sortedNominators?.length
           ? (<>
