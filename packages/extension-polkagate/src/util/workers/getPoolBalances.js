@@ -14,20 +14,19 @@ import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
 
-async function getPoolBalances(endpoint, stakerAddress, id = undefined) {
-  console.log(`getPoolBalances is called for ${stakerAddress} id:${id}`);
+async function getPoolBalances(endpoint, stakerAddress) {
+  console.log(`getPoolBalances is called for ${stakerAddress}`);
   const api = await getApi(endpoint);
   const token = api.registry.chainTokens[0];
-  const members = !id && await api.query.nominationPools.poolMembers(stakerAddress);
-  const member = members?.isSome ? members.unwrap() : undefined;
+  const member = (await api.query.nominationPools.poolMembers(stakerAddress)).unwrapOr(undefined);
 
-  if (!member && !id) {
-    console.log(`can not find member for ${stakerAddress} or id is :${id}`);
+  if (!member) {
+    console.log(`can not find member for ${stakerAddress}`);
 
     return null; // user does not joined a pool yet. or pool id does not exist
   }
 
-  const poolId = member?.poolId?.toNumber() ?? id;
+  const poolId = member?.poolId?.toNumber();
   const accounts = getPoolAccounts(api, poolId);
 
   if (!accounts) {

@@ -61,6 +61,7 @@ import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
 import Signing from './Signing';
+import { Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
 
@@ -102,6 +103,11 @@ export default function Popup(): React.ReactElement {
   const [signRequests, setSignRequests] = useState<null | SigningRequest[]>(null);
   const [isWelcomeDone, setWelcomeDone] = useState(false);
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
+  const [fetching, setFetching] = useState<Fetching>({});
+
+  const set = useCallback((change: Fetching) => {
+    setFetching(change);
+  }, []);
 
   const _onAction = useCallback(
     (to?: string): void => {
@@ -162,7 +168,7 @@ export default function Popup(): React.ReactElement {
         <ActionContext.Provider value={_onAction}>
           <SettingsContext.Provider value={settingsCtx}>
             <AccountContext.Provider value={accountCtx}>
-              <FetchingContext.Provider value={{}}>
+              <FetchingContext.Provider value={{ fetching, set }}>
                 <AuthorizeReqContext.Provider value={authRequests}>
                   <MediaContext.Provider value={cameraOn && mediaAllowed}>
                     <MetadataReqContext.Provider value={metaRequests}>
@@ -196,7 +202,7 @@ export default function Popup(): React.ReactElement {
                             <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                             <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
                             <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
-                            <Route path='/import/add-address-only'>{wrapWithErrorBoundary(<AddAddressOnly />, 'add-address-only')}</Route>
+                            <Route path='/import/add-address-only'>{wrapWithErrorBoundary(<AddAddressOnly />, 'import-add-address-only')}</Route>
                             <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
                             <Route exact path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
                             <Route exact path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>

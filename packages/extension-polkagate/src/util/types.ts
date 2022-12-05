@@ -592,10 +592,10 @@ export interface MemberPoints {
   points: BN;
 }
 
-export type FetchContext = {
+export type Fetching = {
   [formatted: string]: IsFetching;
 }
 
 export type IsFetching = {
-  [type: string]: boolean;
+  [item: string]: boolean;
 }
