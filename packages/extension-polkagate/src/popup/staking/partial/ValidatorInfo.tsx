@@ -63,7 +63,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
 
   const ValidatorInformation = () => (
     <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
-      <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
         <Grid item lineHeight={1} width='85%'>
           <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
@@ -86,7 +86,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
       </Grid>
       <Grid container item>
         <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
-          <Grid display='inline-flex' item>
+          <Grid display='inline-flex' fontSize='12px' fontWeight={400} item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Own')}:
             </Typography>
@@ -106,8 +106,8 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             </Typography>
           </Grid>
         </Grid>
-        <Grid container direction='column' justifyContent='center' item width='50%'>
-          <Grid display='inline-flex' item justifyContent='flex-end'>
+        <Grid container direction='column' item justifyContent='center' width='50%'>
+          <Grid display='inline-flex' fontSize='12px' fontWeight={400} item justifyContent='flex-end'>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Total')}:
             </Typography>
