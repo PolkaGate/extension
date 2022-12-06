@@ -165,10 +165,12 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               api={api}
               chain={chain}
+              decimal={pool?.decimal}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - 190}
               staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
               stakingConsts={stakingConsts}
+              token={pool?.token}
               validatorsToList={selectedValidatorsInfo}
             />
             <ValidatorsActions />

@@ -24,10 +24,10 @@ import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
 import { AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
+import { Data, getComparator, Order } from '../../../partial/comparators';
 import Filters from '../../../partial/Filters';
 import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
 import Review from './Review';
-import { Data, getComparator, Order } from '../../../partial/comparators';
 
 interface Props {
   address: string;
@@ -82,7 +82,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
 
     setValidatorsToList(selectedTemp.concat(filteredValidators));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities,order, orderBy]);
+  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, order, orderBy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -209,6 +209,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 allValidatorsIdentities={allValidatorsIdentities}
                 api={api}
                 chain={chain}
+                decimal={pool?.decimal}
                 formatted={pool?.stashIdAccount?.accountId?.toString()}
                 handleCheck={handleCheck}
                 height={window.innerHeight - 230}
@@ -219,6 +220,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 showCheckbox
                 staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
                 stakingConsts={stakingConsts}
+                token={pool?.token}
                 validatorsToList={validatorsToList}
               />
             }

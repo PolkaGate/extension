@@ -81,6 +81,9 @@ export default function Index(): React.ReactElement {
   const onRemoveValidators = useCallback(() => {
     setShowRemoveValidator(true);
   }, []);
+  const OnTuneUp = useCallback(() => {
+    // setShowRemoveValidator(true);
+  }, []);
 
   const onChangeValidators = useCallback(() => {
     goToSelectValidator();
@@ -119,7 +122,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       <Grid item>
         <Infotip text={t<string>('If Tune UP is available, it will correct your account\'s position in voters\' list to be eligible for receiving rewards.')}>
-          <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          <Typography onClick={OnTuneUp} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
             {t('Tune Up')}
           </Typography>
         </Infotip>
@@ -169,10 +172,12 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               api={api}
               chain={chain}
+              decimal={stakingAccount?.decimal}
               formatted={formatted}
               height={window.innerHeight - 190}
               staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
               stakingConsts={stakingConsts}
+              token={stakingAccount?.token}
               validatorsToList={selectedValidatorsInfo}
             />
             <ValidatorsActions />
