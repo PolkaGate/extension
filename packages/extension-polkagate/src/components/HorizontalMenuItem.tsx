@@ -18,12 +18,12 @@ export default function HorizontalMenuItem({ textDisabled, divider = false, exce
     <>
       <Grid container direction='column' item justifyContent='center' maxWidth='fit-content'>
         <Grid container item justifyContent='center'>
-          <IconButton onClick={onClick} sx={{ alignSelf: 'center', m: 'auto', py: 0, transform: 'scale(0.9)', width: 'fit-content' }}>
+          <IconButton onClick={onClick} sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content' }}>
             {icon}
           </IconButton>
         </Grid>
         <Grid item textAlign='center'>
-          <Typography fontSize='12px' fontWeight={300} sx={{ color: textDisabled && 'action.disabledBackground' }}>
+          <Typography fontSize='12px' fontWeight={300} sx={{ color: textDisabled && 'action.disabledBackground', pt:'3px' }}>
             {title}
           </Typography>
         </Grid>
