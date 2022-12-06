@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
+import { BN, bnMin } from '@polkadot/util';
+
 import getApi from '../getApi';
 
-const bigIntMin = (...args) => args.reduce((m, e) => e < m ? e : m);
-
-async function getNominatorInfo (endpoint, _nominatorAddress) {
+async function getNominatorInfo(endpoint, _nominatorAddress) {
   const api = await getApi(endpoint);
 
   // a map of all nominators
@@ -16,10 +16,10 @@ async function getNominatorInfo (endpoint, _nominatorAddress) {
 
   stakers.map((x) => x[1].others).flat().forEach((x) => {
     const nominatorAddress = String(x.who);
-    const amount = BigInt(x.value);
+    const amount = new BN(String(x.value));
 
     if (assignments.get(nominatorAddress)) {
-      assignments.set(nominatorAddress, amount + (assignments.get(nominatorAddress)));
+      assignments.set(nominatorAddress, amount.add(assignments.get(nominatorAddress)));
     } else {
       assignments.set(nominatorAddress, amount);
     }
@@ -27,7 +27,7 @@ async function getNominatorInfo (endpoint, _nominatorAddress) {
 
   return {
     isInList: !!assignments.get(_nominatorAddress),
-    minNominated: bigIntMin(...assignments.values())
+    minNominated: bnMin(...assignments.values())
   };
 }
 

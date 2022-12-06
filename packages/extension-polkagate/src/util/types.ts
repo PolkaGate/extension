@@ -56,7 +56,7 @@ export interface StakingConsts {
 }
 
 export interface NominatorInfo {
-  minNominated: bigint;
+  minNominated: BN;
   isInList: boolean // is Nominator in top 22500 elected
 }
 

@@ -27,19 +27,13 @@ interface Props {
   showInfo?: boolean;
 }
 
-export default function ShowPool({ api, chain, label, labelPosition = 'left', mode, pool, style, showInfo }: Props): React.ReactElement {
+export default function ShowPool({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-
   const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);
 
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
-  const poolStaked = useMemo(() => {
-    const value = pool?.stashIdAccount?.stakingLedger?.active ?? pool?.bondedPool?.points;
-
-    return value !== undefined ? api?.createType('Balance', value) : undefined;
-  }, [api, pool?.bondedPool?.points, pool?.stashIdAccount?.stakingLedger?.active]);
-
+  const poolStaked = pool?.stashIdAccount?.stakingLedger?.active ?? pool?.bondedPool?.points;
   const poolStatus = pool?.bondedPool?.state;
 
   return (
@@ -66,7 +60,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   </Grid>
                 }
               </Grid>
-              <Grid container item sx={{ fontWeight: 400, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+              <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', fontWeight: 400 }}>
                 <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='20%'>
                   {t<string>('Index')}
                 </Typography>
@@ -88,8 +82,10 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   <ShowBalance
                     api={api}
                     balance={poolStaked}
+                    decimal={pool?.decimal}
                     decimalPoint={4}
                     height={22}
+                    token={pool?.token}
                   />
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='23%'>

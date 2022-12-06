@@ -12,7 +12,7 @@ export const darkTheme: ThemeOptions = {
 
   palette: {
     mode: 'dark',
-    primary: { main: '#99004F', light: '#838383' },
+    primary: { main: '#99004F', light: '#838383', contrastText: '#212121' },
     secondary: { main: '#BA2882', light: '#BA2682' },
     background: { default: '#180710', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },

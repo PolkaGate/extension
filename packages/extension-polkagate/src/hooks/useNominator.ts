@@ -5,6 +5,8 @@ import type { NominatorInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { BN } from '@polkadot/util';
+
 import { useEndpoint2, useFormatted } from '.';
 
 export default function useNominator(address: string): NominatorInfo | undefined {
@@ -23,10 +25,9 @@ export default function useNominator(address: string): NominatorInfo | undefined
     };
 
     getNominatorInfoWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const nominatorInfo: NominatorInfo = e.data;
+      const nominatorInfo = e.data as NominatorInfo;
 
-      console.log('nominatorInfo for solo:', nominatorInfo);
+      nominatorInfo.minNominated = new BN(nominatorInfo.minNominated)
 
       setNominatorInfo(nominatorInfo);
       getNominatorInfoWorker.terminate();

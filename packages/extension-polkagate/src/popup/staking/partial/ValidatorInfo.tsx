@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Avatar, Grid, IconButton, Link, Slide, Typography, useTheme } from '@mui/material';
+import { Avatar, Grid, IconButton, Link, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -29,9 +29,6 @@ interface Props {
 
 export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const ValidatorInfoRef = React.useRef(null);
-
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
@@ -43,7 +40,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
   const myPossibleIndex = staked && myIndex === -1 ? sortedNominators?.findIndex((n) => n.value < staked.toNumber()) : -1;
 
-  const _closeMenu = useCallback(
+  const closeMenu = useCallback(
     () => setShowValidatorInfo(false),
     [setShowValidatorInfo]
   );
@@ -150,7 +147,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   };
 
   const label = validatorInfo?.exposure?.others?.length
-    ? t('Nominators (count)', { replace: { count: validatorInfo?.exposure?.others?.length } })
+    ? t('Nominators ({{count}})', { replace: { count: validatorInfo?.exposure?.others?.length } })
     : t('Nominators');
 
   const NominatorTableWithLabel = () => (
@@ -216,7 +213,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
       <ValidatorInformation />
       <NominatorTableWithLabel />
       <IconButton
-        onClick={_closeMenu}
+        onClick={closeMenu}
         sx={{
           left: '15px',
           p: 0,

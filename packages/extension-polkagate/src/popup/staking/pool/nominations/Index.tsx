@@ -165,10 +165,12 @@ export default function Index(): React.ReactElement {
               activeValidators={activeValidators}
               api={api}
               chain={chain}
+              decimal={pool?.decimal}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
               height={window.innerHeight - 190}
               staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
               stakingConsts={stakingConsts}
+              token={pool?.token}
               validatorsToList={selectedValidatorsInfo}
             />
             <ValidatorsActions />
@@ -193,7 +195,7 @@ export default function Index(): React.ReactElement {
           title={t('Remove Selected Validators')}
         />
       }
-      {showSelectValidator &&
+      {showSelectValidator && pool &&
         <SelectValidators
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}
@@ -202,7 +204,6 @@ export default function Index(): React.ReactElement {
           chain={chain}
           formatted={formatted}
           pool={pool}
-          poolId={pool?.poolId}
           selectedValidatorsId={selectedValidatorsId}
           setShow={setShowSelectValidator}
           show={showSelectValidator}
