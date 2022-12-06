@@ -12,7 +12,7 @@ import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/type
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Identity, Label, ShowBalance } from '../../../components';
+import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 
@@ -230,35 +230,8 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   );
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      ref={ValidatorInfoRef}
-      sx={[{
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        },
-        top: 0
-      }]}
-      width='357px'
-      zIndex={10}
-    >
-      <Slide
-        container={ValidatorInfoRef.current}
-        direction='up'
-        in={showValidatorInfo}
-        mountOnEnter
-        unmountOnExit
-      >
-        {page}
-      </Slide>
-    </Grid>
+    <SlidePopUp show={showValidatorInfo}>
+      {page}
+    </SlidePopUp>
   );
 }
