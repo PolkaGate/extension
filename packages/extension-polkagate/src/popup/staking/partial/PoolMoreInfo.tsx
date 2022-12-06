@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Collapse, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
+import { Collapse, Grid, IconButton, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -35,8 +35,6 @@ interface CollapseProps {
 
 export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const poolInfoRef = React.useRef(null);
   const poolToShow = usePool(address, poolId, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId.toString());
 
@@ -116,11 +114,11 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
             </Grid>
           </Grid>
         ))
-        : <Grid alignItems='center' container justifyContent='center'          >
-          <Grid item            >
+        : <Grid alignItems='center' container justifyContent='center'>
+          <Grid item>
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
           </Grid>
-          <Typography fontSize='13px' lineHeight='40px' pl='10px'            >
+          <Typography fontSize='13px' lineHeight='40px' pl='10px'>
             {t<string>('Loading pool members...')}
           </Typography>
         </Grid>
