@@ -39,7 +39,6 @@ onmessage = (e) => {
 
   getStackingConsts(endpoint)
     .then((consts) => {
-      console.log(`StackingConsts in worker using:${endpoint}: %o`, consts);
       postMessage(consts);
     }).catch(console.error);
 };
