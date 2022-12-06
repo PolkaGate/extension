@@ -22,7 +22,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, AmountWithOptions, ButtonWithCancel, Identicon, Motion, PButton, SettingsContext, ShortAddress, To } from '../../components';
+import { AccountContext, AmountWithOptions, Identicon, Motion, PButton, SettingsContext, ShortAddress, To } from '../../components';
 import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
