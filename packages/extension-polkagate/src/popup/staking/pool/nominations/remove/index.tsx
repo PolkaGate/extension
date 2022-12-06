@@ -18,7 +18,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
@@ -30,7 +30,7 @@ import TxDetail from '../../../solo/nominations/partials/TxDetail';
 
 interface Props {
   address: string;
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   chain: Chain | null;
   formatted: string;
   title: string;
@@ -55,7 +55,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const chilled = api.tx.nominationPools.chill;
+  const chilled = api && api.tx.nominationPools.chill;
   const params = useMemo(() => [poolId], [poolId]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -98,14 +98,14 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
   }, [proxies]);
 
   useEffect((): void => {
-    chilled(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    chilled && chilled(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [chilled, formatted, params, poolId]);
 
   const remove = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !chilled) {
+      if (!formatted || !chilled || !api) {
         return;
       }
 
@@ -169,9 +169,15 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
           </Grid>
         }
         <SubTitle label={t('Review')} />
-        <Grid container sx={{ p: '50px 35px', justifyContent: 'center' }}>
-          <Typography fontSize='18px' fontWeight={400} pb='33px' textAlign='center'>
-            {t('There will be no selected validators and you will not get any rewards after.')}
+        <Grid container justifyContent='center' sx={{ px: '30px' }}>
+          <AccountHolderWithProxy
+            address={address}
+            chain={chain}
+            selectedProxyAddress={selectedProxyAddress}
+            showDivider
+          />
+          <Typography fontSize='18px' fontWeight={400} py='25px' textAlign='center'>
+            {t('There will be no selected validators for my pool (index: {{index}}) and it will not get any rewards after.', { replace: { index: String(poolId) } })}
           </Typography>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
           <Grid alignItems='center' container item justifyContent='center' pt='10px'>

@@ -16,9 +16,8 @@ import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
@@ -168,8 +167,14 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
           </Grid>
         }
         <SubTitle label={t('Review')} />
-        <Grid container sx={{ p: '50px 35px', justifyContent: 'center' }}>
-          <Typography fontSize='18px' fontWeight={400} pb='33px' textAlign='center'>
+        <Grid container justifyContent='center' sx={{ px: '30px' }}>
+          <AccountHolderWithProxy
+            address={address}
+            chain={chain}
+            selectedProxyAddress={selectedProxyAddress}
+            showDivider
+          />
+          <Typography fontSize='18px' fontWeight={400} py='25px' textAlign='center'>
             {t('There will be no selected validators and you will not get any rewards after.')}
           </Typography>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />

@@ -4,14 +4,14 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Typography } from '@mui/material';
+import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { Checkbox2, SlidePopUp } from '../../../components';
+import { Checkbox2, Input, PButton, Select, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../util/constants';
+import { DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR, DEFAULT_MAX_COMMISSION, DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../util/constants';
 import { AllValidators, StakingConsts, ValidatorInfo } from '../../../util/types';
 import { Data, getComparator, Order } from './comparators';
 
@@ -30,12 +30,23 @@ interface Props {
   setOrderBy: React.Dispatch<React.SetStateAction<keyof Data>>;
 }
 
-export default function Filters({ allValidatorsIdentities,order, setOrder,orderBy, setOrderBy, allValidatorsInfo, newSelectedValidators, setNewSelectedValidators, setShow, setValidatorsToList, show, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters({ allValidatorsIdentities, order, setOrder, orderBy, setOrderBy, allValidatorsInfo, newSelectedValidators, setNewSelectedValidators, setShow, setValidatorsToList, show, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [idOnly, setIdOnly] = useState<boolean>();
   const [noMoreThan20Comm, setNoMoreThan20Comm] = useState<boolean>();
   const [noOversubscribed, setNoOversubscribed] = useState<boolean>();
   const [noWaiting, setNoWaiting] = useState<boolean>();
+
+  const SORT_OPTIONS = [
+    { text: t('None (Default)'), value: 1 },
+    { text: t('Staked: Hight to Low'), value: 2 },
+    { text: t('Staked: Low to High'), value: 3 },
+    { text: t('Commissions: High to Low'), value: 4 },
+    { text: t('Commissions: Low to High'), value: 5 },
+    { text: t('Nominators: High to Low'), value: 6 },
+    { text: t('Nominators: Low to High'), value: 7 }
+  ];
 
   useEffect(() => {
     if (!allValidatorsInfo || !allValidatorsIdentities) {
@@ -120,11 +131,61 @@ export default function Filters({ allValidatorsIdentities,order, setOrder,orderB
         />
         <Checkbox2
           // checked={idOnly}
-          label={t<string>('Maximum Commission')}
+          label={`${t<string>('Maximum Commission')}%`}
           // onChange={() => setIdOnly(!idOnly)}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '300', pt: '15px' }}
+          style={{ width: '63%', fontSize: '14px', fontWeight: '300', pt: '15px' }}
         />
+        <Input
+          autoCapitalize='off'
+          autoCorrect='off'
+          padding='0px'
+          spellCheck={false}
+          textAlign='center'
+          type='text'
+          placeholder={DEFAULT_MAX_COMMISSION}
+          // value={DEFAULT_MAX_COMMISSION}
+          width='17%'
+          theme={theme}
+          // onChange={onChangeFilter}
+          fontSize='18px'
+          margin='auto 0 0'
+          height='36px'
+        />
+        <Checkbox2
+          // checked={idOnly}
+          label={t<string>('Limit of validators per operator')}
+          // onChange={() => setIdOnly(!idOnly)}
+          style={{ width: '63%', fontSize: '14px', fontWeight: '300', pt: '15px' }}
+        />
+        <Input
+          autoCapitalize='off'
+          autoCorrect='off'
+          padding='0px'
+          spellCheck={false}
+          textAlign='center'
+          type='text'
+          placeholder={DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR}
+          // value={DEFAULT_MAX_COMMISSION}
+          width='17%'
+          theme={theme}
+          // onChange={onChangeFilter}
+          fontSize='18px'
+          height='36px'
+          margin='auto 0 0'
+        />
+        <div style={{ width: '80%', paddingTop: '10px' }}>
+          <Select
+            label={'Sort by'}
+            // onChange={_onChangeEndpoint}
+            options={SORT_OPTIONS}
+            value={t('None (Default)')}
+          />
+        </div>
       </Grid>
+      <PButton
+        // _onClick={apply}
+        text={t<string>('Apply')}
+      />
       <IconButton
         onClick={closeMenu}
         sx={{

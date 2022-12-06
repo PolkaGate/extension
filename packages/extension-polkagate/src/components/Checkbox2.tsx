@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
-import { Checkbox, FormControlLabel, SxProps, Theme } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, SxProps, Theme } from '@mui/material';
 import React from 'react';
+
+import { checkBox, checkedBox } from '../assets/icons';
 
 interface Props {
   checked?: boolean;
@@ -19,8 +21,10 @@ export default function Checkbox2({ checked = false, label, labelStyle = { fontS
       control={
         <Checkbox
           checked={checked}
-          checkedIcon={<CheckBoxOutlinedIcon sx={{ color: 'secondary.light' }} />}
-          icon={<CheckBoxOutlineBlankRoundedIcon sx={{ color: 'secondary.light' }} />}
+          // checkedIcon={<CheckBoxOutlinedIcon sx={{ color: 'secondary.light' }} />}
+          checkedIcon={<img src={checkedBox} />}
+          icon={<img src={checkBox} />}
+          // icon={<CheckBoxOutlineBlankRoundedIcon sx={{ color: 'secondary.light' }} />}
           onChange={onChange}
           sx={{ p: 0, pr: label && '5px' }}
         />
