@@ -193,7 +193,7 @@ export default function Index(): React.ReactElement {
           title={t('Remove Selected Validators')}
         />
       }
-      {showSelectValidator &&
+      {showSelectValidator && pool &&
         <SelectValidators
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}
@@ -202,7 +202,6 @@ export default function Index(): React.ReactElement {
           chain={chain}
           formatted={formatted}
           pool={pool}
-          poolId={pool?.poolId}
           selectedValidatorsId={selectedValidatorsId}
           setShow={setShowSelectValidator}
           show={showSelectValidator}
