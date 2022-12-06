@@ -67,7 +67,7 @@ export default function Index(): React.ReactElement {
       pathname: `/solo/${address}`,
       state: { ...state }
     });
-  }, [history, state]);
+  }, [address, history, state]);
 
   const goToSelectValidator = useCallback(() => {
     setShowSelectValidator(true);
@@ -137,10 +137,10 @@ export default function Index(): React.ReactElement {
         text={t<string>('Solo Staking')}
       />
       <SubTitle label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')} />
-      {(selectedValidatorsId === null || allValidatorsInfo === null) &&
-        <>
+      {selectedValidatorsId === null
+        ? <>
           <Warn text={t<string>('No validator found.')} />
-          <Grid alignItems='center' container direction='column' pt='98px' >
+          <Grid alignItems='center' container direction='column' pt='98px'>
             <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
                 color={`${theme.palette.secondary.light}`}
@@ -155,8 +155,7 @@ export default function Index(): React.ReactElement {
             </Grid>
           </Grid>
         </>
-      }
-      {(selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
+        : (selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
         <Progress
           pt='125px'
           size={125}
@@ -207,8 +206,8 @@ export default function Index(): React.ReactElement {
           formatted={formatted}
           selectedValidatorsId={selectedValidatorsId}
           setShow={setShowSelectValidator}
-          stakingAccount={stakingAccount}
           show={showSelectValidator}
+          stakingAccount={stakingAccount}
           stakingConsts={stakingConsts}
           title={t('Select Validators')}
         />

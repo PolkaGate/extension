@@ -19,13 +19,22 @@ BN.prototype.toJSON = function () {
   return this.toString();
 };
 
-export default function useStakingAccount(stashId: AccountId | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean | undefined, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>): AccountStakingInfo | undefined {
+/**
+ * @description get all staking info for an account in solo staking
+ * 
+ * @param stashId 
+ * @param stateInfo 
+ * @param refresh 
+ * @param setRefresh 
+ * @returns account staking Info
+ */
+export default function useStakingAccount(stashId: AccountId | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean | undefined, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>): AccountStakingInfo | null | undefined {
   const account = useAccount(stashId);
   const chain = useChain(stashId);
   const chainName = chain && chain.name.replace(' Relay Chain', '');
   const api = useApi(stashId);
 
-  const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo>();
+  const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null>();
 
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
@@ -39,6 +48,14 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
       api.derive.staking.account(stashId),
       api.query.staking.currentEra()
     ]);
+
+
+    if (!accountInfo) {
+      console.log('Can not fetch accountInfo!');
+
+      return setStakingInfo(null);
+    }
+
     const temp = { ...accountInfo };
 
     temp.stakingLedger.set('active', accountInfo.stakingLedger.active.unwrap());
@@ -114,7 +131,6 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
 
     if (savedStakingAccount[chainName]) {
       const sa = savedStakingAccount[chainName] as AccountStakingInfo;
-      console.log('sa:', sa);
 
       sa.redeemable = new BN(sa.redeemable);
       sa.stakingLedger.active = new BN(sa.stakingLedger.active);

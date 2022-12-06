@@ -20,7 +20,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox2, Motion, PButton, Popup } from '../../../../../components';
+import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
@@ -89,6 +89,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const [systemSuggestion, setSystemSuggestion] = useState<boolean>();
   const [idOnly, setIdOnly] = useState<boolean>();
   const [noMoreThan20Comm, setNoMoreThan20Comm] = useState<boolean>();
   const [noOversubscribed, setNoOversubscribed] = useState<boolean>();
@@ -98,6 +99,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
   const [showReview, setShowReview] = useState<boolean>(false);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     if (!allValidatorsInfo || !allValidatorsIdentities) {
@@ -138,6 +140,10 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const _onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
+
+  const _onChangeFilter = useCallback((filter: string) => {
+    setFilter(filter);
+  }, []);
 
   const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -190,8 +196,9 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     <Motion>
       <Popup show={show}>
         <HeaderBrand
+          noBorder
           onBackClick={_onBackClick}
-          shortBorder
+          paddingBottom={0}
           showBackArrow
           showClose
           text={title}
@@ -200,8 +207,39 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
             total: 2
           }}
         />
-        <Grid container sx={{ justifyContent: 'center', p: '10px 15px' }}>
-          <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
+        <Grid container sx={{ justifyContent: 'flex-start', px: '15px' }}>
+          <Grid container item justifyContent='center' ml='-15px'>
+            <Infotip
+              iconLeft={6}
+              iconTop={6}
+              showQuestionMark text={t<string>('We suggest trusted, high return, low commission validators which not slashed before.')}>
+              <Checkbox2
+                checked={systemSuggestion}
+                label={t<string>('System Suggestions')}
+                labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+                onChange={() => setSystemSuggestion(!systemSuggestion)}
+              />
+            </Infotip>
+          </Grid>
+          <Grid item justifyContent='flex-start' py='10px' width='73%'>
+            <InputFilter
+              autoFocus={false}
+              onChange={_onChangeFilter}
+              placeholder={t<string>('🔍 Search validator')}
+              theme={theme}
+              value={filter}
+              withReset
+            />
+          </Grid>
+          <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' pl='15px' py='10px' width='27%'>
+            {t('Filters')}
+            <Grid alignItems='center' container item pl='10px' justifyContent='center'
+              // onClick={showFilters}
+              sx={{ cursor: 'pointer', width: '40%' }}>
+              <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
+            </Grid>
+          </Grid>
+          {/* <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
             <Checkbox2
               checked={idOnly}
               label={t<string>('ID only')}
@@ -227,7 +265,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               style={{ width: '40%' }}
             />
             <SearchIcon sx={{ color: 'secondary.light', width: '10%' }} />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             {validatorsToList &&
               <ValidatorsTable
@@ -236,7 +274,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 chain={chain}
                 formatted={pool?.stashIdAccount?.accountId?.toString()}
                 handleCheck={handleCheck}
-                height={window.innerHeight - 255}
+                height={window.innerHeight - 230}
                 isSelected={isSelected}
                 maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
                 selectedValidatorsId={selectedValidatorsId}

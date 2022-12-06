@@ -360,14 +360,15 @@ export interface PoolInfo {
 export interface MyPoolInfo extends PoolInfo {
   member?: PalletNominationPoolsPoolMember;
   accounts?: PoolAccounts;
-  nominators?: string[];
+  // nominators?: string[];
   myClaimable?: BN;
   redeemable?: BN;
   rewardClaimable?: BN;
-  ledger?: StakingLedger | null;
+  // ledger?: StakingLedger | null;
   rewardIdBalance?: DeriveStakingAccount;
   stashIdAccount?: DeriveStakingAccount;
   token: string;
+  decimal: number;
 }
 
 export interface PoolAccounts {
@@ -560,8 +561,8 @@ export interface Prices {
 export interface Price {
   amount: number;
   chainName: string;
-  date?: number;
-  token: string;
+  date: number;
+  token?: string;
 }
 
 export interface SavedBalances {
@@ -591,10 +592,10 @@ export interface MemberPoints {
   points: BN;
 }
 
-export type FetchContext = {
+export type Fetching = {
   [formatted: string]: IsFetching;
 }
 
 export type IsFetching = {
-  [type: string]: boolean;
+  [item: string]: boolean;
 }

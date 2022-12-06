@@ -63,7 +63,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
 
   const ValidatorInformation = () => (
     <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
-      <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
         <Grid item lineHeight={1} width='85%'>
           <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
@@ -86,7 +86,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
       </Grid>
       <Grid container item>
         <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
-          <Grid display='inline-flex' item>
+          <Grid display='inline-flex' fontSize='12px' fontWeight={400} item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Own')}:
             </Typography>
@@ -106,23 +106,22 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             </Typography>
           </Grid>
         </Grid>
-        <Grid container direction='column' justifyContent='center' item width='50%'>
-          <Grid display='inline-flex' item justifyContent='end'>
+        <Grid container direction='column' item justifyContent='center' width='50%'>
+          <Grid display='inline-flex' fontSize='12px' fontWeight={400} item justifyContent='flex-end'>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t<string>('Total')}:
             </Typography>
             {total.isZero()
-              ? (
-                <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
-                  {t<string>('N/A')}
-                </Typography>)
-              : (
-                <ShowBalance
-                  api={api}
-                  balance={total}
-                  decimalPoint={4}
-                  height={22}
-                />)}
+              ? <Typography fontSize='12px' fontWeight={400} lineHeight='22px' pr='5px'>
+                {t<string>('N/A')}
+              </Typography>
+              : <ShowBalance
+                api={api}
+                balance={total}
+                decimalPoint={4}
+                height={22}
+              />
+            }
           </Grid>
           {!staked?.isZero() &&
             <Grid display='inline-flex' item justifyContent='end'>
@@ -150,8 +149,15 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
     return percentToShow;
   };
 
+  const label = validatorInfo?.exposure?.others?.length
+    ? t('Nominators (count)', { replace: { count: validatorInfo?.exposure?.others?.length } })
+    : t('Nominators');
+
   const NominatorTableWithLabel = () => (
-    <Label label={`Nominators (${validatorInfo?.exposure?.others?.length})`} style={{ margin: '20px auto', width: '92%' }}>
+    <Label
+      label={label}
+      style={{ margin: '20px auto', width: '92%' }}
+    >
       <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
         {sortedNominators?.length
           ? (<>
@@ -173,7 +179,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
               </Grid>
             </Grid>
             {sortedNominators?.map(({ value, who }, index) => (
-              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'background.default' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
+              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
                 <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
                   <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress style={{ fontSize: '16px' }} />
                 </Grid>
@@ -192,7 +198,9 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             ))}
           </>
           )
-          : (<Typography fontSize='18px' fontWeight={300} m='auto' py='20px' textAlign='center' width='92%'>{t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}</Typography>)
+          : (<Typography fontSize='16px' fontWeight={400} m='auto' py='20px' textAlign='center' width='92%'>
+            {t<string>('The list of nominators is not available to be displayed as this validator is in the waiting status.')}
+          </Typography>)
         }
       </Grid>
     </Label>

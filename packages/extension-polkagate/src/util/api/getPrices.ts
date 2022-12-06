@@ -5,7 +5,7 @@ import request from 'umi-request';
 
 import { Prices } from '../types';
 
-export default async function getPrices (chainNames: string[], currency = 'usd'): Promise<Prices> {
+export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices> {
   const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${chainNames}&vs_currencies=${currency}`, {});
 
   prices.westend = { usd: 0 };
@@ -13,7 +13,7 @@ export default async function getPrices (chainNames: string[], currency = 'usd')
   return { date: Date.now(), prices };
 }
 
-function getReq (api: string, data: Record<string, any> = {}, option?: Record<string, any>): Promise<Record<string, any>> {
+function getReq(api: string, data: Record<string, any> = {}, option?: Record<string, any>): Promise<Record<string, any>> {
   return request.get(api, {
     data,
     ...option

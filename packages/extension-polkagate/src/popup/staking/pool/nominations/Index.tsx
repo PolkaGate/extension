@@ -133,11 +133,11 @@ export default function Index(): React.ReactElement {
       <SubTitle
         label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')}
       />
-      {(selectedValidatorsId === null || allValidatorsInfo === null) &&
-        <>
+      {selectedValidatorsId === null
+        ? <>
           <Warn text={t<string>('No validator found.')} />
           <Grid alignItems='center' container direction='column' pt='98px'>
-            <Grid item>
+            <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
                 color={`${theme.palette.primary.light}`}
                 icon={faRefresh}
@@ -146,13 +146,12 @@ export default function Index(): React.ReactElement {
                 spin={refresh}
               />
             </Grid>
-            <Grid item sx={{ fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            <Grid item onClick={onRefresh} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
               {t('Refresh')}
             </Grid>
           </Grid>
         </>
-      }
-      {(selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
+        : (selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
         <Progress
           pt='125px'
           size={125}

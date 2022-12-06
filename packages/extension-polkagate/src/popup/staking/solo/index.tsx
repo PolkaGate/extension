@@ -53,7 +53,8 @@ export default function Index(): React.ReactElement {
   const rewards = useStakingRewards(formatted);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const balances = useBalances(address);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const balances = useBalances(address, refresh, setRefresh);
   const nominatorInfo = useNominator(address);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
@@ -167,7 +168,7 @@ export default function Index(): React.ReactElement {
             {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
           </Grid>
           <Grid fontWeight={400} item>
-            <FormatBalance api={api} decimalPoint={2} value={amount} />
+            <FormatBalance api={api} decimalPoint={4} value={amount} />
           </Grid>
         </Grid>))
       }
@@ -184,7 +185,7 @@ export default function Index(): React.ReactElement {
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
               <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} >
-                <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
+                <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={4} token={token} />
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
@@ -323,6 +324,7 @@ export default function Index(): React.ReactElement {
           available={getValue('available', balances)}
           chain={chain}
           formatted={formatted}
+          setRefresh={setRefresh}
           setShow={setShowRedeemableWithdraw}
           show={showRedeemableWithdraw}
         />}

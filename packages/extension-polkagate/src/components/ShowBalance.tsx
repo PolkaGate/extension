@@ -7,7 +7,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 
-import { GridDirection, Skeleton } from '@mui/material';
+import { Grid, GridDirection, Skeleton } from '@mui/material';
 import { ResponsiveStyleValue } from '@mui/system';
 import React from 'react';
 
@@ -30,7 +30,7 @@ export interface Props {
 
 export default function ShowBalance({ api, balance, decimalPoint, height = 20, skeletonWidth = 90, decimal = undefined, token = undefined }: Props): React.ReactElement<Props> {
   return (
-    <>
+    <Grid alignItems='center' container justifyContent='center' width='fit-content'>
       {balance === undefined || !(api || (decimal && token))
         ? <Skeleton
           height={height}
@@ -50,6 +50,6 @@ export default function ShowBalance({ api, balance, decimalPoint, height = 20, s
             value={balance}
           />
       }
-    </>
+    </Grid>
   );
 }

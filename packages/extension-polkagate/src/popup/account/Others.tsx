@@ -65,7 +65,7 @@ export default function Others({ account, api, balances, chain, formatted, price
               {type}
             </Typography>
           </Grid>
-          <Grid container direction='column' item justifyContent='flex-end' xs>
+          <Grid container direction='column' item alignItems='flex-end' xs>
             <Grid item textAlign='right'>
               <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }}>
                 <ShowBalance api={api} balance={value} decimal={balances?.decimal} token={balances?.token} />

@@ -5,7 +5,7 @@ import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useEndpoint2, useFormatted } from '.';
+import { useApi, useEndpoint2, useFormatted } from '.';
 
 export default function usePool(address: string, id?: number, statePool?: MyPoolInfo, refresh?: boolean): MyPoolInfo | null | undefined {
   const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
@@ -37,11 +37,21 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
       console.log('*** My pool info returned from worker is:', parsedInfo);
 
-      // id ? setSelectedPool(parsedInfo) :
       setMyPool(parsedInfo);
+
+      /** save my pool to local storage */
+      chrome.storage.local.get('MyPools', (res) => {
+        const k = `${formatted}`;
+        const last = res?.MyPools ?? {};
+
+        last[k] = parsedInfo;
+        // eslint-disable-next-line no-void
+        void chrome.storage.local.set({ MyPools: last });
+      });
+
       getPoolWorker.terminate();
     };
-  }, []);
+  }, [formatted]);
 
   useEffect(() => {
     if (statePool !== undefined) {
@@ -50,6 +60,20 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
     endpoint && formatted && getPoolInfo(endpoint, formatted, id);
   }, [endpoint, formatted, getPoolInfo, id, statePool]);
+
+  useEffect(() => {
+    if (!formatted) {
+      return;
+    }
+
+    chrome.storage.local.get('MyPools', (res) => {
+      console.log('MyPools in local storage:', res);
+
+      if (res?.MyPools?.[formatted]) {
+        setMyPool(res.MyPools[formatted]);
+      }
+    });
+  }, [formatted]);
 
   useEffect(() => {
     refresh && console.log('refreshing ...');

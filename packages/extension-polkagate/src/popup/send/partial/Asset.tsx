@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component shows ..
@@ -37,50 +39,20 @@ export default function Asset({ api, balance, balanceLabel, balanceType, balance
   const { t } = useTranslation();
 
   return (
-    <Grid
-      container
-      item
-      sx={style}
-      xs={12}
-    >
+    <Grid container item sx={style} xs={12}>
       <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
         {t('Asset')}
       </div>
-      <Grid
-        alignItems='center'
-        container
-        item
-        justifyContent='space-between'
-        sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}
-      >
-        <Grid
-          container
-          item
-          xs={1.5}
-        >
-          <ChainLogo
-            genesisHash={genesisHash}
-            size={31}
-          />
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
+        <Grid container item xs={1.5}>
+          <ChainLogo genesisHash={genesisHash} size={31} />
         </Grid>
-        <Grid
-          container
-          item
-          sx={{ fontSize: '16px', fontWeight: 300 }}
-          xs={5}
-        >
-          <Grid item>
-            {balanceLabel}
-            <br />
+        <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
+          <Grid item>            {balanceLabel}            <br />
             {t('Fee')}
           </Grid>
         </Grid>
-        <Grid
-          container
-          item
-          justifyContent='flex-end'
-          xs
-        >
+        <Grid container item justifyContent='flex-end' xs>
           <BalanceFee
             api={api}
             balance={balance}

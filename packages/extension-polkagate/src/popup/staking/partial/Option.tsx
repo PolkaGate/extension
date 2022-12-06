@@ -7,7 +7,8 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { PButton, ShowBalance, Warning } from '../../../components';
+import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
+import { useTranslation } from '../../../hooks';
 
 interface OptionProps {
   api?: ApiPromise;
@@ -21,45 +22,24 @@ interface OptionProps {
   onClick: () => void;
   style?: SxProps<Theme> | undefined;
   warningText?: string;
+  helperText?: string;
 }
 
-export default function Option ({ api, balance, balanceText, buttonText, isBusy, isDisabled, onClick, style, text, title, warningText }: OptionProps): React.ReactElement {
+export default function Option({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, onClick, style, text, title, warningText }: OptionProps): React.ReactElement {
+  const { t } = useTranslation();
   const theme = useTheme();
 
   return (
-    <Grid
-      alignItems='center'
-      container
-      direction='column'
-      justifyContent='center'
-      sx={{
-        backgroundColor: 'background.paper',
-        border: '0.5px solid',
-        borderColor: 'secondary.main',
-        borderRadius: '5px',
-        letterSpacing: '-1.5%',
-        p: '10px 14px',
-        ...style
-      }}
-    >
+    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
       <Grid item>
-        <Typography
-          fontSize='20px'
-          fontWeight={400}
-        >
-          {title}
-        </Typography>
+        <Infotip iconLeft={6} iconTop={10} showQuestionMark text={helperText}>
+          <Typography fontSize='20px' fontWeight={400}>
+            {title}
+          </Typography>
+        </Infotip>
       </Grid>
       {warningText &&
-        <Grid
-          color='red'
-          container
-          height='30px'
-          item
-          justifyContent='center'
-          mb='5px'
-          mt='10px'
-        >
+        <Grid color='red' container height='30px' item justifyContent='center' mb='5px' mt='10px'>
           <Warning
             fontWeight={400}
             isBelowInput
@@ -71,27 +51,14 @@ export default function Option ({ api, balance, balanceText, buttonText, isBusy,
         </Grid>
       }
       {text &&
-        <Grid
-          item
-          pt='5px'
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-          >
+        <Grid item pt='5px'>
+          <Typography fontSize='14px' fontWeight={300}>
             {text}
           </Typography>
         </Grid>
       }
-      <Grid
-        container
-        item
-        justifyContent='space-between'
-        pt='10px'
-      >
-        <Grid
-          item
-        >
+      <Grid container item justifyContent='space-between' pt='10px'>
+        <Grid item>
           <Typography
             fontSize='14px'
             fontWeight={300}
@@ -99,13 +66,7 @@ export default function Option ({ api, balance, balanceText, buttonText, isBusy,
             {balanceText}
           </Typography>
         </Grid>
-        <Grid
-          item
-          sx={{
-            fontSize: '14px',
-            fontWeight: 400
-          }}
-        >
+        <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
           <ShowBalance
             api={api}
             balance={balance}

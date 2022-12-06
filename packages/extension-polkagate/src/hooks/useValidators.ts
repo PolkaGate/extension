@@ -38,7 +38,9 @@ export default function useValidators(address: string): AllValidators | null | u
       if (fetchedValidatorsInfo && JSON.stringify(savedValidators) !== JSON.stringify(fetchedValidatorsInfo)) {
         setValidatorsInfo(fetchedValidatorsInfo);
 
-        window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(fetchedValidatorsInfo));
+        if (chainName?.toLocaleLowerCase() !== 'westend') {
+          window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(fetchedValidatorsInfo));
+        }
       }
 
       getValidatorsInfoWorker.terminate();
