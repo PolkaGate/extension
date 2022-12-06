@@ -41,7 +41,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
       state: { api, pathname, poolConsts, stakingConsts }
     });
   }, [address, api, history, pathname, poolConsts, stakingConsts]);
-  
+
   const goToSoloStaking = useCallback(() => {
     address && history.push({
       pathname: `/solo/${address}/`,
@@ -79,6 +79,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           text={t('Stakers (nominators) with sufficient amount of tokens can choose solo staking.')}
           title={t('Solo Staking')}
           helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
+          tipPlace='bottom'
         />
       </Box>
     </Slide>
