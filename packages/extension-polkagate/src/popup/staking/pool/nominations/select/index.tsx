@@ -10,7 +10,6 @@
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
-import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Checkbox, FormControlLabel, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -25,64 +24,24 @@ import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_VALIDATOR_COMMISSION_FILTER } from '../../../../../util/constants';
 import { AllValidators, MyPoolInfo, StakingConsts, ValidatorInfo } from '../../../../../util/types';
+import Filters from '../../../partial/Filters';
 import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
 import Review from './Review';
+import { Data, getComparator, Order } from '../../../partial/comparators';
 
 interface Props {
   address: string;
-  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
+  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
+  allValidatorsInfo: AllValidators | null | undefined;
   api: ApiPromise;
   chain: Chain | null;
-  formatted: string;
+  formatted: AccountId | undefined
   title: string;
-  poolId: BN | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  allValidatorsInfo: AllValidators | null | undefined
-  selectedValidatorsId: AccountId[] | null | undefined
-  stakingConsts: StakingConsts | undefined
-  pool: MyPoolInfo | undefined;
-}
-
-interface Data {
-  name: string;
-  commission: number;
-  nominator: number;
-  staked: string;
-}
-
-type Order = 'asc' | 'desc';
-
-function descendingComparator<T>(a: ValidatorInfo, b: ValidatorInfo, orderBy: keyof T) {
-  let A, B;
-
-  switch (orderBy) {
-    case ('commission'):
-      A = a.validatorPrefs.commission;
-      B = b.validatorPrefs.commission;
-      break;
-    case ('nominator'):
-      A = a.exposure.others.length;
-      B = b.exposure.others.length;
-      break;
-    default:
-      A = a.accountId;
-      B = b.accountId;
-  }
-
-  if (B < A) {
-    return -1;
-  }
-
-  if (B > A) {
-    return 1;
-  }
-
-  return 0;
-}
-
-function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b: ValidatorInfo) => number {
-  return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
+  selectedValidatorsId: AccountId[] | null | undefined;
+  stakingConsts: StakingConsts | null | undefined;
+  pool: MyPoolInfo;
 }
 
 export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
@@ -90,35 +49,23 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const theme = useTheme();
 
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>();
-  const [idOnly, setIdOnly] = useState<boolean>();
-  const [noMoreThan20Comm, setNoMoreThan20Comm] = useState<boolean>();
-  const [noOversubscribed, setNoOversubscribed] = useState<boolean>();
-  const [noWaiting, setNoWaiting] = useState<boolean>();
+  const [showFilters, setShowFilters] = useState<boolean>(false);
   const [validatorsToList, setValidatorsToList] = useState<ValidatorInfo[]>();
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
   const [showReview, setShowReview] = useState<boolean>(false);
-  const [filter, setFilter] = useState('');
+  const [keyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
     if (!allValidatorsInfo || !allValidatorsIdentities) {
       return;
     }
 
-    let filteredValidators = allValidatorsInfo.current.concat(allValidatorsInfo.waiting);
+    let filteredValidators = validatorsToList ?? allValidatorsInfo.current.concat(allValidatorsInfo.waiting);
 
     // at first filtered blocked allValidatorsInfo
     filteredValidators = filteredValidators?.filter((v) => !v.validatorPrefs.blocked);
-
-    filteredValidators = noWaiting ? filteredValidators?.filter((v) => v.exposure.others.length !== 0) : filteredValidators;
-    filteredValidators = noOversubscribed ? filteredValidators?.filter((v) => v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator) : filteredValidators;
-    filteredValidators = noMoreThan20Comm ? filteredValidators?.filter((v) => Number(v.validatorPrefs.commission) / (10 ** 7) <= DEFAULT_VALIDATOR_COMMISSION_FILTER) : filteredValidators;
-
-    if (idOnly && allValidatorsIdentities) {
-      filteredValidators = filteredValidators?.filter((v) =>
-        allValidatorsIdentities.find((i) => i.accountId === v.accountId && (i.identity.display || i.identity.displayParent)));
-    }
 
     // remove filtered validators from the selected list
     const selectedTemp = [...newSelectedValidators];
@@ -135,22 +82,19 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
 
     setValidatorsToList(selectedTemp.concat(filteredValidators));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities, noWaiting, noOversubscribed, noMoreThan20Comm, idOnly, order, orderBy]);
+  }, [stakingConsts, allValidatorsInfo, allValidatorsIdentities,order, orderBy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
-  const _onChangeFilter = useCallback((filter: string) => {
-    setFilter(filter);
+  const onFilters = useCallback(() => {
+    setShowFilters(true);
   }, []);
 
-  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Data) => {
-    const isAsc = orderBy === property && order === 'asc';
-
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+  const onSearch = useCallback((filter: string) => {
+    setSearchKeyword(filter);
+  }, []);
 
   const isSelected = useCallback((v: ValidatorInfo) => newSelectedValidators.indexOf(v) !== -1, [newSelectedValidators]);
 
@@ -224,28 +168,22 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           <Grid item justifyContent='flex-start' py='10px' width='73%'>
             <InputFilter
               autoFocus={false}
-              onChange={_onChangeFilter}
+              onChange={onSearch}
               placeholder={t<string>('🔍 Search validator')}
               theme={theme}
-              value={filter}
+              value={keyword}
               withReset
             />
           </Grid>
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' pl='15px' py='10px' width='27%'>
             {t('Filters')}
-            <Grid alignItems='center' container item pl='10px' justifyContent='center'
-              // onClick={showFilters}
+            <Grid alignItems='center' container item pl='10px' justifyContent='center' onClick={onFilters}
               sx={{ cursor: 'pointer', width: '40%' }}>
               <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
             </Grid>
           </Grid>
           {/* <Grid container fontSize='14px' fontWeight='400' item pb='15px'>
-            <Checkbox2
-              checked={idOnly}
-              label={t<string>('ID only')}
-              onChange={() => setIdOnly(!idOnly)}
-              style={{ width: '30%', fontSize: '14px', fontWeight: '400' }}
-            />
+        
             <Checkbox2
               checked={noMoreThan20Comm}
               label={t<string>('No more than 20 Commission')}
@@ -264,7 +202,6 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               onChange={() => setNoWaiting(!noWaiting)}
               style={{ width: '40%' }}
             />
-            <SearchIcon sx={{ color: 'secondary.light', width: '10%' }} />
           </Grid> */}
           <Grid item xs={12}>
             {validatorsToList &&
@@ -287,6 +224,20 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
             }
           </Grid>
           <TableSubInfoWithClear />
+          {showFilters &&
+            <Grid ml='-15px' position='absolute'>
+              <Filters
+                allValidatorsIdentities={allValidatorsIdentities}
+                allValidatorsInfo={allValidatorsInfo}
+                newSelectedValidators={newSelectedValidators}
+                setNewSelectedValidators={setNewSelectedValidators}
+                setShow={setShowFilters}
+                setValidatorsToList={setValidatorsToList}
+                show={showFilters}
+                stakingConsts={stakingConsts}
+              />
+            </Grid>
+          }
         </Grid>
         <PButton
           _onClick={() => setShowReview(true)}
