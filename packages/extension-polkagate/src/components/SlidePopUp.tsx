@@ -13,7 +13,7 @@ interface Props {
 
 export default function SlidePopUp({ children, show }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const ValidatorInfoRef = React.useRef(null);
+  const ref = React.useRef(null);
 
   return (
     <Grid
@@ -21,7 +21,7 @@ export default function SlidePopUp({ children, show }: Props): React.ReactElemen
       container
       height='100%'
       justifyContent='end'
-      ref={ValidatorInfoRef}
+      ref={ref}
       sx={[{
         mixBlendMode: 'normal',
         overflowY: 'scroll',
@@ -37,7 +37,7 @@ export default function SlidePopUp({ children, show }: Props): React.ReactElemen
       zIndex={10}
     >
       <Slide
-        container={ValidatorInfoRef.current}
+        container={ref.current}
         direction='up'
         in={show}
         mountOnEnter
