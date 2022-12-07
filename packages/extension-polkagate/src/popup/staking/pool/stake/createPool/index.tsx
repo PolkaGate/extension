@@ -116,8 +116,8 @@ export default function CreatePool(): React.ReactElement {
   }, [DEFAULT_POOLNAME, amountAsBN, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, showReview, stateTogglerId]);
 
   useEffect(() => {
-    !nominatorId && formatted && setNominatorId(formatted);
-    !stateTogglerId && formatted && setStateTogglerId(formatted);
+    !nominatorId && formatted && setNominatorId(String(formatted));
+    !stateTogglerId && formatted && setStateTogglerId(String(formatted));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted]);
 
