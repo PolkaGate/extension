@@ -208,6 +208,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           labelPosition='center'
           mode='Creating'
           pool={poolToCreate}
+          showInfo
           style={{
             m: '8px auto 0',
             width: '92%'
