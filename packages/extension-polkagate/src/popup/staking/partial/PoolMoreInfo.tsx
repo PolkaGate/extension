@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Collapse, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
+import { Collapse, Grid, IconButton, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, Progress, ShowBalance } from '../../../components';
+import { Identity, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { usePool, usePoolMembers, useTranslation } from '../../../hooks';
 import { MemberPoints, MyPoolInfo } from '../../../util/types';
 import ShowPool from './ShowPool';
@@ -35,8 +35,6 @@ interface CollapseProps {
 
 export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const poolInfoRef = React.useRef(null);
   const poolToShow = usePool(address, poolId, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId.toString());
 
@@ -116,26 +114,14 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
             </Grid>
           </Grid>
         ))
-        : (
-          <Grid
-            alignItems='center'
-            container
-            justifyContent='center'
-          >
-            <Grid
-              item
-            >
-              <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
-            </Grid>
-            <Typography
-              fontSize='13px'
-              lineHeight='40px'
-              pl='10px'
-            >
-              {t<string>('Loading pool members...')}
-            </Typography>
+        : <Grid alignItems='center' container justifyContent='center'>
+          <Grid item>
+            <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
           </Grid>
-        )
+          <Typography fontSize='13px' lineHeight='40px' pl='10px'>
+            {t<string>('Loading pool members...')}
+          </Typography>
+        </Grid>
       }
     </Grid>
   );
@@ -210,35 +196,8 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   );
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      ref={poolInfoRef}
-      sx={[{
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        },
-        top: 0
-      }]}
-      width='357px'
-      zIndex={10}
-    >
-      <Slide
-        container={poolInfoRef.current}
-        direction='up'
-        in={showPoolInfo}
-        mountOnEnter
-        unmountOnExit
-      >
-        {page}
-      </Slide>
-    </Grid>
+    <SlidePopUp show={showPoolInfo}>
+      {page}
+    </SlidePopUp>
   );
 }

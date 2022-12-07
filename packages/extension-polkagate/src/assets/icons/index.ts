@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+export { default as checkBox } from './checkBox.svg';
+export { default as checkedBox } from './checkedBox.svg';
 export { default as send } from './send.png';
 export { default as isend } from './isend.png';
 export { default as roadBranch } from './roadBranchW.png';

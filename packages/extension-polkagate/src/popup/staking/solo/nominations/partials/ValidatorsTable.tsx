@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import type { AccountId } from '@polkadot/types/interfaces';
+
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
 import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -25,7 +27,7 @@ interface Props {
   activeValidators: ValidatorInfo[] | undefined;
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
   chain?: Chain;
-  formatted?: string;
+  formatted?: AccountId;
   handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
   height?: number;
   isSelected: (v: ValidatorInfo) => boolean;
@@ -35,9 +37,11 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
+  token?: string;
+  decimal?: number;
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, formatted, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();
@@ -142,9 +146,11 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
                             ? <ShowBalance
                               api={api}
                               balance={v.exposure.total}
+                              decimal={decimal}
                               decimalPoint={1}
                               height={15}
                               skeletonWidth={50}
+                              token={token}
                             />
                             : t('waiting')
                           }

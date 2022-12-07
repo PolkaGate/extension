@@ -22,6 +22,7 @@ export { default as Infotip } from './Infotip';
 export { default as ShowIdentity } from './ShowIdentity';
 export { default as ShortAddress } from './ShortAddress';
 export { default as Select } from './Select';
+export { default as SlidePopUp } from './SlidePopUp';
 export { default as Header } from './Header';
 export { default as ShowBalance } from './ShowBalance';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';
@@ -58,6 +59,5 @@ export { default as MnemonicSeed } from './MnemonicSeed';
 export { default as Motion } from './Motion';
 
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
-
 
 export * from './contexts';

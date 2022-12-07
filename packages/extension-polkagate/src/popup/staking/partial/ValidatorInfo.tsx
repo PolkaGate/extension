@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Avatar, Grid, IconButton, Link, Slide, Typography, useTheme } from '@mui/material';
+import { Avatar, Grid, IconButton, Link, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -12,7 +12,7 @@ import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/type
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Identity, Label, ShowBalance } from '../../../components';
+import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 
@@ -29,9 +29,6 @@ interface Props {
 
 export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const ValidatorInfoRef = React.useRef(null);
-
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
@@ -43,7 +40,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
   const myPossibleIndex = staked && myIndex === -1 ? sortedNominators?.findIndex((n) => n.value < staked.toNumber()) : -1;
 
-  const _closeMenu = useCallback(
+  const closeMenu = useCallback(
     () => setShowValidatorInfo(false),
     [setShowValidatorInfo]
   );
@@ -150,7 +147,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   };
 
   const label = validatorInfo?.exposure?.others?.length
-    ? t('Nominators (count)', { replace: { count: validatorInfo?.exposure?.others?.length } })
+    ? t('Nominators ({{count}})', { replace: { count: validatorInfo?.exposure?.others?.length } })
     : t('Nominators');
 
   const NominatorTableWithLabel = () => (
@@ -216,7 +213,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
       <ValidatorInformation />
       <NominatorTableWithLabel />
       <IconButton
-        onClick={_closeMenu}
+        onClick={closeMenu}
         sx={{
           left: '15px',
           p: 0,
@@ -230,35 +227,8 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   );
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      ref={ValidatorInfoRef}
-      sx={[{
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        },
-        top: 0
-      }]}
-      width='357px'
-      zIndex={10}
-    >
-      <Slide
-        container={ValidatorInfoRef.current}
-        direction='up'
-        in={showValidatorInfo}
-        mountOnEnter
-        unmountOnExit
-      >
-        {page}
-      </Slide>
-    </Grid>
+    <SlidePopUp show={showValidatorInfo}>
+      {page}
+    </SlidePopUp>
   );
 }

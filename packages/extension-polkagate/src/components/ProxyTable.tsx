@@ -45,7 +45,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
 
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
-  , [accounts, proxyTypeFilter]);
+    , [accounts, proxyTypeFilter]);
 
   const getProxyName = useCallback((proxy: Proxy): string | undefined => accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate))?.name, [accounts]);
 
@@ -76,47 +76,36 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   );
 
   const Delete = ({ proxyItem }: { proxyItem: ProxyItem }) => (
-    <Grid
-      height={25}
-      onClick={() => handleDelete(proxyItem.proxy)}
-    >
+    <Grid height={25} onClick={() => handleDelete(proxyItem.proxy)}    >
       {proxyItem.status === 'new'
-        ? (
-          <BackspaceIcon
-            sx={{
-              color: 'secondary.main',
-              cursor: 'pointer',
-              height: '25px',
-              width: '30px'
-            }}
-          />)
-        : (
-          <Checkbox
-            checked={proxyItem.status === 'remove'}
-            height={25}
-            label=''
-            style={{ margin: 'auto', width: 'fit-content' }}
-            theme={theme}
-            width={25}
-          />)
+        ? <BackspaceIcon
+          sx={{
+            color: 'secondary.main',
+            cursor: 'pointer',
+            height: '25px',
+            width: '30px'
+          }}
+        />
+        : <Checkbox
+          checked={proxyItem.status === 'remove'}
+          height={25}
+          label=''
+          style={{ margin: 'auto', width: 'fit-content' }}
+          theme={theme}
+          width={25}
+        />
       }
     </Grid>
   );
 
   const Available = ({ proxy }: { proxy: Proxy }) => (
-    <Typography
-      fontSize='12px'
-      fontWeight={400}
-    >
+    <Typography fontSize='12px' fontWeight={400}>
       {isAvailable(proxy) ? 'Yes' : 'No'}
     </Typography>
   );
 
   const Status = ({ status }: { status: string }) => (
-    <Typography
-      fontSize='12px'
-      fontWeight={400}
-    >
+    <Typography fontSize='12px' fontWeight={400}>
       {status === 'new' && 'Adding'}
       {status === 'remove' && 'Removing'}
     </Typography>
@@ -125,7 +114,9 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   const fade = (toCheck: ProxyItem) => {
     if (mode === 'Delete') {
       return (toCheck.status === 'remove');
-    } else if (mode === 'Availability' || mode === 'Select') {
+    }
+
+    if (mode === 'Availability' || mode === 'Select') {
       return !(isAvailable(toCheck.proxy));
     }
 
@@ -133,249 +124,135 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   };
 
   return (
-    <>
-      <Grid
-        sx={{ ...style }}
-      >
-        <Label
-          label={label}
-          style={{ position: 'relative' }}
+    <Grid sx={{ ...style }}>
+      <Label label={label} style={{ position: 'relative', fontWeight: 300 }}>
+        <Grid container direction='column'
+          sx={{
+            '&::-webkit-scrollbar': {
+              display: 'none',
+              width: 0
+            },
+            '> div:not(:last-child:not(:only-child))': {
+              borderBottom: '1px solid',
+              borderBottomColor: 'secondary.light'
+            },
+            bgcolor: 'background.paper',
+            border: '1px solid',
+            borderColor: 'secondary.light',
+            borderRadius: '5px',
+            display: 'block',
+            maxHeight,
+            minHeight: '68px',
+            overflowY: 'scroll',
+            scrollbarWidth: 'none',
+            textAlign: 'center'
+          }}
         >
-          <Grid
-            container
-            direction='column'
-            sx={{
-              '&::-webkit-scrollbar': {
-                display: 'none',
-                width: 0
-              },
-              '> div:not(:last-child:not(:only-child))': {
-                borderBottom: '1px solid',
-                borderBottomColor: 'secondary.light'
-              },
-              bgcolor: 'background.paper',
-              border: '1px solid',
-              borderColor: 'secondary.light',
-              borderRadius: '5px',
-              display: 'block',
-              maxHeight,
-              minHeight: '68px',
-              overflowY: 'scroll',
-              scrollbarWidth: 'none',
-              textAlign: 'center'
-            }}
-          >
-            <Grid
-              container
-              item
-              sx={{
-                '> div:not(:last-child)': {
-                  borderRight: '1px solid',
-                  borderRightColor: 'secondary.light'
-                },
-                textAlign: 'center'
-              }}
-              xs={12}
-            >
-              <Grid
-                item
-                xs={mode === 'None' ? 6.1 : 4.7}
-              >
-                <Typography
-                  fontSize='12px'
-                  fontWeight={300}
-                  lineHeight='25px'
-                >
-                  {t('Identity')}
+          <Grid container item sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, textAlign: 'center' }} xs={12}>
+            <Grid item xs={mode === 'None' ? 6.1 : 4.7}>
+              <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
+                {t('Identity')}
+              </Typography>
+            </Grid>
+            <Grid item xs={mode === 'None' ? 4.5 : 3.9}>
+              <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
+                {t('Type')}
+              </Typography>
+            </Grid>
+            <Grid item xs={1.4}>
+              <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
+                {t('Delay')}
+              </Typography>
+            </Grid>
+            {mode !== 'None' &&
+              <Grid item xs={2}>
+                <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
+                  {mode === 'Select' ? t('Select') : mode === 'Delete' ? t('Delete') : mode === 'Status' ? t('Status') : t('Available')}
                 </Typography>
               </Grid>
-              <Grid
-                item
-                xs={mode === 'None' ? 4.5 : 3.9}
-              >
-                <Typography
-                  fontSize='12px'
-                  fontWeight={300}
-                  lineHeight='25px'
-                >
-                  {t('Type')}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                xs={1.4}
-              >
-                <Typography
-                  fontSize='12px'
-                  fontWeight={300}
-                  lineHeight='25px'
-                >
-                  {t('Delay')}
-                </Typography>
-              </Grid>
-              {mode !== 'None' &&
-                <Grid
-                  item
-                  xs={2}
-                >
-                  <Typography
-                    fontSize='12px'
-                    fontWeight={300}
-                    lineHeight='25px'
-                  >
-                    {mode === 'Select' ? t('Select') : mode === 'Delete' ? t('Delete') : mode === 'Status' ? t('Status') : t('Available')}
+            }
+          </Grid>
+          {chain &&
+            (proxies
+              ? proxies.length
+                ? proxies.map((proxyItem, index) => {
+                  return (
+                    <Grid container item key={index}
+                      sx={{
+                        '> div:not(:last-child)': {
+                          borderRight: '1px solid',
+                          borderRightColor: 'secondary.light'
+                        },
+                        bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent',
+                        height: '41px',
+                        opacity: fade(proxyItem) ? 0.7 : 1,
+                        textAlign: 'center'
+                      }}
+                      xs={12}
+                    >
+                      <Grid alignItems='center' container height='100%' item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
+                        <Grid item width='30px'>
+                          <Identicon
+                            prefix={chain?.ss58Format ?? 42}
+                            size={30}
+                            theme={chain?.icon || 'polkadot'}
+                            value={proxyItem.proxy.delegate}
+                          />
+                        </Grid>
+                        <Typography
+                          fontSize='12px'
+                          fontWeight={400}
+                          maxWidth='calc(100% - 35px)'
+                          overflow='hidden'
+                          pl='5px'
+                          textOverflow='ellipsis'
+                          whiteSpace='nowrap'
+                        >
+                          {getProxyName(proxyItem.proxy) || toShortAddress(proxyItem.proxy.delegate)}
+                        </Typography>
+                      </Grid>
+                      <Grid alignItems='center' container height='100%' item justifyContent='center' xs={mode === 'None' ? 4.5 : 3.9}>
+                        <Typography fontSize='12px' fontWeight={400}>
+                          {proxyItem.proxy.proxyType}
+                        </Typography>
+                      </Grid>
+                      <Grid alignItems='center' container height='100%' item justifyContent='center' xs={1.4}>
+                        <Typography fontSize='12px' fontWeight={400}>
+                          {proxyItem.proxy.delay}
+                        </Typography>
+                      </Grid>
+                      {mode !== 'None' &&
+                        <Grid alignItems='center' container height='100%' item justifyContent='center' xs={2}>
+                          {mode === 'Availability'
+                            ? <Available proxy={proxyItem.proxy} />
+                            : mode === 'Select'
+                              ? <Select proxy={proxyItem.proxy} index={index} />
+                              : mode === 'Delete'
+                                ? <Delete proxyItem={proxyItem} />
+                                : <Status status={proxyItem.status} />
+                          }
+                        </Grid>
+                      }
+                    </Grid>
+                  );
+                })
+                : <Grid display='inline-flex' p='10px'>
+                  <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
+                  <Typography fontSize='12px' fontWeight={400} lineHeight='20px' pl='8px'>
+                    {warningText}
                   </Typography>
                 </Grid>
-              }
-            </Grid>
-            {chain &&
-              (proxies
-                ? proxies.length
-                  ? proxies.map((proxyItem, index) => {
-                    return (
-                      <Grid
-                        container
-                        item
-                        key={index}
-                        sx={{
-                          '> div:not(:last-child)': {
-                            borderRight: '1px solid',
-                            borderRightColor: 'secondary.light'
-                          },
-                          bgcolor: fade(proxyItem) ? '#212121' : 'transparent',
-                          height: '41px',
-                          opacity: fade(proxyItem) ? 0.7 : 1,
-                          textAlign: 'center'
-                        }}
-                        xs={12}
-                      >
-                        <Grid
-                          alignItems='center'
-                          container
-                          height='100%'
-                          item
-                          justifyContent='left'
-                          pl='3px'
-                          xs={mode === 'None' ? 6.1 : 4.7}
-                        >
-                          <Grid
-                            item
-                            width='30px'
-                          >
-                            <Identicon
-                              prefix={chain?.ss58Format ?? 42}
-                              size={30}
-                              theme={chain?.icon || 'polkadot'}
-                              value={proxyItem.proxy.delegate}
-                            />
-                          </Grid>
-                          <Typography
-                            fontSize='12px'
-                            fontWeight={400}
-                            maxWidth='calc(100% - 35px)'
-                            overflow='hidden'
-                            pl='5px'
-                            textOverflow='ellipsis'
-                            whiteSpace='nowrap'
-                          >
-                            {getProxyName(proxyItem.proxy) || toShortAddress(proxyItem.proxy.delegate)}
-                          </Typography>
-                        </Grid>
-                        <Grid
-                          alignItems='center'
-                          container
-                          height='100%'
-                          item
-                          justifyContent='center'
-                          xs={mode === 'None' ? 4.5 : 3.9}
-                        >
-                          <Typography
-                            fontSize='12px'
-                            fontWeight={400}
-                          >
-                            {proxyItem.proxy.proxyType}
-                          </Typography>
-                        </Grid>
-                        <Grid
-                          alignItems='center'
-                          container
-                          height='100%'
-                          item
-                          justifyContent='center'
-                          xs={1.4}
-                        >
-                          <Typography
-                            fontSize='12px'
-                            fontWeight={400}
-                          >
-                            {proxyItem.proxy.delay}
-                          </Typography>
-                        </Grid>
-                        {mode !== 'None' &&
-                          <Grid
-                            alignItems='center'
-                            container
-                            height='100%'
-                            item
-                            justifyContent='center'
-                            xs={2}
-                          >
-                            {mode === 'Availability'
-                              ? <Available proxy={proxyItem.proxy} />
-                              : mode === 'Select'
-                                ? <Select proxy={proxyItem.proxy} index={index} />
-                                : mode === 'Delete'
-                                  ? <Delete proxyItem={proxyItem} />
-                                  : <Status status={proxyItem.status} />
-                            }
-                          </Grid>
-                        }
-                      </Grid>
-                    );
-                  })
-                  : (
-                    <Grid
-                      display='inline-flex'
-                      p='10px'
-                    >
-                      <FontAwesomeIcon
-                        className='warningImage'
-                        icon={faExclamationTriangle}
-                      />
-                      <Typography
-                        fontSize='12px'
-                        fontWeight={400}
-                        lineHeight='20px'
-                        pl='8px'
-                      >
-                        {warningText}
-                      </Typography>
-                    </Grid>
-                  )
-                : (
-                  <Grid
-                    alignItems='center'
-                    container
-                    justifyContent='center'
-                  >
-                    <Grid
-                      item
-                    >
-                      <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
-                    </Grid>
-                    <Typography
-                      fontSize='13px'
-                      lineHeight='41px'
-                      pl='10px'
-                    >
-                      {t<string>('looking for proxies...')}
-                    </Typography>
-                  </Grid>
-                )
-              )}
-          </Grid>
-        </Label>
-      </Grid>
-    </>
+              : <Grid alignItems='center' container justifyContent='center'>
+                <Grid item>
+                  <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
+                </Grid>
+                <Typography fontSize='13px' lineHeight='41px' pl='10px'>
+                  {t<string>('looking for proxies...')}
+                </Typography>
+              </Grid>
+            )}
+        </Grid>
+      </Label>
+    </Grid>
   );
 }

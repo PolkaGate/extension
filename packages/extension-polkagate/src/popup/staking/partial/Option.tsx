@@ -23,16 +23,17 @@ interface OptionProps {
   style?: SxProps<Theme> | undefined;
   warningText?: string;
   helperText?: string;
+  tipPlace?: string;
 }
 
-export default function Option({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, onClick, style, text, title, warningText }: OptionProps): React.ReactElement {
+export default function Option({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, onClick, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
       <Grid item>
-        <Infotip iconLeft={6} iconTop={10} showQuestionMark text={helperText}>
+        <Infotip iconLeft={6} iconTop={10} showQuestionMark text={helperText} placement={tipPlace}>
           <Typography fontSize='20px' fontWeight={400}>
             {title}
           </Typography>

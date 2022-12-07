@@ -7,6 +7,8 @@ import { BN } from '@polkadot/util';
 export const EXTENSION_NAME = 'Polkadot js plus ❤️';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
+export const DEFAULT_MAX_COMMISSION = 10;
+export const DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR = 2;
 export const MILLISECONDS_TO_UPDATE = 5 * 60 * 1000; // to update price
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance i grey
 export const PLUS_VERSION = '0.44.1.19';

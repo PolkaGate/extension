@@ -45,6 +45,7 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
           disabled={disabled}
           onClick={_onClick}
           sx={{
+            "&:disabled": { backgroundColor: '#4b4b4b' },
             borderColor: 'secondary.main',
             borderRadius: '5px',
             bottom: !_mt ? '25px' : 0,
