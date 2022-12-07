@@ -475,6 +475,7 @@ export interface SubscanRewardInfo {
 export interface RewardInfo {
   era: number;
   amount: BN;
+  date?: string;
   timeStamp: number;
   event: string;
   validator: string;
