@@ -14,10 +14,10 @@ interface Props {
   address: string;
   chain?: Chain;
   formatted?: string;
-  nominatorId: string;
-  stateTogglerId: string;
-  setNominatorId: React.Dispatch<React.SetStateAction<string>>;
-  setStateTogglerId: React.Dispatch<React.SetStateAction<string>>;
+  nominatorId: string | undefined;
+  stateTogglerId: string | undefined;
+  setNominatorId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setStateTogglerId: React.Dispatch<React.SetStateAction<string | undefined>>;
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,8 +28,8 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
-  const [newNominatorId, setNewNominatorId] = useState<string | undefined>(formatted);
-  const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(formatted);
+  const [newNominatorId, setNewNominatorId] = useState<string | undefined>(nominatorId);
+  const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(stateTogglerId);
 
   const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
@@ -48,8 +48,10 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   }, [newNominatorId, newStateTogglerId, setNominatorId, setShow, setStateTogglerId, show]);
 
   useEffect(() => {
-    setUpdateBtnDisable(!(stateTogglerId && nominatorId));
-  }, [nominatorId, stateTogglerId]);
+    setUpdateBtnDisable(!newNominatorId || !newStateTogglerId || (newStateTogglerId === stateTogglerId && newNominatorId === nominatorId));
+  }, [newNominatorId, newStateTogglerId, nominatorId, stateTogglerId]);
+
+  console.log('updateBtnDisable:', updateBtnDisable)
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='10px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
