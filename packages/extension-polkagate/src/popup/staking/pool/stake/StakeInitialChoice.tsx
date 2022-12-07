@@ -80,7 +80,7 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
       return setCreateWarningText(t<string>('Pools are full.'));
     }
 
-    if (consts?.minCreateBond.gt(availableBalance)) {
+    if (consts?.minCreationBond.gt(availableBalance)) {
       return setCreateWarningText(t<string>('You don’t have enough fund.'));
     }
 
@@ -112,7 +112,7 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
       />
       <Option
         api={api}
-        balance={consts?.minCreateBond}
+        balance={consts?.minCreationBond}
         balanceText={t<string>('Minimum to create')}
         buttonText={t<string>('Create')}
         isDisabled={createDisabled}
