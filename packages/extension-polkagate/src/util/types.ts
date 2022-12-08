@@ -4,6 +4,7 @@
 /* eslint-disable camelcase */
 
 import type { DeriveAccountInfo, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { StakingLedger } from '@polkadot/types/interfaces';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
@@ -599,4 +600,22 @@ export type Fetching = {
 
 export type IsFetching = {
   [item: string]: boolean;
+}
+
+export interface Filter {
+  withIdentity: boolean;
+  noWaiting: boolean;
+  noOversubscribed: boolean;
+  noSlashed: boolean;
+  maxCommission: Limit;
+  limitOfValidatorsPerOperator: Limit;
+  sortBy: string;
+}
+interface Limit {
+  check?: boolean;
+  value?: number;
+}
+
+export interface ValidatorInfoWithIdentity extends ValidatorInfo {
+  identity?: DeriveAccountRegistration;
 }

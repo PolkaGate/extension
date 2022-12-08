@@ -18,19 +18,19 @@ export default function usePrice(address: string, currency = 'usd'): Price | und
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.toLowerCase();
 
-  useEffect(() => {
-    if (!chainName) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!chainName) {
+  //     return;
+  //   }
 
-    getPrices([chainName]).then((res) => {
-      setNewPrice({
-        amount: res.prices[chainName.toLocaleLowerCase()][currency],
-        chainName,
-        date: res.date
-      });
-    }).catch(console.error);
-  }, [chainName, currency]);
+  //   getPrices([chainName]).then((res) => {
+  //     setNewPrice({
+  //       amount: res.prices[chainName.toLocaleLowerCase()][currency],
+  //       chainName,
+  //       date: res.date
+  //     });
+  //   }).catch(console.error);
+  // }, [chainName, currency]);
 
   useEffect(() => {
     if (!chainName) {

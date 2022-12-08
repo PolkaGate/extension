@@ -115,3 +115,13 @@ export const PASS_MAP = {
 
 // export const DATE_OPTIONS = { year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 export const DATE_OPTIONS = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+export const DEFAULT_FILTERS = {
+  limitOfValidatorsPerOperator: { check: false, value: 2 },
+  maxCommission: { check: false, value: 5 },
+  noOversubscribed: false,
+  noSlashed: false,
+  noWaiting: false,
+  sortBy: 'None (Default)',
+  withIdentity: false
+};
