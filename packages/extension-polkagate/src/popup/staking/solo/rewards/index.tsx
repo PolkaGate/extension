@@ -444,7 +444,7 @@ export default function RewardDetails(): React.ReactElement {
                 ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
                   <>
                     <Accordion disableGutters expanded={expanded === index} key={index} onChange={handleAccordionChange(index)} sx={{ bgcolor: 'transparent', flexGrow: 1, fontSize: 12 }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px', width: '92%' }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px' }}>
                         <Grid container item key={index} sx={{ textAlign: 'left' }}>
                           <Grid item width='40%'>
                             {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
@@ -481,7 +481,7 @@ export default function RewardDetails(): React.ReactElement {
                   </>
                 )
                 : <Typography fontSize='18px' fontWeight={400} lineHeight='40px' m='30px auto 0' textAlign='center' width='92%'>
-                  {t('No reward on this week!')}
+                  {t('No reward this week!')}
                 </Typography>
               }
             </Grid>
