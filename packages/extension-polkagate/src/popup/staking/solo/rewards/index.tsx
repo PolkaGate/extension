@@ -111,11 +111,11 @@ export default function RewardDetails(): React.ReactElement {
     ascSortedRewards.forEach((item) => {
       if (item.date === ascSortedLabels[index]) {
         temp[index] = temp[index].add(item.amount);
-        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: new Date(item.timeStamp).valueOf() });
+        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: new Date(item.timeStamp).getTime() });
       } else {
         index++;
         temp[index] = temp[index].add(item.amount);
-        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: new Date(item.timeStamp).valueOf() });
+        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: new Date(item.timeStamp).getTime() });
       }
     });
 
@@ -126,15 +126,14 @@ export default function RewardDetails(): React.ReactElement {
 
       const firstRewardDate = new Date(tempToHuman[j].date * 1000);
       const lastRewardDate = new Date(tempToHuman[j + 1].date * 1000);
-
-      const difference = lastRewardDate.getTime() - firstRewardDate.getTime();
-      const TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
+      const difference = (lastRewardDate.getTime() / 1000) - (firstRewardDate.getTime() / 1000);
+      const TotalDays = Math.round(difference / (3600 * 24));
 
       if (TotalDays > 1) {
-        for (let i = 1; i < TotalDays - 1; i++) {
+        for (let i = 1; i < TotalDays; i++) {
           const pnd = new Date(firstRewardDate.setDate(firstRewardDate.getDate() + 1));
 
-          tempToHuman.splice(j + i, 0, { amount: '0', date: (pnd.valueOf() / 1000) });
+          tempToHuman.splice(j + i, 0, { amount: '0', date: (pnd.getTime() / 1000) });
         }
       }
     }
@@ -196,7 +195,7 @@ export default function RewardDetails(): React.ReactElement {
           const dateToAdd = new Date(week[index ? 0 : week.length - 1].date * 1000);
 
           if (index) {
-            const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() - 1)).valueOf() / 1000;
+            const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() - 1)).getTime() / 1000;
 
             aWeekRewardsAmount.unshift('0');
             aWeekRewardsLabel.unshift(formateDate(newDate));
@@ -205,7 +204,7 @@ export default function RewardDetails(): React.ReactElement {
               date: newDate
             });
           } else {
-            const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1)).valueOf() / 1000;
+            const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1)).getTime() / 1000;
 
             aWeekRewardsAmount.push('0');
             aWeekRewardsLabel.push(formateDate(newDate));
@@ -282,8 +281,8 @@ export default function RewardDetails(): React.ReactElement {
     const end = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][6];
 
     const newDate = new Date(weeksRewards[next ? 0 : weeksRewards?.length - 1][next ? 6 : 0].date * 1000);
-    const estimatedStart = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 1)).valueOf() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() - 7)).valueOf() / 1000);
-    const estimatedEnd = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 7)).valueOf() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() + 6)).valueOf() / 1000);
+    const estimatedStart = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 1)).getTime() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() - 7)).getTime() / 1000);
+    const estimatedEnd = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 7)).getTime() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() + 6)).getTime() / 1000);
 
     return `${start ?? estimatedStart} - ${end ?? estimatedEnd}`;
   };
@@ -312,7 +311,7 @@ export default function RewardDetails(): React.ReactElement {
             return `${TooltipItem.formattedValue} ${token}`;
           },
           title: function (TooltipItem: string | { label: string }[] | undefined) {
-            if (!dataToShow || !TooltipItem || token) {
+            if (!dataToShow || !TooltipItem || !token) {
               return;
             }
 
@@ -445,7 +444,7 @@ export default function RewardDetails(): React.ReactElement {
                 ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
                   <>
                     <Accordion disableGutters expanded={expanded === index} key={index} onChange={handleAccordionChange(index)} sx={{ bgcolor: 'transparent', flexGrow: 1, fontSize: 12 }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ height: '35px', m: 'auto', minHeight: '35px', width: '92%' }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px', width: '92%' }}>
                         <Grid container item key={index} sx={{ textAlign: 'left' }}>
                           <Grid item width='40%'>
                             {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
