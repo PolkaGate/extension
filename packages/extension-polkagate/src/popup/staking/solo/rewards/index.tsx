@@ -312,7 +312,7 @@ export default function RewardDetails(): React.ReactElement {
             return `${TooltipItem.formattedValue} ${token}`;
           },
           title: function (TooltipItem: string | { label: string }[] | undefined) {
-            if (!dataToShow || !TooltipItem || token) {
+            if (!dataToShow || !TooltipItem || !token) {
               return;
             }
 
