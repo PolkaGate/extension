@@ -6,10 +6,12 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 
-import {useToast, useTranslation} from '../hooks';
+import { useTranslation } from '../hooks';
 import { Proxy } from '../util/types';
+import { getSubstrateAddress } from '../util/utils';
+import { ActionContext } from './contexts';
 import Identicon from './Identicon';
 
 interface Props {
@@ -23,37 +25,27 @@ interface Props {
 export default function AccountIcons({ formatted, identiconTheme, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
+
+  const address = getSubstrateAddress(formatted);
+
+  const openManageProxy = useCallback(() => {
+    address && onAction(`/manageProxies/${address}`);
+  }, [address, onAction]);
 
   return (
-    <Grid
-      container
-      direction='column'
-      xs={3}
-    >
-      <Grid
-        item
-        m='auto'
-        width='fit-content'
-      >
+    <Grid container direction='column' xs={3}>
+      <Grid item m='auto' width='fit-content'>
         <Identicon
           iconTheme={identiconTheme}
-          // onCopy={_onCopy}
           prefix={prefix}
           size={40}
           value={formatted}
         />
       </Grid>
-      <Grid
-        container
-        direction='row'
-        item
-        justifyContent='center'
-      >
+      <Grid container direction='row' item justifyContent='center'>
         <Grid item title={t('is recoverable')}>
-          <IconButton
-            disabled={!recoverable}
-            sx={{ height: '15px', width: '15px' }}
-          >
+          <IconButton disabled={!recoverable} sx={{ height: '15px', width: '15px' }}>
             <FontAwesomeIcon
               color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
               fontSize='13px'
@@ -62,10 +54,7 @@ export default function AccountIcons({ formatted, identiconTheme, prefix, proxie
           </IconButton>
         </Grid>
         <Grid item title={t('has proxy')}>
-          <IconButton
-            disabled={!proxies?.length}
-            sx={{ height: '15px', width: '15px' }}
-          >
+          <IconButton onClick={openManageProxy} sx={{ height: '15px', width: '15px' }}>
             <FontAwesomeIcon
               color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
               fontSize='13px'

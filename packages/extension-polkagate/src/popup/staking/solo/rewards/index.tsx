@@ -304,8 +304,15 @@ export default function RewardDetails(): React.ReactElement {
           weight: 'bold'
         },
         callbacks: {
-          title: function (TooltipItem: string | { label: string }[] | undefined) {
+          label: function (TooltipItem: string | { label: string }[] | undefined) {
             if (!dataToShow || !TooltipItem) {
+              return;
+            }
+
+            return `${TooltipItem.formattedValue} ${token}`;
+          },
+          title: function (TooltipItem: string | { label: string }[] | undefined) {
+            if (!dataToShow || !TooltipItem || token) {
               return;
             }
 
@@ -378,7 +385,7 @@ export default function RewardDetails(): React.ReactElement {
   }, [dataToShow, pageIndex]);
 
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
-    <Grid container justifyContent='space-between' m='auto' width='92%'>
+    <Grid container justifyContent='space-between' m='auto' width='96%'>
       <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='48%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
         <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
