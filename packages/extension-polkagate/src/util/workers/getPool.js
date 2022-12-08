@@ -95,7 +95,7 @@ async function getPool(endpoint, stakerAddress, id = undefined) {
     rewardIdBalance: rewardIdBalance.data,
     rewardPool: unwrappedRewardPools,
     stashIdAccount,
-    token,
+    token
   };
 
   return JSON.stringify(poolInfo);
