@@ -44,11 +44,9 @@ export default function Index(): React.ReactElement {
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
-
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
-
   const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
@@ -184,6 +182,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       {selectedValidatorsId === null &&
         <PButton
+          _isBusy={showSelectValidator && !allValidatorsInfo}
           _onClick={goToSelectValidator}
           text={t<string>('Select Validator')}
         />
@@ -200,7 +199,7 @@ export default function Index(): React.ReactElement {
           title={t('Remove Selected Validators')}
         />
       }
-      {showSelectValidator && pool &&
+      {showSelectValidator && pool && allValidatorsInfo &&
         <SelectValidators
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}

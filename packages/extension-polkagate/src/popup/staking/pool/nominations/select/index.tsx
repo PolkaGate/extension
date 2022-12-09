@@ -23,15 +23,15 @@ import { useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import { DEFAULT_FILTERS } from '../../../../../util/constants';
 import { AllValidators, Filter, MyPoolInfo, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../../util/types';
+import { getComparator } from '../../../partial/comparators';
 import Filters from '../../../partial/Filters';
 import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
 import Review from './Review';
-import { getComparator } from '../../../partial/comparators';
 
 interface Props {
   address: string;
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
-  allValidatorsInfo: AllValidators | null | undefined;
+  allValidatorsInfo: AllValidators;
   api: ApiPromise;
   chain: Chain | null;
   formatted: AccountId | undefined
