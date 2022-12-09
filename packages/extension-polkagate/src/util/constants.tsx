@@ -29,7 +29,6 @@ export const DEFAULT_COIN = 'WND';
 export const DEFAULT_CHAIN_NAME = 'Westend';
 export const DEFAULT_VALIDATOR_COMMISSION_FILTER = 20;
 export const TRANSACTION_HISTORY_DEFAULT_ROWS = 6;
-export const MAX_ACCEPTED_COMMISSION = 20;
 export const SHORT_ADDRESS_CHARACTERS = 4;
 export const MAX_VOTES = 16;
 export const MAX_REWARDS_TO_SHOW = 20;

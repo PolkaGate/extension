@@ -30,9 +30,11 @@ interface Props {
   sortValue: number;
   apply: boolean;
   setApply: React.Dispatch<React.SetStateAction<boolean>>;
+  onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[]
+
 }
 
-export default function Filters({ allValidators, allValidatorsIdentities, apply, filters, newSelectedValidators, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters({ allValidators, onLimitValidatorsPerOperator, allValidatorsIdentities, apply, filters, newSelectedValidators, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -45,40 +47,6 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
     { text: t('Nominators: High to Low'), value: 5 },
     { text: t('Nominators: Low to High'), value: 6 }
   ], [t]);
-
-  const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInfoWithIdentity[] | undefined, limit: number): ValidatorInfoWithIdentity[] => {
-    if (!validators?.length) {
-      return [];
-    }
-
-    validators.forEach((v) => {
-      const vId = allValidatorsIdentities?.find((vi) => vi.accountId === v.accountId);
-
-      v.identity = vId?.identity;
-    });
-
-    validators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent));
-
-    let counter = 1;
-    let indicator = validators[0];
-
-    return validators.filter((v, index) => {
-      if (indicator.identity?.displayParent && indicator.identity?.displayParent === v.identity?.displayParent && limit >= counter++) {
-        return true;
-      }
-
-      if (indicator.identity?.displayParent && indicator.identity?.displayParent === v.identity?.displayParent) {
-        return false;
-      }
-
-      counter = 1;
-      indicator = validators[index + 1];
-
-      return true;
-    });
-  }, [allValidatorsIdentities]);
-
-  console.log('filters:', filters);
 
   useEffect(() => {
     if (!apply || !allValidators) {
@@ -161,13 +129,6 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
     setSortValue(0);
     setApply(false);
   }, [setApply, setFilters, setSortValue]);
-
-  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Data) => {
-    const isAsc = orderBy === property && order === 'asc';
-
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
 
   const closeMenu = useCallback(() => {
     setShow(false);

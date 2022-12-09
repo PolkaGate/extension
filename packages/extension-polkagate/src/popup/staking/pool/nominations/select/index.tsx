@@ -26,6 +26,7 @@ import { AllValidators, Filter, MyPoolInfo, StakingConsts, ValidatorInfo, Valida
 import Filters from '../../../partial/Filters';
 import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
 import Review from './Review';
+import { getComparator } from '../../../partial/comparators';
 
 interface Props {
   address: string;
@@ -46,7 +47,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const { t } = useTranslation();
   const theme = useTheme();
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
-  const [systemSuggestion, setSystemSuggestion] = useState<boolean>();
+  const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filteredValidators, setFilteredValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
   const [validatorsToList, setValidatorsToList] = useState<ValidatorInfo[] | undefined>(allValidators);
@@ -57,7 +58,6 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [filters, setFilters] = useState<Filter>(structuredClone(DEFAULT_FILTERS) as Filter);
   const [sortValue, setSortValue] = useState<number>();
   const [apply, setApply] = useState<boolean>(false);
-  console.log('apply:',apply)
 
   useEffect(() => {
     searchedValidators?.length &&
@@ -79,9 +79,52 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     setSearchedValidators(searched?.length ? [...searched] : []);
   }, [allValidatorsIdentities, allValidators]);
 
-  // const clearFilters = useCallback(() => {
-  //   setFilters(DEFAULT_FILTERS);
-  // }, []);
+  const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInfoWithIdentity[] | undefined, limit: number): ValidatorInfoWithIdentity[] => {
+    if (!validators?.length) {
+      return [];
+    }
+
+    const aDeepCopyOfValidators = JSON.parse(JSON.stringify(validators)) as ValidatorInfoWithIdentity[];
+
+    aDeepCopyOfValidators.forEach((v) => {
+      const vId = allValidatorsIdentities?.find((vi) => vi.accountId === v.accountId);
+
+      v.identity = vId?.identity;
+    });
+
+    aDeepCopyOfValidators.sort((v1, v2) => ('' + v1?.identity?.displayParent).localeCompare(v2?.identity?.displayParent));
+
+    let counter = 1;
+    let indicator = aDeepCopyOfValidators[0];
+
+    return aDeepCopyOfValidators.filter((v, index) => {
+      if (indicator.identity?.displayParent && indicator.identity?.displayParent === v.identity?.displayParent && limit >= counter++) {
+        return true;
+      }
+
+      if (indicator.identity?.displayParent && indicator.identity?.displayParent === v.identity?.displayParent) {
+        return false;
+      }
+
+      counter = 1;
+      indicator = aDeepCopyOfValidators[index + 1];
+
+      return true;
+    });
+  }, [allValidatorsIdentities]);
+
+  // TODO: find a better algorithm to select validators automatically
+  const selectBestValidators = useCallback((allValidators: ValidatorInfo[], stakingConsts: StakingConsts): ValidatorInfo[] => {
+    const filtered1 = allValidators.filter((v) =>
+      // !v.validatorPrefs.blocked && // filter blocked validators
+      (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
+      v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator &&// filter oversubscribed
+      v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
+    );
+    const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
+
+    return filtered2.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
+  }, [onLimitValidatorsPerOperator]);
 
   const _onBackClick = useCallback(() => {
     // clearFilters();
@@ -98,7 +141,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     applySearch(filter);
   }, [applySearch]);
 
-  const isSelected = useCallback((v: ValidatorInfo) => newSelectedValidators.indexOf(v) !== -1, [newSelectedValidators]);
+  const isSelected = useCallback((v: ValidatorInfo) => !!newSelectedValidators.find((n) => n.accountId === v.accountId), [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
@@ -122,6 +165,11 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
 
     setNewSelectedValidators([...newSelected]);
   }, [newSelectedValidators, stakingConsts?.maxNominations]);
+
+  const onSystemSuggestion = useCallback((event, checked: boolean) => {
+    setSystemSuggestion(checked);
+    checked && allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)]);
+  }, [allValidators, selectBestValidators, stakingConsts]);
 
   const TableSubInfoWithClear = () => (
     <Grid container justifyContent='space-between' pt='5px'>
@@ -165,7 +213,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 checked={systemSuggestion}
                 label={t<string>('System Suggestions')}
                 labelStyle={{ fontSize: '16px', fontWeight: '400' }}
-                onChange={() => setSystemSuggestion(!systemSuggestion)}
+                onChange={onSystemSuggestion}
               />
             </Infotip>
           </Grid>
@@ -217,6 +265,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 apply={apply}
                 filters={filters}
                 newSelectedValidators={newSelectedValidators}
+                onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
                 setApply={setApply}
                 setFilteredValidators={setFilteredValidators}
                 setFilters={setFilters}

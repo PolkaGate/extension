@@ -10,7 +10,7 @@ import { checkBox, checkedBox } from '../assets/icons';
 interface Props {
   checked?: boolean;
   label?: string;
-  onChange?: (checked: boolean) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
   style?: SxProps<Theme> | undefined
   labelStyle?: React.CSSProperties | undefined
 }
