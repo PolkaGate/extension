@@ -5,7 +5,7 @@ import { Grid, SxProps, Typography } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React, { useCallback, useState } from 'react';
 
-import Checkmark from '../assets/checkmark.svg';
+import Checkmark from '../assets/icons/checkmark.svg';
 
 interface Props {
   checked?: boolean;
