@@ -8,7 +8,7 @@
 
 import '@vaadin/icons';
 
-import { Divider, Grid } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import { keyframes } from '@mui/system';
 import React from 'react';
 
@@ -25,28 +25,38 @@ interface Props {
 
 function BouncingSubTitle({ label, mt, withSteps, style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
   const bounce = keyframes`
-  from {
-    transform: translateY(0) scale(1);  
+  0% {
+    transform: translateY(0);
   }
-  to {
-    transform: translateY(20px) scale(1, 0.7);
+  70% {
+    transform: translateY(67px);
+  }
+  85%{
+    transform: translateY(63px);
+  }
+  100%{
+    transform: translateY(65px);
   }
 `;
 
   return (
     <>
-      <Grid container item justifyContent='center' position='relative' sx={{ height: '45px', fontSize: '20px', fontWeight: 400 }}>
-        <Grid item
+      <Grid container item justifyContent='center' position='relative' sx={{ height: '45px', overflow: 'hidden' }}>
+        <Grid item className='text'
           sx={{
+            top:'-50px',
+            // animationDelay: '0.3s',
             animationDuration: '1s',
             animationName: `${bounce}`,
-            animationTimingFunction: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+            animationFillMode: 'forwards',
+            animationTimingFunction: 'cubic-bezier(1, 0.25, 0.8, 0.7)',
             position: 'absolute',
-            pr: '5px',
-            top: '5px'
+            pr: '5px'
           }}
         >
-          {label}
+          <Typography fontSize='20px' fontWeight={400}>
+            {label}
+          </Typography>
         </Grid>
         {withSteps &&
           <Grid item>
