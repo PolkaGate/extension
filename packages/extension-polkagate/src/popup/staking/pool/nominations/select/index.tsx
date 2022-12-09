@@ -118,12 +118,12 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     const filtered1 = allValidators.filter((v) =>
       // !v.validatorPrefs.blocked && // filter blocked validators
       (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
-      v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
+      v.exposure.others.length && v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
-    const filtered3 = filtered2.filter((v) => v?.identity?.display);
+    const filtered3 = filtered2.filter((v) => v?.identity?.display); // filter has no identity
 
     return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
   }, [onLimitValidatorsPerOperator]);
@@ -134,8 +134,11 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   }, [setShow]);
 
   const onFilters = useCallback(() => {
+    systemSuggestion && setNewSelectedValidators([]);
+    setSystemSuggestion(false); // remove system suggestions when click on filters
+
     setShowFilters(true);
-  }, []);
+  }, [systemSuggestion]);
 
   const onSearch = useCallback((filter: string) => {
     // setSearchKeyword(filter);
@@ -171,6 +174,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const onSystemSuggestion = useCallback((event, checked: boolean) => {
     setSystemSuggestion(checked);
     checked && allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)]);
+    !checked && setNewSelectedValidators([]);
   }, [allValidators, selectBestValidators, stakingConsts]);
 
   const TableSubInfoWithClear = () => (
@@ -209,7 +213,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               iconLeft={6}
               iconTop={6}
               showQuestionMark
-              text={t<string>('We suggest trusted, high return, low commission validators which not slashed before.')}
+              text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}
             >
               <Checkbox2
                 checked={systemSuggestion}
@@ -287,7 +291,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview && newSelectedValidators && api && formatted && pool &&
+      {showReview && newSelectedValidators && formatted && pool &&
         <Review
           address={address}
           allValidators={isSearching ? searchedValidators : allValidators}
