@@ -134,8 +134,11 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   }, [setShow]);
 
   const onFilters = useCallback(() => {
+    systemSuggestion && setNewSelectedValidators([]);
+    setSystemSuggestion(false); // remove system suggestions when click on filters
+
     setShowFilters(true);
-  }, []);
+  }, [systemSuggestion]);
 
   const onSearch = useCallback((filter: string) => {
     // setSearchKeyword(filter);
@@ -171,6 +174,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const onSystemSuggestion = useCallback((event, checked: boolean) => {
     setSystemSuggestion(checked);
     checked && allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)]);
+    !checked && setNewSelectedValidators([]);
   }, [allValidators, selectBestValidators, stakingConsts]);
 
   const TableSubInfoWithClear = () => (
@@ -209,7 +213,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               iconLeft={6}
               iconTop={6}
               showQuestionMark
-              text={t<string>('We suggest trusted, high return, low commission validators which not slashed before.')}
+              text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}
             >
               <Checkbox2
                 checked={systemSuggestion}
