@@ -22,6 +22,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
+import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { DATE_OPTIONS } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
@@ -298,7 +299,7 @@ export default function Index(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
-        <SubTitle label={t<string>('Pool Staking')} lineHeight='35px' mt='10px' style={{ fontSize: '20px', fontWeight: 400 }} />
+        <BouncingSubTitle label={t<string>('Pool Staking')} style={{ fontSize: '20px', fontWeight: 400 }} />
         <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
             label={t('Staked')}
