@@ -28,14 +28,14 @@ function BouncingSubTitle({ label, mt, withSteps, style = { fontSize: '16px', fo
   0% {
     transform: translateY(0);
   }
-  70% {
-    transform: translateY(67px);
+  50% {
+    transform: translateY(66px);
   }
-  85%{
-    transform: translateY(63px);
+  75%{
+    transform: translateY(62px);
   }
   100%{
-    transform: translateY(65px);
+    transform: translateY(63px);
   }
 `;
 
@@ -49,7 +49,7 @@ function BouncingSubTitle({ label, mt, withSteps, style = { fontSize: '16px', fo
             animationDuration: '1s',
             animationName: `${bounce}`,
             animationFillMode: 'forwards',
-            animationTimingFunction: 'cubic-bezier(1, 0.25, 0.8, 0.7)',
+            animationTimingFunction: 'cubic-bezier(1, 0.2, 0.7, 0.7)',
             position: 'absolute',
             pr: '5px'
           }}
@@ -69,7 +69,7 @@ function BouncingSubTitle({ label, mt, withSteps, style = { fontSize: '16px', fo
         }
 
       </Grid>
-      <Grid container item justifyContent='center' xs={12} >
+      <Grid container item justifyContent='center' xs={12}>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
       </Grid>
     </>
