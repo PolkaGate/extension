@@ -118,12 +118,12 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     const filtered1 = allValidators.filter((v) =>
       // !v.validatorPrefs.blocked && // filter blocked validators
       (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
-      v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
+      v.exposure.others.length && v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
-    const filtered3 = filtered2.filter((v) => v?.identity?.display);
+    const filtered3 = filtered2.filter((v) => v?.identity?.display); // filter has no identity
 
     return filtered3.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
   }, [onLimitValidatorsPerOperator]);
@@ -287,7 +287,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview && newSelectedValidators && api && formatted && pool &&
+      {showReview && newSelectedValidators && formatted && pool &&
         <Review
           address={address}
           allValidators={isSearching ? searchedValidators : allValidators}

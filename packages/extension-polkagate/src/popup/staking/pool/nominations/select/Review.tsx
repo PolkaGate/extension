@@ -32,7 +32,7 @@ import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable'
 
 interface Props {
   address: string;
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   chain: Chain | null;
   formatted: string;
   newSelectedValidators: ValidatorInfo[]
@@ -58,15 +58,13 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const nominated = api.tx.nominationPools.nominate;
+  const nominated = api && api.tx.nominationPools.nominate;
   const params = useMemo(() => {
     const selectedValidatorsAccountId = newSelectedValidators.map((v) => v.accountId);
 
     return [pool.poolId, selectedValidatorsAccountId];
   }, [newSelectedValidators, pool]);
 
-  const decimals = api?.registry?.chainDecimals[0] ?? 1;
-  const token = api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -101,7 +99,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
   }, [onAction, setShow]);
 
   useEffect((): void => {
-    nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    nominated && nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [nominated, formatted, params]);
 
   useEffect((): void => {
@@ -114,7 +112,7 @@ export default function Review({ address, api, chain, formatted, newSelectedVali
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !nominated) {
+      if (!formatted || !nominated || !api) {
         return;
       }
 
