@@ -59,7 +59,6 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [sortValue, setSortValue] = useState<number>();
   const [apply, setApply] = useState<boolean>(false);
 
-  console.log('repeating ....')
   useEffect(() => {
     /** apply filtered validators on searched validators */
     searchedValidators?.length &&
