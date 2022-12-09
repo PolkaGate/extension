@@ -54,15 +54,25 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [searchedValidators, setSearchedValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
   const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
   const [showReview, setShowReview] = useState<boolean>(false);
-  const [isSearching, setIsSearching] = useState<boolean>();
+  const [searchKeyword, setSearchKeyword] = useState<string>();
   const [filters, setFilters] = useState<Filter>(structuredClone(DEFAULT_FILTERS) as Filter);
   const [sortValue, setSortValue] = useState<number>();
   const [apply, setApply] = useState<boolean>(false);
 
   useEffect(() => {
+    /** apply filtered validators on searched validators */
     searchedValidators?.length &&
       setValidatorsToList([...filteredValidators?.filter((f) => searchedValidators?.find((s) => s.accountId === f.accountId)) || []]);
   }, [searchedValidators, filteredValidators]);
+
+  useEffect(() => {
+    /** show selected validators  on top */
+    if (systemSuggestion && newSelectedValidators?.length) {
+      const notSelected = allValidators?.filter((a) => !newSelectedValidators.find((n) => a.accountId === n.accountId));
+
+      setValidatorsToList(newSelectedValidators.concat(notSelected));
+    }
+  }, [systemSuggestion, newSelectedValidators, allValidators]);
 
   const applySearch = useCallback((keyword: string) => {
     const validatorsWithIdentity = allValidators?.map((v: ValidatorInfoWithIdentity) => {
@@ -140,11 +150,18 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     setShowFilters(true);
   }, [systemSuggestion]);
 
+  const onSystemSuggestion = useCallback((event, checked: boolean) => {
+    setSearchKeyword('');
+    setSystemSuggestion(checked);
+    checked && allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)]);
+    !checked && setNewSelectedValidators([]);
+  }, [allValidators, selectBestValidators, stakingConsts]);
+
   const onSearch = useCallback((filter: string) => {
-    // setSearchKeyword(filter);
-    setIsSearching(!!filter);
+    onSystemSuggestion(undefined, false);// to reset system suggestion on search
+    setSearchKeyword(filter);
     applySearch(filter);
-  }, [applySearch]);
+  }, [applySearch, onSystemSuggestion]);
 
   const isSelected = useCallback((v: ValidatorInfo) => !!newSelectedValidators.find((n) => n.accountId === v.accountId), [newSelectedValidators]);
 
@@ -170,12 +187,6 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
 
     setNewSelectedValidators([...newSelected]);
   }, [newSelectedValidators, stakingConsts?.maxNominations]);
-
-  const onSystemSuggestion = useCallback((event, checked: boolean) => {
-    setSystemSuggestion(checked);
-    checked && allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)]);
-    !checked && setNewSelectedValidators([]);
-  }, [allValidators, selectBestValidators, stakingConsts]);
 
   const TableSubInfoWithClear = () => (
     <Grid container justifyContent='space-between' pt='5px'>
@@ -229,8 +240,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               onChange={onSearch}
               placeholder={t<string>('🔍 Search validator')}
               theme={theme}
-              // value={keyword}
-              withReset
+              value={searchKeyword ?? ''}
             />
           </Grid>
           <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' pl='15px' py='10px' width='27%'>
@@ -266,7 +276,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           {showFilters &&
             <Grid ml='-15px' position='absolute'>
               <Filters
-                allValidators={isSearching ? searchedValidators : allValidators}
+                allValidators={searchKeyword ? searchedValidators : allValidators}
                 allValidatorsIdentities={allValidatorsIdentities}
                 apply={apply}
                 filters={filters}
@@ -294,7 +304,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
       {showReview && newSelectedValidators && formatted && pool &&
         <Review
           address={address}
-          allValidators={isSearching ? searchedValidators : allValidators}
+          allValidators={searchKeyword ? searchedValidators : allValidators}
           api={api}
           chain={chain}
           formatted={formatted}
