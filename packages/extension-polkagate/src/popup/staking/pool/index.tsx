@@ -7,21 +7,22 @@ import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Option, StorageKey } from '@polkadot/types';
-import type { AccountId, AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, NominatorInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { AccountId32 } from '@polkadot/types/interfaces';
+import type { MembersMapEntry, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
+import { faHand } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useEndpoint2, useFormatted, useMapEntries, usePool, usePoolConsts, useStakingConsts, useTranslation, useValidators } from '../../../hooks';
-import { HeaderBrand, SubTitle } from '../../../partials';
+import { useApi, useBalances, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
+import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { DATE_OPTIONS } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
@@ -343,7 +344,15 @@ export default function Index(): React.ReactElement {
         <HorizontalMenuItem
           divider
           exceptionWidth={30}
-          icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
+          icon={
+            <FontAwesomeIcon
+            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+            icon={faHand}
+            size='lg'
+            spin={refresh}
+          />
+            // <vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />
+        }
           onClick={goToNominations}
           title={t<string>('Validators')}
         />

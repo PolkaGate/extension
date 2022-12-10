@@ -8,6 +8,8 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
+import { faHand } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -297,7 +299,16 @@ export default function Index(): React.ReactElement {
         <HorizontalMenuItem
           divider
           exceptionWidth={30}
-          icon={<vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
+          icon={
+            <FontAwesomeIcon
+              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              icon={faHand}
+              bounce // do when has stake but not nominations
+              size='lg'
+              spin={refresh}
+            />
+            // <vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />
+          }
           onClick={goToNominations}
           title={t<string>('Validators')}
         />
