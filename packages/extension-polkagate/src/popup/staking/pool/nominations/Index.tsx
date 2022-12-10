@@ -180,10 +180,11 @@ export default function Index(): React.ReactElement {
           </>
         }
       </Grid>
-      {selectedValidatorsId === null &&
+      {selectedValidatorsId === null && canNominate &&
         <PButton
           _isBusy={showSelectValidator && !allValidatorsInfo}
           _onClick={goToSelectValidator}
+          // disabled={!canNominate}
           text={t<string>('Select Validator')}
         />
       }

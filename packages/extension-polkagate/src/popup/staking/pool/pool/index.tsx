@@ -163,10 +163,10 @@ export default function Pool(): React.ReactElement {
               fontWeight={400}
               theme={theme}
             >
-              {t<string>("You're not staked yet!")}
+              {t<string>('You\'re not in any pools!')}
             </Warning>
           </Grid>
-          <PButton _onClick={goToPoolStake} text={t<string>('Pool Stake')} />
+          <PButton _onClick={goToPoolStake} text={t<string>('Stake')} />
         </>
       }
       {pool &&
