@@ -16,8 +16,8 @@ import { toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 interface Props {
   anotherDay: boolean;
   info: SubQueryHistory;
-  decimal: number;
-  token: string;
+  decimal: number | undefined;
+  token: string | undefined;
   date?: string;
   path: string | undefined;
   chainName: string;
@@ -127,8 +127,8 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, info
               fontSize='20px'
               fontWeight={300}
             >
-              {info?.transfer?.amount
-                ? <FormatBalance2 decimalPoint={2} decimals={[Number(decimal)]} tokens={[token]} value={new BN(info.transfer.amount)} />
+              {info?.transfer?.amount && decimal && token
+                ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={new BN(info.transfer.amount)} />
                 : 'N/A'
               }
             </Typography>

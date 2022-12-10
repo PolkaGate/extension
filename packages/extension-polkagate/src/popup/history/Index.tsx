@@ -6,8 +6,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ActionContext, Progress } from '../../components';
-import { useTranslation } from '../../hooks';
+import { Progress } from '../../components';
+import { useDecimal, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory } from '../../util/types';
@@ -16,8 +16,6 @@ import HistoryItem from './partials/HistoryItem';
 interface ChainNameAddressState {
   chainName: string;
   formatted: string;
-  decimal: string;
-  token: string;
 }
 
 const TAB_MAP = {
@@ -30,7 +28,9 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const history = useHistory();
   const { pathname, state } = useLocation();
-  const { chainName, decimal, formatted, token } = useParams<ChainNameAddressState>();
+  const { chainName, formatted } = useParams<ChainNameAddressState>();
+  const decimal = useDecimal(formatted);
+  const token = useToken(formatted);
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [isRefreshing, setRefresh] = useState<boolean>(true);
   const [txHistory, setTxHistory] = useState<SubQueryHistory[] | undefined | null>();
@@ -192,7 +192,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
         </Tabs>
       </Box>
       {grouped
-        ? <Grid container item sx={{ height: '70%', px: '15px', maxHeight: '470px', overflowY: 'auto' }} xs={12}>
+        ? <Grid container item sx={{ height: '70%', maxHeight: '470px', overflowY: 'auto', px: '15px' }} xs={12}>
           {Object.entries(grouped)?.map((group) => {
             const [date, info] = group;
 
@@ -201,7 +201,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 anotherDay={index === 0}
                 chainName={chainName}
                 date={date}
-                decimal={Number(decimal)}
+                decimal={decimal}
                 info={h}
                 key={index}
                 path={pathname}
