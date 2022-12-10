@@ -39,7 +39,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsWithdrawReview({ address, setRefresh, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function RewardsWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);

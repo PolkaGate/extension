@@ -386,20 +386,20 @@ export default function RewardDetails(): React.ReactElement {
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='auto' width='96%'>
       <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='48%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
-        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
         <Grid container direction='column' item xs={7}>
-          <Typography color={pageIndex === dataToShow?.length - 1 ? 'text.disabled' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Previous')}</Typography>
-          <Typography color={pageIndex === dataToShow?.length - 1 ? 'text.disabled' : 'text.primay'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
+          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Previous')}</Typography>
+          <Typography color={pageIndex === dataToShow?.length - 1 ? 'secondary.contrastText' : 'text.primay'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='48%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
         <Grid container direction='column' item textAlign='right' xs={7}>
-          <Typography color={pageIndex === 0 ? 'text.disabled' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Next')}</Typography>
-          <Typography color={pageIndex === 0 ? 'text.disabled' : 'text.primay'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
+          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Next')}</Typography>
+          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primay'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
         </Grid>
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
-        <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'text.disabled' : 'secondary.light', fontSize: '25px' }} />
+        <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
       </Grid>
     </Grid>
   );
@@ -444,7 +444,7 @@ export default function RewardDetails(): React.ReactElement {
                 ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
                   <>
                     <Accordion disableGutters expanded={expanded === index} key={index} onChange={handleAccordionChange(index)} sx={{ bgcolor: 'transparent', flexGrow: 1, fontSize: 12 }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px', width: '92%' }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '35px' }} />} sx={{ height: '35px', m: 'auto', minHeight: '35px' }}>
                         <Grid container item key={index} sx={{ textAlign: 'left' }}>
                           <Grid item width='40%'>
                             {d.timeStamp ? new Date(d.timeStamp * 1000).toDateString() : d.era}
@@ -481,7 +481,7 @@ export default function RewardDetails(): React.ReactElement {
                   </>
                 )
                 : <Typography fontSize='18px' fontWeight={400} lineHeight='40px' m='30px auto 0' textAlign='center' width='92%'>
-                  {t('No reward on this week!')}
+                  {t('No reward this week!')}
                 </Typography>
               }
             </Grid>

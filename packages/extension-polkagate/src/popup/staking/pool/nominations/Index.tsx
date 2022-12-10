@@ -44,15 +44,14 @@ export default function Index(): React.ReactElement {
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
-
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
-
   const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
+  const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
@@ -102,23 +101,27 @@ export default function Index(): React.ReactElement {
   );
 
   const ValidatorsActions = () => (
-    <Grid container justifyContent='center' pt='15px' spacing={1}>
-      <Grid item>
-        <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
-          {t('Change Validators')}
-        </Typography>
-      </Grid>
-      <Grid item>
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
-      </Grid>
-      <Grid item>
-        <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
-          <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
-            {t('Remove Validators')}
-          </Typography>
-        </Infotip>
-      </Grid>
-    </Grid>
+    <>
+      {canNominate &&
+        <Grid container justifyContent='center' pt='15px' spacing={1}>
+          <Grid item>
+            <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+              {t('Change Validators')}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
+          </Grid>
+          <Grid item>
+            <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
+              <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+                {t('Remove Validators')}
+              </Typography>
+            </Infotip>
+          </Grid>
+        </Grid>
+      }
+    </>
   );
 
   return (
@@ -179,6 +182,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       {selectedValidatorsId === null &&
         <PButton
+          _isBusy={showSelectValidator && !allValidatorsInfo}
           _onClick={goToSelectValidator}
           text={t<string>('Select Validator')}
         />
@@ -195,7 +199,7 @@ export default function Index(): React.ReactElement {
           title={t('Remove Selected Validators')}
         />
       }
-      {showSelectValidator && pool &&
+      {showSelectValidator && pool && allValidatorsInfo &&
         <SelectValidators
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}

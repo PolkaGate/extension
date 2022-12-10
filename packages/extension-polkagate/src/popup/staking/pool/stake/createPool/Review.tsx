@@ -65,9 +65,9 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
     setShowReview(!showReview);
   }, [setShowReview, showReview]);
 
-  const goToMyAccounts = useCallback(() => { //TODO ADD SELECT VALIDATORS URL
-    onAction('/');
-  }, [onAction]);
+  const goToMyAccounts = useCallback(() => {
+    onAction(`/pool/nominations/${address}`);
+  }, [address, onAction]);
 
   const goToStakingHome = useCallback(() => {
     onAction(`pool/stake/${address}`);

@@ -27,6 +27,7 @@ interface Props {
   activeValidators: ValidatorInfo[] | undefined;
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
   chain?: Chain;
+  decimal?: number;
   formatted?: AccountId;
   handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
   height?: number;
@@ -38,10 +39,10 @@ interface Props {
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   token?: string;
-  decimal?: number;
+  selectedValidatorsId: AccountId[] | null | undefined; // TODO: to show already nominated validators in color
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, selectedValidatorsId, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();

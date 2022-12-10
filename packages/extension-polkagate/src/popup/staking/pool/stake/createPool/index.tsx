@@ -1,6 +1,8 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, Typography } from '@mui/material';
@@ -186,10 +188,28 @@ export default function CreatePool(): React.ReactElement {
       </Grid>
       <PButton _onClick={toReview} disabled={toReviewDisabled} text={t<string>('Next')} />
       {showRoles &&
-        <UpdateRoles address={address} chain={chain} formatted={formatted} nominatorId={nominatorId} setNominatorId={setNominatorId} setShow={setShowRoles} setStateTogglerId={setStateTogglerId} show={showRoles} stateTogglerId={stateTogglerId} />
+        <UpdateRoles
+          address={address}
+          chain={chain}
+          formatted={formatted}
+          nominatorId={nominatorId}
+          setNominatorId={setNominatorId}
+          setShow={setShowRoles}
+          setStateTogglerId={setStateTogglerId}
+          show={showRoles}
+          stateTogglerId={stateTogglerId}
+        />
       }
       {showReview && newPool &&
-        <Review address={address} api={api} createAmount={amountAsBN} estimatedFee={estimatedFee} poolToCreate={newPool} setShowReview={setShowReview} showReview={showReview} />
+        <Review
+          address={address}
+          api={api}
+          createAmount={amountAsBN}
+          estimatedFee={estimatedFee}
+          poolToCreate={newPool}
+          setShowReview={setShowReview}
+          showReview={showReview}
+        />
       }
     </>
   );

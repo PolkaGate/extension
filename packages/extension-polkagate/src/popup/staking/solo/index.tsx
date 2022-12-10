@@ -6,9 +6,7 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Option, StorageKey } from '@polkadot/types';
-import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -21,13 +19,13 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useFormatted, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
-import { HeaderBrand, SubTitle } from '../../../partials';
+import { HeaderBrand } from '../../../partials';
+import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
-import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 
 interface SessionIfo {
   eraLength: number;
@@ -48,12 +46,12 @@ export default function Index(): React.ReactElement {
   const { pathname, state } = useLocation<State>();
   const { address } = useParams<{ address: AccountId }>();
   const formatted = useFormatted(address);
-  const stakingAccount = useStakingAccount(formatted);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const stakingAccount = useStakingAccount(formatted, state?.stakingAccount, refresh, setRefresh);
   const chain = useChain(address);
   const rewards = useStakingRewards(formatted);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const [refresh, setRefresh] = useState<boolean>(false);
   const balances = useBalances(address, refresh, setRefresh);
   const nominatorInfo = useNominator(address);
 
