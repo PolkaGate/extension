@@ -19,7 +19,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Progress } from '../../../../components';
-import { useApi, useChain, useFormatted, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
@@ -65,8 +65,10 @@ export default function RewardDetails(): React.ReactElement {
   const [weeksRewards, setWeekRewards] = useState<{ date: number; amount?: string | undefined; }[][]>();
 
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-  const decimal = api && api.registry.chainDecimals[0];
-  const token = api && api.registry.chainTokens[0];
+  // const decimal = api && api.registry.chainDecimals[0];
+  const decimal = useDecimal(address);
+  // const token = api && api.registry.chainTokens[0];
+  const token = useToken(address);
   const [expanded, setExpanded] = useState<number>(-1);
 
   const dateOptions = useMemo(() => { return { day: 'numeric', month: 'short' } }, []);
@@ -179,7 +181,7 @@ export default function RewardDetails(): React.ReactElement {
       }
 
       if (i === 0 && new Date(aggregatedRewards[i].date * 1000).getDay() !== 0) {
-        aWeekRewards.push(aggregatedRewards.slice(0, counter));
+        aWeekRewards.push(aggregatedRewards.slice(0, counter > 0 ? counter : aggregatedRewards.length - 1));
       }
     }
 
@@ -192,9 +194,10 @@ export default function RewardDetails(): React.ReactElement {
           aWeekRewardsAmount.push(week[i].amount);
           aWeekRewardsLabel.push(formateDate(week[i].date));
         } else {
-          const dateToAdd = new Date(week[index ? 0 : week.length - 1].date * 1000);
+          const firstDay = new Date(week[0].date * 1000).getDay();
+          const dateToAdd = new Date(week[firstDay ? 0 : week.length - 1].date * 1000);
 
-          if (index) {
+          if (firstDay) {
             const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() - 1)).getTime() / 1000;
 
             aWeekRewardsAmount.unshift('0');
