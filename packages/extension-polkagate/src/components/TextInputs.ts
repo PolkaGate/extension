@@ -34,9 +34,9 @@ const TextBox = css(({ disabled = false, fontSize, height, margin, max, padding,
   padding: ${padding || '12px'};
   text-align: ${textAlign || 'left'};
   font - weight: 400;
-  &:: -webkit - outer - spin - button,
-  &:: -webkit - inner - spin - button {
-  -webkit - appearance: none;
+  &:: -webkit-outer-spin-button,
+  &:: -webkit-inner-spin-button {
+  -webkit-appearance: none;
   margin: 0;
 }
 -moz - appearance: textfield;
