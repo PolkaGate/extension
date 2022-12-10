@@ -204,8 +204,9 @@ export default function JoinPool(): React.ReactElement {
         _onClick={toReview}
         disabled={nextBtnDisabled}
         text={t<string>('Next')}
+        _isBusy={poolToJoin?.poolId ? Number(poolToJoin.poolId) !== selectedPool?.poolId?.toNumber() : true}
       />
-      {showReview &&
+      {showReview && poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() &&
         <Review
           address={address}
           api={api}
