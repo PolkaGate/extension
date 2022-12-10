@@ -8,6 +8,8 @@ export { default as useApiWithChain } from './useApiWithChain';
 export { default as useBalances } from './useBalances';
 export { default as useBalancesInPool } from './useBalancesInPool';
 export { default as useChain } from './useChain';
+export { default as useDecimal } from './useDecimal';
+export { default as useToken } from './useToken';
 export { usePoolMembers } from './usePoolMembers';
 export { default as useEndpoint2 } from './useEndpoint2';
 export { useEndpoint } from './useEndpoint';
