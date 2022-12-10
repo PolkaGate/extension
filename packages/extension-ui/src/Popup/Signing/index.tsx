@@ -5,7 +5,7 @@ import type { SignerPayloadJSON } from '@polkadot/types/types';
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Loading, SigningReqContext } from '../../components';
+import { Loading, SigningReqContext } from '../../../../extension-polkagate/src/components';
 import useTranslation from '../../hooks/useTranslation';
 import { Header } from '../../partials';
 import Request from './Request';
