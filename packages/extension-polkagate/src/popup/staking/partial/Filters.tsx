@@ -114,6 +114,7 @@ export default function Filters({ allValidators, onLimitValidatorsPerOperator, a
 
     if (value) {
       filters[type].value = value;
+      filters[type].check = true;
 
       setFilters({ ...filters });
     }
@@ -152,38 +153,38 @@ export default function Filters({ allValidators, onLimitValidatorsPerOperator, a
           checked={filters?.withIdentity}
           label={t<string>('With verified identity')}
           onChange={() => onFilters('withIdentity')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '400', pt: '15px' }}
+          style={{ width: '80%', fontSize: '14px', fontWeight: '400', mt: '15px' }}
         />
         <Checkbox2
           checked={filters?.noWaiting}
           label={t<string>('Not waiting (currently elected)')}
           onChange={() => onFilters('noWaiting')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '30', pt: '15px' }}
+          style={{ width: '80%', fontSize: '14px', fontWeight: '30', mt: '15px' }}
         />
         <Checkbox2
           checked={filters?.noOversubscribed}
           label={t<string>('No oversubscribed')}
           onChange={() => onFilters('noOversubscribed')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '300', pt: '15px' }}
+          style={{ width: '80%', fontSize: '14px', fontWeight: '300', mt: '15px' }}
         />
         <Checkbox2
           checked={filters?.noSlashed}
           label={t<string>('No slashed before')}
           onChange={() => onFilters('noSlashed')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '300', pt: '15px' }}
+          style={{ width: '80%', fontSize: '14px', fontWeight: '300', mt: '15px' }}
         />
         <Checkbox2
           checked={filters?.maxCommission?.check}
           label={`${t<string>('Maximum Commission')} %`}
           onChange={() => onFilters('maxCommission')}
-          style={{ width: '63%', fontSize: '14px', fontWeight: '300', pt: '15px' }}
+          style={{ width: '63%', fontSize: '14px', fontWeight: '300', mt: '15px' }}
         />
         <Input
           autoCapitalize='off'
           autoCorrect='off'
-          disabled={!filters.maxCommission.check}
+          // disabled={!filters.maxCommission.check}
           fontSize='18px'
-          height='36px'
+          height='32px'
           margin='auto 0 0'
           max={100}
           onChange={(e) => onLimitChange(e, 'maxCommission')}
@@ -194,19 +195,20 @@ export default function Filters({ allValidators, onLimitValidatorsPerOperator, a
           theme={theme}
           type='number'
           width='17%'
+          // value={filters.maxCommission.value ?? EFAULT_FILTERS.maxCommission.value}
         />
         <Checkbox2
           checked={filters?.limitOfValidatorsPerOperator?.check}
           label={t<string>('Limit of validators per operator')}
           onChange={() => onFilters('limitOfValidatorsPerOperator')}
-          style={{ fontSize: '14px', fontWeight: '300', pt: '15px', width: '63%' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '63%' }}
         />
         <Input
           autoCapitalize='off'
           autoCorrect='off'
-          disabled={!filters.limitOfValidatorsPerOperator.check}
+          // disabled={!filters.limitOfValidatorsPerOperator.check}
           fontSize='18px'
-          height='36px'
+          height='32px'
           margin='auto 0 0'
           max={100}
           onChange={(e) => onLimitChange(e, 'limitOfValidatorsPerOperator')}
