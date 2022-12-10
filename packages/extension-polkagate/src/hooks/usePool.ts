@@ -5,7 +5,7 @@ import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useApi, useEndpoint2, useFormatted } from '.';
+import { useEndpoint2, useFormatted } from '.';
 
 export default function usePool(address: string, id?: number, statePool?: MyPoolInfo, refresh?: boolean): MyPoolInfo | null | undefined {
   const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
@@ -27,6 +27,16 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
       if (!info) {
         setMyPool(null);
+        /** remove saved pool from local storage if any */
+        chrome.storage.local.get('MyPools', (res) => {
+          const k = `${formatted}`;
+          const last = res?.MyPools ?? {};
+
+          last[k] = null;
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ MyPools: last });
+        });
+
 
         getPoolWorker.terminate();
 
@@ -66,6 +76,7 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
       return;
     }
 
+    /** load pool from storage */
     chrome.storage.local.get('MyPools', (res) => {
       console.log('MyPools in local storage:', res);
 
