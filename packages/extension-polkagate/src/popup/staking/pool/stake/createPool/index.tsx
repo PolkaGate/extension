@@ -52,9 +52,10 @@ export default function CreatePool(): React.ReactElement {
   const [stateTogglerId, setStateTogglerId] = useState<string>();
   const [newPool, setNewPool] = useState<PoolInfo | undefined>();
 
-  const amountAsBN = useMemo(() => new BN(parseFloat(createAmount ?? '0') * 10 ** decimals), [decimals, createAmount]);
+  const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
   const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
+  const amountAsBN = useMemo(() => ED && (new BN(parseFloat(createAmount ?? '0') * 10 ** decimals)).sub(ED), [ED, createAmount, decimals]);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -74,16 +75,15 @@ export default function CreatePool(): React.ReactElement {
   }, [decimals]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedMaxFee) {
+    if (!api || !availableBalance || !estimatedMaxFee || !ED) {
       return;
     }
 
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimals);
 
     maxToHuman && setCreateAmount(maxToHuman);
-  }, [api, availableBalance, decimals, estimatedMaxFee]);
+  }, [ED, api, availableBalance, decimals, estimatedMaxFee]);
 
   const onMinAmount = useCallback(() => {
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimals));
@@ -124,15 +124,15 @@ export default function CreatePool(): React.ReactElement {
   }, [formatted]);
 
   useEffect(() => {
-    if (!poolStakingConsts?.minCreationBond) {
+    if (!poolStakingConsts?.minCreateBond) {
       return;
     }
 
     const goTo = !(formatted && nominatorId && stateTogglerId && createAmount);
-    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minCreationBond);
+    const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
 
     setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolName, poolStakingConsts?.minCreationBond, stateTogglerId]);
+  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolName, poolStakingConsts?.minCreateBond, stateTogglerId]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -149,7 +149,7 @@ export default function CreatePool(): React.ReactElement {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    api && amountAsBN && api.tx.nominationPools.create(String(amountAsBN), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
+    api && amountAsBN && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
