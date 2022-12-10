@@ -103,6 +103,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const balances = useBalances(address, refresh, setRefresh);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
+  console.log('accounts', accounts);
   const [newChain, setNewChain] = useState<Chain | null>(chain);
   const genesis = newChain?.genesisHash ?? chain?.genesisHash;
   const endpointOptions = useEndpoints(genesis);
@@ -113,8 +114,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');
-  const decimal = api && api.registry.chainDecimals[0];
-  const token = api && api.registry.chainTokens[0];
 
   const resetToDefaults = useCallback(() => {
     setNewEndpoint(undefined);
@@ -203,12 +202,12 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   }, [genesisHash, showStakingOptions]);
 
   const goToHistory = useCallback(() => {
-    chainName && formatted && decimal && token &&
+    chainName && formatted &&
       history.push({
-        pathname: `/history/${chainName}/${decimal}/${token}/${formatted}`,
+        pathname: `/history/${chainName}/${formatted}`,
         state: { pathname }
       });
-  }, [chainName, formatted, decimal, token, history, pathname]);
+  }, [chainName, formatted, history, pathname]);
 
   const identicon = (
     <Identicon
