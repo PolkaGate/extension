@@ -19,7 +19,7 @@ export const PREFERRED_POOL_ID_ON_POLKADOT = undefined;
 export const DEVELOPMENT_ENDPOINT = 'wss://109.109.36.23:443';
 export const SELECTED_COLOR = '#fffbed';
 export const POLKADOT_COLOR = '#E6007A';
-export const AUCTION_GRACE_PERIOD = 27000;// BLOCKS
+export const AUCTION_GRACE_PERIOD = 27000;// blocks
 export const MAX_NOMINATIONS = 16;
 export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
@@ -34,6 +34,7 @@ export const MAX_VOTES = 16;
 export const MAX_REWARDS_TO_SHOW = 30;
 export const MAX_HISTORY_RECORD_TO_SHOW = 20;
 export const MAX_AMOUNT_LENGTH = 15;
+export const TIME_TO_SHAKE_STAKE_ICON = 5000;// msec
 export const RELAY_CHAINS = [
   {
     name: 'Polkadot',
