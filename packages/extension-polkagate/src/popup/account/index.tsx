@@ -203,10 +203,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const goToHistory = useCallback(() => {
     chainName && formatted &&
       history.push({
-        pathname: `/history/${chainName}/${formatted}`,
+        pathname: `/history/${address}`,
         state: { pathname }
       });
-  }, [chainName, formatted, history, pathname]);
+  }, [address, chainName, formatted, history, pathname]);
 
   const identicon = (
     <Identicon

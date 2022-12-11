@@ -7,16 +7,11 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Progress } from '../../components';
-import { useDecimal, useToken, useTranslation } from '../../hooks';
+import { useChainName, useDecimal, useFormatted, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory } from '../../util/types';
 import HistoryItem from './partials/HistoryItem';
-
-interface ChainNameAddressState {
-  chainName: string;
-  formatted: string;
-}
 
 const TAB_MAP = {
   ALL: 1,
@@ -28,10 +23,12 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const { t } = useTranslation();
   const history = useHistory();
   const { pathname, state } = useLocation();
-  const { chainName, formatted } = useParams<ChainNameAddressState>();
+  const { address } = useParams<{ address: string }>();
+  const formatted = useFormatted(address);
+  const chainName = useChainName(address);
   const decimal = useDecimal(formatted);
   const token = useToken(formatted);
-  const [tabIndex, setTabIndex] = useState<number>(1);
+  const [tabIndex, setTabIndex] = useState<number>(state?.tabIndex ?? 1);
   const [isRefreshing, setRefresh] = useState<boolean>(true);
   const [txHistory, setTxHistory] = useState<SubQueryHistory[] | undefined | null>();
   // const [groupedHistory, setGroupedHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
@@ -75,7 +72,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
     ).catch(console.error);
   }, [formatted, chainName, isRefreshing]);
 
-  console.log('groupedhistory:', grouped);
+  console.log('grouped-history:', grouped);
 
   const _onBack = useCallback(() => {
     history.push({
@@ -192,12 +189,13 @@ export default function TransactionHistory(): React.ReactElement<''> {
         </Tabs>
       </Box>
       {grouped
-        ? <Grid container item sx={{ height: '70%', maxHeight: '470px', overflowY: 'auto', px: '15px' }} xs={12}>
+        ? <Grid container item sx={{ height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
           {Object.entries(grouped)?.map((group) => {
             const [date, info] = group;
 
             return info.map((h, index) => (
               <HistoryItem
+                address={address}
                 anotherDay={index === 0}
                 chainName={chainName}
                 date={date}
@@ -210,11 +208,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
             ));
           })}
         </Grid>
-        : <Progress
-          pt='150px'
-          size={50}
-          title={t('Loading history')}
-        />
+        : <Progress pt='150px' size={50} title={t('Loading history')} />
       }
     </>
   );

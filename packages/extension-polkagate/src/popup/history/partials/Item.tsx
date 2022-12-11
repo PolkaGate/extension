@@ -11,17 +11,9 @@ export default function Item({ item, mt = 0, noDivider = false, toCopy }: { item
     <>
       {item &&
         <>
-          <Grid
-            alignItems='center'
-            container
-            justifyContent='center'
-          >
+          <Grid alignItems='center' container justifyContent='center'>
             <Grid item>
-              <Typography
-                fontSize='16px'
-                fontWeight={400}
-                sx={{ mt: `${mt}px` }}
-              >
+              <Typography fontSize='16px' fontWeight={400} sx={{ mt: `${mt}px` }}>
                 {item}
               </Typography>
             </Grid>
