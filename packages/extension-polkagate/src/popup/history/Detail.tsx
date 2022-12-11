@@ -3,10 +3,9 @@
 
 import { Divider, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
 
-import { AccountContext, ActionContext, PButton } from '../../components';
-import { useRedirectOnRefresh, useTranslation } from '../../hooks';
+import { AccountContext, PButton, Popup } from '../../components';
+import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import getLogo from '../../util/getLogo';
 import { accountName, toShortAddress, upperCaseFirstChar } from '../../util/utils';
@@ -14,27 +13,24 @@ import Amount from './partials/Amount';
 import FailSuccessIcon from './partials/FailSuccessIcon';
 import Item from './partials/Item';
 
-interface LocationState {
+interface Props {
   chainName: string;
   info: Record<string, any>;
   decimal: number;
   token: string;
-  path: string;
+  setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
+  showDetail: boolean;
 }
 
-// TODO: make this as a popup
-export default function Detail(): React.ReactElement {
+export default function Detail({ chainName, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const onAction = useContext(ActionContext);
-
-  const { state: { chainName, decimal, info, path, token } } = useLocation<LocationState>();
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
   const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.extrinsicHash);
 
   const _onBack = useCallback(() => {
-    path && onAction(path);
-  }, [onAction, path]);
+    setShowDetail(false);
+  }, [setShowDetail]);
 
   const action = useMemo((): string | undefined => {
     if (info?.transfer) {
@@ -93,38 +89,20 @@ export default function Detail(): React.ReactElement {
   }, [info]);
 
   return (
-    <>
+    <Popup show={showDetail}>
       <HeaderBrand
         onBackClick={_onBack}
         showBackArrow
         text={t<string>('Transaction Detail')}
       />
-      <Grid
-        alignItems='center'
-        justifyContent='center'
-        pt='10px'
-        textAlign='center'
-      >
-        <Typography
-          fontSize='20px'
-          fontWeight={400}
-        >
+      <Grid alignItems='center' justifyContent='center' pt='10px' textAlign='center'      >
+        <Typography fontSize='20px' fontWeight={400}        >
           {action}
         </Typography>
-        <Typography
-          fontSize='18px'
-          fontWeight={300}
-        >
+        <Typography fontSize='18px' fontWeight={300}        >
           {subAction}
         </Typography>
-        <Divider
-          sx={{
-            bgcolor: 'secondary.light',
-            height: '2px',
-            m: '3px auto',
-            width: '35%'
-          }}
-        />
+        <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '35%' }} />
         <FailSuccessIcon success={success} />
         {/* <Typography
           fontSize='16px'
@@ -153,18 +131,8 @@ export default function Detail(): React.ReactElement {
         <Item item={`${t('Block')}: #${info?.blockNumber}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.extrinsicHash, 6)}`} noDivider toCopy={info?.extrinsicHash} />
         <Grid item sx={{ mt: '20px' }}>
-          <Link
-            href={`${subscanLink()}`}
-            rel='noreferrer'
-            target='_blank'
-            underline='none'
-          >
-            <Grid
-              alt={'subscan'}
-              component='img'
-              src={getLogo('subscan')}
-              sx={{ height: 40, width: 40 }}
-            />
+          <Link href={`${subscanLink()}`} rel='noreferrer' target='_blank' underline='none'          >
+            <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
           </Link>
         </Grid>
       </Grid>
@@ -172,6 +140,6 @@ export default function Detail(): React.ReactElement {
         _onClick={_onBack}
         text={t<string>('Back')}
       />
-    </>
+    </Popup>
   );
 }

@@ -179,8 +179,8 @@ export default function Popup(): React.ReactElement {
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                             <Route path='/selectProxy/:proxiedAddress/:genesisHash'>{wrapWithErrorBoundary(<SelectProxy />, 'select-proxy')}</Route>
-                            <Route path='/history/:chainName/:formatted'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
-                            <Route path='/detail/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>
+                            <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
+                            <Route path='/detail//:address/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                             {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                             {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
