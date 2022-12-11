@@ -23,7 +23,7 @@ import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalanc
 import { useApi, useBalances, useChain, useFormatted, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import Info from './Info';
@@ -69,7 +69,7 @@ export default function Index(): React.ReactElement {
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
-  const [shake, setShake] = useState<numbbooleaner>(false); //  to shake to persuade to stake ;)
+  const [shake, setShake] = useState<boolean>(false); //  to shake to persuade to stake ;)
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -84,9 +84,9 @@ export default function Index(): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
-    if (stakingAccount?.stakingLedger.active.isZero()) {
+    if (stakingAccount?.stakingLedger?.active?.isZero()) {
       setShake(true);
-      setTimeout(() => setShake(false), 2000);
+      setTimeout(() => setShake(false), TIME_TO_SHAKE_STAKE_ICON);
     }
   }, [stakingAccount?.stakingLedger.active]);
 

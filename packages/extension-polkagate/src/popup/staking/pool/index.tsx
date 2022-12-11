@@ -24,7 +24,7 @@ import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Ident
 import { useApi, useBalances, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { DATE_OPTIONS } from '../../../util/constants';
+import { DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
@@ -84,7 +84,7 @@ export default function Index(): React.ReactElement {
   const token = (api && api.registry.chainTokens[0]) || pool?.token;
   const decimal = (api && api.registry.chainDecimals[0]) || pool?.decimal;
 
-  const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), []);
+  const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
@@ -97,12 +97,12 @@ export default function Index(): React.ReactElement {
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
-  const [shake, setShake] = useState<boolean>(false); // 3 times shake to persuade to stake ;)
+  const [shake, setShake] = useState<boolean>(false); // to shake to persuade to stake ;)
 
   useEffect(() => {
-    if (staked?.isZero() && (pool === null || !['Blocked', 'Destroying'].includes(pool?.bondedPool?.state))) {
+    if (staked?.isZero() && (pool === null || !['Blocked', 'Destroying'].includes(String(pool?.bondedPool?.state)))) {
       setShake(true);
-      setTimeout(() => setShake(false), 2000);
+      setTimeout(() => setShake(false), TIME_TO_SHAKE_STAKE_ICON);
     }
   }, [pool, pool?.bondedPool?.state, shake, staked]);
 
