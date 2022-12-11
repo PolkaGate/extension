@@ -39,10 +39,10 @@ interface Props {
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   token?: string;
-  selectedValidatorsId: AccountId[] | null | undefined; // TODO: to show already nominated validators in color
+  nominatedValidatorsIds: AccountId[] | null | undefined; // TODO: to show already nominated validators in color
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, selectedValidatorsId, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();
