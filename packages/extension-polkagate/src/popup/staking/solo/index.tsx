@@ -255,7 +255,6 @@ export default function Index(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} />
-        {/* <SubTitle label={t<string>('Solo Staking')} mt='10px' lineHeight='35px' style={{ fontSize: '20px', fontWeight: 400 }} /> */}
         <BouncingSubTitle label={t<string>('Solo Staking')} style={{ fontSize: '20px', fontWeight: 400 }} />
         <Grid container maxHeight={window.innerHeight - 260} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
@@ -301,13 +300,12 @@ export default function Index(): React.ReactElement {
           exceptionWidth={30}
           icon={
             <FontAwesomeIcon
+              bounce={stakingAccount !== undefined && !stakingAccount?.nominators.length && !stakingAccount?.stakingLedger.active.isZero()} // do when has stake but does not nominations
               color={theme.palette.mode === 'dark' ? 'white' : 'black'}
               icon={faHand}
-              bounce // do when has stake but not nominations
               size='lg'
               spin={refresh}
             />
-            // <vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />
           }
           onClick={goToNominations}
           title={t<string>('Validators')}

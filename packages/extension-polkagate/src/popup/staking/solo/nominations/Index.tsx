@@ -46,20 +46,20 @@ export default function Index(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const formatted = useFormatted(address);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount, refresh, setRefresh);
-  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | string[] | undefined | null>();
+  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
   const selectedValidatorsInfo = useMemo(() =>
-    allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
+    allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
-      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(v.accountId))
-    , [allValidatorsInfo, selectedValidatorsId]);
+      .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
   useEffect(() => {
-    setSelectedValidatorsId(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));
+    setNominatedValidatorsIds(stakingAccount === null || stakingAccount?.nominators?.length === 0 ? null : stakingAccount?.nominators.map((item) => item.toString()));
   }, [stakingAccount]);
 
   const onBackClick = useCallback(() => {
@@ -75,7 +75,7 @@ export default function Index(): React.ReactElement {
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    setSelectedValidatorsId(undefined);
+    setNominatedValidatorsIds(undefined);
   }, []);
 
   const onRemoveValidators = useCallback(() => {
@@ -139,8 +139,8 @@ export default function Index(): React.ReactElement {
         showClose
         text={t<string>('Solo Staking')}
       />
-      <SubTitle label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')} />
-      {selectedValidatorsId === null
+      <SubTitle label={t<string>('Selected validators') + (nominatedValidatorsIds?.length ? ` (${nominatedValidatorsIds?.length})` : '')} />
+      {nominatedValidatorsIds === null
         ? <>
           <Warn text={t<string>('No validator found.')} />
           <Grid alignItems='center' container direction='column' pt='98px'>
@@ -158,7 +158,7 @@ export default function Index(): React.ReactElement {
             </Grid>
           </Grid>
         </>
-        : (selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
+        : (nominatedValidatorsIds === undefined || allValidatorsInfo === undefined) &&
         <Progress
           pt='125px'
           size={125}
@@ -166,7 +166,7 @@ export default function Index(): React.ReactElement {
         />
       }
       <Grid item sx={{ m: '20px 15px' }} xs={12}>
-        {selectedValidatorsId && allValidatorsInfo &&
+        {nominatedValidatorsIds && allValidatorsInfo &&
           <>
             <ValidatorsTable
               activeValidators={activeValidators}
@@ -184,7 +184,7 @@ export default function Index(): React.ReactElement {
           </>
         }
       </Grid>
-      {selectedValidatorsId === null &&
+      {nominatedValidatorsIds === null &&
         <PButton
           _onClick={goToSelectValidator}
           text={t<string>('Select Validator')}
@@ -209,7 +209,7 @@ export default function Index(): React.ReactElement {
           api={api}
           chain={chain}
           formatted={formatted}
-          selectedValidatorsId={selectedValidatorsId}
+          nominatedValidatorsIds={nominatedValidatorsIds}
           setShow={setShowSelectValidator}
           show={showSelectValidator}
           stakingAccount={stakingAccount}

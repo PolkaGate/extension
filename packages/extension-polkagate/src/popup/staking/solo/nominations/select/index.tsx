@@ -37,7 +37,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   allValidatorsInfo: AllValidators | null | undefined
-  selectedValidatorsId: AccountId[] | null | undefined
+  nominatedValidatorsIds: AccountId[] | null | undefined
   stakingConsts: StakingConsts | undefined
   stakingAccount: AccountStakingInfo | undefined
 }
@@ -83,7 +83,7 @@ function getComparator<T>(order: Order, orderBy: keyof T): (a: ValidatorInfo, b:
   return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, selectedValidatorsId, setShow, show, stakingAccount, stakingConsts, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, nominatedValidatorsIds, setShow, show, stakingAccount, stakingConsts, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -237,7 +237,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 height={window.innerHeight - 255}
                 isSelected={isSelected}
                 maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
-                selectedValidatorsId={selectedValidatorsId}
+                selectedValidatorsId={nominatedValidatorsIds}
                 setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
                 staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}

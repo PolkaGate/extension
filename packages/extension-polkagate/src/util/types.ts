@@ -594,12 +594,17 @@ export interface MemberPoints {
   points: BN;
 }
 
-export type Fetching = {
+export interface Fetching {
   [formatted: string]: IsFetching;
 }
 
-export type IsFetching = {
+export interface IsFetching {
   [item: string]: boolean;
+}
+
+export interface FetchingsContext {
+  fetching: Fetching;
+  set: (change: Fetching) => void;
 }
 
 export interface Filter {
