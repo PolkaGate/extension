@@ -10,7 +10,7 @@ import type { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
 import type { MembersMapEntry, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faHand } from '@fortawesome/free-solid-svg-icons';
+import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -84,9 +84,8 @@ export default function Index(): React.ReactElement {
   const token = (api && api.registry.chainTokens[0]) || pool?.token;
   const decimal = (api && api.registry.chainDecimals[0]) || pool?.decimal;
 
-  const staked = pool === undefined ? undefined : new BN(pool?.member?.points ?? 0);
+  const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), []);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  // const nominatedValidatorsId: AccountId[] | undefined | null = pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators;
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -98,6 +97,14 @@ export default function Index(): React.ReactElement {
   const [showRewardWithdraw, setShowRewardWithdraw] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [currentEraIndex, setCurrentEraIndex] = useState<number | undefined>(state?.currentEraIndex);
+  const [shake, setShake] = useState<boolean>(false); // 3 times shake to persuade to stake ;)
+
+  useEffect(() => {
+    if (staked?.isZero() && (pool === null || !['Blocked', 'Destroying'].includes(pool?.bondedPool?.state))) {
+      setShake(true);
+      setTimeout(() => setShake(false), 2000);
+    }
+  }, [pool, pool?.bondedPool?.state, shake, staked]);
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -324,7 +331,6 @@ export default function Index(): React.ReactElement {
           />
           <Row
             label={t('Unstaking')}
-            //  link1Text={t('Restake')} 
             value={unlockingAmount}
           />
           <Row
@@ -337,7 +343,14 @@ export default function Index(): React.ReactElement {
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}>
         <HorizontalMenuItem
           divider
-          icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          icon={
+            <FontAwesomeIcon
+              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              icon={faPlus}
+              shake={shake}
+              size='lg'
+            />
+          }
           onClick={goToStake}
           title={t<string>('Stake')}
         />
@@ -346,13 +359,12 @@ export default function Index(): React.ReactElement {
           exceptionWidth={30}
           icon={
             <FontAwesomeIcon
-            color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-            icon={faHand}
-            size='lg'
-            spin={refresh}
-          />
-            // <vaadin-icon icon='vaadin:hand' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />
-        }
+              bounce={staked !== undefined && !staked.isZero() && pool?.bondedPool?.state !== 'Destroying' && pool?.stashIdAccount?.nominators?.length === 0} // do when has stake but does not nominations
+              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              icon={faHand}
+              size='lg'
+            />
+          }
           onClick={goToNominations}
           title={t<string>('Validators')}
         />

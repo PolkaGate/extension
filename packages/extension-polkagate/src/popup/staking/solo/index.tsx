@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import type { ApiPromise } from '@polkadot/api';
 import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faHand } from '@fortawesome/free-solid-svg-icons';
+import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -69,6 +69,7 @@ export default function Index(): React.ReactElement {
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
+  const [shake, setShake] = useState<numbbooleaner>(false); //  to shake to persuade to stake ;)
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
@@ -81,6 +82,13 @@ export default function Index(): React.ReactElement {
       });
     });
   }, [api]);
+
+  useEffect(() => {
+    if (stakingAccount?.stakingLedger.active.isZero()) {
+      setShake(true);
+      setTimeout(() => setShake(false), 2000);
+    }
+  }, [stakingAccount?.stakingLedger.active]);
 
   useEffect(() => {
     if (!stakingAccount || !sessionInfo) {
@@ -291,7 +299,14 @@ export default function Index(): React.ReactElement {
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}>
         <HorizontalMenuItem
           divider
-          icon={<vaadin-icon icon='vaadin:plus-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          icon={
+            <FontAwesomeIcon
+              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              icon={faPlus}
+              shake={shake}
+              size='lg'
+            />
+          }
           onClick={goToStake}
           title={t<string>('Stake')}
         />
@@ -304,7 +319,6 @@ export default function Index(): React.ReactElement {
               color={theme.palette.mode === 'dark' ? 'white' : 'black'}
               icon={faHand}
               size='lg'
-              spin={refresh}
             />
           }
           onClick={goToNominations}
