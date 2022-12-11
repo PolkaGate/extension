@@ -15,37 +15,40 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
-import { HeaderBrand } from '../../../../../partials';
-import { DEFAULT_FILTERS } from '../../../../../util/constants';
-import { AllValidators, Filter, MyPoolInfo, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../../util/types';
-import { getComparator } from '../../../partial/comparators';
-import Filters from '../../../partial/Filters';
-import ValidatorsTable from '../../../solo/nominations/partials/ValidatorsTable';
-import Review from './Review';
+import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup } from '../../../components';
+import { useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { HeaderBrand } from '../../../partials';
+import { DEFAULT_FILTERS } from '../../../util/constants';
+import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
+import { getComparator } from '../partial/comparators';
+import Filters from '../partial/Filters';
+import ValidatorsTable from './ValidatorsTable';
+import Review from './SelectValidatorsReview';
 
 interface Props {
   address: string;
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
   allValidatorsInfo: AllValidators;
   api: ApiPromise;
-  chain: Chain | null;
-  formatted: AccountId | undefined
   title: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  selectedValidatorsId: AccountId[] | null | undefined;
+  nominatedValidatorsIds: AccountId[] | null | undefined;
   stakingConsts: StakingConsts | null | undefined;
-  pool: MyPoolInfo;
+  stashId: AccountId;
+  staked: BN;
+  poolId?: BN;
 }
 
-export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, chain, formatted, pool, selectedValidatorsId, setShow, show, stakingConsts, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, poolId, nominatedValidatorsIds, setShow, show, staked, stakingConsts, stashId, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const token = useToken(address);
+  const decimal = useDecimal(address);
+  const chain = useChain(address);
+
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -256,18 +259,18 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 allValidatorsIdentities={allValidatorsIdentities}
                 api={api}
                 chain={chain}
-                decimal={pool?.decimal}
-                formatted={pool?.stashIdAccount?.accountId?.toString()}
+                decimal={decimal}
+                formatted={stashId}
                 handleCheck={handleCheck}
                 height={window.innerHeight - 230}
                 isSelected={isSelected}
                 maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
-                selectedValidatorsId={selectedValidatorsId}
+                selectedValidatorsId={nominatedValidatorsIds}
                 setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
-                staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
+                staked={staked}
                 stakingConsts={stakingConsts}
-                token={pool?.token}
+                token={token}
                 validatorsToList={validatorsToList}
               />
             }
@@ -301,17 +304,16 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview && newSelectedValidators && formatted && pool &&
+      {showReview && newSelectedValidators &&
         <Review
           address={address}
           allValidators={searchKeyword ? searchedValidators : allValidators}
           api={api}
-          chain={chain}
-          formatted={formatted}
           newSelectedValidators={newSelectedValidators}
-          pool={pool}
+          poolId={poolId}
           setShow={setShowReview}
           show={showReview}
+          staked={staked}
           stakingConsts={stakingConsts}
         />
       }

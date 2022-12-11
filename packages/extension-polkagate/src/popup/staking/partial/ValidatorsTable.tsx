@@ -17,10 +17,10 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
-import { StakingConsts, ValidatorInfo } from '../../../../../util/types';
-import ValidatorInfoPage from '../../../partial/ValidatorInfo';
+import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
+import { useTranslation } from '../../../hooks';
+import { StakingConsts, ValidatorInfo } from '../../../util/types';
+import ValidatorInfoPage from './ValidatorInfo';
 
 interface Props {
   api?: ApiPromise;

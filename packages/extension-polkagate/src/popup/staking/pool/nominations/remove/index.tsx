@@ -26,7 +26,7 @@ import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
-import TxDetail from '../../../solo/nominations/partials/TxDetail';
+import TxDetail from '../../../partial/TxDetail';
 
 interface Props {
   address: string;
