@@ -20,9 +20,9 @@ import { BN } from '@polkadot/util';
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import ValidatorsTable from '../../solo/nominations/partials/ValidatorsTable';
+import SelectValidators from '../../partial/SelectValidators';
+import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
-import SelectValidators from './select';
 
 interface State {
   api: ApiPromise | undefined;
@@ -199,20 +199,21 @@ export default function Index(): React.ReactElement {
           title={t('Remove Selected Validators')}
         />
       }
-      {showSelectValidator && pool && allValidatorsInfo &&
+      {showSelectValidator && pool && allValidatorsInfo && formatted &&
         <SelectValidators
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}
           allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
-          formatted={formatted}
-          pool={pool}
+          poolId={pool.poolId}
           selectedValidatorsId={selectedValidatorsId}
           setShow={setShowSelectValidator}
           show={showSelectValidator}
           stakingConsts={stakingConsts}
+          stashId={formatted}
           title={t('Select Validators')}
+          staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
         />
       }
     </Motion>

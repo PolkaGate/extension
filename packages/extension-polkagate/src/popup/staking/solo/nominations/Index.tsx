@@ -15,14 +15,14 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { DeriveStakingQuery } from '@polkadot/api-derive/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import ValidatorsTable from './partials/ValidatorsTable';
+import SelectValidators from '../../partial/SelectValidators';
+import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
-import SelectValidators from './select';
 
 interface State {
   api: ApiPromise | undefined;
@@ -184,7 +184,7 @@ export default function Index(): React.ReactElement {
           </>
         }
       </Grid>
-      {nominatedValidatorsIds === null &&
+      {nominatedValidatorsIds === null && stakingAccount?.stakingLedger?.active && !stakingAccount?.stakingLedger?.active?.isZero() &&
         <PButton
           _onClick={goToSelectValidator}
           text={t<string>('Select Validator')}
@@ -201,19 +201,19 @@ export default function Index(): React.ReactElement {
           title={t('Remove Selected Validators')}
         />
       }
-      {showSelectValidator &&
+      {showSelectValidator && allValidatorsInfo && formatted &&
         <SelectValidators
           address={address}
           allValidatorsIdentities={allValidatorsIdentities}
           allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
-          formatted={formatted}
           nominatedValidatorsIds={nominatedValidatorsIds}
           setShow={setShowSelectValidator}
           show={showSelectValidator}
-          stakingAccount={stakingAccount}
+          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
           stakingConsts={stakingConsts}
+          stashId={formatted}
           title={t('Select Validators')}
         />
       }
