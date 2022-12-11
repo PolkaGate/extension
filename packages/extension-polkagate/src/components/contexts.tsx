@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { Fetching } from '../util/types';
+import type { FetchingsContext } from '../util/types';
 
 import React from 'react';
 
@@ -20,7 +20,7 @@ const MetadataReqContext = React.createContext<MetadataRequest[]>([]);
 const SettingsContext = React.createContext<SettingsStruct>(settings.get());
 const SigningReqContext = React.createContext<SigningRequest[]>([]);
 const ToastContext = React.createContext<({ show: (message: string) => void })>({ show: noop });
-const FetchingContext = React.createContext<{ fetching: Fetching, set:(change: Fetching) => void }>({ fetching: {}, set: noop });
+const FetchingContext = React.createContext<FetchingsContext>({ fetching: {}, set: noop });
 
 export {
   AccountContext,

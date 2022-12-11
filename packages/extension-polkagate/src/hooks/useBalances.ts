@@ -9,7 +9,7 @@ import { FetchingContext } from '../components';
 import { updateMeta } from '../messaging';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
-import { useAccount, useApi, useChain, useFormatted } from '.';
+import { useAccount, useApi, useChain, useDecimal, useFormatted, useToken } from '.';
 
 interface Output {
   balance: BN;
@@ -31,8 +31,8 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
   // console.log('isFetching.fetching:', isFetching.fetching);
 
   const chainName = chain && chain.name.replace(' Relay Chain', '')?.replace(' Network', '').toLocaleLowerCase();
-  const token = api && api.registry.chainTokens[0];
-  const decimal = api && api.registry.chainDecimals[0];
+  const token = useToken(address);
+  const decimal = useDecimal(address);
 
   const getPoolBalances = useCallback(() => {
     if (api && !api.query.nominationPools) {
@@ -83,8 +83,8 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
 
       setPooledBalance(active.add(rewards).add(unlockingValue));
       setRefresh && setRefresh(false);
-      // isFetching.fetching[String(formatted)].pooledBalance = false;
-      // isFetching.set(isFetching.fetching);
+      isFetching.fetching[String(formatted)].pooledBalance = false;
+      isFetching.set(isFetching.fetching);
     }).catch(console.error);
   }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
@@ -100,8 +100,8 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
 
       setNewBalances(b);
       setRefresh && setRefresh(false);
-      // isFetching.fetching[String(formatted)].balances = false;
-      // isFetching.set(isFetching.fetching);
+      isFetching.fetching[String(formatted)].balances = false;
+      isFetching.set(isFetching.fetching);
     }).catch(console.error);
   }, [api, chain?.genesisHash, chainName, decimal, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh, token]);
 
@@ -155,6 +155,13 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       setBalances(undefined);
       setNewBalances(undefined);
       setPooledBalance(undefined);
+
+      if (isFetching.fetching[String(formatted)]) {
+        isFetching.fetching[String(formatted)].pooledBalance = false;
+        isFetching.fetching[String(formatted)].balances = true;
+      }
+
+      isFetching.set(isFetching.fetching);
       getBalances();
       getPoolBalances();
     }

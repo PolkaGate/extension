@@ -103,7 +103,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const balances = useBalances(address, refresh, setRefresh);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
-  console.log('accounts', accounts);
   const [newChain, setNewChain] = useState<Chain | null>(chain);
   const genesis = newChain?.genesisHash ?? chain?.genesisHash;
   const endpointOptions = useEndpoints(genesis);
@@ -226,7 +225,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -294,9 +293,10 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }} >
+        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '7px', pb:'5px', width: '92%' }} >
           <HorizontalMenuItem
             divider
+            isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
             icon={
               <FontAwesomeIcon
                 color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
