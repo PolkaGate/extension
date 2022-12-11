@@ -57,7 +57,7 @@ export default function LabelBalancePrice({ api, balances, label, price, showLab
                 : <ShowBalance api={api} balance={value} decimalPoint={2} />
               }
             </Grid>
-            <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
+            <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined
                 ? `$${Number(balanceInUSD)?.toLocaleString()}`
                 : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
