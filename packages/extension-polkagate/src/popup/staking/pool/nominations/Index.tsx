@@ -52,10 +52,11 @@ export default function Index(): React.ReactElement {
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
+
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
-      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(String(v.accountId)))
+      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(v.accountId))
     , [allValidatorsInfo, selectedValidatorsId]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
@@ -101,27 +102,23 @@ export default function Index(): React.ReactElement {
   );
 
   const ValidatorsActions = () => (
-    <>
-      {canNominate &&
-        <Grid container justifyContent='center' pt='15px' spacing={1}>
-          <Grid item>
-            <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
-              {t('Change Validators')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
-          </Grid>
-          <Grid item>
-            <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
-              <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
-                {t('Remove Validators')}
-              </Typography>
-            </Infotip>
-          </Grid>
-        </Grid>
-      }
-    </>
+    <Grid container justifyContent='center' pt='15px' spacing={1}>
+      <Grid item>
+        <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          {t('Change Validators')}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
+      </Grid>
+      <Grid item>
+        <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
+          <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            {t('Remove Validators')}
+          </Typography>
+        </Infotip>
+      </Grid>
+    </Grid>
   );
 
   return (
@@ -170,13 +167,15 @@ export default function Index(): React.ReactElement {
               chain={chain}
               decimal={pool?.decimal}
               formatted={pool?.stashIdAccount?.accountId?.toString()}
-              height={window.innerHeight - 190}
+              height={window.innerHeight - (canNominate ? 190 : 150)}
               staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
               stakingConsts={stakingConsts}
               token={pool?.token}
               validatorsToList={selectedValidatorsInfo}
             />
-            <ValidatorsActions />
+            {canNominate &&
+              <ValidatorsActions />
+            }
           </>
         }
       </Grid>
