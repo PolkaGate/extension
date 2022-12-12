@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -7,8 +7,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext, TwoButtons, Warning } from '../../components';
-import useMetadata from '../../hooks/useMetadata';
-import useTranslation from '../../hooks/useTranslation';
+import { useMetadata, useTranslation } from '../../hooks';
 import { approveMetaRequest, rejectMetaRequest } from '../../messaging';
 
 interface Props {

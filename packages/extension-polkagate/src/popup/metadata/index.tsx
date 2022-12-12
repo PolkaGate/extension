@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext } from 'react';
@@ -24,7 +24,7 @@ export default function Metadata(): React.ReactElement {
 
   return (
     <>
-      <Header text={t<string>('Metadata')} onClose={onReject} />
+      <Header onClose={onReject} text={t<string>('Metadata')} />
       {requests[0]
         ? (
           <Request
