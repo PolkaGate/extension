@@ -162,8 +162,18 @@ export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdi
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview &&
-        <Review address={address} api={api} chain={chain} formatted={formatted} pool={myPool} setShow={setShowReview} setShowMyPool={setShowEdit} show={showReview} changes={changes} />
+      {showReview && myPool && formatted &&
+        <Review
+          address={address}
+          api={api}
+          chain={chain}
+          changes={changes}
+          formatted={formatted}
+          pool={myPool}
+          setShow={setShowReview}
+          setShowMyPool={setShowEdit}
+          show={showReview}
+        />
       }
     </>
   );
