@@ -9,7 +9,7 @@ import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../u
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -90,8 +90,8 @@ export default function Index(): React.ReactElement {
     goToSelectValidator();
   }, [goToSelectValidator]);
 
-  const Warn = ({ text }: { text: string }) => (
-    <Grid container justifyContent='center' py='15px' >
+  const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
+    <Grid container justifyContent='center' sx={style} >
       <Warning
         fontWeight={400}
         theme={theme}
@@ -135,7 +135,7 @@ export default function Index(): React.ReactElement {
       />
       {nominatedValidatorsIds === null
         ? <>
-          <Warn text={t<string>('No validator found.')} />
+          <Warn text={t<string>('No validator found.')} style={{ py: '15px' }} />
           <Grid alignItems='center' container direction='column' pt='98px'>
             <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
@@ -180,13 +180,18 @@ export default function Index(): React.ReactElement {
           </>
         }
       </Grid>
-      {nominatedValidatorsIds === null && canNominate &&
-        <PButton
-          _isBusy={showSelectValidator && !allValidatorsInfo}
-          _onClick={goToSelectValidator}
-          // disabled={!canNominate}
-          text={t<string>('Select Validator')}
-        />
+      {nominatedValidatorsIds === null &&
+        <>
+          {!canNominate &&
+            <Warn text={t<string>('Only pool owner can select validators.')} style={{pt:'100px'}}/>
+          }
+          <PButton
+            _isBusy={showSelectValidator && !allValidatorsInfo}
+            _onClick={goToSelectValidator}
+            disabled={!canNominate}
+            text={t<string>('Select Validator')}
+          />
+        </>
       }
       {showRemoveValidator &&
         <RemoveValidators
