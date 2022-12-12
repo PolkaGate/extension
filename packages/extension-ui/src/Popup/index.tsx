@@ -60,7 +60,8 @@ import { ErrorBoundary } from '../components';
 import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
 import PhishingDetected from './PhishingDetected';
-import Signing from './Signing';
+// import Signing from './Signing';
+import Signing from '../../../extension-polkagate/src/popup/signing';
 import { Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
