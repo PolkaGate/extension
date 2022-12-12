@@ -16,7 +16,7 @@ import uiSettings from '@polkadot/ui-settings';
 // import Governance from '../../../extension-polkagate/src/Popup/Governance';// added for plus
 // import SocialRecovery from '../../../extension-polkagate/src/Popup/SocialRecovery';// added for plus
 import { Loading } from '../../../extension-polkagate/src/components';
-import { AccountContext, FetchingContext, ActionContext, AuthorizeReqContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext, APIContext } from '../../../extension-polkagate/src/components/contexts';
+import { AccountContext, ActionContext, APIContext,AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import SelectProxy from '../../../extension-polkagate/src/partials/SelectProxy';
 import Account from '../../../extension-polkagate/src/popup/account';
@@ -28,8 +28,8 @@ import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/ForgetAccount';
-import Detail from '../../../extension-polkagate/src/popup/history/Detail';
 import History from '../../../extension-polkagate/src/popup/history';
+import Detail from '../../../extension-polkagate/src/popup/history/Detail';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
@@ -37,10 +37,13 @@ import ImportLedger from '../../../extension-polkagate/src/popup/import/importLe
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
+import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
 import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
+// import Signing from './Signing';
+import Signing from '../../../extension-polkagate/src/popup/signing';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
 import PoolNominations from '../../../extension-polkagate/src/popup/staking/pool/nominations';
 import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/pool';
@@ -56,16 +59,9 @@ import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
-import ToastProvider from '../components/Toast/ToastProvider';
-import Metadata from './Metadata';
-// import PhishingDetected from './PhishingDetected';
-import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
-// import Signing from './Signing';
-import Signing from '../../../extension-polkagate/src/popup/signing';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
-
 import { ErrorBoundary } from '../components';
-import PhishingDetected from './PhishingDetected';
+import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
 
 const startSettings = uiSettings.get();
