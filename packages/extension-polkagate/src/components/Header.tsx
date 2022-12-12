@@ -8,67 +8,42 @@
  * this component opens a header on top of pages except the accounts page
  * */
 
-import { ArrowBackIosNewRounded as BackIcon, Menu as MenuIcon } from '@mui/icons-material';
-import { Box, Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Box, Grid, IconButton, useTheme, Typography } from '@mui/material';
+import React from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos/';
 
 interface Props {
-  children?: React.ReactNode;
-  icon: React.node;
-  preUrl?: string;
-  state?: any;
-  showLogo?: boolean;
+  onClose: () => void;
+  text: string;
 }
 
-export default function Header({ children, icon, preUrl = '/', state = {}, showLogo }: Props): React.ReactElement<Props> {
-  const history = useHistory();
+export default function Header({ onClose, text }: Props): React.ReactElement {
   const theme = useTheme();
 
-  const gotoPreUrl = useCallback(() => {
-    history.push({
-      pathname: preUrl,
-      state
-    });
-  }, [history, preUrl, state]);
-
   return (
-    <>
-      <Grid alignItems='center' container justifyContent='flex-end' pt='15px'>
-        <Grid item xs={4}>
-          {showLogo
-            ? <Box component='img' sx={{ height: 45, width: 45 }} src={theme.palette.mode === 'dark' ? logoWhite : logoBlack} />
-            : preUrl && <IconButton
-              aria-label='menu'
-              color='inherit'
-              edge='start'
-              onClick={gotoPreUrl}
-              size='small'
-              sx={{ p: '0px' }}
-            >
-              <BackIcon sx={{ color: 'secondary.main', fontSize: '30px' }} />
-            </IconButton>
-          }
-        </Grid>
-        <Grid item textAlign='center' m='auto' width='fit-content' >
-          {icon}
-        </Grid>
-        <Grid item textAlign='right' xs={4}>
-          <IconButton
-            aria-label='menu'
-            color='inherit'
-            edge='start'
-            // onClick={_toggleSettings}
-            size='small'
-            sx={{ p: '0px' }}
-          >
-            <MenuIcon sx={{ color: 'secondary.main', fontSize: 40 }} />
-          </IconButton>
-        </Grid>
+    <Grid alignItems='center' container justifyContent='flex-end' p='15px 30px 0'>
+      <Grid alignItems='center' container item xs={2}>
+        <Box component='img' src={theme.palette.mode === 'dark' ? logoWhite : logoBlack} sx={{ height: 38, width: 38 }} />
       </Grid>
-      {children}
-    </>
+      <Grid item m='auto' textAlign='center' xs={8}>
+        <Typography fontSize='20px' fontWeight={400}>
+          {text}
+        </Typography>
+      </Grid>
+      <Grid item textAlign='right' xs={2}>
+        <IconButton
+          aria-label='menu'
+          color='inherit'
+          edge='start'
+          onClick={onClose}
+          size='small'
+          sx={{ p: '0px' }}
+        >
+          <CloseIcon sx={{ fontSize: 40 }} />
+        </IconButton>
+      </Grid>
+    </Grid>
   );
 }
