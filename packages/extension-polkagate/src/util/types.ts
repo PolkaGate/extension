@@ -3,9 +3,10 @@
 /* eslint-disable header/header */
 /* eslint-disable camelcase */
 
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 import type { DeriveAccountInfo, DeriveBalancesAll, DeriveCollectiveProposal, DeriveElectionsInfo, DeriveProposal, DeriveReferendumExt, DeriveStakingAccount, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import type { StakingLedger } from '@polkadot/types/interfaces';
+import type { LinkOption } from '@polkadot/apps-config/settings/types';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -623,4 +624,39 @@ interface Limit {
 
 export interface ValidatorInfoWithIdentity extends ValidatorInfo {
   identity?: DeriveAccountRegistration;
+}
+
+export interface ApiState {
+  apiDefaultTx: SubmittableExtrinsicFunction;
+  apiDefaultTxSudo: SubmittableExtrinsicFunction;
+  // hasInjectedAccounts: boolean;
+  isApiReady: boolean;
+  isDevelopment: boolean;
+  isEthereum: boolean;
+  specName: string;
+  specVersion: string;
+  systemChain: string;
+  systemName: string;
+  systemVersion: string;
+}
+
+export interface ApiProps extends ApiState {
+  api: ApiPromise;
+  apiEndpoint: LinkOption | null;
+  apiError: string | null;
+  apiRelay: ApiPromise | null;
+  apiUrl?: string;
+  extensions?: InjectedExtension[];
+  isApiConnected: boolean;
+  isApiInitialized: boolean;
+  isElectron: boolean;
+  isWaitingInjected: boolean;
+}
+
+export interface APIs {
+  [genesisHash: string]: ApiProps;
+}
+export interface APIsContext {
+  apis: APIs;
+  setIt: (apis: APIs) => void;
 }
