@@ -233,7 +233,19 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
             <PButton _mt='20px' _onClick={goRemoveAll} disabled={!members || RemoveAllBtnDisabled} text={t<string>('Remove All')} />
           </Grid>}
       </Grid>
-      {showReview && mode && members && <Review address={address} api={api} chain={chain} formatted={formatted} mode={mode} pool={pool} poolMembers={members} setShow={setShowReview} setShowMyPool={setShowRemoveAll} show={showReview} />}
+      {showReview && mode && members &&
+        <Review
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={formatted}
+          mode={mode}
+          pool={pool}
+          poolMembers={members}
+          setShow={setShowReview}
+          setShowMyPool={setShowRemoveAll}
+          show={showReview}
+        />}
     </Popup>
   );
 }
