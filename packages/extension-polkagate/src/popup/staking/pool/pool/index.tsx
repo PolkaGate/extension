@@ -221,10 +221,22 @@ export default function Pool(): React.ReactElement {
         />
       }
       {showEdit && pool &&
-        <EditPool address={address} apiToUse={api} pool={pool} setShowEdit={setShowEdit} showEdit={showEdit} />
+        <EditPool
+          address={address}
+          apiToUse={api}
+          pool={pool}
+          setShowEdit={setShowEdit}
+          showEdit={showEdit}
+        />
       }
       {showRemoveAll && pool &&
-        <RemoveAll address={address} api={api} pool={pool} setShowRemoveAll={setShowRemoveAll} showRemoveAll={showRemoveAll} />
+        <RemoveAll
+          address={address}
+          api={api}
+          pool={pool}
+          setShowRemoveAll={setShowRemoveAll}
+          showRemoveAll={showRemoveAll}
+        />
       }
     </>
   );
