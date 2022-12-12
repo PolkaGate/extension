@@ -24,8 +24,8 @@ import { DEFAULT_FILTERS } from '../../../util/constants';
 import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
-import ValidatorsTable from './ValidatorsTable';
 import Review from './SelectValidatorsReview';
+import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
   address: string;
@@ -42,7 +42,7 @@ interface Props {
   poolId?: BN;
 }
 
-export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, poolId, nominatedValidatorsIds, setShow, show, staked, stakingConsts, stashId, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, nominatedValidatorsIds, poolId, setShow, show, staked, stakingConsts, stashId, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(address);
@@ -246,10 +246,9 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               value={searchKeyword ?? ''}
             />
           </Grid>
-          <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' pl='15px' py='10px' width='27%'>
+          <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
             {t('Filters')}
-            <Grid alignItems='center' container item justifyContent='center' onClick={onFilters} pl='10px'
-              sx={{ cursor: 'pointer', width: '40%' }}>
+            <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
               <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
             </Grid>
           </Grid>
@@ -265,7 +264,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
                 height={window.innerHeight - 230}
                 isSelected={isSelected}
                 maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
-                selectedValidatorsId={nominatedValidatorsIds}
+                nominatedValidatorsIds={nominatedValidatorsIds}
                 setSelectedValidators={setNewSelectedValidators}
                 showCheckbox
                 staked={staked}
