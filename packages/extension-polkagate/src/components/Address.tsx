@@ -12,7 +12,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { useTranslation } from '../hooks';
+import { useAccountName, useTranslation } from '../hooks';
 import useMetadata from '../hooks/useMetadata';
 import { DEFAULT_TYPE } from '../util/defaultType';
 import { AccountContext, Identicon, SettingsContext, ShortAddress } from './';
@@ -87,20 +87,10 @@ const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAU
 function Address({ address, className, genesisHash, isExternal, isHardware, margin = '20px auto', name, width = '92%', showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
+  const accountName = useAccountName(address);
   const settings = useContext(SettingsContext);
   const [{ formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
   const chain = useMetadata(genesisHash || recodedGenesis, true);
-  const accName = useMemo(() => {
-    if (name) {
-      return name;
-    }
-
-    if (!accounts) {
-      return;
-    }
-
-    return accounts.find((a) => a.address === address)?.name;
-  }, [accounts, address, name]);
 
   useEffect((): void => {
     if (!address) {
@@ -173,7 +163,7 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
             variant='h3'
             whiteSpace='nowrap'
           >
-            {accName || t('<unknown>')}
+            {name || accountName || t('<unknown>')}
           </Typography>
           <Grid
             container
