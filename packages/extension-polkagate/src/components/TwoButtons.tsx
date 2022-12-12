@@ -29,7 +29,7 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
           onClick={onSecondaryClick}
           sx={{
             borderColor: 'secondary.main',
-            color: theme.palette.mode === 'dark' ? 'text.primary' : 'text.secondary',
+            color: 'text.primary',
             fontSize: '18px',
             fontWeight: 400,
             height: '36px',
