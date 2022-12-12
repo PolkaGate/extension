@@ -162,6 +162,7 @@ export default function Index(): React.ReactElement {
         {nominatedValidatorsIds && allValidatorsInfo &&
           <>
             <ValidatorsTable
+              allValidatorsIdentities={allValidatorsIdentities}
               activeValidators={activeValidators}
               api={api}
               chain={chain}
