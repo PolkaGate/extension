@@ -57,6 +57,10 @@ import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/uns
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import ToastProvider from '../components/Toast/ToastProvider';
+// import Metadata from './Metadata';
+import Metadata from '../../../extension-polkagate/src/popup/metadata';
+import PhishingDetected from './PhishingDetected';
+// import Signing from './Signing';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
