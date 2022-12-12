@@ -37,7 +37,6 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
           void chrome.storage.local.set({ MyPools: last });
         });
 
-
         getPoolWorker.terminate();
 
         return;
@@ -49,8 +48,8 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
       setMyPool(parsedInfo);
 
-      /** save my pool to local storage */
-      chrome.storage.local.get('MyPools', (res) => {
+      /** save my pool to local storage if it is not fetched by id, since pools to join are fetched byy Id*/
+      !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${formatted}`;
         const last = res?.MyPools ?? {};
 

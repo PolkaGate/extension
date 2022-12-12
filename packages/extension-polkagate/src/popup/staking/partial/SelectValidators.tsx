@@ -171,6 +171,8 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
 
+    setSystemSuggestion(false);
+
     if (newSelectedValidators.length >= stakingConsts?.maxNominations && checked) {
       console.log('Max validators are selected !');
 
@@ -227,6 +229,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
               iconLeft={6}
               iconTop={6}
               showQuestionMark
+              placement='top'
               text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}
             >
               <Checkbox2
