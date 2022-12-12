@@ -59,7 +59,8 @@ import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHiera
 import { ErrorBoundary } from '../components';
 import ToastProvider from '../components/Toast/ToastProvider';
 import Metadata from './Metadata';
-import PhishingDetected from './PhishingDetected';
+// import PhishingDetected from './PhishingDetected';
+import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 // import Signing from './Signing';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import { Fetching } from '../../../extension-polkagate/src/util/types';
