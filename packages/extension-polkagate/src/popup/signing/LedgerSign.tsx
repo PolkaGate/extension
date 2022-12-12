@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
@@ -6,10 +6,11 @@ import type { HexString } from '@polkadot/util/types';
 
 import { faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Button, Warning } from '../../components';
+import { PButton, Warning } from '../../components';
 import { useLedger } from '../../hooks/useLedger';
 import useTranslation from '../../hooks/useTranslation';
 
@@ -24,9 +25,10 @@ interface Props {
   setError: (value: string | null) => void;
 }
 
-function LedgerSign ({ accountIndex, addressOffset, className, error, genesisHash, onSignature, payload, setError }: Props): React.ReactElement<Props> {
+function LedgerSign({ accountIndex, addressOffset, className, error, genesisHash, onSignature, payload, setError }: Props): React.ReactElement<Props> {
   const [isBusy, setIsBusy] = useState(false);
   const { t } = useTranslation();
+  const theme = useTheme();
   const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useLedger(genesisHash, accountIndex, addressOffset);
 
   useEffect(() => {
@@ -62,32 +64,29 @@ function LedgerSign ({ accountIndex, addressOffset, className, error, genesisHas
   return (
     <div className={className}>
       {!!ledgerWarning && (
-        <Warning>
+        <Warning theme={theme}>
           {ledgerWarning}
         </Warning>
       )}
       {error && (
-        <Warning isDanger>
+        <Warning isDanger theme={theme}>
           {error}
         </Warning>
       )}
       {(ledgerLocked || error)
         ? (
-          <Button
-            isBusy={isBusy || ledgerLoading}
-            onClick={_onRefresh}
-          >
-            <FontAwesomeIcon icon={faSync} />
-            {t<string>('Refresh')}
-          </Button>
+          <PButton
+            _isBusy={isBusy || ledgerLoading}
+            _onClick={_onRefresh}
+            text={t<string>('Refresh')}
+          />
         )
         : (
-          <Button
-            isBusy={isBusy || ledgerLoading}
-            onClick={_onSignLedger}
-          >
-            {t<string>('Sign on Ledger')}
-          </Button>
+          <PButton
+            _isBusy={isBusy || ledgerLoading}
+            _onClick={_onSignLedger}
+            text={t<string>('Sign on Ledger')}
+          />
         )
       }
     </div>
