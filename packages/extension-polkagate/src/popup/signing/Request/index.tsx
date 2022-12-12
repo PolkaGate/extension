@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
@@ -6,6 +6,7 @@ import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
+import { useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { TypeRegistry } from '@polkadot/types';
@@ -49,6 +50,7 @@ export default function Request({ setError, error, account: { accountIndex, addr
   const onAction = useContext(ActionContext);
   const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
   const { t } = useTranslation();
+  const theme = useTheme();
 
   useEffect((): void => {
     const payload = request.payload;
@@ -151,7 +153,7 @@ export default function Request({ setError, error, account: { accountIndex, addr
         />
         {(isHardware || isExternal) && (
           <>
-            <Warning>{
+            <Warning theme={theme}>{
               isHardware
                 ? t('Raw data signing is not supported for hardware wallets.')
                 : t('Raw data signing is not supported for QR wallets.')

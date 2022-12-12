@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -11,8 +11,8 @@ import React, { useMemo, useRef } from 'react';
 
 import { BN, bnToBn, formatNumber } from '@polkadot/util';
 
-import { useMetadata, useTranslation } from '../../hooks';
 import { ShortAddress } from '../../components';
+import { useMetadata, useTranslation } from '../../hooks';
 
 interface Decoded {
   args: AnyJson | null;
@@ -20,7 +20,6 @@ interface Decoded {
 }
 
 interface Props {
-  className?: string;
   payload: ExtrinsicPayload;
   request: SignerPayloadJSON;
   url: string;
@@ -106,7 +105,7 @@ function mortalityAsString(era: ExtrinsicEra, hexBlockNumber: string, t: TFuncti
   });
 }
 
-function Extrinsic({ className, payload: { era, nonce, tip }, request: { blockNumber, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
+function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash);
   const specVersion = useRef(bnToBn(hexSpec)).current;

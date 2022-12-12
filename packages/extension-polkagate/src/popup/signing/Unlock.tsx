@@ -1,14 +1,13 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { InputWithLabel, Warning } from '../../components';
+import { InputWithLabel } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {
-  className?: string;
   error?: string | null;
   isBusy: boolean;
   onSign: () => void;
@@ -17,7 +16,7 @@ interface Props {
   setPassword: (password: string) => void;
 }
 
-function Unlock({ className, error, isBusy, onSign, password, setError, setPassword }: Props): React.ReactElement<Props> {
+function Unlock({ error, isBusy, onSign, password, setError, setPassword }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const _onChangePassword = useCallback(
@@ -41,15 +40,6 @@ function Unlock({ className, error, isBusy, onSign, password, setError, setPassw
         value={password}
         withoutMargin={true}
       />
-      {/* {error && (
-          <Warning
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {error}
-          </Warning>
-        )} */}
     </Grid>
   );
 }
