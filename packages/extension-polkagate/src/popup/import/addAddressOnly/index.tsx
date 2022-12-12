@@ -81,10 +81,6 @@ export default function AddProxy(): React.ReactElement {
       >
         {t('Enter just your account\'s public information (no private key), this can be used as e.g., watch only, and proxied account.')}
       </Typography>
-      <Name
-        label={t<string>('Name')}
-        onChange={_onNameChange}
-      />
       <DropdownWithIcon
         defaultValue={genesisOptions[0].text}
         icon={getLogo(chain ?? undefined)}
@@ -92,6 +88,10 @@ export default function AddProxy(): React.ReactElement {
         onChange={_onChangeGenesis}
         options={genesisOptions}
         style={{ m: '12px auto 20px', width: '92%' }}
+      />
+      <Name
+        onChange={_onNameChange}
+        style={{ marginTop: '-15px', marginBottom: '20px' }}
       />
       <InputWithLabelAndIdenticon
         address={realAddress}

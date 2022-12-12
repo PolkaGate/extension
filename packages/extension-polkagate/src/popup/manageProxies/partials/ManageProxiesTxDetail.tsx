@@ -7,12 +7,12 @@ import React, { useCallback, useContext } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
+import { Chain } from '../../../../../extension-chains/src/types';
 import { AccountContext, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ThroughProxy from '../../../partials/ThroughProxy';
 import { NameAddress, Proxy, ProxyItem } from '../../../util/types';
 import { getSubstrateAddress } from '../../../util/utils';
-import { Chain } from '../../../../../extension-chains/src/types';
 
 interface Props {
   proxies: ProxyItem[];
