@@ -23,22 +23,8 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
   const theme = useTheme();
 
   return (
-    <Grid
-      container
-      justifyContent='space-between'
-      margin='auto'
-      ml='6%'
-      mt={mt}
-      sx={{
-        bottom: mt ? 0 : '25px',
-        position: mt ? 'inherit' : 'absolute'
-      }}
-      width='88%'
-    >
-      <Grid
-        item
-        xs={5.8}
-      >
+    <Grid container justifyContent='space-between' margin='auto' ml='6%' mt={mt} sx={{ bottom: mt ? 0 : '25px', position: mt ? 'inherit' : 'absolute' }} width='88%'>
+      <Grid item xs={5.8}>
         <Button
           onClick={onSecondaryClick}
           sx={{
@@ -56,10 +42,7 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
           {secondaryBtnText || t<string>('Cancel')}
         </Button>
       </Grid>
-      <Grid
-        item
-        xs={5.8}
-      >
+      <Grid item xs={5.8} >
         {isBusy
           ? <Grid container justifyContent='center' alignItems='center'
             sx={{
@@ -96,6 +79,6 @@ export default function TwoButtons({ disabled = false, isBusy, mt, onPrimaryClic
           </Button>
         }
       </Grid>
-    </Grid >
+    </Grid>
   );
 }

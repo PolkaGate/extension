@@ -8,7 +8,7 @@ import '@vaadin/icons';
 import type { AccountId } from '@polkadot/types/interfaces';
 
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
-import { Divider, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { alpha, Divider, Grid, hexToRgb, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -99,7 +99,8 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column' sx={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', overflowY: 'scroll', textAlign: 'center' }}>
+      <Grid container direction='column'
+        sx={{ scrollBehavior: 'smooth', '> div': { scrollbarWidth: 'none' }, ' > div::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', textAlign: 'center' }}>
         {validatorsToList?.length !== 0 &&
           <List
             height={height}
@@ -114,9 +115,10 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
               const isOversubscribed = overSubscribed(v);
               const accountInfo = allValidatorsIdentities?.find((a) => a.accountId === v?.accountId);
               const check = isSelected && isSelected(v);
+              const isNominated = !!nominatedValidatorsIds?.find((n) => n === v.accountId);
 
               return (
-                <Grid container key={key} item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, ...style }}>
+                <Grid container item key={key} sx={{ backgroundColor: isNominated && alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2), borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, ...style }}>
                   <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
                     <Grid alignItems='center' container item>
                       {showCheckbox &&
@@ -194,7 +196,8 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           </List>
         }
       </Grid>
-      {showValidatorInfo && validatorToShowInfo && api && chain &&
+      {
+        showValidatorInfo && validatorToShowInfo && api && chain &&
         <Grid ml='-15px'>
           <ValidatorInfoPage
             api={api}
@@ -208,6 +211,6 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           />
         </Grid>
       }
-    </Grid>
+    </Grid >
   );
 }

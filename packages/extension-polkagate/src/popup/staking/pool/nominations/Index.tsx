@@ -47,22 +47,22 @@ export default function Index(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const pool = usePool(address, undefined, state?.pool, refresh);
   const formatted = useFormatted(address);
-  const [selectedValidatorsId, setSelectedValidatorsId] = useState<AccountId[] | undefined | null>();
+  const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
 
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
 
   const selectedValidatorsInfo = useMemo(() =>
-    allValidatorsInfo && selectedValidatorsId && allValidatorsInfo.current
+    allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
-      .filter((v: DeriveStakingQuery) => selectedValidatorsId.includes(v.accountId))
-    , [allValidatorsInfo, selectedValidatorsId]);
+      .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 
   useEffect(() => {
-    setSelectedValidatorsId(pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators);
+    setNominatedValidatorsIds(pool === null || pool?.stashIdAccount?.nominators?.length === 0 ? null : pool?.stashIdAccount?.nominators);
     setRefresh(false);
   }, [pool]);
 
@@ -79,7 +79,7 @@ export default function Index(): React.ReactElement {
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    setSelectedValidatorsId(undefined);
+    setNominatedValidatorsIds(undefined);
   }, []);
 
   const onRemoveValidators = useCallback(() => {
@@ -131,9 +131,9 @@ export default function Index(): React.ReactElement {
         text={t<string>('Pool Staking')}
       />
       <SubTitle
-        label={t<string>('Selected validators') + (selectedValidatorsId?.length ? ` (${selectedValidatorsId?.length})` : '')}
+        label={t<string>('Selected validators') + (nominatedValidatorsIds?.length ? ` (${nominatedValidatorsIds?.length})` : '')}
       />
-      {selectedValidatorsId === null
+      {nominatedValidatorsIds === null
         ? <>
           <Warn text={t<string>('No validator found.')} />
           <Grid alignItems='center' container direction='column' pt='98px'>
@@ -151,7 +151,7 @@ export default function Index(): React.ReactElement {
             </Grid>
           </Grid>
         </>
-        : (selectedValidatorsId === undefined || allValidatorsInfo === undefined) &&
+        : (nominatedValidatorsIds === undefined || allValidatorsInfo === undefined) &&
         <Progress
           pt='125px'
           size={125}
@@ -159,7 +159,7 @@ export default function Index(): React.ReactElement {
         />
       }
       <Grid item sx={{ m: '20px 15px' }} xs={12}>
-        {selectedValidatorsId && allValidatorsInfo &&
+        {nominatedValidatorsIds && allValidatorsInfo &&
           <>
             <ValidatorsTable
               activeValidators={activeValidators}
@@ -179,7 +179,7 @@ export default function Index(): React.ReactElement {
           </>
         }
       </Grid>
-      {selectedValidatorsId === null && canNominate &&
+      {nominatedValidatorsIds === null && canNominate &&
         <PButton
           _isBusy={showSelectValidator && !allValidatorsInfo}
           _onClick={goToSelectValidator}
@@ -206,14 +206,14 @@ export default function Index(): React.ReactElement {
           allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
+          nominatedValidatorsIds={nominatedValidatorsIds}
           poolId={pool.poolId}
-          selectedValidatorsId={selectedValidatorsId}
           setShow={setShowSelectValidator}
           show={showSelectValidator}
+          staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}
-          staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
         />
       }
     </Motion>
