@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { FetchingsContext } from '../util/types';
+import type { APIsContext, FetchingsContext } from '../util/types';
 
 import React from 'react';
 
@@ -13,6 +13,7 @@ import settings from '@polkadot/ui-settings';
 const noop = (): void => undefined;
 
 const AccountContext = React.createContext<AccountsContext>({ accounts: [], hierarchy: [], master: undefined });
+const APIContext = React.createContext<APIsContext>({ apis: {}, setIt: noop });
 const ActionContext = React.createContext<(to?: string) => void>(noop);
 const AuthorizeReqContext = React.createContext<AuthorizeRequest[]>([]);
 const MediaContext = React.createContext<boolean>(false);
@@ -25,6 +26,7 @@ const FetchingContext = React.createContext<FetchingsContext>({ fetching: {}, se
 export {
   AccountContext,
   ActionContext,
+  APIContext,
   AuthorizeReqContext,
   FetchingContext,
   MediaContext,
