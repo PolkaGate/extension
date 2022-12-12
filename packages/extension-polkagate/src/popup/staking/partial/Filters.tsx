@@ -231,15 +231,11 @@ export default function Filters({ allValidators, onLimitValidatorsPerOperator, a
           }
         </div>
       </Grid>
-      {/* <PButton
-        _onClick={onApply}
-        text={t<string>('Apply')}
-      /> */}
       <TwoButtons
         onPrimaryClick={onApply}
         onSecondaryClick={onClear}
         primaryBtnText={t<string>('Apply')}
-        secondaryBtnText={t<string>('Clear')}
+        secondaryBtnText={t<string>('Reset All')}
       />
       <IconButton
         onClick={closeMenu}
