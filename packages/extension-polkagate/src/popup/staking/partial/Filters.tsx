@@ -30,11 +30,10 @@ interface Props {
   sortValue: number;
   apply: boolean;
   setApply: React.Dispatch<React.SetStateAction<boolean>>;
-  onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[]
-
+  onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];
 }
 
-export default function Filters({ allValidators, onLimitValidatorsPerOperator, allValidatorsIdentities, apply, filters, newSelectedValidators, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters({ allValidators, allValidatorsIdentities, apply, filters, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -131,7 +130,7 @@ export default function Filters({ allValidators, onLimitValidatorsPerOperator, a
     setApply(false);
   }, [setApply, setFilters, setSortValue]);
 
-  const closeMenu = useCallback(() => {
+  const onCloseFilter = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
@@ -238,7 +237,7 @@ export default function Filters({ allValidators, onLimitValidatorsPerOperator, a
         secondaryBtnText={t<string>('Reset All')}
       />
       <IconButton
-        onClick={closeMenu}
+        onClick={onCloseFilter}
         sx={{
           left: '15px',
           p: 0,
