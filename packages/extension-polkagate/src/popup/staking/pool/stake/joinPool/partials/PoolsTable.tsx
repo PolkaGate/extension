@@ -25,9 +25,10 @@ interface Props {
   label: string;
   selected?: PoolInfo;
   setSelected: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
+  maxHeight?: number;
 }
 
-export default function PoolsTable({ address, api, label, pools, selected, setSelected, style }: Props): React.ReactElement {
+export default function PoolsTable({ address, api, label, pools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
@@ -84,7 +85,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   return (
     <Grid sx={{ ...style }}>
       <Label label={label} style={{ position: 'relative' }}>
-        <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: window.innerHeight / 2.4, minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
+        <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
           {pools
             ? pools.length
               ? pools.map((pool, index) => (

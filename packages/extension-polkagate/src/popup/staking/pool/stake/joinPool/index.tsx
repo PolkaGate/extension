@@ -199,6 +199,7 @@ export default function JoinPool(): React.ReactElement {
           m: '15px auto 0',
           width: '92%'
         }}
+        maxHeight={window.innerHeight - 350}
       />
       <PButton
         _onClick={toReview}
