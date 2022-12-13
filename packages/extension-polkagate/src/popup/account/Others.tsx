@@ -98,7 +98,7 @@ export default function Others({ account, api, balances, chain, formatted, price
         />
         <Container disableGutters sx={{ px: '15px' }}>
           <Grid container item justifyContent='center' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            <Typography sx={{ fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+            <Typography sx={{ fontSize: '28px', fontWeight: 400, width: '99%' }}>
               {account?.name}
             </Typography>
           </Grid>

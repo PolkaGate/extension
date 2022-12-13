@@ -6,9 +6,7 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Option, StorageKey } from '@polkadot/types';
-import type { AccountId32 } from '@polkadot/types/interfaces';
-import type { MembersMapEntry, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useIdentity, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -59,6 +57,7 @@ export default function Index(): React.ReactElement {
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
+  const identity = useIdentity(address);
 
   const token = (api && api.registry.chainTokens[0]) || pool?.token;
   const decimal = (api && api.registry.chainDecimals[0]) || pool?.decimal;
@@ -268,6 +267,7 @@ export default function Index(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
+      judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}
@@ -285,7 +285,7 @@ export default function Index(): React.ReactElement {
         showClose
       />
       <Container disableGutters sx={{ px: '15px' }}>
-        <AccountBrief address={address} />
+        <AccountBrief address={address} identity={identity} />
         <BouncingSubTitle label={t<string>('Pool Staking')} style={{ fontSize: '20px', fontWeight: 400 }} />
         <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
@@ -384,7 +384,7 @@ export default function Index(): React.ReactElement {
           setShow={setShowRewardWithdraw}
           show={showRewardWithdraw}
         />}
-      {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain &&
+      {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
         <RedeemableWithdrawReview
           address={address}
           amount={redeemable}
