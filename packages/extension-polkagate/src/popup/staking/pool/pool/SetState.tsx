@@ -11,6 +11,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
@@ -27,7 +28,7 @@ interface Props {
   address: string;
   api: ApiPromise | undefined;
   chain: Chain;
-  formatted: string;
+  formatted: AccountId;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -147,7 +148,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       setTxInfo({ ...info, api, chain });
 
       // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
+      void saveHistory(chain, hierarchy, String(formatted), history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
