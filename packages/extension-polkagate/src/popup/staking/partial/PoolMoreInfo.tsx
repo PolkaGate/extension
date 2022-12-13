@@ -91,7 +91,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   };
 
   const ShowMembers = () => (
-    <Grid container direction='column' display='block' sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: '150px', minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll', scrollbarWidth: 'none' }}>
+    <Grid container direction='column' display='block' sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll', scrollbarWidth: 'none' }}>
       <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Grid item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='70%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>{t<string>('Identity')}</Typography>
@@ -102,7 +102,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
       </Grid>
       {membersToShow?.length
         ? membersToShow.map((member, index) => (
-          <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+          <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
             <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ borderRight: '1px solid', borderRightColor: 'secondary.main', fontSize: '18px', minHeight: '45px', pl: '10px', width: '70%' }} />
             <Grid alignItems='center' container item justifyContent='center' width='30%'>
               <ShowBalance
@@ -151,7 +151,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
         </Grid>
       </Grid>
       <Collapse in={show} sx={{ width: '100%' }} timeout='auto' unmountOnExit>
-        {(mode === 'Ids' || mode === 'Roles') && <ShowRoles chain={chain} mode={mode} pool={pool} style={{ my: '10px' }} />}
+        {(mode === 'Ids' || mode === 'Roles') && <ShowRoles api={api} chain={chain} mode={mode} pool={pool} style={{ my: '10px' }} />}
         {mode === 'Members' && <ShowMembers />}
         {mode === 'Reward' && <ShowReward />}
       </Collapse>
