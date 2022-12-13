@@ -3,27 +3,21 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { faUsb } from '@fortawesome/free-brands-svg-icons';
-import { faQrcode } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { SettingsContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
-import { useApi, useChain, useProxies, useTranslation } from '../../hooks';
+import { useApi, useChain, useIdentity, useProxies } from '../../hooks';
 import { showAccount } from '../../messaging';
 import { AccMenu } from '../../partials';
-import AccountDetail from './AccountDetail';
 import { getFormattedAddress } from '../../util/utils';
+import AccountDetail from './AccountDetail';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -41,10 +35,7 @@ export interface Props {
   balancesOnLocalStorage?: string;
 }
 
-const isChainApi = (chain: Chain | null, api: ApiPromise | undefined) => (chain?.genesisHash && api?.genesisHash && chain.genesisHash === api.genesisHash?.toString());
-
 export default function AccountPreview({ address, genesisHash, isExternal, isHardware, isHidden, name, toggleActions, type }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
   const history = useHistory();
   const settings = useContext(SettingsContext);
   const chain = useChain(address);
@@ -52,9 +43,8 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
   const [formatted, setFormatted] = useState<string>();
   const proxies = useProxies(api, formatted);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
-  const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
-  // const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
+  const identity = useIdentity(address);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -67,28 +57,9 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
     }
   }, [address, chain, settings]);
 
-  // useEffect(() => {
-  //   setBalances(undefined);
-  //   // eslint-disable-next-line no-void
-  //   isChainApi(chain, api) && formatted && void api.derive.balances?.all(formatted).then(setBalances).catch(console.error);
-  // }, [api, chain, formatted]);
-
   useEffect((): void => {
     setShowActionsMenu(false);
   }, [toggleActions]);
-
-  useEffect((): void => {
-    // eslint-disable-next-line no-void
-    api && formatted && void api.derive.accounts.info(formatted).then((info) => {
-      setIdentity(info?.identity);
-    });
-  }, [api, formatted]);
-
-  const judgement = useMemo(
-    () =>
-      identity?.judgements && JSON.stringify(identity?.judgements).match(/reasonable|knownGood/gi)
-    , [identity?.judgements]
-  );
 
   const identiconTheme = (
     type === 'ethereum'
@@ -108,33 +79,6 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
     [address, isHidden]
   );
 
-  const Name = () => {
-    const displayName = identity?.display || name || t('<Unknown>');
-
-    return (
-      <>
-        {!!name && (isExternal || isExternal) && (
-          isHardware
-            ? (
-              <FontAwesomeIcon
-                className='hardwareIcon'
-                icon={faUsb}
-                rotation={270}
-                title={t('hardware wallet account')}
-              />
-            )
-            : (
-              <FontAwesomeIcon
-                className='externalIcon'
-                icon={faQrcode}
-                title={t('external account')}
-              />
-            )
-        )}
-        <span title={displayName}>{displayName}</span>
-      </>);
-  };
-
   const goToAccount = useCallback(() => {
     genesisHash && address && formatted && history.push({
       pathname: `/account/${genesisHash}/${address}/`,
@@ -147,6 +91,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
       <AccountIcons
         formatted={formatted || address}
         identiconTheme={identiconTheme}
+        judgements={identity?.judgements} // TODO: to fix the type issue
         prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}
@@ -158,6 +103,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
         isHidden={isHidden}
         name={name}
         toggleVisibility={_toggleVisibility}
+        identity={identity}
       />
       <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} chain={chain} />
       {

@@ -27,7 +27,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
-import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, usePrice, useProxies, useTranslation } from '../../hooks';
+import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { STAKING_CHAINS } from '../../util/constants';
@@ -94,6 +94,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const theme = useTheme();
   const { pathname, state } = useLocation();
   const { address, genesisHash } = useParams<FormattedAddressState>();
+  const identity = useIdentity(address);
   const price = usePrice(address);
   const endpoint = useEndpoint2(address);
   const formatted = useFormatted(address);
@@ -109,7 +110,6 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const api = useApi(address, state?.api);
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
-  // const accountName = useMemo((): string => state?.identity?.display || account?.name, [state, account]);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const chainName = (newChain?.name ?? chain?.name)?.replace(' Relay Chain', '')?.replace(' Network', '');
@@ -211,8 +211,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
-      // isExternal={isExternal}
-      // onCopy={_onCopy}
+      judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}
@@ -261,7 +260,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
         showBackArrow
       />
       <Container disableGutters sx={{ px: '15px' }}>
-        <AccountBrief address={address} />
+        <AccountBrief address={address} identity={identity} />
         {!showStakingOptions
           ? <>
             <Grid alignItems='flex-end' container pt='10px'>
@@ -293,7 +292,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '7px', pb:'5px', width: '92%' }} >
+        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
           <HorizontalMenuItem
             divider
             isLoading={availableProxiesForTransfer === undefined && account?.isExternal}

@@ -49,6 +49,7 @@ export interface AccountJson extends KeyringPair$Meta {
   endpoint?: string;
   balances?: string;
   stakingAccount?: string;
+  identities?: string;
 }
 
 export type AccountWithChildren = AccountJson & {
