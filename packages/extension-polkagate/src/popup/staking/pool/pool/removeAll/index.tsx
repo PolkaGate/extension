@@ -60,7 +60,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
   const chain = useChain(address);
   const formatted = useFormatted(address);
 
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(0);
   const [mode, setMode] = useState<'UnbondAll' | 'RemoveAll' | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
@@ -69,6 +69,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
   const [remainingTimeCounter, setRemainingTimeCounter] = useState<RemainingTimeCounterProps>();
 
   const poolMembers = usePoolMembers(api, pool.poolId.toString());
+  const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
 
   const members = useMemo(() => {
     if (!poolMembers) {
@@ -84,10 +85,10 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
     }
 
     const allMembersPoints = members.reduce((sum: BN, { points }) => sum.add(points), BN_ZERO);
-    const myPoint = members.find((m) => m.accountId === formatted)?.points ?? BN_ZERO;
+    const myPoint = members.find((m) => m.accountId === poolDepositorAddr)?.points ?? BN_ZERO;
 
     return !allMembersPoints.sub(myPoint).isZero();
-  }, [members, formatted]);
+  }, [members, poolDepositorAddr]);
 
   const backToPool = useCallback(() => {
     setShowRemoveAll(false);
@@ -174,11 +175,11 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
               : t<string>('day and')}
           </Typography>
         }
-        <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>{remainingTimeCounter?.hourCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
-        <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>:</Typography>
-        <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>{remainingTimeCounter?.minCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
-        <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>:</Typography>
-        <Typography fontSize='28px' fontWeight={400} textAlign='center' px='2px'>{remainingTimeCounter?.secCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>{remainingTimeCounter?.hourCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>:</Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>{remainingTimeCounter?.minCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>:</Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>{remainingTimeCounter?.secCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
       </Grid>
     </Grid>
   );
@@ -191,22 +192,34 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
         showBackArrow
         showClose
         text={t<string>('Remove All')}
-        withSteps={step !== 4 ? { current: step, total: 3 } : undefined}
+        withSteps={step !== 4 ? { current: step === 0 ? 1 : step, total: 3 } : undefined}
       />
       <Grid container direction='column' m='20px auto' width='85%'>
         <Typography fontSize='14px' fontWeight={300}>
           {t<string>('To remove all members')}:
         </Typography>
-        <Grid alignItems='center' container item lineHeight='25px' pl='5px' pt='15px'>
-          {step > 1 ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', fontSize: '15px' }} /> : '1.'}
+        <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
+          {step > 1
+            ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
+            : <Typography fontSize='13px' sx={{ bgcolor: step === 1 ? 'success.main' : 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+              1
+            </Typography>}
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Unstake all members’ tokens')}</Typography>
         </Grid>
-        <Grid alignItems='center' container item lineHeight='25px' pl='5px'>
-          {step <= 2 ? '2.' : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', fontSize: '15px' }} />}
+        <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
+          {step <= 2
+            ? <Typography fontSize='13px' sx={{ bgcolor: step === 2 ? 'success.main' : 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+              2
+            </Typography>
+            : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Wait for unstaking locking period')}</Typography>
         </Grid>
-        <Grid alignItems='center' container item lineHeight='25px' pl='5px'>
-          {step <= 3 ? '3.' : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', fontSize: '15px' }} />}
+        <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
+          {step <= 3
+            ? <Typography fontSize='13px' sx={{ bgcolor: step === 3 ? 'success.main' : 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+              3
+            </Typography>
+            : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Come back here, and remove all')}</Typography>
         </Grid>
       </Grid>
@@ -233,7 +246,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
             <PButton _mt='20px' _onClick={goRemoveAll} disabled={!members || RemoveAllBtnDisabled} text={t<string>('Remove All')} />
           </Grid>}
       </Grid>
-      {showReview && mode && members &&
+      {showReview && mode && members && api &&
         <Review
           address={address}
           api={api}

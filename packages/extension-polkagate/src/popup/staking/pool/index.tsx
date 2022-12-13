@@ -32,27 +32,6 @@ import RewardsWithdrawReview from './rewards/Withdraw';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
 
-const OPT_ENTRIES = {
-  transform: (entries: [StorageKey<[AccountId32]>, Option<PalletNominationPoolsPoolMember>][]): MembersMapEntry[] =>
-    entries.reduce((all: MembersMapEntry[], [{ args: [accountId] }, optMember]) => {
-      if (optMember.isSome) {
-        const member = optMember.unwrap();
-        const poolId = member.poolId.toString();
-
-        if (!all[poolId]) {
-          all[poolId] = [];
-        }
-
-        all[poolId].push({
-          accountId: accountId.toString(),
-          member
-        });
-      }
-
-      return all;
-    }, {})
-};
-
 interface SessionIfo {
   eraLength: number;
   eraProgress: number;

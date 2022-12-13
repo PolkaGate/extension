@@ -49,7 +49,8 @@ export default function Pool(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
   const api = useApi(address, state?.api);
-  const pool = usePool(address, undefined, state?.pool);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const pool = usePool(address, undefined, state?.pool, refresh);
   const history = useHistory();
   const chain = useChain(address);
   const formatted = useFormatted(address);
@@ -206,7 +207,7 @@ export default function Pool(): React.ReactElement {
           }
         </>
       }
-      {goChange && changeState &&
+      {goChange && changeState && pool && formatted &&
         <SetState
           address={address}
           api={api}
@@ -215,6 +216,7 @@ export default function Pool(): React.ReactElement {
           headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
           helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
           pool={pool}
+          setRefresh={setRefresh}
           setShow={setGoChange}
           show={goChange}
           state={changeState}

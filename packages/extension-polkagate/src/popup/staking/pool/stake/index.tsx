@@ -5,9 +5,9 @@
 
 import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 
@@ -33,13 +33,24 @@ export default function Stake(): React.ReactElement {
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = useBalances(address);
   const pool = usePool(address, undefined, state?.pool);
+  const history = useHistory();
+
+  const onBackClick = useCallback(() => {
+    history.push({
+      pathname: `/pool/${address}`,
+      state: { ...state }
+    });
+  }, [address, history, state]);
 
   return (
     <>
       {pool === undefined &&
         <>
           <HeaderBrand
+            onBackClick={onBackClick}
             shortBorder
+            showBackArrow
+            showClose
             text={t<string>('Pool Staking')}
           />
           <Typography fontSize='22px' fontWeight={300} m='25px auto 60px' textAlign='center' width='60%'>
