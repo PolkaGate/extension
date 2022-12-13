@@ -207,7 +207,7 @@ export default function Pool(): React.ReactElement {
           }
         </>
       }
-      {goChange && changeState &&
+      {goChange && changeState && pool && formatted &&
         <SetState
           address={address}
           api={api}
