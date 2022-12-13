@@ -4,7 +4,7 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import Header from '../partials/Header';
+// import Header from '../partials/Header';
 import Button from './Button';
 import ButtonArea from './ButtonArea';
 import translate from './translate';
@@ -50,20 +50,20 @@ class ErrorBoundary extends React.Component<Props> {
     return error
       ? (
         <>
-          <Header text={t<string>('An error occurred')} />
+          {/* <Header text={t<string>('An error occurred')} /> */}
           <div>
             {t<string>('Something went wrong with the query and rendering of this component. {{message}}', {
               replace: { message: error.message }
             })}
           </div>
-          <VerticalSpace />
-          <ButtonArea>
+          {/* <VerticalSpace /> */}
+          {/* <ButtonArea> */}
             <Button
               onClick={this.#goHome}
             >
               {t<string>('Back to home')}
             </Button>
-          </ButtonArea>
+          {/* </ButtonArea> */}
         </>
       )
       : children;

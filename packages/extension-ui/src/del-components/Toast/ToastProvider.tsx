@@ -3,7 +3,7 @@
 
 import React, { useCallback, useState } from 'react';
 
-import { ToastContext } from '..';
+import { ToastContext } from '../del-index';
 import Toast from './Toast';
 
 interface ToastProviderProps {

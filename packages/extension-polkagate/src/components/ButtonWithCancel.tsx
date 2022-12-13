@@ -5,7 +5,8 @@ import { Button, Grid, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { useTranslation } from '../hooks';
+
 
 interface Props {
   text: string;

@@ -10,11 +10,12 @@
 
 import '@vaadin/icons';
 
-import { Divider, Grid, IconButton, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { subscan } from '../../assets/icons/';
 import { ShortAddress } from '../../components';
-import { useAccount, useFormatted } from '../../hooks';
+import { useAccount, useChainName, useFormatted } from '../../hooks';
 import { showAccount } from '../../messaging';
 
 interface Props {
@@ -24,6 +25,7 @@ interface Props {
 export default function AccountBrief({ address }: Props): React.ReactElement<Props> {
   const formatted = useFormatted(address);
   const account = useAccount(address);
+  const chainName = useChainName(address);
   const theme = useTheme();
 
   const _toggleVisibility = useCallback(
@@ -32,6 +34,9 @@ export default function AccountBrief({ address }: Props): React.ReactElement<Pro
     },
     [address, account?.isHidden]
   );
+
+  const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}`;
+
 
   return (
     < >
@@ -42,13 +47,22 @@ export default function AccountBrief({ address }: Props): React.ReactElement<Pro
         <span>
           <IconButton
             onClick={_toggleVisibility}
-            sx={{ height: '15px', ml: '10px', mt: '5px', p: 0, width: '24px' }}
+            sx={{ height: '15px', m: '4px 6px 4px 10px', p: 0, width: '24px' }}
           >
             <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
           </IconButton>
+
         </span>
+        <Link
+          href={`${subscanLink(formatted)}`}
+          rel='noreferrer'
+          target='_blank'
+          underline='none'
+        >
+          <Box component='img' mt='13px' src={subscan} />
+        </Link>
       </Grid>
-      <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300}} />
+      <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 200 }} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '10px' }} />
     </>
   );

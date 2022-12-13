@@ -9,6 +9,7 @@ export { default as useApiWithChain } from './useApiWithChain';
 export { default as useBalances } from './useBalances';
 export { default as useBalancesInPool } from './useBalancesInPool';
 export { default as useChain } from './useChain';
+export { default as useIsMounted } from './useIsMounted';
 export { default as useChainName } from './useChainName';
 export { default as useDecimal } from './useDecimal';
 export { useEndpoint } from './useEndpoint';

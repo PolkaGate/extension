@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Button, Warning } from '../../components';
+import { Button, Warning } from '../../components/del-index';
 import { useLedger } from '../../hooks/useLedger';
 import useTranslation from '../../hooks/useTranslation';
 

@@ -3,8 +3,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
 import { Password, ValidatedInput } from '../components';
+import { useTranslation } from '../hooks';
 import { allOf, isNotShorterThan, isSameAs, Validator } from '../util/validators';
 
 interface Props {

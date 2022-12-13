@@ -19,8 +19,8 @@ import { westendMetadata } from '../Popup/Signing/metadataMock';
 import { flushAllPromises } from '../testHelpers';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
-import getParentNameSuri from '../util/getParentNameSuri';
-import { AccountContext, Address } from '.';
+import getParentNameSuri from '../del-util/getParentNameSuri';
+import { AccountContext, Address } from './del-index';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
 configure({ adapter: new Adapter() });

@@ -3,7 +3,7 @@
 
 import React, { useCallback } from 'react';
 
-import { InputWithLabel, Warning } from '../../components';
+import { InputWithLabel, Warning } from '../../components/del-index';
 import useTranslation from '../../hooks/useTranslation';
 
 interface Props {

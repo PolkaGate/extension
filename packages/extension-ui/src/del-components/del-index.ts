@@ -4,7 +4,7 @@
 export { default as AccountNamePasswordCreation } from '../../../extension-polkagate/src/components/AccountNamePasswordCreation';
 export { default as ActionBar } from './ActionBar';
 export { default as ActionText } from '../../../extension-polkagate/src/components/ActionText';
-export { default as Address } from './Address';
+// export { default as Address } from './Address';
 export { default as BackButton } from './BackButton';
 export { default as Box } from './Box';
 export { default as Button } from './Button';
@@ -22,7 +22,7 @@ export { default as Label } from '../../../extension-polkagate/src/components/La
 export { default as Link } from './Link';
 export { default as List } from './List';
 export { default as Loading } from '../../../extension-polkagate/src/components/Loading';
-export { default as Main } from './Main';
+export { default as Main } from '../../../extension-polkagate/src/components/Main';
 export { default as Menu } from './Menu';
 export { default as MenuDivider } from './MenuDivider';
 export { default as MenuItem } from './MenuItem';
@@ -36,11 +36,11 @@ export { default as Table } from './Table';
 export { default as TextAreaWithLabel } from '../../../extension-polkagate/src/components/TextAreaWithLabel';
 export { default as ValidatedInput } from '../../../extension-polkagate/src/components/ValidatedInput';
 export { default as VerticalSpace } from './VerticalSpace';
-export { default as View } from './View';
+// export { default as View } from './View';
 export { default as Warning } from '../../../extension-polkagate/src/components/Warning';
 export { ColorContext } from './ColorContext';
 
 export { Input, TextArea } from '../../../extension-polkagate/src/components/TextInputs';
 
 export * from './contexts';
-export * from './themes';
+export * from '../../../extension-polkagate/src/components/themes';

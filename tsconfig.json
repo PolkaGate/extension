@@ -6,8 +6,10 @@
     "composite": false
   },
   "include": [
-    "packages/**/src/**/*"
-, "packages/extension-polkagate/icons", "packages/extension-polkagate/patials/PHeaderBrand.tsx"  ],
+    "packages/**/src/**/*",
+    "packages/extension-polkagate/icons",
+    "packages/extension-polkagate/src/components/themes.ts"
+  ],
   "exclude": [
     "**/node_modules/**/*"
   ]
