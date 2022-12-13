@@ -63,6 +63,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   const poolWithdrawUnbonded = api.tx.nominationPools.poolWithdrawUnbonded;
   const batchAll = api.tx.utility.batchAll;
   const redeem = api.tx.nominationPools.withdrawUnbonded;
+  const poolDepositorAddr = String(pool.bondedPool?.roles.depositor);
 
   const unlockingLen = pool?.stashIdAccount?.stakingLedger?.unlocking?.length ?? 0;
   const maxUnlockingChunks = api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
@@ -87,15 +88,15 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
     if (mode === 'UnbondAll') {
       const nonZeroPointMembers = poolMembers.filter((m) => !new BN(m.points).isZero());
 
-      const membersToUnbond = nonZeroPointMembers.filter((m) => m.accountId !== formatted);
+      const membersToUnbond = nonZeroPointMembers.filter((m) => m.accountId !== poolDepositorAddr);
 
       setMembersToUnboundAll(membersToUnbond);
     } else {
-      const membersToRemove = poolMembers.filter((m) => m.accountId !== formatted);
+      const membersToRemove = poolMembers.filter((m) => m.accountId !== poolDepositorAddr);
 
       setMembersToRemoveAll(membersToRemove);
     }
-  }, [poolMembers, mode, formatted]);
+  }, [poolMembers, mode, poolDepositorAddr]);
 
   useEffect(() => {
     if (!membersToUnboundAll && !membersToRemoveAll) { return; }
