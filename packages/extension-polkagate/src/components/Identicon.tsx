@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import type { ThemeProps } from '../types';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -9,16 +10,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Icon from '@polkadot/react-identicon';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 interface Props {
   className?: string;
-  iconTheme?: IconTheme;
+  iconTheme?: IconTheme | string;
   isExternal?: boolean | null;
   onCopy?: () => void;
   prefix?: number;
-  value?: string | null;
-  size?: number;
-  judgement?: RegExpMatchArray | null | undefined
+  value?: AccountId | string | null;
+  size: number;
+  judgement?: RegistrationJudgement[] | null;
 }
 
 function Identicon({ className, iconTheme, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
@@ -41,8 +43,8 @@ function Identicon({ className, iconTheme, judgement, onCopy, prefix, size, valu
             borderRadius: '50%',
             color: 'white',
             // stroke: 'white',
-            fontSize: 10,
-            left: '15px',
+            fontSize: 0.4 * size,
+            left: `${size * 0.6}px`,
             position: 'absolute',
             top: 0
           }}
