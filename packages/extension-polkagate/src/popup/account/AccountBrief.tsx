@@ -41,7 +41,7 @@ export default function AccountBrief({ address }: Props): React.ReactElement<Pro
   return (
     < >
       <Grid alignItems='center' container justifyContent='center' xs={12}>
-        <Typography sx={{ fontSize: '36px', fontWeight: 400, height: '50px', letterSpacing: '-0.015em', maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Typography sx={{ fontSize: '36px', fontWeight: 400, height: '50px', letterSpacing: '-0.015em', maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {account?.name}
         </Typography>
         <span>
