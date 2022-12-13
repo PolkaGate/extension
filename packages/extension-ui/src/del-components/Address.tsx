@@ -27,7 +27,7 @@ import useToast from '../../../extension-polkagate/src/hooks/useToast';
 import useTranslation from '../hooks/useTranslation';
 import { showAccount } from '../../../extension-polkagate/src/messaging';
 import { DEFAULT_TYPE } from '../../../extension-polkagate/src/util/defaultType';
-import getParentNameSuri from '../util/getParentNameSuri';
+import getParentNameSuri from '../del-util/getParentNameSuri';
 import { AccountContext, SettingsContext } from './contexts';
 import Identicon from './Identicon';
 import Menu from './Menu';

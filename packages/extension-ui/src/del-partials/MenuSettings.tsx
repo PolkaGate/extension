@@ -10,12 +10,12 @@ import styled, { ThemeContext } from 'styled-components';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, ActionText, Checkbox, Dropdown, Menu, MenuDivider, MenuItem, Svg, Switch, themes, ThemeSwitchContext } from '../components';
+import { ActionContext, ActionText, Checkbox, Dropdown, Menu, MenuDivider, MenuItem, Svg, Switch, themes, ThemeSwitchContext } from '../components/del-index';
 import { SwitchModeButton } from '../components/SwitchModeButton ';
 import useIsPopup from '../hooks/useIsPopup';
 import useTranslation from '../hooks/useTranslation';
 import { setNotification, windowOpen } from '../../../extension-polkagate/src/messaging';
-import getLanguageOptions from '../util/getLanguageOptions';
+import getLanguageOptions from '../del-util/getLanguageOptions';
 
 interface Option {
   text: string;

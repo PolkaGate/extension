@@ -6,7 +6,7 @@ export { default as Address } from './Address';
 export { default as Amount } from './Amount';
 export { default as AmountFee } from './AmountFee';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
-export { default as AccountHolderWithProxy  } from './AccountHolderWithProxy';
+export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as ActionText } from './ActionText';
 export { default as Button } from './Button';
 export { default as ChainLogo } from './ChainLogo';
@@ -52,12 +52,15 @@ export { default as Steps } from './Steps';
 export { default as AmountWithOptions } from './AmountWithOptions';
 export { Input } from './TextInputs';
 export { default as ValidatedInput } from './ValidatedInput';
+export { chooseTheme } from './Themes';
 export { default as Label } from './Label';
-
+export { default as Main } from './Main';
 export { default as Loading } from './Loading';
 export { default as MnemonicSeed } from './MnemonicSeed';
 export { default as Motion } from './Motion';
+export { default as ErrorBoundary } from './ErrorBoundary';
 
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 
 export * from './contexts';
+export * from './themes';

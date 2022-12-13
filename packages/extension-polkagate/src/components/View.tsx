@@ -1,17 +1,14 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ThemeProps } from '../types';
-
 import { CssBaseline, PaletteMode, Theme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import { createGlobalStyle } from 'styled-components';
 
-import { ColorContext } from '../../../extension-polkagate/src/components';
-import { darkTheme as dark } from '../../../extension-polkagate/src/themes/dark';
-import { lightTheme as light } from '../../../extension-polkagate/src/themes/light';
-import { chooseTheme, Main } from '.';
+import { darkTheme as dark } from '../themes/dark';
+import { lightTheme as light } from '../themes/light';
+import { chooseTheme, ColorContext, Main } from '.';
 
 interface Props {
   children: React.ReactNode;

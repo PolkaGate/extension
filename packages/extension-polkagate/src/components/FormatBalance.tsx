@@ -11,7 +11,7 @@ import React, { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { formatBalance, isString } from '@polkadot/util';
 
-import useTranslation from '../../../extension-ui/src/hooks/useTranslation';
+import { useTranslation } from '../hooks';
 
 interface Props {
   api: ApiPromise;

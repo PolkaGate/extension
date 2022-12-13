@@ -12,7 +12,7 @@ import { act } from 'react-dom/test-utils';
 
 import { flushAllPromises } from '../testHelpers';
 import BackButton from './BackButton';
-import { AccountNamePasswordCreation, Input, InputWithLabel, NextStepButton } from '.';
+import { AccountNamePasswordCreation, Input, InputWithLabel, NextStepButton } from './del-index';
 
 // For this file, there are a lot of them
 /* eslint-disable @typescript-eslint/no-unsafe-argument */

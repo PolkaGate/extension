@@ -9,7 +9,7 @@ import { HeaderBrand } from '../../../extension-polkagate/src/partials';
 import Header from '../partials/Header';
 import Button from './Button';
 import ButtonArea from './ButtonArea';
-import translate from './translate';
+import translate from '../../../extension-polkagate/src/components/translate';
 import VerticalSpace from './VerticalSpace';
 
 interface Props extends WithTranslation {

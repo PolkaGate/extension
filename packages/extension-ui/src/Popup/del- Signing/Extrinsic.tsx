@@ -10,7 +10,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { BN, bnToBn, formatNumber } from '@polkadot/util';
 
-import { Table } from '../../components';
+import { Table } from '../../components/del-index';
 import useMetadata from '../../../../extension-polkagate/src/hooks/useMetadata';
 import useTranslation from '../../hooks/useTranslation';
 

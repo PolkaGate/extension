@@ -4,8 +4,8 @@
 import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import useIsMounted from '../../../extension-ui/src/hooks/useIsMounted';
 import { useTranslation } from '../hooks';
+import { useIsMounted } from '../hooks/';
 import { Result, Validator } from '../util/validators';
 import Affirm from './Affirm';
 import Warning from './Warning';

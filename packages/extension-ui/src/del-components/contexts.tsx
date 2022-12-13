@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AvailableThemes } from './themes';
+import type { AvailableThemes } from '../../../extension-polkagate/src/components/themes';
 
 import React from 'react';
 

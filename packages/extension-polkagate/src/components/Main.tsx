@@ -1,10 +1,8 @@
-// Copyright 2019-2022 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ThemeProps } from '../types';
 
 import React from 'react';
-import styled from 'styled-components';
 
 interface Props {
   children: React.ReactNode;

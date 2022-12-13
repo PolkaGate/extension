@@ -10,8 +10,8 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { TypeRegistry } from '@polkadot/types';
 
-import { ActionContext, Address, VerticalSpace, Warning } from '../../../components';
-import { useTranslation } from '../../../components/translate';
+import { ActionContext, Address, VerticalSpace, Warning } from '../../../components/del-index';
+import { useTranslation } from '../../../../../extension-polkagate/src/components/translate';
 import { approveSignSignature } from '../../../../../extension-polkagate/src/messaging';
 import Bytes from '../Bytes';
 import Extrinsic from '../Extrinsic';

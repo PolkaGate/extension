@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import { wrapBytes } from '@polkadot/extension-dapp/wrapBytes';
 import { QrDisplayPayload, QrScanSignature } from '@polkadot/react-qr';
 
-import { Button } from '../../components';
+import { Button } from '../../components/del-index';
 import useTranslation from '../../hooks/useTranslation';
 import { CMD_MORTAL, CMD_SIGN_MESSAGE } from './Request';
 

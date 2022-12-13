@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { act } from 'react-dom/test-utils';
 import { ThemeProvider } from 'styled-components';
 
-import { ActionContext, Address, Button, Input, SigningReqContext, themes } from '../../components';
+import { ActionContext, Address, Button, Input, SigningReqContext, themes } from '../../components/del-index';
 import * as messaging from '../../../../extension-polkagate/src/messaging';
 import * as MetadataCache from '../../../../extension-polkagate/src/MetadataCache';
 import { flushAllPromises } from '../../testHelpers';
