@@ -62,16 +62,14 @@ export default function RewardDetails(): React.ReactElement {
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [mostPrize, setMostPrize] = useState<number>(0);
   const [dataToShow, setDataToShow] = useState<[string[], string[]][]>();
-  const [weeksRewards, setWeekRewards] = useState<{ date: number; amount?: string | undefined; }[][]>();
+  const [weeksRewards, setWeekRewards] = useState<{ amount: BN, amountInHuman: string, date: string, timestamp: number, }[][]>();
 
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-  // const decimal = api && api.registry.chainDecimals[0];
   const decimal = useDecimal(address);
-  // const token = api && api.registry.chainTokens[0];
   const token = useToken(address);
   const [expanded, setExpanded] = useState<number>(-1);
 
-  const dateOptions = useMemo(() => { return { day: 'numeric', month: 'short' } }, []);
+  const dateOptions = useMemo(() => ({ day: 'numeric', month: 'short' }), []);
   const weekDaysShort = ['Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thurs.', 'Fri.', 'Sat.'];
 
   const formateDate = useCallback((date: number) => {
@@ -105,37 +103,31 @@ export default function RewardDetails(): React.ReactElement {
     });
 
     const ascSortedLabels = Array.from(uDate) as string[];
-
-    const tempToHuman: { date: number, amount?: string }[] = [];
-    const temp = new Array(ascSortedLabels.length).fill(BN_ZERO) as BN[];
-    let index = 0;
+    const temp = ascSortedLabels.map((uniqueDate) => ({ amount: BN_ZERO, amountInHuman: undefined as unknown as string, date: uniqueDate, timestamp: undefined as unknown as number }));
 
     ascSortedRewards.forEach((item) => {
-      if (item.date === ascSortedLabels[index]) {
-        temp[index] = temp[index].add(item.amount);
-        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: new Date(item.timeStamp).getTime() });
-      } else {
-        index++;
-        temp[index] = temp[index].add(item.amount);
-        tempToHuman[index] = ({ amount: amountToHuman(temp[index], decimal), date: new Date(item.timeStamp).getTime() });
-      }
+      const relatedDateIndex = temp.findIndex((dateItem) => dateItem.date === item.date);
+
+      temp[relatedDateIndex].amount.iadd(item.amount);
+      temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
+      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal);
     });
 
-    for (let j = 0; j < tempToHuman.length; j++) {
-      if (j + 1 === tempToHuman.length) {
+    for (let j = 0; j < temp.length; j++) {
+      if (j + 1 === temp.length) {
         continue;
       }
 
-      const firstRewardDate = new Date(tempToHuman[j].date * 1000);
-      const lastRewardDate = new Date(tempToHuman[j + 1].date * 1000);
+      const firstRewardDate = new Date(temp[j].timestamp * 1000);
+      const lastRewardDate = new Date(temp[j + 1].timestamp * 1000);
       const difference = (lastRewardDate.getTime() / 1000) - (firstRewardDate.getTime() / 1000);
-      const TotalDays = Math.round(difference / (3600 * 24));
+      const TotalDays = Math.floor(difference / (3600 * 24));
 
       if (TotalDays > 1) {
         for (let i = 1; i < TotalDays; i++) {
           const pnd = new Date(firstRewardDate.setDate(firstRewardDate.getDate() + 1));
 
-          tempToHuman.splice(j + i, 0, { amount: '0', date: (pnd.getTime() / 1000) });
+          temp.splice(j + i, 0, { amount: BN_ZERO, amountInHuman: '0', date: formateDate(pnd.getTime() / 1000), timestamp: (pnd.getTime() / 1000) });
         }
       }
     }
@@ -143,14 +135,14 @@ export default function RewardDetails(): React.ReactElement {
     let estimatedMostPrize = BN_ZERO;
 
     temp.forEach((prize) => {
-      if (prize.gt(estimatedMostPrize)) {
-        estimatedMostPrize = prize;
+      if (prize.amount.gt(estimatedMostPrize)) {
+        estimatedMostPrize = prize.amount;
       }
     });
 
     setMostPrize(Number(amountToHuman(estimatedMostPrize, decimal)));
 
-    return tempToHuman;
+    return temp;
   }, [ascSortedRewards, decimal]);
 
   const descSortedRewards = useMemo(() => {
@@ -158,7 +150,7 @@ export default function RewardDetails(): React.ReactElement {
       return;
     }
 
-    const availableDates = weeksRewards[pageIndex].map((item) => formateDate(item.date));
+    const availableDates = weeksRewards[pageIndex].map((item) => formateDate(item.timestamp));
     const filteredRewardsDetail = ascSortedRewards.filter((item) => availableDates.includes(item.date));
 
     return filteredRewardsDetail.reverse();
@@ -175,12 +167,12 @@ export default function RewardDetails(): React.ReactElement {
     let counter = 0;
 
     for (let i = aggregatedRewards.length - 1; i >= 0; i--) {
-      if (new Date(aggregatedRewards[i].date * 1000).getDay() === 0) {
+      if (new Date(aggregatedRewards[i].timestamp * 1000).getDay() === 0) {
         aWeekRewards.push(aggregatedRewards.slice(i, i + 7));
         counter = i;
       }
 
-      if (i === 0 && new Date(aggregatedRewards[i].date * 1000).getDay() !== 0) {
+      if (i === 0 && new Date(aggregatedRewards[i].timestamp * 1000).getDay() !== 0) {
         aWeekRewards.push(aggregatedRewards.slice(0, counter > 0 ? counter : aggregatedRewards.length - 1));
       }
     }
@@ -191,11 +183,11 @@ export default function RewardDetails(): React.ReactElement {
 
       for (let i = 0; i < 7; i++) {
         if (week[i]?.date) {
-          aWeekRewardsAmount.push(week[i].amount);
-          aWeekRewardsLabel.push(formateDate(week[i].date));
+          aWeekRewardsAmount.push(week[i].amountInHuman);
+          aWeekRewardsLabel.push(formateDate(week[i].timestamp));
         } else {
-          const firstDay = new Date(week[0].date * 1000).getDay();
-          const dateToAdd = new Date(week[firstDay ? 0 : week.length - 1].date * 1000);
+          const firstDay = new Date(week[0].timestamp * 1000).getDay();
+          const dateToAdd = new Date(week[firstDay ? 0 : week.length - 1].timestamp * 1000);
 
           if (firstDay) {
             const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() - 1)).getTime() / 1000;
@@ -203,8 +195,10 @@ export default function RewardDetails(): React.ReactElement {
             aWeekRewardsAmount.unshift('0');
             aWeekRewardsLabel.unshift(formateDate(newDate));
             week.unshift({
-              amount: '0',
-              date: newDate
+              amount: BN_ZERO,
+              amountInHuman: '0',
+              date: formateDate(newDate),
+              timestamp: newDate
             });
           } else {
             const newDate = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1)).getTime() / 1000;
@@ -212,8 +206,10 @@ export default function RewardDetails(): React.ReactElement {
             aWeekRewardsAmount.push('0');
             aWeekRewardsLabel.push(formateDate(newDate));
             week.push({
-              amount: '0',
-              date: newDate
+              amount: BN_ZERO,
+              amountInHuman: '0',
+              date: formateDate(newDate),
+              timestamp: newDate
             });
           }
         }
@@ -283,7 +279,7 @@ export default function RewardDetails(): React.ReactElement {
     const start = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][0];
     const end = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][6];
 
-    const newDate = new Date(weeksRewards[next ? 0 : weeksRewards?.length - 1][next ? 6 : 0].date * 1000);
+    const newDate = new Date(weeksRewards[next ? 0 : weeksRewards?.length - 1][next ? 6 : 0].timestamp * 1000);
     const estimatedStart = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 1)).getTime() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() - 7)).getTime() / 1000);
     const estimatedEnd = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 7)).getTime() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() + 6)).getTime() / 1000);
 
