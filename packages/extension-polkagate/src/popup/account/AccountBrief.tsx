@@ -62,7 +62,7 @@ export default function AccountBrief({ address, identity }: Props): React.ReactE
           target='_blank'
           underline='none'
         >
-          <Box component='img' mt='13px' src={subscan} />
+          <Box component='img' mt='10px' src={subscan} />
         </Link>
       </Grid>
       <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
