@@ -173,6 +173,7 @@ export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdi
           setShow={setShowReview}
           setShowMyPool={setShowEdit}
           show={showReview}
+          state={t<string>('Edit')}
         />
       }
     </>
