@@ -135,7 +135,7 @@ export default function Index(): React.ReactElement {
       />
       {nominatedValidatorsIds === null
         ? <>
-          <Warn text={t<string>('No validator found.')} style={{ py: '15px' }} />
+          <Warn style={{ py: '15px' }} text={t<string>('No validator found.')} />
           <Grid alignItems='center' container direction='column' pt='98px'>
             <Grid item sx={{ cursor: 'pointer' }}>
               <FontAwesomeIcon
@@ -162,8 +162,8 @@ export default function Index(): React.ReactElement {
         {nominatedValidatorsIds && allValidatorsInfo &&
           <>
             <ValidatorsTable
-              allValidatorsIdentities={allValidatorsIdentities}
               activeValidators={activeValidators}
+              allValidatorsIdentities={allValidatorsIdentities}
               api={api}
               chain={chain}
               decimal={pool?.decimal}
@@ -183,7 +183,7 @@ export default function Index(): React.ReactElement {
       {nominatedValidatorsIds === null &&
         <>
           {!canNominate &&
-            <Warn text={t<string>('Only pool owner can select validators.')} style={{pt:'100px'}}/>
+            <Warn style={{ pt: '100px' }} text={t<string>('Only pool owner can select validators.')} />
           }
           <PButton
             _isBusy={showSelectValidator && !allValidatorsInfo}

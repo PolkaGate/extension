@@ -19,10 +19,11 @@ interface Props {
   recoverable?: boolean;
   identiconTheme: IconTheme;
   prefix?: number;
-  proxies: Proxy[] | undefined
+  proxies: Proxy[] | undefined;
+  judgements?: RegExpMatchArray | null | undefined
 }
 
-export default function AccountIcons({ formatted, identiconTheme, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons({ formatted, identiconTheme, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -38,6 +39,7 @@ export default function AccountIcons({ formatted, identiconTheme, prefix, proxie
       <Grid item m='auto' width='fit-content'>
         <Identicon
           iconTheme={identiconTheme}
+          judgement={judgements}
           prefix={prefix}
           size={40}
           value={formatted}

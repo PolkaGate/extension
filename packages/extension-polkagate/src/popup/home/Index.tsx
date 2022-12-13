@@ -24,7 +24,7 @@ export default function Home(): React.ReactElement {
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
   const [chainNames, setChainNames] = useState<string[]>();
-
+  
   usePrices(chainNames); // get balances for all chains available in accounts
   const networkMap = useMemo(() => getNetworkMap(), []);
 

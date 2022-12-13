@@ -5,6 +5,8 @@
 
 import '@vaadin/icons';
 
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+
 import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -27,9 +29,10 @@ interface Props {
   toggleVisibility: () => void;
   chain: Chain | null;
   isHidden: boolean | undefined;
+  identity: DeriveAccountRegistration | null | undefined;
 }
 
-export default function AccountDetail({ address, chain, formatted, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, formatted, identity, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -96,7 +99,7 @@ export default function AccountDetail({ address, chain, formatted, isHidden, nam
       <Grid container direction='row' item>
         <Grid item maxWidth='65%'>
           <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {name}
+            {identity?.display || name}
           </Typography>
         </Grid>
         <Grid item>

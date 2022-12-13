@@ -577,6 +577,10 @@ export interface SavedBalances {
   }
 }
 
+export interface SavedIdentities {
+  [chainName: string]: DeriveAccountRegistration;
+}
+
 export interface BalancesInfo extends DeriveBalancesAll {
   chainName: string;
   decimal: number;

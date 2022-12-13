@@ -10,6 +10,8 @@
 
 import '@vaadin/icons';
 
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+
 import { Box, Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
@@ -19,10 +21,12 @@ import { useAccount, useChainName, useFormatted } from '../../hooks';
 import { showAccount } from '../../messaging';
 
 interface Props {
-  address: string
+  address: string;
+  identity: DeriveAccountRegistration | null | undefined
+
 }
 
-export default function AccountBrief({ address }: Props): React.ReactElement<Props> {
+export default function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chainName = useChainName(address);
@@ -37,12 +41,11 @@ export default function AccountBrief({ address }: Props): React.ReactElement<Pro
 
   const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}`;
 
-
   return (
     < >
       <Grid alignItems='center' container justifyContent='center' xs={12}>
         <Typography sx={{ fontSize: '36px', fontWeight: 400, height: '50px', letterSpacing: '-0.015em', maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {account?.name}
+          {identity?.display || account?.name}
         </Typography>
         <span>
           <IconButton
@@ -62,7 +65,7 @@ export default function AccountBrief({ address }: Props): React.ReactElement<Pro
           <Box component='img' mt='13px' src={subscan} />
         </Link>
       </Grid>
-      <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 200 }} />
+      <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '10px' }} />
     </>
   );
