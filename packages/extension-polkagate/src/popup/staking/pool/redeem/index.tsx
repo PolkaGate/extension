@@ -202,6 +202,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer']}
@@ -214,7 +215,6 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={submit}
         />
         <WaitScreen
           show={showWaitScreen}

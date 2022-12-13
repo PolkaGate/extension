@@ -20,7 +20,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useIdentity, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -56,6 +56,7 @@ export default function Index(): React.ReactElement {
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const balances = useBalances(address, refresh, setRefresh);
   const nominatorInfo = useNominator(address);
+  const identity = useIdentity(address);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
@@ -245,6 +246,7 @@ export default function Index(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
+      judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={String(formatted)}
@@ -262,7 +264,7 @@ export default function Index(): React.ReactElement {
         showClose
       />
       <Container disableGutters sx={{ px: '15px' }}>
-        <AccountBrief address={address} />
+        <AccountBrief address={address} identity={identity} />
         <BouncingSubTitle label={t<string>('Solo Staking')} style={{ fontSize: '20px', fontWeight: 400 }} />
         <Grid container maxHeight={window.innerHeight - 260} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
           <Row
@@ -337,7 +339,7 @@ export default function Index(): React.ReactElement {
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       />
-      {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain &&
+      {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
         <RedeemableWithdrawReview
           address={address}
           amount={redeemable}

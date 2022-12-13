@@ -26,7 +26,7 @@ interface Props {
 
 }
 
-export default function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
+function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chainName = useChainName(address);
@@ -70,3 +70,5 @@ export default function AccountBrief({ address, identity }: Props): React.ReactE
     </>
   );
 }
+
+export default React.memo(AccountBrief);

@@ -100,10 +100,10 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
         address={address}
         chain={chain}
         formatted={formatted}
+        identity={identity}
         isHidden={isHidden}
         name={name}
         toggleVisibility={_toggleVisibility}
-        identity={identity}
       />
       <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} chain={chain} />
       {
