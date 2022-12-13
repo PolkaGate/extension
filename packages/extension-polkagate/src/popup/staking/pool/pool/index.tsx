@@ -183,7 +183,7 @@ export default function Pool(): React.ReactElement {
               width: '92%'
             }}
           />
-          <ShowRoles chain={chain} label={t<string>('Roles')} mode='Roles' pool={pool} style={{ m: 'auto', width: '92%' }} />
+          <ShowRoles api={api} chain={chain} label={t<string>('Roles')} mode='Roles' pool={pool} style={{ m: 'auto', width: '92%' }} />
           {canChangeState &&
             <Grid alignItems='center' container justifyContent='space-between' m='20px auto' width='92%'>
               <ActionBtn disabled={poolState === 'Destroying'} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
