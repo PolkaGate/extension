@@ -25,18 +25,19 @@ import ShowPool from '../../partial/ShowPool';
 
 interface Props {
   address: string;
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   chain: Chain;
   formatted: string;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   state: string;
   helperText: string;
   headerText: string;
 }
 
-export default function SetState({ address, api, chain, formatted, headerText, helperText, pool, setShow, show, state }: Props): React.ReactElement {
+export default function SetState({ address, api, chain, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -56,9 +57,9 @@ export default function SetState({ address, api, chain, formatted, headerText, h
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const batchAll = api.tx.utility.batchAll;
-  const chilled = api.tx.nominationPools.chill;
-  const poolSetState = api.tx.nominationPools.setState(pool.poolId.toString(), state); // (poolId, state)
+  const batchAll = api && api.tx.utility.batchAll;
+  const chilled = api && api.tx.nominationPools.chill;
+  const poolSetState = api && api.tx.nominationPools.setState(pool.poolId.toString(), state); // (poolId, state)
 
   const backToStake = useCallback(() => {
     setShow(false);
@@ -66,7 +67,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    void poolSetState.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+    void poolSetState?.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
   }, [formatted, poolSetState]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
@@ -109,8 +110,10 @@ export default function SetState({ address, api, chain, formatted, headerText, h
   const changeState = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
+    setRefresh(false);
+
     try {
-      if (!formatted) {
+      if (!formatted || !api || !batchAll || !poolSetState || !chilled) {
         return;
       }
 
@@ -148,11 +151,12 @@ export default function SetState({ address, api, chain, formatted, headerText, h
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batchAll, chain, chilled, estimatedFee, formatted, hierarchy, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
+  }, [api, batchAll, chain, chilled, estimatedFee, formatted, hierarchy, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state, setRefresh]);
 
   return (
     <Motion>
@@ -212,6 +216,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
         </Typography>
         <PasswordUseProxyConfirm
           api={api}
+          confirmDisabled={!estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
@@ -255,8 +260,8 @@ export default function SetState({ address, api, chain, formatted, headerText, h
                 <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
                   <ShortAddress
                     address={txInfo.from.address}
-                    style={{ fontSize: '16px' }}
                     inParentheses
+                    style={{ fontSize: '16px' }}
                   />
                 </Grid>
               </Grid>
