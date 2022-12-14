@@ -11,13 +11,7 @@ import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
 import { useAccount, useApi, useChain, useDecimal, useFormatted, useToken } from '.';
 
-interface Output {
-  balance: BN;
-  token: string;
-}
-
-export default function useBalances(address: string, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>
-): BalancesInfo | undefined {
+export default function useBalances(address: string, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
   const account = useAccount(address);
   const [pooledBalance, setPooledBalance] = useState<BN | null>();
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
@@ -27,8 +21,6 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const isFetching = useContext(FetchingContext);
-
-  // console.log('isFetching.fetching:', isFetching.fetching);
 
   const chainName = chain && chain.name.replace(' Relay Chain', '')?.replace(' Network', '').toLocaleLowerCase();
   const token = useToken(address);
