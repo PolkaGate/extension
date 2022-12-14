@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, ShowBalance } from '../../../components';
+import { Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { MyPoolInfo, PoolInfo } from '../../../util/types';
 import PoolMoreInfo from './PoolMoreInfo';
@@ -47,12 +47,14 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
             ? <>
               <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
                 <Grid justifyContent='center' fontSize='16px' fontWeight={400} item overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={showInfo ? '92%' : '100%'}>
-                  {pool?.stashIdAccount?.accountId
-                    ? <Identity chain={chain} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
-                    : <>
-                      {pool?.metadata ?? t('Unknown')}
-                    </>
-                  }
+                  <Infotip text={pool?.metadata ?? t('Unknown')}>
+                    {pool?.stashIdAccount?.accountId
+                      ? <Identity chain={chain} formatted={pool.stashIdAccount.accountId} identiconSize={25} name={pool?.metadata ?? t('Unknown')} style={{ fontSize: '16px', fontWeight: 400 }} />
+                      : <>
+                        {pool?.metadata ?? t('Unknown')}
+                      </>
+                    }
+                  </Infotip>
                 </Grid>
                 {showInfo &&
                   <Grid alignItems='center' container item justifyContent='center' onClick={openPoolInfo} sx={{ cursor: 'pointer' }} width='8%'>

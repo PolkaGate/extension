@@ -66,7 +66,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
   const goToStakingHome = useCallback(() => {
     setShowReview(!showReview);
-    onAction(`pool/stake/${address}`);
+    onAction(`pool/${address}`);
   }, [address, onAction, setShowReview, showReview]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
@@ -109,7 +109,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         chain,
         date: Date.now(),
         failureText,
-        fee: fee || String(estimatedFee),
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
         status,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,

@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { useEffect, useState } from 'react';
 
@@ -12,32 +12,35 @@ import { SavedIdentities } from '../util/types';
 import useFormatted from './useFormatted';
 import { useAccount, useApi, useChainName } from '.';
 
+/** This hook is going to be used for users account existing in the extension */
 export default function useIdentity(address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
   const formatted = useFormatted(address);
   const api = useApi(address);
   const account = useAccount(address);
-  const chainName = useChainName(address);
+  const chainName = useChainName(formatted);
 
-  const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
+  const [info, setInfo] = useState<DeriveAccountInfo | null | undefined>();
+  const [oldIdentity, setOldIdentity] = useState<DeriveAccountRegistration | null | undefined>();
 
   useEffect(() => {
     api && formatted && api.derive.accounts.info(formatted).then((info) => {
-      info?.identity?.display ? setIdentity(JSON.parse(JSON.stringify(info.identity)) as DeriveAccountRegistration) : setIdentity(null);
+      info?.identity?.display
+        ? setInfo(JSON.parse(JSON.stringify(info)) as DeriveAccountInfo)
+        : setInfo(null);
     }).catch(console.error);
   }, [api, formatted]);
 
   useEffect(() => {
-    if (!account || !chainName || !identity || !address) {
+    if (!account || !chainName || !info || !address || info.accountId !== formatted) {
       return;
     }
 
     const savedIdentities = JSON.parse(account?.identities ?? '{}') as SavedIdentities;
-
-    savedIdentities[chainName] = identity;
+    savedIdentities[chainName] = info.identity;
     const metaData = JSON.stringify({ identities: JSON.stringify(savedIdentities) });
 
     updateMeta(address, metaData).catch(console.error);
-  }, [Object.keys(account ?? {})?.length, address, chainName, identity]);
+  }, [Object.keys(account ?? {})?.length, address, chainName, info, formatted]);
 
   useEffect(() => {
     if (!account || !chainName) {
@@ -47,9 +50,9 @@ export default function useIdentity(address: AccountId | string | undefined): De
     const savedIdentities = JSON.parse(account?.identities ?? '{}') as SavedIdentities;
 
     if (savedIdentities[chainName]) {
-      setIdentity(savedIdentities[chainName]);
+      setOldIdentity(savedIdentities[chainName]);
     }
   }, [Object.keys(account ?? {})?.length, chainName]);
 
-  return identity;
+  return info?.identity || oldIdentity;
 }

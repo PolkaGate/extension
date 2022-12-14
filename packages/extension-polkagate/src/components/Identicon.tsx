@@ -36,7 +36,7 @@ function Identicon({ className, iconTheme, judgement, onCopy, prefix, size, valu
           value={value}
         />
       </div>
-      {judgement?.length &&
+      {!!judgement?.length &&
         <CheckCircleOutlineIcon
           sx={{
             bgcolor: 'success.main',

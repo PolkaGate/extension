@@ -11,7 +11,7 @@ import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
-import { Avatar, Container, Divider, Grid, useTheme } from '@mui/material';
+import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -21,7 +21,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Identicon, Motion, PasswordUseProxyConfirm, PButton, ShortAddress, Warning } from '../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, ShortAddress, Warning } from '../../components';
 import { useMetadata, useProxies, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -29,7 +29,6 @@ import SubTitle from '../../partials/SubTitle';
 import ThroughProxy from '../../partials/ThroughProxy';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
-import getLogo from '../../util/getLogo';
 import { FormattedAddressState, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
@@ -74,20 +73,10 @@ export default function Review(): React.ReactElement {
   const token = state?.api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const needsWarning = useMemo(() => accounts?.find((a) => a.address === address && a.isExternal) && !selectedProxyAddress, [accounts, address, selectedProxyAddress]);
 
   const goToMyAccounts = useCallback(() => {
     onAction('/');
   }, [onAction]);
-
-  const ChainLogo = (
-    <Avatar
-      alt={'logo'}
-      src={getLogo(chain)}
-      sx={{ height: 31, width: 31 }}
-      variant='square'
-    />
-  );
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

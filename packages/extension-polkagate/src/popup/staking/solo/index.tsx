@@ -46,7 +46,7 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
   const history = useHistory();
   const { pathname, state } = useLocation<State>();
-  const { address } = useParams<{ address: AccountId }>();
+  const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount, refresh, setRefresh);
