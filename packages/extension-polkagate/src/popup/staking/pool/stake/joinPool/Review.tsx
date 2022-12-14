@@ -108,7 +108,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
         block,
         date: Date.now(),
         failureText,
-        fee: fee || String(estimatedFee),
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
         status,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
