@@ -108,7 +108,7 @@ export default function RewardDetails(): React.ReactElement {
     ascSortedRewards.forEach((item) => {
       const relatedDateIndex = temp.findIndex((dateItem) => dateItem.date === item.date);
 
-      temp[relatedDateIndex].amount.iadd(item.amount);
+      temp[relatedDateIndex].amount = temp[relatedDateIndex].amount.add(item.amount);
       temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
       temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal);
     });
@@ -119,16 +119,11 @@ export default function RewardDetails(): React.ReactElement {
       }
 
       const firstRewardDate = new Date(temp[j].timestamp * 1000);
-      const lastRewardDate = new Date(temp[j + 1].timestamp * 1000);
-      const difference = (lastRewardDate.getTime() / 1000) - (firstRewardDate.getTime() / 1000);
-      const TotalDays = Math.floor(difference / (3600 * 24));
+      const nextRewardDate = temp[j + 1].timestamp;
+      const pnd = new Date(firstRewardDate.setDate(firstRewardDate.getDate() + 1));
 
-      if (TotalDays > 1) {
-        for (let i = 1; i < TotalDays; i++) {
-          const pnd = new Date(firstRewardDate.setDate(firstRewardDate.getDate() + 1));
-
-          temp.splice(j + i, 0, { amount: BN_ZERO, amountInHuman: '0', date: formateDate(pnd.getTime() / 1000), timestamp: (pnd.getTime() / 1000) });
-        }
+      if (formateDate(pnd.getTime() / 1000) !== formateDate(nextRewardDate)) {
+        temp.splice(j + 1, 0, { amount: BN_ZERO, amountInHuman: '0', date: formateDate(pnd.getTime() / 1000), timestamp: (pnd.getTime() / 1000) });
       }
     }
 
