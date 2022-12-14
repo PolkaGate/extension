@@ -28,7 +28,7 @@ BN.prototype.toJSON = function () {
  * @param setRefresh 
  * @returns account staking Info
  */
-export default function useStakingAccount(stashId: AccountId | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean | undefined>>): AccountStakingInfo | null | undefined {
+export default function useStakingAccount(stashId: AccountId | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const account = useAccount(stashId);
   const chain = useChain(stashId);
   const chainName = chain && chain.name.replace(' Relay Chain', '');
