@@ -9,8 +9,9 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { AnyTuple } from '@polkadot/types/types';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import { Container, Grid, useTheme } from '@mui/material';
+import { Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -20,13 +21,13 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Infotip, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
+import { useAccountName, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
+import { Proxy, ProxyItem, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -42,13 +43,16 @@ interface Props {
   total: BN | undefined;
   params: (string | BN | AccountId | undefined)[];
   tx: SubmittableExtrinsicFunction<'promise', AnyTuple>;
+  isFirstTimeStaking?: boolean;
+  selectedValidators: ValidatorInfo[] | null | undefined;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, params, setShow, show, total, tx }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, selectedValidators, estimatedFee, formatted, isFirstTimeStaking, params, setShow, show, total, tx }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
   const theme = useTheme();
+  const token = useToken(address);
   const onAction = useContext(ActionContext);
   const { accounts, hierarchy } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
@@ -59,8 +63,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const decimal = api?.registry?.chainDecimals[0] ?? 1;
-  const token = api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -172,6 +174,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
             chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
+            title={t('Stash account')}
           />
           <AmountFee
             address={address}
@@ -183,17 +186,34 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
             token={token}
             withFee
           />
-          <AmountFee
-            address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={total}
-              />
-            }
-            label={t('Total stake after')}
-            style={{ pt: '5px' }}
-          />
+          {isFirstTimeStaking
+            ? <Grid container alignContent='center' justifyContent='center'>
+              <Grid item sx={{ alignSelf: 'center', mr: '8px', width:'60%' }}>
+                <Infotip text={t('disclaimer')} showQuestionMark iconLeft={-15} iconTop={5}>
+                  <Typography>
+                    {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
+                  </Typography>
+                </Infotip>
+              </Grid>
+              <Grid item
+                // onClick={openPoolInfo} 
+                sx={{ cursor: 'pointer', mt: '5px' }} width='8%'>
+                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+              </Grid>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+            </Grid>
+            : <AmountFee
+              address={address}
+              amount={
+                <FormatBalance
+                  api={api}
+                  value={total}
+                />
+              }
+              label={t('Total stake after')}
+              style={{ pt: '5px' }}
+            />
+          }
         </Container>
         <PasswordUseProxyConfirm
           api={api}
@@ -233,6 +253,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           </Confirmation>)
         }
       </Popup>
-    </Motion>
+    </Motion >
   );
 }

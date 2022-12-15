@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Select, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, MIN_EXTRA_BOND } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
@@ -34,6 +34,7 @@ export default function Index(): React.ReactElement {
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
+  const token = useToken(address);
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
@@ -41,18 +42,21 @@ export default function Index(): React.ReactElement {
   const balances = useBalances(address);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
+  const autoSelected = useValidatorSuggestion(address);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
 
+  console.log('autoSelected:', autoSelected);
+
+
   const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
   const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
-  const totalAfterStake = useMemo(() => staked && staked.add(amountToMachine(amount, decimal)), [amount, decimal, staked]);
-  const isFirstTimeStaking = stakingAccount?.stakingLedger?.total?.isZero();
+  const totalAfterStake = useMemo(() => staked?.add(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
 
   const thresholds = useMemo(() => {
     if (!stakingConsts || !decimal || !balances || !stakingAccount) {
@@ -61,7 +65,7 @@ export default function Index(): React.ReactElement {
 
     const ED = stakingConsts.existentialDeposit;
     let max = balances.availableBalance.sub(ED.muln(2));
-    let min = stakingConsts?.minNominatorBond;
+    let min = stakingConsts.minNominatorBond;
 
     if (!stakingAccount.stakingLedger.active.isZero()) {
       min = BN_ZERO;
@@ -110,8 +114,14 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than available balance.'));
     }
 
+    if (api && stakingConsts?.minNominatorBond && (stakingConsts.minNominatorBond.gt(amountAsBN) || balances?.availableBalance?.lt(stakingConsts.minNominatorBond))) {
+      const minNominatorBond = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
+
+      return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
+    }
+
     setAlert(undefined);
-  }, [amount, api, decimal, balances?.availableBalance, t, amountAsBN]);
+  }, [amount, api, decimal, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -130,18 +140,23 @@ export default function Index(): React.ReactElement {
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
-  const onThresholdAmount = useCallback((maxMin: string) => {
+  const onThresholdAmount = useCallback((maxMin: 'max' | 'min') => {
     if (!thresholds || !decimal) {
       return;
     }
+
     console.log('maxMin:', maxMin);
-    console.log('hresholds[maxMin].toString():', thresholds[maxMin].toString());
+    console.log('amountToHuman(thresholds[maxMin].toString(), decimal):', amountToHuman(thresholds[maxMin].toString(), decimal));
 
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
   }, [thresholds, decimal]);
 
   const goToReview = useCallback(() => {
     setShowReview(true);
+  }, []);
+
+  const onSelectionMethodChange = useCallback((value: string | number): void => {
+
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -190,17 +205,17 @@ export default function Index(): React.ReactElement {
         <Grid item mt='20px' xs={12}>
           {isFirstTimeStaking &&
             <Select
+              defaultValue={VALIDATOR_SELECTION_OPTIONS[0].value}
               label={'Validator selection method'}
-              // onChange={_onChangeEndpoint}
+              onChange={onSelectionMethodChange}
               options={VALIDATOR_SELECTION_OPTIONS}
-              value={t('Auto')}
             />
           }
         </Grid>
       </Grid>
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0'}
+        disabled={!!alert || !amount || amount === '0' || !balances?.availableBalance || balances?.availableBalance?.isZero() || balances?.availableBalance?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && staked && chain && tx && params &&
@@ -211,12 +226,14 @@ export default function Index(): React.ReactElement {
           chain={chain}
           estimatedFee={estimatedFee}
           formatted={formatted}
+          isFirstTimeStaking={isFirstTimeStaking}
           params={params}
           setShow={setShowReview}
           show={showReview}
           staked={staked}
           total={totalAfterStake}
           tx={tx}
+          selectedValidators={autoSelected}
         />
       }
     </Motion>

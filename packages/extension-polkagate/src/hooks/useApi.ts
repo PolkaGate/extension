@@ -18,8 +18,6 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   useEffect(() => {
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      console.log(' using context api ....', apisContext?.apis[chain.genesisHash].api);
-
       return setApi(apisContext?.apis[chain.genesisHash].api);
     }
 

@@ -12,6 +12,7 @@ export { default as useChain } from './useChain';
 export { default as useIsMounted } from './useIsMounted';
 export { default as useChainName } from './useChainName';
 export { default as useDecimal } from './useDecimal';
+export { default as useValidatorSuggestion } from './useValidatorSuggestion';
 export { useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useEndpoint2 } from './useEndpoint2';

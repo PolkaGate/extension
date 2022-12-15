@@ -6,11 +6,11 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import getLanguageOptions from '../../../extension-ui/src/del-util/getLanguageOptions';
 import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
 import { ActionContext, Checkbox, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
+import getLanguageOptions from '../util/getLanguageOptions';
 
 export default function SettingSubMenu(): React.ReactElement {
   const { t } = useTranslation();
