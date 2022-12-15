@@ -172,6 +172,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);

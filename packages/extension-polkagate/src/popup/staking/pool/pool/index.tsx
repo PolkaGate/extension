@@ -61,7 +61,8 @@ export default function Pool(): React.ReactElement {
   const [showRemoveAll, setShowRemoveAll] = useState<boolean>(false);
 
   const poolState = pool?.bondedPool?.state?.toString();
-  const canChangeState = useMemo(() => pool?.bondedPool && formatted && [String(pool.bondedPool.roles.root), String(pool.bondedPool.roles.stateToggler)].includes(formatted), [pool, formatted]);
+  const canChangeState = useMemo(() => pool?.bondedPool && formatted && [String(pool.bondedPool.roles.root), String(pool.bondedPool.roles.stateToggler)].includes(String(formatted)), [pool, formatted]);
+  const poolRoot = useMemo(() => pool?.bondedPool && formatted && String(pool.bondedPool.roles.root) === (String(formatted)), [pool, formatted]);
 
   const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
@@ -200,8 +201,8 @@ export default function Pool(): React.ReactElement {
               <ActionBtn disabled={isRemoveAllDisabled} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
                 <FontAwesomeIcon color={isRemoveAllDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
               </ActionBtn>
-              <ActionBtn disabled={poolState === 'Destroying'} onClick={goEdit} text={t<string>('Edit')}>
-                <FontAwesomeIcon color={poolState === 'Destroying' ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />
+              <ActionBtn disabled={poolState === 'Destroying' || !poolRoot} onClick={goEdit} text={t<string>('Edit')}>
+                <FontAwesomeIcon color={(poolState === 'Destroying' || !poolRoot) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />
               </ActionBtn>
             </Grid>
           }
@@ -227,6 +228,7 @@ export default function Pool(): React.ReactElement {
           address={address}
           apiToUse={api}
           pool={pool}
+          setRefresh={setRefresh}
           setShowEdit={setShowEdit}
           showEdit={showEdit}
         />
@@ -236,6 +238,7 @@ export default function Pool(): React.ReactElement {
           address={address}
           api={api}
           pool={pool}
+          setRefresh={setRefresh}
           setShowRemoveAll={setShowRemoveAll}
           showRemoveAll={showRemoveAll}
         />

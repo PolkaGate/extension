@@ -29,6 +29,7 @@ interface Props {
   chain: Chain;
   formatted: string;
   pool: MyPoolInfo;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   setShowMyPool: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
@@ -36,7 +37,7 @@ interface Props {
   mode: 'UnbondAll' | 'RemoveAll';
 }
 
-export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setShow, setShowMyPool, show }: Props): React.ReactElement {
+export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -193,6 +194,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       saveHistory(chain, hierarchy, formatted, [info]);
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
@@ -227,7 +229,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
             {t<string>('Unstaking all members of the pool except yourself forcefully.')}
           </Typography>)
           : (<>
-            <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
+            <Typography fontSize='14px' fontWeight={300} textAlign='center' sx={{ m: '15px auto 0', width: '85%' }}>
               {t<string>('Removing all mermbers from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
