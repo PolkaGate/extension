@@ -23,7 +23,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, AmountWithOptions, Identicon, Motion, PButton, SettingsContext, ShortAddress, To } from '../../components';
-import { useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { useApi, useEndpoint, useMetadata, useTranslation, useDecimal, useAccountName } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
@@ -53,8 +53,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const chain = useMetadata(genesisHash, true);
   const endpoint = useEndpoint(address, chain);
-  const api = useApi(address);
-  const [apiToUse, setApiToUse] = useState<ApiPromise | undefined>(state?.api);
+  const api = useApi(address, state?.api);
+  const decimal = useDecimal(address);
+  const accountName = useAccountName(address);
 
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
@@ -65,9 +66,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
 
-  const decimals = apiToUse?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const accountName = useMemo(() => accounts?.find((a) => a.address === address)?.name, [accounts, address]);
-  const transfer = apiToUse && apiToUse.tx?.balances && (['All', 'Max'].includes(transferType) ? (apiToUse.tx.balances.transferAll) : (apiToUse.tx.balances.transferKeepAlive));
+  const transfer = api && api.tx?.balances && (['All', 'Max'].includes(transferType) ? (api.tx.balances.transferAll) : (api.tx.balances.transferKeepAlive));
   const recipientName = useMemo(
     (): string => {
       if (state?.recipientName) {
@@ -81,47 +80,47 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
-    apiToUse && recipientAddress && void apiToUse.derive.accounts.info(recipientAddress).then((info) => {
+    api && recipientAddress && void api.derive.accounts.info(recipientAddress).then((info) => {
       setIdentity(info?.identity);
     });
-  }, [apiToUse, recipientAddress]);
+  }, [api, recipientAddress]);
 
   useEffect((): void => {
     state?.recipientAddress && setRecipientAddress(state?.recipientAddress);
   }, [state?.recipientAddress]);
 
   const setWholeAmount = useCallback((type: TransferType) => {
-    if (!api || !balances?.availableBalance || !maxFee) {
+    if (!api || !balances?.availableBalance || !maxFee || !decimal) {
       return;
     }
 
     setTransferType(type);
     const ED = type === 'Max' ? api.consts.balances.existentialDeposit as unknown as BN : BN_ZERO;
-    const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimals);
+    const allMaxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimal);
 
     setAmount(allMaxAmount);
-  }, [api, balances?.availableBalance, decimals, maxFee]);
+  }, [api, balances?.availableBalance, decimal, maxFee]);
 
   useEffect(() => {
-    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
-    const isAmountGreaterThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
+    if (!decimal) {
+      return;
+    }
 
-    setButtonDisabled(!isValidAddress(recipientAddress) || !(amount) || (amount === '0') || isAmountGreaterThanAllTransferAble);
-  }, [amount, api, balances?.availableBalance, decimals, maxFee, recipientAddress]);
+    const amountAsBN = new BN(parseFloat(parseFloat(amount ?? '0').toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+    const isAmountLessThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
-  useEffect(() => {
-    api && !apiToUse && setApiToUse(api);
-  }, [api, apiToUse]);
+    setButtonDisabled(!isValidAddress(recipientAddress) || !amount || (amount === '0') || isAmountLessThanAllTransferAble);
+  }, [amount, api, balances?.availableBalance, decimal, maxFee, recipientAddress]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    endpoint && apiToUse && void apiToUse.derive.balances?.all(formatted).then((b) => {
+    endpoint && api && void api.derive.balances?.all(formatted).then((b) => {
       setBalances(b);
     });
-  }, [apiToUse, formatted, endpoint]);
+  }, [api, formatted, endpoint]);
 
   useEffect(() => {
-    if (!apiToUse || !transfer || amount) {
+    if (!api || !transfer || amount || !decimal) {
       return;
     }
 
@@ -132,7 +131,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
 
       params = [formatted, keepAlive]; // just for fee calculation, sender and receiver are the same
     } else {
-      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
 
       params = [formatted, amountAsBN];
     }
@@ -140,15 +139,15 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     // eslint-disable-next-line no-void
     void transfer(...params).paymentInfo(formatted)
       .then((i) => setFee(i?.partialFee)).catch(console.error);
-  }, [apiToUse, formatted, transfer, amount, decimals, transferType]);
+  }, [api, formatted, transfer, amount, decimal, transferType]);
 
   useEffect(() => {
-    if (!apiToUse || !transfer || !balances) { return; }
+    if (!api || !transfer || !balances) { return; }
 
     // eslint-disable-next-line no-void
     void transfer(formatted, balances.availableBalance).paymentInfo(formatted)
       .then((i) => setMaxFee(i?.partialFee)).catch(console.error);
-  }, [apiToUse, formatted, transfer, balances]);
+  }, [api, formatted, transfer, balances]);
 
   useEffect(() => {
     cryptoWaitReady()
@@ -168,9 +167,9 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const _onBackClick = useCallback(() => {
     history.push({
       pathname: `/account/${genesisHash}/${address}/`,
-      state: { balances, api: apiToUse, price: state?.price as number | undefined }
+      state: { balances, api, price: state?.price as number | undefined }
     });
-  }, [address, apiToUse, balances, genesisHash, history, state?.price]);
+  }, [address, api, balances, genesisHash, history, state?.price]);
 
   const goToReview = useCallback(() => {
     balances && history.push({
@@ -178,7 +177,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       state: {
         accountName,
         amount,
-        api: apiToUse,
+        api,
         backPath: pathname,
         balances,
         chain,
@@ -189,11 +188,15 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
         transferType
       }
     });
-  }, [accountName, address, amount, apiToUse, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
+  }, [accountName, address, amount, api, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
 
   const _onChangeAmount = useCallback((value: string) => {
-    if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+    if (!decimal) {
+      return;
+    }
+
+    if (value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
@@ -201,7 +204,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     setTransferType('Normal');
 
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
+  }, [decimal]);
 
   const identicon = (
     <Identicon
@@ -257,7 +260,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           style={{ pt: '10px' }}
         />
         <Asset
-          api={apiToUse}
+          api={api}
           balanceLabel={t('Available balance')}
           balanceType='available'
           balances={balances}
