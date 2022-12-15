@@ -5,7 +5,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -13,11 +13,12 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
+import ShowPool from '../../partial/ShowPool';
 import Review from './Review';
 
 interface State {
@@ -36,7 +37,7 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
-  const pool = usePool(address, undefined, state?.myPool);
+  const myPool = usePool(address, undefined, state?.myPool);
   const formatted = useFormatted(address);
   const poolConsts = usePoolConsts(address, state?.poolConsts);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
@@ -46,11 +47,16 @@ export default function Index(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
-  const myPool = (state?.myPool || pool);
-  const staked = useMemo(() => myPool === undefined ? undefined : new BN(myPool?.member?.points ?? 0), [myPool]);
-  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
-  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimals)), [amount, decimals, staked]);
+  const staked = useMemo(() => {
+    if (myPool && myPool.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
+      return (new BN(myPool.member.points).mul(new BN(String(myPool.stashIdAccount.stakingLedger.active)))).div(new BN(myPool.bondedPool.points));
+    } else {
+      return BN_ZERO;
+    }
+  }, [myPool]);
+  const decimal = useDecimal(address) ?? DEFAULT_TOKEN_DECIMALS;
+  const token = useToken(address) ?? '...';
+  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
@@ -71,7 +77,7 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
 
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
       return setAlert(t('It is more than already staked.'));
@@ -85,10 +91,10 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amount, api, poolConsts, decimals, staked, t, unstakeAllAmount]);
+  }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount]);
 
   useEffect(() => {
-    const params = [formatted, amountToMachine(amount, decimals)];
+    const params = [formatted, amountToMachine(amount, decimal)];
 
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
@@ -107,7 +113,7 @@ export default function Index(): React.ReactElement {
         void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
       }
     }).catch(console.error);
-  }, [amount, api, decimals, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
+  }, [amount, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -119,37 +125,49 @@ export default function Index(): React.ReactElement {
   const onChangeAmount = useCallback((value: string) => {
     setUnstakeAllAmount(false);
 
-    if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+    if (value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
+  }, [decimal]);
 
   const onAllAmount = useCallback(() => {
-    if (!staked) {
+    if (!myPool || !formatted || !poolConsts || !staked || staked.isZero()) {
       return;
     }
 
-    const allToShow = amountToHuman(staked.toString(), decimals);
+    if (String(formatted) === String(myPool.bondedPool?.roles.root) && String(myPool.bondedPool?.state) === 'Destroying' && Number(myPool.bondedPool?.memberCounter) === 1) {
+      setUnstakeAllAmount(true);
+      setAmount(amountToHuman(staked.toString(), decimal));
+    }
 
-    setUnstakeAllAmount(true);
-    setAmount(allToShow);
-  }, [decimals, staked]);
+    if (String(formatted) === String(myPool.bondedPool?.roles?.depositor) && String(myPool.bondedPool?.state) === 'Destroying' && Number(myPool.bondedPool?.memberCounter) === 1) {
+      setUnstakeAllAmount(true);
+      setAmount(amountToHuman(staked, decimal));
+    }
+
+    if (String(formatted) === String(myPool.bondedPool?.roles?.depositor) && (String(myPool.bondedPool?.state) !== 'Destroying' || Number(myPool.bondedPool?.memberCounter) !== 1)) {
+      const partial = staked.sub(poolConsts.minCreateBond);
+
+      setUnstakeAllAmount(false);
+      !partial.isZero() && setAmount(amountToHuman(partial, decimal));
+    }
+
+    if (String(formatted) !== String(myPool.bondedPool?.roles.root) && String(formatted) !== String(myPool.bondedPool?.roles.depositor)) {
+      setUnstakeAllAmount(true);
+      setAmount(amountToHuman(staked.toString(), decimal));
+    }
+  }, [decimal, formatted, myPool, poolConsts, staked]);
 
   const goToReview = useCallback(() => {
     setShowReview(true);
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid
-      color='red'
-      container
-      justifyContent='center'
-      py='15px'
-    >
+    <Grid color='red' container justifyContent='center' py='15px'>
       <Warning
         fontWeight={400}
         isBelowInput
@@ -178,7 +196,7 @@ export default function Index(): React.ReactElement {
       {staked?.isZero() &&
         <Warn text={t<string>('Nothing to unstake.')} />
       }
-      <Grid item xs={12} sx={{ mx: '15px' }}>
+      <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset api={api} balance={staked} balanceLabel={t('Staked')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
@@ -194,6 +212,21 @@ export default function Index(): React.ReactElement {
         </div>
 
       </Grid>
+      <ShowPool
+        api={api}
+        chain={chain}
+        label={t<string>('Pool')}
+        mode='Default'
+        pool={myPool}
+        showInfo
+        style={{
+          m: '15px auto 0',
+          width: '92%'
+        }}
+      />
+      <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
+        {t<string>('Your rewards wil be automatically withdrawn.')}
+      </Typography>
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0'}
@@ -208,7 +241,7 @@ export default function Index(): React.ReactElement {
           estimatedFee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
-          poolId={pool?.poolId}
+          poolId={myPool?.poolId}
           poolWithdrawUnbonded={poolWithdrawUnbonded}
           redeemDate={redeemDate}
           setShow={setShowReview}
