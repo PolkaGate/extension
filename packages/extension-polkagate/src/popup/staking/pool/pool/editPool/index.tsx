@@ -19,6 +19,7 @@ interface Props {
   pool?: MyPoolInfo;
   showEdit: boolean;
   setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface ChangesProps {
@@ -30,7 +31,7 @@ export interface ChangesProps {
   }
 }
 
-export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdit }: Props): React.ReactElement {
+export default function EditPool({ address, apiToUse, pool, setRefresh, setShowEdit, showEdit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const api = useApi(address, apiToUse);
@@ -170,6 +171,7 @@ export default function EditPool({ address, apiToUse, pool, setShowEdit, showEdi
           changes={changes}
           formatted={formatted}
           pool={myPool}
+          setRefresh={setRefresh}
           setShow={setShowReview}
           setShowMyPool={setShowEdit}
           show={showReview}

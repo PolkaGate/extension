@@ -24,6 +24,7 @@ interface Props {
   api: ApiPromise | undefined;
   pool: MyPoolInfo;
   showRemoveAll?: boolean;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRemoveAll: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -54,7 +55,7 @@ const remainingTime = (seconds: number) => {
   });
 };
 
-export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRemoveAll }: Props): React.ReactElement {
+export default function RemoveAll({ address, api, pool, setRefresh, setShowRemoveAll, showRemoveAll }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chain = useChain(address);
@@ -126,7 +127,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
       return setStep(2);
     }
 
-    if (sessionInfo && remainingEraToKick === 0) {
+    if (sessionInfo && (remainingEraToKick === 0 || remainingEraToKick === null)) {
       return setStep(3);
     }
 
@@ -149,7 +150,9 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
     }
 
     if (remainingEraToKick === null) {
-      return setRemainingSecondsToKickAll(0);
+      setRemainingSecondsToKickAll(0);
+
+      return;
     }
 
     setRemainingSecondsToKickAll(((remainingEraToKick - 1) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6);
@@ -255,6 +258,7 @@ export default function RemoveAll({ address, api, pool, setShowRemoveAll, showRe
           mode={mode}
           pool={pool}
           poolMembers={members}
+          setRefresh={setRefresh}
           setShow={setShowReview}
           setShowMyPool={setShowRemoveAll}
           show={showReview}
