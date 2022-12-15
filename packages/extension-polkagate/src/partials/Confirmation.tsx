@@ -29,9 +29,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
   const onAction = useContext(ActionContext);
 
   const network = txInfo.chain.name.replace(' Relay Chain', '');
-  const decimal = txInfo.api.registry.chainDecimals[0];
-  const token = txInfo.api.registry.chainTokens[0];
-  const historyLink = `/history/${network}/${decimal}/${token}/${txInfo?.from.address}`;
+  const historyLink = `/history/${txInfo?.from.address}`;
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
   const fee = txInfo.api.createType('Balance', txInfo.fee);
 
@@ -46,7 +44,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <Typography fontSize='16px' fontWeight={500} m='auto' sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.main' }} textAlign='center' width='39%' >
+        <Typography fontSize='16px' fontWeight={500} m='auto' sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.main' }} textAlign='center' width='39%'>
           {txInfo.status === 'success' ? t<string>('Completed') : t<string>('Failed')}
         </Typography>
         <FailSuccessIcon
@@ -74,11 +72,11 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           </Typography>
         }
         {children}
-        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}        >
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'          >
+        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}>
+          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
-          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'          >
+          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
             {fee?.toHuman() ?? '00.00'}
           </Grid>
         </Grid>

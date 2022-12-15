@@ -11,14 +11,14 @@ import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Container, Divider, Grid, useTheme } from '@mui/material';
+import { Box, Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
+import { soloSetting, soloSettingB } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useFormatted, useIdentity, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
@@ -326,6 +326,14 @@ export default function Index(): React.ReactElement {
           onClick={goToNominations}
           title={t<string>('Validators')}
         />
+        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) &&
+          <HorizontalMenuItem
+            divider
+            icon={<Box component='img' src={theme.palette.mode === 'dark' ? soloSetting : soloSettingB} />}
+            onClick={goToInfo}
+            title={t<string>('Setting')}
+          />
+        }
         <HorizontalMenuItem
           icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
           onClick={goToInfo}

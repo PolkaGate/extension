@@ -46,3 +46,5 @@ export { default as copy } from './copy.png';
 export { default as icopy } from './icopy.png';
 export { default as upload } from './upload.png';
 export { default as subscan } from './subscan.svg';
+export { default as soloSetting } from './soloSetting.svg';
+export { default as soloSettingB } from './soloSettingB.svg';
