@@ -13,7 +13,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
-import { useChain } from '.';
+import { useChain, useFormatted, useStashId } from '.';
 
 export async function getStakingReward(_chain: Chain | null | undefined, _stakerAddress: AccountId | string | null): Promise<string | null> {
   if (!_stakerAddress) {
@@ -50,10 +50,12 @@ export async function getStakingReward(_chain: Chain | null | undefined, _staker
   });
 }
 
-export default function useStakingRewards(stashId: AccountId | undefined): BN | undefined {
+export default function useStakingRewards(address: AccountId | undefined): BN | undefined {
   const [rewards, setRewards] = useState<BN>();
-  const chain = useChain(stashId);
-
+  const chain = useChain(address);
+  const formatted = useFormatted(address);
+  const stashId = useStashId(formatted);
+  
   useEffect(() => {
     if (!stashId) {
       return;
