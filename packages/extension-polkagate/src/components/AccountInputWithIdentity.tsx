@@ -8,24 +8,22 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
-import { AccountContext, Identity, InputWithLabelAndIdenticon } from './';
+import { AccountContext, Identity, InputWithLabelAndIdenticon } from '.';
 
 interface Props {
   address: string | undefined;
   chain: Chain | null;
   label: string;
-  name?: string;
   style?: SxProps<Theme>;
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
-  senderAddress: string
+  ignoreAddress?: string
 }
 
-export default function To({ address, chain, senderAddress, setAddress, style }: Props): React.ReactElement<Props> {
-  // const [offFocus, setOffFocus] = useState(false);
+export default function AccountInputWithIdentity({ address, chain, label, ignoreAddress, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
-  const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format, senderAddress);
+  const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format, ignoreAddress);
   const allAddr = getAllAddresses(hierarchy, true, true, chain?.ss58Format);
 
   const selectedAddrName = allAddr.find((acc) => acc[0] === address)?.[2];
@@ -36,7 +34,7 @@ export default function To({ address, chain, senderAddress, setAddress, style }:
         address={address}
         allAddresses={allAddresses}
         chain={chain}
-        label={t<string>('To')}
+        label={label}
         placeHolder={t<string>('Paste the address here')}
         setAddress={setAddress}
         showIdenticon={false}
