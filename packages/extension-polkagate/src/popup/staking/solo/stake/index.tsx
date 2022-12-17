@@ -50,7 +50,7 @@ export default function Index(): React.ReactElement {
   const [settings, setSettings] = useState<SoloSettings>({ controllerId: formatted, payee: 'Staked', stashId: formatted });
 
   useEffect(() => {
-    setSettings({ controllerId: '5CEUsVeAEWNVwNoyuT7mwDnxumZP6GPaaGrRKW6fWm38PEgz', payee: 'Staked', stashId: formatted });
+    setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   }, [formatted]);
 
   console.log('autoSelected:', autoSelected);

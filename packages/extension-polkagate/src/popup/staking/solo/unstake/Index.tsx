@@ -51,9 +51,9 @@ export default function Index (): React.ReactElement {
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
-  const unbonded = api && api.tx.staking.unbond;
-  const redeem = api && api.tx.staking.withdrawUnbonded;
-  const chilled = api && api.tx.staking.chill;
+  const unbonded = api && api.tx.staking.unbond; // signer: Controller
+  const redeem = api && api.tx.staking.withdrawUnbonded; // signer: Controller
+  const chilled = api && api.tx.staking.chill; // signer: Controller
   const redeemDate = useMemo(() => {
     if (stakingConsts) {
       const date = Date.now() + stakingConsts.unbondingDuration * 24 * 60 * 60 * 1000;

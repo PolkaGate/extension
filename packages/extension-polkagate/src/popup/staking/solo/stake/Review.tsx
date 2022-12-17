@@ -23,7 +23,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../../components';
 import { useAccountName, useIdentity, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
@@ -194,6 +194,33 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
     );
   };
 
+  const Controller = useCallback(() => (
+    <Grid alignItems='center' container direction='column' justifyContent='center' py='5px'>
+      <Typography fontSize='16px' fontWeight={300} height='18px' textAlign='center'>
+        {t<string>('Controller account')}
+      </Typography>
+      <Identity
+        formatted={settings.controllerId}
+        identiconSize={31}
+        style={{
+          height: '38px',
+          maxWidth: '100%',
+          minWidth: '35%',
+          width: 'fit-content'
+        }}
+      />
+      <ShortAddress address={settings.controllerId} />
+      <Divider
+        sx={{
+          bgcolor: 'secondary.main',
+          height: '2px',
+          mt: '5px',
+          width: '240px'
+        }}
+      />
+    </Grid>
+  ), [settings.controllerId, t]);
+
   return (
     <Motion>
       <Popup show={show}>
@@ -222,8 +249,11 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
-            title={t('Stash account')}
+            title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
           />
+          {settings.controllerId !== settings.stashId &&
+            <Controller />
+          }
           <AmountFee
             address={address}
             amount={amount}
@@ -298,7 +328,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail txInfo={txInfo} />
+            <TxDetail txInfo={txInfo} settings={settings} />
           </Confirmation>)
         }
       </Popup>
