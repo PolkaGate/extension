@@ -60,8 +60,8 @@ export default function useStakingAccount(address: AccountId | string | undefine
     temp.stakingLedger.set('active', accountInfo.stakingLedger.active.unwrap());
     temp.stakingLedger.set('total', accountInfo.stakingLedger.total.unwrap());
     temp.accountId = temp.accountId.toString();
-    temp.controllerId = temp.controllerId.toString();
-    
+    temp.controllerId = temp.controllerId?.toString() || null;
+
     setStakingInfo({ ...temp, era: Number(era), date: Date.now(), decimal, token });
     refresh && setRefresh && setRefresh(false);
   }, [api, decimal, refresh, setRefresh, stashId, token]);
