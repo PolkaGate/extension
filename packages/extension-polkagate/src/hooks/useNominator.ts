@@ -7,11 +7,12 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { useEndpoint2, useFormatted } from '.';
+import { useEndpoint2, useFormatted, useStashId } from '.';
 
 export default function useNominator(address: string): NominatorInfo | undefined {
   const endpoint = useEndpoint2(address);
   const formatted = useFormatted(address);
+  const stashId = useStashId(formatted);
 
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
 
@@ -35,8 +36,8 @@ export default function useNominator(address: string): NominatorInfo | undefined
   }, []);
 
   useEffect(() => {
-    formatted && endpoint && getNominatorInfo(endpoint, formatted);
-  }, [formatted, endpoint, getNominatorInfo]);
+    stashId && endpoint && getNominatorInfo(endpoint, stashId);
+  }, [stashId, endpoint, getNominatorInfo]);
 
   return nominatorInfo;
 }

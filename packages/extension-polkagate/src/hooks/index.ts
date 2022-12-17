@@ -38,6 +38,7 @@ export { default as useRedirectOnRefresh } from './useRedirectOnRefresh';
 export { default as useStakingAccount } from './useStakingAccount';
 export { default as useStakingConsts } from './useStakingConsts';
 export { default as useStakingRewards } from './useStakingRewards';
+export { default as useStashId } from './useStashId';
 export { default as useTranslation } from './useTranslation';
 export { default as useToast } from './useToast';
 export { default as useValidators } from './useValidators';

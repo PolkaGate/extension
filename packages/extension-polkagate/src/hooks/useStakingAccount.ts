@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
 import { AccountStakingInfo } from '../util/types';
-import { useAccount, useApi, useChain } from '.';
+import { useAccount, useApi, useChain, useFormatted, useStashId } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();
@@ -28,14 +28,14 @@ BN.prototype.toJSON = function () {
  * @param setRefresh 
  * @returns account staking Info
  */
-export default function useStakingAccount(stashId: AccountId | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
-  const account = useAccount(stashId);
-  const chain = useChain(stashId);
+export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
+  const account = useAccount(address);
+  const chain = useChain(address);
   const chainName = chain && chain.name.replace(' Relay Chain', '');
-  const api = useApi(stashId);
+  const api = useApi(address);
+  const stashId = useStashId(address);
 
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null>();
-
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
 
@@ -49,7 +49,6 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
       api.query.staking.currentEra()
     ]);
 
-
     if (!accountInfo) {
       console.log('Can not fetch accountInfo!');
 
@@ -60,7 +59,9 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
 
     temp.stakingLedger.set('active', accountInfo.stakingLedger.active.unwrap());
     temp.stakingLedger.set('total', accountInfo.stakingLedger.total.unwrap());
-
+    temp.accountId = temp.accountId.toString();
+    temp.controllerId = temp.controllerId.toString();
+    
     setStakingInfo({ ...temp, era: Number(era), date: Date.now(), decimal, token });
     refresh && setRefresh && setRefresh(false);
   }, [api, decimal, refresh, setRefresh, stashId, token]);
@@ -90,7 +91,7 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
       return;
     }
 
-    console.log('stakingInfo:', stakingInfo);
+    console.log('stakingInfo in useStakingAccount, parsed:', JSON.parse(JSON.stringify(stakingInfo)));
 
     const temp = {} as AccountStakingInfo;
     temp.accountId = stakingInfo.accountId;
@@ -118,9 +119,9 @@ export default function useStakingAccount(stashId: AccountId | undefined, stateI
     savedStakingAccount[chainName] = { ...temp, date: Date.now(), decimal, token };
     const metaData = JSON.stringify({ ['stakingAccount']: JSON.stringify(savedStakingAccount) });
 
-    updateMeta(stashId, metaData).catch(console.error);
+    updateMeta(String(address), metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stashId, api, chain, chainName, stakingInfo, Object.keys(account ?? {})?.length, token, decimal]);
+  }, [address, api, chain, chainName, stakingInfo, Object.keys(account ?? {})?.length, token, decimal]);
 
   useEffect(() => {
     if (!chainName || !account) {
