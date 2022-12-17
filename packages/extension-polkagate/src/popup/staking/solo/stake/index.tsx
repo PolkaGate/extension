@@ -15,12 +15,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Select, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useValidatorSuggestion } from '../../../../hooks';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, MIN_EXTRA_BOND } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import Review from './Review';
+import Settings from './Settings';
 
 interface State {
   api: ApiPromise | undefined;
@@ -35,6 +36,7 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const token = useToken(address);
+  const decimal = useDecimal(address);
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
@@ -48,6 +50,7 @@ export default function Index(): React.ReactElement {
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [settings, setSettings] = useState<SoloSettings>({ controllerId: formatted, payee: 'Staked', stashId: formatted });
+  const [showAdvanceSettings, setShowAdvanceSettings] = useState<boolean>();
 
   useEffect(() => {
     setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
@@ -56,9 +59,8 @@ export default function Index(): React.ReactElement {
   console.log('autoSelected:', autoSelected);
 
   const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const totalAfterStake = useMemo(() => staked?.add(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
+  const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
   const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
 
   const thresholds = useMemo(() => {
@@ -85,7 +87,8 @@ export default function Index(): React.ReactElement {
   const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
   const batchAll = api && api.tx.utility.batchAll;
   const nominated = api && api.tx.staking.nominate;
-
+  const setController = api && api.tx.staking.setController; // sign by stash
+  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
@@ -122,7 +125,7 @@ export default function Index(): React.ReactElement {
   }, [amountAsBN, api, autoSelected, batchAll, bond, formatted, isFirstTimeStaking, nominated, params, tx]);
 
   useEffect(() => {
-    if (!amount) {
+    if (!amountAsBN) {
       return;
     }
 
@@ -137,7 +140,7 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amount, api, decimal, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking]);
+  }, [api, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -147,6 +150,10 @@ export default function Index(): React.ReactElement {
   }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
+    if (!decimal) {
+      return;
+    }
+
     if (value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
 
@@ -169,7 +176,7 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onSelectionMethodChange = useCallback((value: string | number): void => {
-console.log('value:', value)
+    console.log('value:', value)
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -224,12 +231,17 @@ console.log('value:', value)
         </div>
         <Grid item mt='20px' xs={12}>
           {isFirstTimeStaking &&
-            <Select
-              defaultValue={VALIDATOR_SELECTION_OPTIONS[0].value}
-              label={'Validator selection method'}
-              onChange={onSelectionMethodChange}
-              options={VALIDATOR_SELECTION_OPTIONS}
-            />
+            <>
+              <Select
+                defaultValue={VALIDATOR_SELECTION_OPTIONS[0].value}
+                label={'Validator selection method'}
+                onChange={onSelectionMethodChange}
+                options={VALIDATOR_SELECTION_OPTIONS}
+              />
+              <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '25px' }}>
+                {t('Advanced settings')}
+              </Grid>
+            </>
           }
         </Grid>
       </Grid>
@@ -256,7 +268,20 @@ console.log('value:', value)
           tx={tx}
         />
       }
+      {showAdvanceSettings &&
+        <Grid item>
+          <Settings
+            chain={chain}
+            setShowAdvanceSettings={setShowAdvanceSettings}
+            settings={settings}
+            setSettings={setSettings}
+            showAdvanceSettings={showAdvanceSettings}
+            stakingConsts={stakingConsts}
+            decimal={decimal}
+            token={token}
+          />
+        </Grid>
+      }
     </Motion>
   );
 }
-

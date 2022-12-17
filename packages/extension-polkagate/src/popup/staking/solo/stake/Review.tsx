@@ -50,6 +50,36 @@ interface Props {
   selectedValidators: ValidatorInfo[] | null | undefined;
 }
 
+function RewardsDestination({ settings }: { settings: SoloSettings }) {
+  const { t } = useTranslation();
+  const address = settings.payee === 'Staked' ? settings.stashId : settings.payee.Account;
+  const payeeName = useAccountName(address)
+  const payeeIdentity = useIdentity(address);
+
+  return (
+    <Grid container item justifyContent='center' sx={{ alignSelf: 'center' }}>
+      <Typography sx={{ fontWeight: 300 }}>
+        {t('Rewards destination')}
+      </Typography>
+      <Grid container item justifyContent='center'>
+        {settings.payee === 'Staked'
+          ? <Typography sx={{ fontWeight: 400 }}>
+            {t('Staked')}
+          </Typography>
+          : <Grid container item justifyContent='center'>
+            <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content', maxWidth: '60%' }}>
+              {payeeIdentity?.display || payeeName}
+            </Grid>
+            <Grid item>
+              <ShortAddress address={address} inParentheses />
+            </Grid>
+          </Grid>
+        }
+      </Grid>
+    </Grid>
+  );
+}
+
 export default function Review({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
@@ -167,59 +197,16 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
     setShow(false);
   }, [setShow]);
 
-  const RewardsDestination = () => {
-    const address = settings.payee === 'Staked' ? settings.stashId : settings.payee.Account;
-    const payeeName = useAccountName(address)
-    const payeeIdentity = useIdentity(address);
-
-    return (
-      <Grid container item justifyContent='center' sx={{ alignSelf: 'center' }}>
-        <Typography sx={{ fontWeight: 300 }}>
-          {t('Rewards destination')}
-        </Typography>
-        <Grid container item justifyContent='center'>
-          {settings.payee === 'Staked'
-            ? <Typography sx={{ fontWeight: 400 }}>
-              {t('Staked')}
-            </Typography>
-            : <Grid container item justifyContent='center'>
-              {payeeIdentity?.display || payeeName}
-              <Grid item>
-                <ShortAddress address={address} inParentheses />
-              </Grid>
-            </Grid>
-          }
-        </Grid>
-      </Grid>
-    );
-  };
-
   const Controller = useCallback(() => (
-    <Grid alignItems='center' container direction='column' justifyContent='center' py='5px'>
-      <Typography fontSize='16px' fontWeight={300} height='18px' textAlign='center'>
+    <Grid alignItems='center' container direction='column' justifyContent='center'>
+      <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t<string>('Controller account')}
       </Typography>
-      <Identity
-        formatted={settings.controllerId}
-        identiconSize={31}
-        style={{
-          height: '38px',
-          maxWidth: '100%',
-          minWidth: '35%',
-          width: 'fit-content'
-        }}
-      />
+      <Identity chain={chain} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={settings.controllerId} />
-      <Divider
-        sx={{
-          bgcolor: 'secondary.main',
-          height: '2px',
-          mt: '5px',
-          width: '240px'
-        }}
-      />
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
-  ), [settings.controllerId, t]);
+  ), [chain, settings?.controllerId, t]);
 
   return (
     <Motion>
@@ -250,6 +237,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
+            style={{ mt: '-5px' }}
           />
           {settings.controllerId !== settings.stashId &&
             <Controller />
@@ -260,7 +248,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             fee={estimatedFee}
             label={t('Amount')}
             showDivider
-            style={{ pt: '5px' }}
             token={token}
             withFee
           />
@@ -276,10 +263,10 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
               <Grid item
                 // onClick={openPoolInfo} 
                 sx={{ cursor: 'pointer', mt: '5px' }} width='8%'>
-                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
               </Grid>
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
-              <RewardsDestination />
+              <RewardsDestination settings={settings} />
             </Grid>
             : <AmountFee
               address={address}
