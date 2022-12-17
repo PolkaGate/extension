@@ -18,20 +18,8 @@ function AccountHolder({ address, style, title }: Props): React.ReactElement {
   const formatted = useFormatted(address);
 
   return (
-    <Grid
-      alignItems='center'
-      container
-      direction='column'
-      justifyContent='center'
-      py='5px'
-      sx={style}
-    >
-      <Typography
-        fontSize='16px'
-        fontWeight={300}
-        height='18px'
-        textAlign='center'
-      >
+    <Grid alignItems='center' container direction='column' justifyContent='center' py='5px' sx={style}>
+      <Typography fontSize='16px' fontWeight={300} height='18px' textAlign='center'>
         {title ?? t<string>('Account holder')}
       </Typography>
       <Identity
