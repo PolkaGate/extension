@@ -48,7 +48,9 @@ export default function Asset({ api, balance, balanceLabel, balanceType, balance
           <ChainLogo genesisHash={genesisHash} size={31} />
         </Grid>
         <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
-          <Grid item>            {balanceLabel}            <br />
+          <Grid item>
+            {balanceLabel}
+            <br />
             {t('Fee')}
           </Grid>
         </Grid>

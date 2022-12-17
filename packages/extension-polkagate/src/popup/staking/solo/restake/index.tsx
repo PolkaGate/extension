@@ -52,7 +52,7 @@ export default function Index(): React.ReactElement {
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountToMachine(amount, decimal)), [amount, decimal, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx.staking.rebond;
+  const rebonded = api && api.tx.staking.rebond; // signer: Controller
 
   useEffect(() => {
     if (!stakingAccount) {

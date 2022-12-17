@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
+import type { AccountStakingInfo, SoloSettings, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,12 +15,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Select, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useValidatorSuggestion } from '../../../../hooks';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation, useValidatorSuggestion } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, MIN_EXTRA_BOND } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import Review from './Review';
+import Settings from './Settings';
 
 interface State {
   api: ApiPromise | undefined;
@@ -35,6 +36,7 @@ export default function Index(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const token = useToken(address);
+  const decimal = useDecimal(address);
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
@@ -47,15 +49,16 @@ export default function Index(): React.ReactElement {
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
+  const [settings, setSettings] = useState<SoloSettings>({ controllerId: formatted, payee: 'Staked', stashId: formatted });
+  const [showAdvanceSettings, setShowAdvanceSettings] = useState<boolean>();
 
-  console.log('autoSelected:', autoSelected);
-
+  useEffect(() => {
+    setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
+  }, [formatted]);
 
   const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
-
-  const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const totalAfterStake = useMemo(() => staked?.add(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
+  const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
   const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
 
   const thresholds = useMemo(() => {
@@ -80,33 +83,47 @@ export default function Index(): React.ReactElement {
 
   const bond = api && api.tx.staking.bond;// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
   const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
+  const batchAll = api && api.tx.utility.batchAll;
+  const nominated = api && api.tx.staking.nominate;
+  const setController = api && api.tx.staking.setController; // sign by stash
+  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
+
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
-  const payee = 'Staked';
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:
    * Staked - Pay into the stash account, increasing the amount at stake accordingly.
    * Stash - Pay into the stash account, not increasing the amount at stake.
-   * Account - Pay into a custom account.
+   * Account - Pay into a custom account. {Account: 17xyz....abc}
    * Controller - Pay into the controller account.
    */
 
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [formatted, amountAsBN, payee] : [amountAsBN], [amountAsBN, formatted, stakingAccount?.stakingLedger?.total]);
+  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [settings.stashId, amountAsBN, settings.payee] : [amountAsBN], [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
-    if (!tx || !api || !formatted) {
+    if (!tx || !api || !formatted || !nominated || !batchAll) {
       return;
     }
 
     if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(api.createType('Balance', BN_ONE));
+      setEstimatedFee(api.createType('Balance', BN_ONE));
+
+      return;
+    }
+
+    if (isFirstTimeStaking && autoSelected?.length) {
+      const ids = autoSelected.map((v) => v.accountId);
+
+      batchAll([tx(...params), nominated(ids)]).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+
+      return;
     }
 
     tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, api, bond, formatted, params, tx]);
+  }, [amountAsBN, api, autoSelected, batchAll, bond, formatted, isFirstTimeStaking, nominated, params, tx]);
 
   useEffect(() => {
-    if (!amount) {
+    if (!amountAsBN || !amount) {
       return;
     }
 
@@ -114,14 +131,14 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than available balance.'));
     }
 
-    if (api && stakingConsts?.minNominatorBond && (stakingConsts.minNominatorBond.gt(amountAsBN) || balances?.availableBalance?.lt(stakingConsts.minNominatorBond))) {
+    if (api && stakingConsts?.minNominatorBond && isFirstTimeStaking && (stakingConsts.minNominatorBond.gt(amountAsBN) || balances?.availableBalance?.lt(stakingConsts.minNominatorBond))) {
       const minNominatorBond = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
 
       return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
     }
 
     setAlert(undefined);
-  }, [amount, api, decimal, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond]);
+  }, [api, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -131,6 +148,10 @@ export default function Index(): React.ReactElement {
   }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
+    if (!decimal) {
+      return;
+    }
+
     if (value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
 
@@ -145,9 +166,6 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    console.log('maxMin:', maxMin);
-    console.log('amountToHuman(thresholds[maxMin].toString(), decimal):', amountToHuman(thresholds[maxMin].toString(), decimal));
-
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
   }, [thresholds, decimal]);
 
@@ -156,7 +174,7 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onSelectionMethodChange = useCallback((value: string | number): void => {
-
+    console.log('value:', value)
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -187,7 +205,14 @@ export default function Index(): React.ReactElement {
         withSteps={{ current: 1, total: 2 }}
       />
       <Grid item xs={12} sx={{ mx: '15px' }}>
-        <Asset api={api} balance={balances?.availableBalance} balanceLabel={t('Available balance')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
+        <Asset
+          api={api}
+          balance={balances?.availableBalance}
+          balanceLabel={t('Available balance')}
+          fee={estimatedFee}
+          genesisHash={chain?.genesisHash}
+          style={{ pt: '20px' }}
+        />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
             label={t<string>('Amount ({{token}})', { replace: { token } })}
@@ -204,39 +229,57 @@ export default function Index(): React.ReactElement {
         </div>
         <Grid item mt='20px' xs={12}>
           {isFirstTimeStaking &&
-            <Select
-              defaultValue={VALIDATOR_SELECTION_OPTIONS[0].value}
-              label={'Validator selection method'}
-              onChange={onSelectionMethodChange}
-              options={VALIDATOR_SELECTION_OPTIONS}
-            />
+            <>
+              <Select
+                defaultValue={VALIDATOR_SELECTION_OPTIONS[0].value}
+                label={'Validator selection method'}
+                onChange={onSelectionMethodChange}
+                options={VALIDATOR_SELECTION_OPTIONS}
+              />
+              <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '25px' }}>
+                {t('Advanced settings')}
+              </Grid>
+            </>
           }
         </Grid>
       </Grid>
       <PButton
+        _isBusy={isFirstTimeStaking && showReview && !autoSelected}
         _onClick={goToReview}
         disabled={!!alert || !amount || amount === '0' || !balances?.availableBalance || balances?.availableBalance?.isZero() || balances?.availableBalance?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
         text={t<string>('Next')}
       />
-      {showReview && amount && api && formatted && staked && chain && tx && params &&
+      {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking ? autoSelected : true) &&
         <Review
           address={address}
           amount={amount}
           api={api}
           chain={chain}
           estimatedFee={estimatedFee}
-          formatted={formatted}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
+          selectedValidators={autoSelected}
           setShow={setShowReview}
+          settings={settings}
           show={showReview}
-          staked={staked}
           total={totalAfterStake}
           tx={tx}
-          selectedValidators={autoSelected}
         />
+      }
+      {showAdvanceSettings &&
+        <Grid item>
+          <Settings
+            chain={chain}
+            setShowAdvanceSettings={setShowAdvanceSettings}
+            settings={settings}
+            setSettings={setSettings}
+            showAdvanceSettings={showAdvanceSettings}
+            stakingConsts={stakingConsts}
+            decimal={decimal}
+            token={token}
+          />
+        </Grid>
       }
     </Motion>
   );
 }
-

@@ -20,7 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { soloSetting, soloSettingB } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useIdentity, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useIdentity, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useStashId, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -49,9 +49,10 @@ export default function Index(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const stakingAccount = useStakingAccount(formatted, state?.stakingAccount, refresh, setRefresh);
+  const stashId = useStashId(formatted);
+  const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const chain = useChain(address);
-  const rewards = useStakingRewards(formatted);
+  const rewards = useStakingRewards(address);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const balances = useBalances(address, refresh, setRefresh);
@@ -198,7 +199,7 @@ export default function Index(): React.ReactElement {
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
-                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() || formatted !== stakingAccount?.controllerId ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                     {link1Text}
                   </Grid>
                 }
@@ -298,7 +299,7 @@ export default function Index(): React.ReactElement {
           />
         </Grid>
       </Container>
-      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', py: '10px', width: '92%' }}>
+      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
         <HorizontalMenuItem
           divider
           icon={
@@ -326,7 +327,7 @@ export default function Index(): React.ReactElement {
           onClick={goToNominations}
           title={t<string>('Validators')}
         />
-        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) &&
+        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) && stakingAccount?.controllerId === formatted &&
           <HorizontalMenuItem
             divider
             icon={<Box component='img' src={theme.palette.mode === 'dark' ? soloSetting : soloSettingB} />}

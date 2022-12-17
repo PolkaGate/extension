@@ -42,7 +42,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined | null>();
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
   const { t } = useTranslation();
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
 
   const PROXY_TYPE = CHAIN_PROXY_TYPES[chain.name.replace(' Relay Chain', '')] as string[];
 
@@ -56,8 +56,6 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const _addProxy = useCallback(() => {
     const proxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;
 
-    // proxyItems?.push({ proxy, status: 'new' });
-    // setProxyItems(proxyItems);
     setProxyItems([{ proxy, status: 'new' }, ...proxyItems]);
     setShowAddProxy(!showAddProxy);
     onChange();
@@ -127,12 +125,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
           width: '92%'
         }}
       />
-      <Grid
-        sx={{
-          m: 'auto',
-          width: '92%'
-        }}
-      >
+      <Grid sx={{ m: 'auto', width: '92%' }}>
         <Select
           helperText={t<string>('TODO')}
           label={t<string>('Proxy type')}
@@ -140,18 +133,8 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
           options={proxyTypeOptions}
         />
       </Grid>
-      <Grid
-        alignItems='end'
-        container
-        sx={{
-          m: '15px auto',
-          width: '92%'
-        }}
-      >
-        <Grid
-          item
-          xs={4}
-        >
+      <Grid alignItems='end' container sx={{ m: '15px auto', width: '92%' }}>
+        <Grid item xs={4}>
           <InputWithLabel
             helperText={t<string>('TODO')}
             label={t<string>('Delay')}

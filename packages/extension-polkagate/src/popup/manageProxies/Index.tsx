@@ -128,32 +128,11 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
       />
       {!showAddProxy && !showReviewProxy &&
         <>
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            m='25px auto'
-            textAlign='left'
-            width='90%'
-          >
-            {/* {t<string>('Add new or select to remove proxies for this account, consider the deposit that will be reserved.')} */}
+          <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left' width='90%'>
             {helperText}
           </Typography>
-          <Grid
-            container
-            m='auto'
-            sx={{
-              opacity: disableAddProxyButton ? 0.5 : 1
-            }}
-            width='92%'
-          >
-            <Grid
-              display='inline-flex'
-              item
-              onClick={_openAddProxy}
-              sx={{
-                cursor: disableAddProxyButton ? 'context-menu' : 'pointer'
-              }}
-            >
+          <Grid container m='auto' sx={{ opacity: disableAddProxyButton ? 0.5 : 1 }} width='92%'>
+            <Grid display='inline-flex' item onClick={_openAddProxy} sx={{ cursor: disableAddProxyButton ? 'context-menu' : 'pointer' }}>
               <AddRoundedIcon
                 sx={{
                   bgcolor: 'primary.main',

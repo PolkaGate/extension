@@ -18,7 +18,7 @@ import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
+import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useStashId, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import SelectValidators from '../../partial/SelectValidators';
 import ValidatorsTable from '../../partial/ValidatorsTable';
@@ -45,7 +45,7 @@ export default function Index(): React.ReactElement {
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const formatted = useFormatted(address);
-  const stakingAccount = useStakingAccount(formatted, state?.stakingAccount, refresh, setRefresh);
+  const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
@@ -79,15 +79,16 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const onRemoveValidators = useCallback(() => {
-    setShowRemoveValidator(true);
-  }, []);
+    stakingAccount?.controllerId === formatted && setShowRemoveValidator(true);
+  }, [formatted, stakingAccount?.controllerId]);
+
   const OnTuneUp = useCallback(() => {
     // setShowRemoveValidator(true);
   }, []);
 
   const onChangeValidators = useCallback(() => {
-    goToSelectValidator();
-  }, [goToSelectValidator]);
+    stakingAccount?.controllerId === formatted && goToSelectValidator();
+  }, [formatted, goToSelectValidator, stakingAccount?.controllerId]);
 
   const Warn = ({ text }: { text: string }) => (
     <Grid container justifyContent='center' py='15px' >
@@ -103,7 +104,7 @@ export default function Index(): React.ReactElement {
   const ValidatorsActions = () => (
     <Grid container justifyContent='center' pt='15px' spacing={1}>
       <Grid item>
-        <Typography onClick={onChangeValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Typography onClick={onChangeValidators} sx={{ color: stakingAccount?.controllerId === formatted ? 'text.primary' : 'text.disabled', cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
           {t('Change Validators')}
         </Typography>
       </Grid>
@@ -112,7 +113,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       <Grid item>
         <Infotip text={t<string>('Use this to unselect validators. Note you will not get any rewards after.')}>
-          <Typography onClick={onRemoveValidators} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          <Typography onClick={onRemoveValidators} sx={{ color: stakingAccount?.controllerId === formatted ? 'text.primary' : 'text.disabled', cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
             {t('Remove Validators')}
           </Typography>
         </Infotip>
@@ -169,8 +170,8 @@ export default function Index(): React.ReactElement {
         {nominatedValidatorsIds && allValidatorsInfo &&
           <>
             <ValidatorsTable
-              allValidatorsIdentities={allValidatorsIdentities}
               activeValidators={activeValidators}
+              allValidatorsIdentities={allValidatorsIdentities}
               api={api}
               chain={chain}
               decimal={stakingAccount?.decimal}
@@ -185,7 +186,7 @@ export default function Index(): React.ReactElement {
           </>
         }
       </Grid>
-      {nominatedValidatorsIds === null && stakingAccount?.stakingLedger?.active && !stakingAccount?.stakingLedger?.active?.isZero() &&
+      {nominatedValidatorsIds === null && stakingAccount?.controllerId === formatted && stakingAccount?.stakingLedger?.active && !stakingAccount?.stakingLedger?.active?.isZero() &&
         <PButton
           _onClick={goToSelectValidator}
           text={t<string>('Select Validator')}
