@@ -22,7 +22,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, ShortAddress, Warning } from '../../components';
-import { useMetadata, useProxies, useTranslation } from '../../hooks';
+import { useApi, useDecimal, useMetadata, useProxies, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
@@ -55,7 +55,10 @@ export default function Review(): React.ReactElement {
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const proxies = useProxies(state?.api, formatted);
   const theme = useTheme();
+  const api = useApi(address, state?.api);
   const history = useHistory();
+  const decimal = useDecimal(address);
+  const token = useToken(address);
   const onAction = useContext(ActionContext);
   const chain = useMetadata(genesisHash, true);
   const { accounts } = useContext(AccountContext);
@@ -69,8 +72,6 @@ export default function Review(): React.ReactElement {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const prevUrl = `/send/${genesisHash}/${address}/${formatted}/`;
-  const decimals = state?.api?.registry?.chainDecimals[0] ?? 1;
-  const token = state?.api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -90,11 +91,11 @@ export default function Review(): React.ReactElement {
 
   const send = useCallback(async () => {
     try {
-      if (!state || !formatted) {
+      if (!state || !formatted || !api || !decimal) {
         return;
       }
 
-      const { accountName, amount, api, recipientAddress, recipientName, transfer, transferType } = state;
+      const { accountName, amount, recipientAddress, recipientName, transfer, transferType } = state;
       const signer = keyring.getPair(selectedProxyAddress ?? formatted);
 
       signer.unlock(password);
@@ -107,7 +108,7 @@ export default function Review(): React.ReactElement {
 
         params = [recipientAddress, keepAlive];
       } else {
-        const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+        const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
 
         params = [recipientAddress, amountAsBN];
       }
@@ -115,8 +116,8 @@ export default function Review(): React.ReactElement {
       const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxy);
 
       setTxInfo({
-        api,
         amount,
+        api,
         block: block || 0,
         chain,
         failureText,
@@ -134,7 +135,7 @@ export default function Review(): React.ReactElement {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [chain, decimals, formatted, password, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
+  }, [api, chain, decimal, formatted, password, selectedProxy, selectedProxyAddress, selectedProxyName, state]);
 
   const _onBackClick = useCallback(() => {
     state?.backPath && history.push({
