@@ -140,7 +140,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
                   </Grid>
                 </Grid>
               ))
-              : <Grid display='inline-flex' p='10px'                >
+              : <Grid display='inline-flex' p='10px'>
                 <FontAwesomeIcon
                   className='warningImage'
                   icon={faExclamationTriangle}
@@ -154,8 +154,8 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
                   {t<string>('hooom! There is a problem, please let us know❤')}
                 </Typography>
               </Grid>
-            : <Grid alignItems='center' container justifyContent='center'              >
-              <Grid item                >
+            : <Grid alignItems='center' container justifyContent='center'>
+              <Grid item>
                 <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
               </Grid>
               <Typography
