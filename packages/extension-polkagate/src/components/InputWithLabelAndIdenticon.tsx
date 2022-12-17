@@ -86,7 +86,7 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
               backgroundColor: disabled ? '#212121' : theme.palette.background.paper,
               borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,
               borderWidth: address !== undefined && !isValidAddress(address) ? '3px' : '1px',
-              fontSize: '18px',
+              fontSize: '14px',
               fontWeight: 300,
               padding: 0,
               paddingLeft: '10px',
