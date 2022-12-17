@@ -315,7 +315,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail txInfo={txInfo} settings={settings} />
+            <TxDetail settings={settings} txInfo={txInfo} />
           </Confirmation>)
         }
       </Popup>
