@@ -44,14 +44,7 @@ function AccountHolderWithProxy({ address, chain, selectedProxyAddress, showDivi
         />
       }
       {showDivider &&
-        <Divider
-          sx={{
-            bgcolor: 'secondary.main',
-            height: '2px',
-            mt: '5px',
-            width: '240px'
-          }}
-        />
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
       }
     </Grid>
   );
