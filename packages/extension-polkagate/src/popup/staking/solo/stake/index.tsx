@@ -56,8 +56,6 @@ export default function Index(): React.ReactElement {
     setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   }, [formatted]);
 
-  console.log('autoSelected:', autoSelected);
-
   const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
   const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
   const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
@@ -125,7 +123,7 @@ export default function Index(): React.ReactElement {
   }, [amountAsBN, api, autoSelected, batchAll, bond, formatted, isFirstTimeStaking, nominated, params, tx]);
 
   useEffect(() => {
-    if (!amountAsBN) {
+    if (!amountAsBN || !amount) {
       return;
     }
 
@@ -140,7 +138,7 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [api, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking]);
+  }, [api, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
 
   const onBackClick = useCallback(() => {
     history.push({
