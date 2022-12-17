@@ -21,8 +21,8 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, AmountWithOptions, Identicon, Motion, PButton, SettingsContext, ShortAddress, To } from '../../components';
-import { useAccountName,useApi, useDecimal, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { AccountContext, AccountInputWithIdentity, AmountWithOptions, Identicon, Motion, PButton, SettingsContext, ShortAddress } from '../../components';
+import { useAccountName, useApi, useDecimal, useEndpoint, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
@@ -249,12 +249,11 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <From />
-        <To
+        <AccountInputWithIdentity
           address={recipientAddress}
           chain={chain}
+          ignoreAddress={formatted}
           label={t('To')}
-          name={recipientName}
-          senderAddress={formatted}
           setAddress={setRecipientAddress}
           style={{ pt: '10px' }}
         />
