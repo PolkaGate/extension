@@ -99,7 +99,7 @@ export default function Pool(): React.ReactElement {
       return [pool, ...filtered];
     }
 
-    return;
+    return undefined;
   }, [myOtherPools, pool]);
 
   useEffect(() => {
