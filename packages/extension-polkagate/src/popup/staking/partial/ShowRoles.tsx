@@ -79,12 +79,12 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
           {accountsToShow?.length
             ? accountsToShow.map((acc, index) => (
               <Grid container fontSize='14px' fontWeight={400} item key={index} lineHeight='37px' textAlign='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-                <Grid alignItems='center' fontSize='12px' fontWeight={400} item justifyContent='center' pl='10px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='left' width='27%'>
+                <Grid alignItems='center' fontSize='12px' fontWeight={400} item justifyContent='center' pl='6px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='left' width='25%'>
                   {acc.label}
                 </Grid>
-                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='63%'>
+                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='65%'>
                   {acc.address
-                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} showSocial identiconSize={25} style={{ fontSize: '14px', pl: '10px' }} showShortAddress/>
+                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} showSocial identiconSize={25} style={{ fontSize: '14px', pl: '5px' }} showShortAddress/>
                     : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
                       {'—'}
                     </Typography>

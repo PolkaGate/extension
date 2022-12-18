@@ -44,9 +44,10 @@ interface Props {
   isDisabled?: boolean;
   _mt?: string | number;
   helperText?: string;
+  disabledItems?: string[] | number[];
 }
 
-export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, isDisabled = false, label, onChange, options, value }: Props) {
+export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, value }: Props) {
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) =>
       onChange && onChange(typeof value === 'string' ? value.trim() : value),
@@ -93,6 +94,7 @@ export default function CustomizedSelect({ _mt = 0, helperText, defaultValue, is
               key={value}
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value || text}
+              disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
             >
               {text}
             </MenuItem>
