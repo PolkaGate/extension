@@ -10,15 +10,14 @@ import type { MyPoolInfo } from '../../../../util/types';
 
 import { faPenToSquare, faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
-import { AutoDelete as AutoDeleteIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
+import { AutoDelete as AutoDeleteIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { PButton, Warning } from '../../../../components';
+import { PButton, Select, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, useMyPools, usePool, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import ShowPool from '../../partial/ShowPool';
@@ -51,6 +50,13 @@ const noop = () => { };
 export default function Pool(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const POOL_ROLES = useMemo(() => ([
+    { text: t<string>('All'), value: 'all' },
+    { text: t<string>('Depositor'), value: 'depositor' },
+    { text: t<string>('Root'), value: 'root' },
+    { text: t<string>('Nominator'), value: 'nominator' },
+    { text: t<string>('StateToggler'), value: 'stateToggler' }
+  ]), [t]);
 
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
@@ -67,6 +73,8 @@ export default function Pool(): React.ReactElement {
   const [changeState, setChangeState] = useState<'Open' | 'Blocked' | 'Destroying'>();
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [showRemoveAll, setShowRemoveAll] = useState<boolean>(false);
+  const [roleToShow, setRoleToShow] = useState<string>('all');
+  const [poolsToShow, setPoolsToShow] = useState<(MyPoolInfo | null | undefined)[] | null | undefined>();
 
   const allMyPools = useMemo(() => {
     if (pool === undefined && myOtherPools === undefined) {
@@ -91,17 +99,59 @@ export default function Pool(): React.ReactElement {
       return [pool, ...filtered];
     }
 
-    return [pool];
+    return;
   }, [myOtherPools, pool]);
 
-  const poolState = allMyPools && allMyPools[poolIndex]?.bondedPool?.state?.toString();
-  const canChangeState = useMemo(() => allMyPools && allMyPools[poolIndex]?.bondedPool && formatted && [String(allMyPools[poolIndex].bondedPool?.roles.root), String(allMyPools[poolIndex].bondedPool?.roles.stateToggler)].includes(String(formatted)), [allMyPools, formatted, poolIndex]);
-  const poolRoot = useMemo(() => allMyPools && allMyPools[poolIndex]?.bondedPool && formatted && String(allMyPools[poolIndex].bondedPool?.roles.root) === (String(formatted)), [allMyPools, formatted, poolIndex]);
+  useEffect(() => {
+    if (allMyPools === undefined) {
+      return;
+    }
+
+    if (allMyPools === null) {
+      setPoolsToShow(null);
+
+      return;
+    }
+
+    if (roleToShow !== 'all') {
+      const filteredPools = allMyPools.filter((pool) => pool?.bondedPool?.roles[roleToShow] === formatted);
+
+      setPoolsToShow(filteredPools);
+
+      return;
+    }
+
+    setPoolsToShow(allMyPools);
+  }, [POOL_ROLES, allMyPools, formatted, roleToShow]);
+
+  useEffect(() => {
+    setPoolIndex(0);
+  }, [roleToShow]);
+
+  const poolState = poolsToShow && poolsToShow[poolIndex]?.bondedPool?.state?.toString();
+  const canChangeState = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && [String(poolsToShow[poolIndex]?.bondedPool?.roles?.root), String(poolsToShow[poolIndex]?.bondedPool?.roles?.stateToggler)].includes(String(formatted)), [poolsToShow, formatted, poolIndex]);
+  const poolRoot = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && String(poolsToShow[poolIndex]?.bondedPool?.roles?.root) === (String(formatted)), [poolsToShow, formatted, poolIndex]);
+  const poolStateToggler = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && String(poolsToShow[poolIndex]?.bondedPool?.roles?.stateToggler) === (String(formatted)), [poolsToShow, formatted, poolIndex]);
+  const disabledItems = useMemo(() => {
+    if (!allMyPools || allMyPools.length === 1) {
+      return;
+    }
+
+    let allRoles = ['depositor', 'root', 'nominator', 'stateToggler'];
+
+    allRoles.forEach((role, index) => {
+      const available = allMyPools.find((pool) => pool?.bondedPool?.roles[role] === formatted);
+
+      allRoles = !available ? allRoles.splice(index, 1) : allRoles;
+    });
+
+    return allRoles;
+  }, [allMyPools, formatted]);
 
   const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
   const unblockHelperText = t<string>('The pool state will be changed to Open, and any member will be able to join the pool.');
-  const isRemoveAllDisabled = !['Destroying', 'Blocked'].includes(poolState ?? '') || (allMyPools && Number(allMyPools[poolIndex]?.bondedPool?.memberCounter) === 1);
+  const isRemoveAllDisabled = !['Destroying', 'Blocked'].includes(poolState ?? '') || (poolsToShow && Number(poolsToShow[poolIndex]?.bondedPool?.memberCounter) === 1);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -153,33 +203,41 @@ export default function Pool(): React.ReactElement {
   }, [showRemoveAll]);
 
   const goNextPool = useCallback(() => {
-    allMyPools && poolIndex !== (allMyPools.length - 1) && setPoolIndex(poolIndex + 1);
-  }, [allMyPools, poolIndex]);
+    poolsToShow && poolIndex !== (poolsToShow.length - 1) && setPoolIndex(poolIndex + 1);
+  }, [poolsToShow, poolIndex]);
 
   const goPreviousPool = useCallback(() => {
     poolIndex !== 0 && setPoolIndex(poolIndex - 1);
   }, [poolIndex]);
 
+  const onSelectionMethodChange = useCallback((value: string): void => {
+    console.log('value:', value)
+    setRoleToShow(value);
+  }, []);
+
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='15px auto 10px' width='92%'>
-      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='35%' onClick={onPrevious} sx={{ cursor: (!allMyPools?.length || poolIndex === 0) ? 'default' : 'pointer' }} width='fit_content'>
-        <KeyboardDoubleArrowLeftIcon sx={{ color: (!allMyPools?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
+      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='35%' onClick={onPrevious} sx={{ cursor: (!poolsToShow?.length || poolIndex === 0) ? 'default' : 'pointer' }} width='fit_content'>
+        <KeyboardDoubleArrowLeftIcon sx={{ color: (!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
+        <Divider orientation='vertical' sx={{ bgcolor: (!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'text.primary', height: '22px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
         <Grid container item xs={7}>
-          <Typography color={(!allMyPools?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Previous')}</Typography>
+          <Typography color={(!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Previous')}</Typography>
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' width='30%'>
-        {allMyPools?.length &&
-          <Typography fontSize='16px' fontWeight={400}>{`${poolIndex + 1} of ${allMyPools.length}`}</Typography>
+        {poolsToShow?.length &&
+          <>
+            <Typography fontSize='16px' fontWeight={400}>{`${poolIndex + 1} of ${poolsToShow.length}`}</Typography>
+            {myOtherPools === undefined && <div style={{ paddingLeft: '5px' }}><Circle color={theme.palette.secondary.light} scaleEnd={0.7} scaleStart={0.4} size={20} /></div>}
+          </>
         }
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='35%' onClick={onNext} sx={{ cursor: (!allMyPools?.length || poolIndex === allMyPools?.length - 1) ? 'default' : 'pointer' }} width='fit_content'>
+      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='35%' onClick={onNext} sx={{ cursor: (!poolsToShow?.length || poolIndex === poolsToShow?.length - 1) ? 'default' : 'pointer' }} width='fit_content'>
         <Grid container item justifyContent='right' xs={7}>
-          <Typography color={(!allMyPools?.length || poolIndex === allMyPools.length - 1) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400} textAlign='left'>{t<string>('Next')}</Typography>
+          <Typography color={(!poolsToShow?.length || poolIndex === poolsToShow.length - 1) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400} textAlign='left'>{t<string>('Next')}</Typography>
         </Grid>
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
-        <KeyboardDoubleArrowRightIcon sx={{ color: (!allMyPools?.length || poolIndex === allMyPools?.length - 1) ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
+        <Divider orientation='vertical' sx={{ bgcolor: (!poolsToShow?.length || poolIndex === poolsToShow.length - 1) ? 'secondary.contrastText' : 'text.primary', height: '22px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
+        <KeyboardDoubleArrowRightIcon sx={{ color: (!poolsToShow?.length || poolIndex === poolsToShow?.length - 1) ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
       </Grid>
     </Grid>
   );
@@ -208,7 +266,7 @@ export default function Pool(): React.ReactElement {
         text={t<string>('Pool Staking')}
       />
       <SubTitle label={t<string>('Pool')} />
-      {allMyPools === undefined &&
+      {poolsToShow === undefined &&
         <>
           <Grid alignItems='center' container justifyContent='center' mt='100px'>
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={125} />
@@ -224,7 +282,7 @@ export default function Pool(): React.ReactElement {
           </Typography>
         </>
       }
-      {allMyPools === null &&
+      {poolsToShow === null &&
         <>
           <Grid container justifyContent='center' py='15px'>
             <Warning
@@ -237,45 +295,55 @@ export default function Pool(): React.ReactElement {
           <PButton _onClick={goToPoolStake} text={t<string>('Stake')} />
         </>
       }
-      {allMyPools?.length &&
+      {poolsToShow?.length &&
         <>
+          <Grid m='10px auto 0' width='92%'>
+            <Select
+              defaultValue={POOL_ROLES[0].value}
+              disabledItems={disabledItems}
+              isDisabled={allMyPools?.length === 1}
+              label={'Select role'}
+              onChange={onSelectionMethodChange}
+              options={POOL_ROLES}
+            />
+          </Grid>
           <Arrows onNext={goNextPool} onPrevious={goPreviousPool} />
           <ShowPool
             api={api}
             chain={chain}
             mode='Default'
-            pool={allMyPools[poolIndex]}
+            pool={poolsToShow[poolIndex]}
             showInfo
             style={{
               m: '20px auto',
               width: '92%'
             }}
           />
-          <ShowRoles api={api} chain={chain} label={t<string>('Roles')} mode='Roles' pool={allMyPools[poolIndex]} style={{ m: 'auto', width: '92%' }} />
+          <ShowRoles api={api} chain={chain} label={t<string>('Roles')} mode='Roles' pool={poolsToShow[poolIndex]} style={{ m: 'auto', width: '92%' }} />
           {canChangeState &&
             <Grid alignItems='center' container justifyContent='space-between' m='20px auto' width='92%'>
-              <ActionBtn disabled={poolState === 'Destroying'} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
-                <AutoDeleteIcon sx={{ color: poolState === 'Destroying' ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
+              <ActionBtn disabled={poolState === 'Destroying' || !(!poolRoot || !poolStateToggler)} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
+                <AutoDeleteIcon sx={{ color: poolState === 'Destroying' || !(!poolRoot || !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
               </ActionBtn>
               {poolState === 'Blocked'
-                ? (<ActionBtn onClick={goUnlock} showDivider text={t<string>('Unblock')}>
-                  <UnblockIcon sx={{ color: 'text.primary', fontSize: '18px' }} />
+                ? (<ActionBtn onClick={goUnlock} disabled={!(!poolRoot || !poolStateToggler)} showDivider text={t<string>('Unblock')}>
+                  <UnblockIcon sx={{ color: !(!poolRoot || !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '18px' }} />
                 </ActionBtn>)
-                : (<ActionBtn disabled={poolState === 'Destroying'} onClick={goBlock} showDivider text={t<string>('Block')}>
-                  <BlockIcon sx={{ color: poolState === 'Destroying' ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
+                : (<ActionBtn disabled={poolState === 'Destroying' || !(!poolRoot || !poolStateToggler)} onClick={goBlock} showDivider text={t<string>('Block')}>
+                  <BlockIcon sx={{ color: poolState === 'Destroying' || !(!poolRoot || !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
                 </ActionBtn>)
               }
-              <ActionBtn disabled={isRemoveAllDisabled} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
-                <FontAwesomeIcon color={isRemoveAllDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
+              <ActionBtn disabled={isRemoveAllDisabled || !(!poolRoot || !poolStateToggler)} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
+                <FontAwesomeIcon color={isRemoveAllDisabled || !(!poolRoot || !poolStateToggler) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
               </ActionBtn>
               <ActionBtn disabled={poolState === 'Destroying' || !poolRoot} onClick={goEdit} text={t<string>('Edit')}>
-                <FontAwesomeIcon color={(poolState === 'Destroying' || !poolRoot) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />
+                <FontAwesomeIcon color={poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />
               </ActionBtn>
             </Grid>
           }
         </>
       }
-      {goChange && changeState && allMyPools?.length && formatted &&
+      {goChange && changeState && poolsToShow?.length && formatted &&
         <SetState
           address={address}
           api={api}
@@ -283,28 +351,28 @@ export default function Pool(): React.ReactElement {
           formatted={formatted}
           headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
           helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
-          pool={allMyPools[poolIndex]}
+          pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShow={setGoChange}
           show={goChange}
           state={changeState}
         />
       }
-      {showEdit && allMyPools?.length &&
+      {showEdit && poolsToShow?.length &&
         <EditPool
           address={address}
           apiToUse={api}
-          pool={allMyPools[poolIndex]}
+          pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShowEdit={setShowEdit}
           showEdit={showEdit}
         />
       }
-      {showRemoveAll && allMyPools?.length &&
+      {showRemoveAll && poolsToShow?.length &&
         <RemoveAll
           address={address}
           api={api}
-          pool={allMyPools[poolIndex]}
+          pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShowRemoveAll={setShowRemoveAll}
           showRemoveAll={showRemoveAll}
