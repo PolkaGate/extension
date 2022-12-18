@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, SoloSettings, StakingConsts } from '../../../util/types';
 
 import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,6 +28,7 @@ import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
+import Settings from './settings';
 
 interface SessionIfo {
   eraLength: number;
@@ -70,6 +71,7 @@ export default function Index(): React.ReactElement {
   const [toBeReleased, setToBeReleased] = useState<{ date: number, amount: BN }[]>();
   const [showUnlockings, setShowUnlockings] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [shake, setShake] = useState<boolean>(false); //  to shake to persuade to stake ;)
 
@@ -154,6 +156,10 @@ export default function Index(): React.ReactElement {
 
   const goToInfo = useCallback(() => {
     setShowInfo(true);
+  }, []);
+
+  const goToSettings = useCallback(() => {
+    setShowSettings(true);
   }, []);
 
   const goToRedeemableWithdraw = useCallback(() => {
@@ -331,7 +337,8 @@ export default function Index(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={<Box component='img' src={theme.palette.mode === 'dark' ? soloSetting : soloSettingB} />}
-            onClick={goToInfo}
+            labelMarginTop={'-7px'}
+            onClick={goToSettings}
             title={t<string>('Setting')}
           />
         }
@@ -348,6 +355,16 @@ export default function Index(): React.ReactElement {
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       />
+      {showSettings &&
+        <Settings
+          address={address}
+          api={api}
+          setShowSettings={setShowSettings}
+          showSettings={showSettings}
+          stakingConsts={stakingConsts}
+          stakingAccount={stakingAccount}
+        />
+      }
       {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
         <RedeemableWithdrawReview
           address={address}

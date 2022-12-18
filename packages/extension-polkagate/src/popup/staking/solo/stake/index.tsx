@@ -269,14 +269,12 @@ export default function Index(): React.ReactElement {
       {showAdvanceSettings &&
         <Grid item>
           <Settings
-            chain={chain}
-            setShowAdvanceSettings={setShowAdvanceSettings}
-            settings={settings}
+            address={address}
             setSettings={setSettings}
+            setShowAdvanceSettings={setShowAdvanceSettings}
             showAdvanceSettings={showAdvanceSettings}
             stakingConsts={stakingConsts}
-            decimal={decimal}
-            token={token}
+            settings={settings}
           />
         </Grid>
       }

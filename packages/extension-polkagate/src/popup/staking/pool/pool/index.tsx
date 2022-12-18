@@ -90,8 +90,6 @@ export default function Pool(): React.ReactElement {
 
       return [pool, ...filtered];
     }
-
-    return [pool];
   }, [myOtherPools, pool]);
 
   const poolState = allMyPools && allMyPools[poolIndex]?.bondedPool?.state?.toString();
