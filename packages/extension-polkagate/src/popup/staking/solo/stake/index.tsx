@@ -85,11 +85,10 @@ export default function Index(): React.ReactElement {
   const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
   const batchAll = api && api.tx.utility.batchAll;
   const nominated = api && api.tx.staking.nominate;
-  const setController = api && api.tx.staking.setController; // sign by stash
-  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
+  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [settings.stashId, amountAsBN, settings.payee] : [amountAsBN], [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total]);
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:
    * Staked - Pay into the stash account, increasing the amount at stake accordingly.
@@ -97,8 +96,6 @@ export default function Index(): React.ReactElement {
    * Account - Pay into a custom account. {Account: 17xyz....abc}
    * Controller - Pay into the controller account.
    */
-
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [settings.stashId, amountAsBN, settings.payee] : [amountAsBN], [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total]);
 
   useEffect(() => {
     if (!tx || !api || !formatted || !nominated || !batchAll) {

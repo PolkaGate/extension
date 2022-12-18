@@ -24,16 +24,15 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../../components';
-import { useAccountName, useIdentity, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountName, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, SoloSettings, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import TxDetail from './partials/TxDetail';
 import RewardsDestination from './partials/RewardDestination';
+import TxDetail from './partials/TxDetail';
 
 interface Props {
   address: string;

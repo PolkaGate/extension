@@ -9,6 +9,7 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 
 import { Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -16,10 +17,13 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
+import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
+import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../../components';
-import { useAccountName, useChain, useIdentity, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { setting } from '../../../../assets/icons';
+import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../components';
+import { useAccountName, useChain, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -34,11 +38,12 @@ interface Props {
   settings: SoloSettings,
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
+  newSettings: SoloSettings | undefined
 }
 
-function RewardsDestination({ settings, chain }: { settings: SoloSettings, chain: Chain | undefined }) {
+function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
   const { t } = useTranslation();
-  const destinationAddress: string = settings.payee === 'Staked' ? settings.stashId : settings.payee.Account;
+  const destinationAddress: string = newSettings.payee === 'Stash' ? settings.stashId : newSettings.payee === 'Controller' ? setting.controllerId : newSettings.payee.Account;
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
@@ -46,7 +51,7 @@ function RewardsDestination({ settings, chain }: { settings: SoloSettings, chain
         {t('Rewards destination')}
       </Typography>
       <Grid container item justifyContent='center'>
-        {settings.payee === 'Staked'
+        {newSettings.payee === 'Staked'
           ? <Typography sx={{ fontSize: '28px', fontWeight: 300 }}>
             {t('Add to staked Amount')}
           </Typography>
@@ -56,16 +61,18 @@ function RewardsDestination({ settings, chain }: { settings: SoloSettings, chain
           </Grid>
         }
       </Grid>
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
   );
 }
 
-export default function Review({ address, api, setShow, settings, show }: Props): React.ReactElement {
+export default function Review({ address, api, newSettings, setShow, settings, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountName(address);
   const theme = useTheme();
   const chain = useChain(address);
+  const formatted = useFormatted(address);
   const token = useToken(address);
   const onAction = useContext(ActionContext);
   const { accounts, hierarchy } = useContext(AccountContext);
@@ -77,9 +84,36 @@ export default function Review({ address, api, setShow, settings, show }: Props)
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [tx, setTx] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
+  const setController = api && api.tx.staking.setController; // sign by stash
+  const setPayee = api && api.tx.staking.setPayee; // sign by Controller
+  const batchAll = api && api.tx.utility.batchAll;
+
+  console.log('newSettings:', newSettings)
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+
+  useEffect(() => {
+    if (!setController || !setPayee || !batchAll || !formatted) {
+      return;
+    }
+
+    const txs = [];
+
+    if (settings.controllerId !== newSettings?.controllerId) {
+      txs.push(setController(newSettings?.controllerId));
+    }
+
+    if (JSON.stringify(settings.payee) !== JSON.stringify(newSettings?.payee)) {
+      txs.push(setPayee(newSettings?.payee));
+    }
+
+    const tx = txs.length === 2 ? batchAll(txs) : txs[0];
+
+    setTx(tx);
+    tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
+  }, [api, batchAll, formatted, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -121,7 +155,7 @@ export default function Review({ address, api, setShow, settings, show }: Props)
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!settings.stashId || !api) {
+      if (!settings.stashId || !api || !tx) {
         return;
       }
 
@@ -130,16 +164,8 @@ export default function Review({ address, api, setShow, settings, show }: Props)
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const setController = api.tx.staking.setController;
-      // const txs = [tx(...params)];
-      settings.controllerId !== settings.stashId && txs.push(setController(settings.controllerId));
-      const extrinsic = api.tx.utility.batchAll(txs);
-
-      const ptx = selectedProxy ? api.tx.proxy.proxy(settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
-
+      const ptx = selectedProxy ? api.tx.proxy.proxy(settings.stashId, selectedProxy.proxyType, tx) : tx;
       const { block, failureText, fee, status, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
-
-      // var { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, settings.stashId, selectedProxy);
 
       const info = {
         action: 'solo_stake_settings',
@@ -165,7 +191,7 @@ export default function Review({ address, api, setShow, settings, show }: Props)
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [settings.stashId, settings.controllerId, selectedProxyAddress, password, api, selectedProxy, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [settings.stashId, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -176,11 +202,11 @@ export default function Review({ address, api, setShow, settings, show }: Props)
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t<string>('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={settings.controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
-      <ShortAddress address={settings.controllerId} />
+      <Identity chain={chain} formatted={newSettings.controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <ShortAddress address={newSettings.controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
-  ), [chain, settings?.controllerId, t]);
+  ), [chain, newSettings?.controllerId, t]);
 
   return (
     <Motion>
@@ -191,10 +217,6 @@ export default function Review({ address, api, setShow, settings, show }: Props)
           showBackArrow
           showClose
           text={t<string>('Solo Staking Settings')}
-          withSteps={{
-            current: 2,
-            total: 2
-          }}
         />
         {isPasswordError &&
           <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
@@ -205,17 +227,27 @@ export default function Review({ address, api, setShow, settings, show }: Props)
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
-          <AccountHolderWithProxy
+          {/* <AccountHolderWithProxy
             address={address}
             chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
-          />
-          {settings.controllerId &&
+          /> */}
+          {newSettings?.controllerId &&
             <Controller />
           }
-          <RewardsDestination chain={chain} settings={settings} />
+          {newSettings?.payee &&
+            <RewardsDestination chain={chain} settings={settings} newSettings={newSettings} />
+          }
+          <Grid alignItems='center' container item justifyContent='center' lineHeight='20px' mt='10px'>
+            <Grid item>
+              {t('Fee')}:
+            </Grid>
+            <Grid item sx={{ pl: '5px' }}>
+              <ShowValue value={estimatedFee?.toHuman()} height={16} />
+            </Grid>
+          </Grid>
         </Container>
         <PasswordUseProxyConfirm
           api={api}

@@ -333,7 +333,7 @@ export default function Index(): React.ReactElement {
           onClick={goToNominations}
           title={t<string>('Validators')}
         />
-        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) && stakingAccount?.controllerId === formatted &&
+        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) && 
           <HorizontalMenuItem
             divider
             icon={<Box component='img' src={theme.palette.mode === 'dark' ? soloSetting : soloSettingB} />}
