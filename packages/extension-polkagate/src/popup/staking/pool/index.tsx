@@ -327,7 +327,7 @@ export default function Index(): React.ReactElement {
               color={theme.palette.mode === 'dark' ? 'white' : 'black'}
               icon={faPlus}
               shake={shake}
-              size='lg'
+              style={{ height: '34px', stroke: theme.palette.mode === 'dark' ? 'white' : 'black', strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
             />
           }
           onClick={goToStake}
