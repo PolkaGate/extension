@@ -9,7 +9,8 @@ import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 import { useChain, useTranslation } from '../hooks';
-import { ChainLogo, ShowValue } from '.';
+import { ChainLogo, Infotip, ShowValue } from '.';
+import { TOTAL_STAKE_HELPER_TEXT } from '../util/constants';
 
 interface Props {
   address: string;
@@ -29,9 +30,16 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', ...style }}>
-      <Grid item sx={{ fontSize: '16px' }}>
-        {label}
-      </Grid>
+      {label.includes(t('Total stake'))
+        ? <Infotip iconLeft={5} iconTop={5} showQuestionMark text={t(TOTAL_STAKE_HELPER_TEXT)}>
+          <Grid item sx={{ fontSize: '16px' }}>
+            {label}
+          </Grid>
+        </Infotip>
+        : <Grid item sx={{ fontSize: '16px' }}>
+          {label}
+        </Grid>
+      }
       <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ fontSize: '28px', fontWeight: 400 }}>
           <Grid item>

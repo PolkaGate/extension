@@ -125,3 +125,5 @@ export const DEFAULT_FILTERS = {
   sortBy: 'None (Default)',
   withIdentity: false
 };
+
+export const TOTAL_STAKE_HELPER_TEXT = 'Your total amount of stake after completing this transaction.';
