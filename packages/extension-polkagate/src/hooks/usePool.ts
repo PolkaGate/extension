@@ -33,7 +33,8 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
           const last = res?.MyPools ?? {};
 
           last[k] = null;
-          chrome.storage.local.set({ MyPools: last }).catch(console.error);
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ MyPools: last });
         });
 
         getPoolWorker.terminate();
@@ -54,7 +55,8 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
         parsedInfo.date = Date.now();
         last[k] = parsedInfo;
-        chrome.storage.local.set({ MyPools: last }).catch(console.error);
+        // eslint-disable-next-line no-void
+        void chrome.storage.local.set({ MyPools: last });
       });
 
       getPoolWorker.terminate();
