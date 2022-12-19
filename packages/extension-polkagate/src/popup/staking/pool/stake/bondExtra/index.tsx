@@ -4,6 +4,7 @@
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
+import { Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -11,9 +12,9 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton } from '../../../../../components';
-import { useAccount, useChain, useTranslation } from '../../../../../hooks';
+import { useAccount, useChain, useDecimal, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
+import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { MyPoolInfo } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import Asset from '../../../../send/partial/Asset';
@@ -41,9 +42,9 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [showReview, setShowReview] = useState<boolean>(false);
 
-  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
-  const amountAsBN = useMemo(() => new BN(parseFloat(bondAmount ?? '0') * 10 ** decimals), [decimals, bondAmount]);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
+  const amountAsBN = useMemo(() => new BN(parseFloat(bondAmount ?? '0') * 10 ** decimal), [decimal, bondAmount]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -59,24 +60,24 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
 
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
-    const maxToHuman = amountToHuman(max.toString(), decimals);
+    const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setBondAmount(maxToHuman);
-  }, [api, availableBalance, decimals, estimatedMaxFee]);
+  }, [api, availableBalance, decimal, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
     setShowReview(!showReview);
   }, [showReview]);
 
   const bondAmountChange = useCallback((value: string) => {
-    if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+    if (value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setBondAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
+  }, [decimal]);
 
   useEffect(() => {
     if (!balances) {
@@ -100,7 +101,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
     amountAsBN && api.tx.nominationPools.bondExtra({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
-  }, [formatted, api, availableBalance, bondAmount, decimals, amountAsBN]);
+  }, [formatted, api, availableBalance, bondAmount, decimal, amountAsBN]);
 
   useEffect(() => {
     if (!bondAmount || !amountAsBN || !api) {
@@ -111,7 +112,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
     const isAmountInRange = amountAsBN.gt(availableBalance?.sub(ED.muln(2)).sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO);
 
     setNextBtnDisabled(!(bondAmount && bondAmount !== '0' && !isAmountInRange) && !pool);
-  }, [amountAsBN, availableBalance, decimals, estimatedMaxFee, bondAmount, api, pool]);
+  }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, bondAmount, api, pool]);
 
   return (
     <>
@@ -157,6 +158,9 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
           width: '92%'
         }}
       />
+      <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
+        {t<string>('Your rewards wil be automatically withdrawn.')}
+      </Typography>
       <PButton _onClick={toReview} disabled={nextBtnDisabled} text={t<string>('Next')} />
       {showReview &&
         <Review
