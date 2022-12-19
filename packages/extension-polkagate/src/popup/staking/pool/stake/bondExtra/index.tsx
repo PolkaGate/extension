@@ -159,7 +159,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         }}
       />
       <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
-        {t<string>('Your rewards wil be automatically withdrawn.')}
+        {t<string>('Your rewards will be automatically withdrawn.')}
       </Typography>
       <PButton _onClick={toReview} disabled={nextBtnDisabled} text={t<string>('Next')} />
       {showReview &&
