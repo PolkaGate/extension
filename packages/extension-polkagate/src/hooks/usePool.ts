@@ -27,14 +27,13 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
       if (!info) {
         setMyPool(null);
-        /** remove saved pool from local storage if any */
+        /** remove saved old pool from local storage if any */
         chrome.storage.local.get('MyPools', (res) => {
           const k = `${formatted}`;
           const last = res?.MyPools ?? {};
 
           last[k] = null;
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ MyPools: last });
+          chrome.storage.local.set({ MyPools: last }).catch(console.error);
         });
 
         getPoolWorker.terminate();
@@ -48,14 +47,14 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
 
       setMyPool(parsedInfo);
 
-      /** save my pool to local storage if it is not fetched by id, since pools to join are fetched byy Id*/
+      /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${formatted}`;
         const last = res?.MyPools ?? {};
 
+        parsedInfo.date = Date.now();
         last[k] = parsedInfo;
-        // eslint-disable-next-line no-void
-        void chrome.storage.local.set({ MyPools: last });
+        chrome.storage.local.set({ MyPools: last }).catch(console.error);
       });
 
       getPoolWorker.terminate();

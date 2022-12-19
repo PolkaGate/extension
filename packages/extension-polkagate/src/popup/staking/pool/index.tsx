@@ -22,7 +22,7 @@ import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Ident
 import { useApi, useBalances, useChain, useFormatted, useIdentity, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
@@ -64,6 +64,7 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
+  const isPoolInfoOutdated = useMemo(() => pool && (Date.now() - pool.date) > BALANCES_VALIDITY_PERIOD, [pool]);
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -211,7 +212,7 @@ export default function Index(): React.ReactElement {
           </Grid>
           <Grid container item justifyContent='flex-end' xs>
             <Grid alignItems='flex-end' container direction='column' item xs>
-              <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '20px' }} >
+              <Grid item sx={{ color: isPoolInfoOutdated ? 'primary.light' : 'text.primary', fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} >
                 {value && token && decimal
                   ? <FormatBalance2 decimalPoint={4} decimals={[decimal]} tokens={[token]} value={value} />
                   : <ShowBalance api={api} balance={value} decimalPoint={2} />
