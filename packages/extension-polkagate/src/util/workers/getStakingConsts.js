@@ -18,9 +18,13 @@ async function getStackingConsts(endpoint) {
     const epochDuration = apiAt.consts.babe.epochDuration.toNumber();
     const expectedBlockTime = api.consts.babe.expectedBlockTime.toNumber();
     const epochDurationInHours = epochDuration * expectedBlockTime / 3600000; // 1000miliSec * 60sec * 60min
-    const minNominatorBond = await apiAt.query.staking.minNominatorBond();
+    const [minNominatorBond, currentEraIndex] = await Promise.all([
+      apiAt.query.staking.minNominatorBond(),
+      api.query.staking.currentEra()
+    ]);
 
     return {
+      eraIndex: currentEraIndex.toString(),
       existentialDeposit,
       maxNominations,
       maxNominatorRewardedPerValidator,

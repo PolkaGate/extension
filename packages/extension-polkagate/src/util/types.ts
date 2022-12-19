@@ -49,6 +49,7 @@ export interface AccountsBalanceType {
 }
 
 export interface StakingConsts {
+  eraIndex: string;
   existentialDeposit: BN;
   maxNominations: number;
   maxNominatorRewardedPerValidator: number;
@@ -341,6 +342,7 @@ export interface Option {
 }
 
 export interface PoolStakingConsts {
+  eraIndex: string;
   lastPoolId: BN;
   maxPoolMembers: number;
   maxPoolMembersPerPool: number;

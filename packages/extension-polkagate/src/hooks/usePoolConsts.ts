@@ -5,17 +5,17 @@ import type { PoolStakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
-import { useChain, useEndpoint2 } from '.';
+import { useChain, useCurrentEraIndex, useEndpoint2 } from '.';
 
 export default function usePoolConsts(address: string, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();
+  const [newConsts, setNewConsts] = useState<PoolStakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
+  const eraIndex = useCurrentEraIndex(address);
+
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
   const getPoolStakingConsts = useCallback((endpoint: string) => {
@@ -40,9 +40,9 @@ export default function usePoolConsts(address: string, stateConsts?: PoolStaking
         c.minJoinBond = new BN(c.minJoinBond);
         c.minNominatorBond = new BN(c.minNominatorBond);
 
-        setConsts(c);
+        setNewConsts(c);
       } else {
-        setConsts(null);
+        setNewConsts(null);
       }
 
       getPoolStakingConstsWorker.terminate();
@@ -74,8 +74,8 @@ export default function usePoolConsts(address: string, stateConsts?: PoolStaking
       return setConsts(stateConsts);
     }
 
-    endpoint && chain && getPoolStakingConsts(endpoint);
-  }, [endpoint, chain, getPoolStakingConsts, stateConsts]);
+    endpoint && chain && eraIndex && eraIndex !== consts?.eraIndex && getPoolStakingConsts(endpoint);
+  }, [endpoint, chain, getPoolStakingConsts, stateConsts, eraIndex, consts?.eraIndex]);
 
-  return consts;
+  return newConsts || consts;
 }
