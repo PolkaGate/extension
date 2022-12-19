@@ -255,7 +255,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           ignoreAddress={formatted}
           label={t('To')}
           setAddress={setRecipientAddress}
-          style={{ pt: '10px' }}
+          style={{ pt: '15px' }}
         />
         <Asset
           api={api}
@@ -264,6 +264,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           balances={balances}
           fee={fee}
           genesisHash={genesisHash}
+          style={{ pt: '15px' }}
         />
         <AmountWithOptions
           label={t<string>('Amount')}
@@ -273,6 +274,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           primaryBtnText={t<string>('Max amount')}
           secondaryBtnText={t<string>('All amount')}
           value={amount}
+          style={{ pt: '15px' }}
         />
       </Container>
       <PButton

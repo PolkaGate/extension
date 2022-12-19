@@ -10,6 +10,7 @@ import { fixFloatingPoint } from '../util/utils';
 import InputWithLabel from './InputWithLabel';
 
 interface Props {
+  disabled?: boolean;
   value?: string;
   secondaryBtnText?: string;
   primaryBtnText: string;
@@ -20,7 +21,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function AmountWithOptions({ label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
+export default function AmountWithOptions({ disabled, label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
   }, [onChangeAmount]);
@@ -29,6 +30,7 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
     <Grid container sx={style}>
       <Grid item xs={8}>
         <InputWithLabel
+          disabled={disabled}
           fontSize={28}
           fontWeight={400}
           height={50}
@@ -40,10 +42,10 @@ export default function AmountWithOptions({ label, onChangeAmount, onPrimary, on
         />
       </Grid>
       <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs={4}>
-        <Grid item onClick={onPrimary} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Grid item onClick={onPrimary} sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>
-        <Grid item onClick={onSecondary} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Grid item onClick={onSecondary} sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {secondaryBtnText}
         </Grid>
       </Grid>
