@@ -206,12 +206,13 @@ export default function Index(): React.ReactElement {
     helperButton === 2 && setGoChange(!goChange);
   }, [goChange, helperButton]);
 
-  const Warn = ({ text }: { text: string }) => (
-    <Grid color='red' container justifyContent='center' py='15px' sx={{ 'div.belowInput.danger': { m: 0 } }}>
+  const Warn = ({ text, isDanger, iconDanger }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
+    <Grid color='red' container sx={{ 'div.belowInput': { m: '5px 0 -8px', p: 0 }, 'div.belowInput.danger': { m: 0, mt: '10px' } }}>
       <Warning
         fontWeight={400}
+        iconDanger={iconDanger}
         isBelowInput
-        isDanger
+        isDanger={isDanger}
         theme={theme}
       >
         {text}
@@ -234,8 +235,8 @@ export default function Index(): React.ReactElement {
         withSteps={{ current: 1, total: 2 }}
       />
       {helperText &&
-        <Grid container justifyContent='center' height='79px' m='auto' width='92%'>
-          <Warn text={helperText} />
+        <Grid container height='78px' justifyContent='center' m='auto' width='92%'>
+          <Warn isDanger text={helperText} />
           {helperButton &&
             <Button onClick={helperButton === 1 ? goToDestroying : goToRemoveAll}
               startIcon={
@@ -252,7 +253,7 @@ export default function Index(): React.ReactElement {
                     />)
               }
               sx={{
-                mt: '30px',
+                mt: '50px',
                 textDecorationLine: 'underline',
                 textTransform: 'capitalize'
               }}
@@ -274,7 +275,7 @@ export default function Index(): React.ReactElement {
             value={amount}
           />
           {alert &&
-            <Warn text={alert} />
+            <Warn iconDanger text={alert} />
           }
         </div>
       </Grid>
