@@ -5,7 +5,10 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
+import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -19,13 +22,15 @@ import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
+import SetState from '../pool/SetState';
 import Review from './Review';
+import RemoveAll from '../pool/removeAll';
 
 interface State {
   api: ApiPromise | undefined;
   pathname: string;
   poolConsts: PoolStakingConsts | undefined;
-  stakingConsts: StakingConsts | undefined
+  stakingConsts: StakingConsts;
   myPool: MyPoolInfo | undefined;
 }
 
@@ -37,15 +42,19 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
-  const myPool = usePool(address, undefined, state?.myPool);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const myPool = usePool(address, undefined, state?.myPool, refresh);
   const formatted = useFormatted(address);
   const poolConsts = usePoolConsts(address, state?.poolConsts);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
+  const [helperText, setHelperText] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
+  const [helperButton, setShowHelperButton] = useState<number>(0);
+  const [goChange, setGoChange] = useState<boolean>(false);
 
   const staked = useMemo(() => {
     if (myPool && myPool.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
@@ -59,6 +68,11 @@ export default function Index(): React.ReactElement {
   const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
+  const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
+  const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
+  const poolMemberCounter = useMemo(() => Number(myPool?.bondedPool?.memberCounter), [myPool?.bondedPool?.memberCounter]);
+  const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
 
   const unbonded = api && api.tx.nominationPools.unbond;
   const poolWithdrawUnbonded = api && api.tx.nominationPools.poolWithdrawUnbonded;
@@ -115,6 +129,24 @@ export default function Index(): React.ReactElement {
     }).catch(console.error);
   }, [amount, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
+  useEffect(() => {
+    if (!myPool || !formatted || !poolConsts || !staked) {
+      return;
+    }
+
+    const partial = staked.sub(poolConsts.minCreateBond);
+
+    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
+      setHelperText(t<string>('You need to change the pool state to Destroying first to be able to unstake.'));
+      setShowHelperButton(1);
+    }
+
+    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
+      setHelperText(t<string>('You need to remove all members first to be able to unstake.'));
+      setShowHelperButton(2);
+    }
+  }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
+
   const onBackClick = useCallback(() => {
     history.push({
       pathname: state?.pathname ?? '/',
@@ -139,35 +171,43 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    if (String(formatted) === String(myPool.bondedPool?.roles.root) && String(myPool.bondedPool?.state) === 'Destroying' && Number(myPool.bondedPool?.memberCounter) === 1) {
+    if (isPoolRoot && poolState === 'Destroying' && poolMemberCounter === 1) {
       setUnstakeAllAmount(true);
       setAmount(amountToHuman(staked.toString(), decimal));
     }
 
-    if (String(formatted) === String(myPool.bondedPool?.roles?.depositor) && String(myPool.bondedPool?.state) === 'Destroying' && Number(myPool.bondedPool?.memberCounter) === 1) {
+    if (isPoolDepositor && poolState === 'Destroying' && poolMemberCounter === 1) {
       setUnstakeAllAmount(true);
       setAmount(amountToHuman(staked, decimal));
     }
 
-    if (String(formatted) === String(myPool.bondedPool?.roles?.depositor) && (String(myPool.bondedPool?.state) !== 'Destroying' || Number(myPool.bondedPool?.memberCounter) !== 1)) {
+    if (isPoolDepositor && (poolState !== 'Destroying' || poolMemberCounter !== 1)) {
       const partial = staked.sub(poolConsts.minCreateBond);
 
       setUnstakeAllAmount(false);
       !partial.isZero() && setAmount(amountToHuman(partial, decimal));
     }
 
-    if (String(formatted) !== String(myPool.bondedPool?.roles.root) && String(formatted) !== String(myPool.bondedPool?.roles.depositor)) {
+    if (!isPoolDepositor && !isPoolRoot) {
       setUnstakeAllAmount(true);
       setAmount(amountToHuman(staked.toString(), decimal));
     }
-  }, [decimal, formatted, myPool, poolConsts, staked]);
+  }, [decimal, formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked]);
 
   const goToReview = useCallback(() => {
     setShowReview(true);
   }, []);
 
+  const goToDestroying = useCallback(() => {
+    helperButton === 1 && setGoChange(!goChange);
+  }, [goChange, helperButton]);
+
+  const goToRemoveAll = useCallback(() => {
+    helperButton === 2 && setGoChange(!goChange);
+  }, [goChange, helperButton]);
+
   const Warn = ({ text }: { text: string }) => (
-    <Grid color='red' container justifyContent='center' py='15px'>
+    <Grid color='red' container justifyContent='center' py='15px' sx={{ 'div.belowInput.danger': { m: 0 } }}>
       <Warning
         fontWeight={400}
         isBelowInput
@@ -193,13 +233,40 @@ export default function Index(): React.ReactElement {
         label={t('Unstake')}
         withSteps={{ current: 1, total: 2 }}
       />
-      {staked?.isZero() &&
-        <Warn text={t<string>('Nothing to unstake.')} />
+      {helperText &&
+        <Grid container justifyContent='center' height='79px' m='auto' width='92%'>
+          <Warn text={helperText} />
+          {helperButton &&
+            <Button onClick={helperButton === 1 ? goToDestroying : goToRemoveAll}
+              startIcon={
+                helperButton === 1
+                  ? (
+                    <AutoDeleteIcon
+                      sx={{ color: 'text.primary', fontSize: '21px' }}
+                    />)
+                  : (
+                    <FontAwesomeIcon
+                      color={theme.palette.text.primary}
+                      fontSize='18px'
+                      icon={faPersonCircleXmark}
+                    />)
+              }
+              sx={{
+                mt: '30px',
+                textDecorationLine: 'underline',
+                textTransform: 'capitalize'
+              }}
+              variant='text'
+            >
+              {helperButton === 1 ? t<string>('Destroying') : t<string>('RemoveAll')}
+            </Button>}
+        </Grid>
       }
       <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset api={api} balance={staked} balanceLabel={t('Staked')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
-        <div style={{ paddingTop: '30px' }}>
+        <div style={{ paddingTop: '15px' }}>
           <AmountWithOptions
+            disabled={!!helperButton}
             label={t<string>('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
             onPrimary={onAllAmount}
@@ -210,7 +277,6 @@ export default function Index(): React.ReactElement {
             <Warn text={alert} />
           }
         </div>
-
       </Grid>
       <ShowPool
         api={api}
@@ -224,9 +290,10 @@ export default function Index(): React.ReactElement {
           width: '92%'
         }}
       />
-      <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
-        {t<string>('Your rewards wil be automatically withdrawn.')}
-      </Typography>
+      {!helperButton &&
+        <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
+          {t<string>('Your rewards wil be automatically withdrawn.')}
+        </Typography>}
       <PButton
         _onClick={goToReview}
         disabled={!amount || amount === '0'}
@@ -249,6 +316,31 @@ export default function Index(): React.ReactElement {
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}
+        />
+      }
+      {goChange && helperButton === 1 && myPool && formatted &&
+        <SetState
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={formatted}
+          headerText={t<string>('Destroy Pool')}
+          helperText={destroyHelperText}
+          pool={myPool}
+          setRefresh={setRefresh}
+          setShow={setGoChange}
+          show={goChange}
+          state={'Destroying'}
+        />
+      }
+      {goChange && helperButton === 2 && myPool && formatted &&
+        <RemoveAll
+          address={address}
+          api={api}
+          pool={myPool}
+          setRefresh={setRefresh}
+          setShowRemoveAll={setGoChange}
+          showRemoveAll={goChange}
         />
       }
     </Motion>
