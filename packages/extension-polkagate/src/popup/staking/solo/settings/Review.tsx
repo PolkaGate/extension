@@ -45,6 +45,8 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
   const { t } = useTranslation();
   const destinationAddress: string = newSettings.payee === 'Stash' ? settings.stashId : newSettings.payee === 'Controller' ? setting.controllerId : newSettings.payee.Account;
 
+  console.log('newSettings newSettings:', newSettings);
+  
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
       <Typography sx={{ fontWeight: 300 }}>
@@ -53,7 +55,7 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
       <Grid container item justifyContent='center'>
         {newSettings.payee === 'Staked'
           ? <Typography sx={{ fontSize: '28px', fontWeight: 300 }}>
-            {t('Add to staked Amount')}
+            {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
             <Identity chain={chain} formatted={destinationAddress} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
@@ -90,7 +92,6 @@ export default function Review({ address, api, newSettings, setShow, settings, s
   const setPayee = api && api.tx.staking.setPayee; // sign by Controller
   const batchAll = api && api.tx.utility.batchAll;
 
-  console.log('newSettings:', newSettings)
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -101,11 +102,11 @@ export default function Review({ address, api, newSettings, setShow, settings, s
 
     const txs = [];
 
-    if (settings.controllerId !== newSettings?.controllerId) {
+    if (newSettings?.controllerId && settings.controllerId !== newSettings?.controllerId) {
       txs.push(setController(newSettings?.controllerId));
     }
 
-    if (JSON.stringify(settings.payee) !== JSON.stringify(newSettings?.payee)) {
+    if (newSettings?.payee && JSON.stringify(settings.payee) !== JSON.stringify(newSettings?.payee)) {
       txs.push(setPayee(newSettings?.payee));
     }
 
@@ -283,7 +284,7 @@ export default function Review({ address, api, newSettings, setShow, settings, s
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail settings={settings} txInfo={txInfo} />
+            <TxDetail newSettings={newSettings} txInfo={txInfo} />
           </Confirmation>)
         }
       </Popup>

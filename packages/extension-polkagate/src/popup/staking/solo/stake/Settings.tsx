@@ -29,7 +29,7 @@ export default function Settings({ address, setSettings, setShowAdvanceSettings,
       <SettingsHeader />
       <SetPayeeController
         address={address}
-        setSettings={setSettings}
+        set={setSettings}
         setShow={setShowAdvanceSettings}
         settings={settings}
         stakingConsts={stakingConsts}

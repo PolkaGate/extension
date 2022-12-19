@@ -21,7 +21,7 @@ interface Props {
 
 export default function RewardsDestination({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const address: string = settings.payee === 'Staked' ? settings.stashId : settings.payee.Account;
+  const address: string = settings.payee === 'Staked' ? settings.stashId : settings.payee.Account; // just to show the address in review page
   const payeeName = useAccountName(address)
   const payeeIdentity = useIdentity(address);
 
@@ -33,7 +33,7 @@ export default function RewardsDestination({ settings }: Props): React.ReactElem
       <Grid container item justifyContent='center' mt='5px'>
         {settings.payee === 'Staked'
           ? <Typography sx={{ fontWeight: 400 }}>
-            {t('Add to staked Amount')}
+            {t('Add to staked amount')}
           </Typography>
           : <Grid container item justifyContent='center'>
             <Grid item sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content', maxWidth: '60%' }}>

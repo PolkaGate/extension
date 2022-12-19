@@ -49,9 +49,6 @@ export default function Settings({ address, api, setShowSettings, showSettings, 
     setSettings({ controllerId: parsedStakingAccount?.controllerId || formatted, payee, stashId: parsedStakingAccount.stashId });
   }, [formatted, stakingAccount]);
 
-  console.log('settings', settings)
-
-
   const onBackClick = useCallback(() => {
     setShowSettings(false);
   }, [setShowSettings]);
@@ -73,7 +70,8 @@ export default function Settings({ address, api, setShowSettings, showSettings, 
             <SetPayeeController
               address={address}
               buttonLabel={t('Next')}
-              setSettings={setNewSettings}
+              newSettings={newSettings}
+              set={setNewSettings}
               setShow={setShowSettings}
               setShowReview={setShowReview}
               settings={settings}
@@ -84,9 +82,9 @@ export default function Settings({ address, api, setShowSettings, showSettings, 
           <Review
             address={address}
             api={api}
+            newSettings={newSettings}
             setShow={setShowReview}
             settings={settings}
-            newSettings={newSettings}
             show={showReview}
           />
         }

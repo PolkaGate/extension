@@ -64,7 +64,7 @@ export default function Index(): React.ReactElement {
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const decimal = stakingAccount?.decimal;
   const token = stakingAccount?.token;
-  const isBalanceOutdated = useMemo(() => stakingAccount && Date.now() - stakingAccount.date > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
+  const isBalanceOutdated = useMemo(() => stakingAccount && (Date.now() - (stakingAccount.date || 0)) > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
@@ -333,7 +333,7 @@ export default function Index(): React.ReactElement {
           onClick={goToNominations}
           title={t<string>('Validators')}
         />
-        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) && 
+        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) &&
           <HorizontalMenuItem
             divider
             icon={<Box component='img' src={theme.palette.mode === 'dark' ? soloSetting : soloSettingB} />}

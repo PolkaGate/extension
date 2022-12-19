@@ -58,13 +58,7 @@ export default function TxDetail({ settings, txInfo }: Props): React.ReactElemen
           </Grid>
         </Grid>
       }
-      <Divider sx={{
-        bgcolor: 'secondary.main',
-        height: '2px',
-        m: '5px auto',
-        width: '75%'
-      }}
-      />
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
         <Typography
           fontSize='16px'

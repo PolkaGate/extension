@@ -12,37 +12,43 @@ import { AccountInputWithIdentity, PButton, Select, Warning } from '../../../../
 import { useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../../hooks';
 import { SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman, isValidAddress } from '../../../../../util/utils';
+import getPayee from './util';
 
 interface Props {
   address: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  setSettings: React.Dispatch<React.SetStateAction<SoloSettings | undefined>>; // This is actually setNewSettings
+  set: React.Dispatch<React.SetStateAction<SoloSettings>>; // This is actually setNewSettings
   stakingConsts: StakingConsts | null | undefined;
   buttonLabel?: string;
   setShowReview?: React.Dispatch<React.SetStateAction<boolean>>;
   settings: SoloSettings;
+  newSettings?: SoloSettings; // will be used when user is already has staked
 }
 
-export default function SetPayeeController({ address, buttonLabel, setSettings, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
+export default function SetPayeeController({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
-
+  const isSettingAtBonding = useMemo(() => !newSettings, [newSettings]);
   const [controllerId, setControllerId] = useState<AccountId | string | undefined>(settings.controllerId);
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
-  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string>(settings.payee?.Account);
+  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>(getPayee(settings));
 
   const REWARD_DESTINATIONS = [
-    { text: t('Add to staked'), value: 'Staked' },
+    { text: t('Add to staked amount'), value: 'Staked' },
     { text: t('Transfer to a specific account'), value: 'Others' }
   ];
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
-  const onSelectionMethodChange = useCallback((value: string): void => {
+  const onSelectionMethodChange = useCallback((value: 'Staked' | 'Others'): void => {
     setRewardDestinationValue(value);
+
+    if (value === 'Staked') {
+      setRewardDestinationAccount(undefined);// to reset
+    }
   }, []);
 
   const makePayee = useCallback((rewardDestinationValue: 'Staked' | 'Others', rewardDestinationAccount?: string) => {
@@ -63,24 +69,29 @@ export default function SetPayeeController({ address, buttonLabel, setSettings, 
     }
   }, [controllerId, settings.controllerId, settings.stashId]);
 
+  const payeeNotChanged = useMemo(() => JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount)), [makePayee, rewardDestinationAccount, rewardDestinationValue, settings.payee]);
+
   const onSet = useCallback(() => {
-    setSettings((s) => {
+    set((s) => {
       if (controllerId && settings.controllerId !== controllerId) {
         s.controllerId = controllerId;
+      } else {
+        s.controllerId = undefined;
       }
 
       const payee = makePayee(rewardDestinationValue, rewardDestinationAccount);
 
       if (payee && JSON.stringify(settings.payee) !== JSON.stringify(payee)) {
         s.payee = payee;
+      } else {
+        s.payee = undefined;
       }
-      // settings.payee = rewardDestinationValue === 'Staked' ? 'Staked' : { Account: rewardDestinationAccount }; // TODO: change types accordingly
 
       return s;
     });
     setShowReview && setShowReview(true);
     !setShowReview && setShow(false); // can be left open when settings accessed from home
-  }, [controllerId, makePayee, rewardDestinationAccount, rewardDestinationValue, setSettings, setShow, setShowReview, settings.controllerId, settings.payee]);
+  }, [controllerId, makePayee, rewardDestinationAccount, rewardDestinationValue, set, setShow, setShowReview, settings.controllerId, settings.payee]);
 
   const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>
@@ -131,7 +142,16 @@ export default function SetPayeeController({ address, buttonLabel, setSettings, 
       }
       <PButton
         _onClick={onSet}
-        disabled={!controllerId || (rewardDestinationValue === 'Others' && (!rewardDestinationAccount || !isValidAddress(rewardDestinationAccount)))}
+        disabled={
+          isSettingAtBonding
+            ? !controllerId || (rewardDestinationValue === 'Others' && !rewardDestinationAccount)
+            : settings.stashId === settings.controllerId
+              ? (!controllerId || (controllerId === settings.controllerId && payeeNotChanged)) ||
+              (rewardDestinationValue === 'Others' && !rewardDestinationAccount)
+              : formatted === settings.stashId
+                ? !controllerId || controllerId === settings.controllerId
+                : payeeNotChanged || (rewardDestinationValue === 'Others' && !rewardDestinationAccount)
+        }
         text={buttonLabel || t<string>('Set')}
       />
     </Grid>
