@@ -253,6 +253,9 @@ export default function Index(): React.ReactElement {
                     />)
               }
               sx={{
+                color: 'text.primary',
+                fontWeight: 400,
+                fontSize: '14px',
                 mt: '50px',
                 textDecorationLine: 'underline',
                 textTransform: 'capitalize'
