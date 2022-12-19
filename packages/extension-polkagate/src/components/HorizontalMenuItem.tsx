@@ -14,9 +14,10 @@ interface Props {
   exceptionWidth?: number;
   textDisabled?: boolean;
   isLoading?: boolean;
+  labelMarginTop?: string;
 }
 
-export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0, icon, isLoading = false, onClick, textDisabled, title }: Props): React.ReactElement {
+export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0, labelMarginTop = '0px', icon, isLoading = false, onClick, textDisabled, title }: Props): React.ReactElement {
   return (
     <>
       {isLoading
@@ -31,7 +32,7 @@ export default function HorizontalMenuItem({ divider = false, exceptionWidth = 0
             </IconButton>
           </Grid>
           <Grid item textAlign='center'>
-            <Typography fontSize='12px' fontWeight={300} sx={{ color: textDisabled && 'action.disabledBackground', pt: '3px' }}>
+            <Typography fontSize='12px' fontWeight={300} sx={{ color: textDisabled && 'action.disabledBackground', pt: '3px', mt: labelMarginTop }}>
               {title}
             </Typography>
           </Grid>
