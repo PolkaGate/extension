@@ -135,7 +135,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
                     right: '25px'
                   }}
                 >
-                  <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.mode === 'dark' ? 'white' : 'black' : theme.palette.text.disabled}` }} />
+                  <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
                 </IconButton>
               }
             </>
