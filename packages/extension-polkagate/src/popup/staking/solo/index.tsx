@@ -349,6 +349,7 @@ export default function Index(): React.ReactElement {
         />
       </Grid>
       <Info
+        address={address}
         api={api}
         info={stakingConsts}
         nominatorInfo={nominatorInfo}

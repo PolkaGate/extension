@@ -14,7 +14,7 @@ async function getPoolStackingConsts(endpoint) {
 
     const ED = new BN(api.consts.balances.existentialDeposit);
 
-    const [maxPoolMembers, maxPoolMembersPerPool, maxPools, minCreateBond, minJoinBond, minNominatorBond, lastPoolId] =
+    const [maxPoolMembers, maxPoolMembersPerPool, maxPools, minCreateBond, minJoinBond, minNominatorBond, lastPoolId, currentEra] =
       await Promise.all([
         apiAt.query.nominationPools.maxPoolMembers(),
         apiAt.query.nominationPools.maxPoolMembersPerPool(),
@@ -22,10 +22,12 @@ async function getPoolStackingConsts(endpoint) {
         apiAt.query.nominationPools.minCreateBond(),
         apiAt.query.nominationPools.minJoinBond(),
         apiAt.query.staking.minNominatorBond(),
-        apiAt.query.nominationPools.lastPoolId()
+        apiAt.query.nominationPools.lastPoolId(),
+        api.query.staking.currentEra()
       ]);
 
     return {
+      eraIndex: currentEra.toString(),
       lastPoolId: lastPoolId.toString(),
       maxPoolMembers: maxPoolMembers.isSome ? maxPoolMembers.unwrap().toNumber() : -1,
       maxPoolMembersPerPool: maxPoolMembersPerPool.isSome ? maxPoolMembersPerPool.unwrap().toNumber() : -1,
