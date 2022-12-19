@@ -94,6 +94,7 @@ export default function AddProxy(): React.ReactElement {
         style={{ marginTop: '-15px', marginBottom: '20px' }}
       />
       <InputWithLabelAndIdenticon
+        addWithQr
         address={realAddress}
         chain={chain}
         label={t<string>('Account ID')}
