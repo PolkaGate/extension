@@ -663,8 +663,10 @@ export interface APIsContext {
   apis: APIs;
   setIt: (apis: APIs) => void;
 }
+
+export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
 export interface SoloSettings {
   controllerId: AccountId | string | undefined,
-  payee: 'Staked' | 'Controller' | 'Stash' | { Account: string },
+  payee: Payee,
   stashId: AccountId | string | undefined,
 }
