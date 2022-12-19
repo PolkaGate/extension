@@ -218,6 +218,7 @@ export default function Review({ address, api, newSettings, setShow, settings, s
           showBackArrow
           showClose
           text={t<string>('Solo Staking Settings')}
+          withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
           <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>

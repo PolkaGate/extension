@@ -64,7 +64,7 @@ export default function Settings({ address, api, setShowSettings, showSettings, 
           showClose
           text={t<string>('Solo Staking')}
         />
-        <SubTitle label={t('Settings')} lineHeight='32px' />
+        <SubTitle label={t('Settings')} lineHeight='32px' withSteps={{ current: 1, total: 2 }} />
         <Grid container sx={{ mt: '10px' }}>
           {settings &&
             <SetPayeeController
