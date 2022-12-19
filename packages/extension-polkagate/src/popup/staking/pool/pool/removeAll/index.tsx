@@ -82,7 +82,7 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
 
   const needsUnboundAll = useMemo(() => {
     if (!members) {
-      return false;
+      return undefined;
     }
 
     const allMembersPoints = members.reduce((sum: BN, { points }) => sum.add(points), BN_ZERO);
@@ -119,7 +119,7 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
   }, [api, members, formatted, pool]);
 
   useEffect(() => {
-    if (needsUnboundAll) {
+    if (needsUnboundAll || needsUnboundAll === undefined) {
       return setStep(1);
     }
 
