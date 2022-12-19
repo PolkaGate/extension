@@ -9,16 +9,17 @@ import type { ApiPromise } from '@polkadot/api';
 import type { NominatorInfo, StakingConsts } from '../../../util/types';
 
 import { Container, Divider, Grid } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { ActionContext, Popup, ShowBalance, ShowValue } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { Popup, ShowValue } from '../../../components';
+import { useDecimal, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { amountToHuman } from '../../../util/utils';
 
 interface Props {
+  address: string;
   api: ApiPromise | undefined;
   showInfo: boolean;
   info: StakingConsts | null | undefined;
@@ -26,10 +27,10 @@ interface Props {
   nominatorInfo: NominatorInfo | undefined
 }
 
-export default function Info({ api, info, nominatorInfo, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, api, info, nominatorInfo, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const token = api && api.registry.chainTokens[0];
-  const decimal = api && api.registry.chainDecimals[0];
+  const token = useToken(address);
+  const decimal = useDecimal(address);
 
   const onBackClick = useCallback(() => {
     setShowInfo(false);

@@ -360,7 +360,13 @@ export default function Index(): React.ReactElement {
           title={t<string>('Info')}
         />
       </Grid>
-      <Info api={api} info={consts} setShowInfo={setShowInfo} showInfo={showInfo} />
+      <Info
+        address={address}
+        api={api}
+        info={consts}
+        setShowInfo={setShowInfo}
+        showInfo={showInfo}
+      />
       {showRewardStake && formatted && api && claimable && staked && chain &&
         <RewardsStakeReview
           address={address}
