@@ -1,12 +1,15 @@
 // Copyright 2019-2022 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import '@vaadin/icons';
+
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
+import settings from '@polkadot/ui-settings';
 
 import { useOutsideClick } from '../hooks';
 import isValidAddress from '../util/validateAddress';
@@ -14,11 +17,11 @@ import Identicon from './Identicon';
 import Label from './Label';
 import ShortAddress from './ShortAddress';
 import { Input } from './TextInputs';
+import QrScanner from '../popup/import/addAddressOnly/QrScanner';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];
   label: string;
-  // onChange?: (value: string) => void;
   style?: SxProps<Theme>;
   chain?: Chain;
   address: string | undefined;
@@ -27,10 +30,12 @@ interface Props {
   helperText?: string;
   placeHolder?: string;
   disabled?: boolean;
+  addWithQr?: boolean;
 }
 
-export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
+  const [openCamera, setOpenCamera] = useState<boolean>(false);
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -58,6 +63,10 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
 
   const _setOffFocus = useCallback(() => {
     setOffFocus(true);
+  }, []);
+
+  const openQrScanner = useCallback(() => {
+    setOpenCamera(true);
   }, []);
 
   const pasteAddress = useCallback(() => {
@@ -90,7 +99,7 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
               fontWeight: 300,
               padding: 0,
               paddingLeft: '10px',
-              paddingRight: disabled ? '10px' : '30px'
+              paddingRight: disabled ? '10px' : addWithQr ? '55px' : '30px'
             }}
             theme={theme}
             type='text'
@@ -98,20 +107,38 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
             withError={offFocus && address !== undefined && !isValidAddress(address)}
           />
           {!disabled &&
-            <IconButton
-              onClick={pasteAddress}
-              sx={{
-                bottom: '0',
-                position: 'absolute',
-                right: '0'
-              }}
-            >
-              <FontAwesomeIcon
-                color={theme.palette.secondary.light}
-                fontSize='15px'
-                icon={address ? faXmarkCircle : faPaste}
-              />
-            </IconButton>
+            <>
+              <IconButton
+                onClick={pasteAddress}
+                sx={{
+                  bottom: '0',
+                  m: '3px',
+                  p: '5px',
+                  position: 'absolute',
+                  right: '0'
+                }}
+              >
+                <FontAwesomeIcon
+                  color={theme.palette.secondary.light}
+                  fontSize='15px'
+                  icon={address ? faXmarkCircle : faPaste}
+                />
+              </IconButton>
+              {addWithQr &&
+                <IconButton
+                  onClick={openQrScanner}
+                  sx={{
+                    bottom: '0',
+                    m: '3px',
+                    p: '5px',
+                    position: 'absolute',
+                    right: '25px'
+                  }}
+                >
+                  <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.mode === 'dark' ? 'white' : 'black' : theme.palette.text.disabled}` }} />
+                </IconButton>
+              }
+            </>
           }
         </Label>
       </Grid>
@@ -185,6 +212,9 @@ export default function InputWithLabelAndIdenticon({ allAddresses = [], chain = 
             </Grid>
           ))}
         </Grid>
+      }
+      {openCamera &&
+        <QrScanner openCamera={openCamera} setAddress={_selectAddress} setOpenCamera={setOpenCamera} />
       }
     </Grid>
   );

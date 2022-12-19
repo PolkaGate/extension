@@ -9,18 +9,14 @@ import { useParams } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../components';
-import { useAccount, useApi, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { useAccount, useApi, useMetadata, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
 import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
 
-interface Props {
-  className?: string;
-}
-
-export default function ManageProxies({ className }: Props): React.ReactElement {
+export default function ManageProxies(): React.ReactElement {
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | undefined>();
   const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
   const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
@@ -40,7 +36,6 @@ export default function ManageProxies({ className }: Props): React.ReactElement 
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor : BN_ZERO;
-  // const available = proxyItems?.filter((item) => item.status !== 'remove')?.length ?? 0;
 
   const _onBackClick = useCallback(() => {
     showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');
