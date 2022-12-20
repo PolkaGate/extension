@@ -20,7 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { soloSetting, soloSettingB } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useIdentity, useNominator, useStakingAccount, useStakingConsts, useStakingRewards, useStashId, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useIdentity, useMinToReceiveRewardsInSolo, useStakingAccount, useStakingConsts, useStakingRewards, useStashId, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -57,7 +57,7 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const balances = useBalances(address, refresh, setRefresh);
-  const nominatorInfo = useNominator(address);
+  const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useIdentity(address);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);

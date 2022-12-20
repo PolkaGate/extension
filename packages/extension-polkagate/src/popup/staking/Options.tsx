@@ -8,7 +8,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, bnMax } from '@polkadot/util';
 
-import { useApi, useNominator, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
+import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
 import Option from './partial/Option';
 
 interface Props {
@@ -23,17 +23,17 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address);
   const poolConsts = usePoolConsts(address);
-  const nominatorInfo = useNominator(address);
+  const nominatorInfo = useMinToReceiveRewardsInSolo(address);
 
   const [minToReceiveRewardsInSolo, setMinToReceiveRewardsInSolo] = useState<BN | undefined>();
 
   useEffect(() => {
-    if (!stakingConsts || !nominatorInfo?.minNominated) { return; }
+    if (!stakingConsts || !nominatorInfo?.minToGetRewards) { return; }
 
-    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), new BN(nominatorInfo.minNominated.toString()));
+    const minSolo = bnMax(new BN(stakingConsts.minNominatorBond.toString()), new BN(stakingConsts?.existentialDeposit.toString()), new BN(nominatorInfo.minToGetRewards.toString()));
 
     setMinToReceiveRewardsInSolo(minSolo);
-  }, [nominatorInfo?.minNominated, stakingConsts]);
+  }, [nominatorInfo?.minToGetRewards, stakingConsts]);
 
   const goToPoolStaking = useCallback(() => {
     address && history.push({
