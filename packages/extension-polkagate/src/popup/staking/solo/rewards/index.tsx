@@ -73,7 +73,7 @@ export default function RewardDetails(): React.ReactElement {
   const weekDaysShort = ['Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thurs.', 'Fri.', 'Sat.'];
 
   const formateDate = useCallback((date: number) => {
-    return new Date(date * 1000).toLocaleDateString('en-GB', dateOptions);
+    return new Date(date * 1000).toLocaleDateString('en-US', dateOptions);
   }, [dateOptions]);
 
   const ascSortedRewards = useMemo(() => {

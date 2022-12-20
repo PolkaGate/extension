@@ -13,6 +13,7 @@ import { BN, bnToBn, formatNumber } from '@polkadot/util';
 
 import { ShortAddress } from '../../components';
 import { useMetadata, useTranslation } from '../../hooks';
+import RemainingDateByBlock from '../../util/remainingDateByBlock';
 
 interface Decoded {
   args: AnyJson | null;
@@ -55,7 +56,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
     return (
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>{t<string>('Method data')}</Typography>
-        <ShortAddress charsCount={6} address={data} showCopy style={{ fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
+        <ShortAddress charsCount={6} address={data} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
       </Grid>
     );
   }
@@ -97,12 +98,9 @@ function mortalityAsString(era: ExtrinsicEra, hexBlockNumber: string, t: TFuncti
   const blockNumber = bnToBn(hexBlockNumber);
   const mortal = era.asMortalEra;
 
-  return t<string>('mortal, valid from {{birth}} to {{death}}', {
-    replace: {
-      birth: formatNumber(mortal.birth(blockNumber)),
-      death: formatNumber(mortal.death(blockNumber))
-    }
-  });
+  const remainingBlocks = mortal.death(blockNumber) - mortal.birth(blockNumber);
+
+  return RemainingDateByBlock(remainingBlocks).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h11' });
 }
 
 function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
@@ -131,7 +129,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
         <Typography fontWeight={300} width='35%'>{chain ? t<string>('Chain') : t<string>('Genesis')}</Typography>
         {chain
           ? <Typography fontWeight={400} textAlign='right' width='65%'>{chain.name}</Typography>
-          : <ShortAddress charsCount={6} address={genesisHash} showCopy style={{ fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
+          : <ShortAddress charsCount={6} address={genesisHash} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
         }
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
@@ -150,7 +148,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
       )}
       {renderMethod(method, decoded, t)}
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('Lifetime')}</Typography>
+        <Typography fontWeight={300} width='35%'>{t<string>('Time to sign')}</Typography>
         <Typography fontWeight={400} textAlign='right' width='65%'>{mortalityAsString(era, blockNumber, t)}</Typography>
       </Grid>
     </Grid>
