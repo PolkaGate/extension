@@ -52,8 +52,10 @@ export default function Rename(): React.ReactElement {
         {t<string>('Choose a new name for your account.')}
       </Typography>
       <Name
+        isFocused
         label={t<string>('Name')}
         onChange={editName}
+        onEnter={_changeName}
       />
       <ButtonWithCancel
         _onClick={_changeName}
