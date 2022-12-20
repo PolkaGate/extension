@@ -4,7 +4,7 @@
 export default function RemainingDateByBlock(nextBlock: number): Date {
   const remainingInSeconds = nextBlock * 6;
   const nowInSeconds = Date.now() / 1000;
-  const remainingTimestamp = nowInSeconds + remainingInSeconds;
+  const remainingTimestamp = (nowInSeconds + remainingInSeconds) * 1000;
 
   const remainingInDate = new Date(remainingTimestamp);
 
