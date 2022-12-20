@@ -137,12 +137,12 @@ export default function Pool(): React.ReactElement {
       return;
     }
 
-    let allRoles = ['depositor', 'root', 'nominator', 'stateToggler'];
+    const allRoles = ['depositor', 'root', 'nominator', 'stateToggler'];
 
     allRoles.forEach((role, index) => {
       const available = allMyPools.find((pool) => pool?.bondedPool?.roles[role] === formatted);
 
-      allRoles = !available ? allRoles.splice(index, 1) : allRoles;
+      available && allRoles.splice(index, 1);
     });
 
     return allRoles;

@@ -207,7 +207,7 @@ export default function Index(): React.ReactElement {
   }, [goChange, helperButton]);
 
   const Warn = ({ text, isDanger, iconDanger }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
-    <Grid color='red' container sx={{ 'div.belowInput': { m: '5px 0 -8px', p: 0 }, 'div.belowInput.danger': { m: 0, mt: '10px' } }}>
+    <Grid color='red' container sx={{ 'div.belowInput': { m: '5px 0 -8px', p: 0, width: '92%' }, 'div.belowInput.danger': { m: 0, mt: '10px' } }}>
       <Warning
         fontWeight={400}
         iconDanger={iconDanger}
@@ -252,14 +252,7 @@ export default function Index(): React.ReactElement {
                       icon={faPersonCircleXmark}
                     />)
               }
-              sx={{
-                color: 'text.primary',
-                fontWeight: 400,
-                fontSize: '14px',
-                mt: '50px',
-                textDecorationLine: 'underline',
-                textTransform: 'capitalize'
-              }}
+              sx={{ color: 'text.primary', fontSize: '14px', fontWeight: 400, mt: '60px', textDecorationLine: 'underline', textTransform: 'capitalize' }}
               variant='text'
             >
               {helperButton === 1 ? t<string>('Destroying') : t<string>('RemoveAll')}
