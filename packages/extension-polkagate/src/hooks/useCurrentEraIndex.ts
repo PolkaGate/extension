@@ -6,13 +6,13 @@ import { useEffect, useState } from 'react';
 import { useApi } from '.';
 
 /** This hook is going to be used for users account existing in the extension */
-export default function useCurrentEraIndex(address: string): string | undefined {
-  const [index, setIndex] = useState<string>();
+export default function useCurrentEraIndex(address: string): number | undefined {
+  const [index, setIndex] = useState<number>();
   const api = useApi(address);
 
   useEffect(() => {
     api && api.query.staking.currentEra().then((i) => {
-      setIndex(i.toString());
+      setIndex(Number(i?.toString() || '0'));
     }).catch(console.error);
   }, [api]);
 

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { useChain, useEndpoint2 } from '.';
+import { useChain, useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
 
 /**
  * @description
@@ -16,11 +16,11 @@ import { useChain, useEndpoint2 } from '.';
 
 export default function useValidators(address: string): AllValidators | null | undefined {
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
+  const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-
-  // console.log('account in useValidators:', account);
+  const currentEraIndex = useCurrentEraIndex(address);
+  const chainName = useChainName(address);
 
   const getValidatorsInfo = useCallback((chain: Chain, endpoint: string, savedValidators = []) => {
     const getValidatorsInfoWorker: Worker = new Worker(new URL('../util/workers/getValidatorsInfo.js', import.meta.url));
@@ -36,7 +36,7 @@ export default function useValidators(address: string): AllValidators | null | u
       const fetchedValidatorsInfo: Validators | null = e.data;
 
       if (fetchedValidatorsInfo && JSON.stringify(savedValidators) !== JSON.stringify(fetchedValidatorsInfo)) {
-        setValidatorsInfo(fetchedValidatorsInfo);
+        setNewValidatorsInfo(fetchedValidatorsInfo);
 
         if (chainName?.toLocaleLowerCase() !== 'westend') {
           window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(fetchedValidatorsInfo));
@@ -48,7 +48,7 @@ export default function useValidators(address: string): AllValidators | null | u
   }, [chainName]);
 
   useEffect(() => {
-    if (!chain || !chainName || !endpoint) {
+    if (!chainName) {
       return;
     }
 
@@ -58,12 +58,14 @@ export default function useValidators(address: string): AllValidators | null | u
       const parsedLocalSavedAllValidatorsInfo = JSON.parse(localSavedAllValidatorsInfo) as Validators;
 
       setValidatorsInfo(parsedLocalSavedAllValidatorsInfo);
-      console.log(`validatorsInfo in storage is from era: ${parsedLocalSavedAllValidatorsInfo.currentEraIndex} on chain: ${chainName}`);
+      console.log(`validatorsInfo in storage is from era: ${parsedLocalSavedAllValidatorsInfo?.eraIndex} on chain: ${chainName}`);
     }
+  }, [chainName]);
 
+  useEffect(() => {
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
-    endpoint && getValidatorsInfo(chain, endpoint, localSavedAllValidatorsInfo);
-  }, [endpoint, chain, chainName, getValidatorsInfo]);
+    endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(chain, endpoint, info);
+  }, [endpoint, chain, getValidatorsInfo, info, currentEraIndex]);
 
-  return info;
+  return newInfo || info;
 }

@@ -24,7 +24,7 @@ async function getStackingConsts(endpoint) {
     ]);
 
     return {
-      eraIndex: currentEraIndex.toString(),
+      eraIndex: Number(currentEraIndex?.toString(), '0'),
       existentialDeposit,
       maxNominations,
       maxNominatorRewardedPerValidator,

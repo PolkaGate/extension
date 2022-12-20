@@ -4,22 +4,31 @@
 
 import getApi from '../getApi.ts';
 
-async function getAllValidatorsIdentities (endpoint, _accountIds) {
+async function getAllValidatorsIdentities(endpoint, _accountIds) {
   try {
     const api = await getApi(endpoint);
     let accountInfo = [];
     const page = 50;
     let totalFetched = 0;
 
+    const currentEraIndex = await api.query.staking.currentEra();
+
     while (_accountIds.length > totalFetched) {
       console.log(`Fetching validators identities : ${totalFetched}/${_accountIds.length}`)
-      const info = await Promise.all(_accountIds.slice(totalFetched, totalFetched + page).map((i) => api.derive.accounts.info(i)));
+      const info = await Promise.all(
+        _accountIds.slice(totalFetched, totalFetched + page)
+          .map((i) =>
+            api.derive.accounts.info(i)
+          ));
 
       accountInfo = accountInfo.concat(info);
       totalFetched += page;
     }
 
-    return JSON.parse(JSON.stringify(accountInfo));
+    return {
+      accountsInfo: JSON.parse(JSON.stringify(accountInfo)),
+      eraIndex: Number(currentEraIndex.toString() || '0')
+    };
   } catch (error) {
     console.log('something went wrong while getting validators id, err:', error);
 
@@ -31,5 +40,7 @@ onmessage = (e) => {
   const { endpoint, validatorsAccountIds } = e.data;
 
   // eslint-disable-next-line no-void
-  void getAllValidatorsIdentities(endpoint, validatorsAccountIds).then((info) => { postMessage(info); });
+  void getAllValidatorsIdentities(endpoint, validatorsAccountIds).then((info) => {
+    postMessage(info);
+  });
 };

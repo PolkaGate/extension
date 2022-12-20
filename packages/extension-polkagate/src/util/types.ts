@@ -49,7 +49,7 @@ export interface AccountsBalanceType {
 }
 
 export interface StakingConsts {
-  eraIndex: string;
+  eraIndex: number;
   existentialDeposit: BN;
   maxNominations: number;
   maxNominatorRewardedPerValidator: number;
@@ -69,13 +69,17 @@ export interface ValidatorInfo extends DeriveStakingQuery {
 export interface AllValidators {
   current: ValidatorInfo[];
   waiting: ValidatorInfo[];
-  currentEraIndex?: number
+  eraIndex?: number;
 }
 
 export interface Validators {
   current: DeriveStakingQuery[];
   waiting: DeriveStakingQuery[];
-  currentEraIndex?: number
+  eraIndex?: number;
+}
+export interface ValidatorsIdentities {
+  accountsInfo: DeriveAccountInfo[] | null;
+  eraIndex?: number;
 }
 
 export interface AllValidatorsFromSubscan {
@@ -342,7 +346,7 @@ export interface Option {
 }
 
 export interface PoolStakingConsts {
-  eraIndex: string;
+  eraIndex: number;
   lastPoolId: BN;
   maxPoolMembers: number;
   maxPoolMembersPerPool: number;

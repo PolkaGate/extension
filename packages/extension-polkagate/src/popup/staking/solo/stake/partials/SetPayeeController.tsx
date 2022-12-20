@@ -11,7 +11,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { AccountInputWithIdentity, PButton, Select, Warning } from '../../../../../components';
 import { useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../../hooks';
 import { SoloSettings, StakingConsts } from '../../../../../util/types';
-import { amountToHuman, isValidAddress } from '../../../../../util/utils';
+import { amountToHuman } from '../../../../../util/utils';
 import getPayee from './util';
 
 interface Props {
