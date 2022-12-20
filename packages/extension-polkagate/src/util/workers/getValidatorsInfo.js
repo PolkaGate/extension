@@ -25,7 +25,7 @@ async function getAllValidators (endpoint) {
 
     return JSON.parse(JSON.stringify({
       current: nextElectedInfo,
-      currentEraIndex: Number(currentEra),
+      eraIndex: Number(currentEra),
       waiting: waiting.info
     }));
   } catch (error) {
