@@ -1,12 +1,11 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
 
 import { BN, bnMin } from '@polkadot/util';
 
 import getApi from '../getApi';
 
-async function getNominatorInfo(endpoint, _nominatorAddress) {
+async function getMinToReceiveRewardsInSolo(endpoint) {
   const api = await getApi(endpoint);
 
   // a map of all nominators
@@ -26,17 +25,16 @@ async function getNominatorInfo(endpoint, _nominatorAddress) {
   });
 
   return {
-    eraIndex: currentEra,
-    isInList: !!assignments.get(_nominatorAddress),
-    minNominated: bnMin(...assignments.values())
+    eraIndex: Number(currentEra.toString()),
+    minToGetRewards: bnMin(...assignments.values()).toString()
   };
 }
 
 onmessage = (e) => {
-  const { endpoint, stakerAddress } = e.data;
+  const { endpoint } = e.data;
 
   // eslint-disable-next-line no-void
-  void getNominatorInfo(endpoint, stakerAddress).then((info) => {
+  void getMinToReceiveRewardsInSolo(endpoint).then((info) => {
     postMessage(info);
   });
 };

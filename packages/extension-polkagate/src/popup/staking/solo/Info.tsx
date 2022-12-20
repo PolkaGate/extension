@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { NominatorInfo, StakingConsts } from '../../../util/types';
+import type { MinToReceiveRewardsInSolo, NominatorInfo, StakingConsts } from '../../../util/types';
 
 import { Container, Divider, Grid } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -24,7 +24,7 @@ interface Props {
   showInfo: boolean;
   info: StakingConsts | null | undefined;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
-  nominatorInfo: NominatorInfo | undefined
+  nominatorInfo: MinToReceiveRewardsInSolo | undefined 
 }
 
 export default function Info({ address, api, info, nominatorInfo, setShowInfo, showInfo }: Props): React.ReactElement {
@@ -87,7 +87,7 @@ export default function Info({ address, api, info, nominatorInfo, setShowInfo, s
       >
         <Row label={t('Max validators you can select')} value={info?.maxNominations} />
         <Row label={t('Min {{token}} to be a staker', { replace: { token } })} value={info?.minNominatorBond} />
-        <Row label={t('Min {{token}} to receive rewards', { replace: { token } })} value={nominatorInfo?.minNominated && new BN(String(nominatorInfo?.minNominated))} />
+        <Row label={t('Min {{token}} to receive rewards', { replace: { token } })} value={nominatorInfo?.minToGetRewards && new BN(String(nominatorInfo?.minToGetRewards))} />
         <Row label={t('Max nominators of a validator, who may receive rewards')} value={info?.maxNominatorRewardedPerValidator} />
         <Row label={t('Days it takes to receive your funds back after unstaking')} value={info?.unbondingDuration} />
         <Row label={t('Min {{token}} that must remain in your account (ED)', { replace: { token } })} value={info?.existentialDeposit} />

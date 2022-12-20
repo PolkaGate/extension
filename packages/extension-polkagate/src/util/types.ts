@@ -60,6 +60,11 @@ export interface StakingConsts {
 export interface NominatorInfo {
   minNominated: BN;
   isInList: boolean // is Nominator in top 22500 elected
+  eraIndex: number;
+}
+export interface MinToReceiveRewardsInSolo {
+  minToGetRewards: BN;
+  eraIndex: number;
 }
 
 export interface ValidatorInfo extends DeriveStakingQuery {
@@ -69,17 +74,17 @@ export interface ValidatorInfo extends DeriveStakingQuery {
 export interface AllValidators {
   current: ValidatorInfo[];
   waiting: ValidatorInfo[];
-  eraIndex?: number;
+  eraIndex: number;
 }
 
 export interface Validators {
   current: DeriveStakingQuery[];
   waiting: DeriveStakingQuery[];
-  eraIndex?: number;
+  eraIndex: number;
 }
 export interface ValidatorsIdentities {
   accountsInfo: DeriveAccountInfo[] | null;
-  eraIndex?: number;
+  eraIndex: number;
 }
 
 export interface AllValidatorsFromSubscan {
