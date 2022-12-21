@@ -134,6 +134,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
       v.exposure.others.length && v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
+
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
     const filtered3 = filtered2.filter((v) => v?.identity?.display); // filter has no identity
@@ -156,8 +157,9 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const onSystemSuggestion = useCallback((event, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
-    checked && allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)]);
-    !checked && setNewSelectedValidators([]);
+    checked
+      ? allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)])
+      : setNewSelectedValidators([]);
   }, [allValidators, selectBestValidators, stakingConsts]);
 
   const onSearch = useCallback((filter: string) => {

@@ -50,7 +50,7 @@ export default function Index(): React.ReactElement {
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
-
+  
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
 
   const selectedValidatorsInfo = useMemo(() =>
