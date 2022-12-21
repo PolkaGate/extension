@@ -16,6 +16,7 @@ import AccountIcons from '../../components/AccountIcons';
 import { useApi, useChain, useIdentity, useProxies } from '../../hooks';
 import { showAccount } from '../../messaging';
 import { AccMenu } from '../../partials';
+import QuickAction from '../../partials/QuickAction';
 import { getFormattedAddress } from '../../util/utils';
 import AccountDetail from './AccountDetail';
 
@@ -33,9 +34,11 @@ export interface Props {
   toggleActions?: number;
   type?: KeypairType;
   balancesOnLocalStorage?: string;
+  quickActionOpen?: string | boolean;
+  setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
 }
 
-export default function AccountPreview({ address, genesisHash, isExternal, isHardware, isHidden, name, toggleActions, type }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, isExternal, isHardware, isHidden, name, toggleActions, type, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const history = useHistory();
   const settings = useContext(SettingsContext);
   const chain = useChain(address);
@@ -87,7 +90,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
   }, [history, genesisHash, address, formatted, api, identity]);
 
   return (
-    <Grid alignItems='center' container py='15px'>
+    <Grid alignItems='center' container position='relative' py='15px'>
       <AccountIcons
         formatted={formatted || address}
         identiconTheme={identiconTheme}
@@ -120,6 +123,9 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
           type={type}
         />
       }
+      <Grid container sx={{ bottom: '20px', left: 0, position: 'absolute' }}>
+        <QuickAction address={address} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
+      </Grid>
     </Grid>
   );
 }
