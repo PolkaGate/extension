@@ -50,7 +50,6 @@ export default function Index(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const stashId = useStashId(formatted);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const chain = useChain(address);
   const rewards = useStakingRewards(address);

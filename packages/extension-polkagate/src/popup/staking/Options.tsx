@@ -9,7 +9,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, bnMax } from '@polkadot/util';
 
 import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
-import Option from './partial/Option';
+import Option from './partial/StakingOption';
 
 interface Props {
   showStakingOptions: boolean
@@ -50,7 +50,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
   }, [address, api, history, pathname, stakingConsts]);
 
   return (
-    <Slide direction='up' mountOnEnter unmountOnExit in={showStakingOptions}>
+    <Slide direction='up' in={showStakingOptions} mountOnEnter unmountOnExit>
       <Box sx={{ zIndex: -1 }}>
         <Option
           api={api}
@@ -71,15 +71,15 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           balance={minToReceiveRewardsInSolo}
           balanceText={t('Minimum to receive rewards')}
           buttonText={t<string>('Enter')}
+          helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
           onClick={goToSoloStaking}
           style={{
             m: 'auto',
             width: '100%'
           }}
           text={t('Stakers (nominators) with sufficient amount of tokens can choose solo staking.')}
-          title={t('Solo Staking')}
-          helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
           tipPlace='bottom'
+          title={t('Solo Staking')}
         />
       </Box>
     </Slide>
