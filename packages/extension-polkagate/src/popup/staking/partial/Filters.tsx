@@ -194,7 +194,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
           theme={theme}
           type='number'
           width='17%'
-          // value={filters.maxCommission.value ?? EFAULT_FILTERS.maxCommission.value}
+        // value={filters.maxCommission.value ?? EFAULT_FILTERS.maxCommission.value}
         />
         <Checkbox2
           checked={filters?.limitOfValidatorsPerOperator?.check}
@@ -235,6 +235,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
         onSecondaryClick={onClear}
         primaryBtnText={t<string>('Apply')}
         secondaryBtnText={t<string>('Reset All')}
+        variant='text'
       />
       <IconButton
         onClick={onCloseFilter}
