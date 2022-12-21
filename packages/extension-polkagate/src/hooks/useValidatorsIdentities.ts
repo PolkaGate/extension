@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { ValidatorsIdentities } from '../util/types';
+import { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
 import { useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
 
 export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined): DeriveAccountInfo[] | null | undefined {
@@ -15,8 +15,8 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
   const chainName = useChainName(address);
   const currentEraIndex = useCurrentEraIndex(address);
 
-  const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
-  const [newValidatorsIdentities, setNewValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
+  const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | null | undefined>();
+  const [newValidatorsIdentities, setNewValidatorsIdentities] = useState<DeriveAccountInfo[] | null | undefined>();
   const [savedEraIndex, setSavedEraIndex] = useState<number | undefined>();
 
   const getValidatorsIdentities = useCallback((endpoint: string, validatorsAccountIds: AccountId[]) => {
@@ -40,7 +40,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       if (info && identities?.length && info.eraIndex !== savedEraIndex) {
         console.log(`setting new identities #old was: ${validatorsIdentities?.length ?? ''} `);
 
-        setNewValidatorsIdentities(info.identities);
+        setNewValidatorsIdentities(info.accountsInfo);
 
         if (chainName?.toLocaleLowerCase() !== 'westend') {
           chrome.storage.local.get('validatorsIdentities', (res) => {
@@ -68,12 +68,13 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
       return;
     }
 
-    chrome.storage.local.get('validatorsIdentities', (res) => {
-      console.log('localSavedValidatorsIdentities:', res);
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
+      console.log('Saved Validators Identities:', res);
 
       if (res?.validatorsIdentities?.[chainName]) {
-        setValidatorsIdentities(res.validatorsIdentities[chainName]?.identities);
-        setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex)
+        setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
+        setSavedEraIndex(res.validatorsIdentities[chainName]?.eraIndex);
       }
     });
   }, [chainName]);
