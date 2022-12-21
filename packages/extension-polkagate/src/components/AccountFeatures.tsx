@@ -24,7 +24,7 @@ export default function AccountFeatures({ chain, goToAccount, menuOnClick }: Pro
           <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
         </IconButton>
       </Grid>
-      <Grid container direction='row' item justifyContent='center' mt='5px'>
+      <Grid container direction='row' item justifyContent='center' mt='5px' zIndex={1}>
         <IconButton
           onClick={goToAccount}
           sx={{ p: 0 }}

@@ -28,9 +28,9 @@ export default function HorizontalMenuItem({ divider = false, dividerHeight = 30
           <Skeleton sx={{ borderRadius: '50%', display: 'inline-block', height: '30px', transform: 'none', width: '30px' }} />
           <Skeleton sx={{ display: 'inline-block', height: '12px', mt: '7px', transform: 'none', width: '30px' }} />
         </Grid>
-        : <Grid container direction='column' item justifyContent='center' maxWidth={exceptionWidth !== 0 ? `${exceptionWidth}px` : 'fit-content'}>
+        : <Grid container direction='column' item justifyContent='center' maxWidth={exceptionWidth !== 0 ? `${exceptionWidth}px` : 'fit-content'} onClick={onClick} sx={{ cursor: 'pointer' }}>
           <Grid container item justifyContent='center'>
-            <IconButton onClick={onClick} sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content' }}>
+            <IconButton sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content' }}>
               {icon}
             </IconButton>
           </Grid>
