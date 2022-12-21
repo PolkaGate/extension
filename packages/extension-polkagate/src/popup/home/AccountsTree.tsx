@@ -6,7 +6,7 @@
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useTranslation } from '../../hooks';
 import getParentNameSuri from '../../util/getParentNameSuri';
@@ -14,9 +14,11 @@ import AccountPreview from './AccountPreview';
 
 interface Props extends AccountWithChildren {
   parentName?: string;
+  quickActionOpen?: string | boolean;
+  setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
 }
 
-export default function AccountsTree({ parentName, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree({ quickActionOpen, setQuickActionOpen, parentName, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
@@ -42,7 +44,7 @@ export default function AccountsTree({ parentName, suri, ...account }: Props): R
 
   return (
     <>
-      <Container className='tree' disableGutters sx={{ borderColor: 'secondary.light', borderTopStyle: account?.parentAddress ? 'dashed' : 'solid', borderTopWidth: '1px', position: 'relative' }}      >
+      <Container className='tree' disableGutters sx={{ borderColor: 'secondary.light', borderTopStyle: account?.parentAddress ? 'dashed' : 'solid', borderTopWidth: '1px', opacity: quickActionOpen === account.address || quickActionOpen === undefined ? 1 : 0.2, transition: 'all 0.3s', position: 'relative' }}>
         <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
           {label}
         </Grid>
@@ -50,6 +52,8 @@ export default function AccountsTree({ parentName, suri, ...account }: Props): R
           {...account}
           parentName={parentName}
           suri={suri}
+          quickActionOpen={quickActionOpen}
+          setQuickActionOpen={setQuickActionOpen}
         />
       </Container>
       {account?.children?.map((child, index) => (
@@ -57,6 +61,8 @@ export default function AccountsTree({ parentName, suri, ...account }: Props): R
           key={`${index}:${child.address}`}
           {...child}
           parentName={account.name}
+          quickActionOpen={quickActionOpen}
+          setQuickActionOpen={setQuickActionOpen}
         />
       ))}
     </>

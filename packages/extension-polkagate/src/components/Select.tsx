@@ -85,6 +85,10 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
               color: 'secondary.light',
               fontSize: '30px'
             },
+            '> .MuiSvgIcon-root.Mui-disabled': {
+              color: 'action.disabledBackground',
+              fontSize: '30px'
+            },
             width: '100%'
           }}
           value={value}
