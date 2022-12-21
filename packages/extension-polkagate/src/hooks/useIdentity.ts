@@ -40,6 +40,7 @@ export default function useIdentity(address: AccountId | string | undefined): De
     const metaData = JSON.stringify({ identities: JSON.stringify(savedIdentities) });
 
     updateMeta(address, metaData).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName, info, formatted]);
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function useIdentity(address: AccountId | string | undefined): De
     if (savedIdentities[chainName]) {
       setOldIdentity(savedIdentities[chainName]);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, chainName]);
 
   return info?.identity || oldIdentity;

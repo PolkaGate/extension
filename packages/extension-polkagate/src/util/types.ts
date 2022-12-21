@@ -87,6 +87,10 @@ export interface ValidatorsIdentities {
   eraIndex: number;
 }
 
+export interface SavedValidatorsIdentities {
+  [chainName: string]: ValidatorsIdentities;
+}
+
 export interface AllValidatorsFromSubscan {
   current: ValidatorsFromSubscan[];
   waiting: ValidatorsFromSubscan[]
