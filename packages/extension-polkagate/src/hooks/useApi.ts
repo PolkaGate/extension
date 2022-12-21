@@ -37,6 +37,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       apisContext.apis[String(api.genesisHash.toHex())] = { api, apiEndpoint: endpoint };
       apisContext.setIt(apisContext.apis);
     }).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apisContext?.apis?.length, endpoint, stateApi, chain]);
 
   return api;

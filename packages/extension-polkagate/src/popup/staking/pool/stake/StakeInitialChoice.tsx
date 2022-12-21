@@ -12,7 +12,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import { PoolStakingConsts } from '../../../../util/types';
-import Option from '../../partial/Option';
+import Option from '../../partial/StakingOption';
 
 interface Props {
   api?: ApiPromise;

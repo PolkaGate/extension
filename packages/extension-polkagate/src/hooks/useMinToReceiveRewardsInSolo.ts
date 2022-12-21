@@ -28,7 +28,7 @@ export default function useMinToReceiveRewardsInSolo(address: string): MinToRece
 
     getMinToSoloWorker.onmessage = (e: MessageEvent<any>) => {
       const min = e.data as MinToReceiveRewardsInSolo;
-      console.log('minnnnnnnnnnnnnnnnnnnnnnnnnn:', min)
+
       window.localStorage.setItem(`${chainName}_minToGetRewardsInSolo`, JSON.stringify(min));
       min.minToGetRewards = new BN(min.minToGetRewards);
 
