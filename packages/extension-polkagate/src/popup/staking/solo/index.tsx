@@ -320,7 +320,6 @@ export default function Index(): React.ReactElement {
         />
         <HorizontalMenuItem
           divider
-          exceptionWidth={30}
           icon={
             <FontAwesomeIcon
               bounce={stakingAccount !== undefined && !stakingAccount?.nominators.length && !stakingAccount?.stakingLedger.active.isZero()} // do when has stake but does not nominations
