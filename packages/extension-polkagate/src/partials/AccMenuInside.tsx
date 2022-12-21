@@ -18,6 +18,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, Identicon, MenuItem, SettingsContext } from '../components';
 import { useTranslation } from '../hooks';
+import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -75,6 +76,12 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
     address && onAction(`/manageProxies/${address}`);
   }, [address, onAction]);
 
+  const goToSoloStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/solo/${address}/`
+    });
+  }, [address, history]);
+
   const goToPoolStaking = useCallback(() => {
     address && history.push({
       pathname: `/pool/${address}/`
@@ -82,22 +89,8 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
   }, [address, history]);
 
   const movingParts = (
-    <Grid
-      alignItems='flex-start'
-      bgcolor='background.default'
-      container
-      display='block'
-      item
-      mt='46px'
-      px='46px'
-      sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }}
-      width='100%'
-    >
-      <Grid
-        container
-        justifyContent='center'
-        my='20px'
-      >
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+      <Grid container justifyContent='center' my='20px'>
         <Identicon
           className='identityIcon'
           iconTheme={identiconTheme}
@@ -106,28 +99,12 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
           size={40}
           value={formatted || address}
         />
-        <Grid
-          item
-          pl='10px'
-          sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-        >
-          <Typography
-            fontSize='28px'
-            fontWeight={400}
-            lineHeight={1.4}
-          >
+        <Grid item pl='10px' sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography fontSize='28px' fontWeight={400} lineHeight={1.4}>
             {name}
           </Typography>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      <MenuItem
-        iconComponent={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-        }
-        // onClick={_goToDeriveAcc}
-        text={t('Contribute to crowdloans')}
-      />
       <MenuItem
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
@@ -135,25 +112,25 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
         onClick={_onManageProxies}
         text={t('Manage proxies')}
       />
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
         iconComponent={
           <vaadin-icon icon='vaadin:coin-piles' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
-        // onClick={onnn}
         text={t('Staking')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', ml: '20px' }} />
       <MenuItem
         pl='20px'
         iconComponent={
-          <vaadin-icon icon='vaadin:hands-up' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />
         }
-        // onClick={onnn}
+        onClick={goToSoloStaking}
         text={t('Solo staking')}
       />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:group' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />
         }
         onClick={goToPoolStaking}
         pl='20px'

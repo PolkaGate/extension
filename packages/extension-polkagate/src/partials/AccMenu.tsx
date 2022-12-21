@@ -44,16 +44,11 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
 
   const currentChain = newChain ?? chain;
   const endpoint = useEndpoint2(address);
-  // const [newEndpoint, setNewEndpoint] = useState<string | undefined>(endpoint);
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
   const canDerive = !(isExternal || isHardware);
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
-
-  // const resetToDefaults = () => {
-  //   setNewEndpoint(undefined);
-  // };
 
   const _onForgetAccount = useCallback(() => {
     onAction(`/forget/${address}/${isExternal}`);
@@ -64,11 +59,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       address && onAction(`/derive/${address}/locked`);
     }, [address, onAction]
   );
-
-  // useEffect(() => {
-  //   !newEndpoint && endpointOptions?.length && setNewEndpoint(endpointOptions[0].value);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [newEndpoint, genesisHash]);
 
   const _closeMenu = useCallback(
     () => setShowMenu((isMenuOpen) => !isMenuOpen),
@@ -84,7 +74,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
 
   const _onChangeNetwork = useCallback(
     (newGenesisHash: string) => {
-      // resetToDefaults();
       address && tieAccount(address, newGenesisHash || null).catch(console.error);
       setGenesis(newGenesisHash);
     },
@@ -111,7 +100,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   }, [genesisHash]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // setNewEndpoint(newEndpoint);
     const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
     // eslint-disable-next-line no-void
@@ -119,22 +107,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   }, [address, chain?.name]);
 
   const movingParts = (
-    <Grid
-      alignItems='flex-start'
-      bgcolor='background.default'
-      container
-      display='block'
-      item
-      mt='46px'
-      px='46px'
-      sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }}
-      width='100%'
-    >
-      <Grid
-        container
-        justifyContent='center'
-        my='20px'
-      >
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+      <Grid container justifyContent='center' my='20px'>
         <Identicon
           className='identityIcon'
           iconTheme={identiconTheme}
@@ -143,16 +117,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
           size={40}
           value={formatted || address}
         />
-        <Grid
-          item
-          pl='10px'
-          sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-        >
-          <Typography
-            fontSize='28px'
-            fontWeight={400}
-            lineHeight={1.4}
-          >
+        <Grid item pl='10px' sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography fontSize='28px' fontWeight={400} lineHeight={1.4}>
             {name}
           </Typography>
         </Grid>
