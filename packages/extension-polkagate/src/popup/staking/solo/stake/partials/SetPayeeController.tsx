@@ -37,10 +37,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>(getPayee(settings));
 
-  const REWARD_DESTINATIONS = [
-    { text: t('Add to staked amount'), value: 'Staked' },
-    { text: t('Transfer to a specific account'), value: 'Others' }
-  ];
+  console.log('rewardDestinationAccount:', rewardDestinationAccount);
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
@@ -60,14 +57,14 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
       return 'Stash';
     }
 
-    if (rewardDestinationAccount === settings.controllerId || rewardDestinationAccount === controllerId) {
+    if (rewardDestinationAccount === settings.controllerId) {// || rewardDestinationAccount === controllerId) {
       return 'Controller';
     }
 
     if (rewardDestinationAccount) {
       return { Account: rewardDestinationAccount };
     }
-  }, [controllerId, settings.controllerId, settings.stashId]);
+  }, [settings.controllerId, settings.stashId]);
 
   const payeeNotChanged = useMemo(() => JSON.stringify(settings.payee) === JSON.stringify(makePayee(rewardDestinationValue, rewardDestinationAccount)), [makePayee, rewardDestinationAccount, rewardDestinationValue, settings.payee]);
 
@@ -127,14 +124,6 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label='Transfer to a specific account' />
               </RadioGroup>
             </FormControl>
-
-            {/* <Select
-              _mt='23px'
-              defaultValue={settings.payee === 'Staked' ? REWARD_DESTINATIONS[0].value : REWARD_DESTINATIONS[1].value}
-              label={'Reward destination'}
-              onChange={onSelectionMethodChange}
-              options={REWARD_DESTINATIONS}
-            /> */}
           </Grid>
           {rewardDestinationValue === 'Others' &&
             <>

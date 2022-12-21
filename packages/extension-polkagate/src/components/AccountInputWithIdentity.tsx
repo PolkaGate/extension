@@ -19,7 +19,7 @@ interface Props {
   ignoreAddress?: string
 }
 
-export default function AccountInputWithIdentity({ address, chain, label, ignoreAddress, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity({ address, chain, ignoreAddress, label, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);

@@ -43,8 +43,9 @@ interface Props {
 
 function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
   const { t } = useTranslation();
-  const destinationAddress: string = newSettings.payee === 'Stash' ? settings.stashId : newSettings.payee === 'Controller' ? setting.controllerId : newSettings.payee.Account;
+  const destinationAddress: string = newSettings.payee === 'Stash' ? settings.stashId : newSettings.payee === 'Controller' ? settings.controllerId : newSettings.payee.Account;
 
+  console.log('destinationAddress:', destinationAddress);
   console.log('newSettings newSettings:', newSettings);
   
   return (
