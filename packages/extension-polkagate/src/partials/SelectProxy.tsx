@@ -68,12 +68,7 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
         showBackArrow
         text={t<string>('Select Proxy')}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='18px auto 0'
-        width='90%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='18px auto 0' width='90%'>
         {t('Select an appropriate proxy of the account to do transaction on behalf.')}
       </Typography>
       <ProxyTable
@@ -90,21 +85,8 @@ export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, sel
           width: '92%'
         }}
       />
-      <Grid
-        m='auto'
-        onClick={onDeselect}
-        width='92%'
-      >
-        <Typography
-          fontSize='14px'
-          fontWeight={400}
-          lineHeight='36px'
-          sx={{
-            cursor: selectedProxy ? 'pointer' : 'default',
-            textAlign: 'right',
-            textDecoration: 'underline'
-          }}
-        >
+      <Grid m='auto' onClick={onDeselect} width='92%'>
+        <Typography fontSize='14px' fontWeight={400} lineHeight='36px' sx={{ cursor: selectedProxy ? 'pointer' : 'default', textAlign: 'right', textDecoration: 'underline' }}>
           {t<string>('Clear selection and use the proxied')}
         </Typography>
       </Grid>

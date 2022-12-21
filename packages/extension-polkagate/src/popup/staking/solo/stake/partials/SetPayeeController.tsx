@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, SxProps, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -43,7 +43,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
   ];
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
-  const onSelectionMethodChange = useCallback((value: 'Staked' | 'Others'): void => {
+  const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
     setRewardDestinationValue(value);
 
     if (value === 'Staked') {
@@ -117,14 +117,24 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
       }
       {formatted === settings?.controllerId &&
         <>
-          <Grid item mx='15px' width='100%'>
-            <Select
+          <Grid item mx='15px' mt='30px' width='100%'>
+            <FormControl>
+              <FormLabel sx={{ color: 'text.primary', '&.Mui-focused': { color: 'text.primary' } }}>
+                {t('Reward destination')}
+              </FormLabel>
+              <RadioGroup defaultValue='Staked' onChange={onSelectionMethodChange}>
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label='Add to staked amount' />
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label='Transfer to a specific account' />
+              </RadioGroup>
+            </FormControl>
+
+            {/* <Select
               _mt='23px'
               defaultValue={settings.payee === 'Staked' ? REWARD_DESTINATIONS[0].value : REWARD_DESTINATIONS[1].value}
               label={'Reward destination'}
               onChange={onSelectionMethodChange}
               options={REWARD_DESTINATIONS}
-            />
+            /> */}
           </Grid>
           {rewardDestinationValue === 'Others' &&
             <>
