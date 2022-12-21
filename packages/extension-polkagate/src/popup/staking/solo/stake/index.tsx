@@ -7,7 +7,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, SoloSettings, StakingConsts } from '../../../../util/types';
 
-import { Grid, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -51,12 +51,13 @@ export default function Index(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
   const [settings, setSettings] = useState<SoloSettings>({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   const [showAdvanceSettings, setShowAdvanceSettings] = useState<boolean>();
+  const [validatorSelectionMethod, setValidatorSelectionMethod] = useState<'auto' | 'manual'>('auto');
 
   useEffect(() => {
     setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   }, [formatted]);
 
-  const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
+  // const VALIDATOR_SELECTION_OPTIONS = [{ text: t('Auto'), value: 1 }, { text: t('Manual'), value: 2 }];
   const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
   const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
   const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
@@ -170,8 +171,9 @@ export default function Index(): React.ReactElement {
     setShowReview(true);
   }, []);
 
-  const onSelectionMethodChange = useCallback((value: string | number): void => {
-    console.log('value:', value)
+  const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
+    console.log('value:', event.target.value);
+    setValidatorSelectionMethod(event.target.value);
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
@@ -201,7 +203,7 @@ export default function Index(): React.ReactElement {
         label={t('Stake')}
         withSteps={{ current: 1, total: 2 }}
       />
-      <Grid item xs={12} sx={{ mx: '15px' }}>
+      <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
           api={api}
           balance={balances?.availableBalance}
@@ -224,21 +226,22 @@ export default function Index(): React.ReactElement {
             <Warn text={alert} />
           }
         </div>
-        <Grid item mt='20px' xs={12}>
-          {isFirstTimeStaking &&
-            <>
-              <Select
-                defaultValue={VALIDATOR_SELECTION_OPTIONS[0].value}
-                label={'Validator selection method'}
-                onChange={onSelectionMethodChange}
-                options={VALIDATOR_SELECTION_OPTIONS}
-              />
-              <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '25px' }}>
-                {t('Advanced settings')}
-              </Grid>
-            </>
-          }
-        </Grid>
+        {isFirstTimeStaking &&
+          <Grid container item justifyContent='flex-start' mt='30px' xs={12}>
+            <FormControl>
+              <FormLabel sx={{ color: 'text.primary', '&.Mui-focused': { color: 'text.primary' } }}>
+                {t('Validator selection method')}
+              </FormLabel>
+              <RadioGroup defaultValue='auto' onChange={onSelectionMethodChange}>
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='auto' />} label='Auto' />
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='manual' />} label='Manual' />
+              </RadioGroup>
+            </FormControl>
+            <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '30px' }} xs={12}>
+              {t('Advanced settings')}
+            </Grid>
+          </Grid>
+        }
       </Grid>
       <PButton
         _isBusy={isFirstTimeStaking && showReview && !autoSelected}
@@ -246,7 +249,7 @@ export default function Index(): React.ReactElement {
         disabled={!!alert || !amount || amount === '0' || !balances?.availableBalance || balances?.availableBalance?.isZero() || balances?.availableBalance?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
         text={t<string>('Next')}
       />
-      {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking ? autoSelected : true) &&
+      {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking && validatorSelectionMethod === 'auto' ? autoSelected : true) &&
         <Review
           address={address}
           amount={amount}
@@ -269,9 +272,9 @@ export default function Index(): React.ReactElement {
             address={address}
             setSettings={setSettings}
             setShowAdvanceSettings={setShowAdvanceSettings}
+            settings={settings}
             showAdvanceSettings={showAdvanceSettings}
             stakingConsts={stakingConsts}
-            settings={settings}
           />
         </Grid>
       }
