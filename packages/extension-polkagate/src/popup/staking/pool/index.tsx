@@ -19,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useIdentity, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -57,7 +57,7 @@ export default function Index(): React.ReactElement {
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
   const balances = useBalances(address);
-  const identity = useIdentity(address);
+  const identity = useMyAccountIdentity(address);
 
   const token = (api && api.registry.chainTokens[0]) || pool?.token;
   const decimal = (api && api.registry.chainDecimals[0]) || pool?.decimal;

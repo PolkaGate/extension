@@ -19,7 +19,7 @@ export { useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useEndpoint2 } from './useEndpoint2';
 export { default as useFormatted } from './useFormatted';
-export { default as useIdentity } from './useIdentity';
+export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { usePoolMembers } from './usePoolMembers';
 export { default as useToken } from './useToken';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';

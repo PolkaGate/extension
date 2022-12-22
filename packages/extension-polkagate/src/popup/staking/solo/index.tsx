@@ -20,7 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useIdentity, useMinToReceiveRewardsInSolo, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useMyAccountIdentity, useMinToReceiveRewardsInSolo, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -58,7 +58,7 @@ export default function Index(): React.ReactElement {
   const myBalances = useBalances(address, refresh, setRefresh);
   const mayBeMyStashBalances = useBalances(stakingAccount?.stashId, refresh, setRefresh);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);
-  const identity = useIdentity(address);
+  const identity = useMyAccountIdentity(address);
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);

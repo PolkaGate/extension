@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { SettingsContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
-import { useApi, useChain, useIdentity, useProxies } from '../../hooks';
+import { useApi, useChain, useMyAccountIdentity, useProxies } from '../../hooks';
 import { showAccount } from '../../messaging';
 import { AccMenu } from '../../partials';
 import QuickAction from '../../partials/QuickAction';
@@ -47,7 +47,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
   const proxies = useProxies(api, formatted);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
-  const identity = useIdentity(address);
+  const identity = useMyAccountIdentity(address);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
