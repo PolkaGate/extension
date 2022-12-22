@@ -6,7 +6,7 @@ import React, { useContext } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { useTranslation } from '../hooks';
+import { useAccountName, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
 import { AccountContext, Identity, InputWithLabelAndIdenticon } from '.';
 
@@ -17,16 +17,16 @@ interface Props {
   style?: SxProps<Theme>;
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   ignoreAddress?: string
+  name?: string;
 }
 
-export default function AccountInputWithIdentity({ address, chain, ignoreAddress, label, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity({ address, chain, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format, ignoreAddress);
-  const allAddr = getAllAddresses(hierarchy, true, true, chain?.ss58Format);
 
-  const selectedAddrName = allAddr.find((acc) => acc[0] === address)?.[2];
+  const selectedAddrName = useAccountName(address);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
@@ -45,7 +45,7 @@ export default function AccountInputWithIdentity({ address, chain, ignoreAddress
             chain={chain}
             formatted={address}
             identiconSize={31}
-            name={selectedAddrName}
+            name={name || selectedAddrName}
           />
         </Grid>
       }

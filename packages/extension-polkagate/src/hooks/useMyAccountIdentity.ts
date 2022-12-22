@@ -13,7 +13,7 @@ import useFormatted from './useFormatted';
 import { useAccount, useApi, useChainName } from '.';
 
 /** This hook is going to be used for users account existing in the extension */
-export default function useIdentity(address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
+export default function useMyAccountIdentity(address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
   const formatted = useFormatted(address);
   const api = useApi(address);
   const account = useAccount(address);

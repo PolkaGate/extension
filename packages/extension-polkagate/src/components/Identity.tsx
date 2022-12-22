@@ -54,7 +54,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
             value={_formatted}
           />
         </Grid>
-        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(95% - ${(socialIcons * 20) + identiconSize}px)`, width: 'max-content' }}>
+        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {_accountInfo?.identity?.displayParent &&
               <Grid item>

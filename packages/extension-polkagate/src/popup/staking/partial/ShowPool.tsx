@@ -33,7 +33,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
 
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
-  const poolStaked = pool?.stashIdAccount?.stakingLedger?.active ?? pool?.bondedPool?.points;
+  const poolStaked = pool?.stashIdAccount?.stakingLedger?.active || pool?.bondedPool?.points;
   const poolStatus = pool?.bondedPool?.state;
 
   return (
@@ -109,8 +109,14 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
           }
         </Grid>
       </Grid>
-      {isOpenPoolInfo &&
-        <PoolMoreInfo api={api} chain={chain} pool={pool} setShowPoolInfo={setOpenPoolInfo} showPoolInfo={isOpenPoolInfo} />
+      {isOpenPoolInfo && pool && chain &&
+        <PoolMoreInfo
+          api={api}
+          chain={chain}
+          pool={pool}
+          setShowPoolInfo={setOpenPoolInfo}
+          showPoolInfo={isOpenPoolInfo}
+        />
       }
     </>
   );

@@ -21,17 +21,14 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, AccountInputWithIdentity, AmountWithOptions, Identicon, Motion, PButton, SettingsContext, ShortAddress } from '../../components';
-import { useAccountName, useApi, useDecimal, useEndpoint, useMetadata, useTranslation } from '../../hooks';
+import { AccountContext, AccountInputWithIdentity, AmountWithOptions, Identicon, Identity, Motion, PButton, SettingsContext, ShortAddress } from '../../components';
+import { useAccountInfo, useAccountName, useApi, useDecimal, useEndpoint, useMetadata, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
 import Asset from './partial/Asset';
 
-interface Props {
-  className?: string;
-}
 
 type TransferType = 'All' | 'Max' | 'Normal';
 interface State {
@@ -41,13 +38,12 @@ interface State {
   balances: DeriveBalancesAll | undefined;
 }
 
-export default function Send({ className }: Props): React.ReactElement<Props> {
+// TODO: can use useMyAccountIdentity
+export default function Send(): React.ReactElement {
   const { t } = useTranslation();
-  const settings = useContext(SettingsContext);
   const history = useHistory();
   const { pathname, state } = useLocation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
 
   const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
   const chain = useMetadata(genesisHash, true);
@@ -55,34 +51,30 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
   const api = useApi(address, state?.api);
   const decimal = useDecimal(address);
   const accountName = useAccountName(address);
+  const myIdentity = useMyAccountIdentity(address);
 
   const [fee, setFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
+  const recipientNameIfIsInExtension = useAccountName(recipientAddress);
+  const recipientInfo = useAccountInfo(api, recipientAddress);
   const [amount, setAmount] = useState<string>();
   const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
   const [transferType, setTransferType] = useState<TransferType | undefined>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
-  const [identity, setIdentity] = useState<DeriveAccountRegistration | undefined>();
+  const [recipientName, setRecipientName] = useState<string>();
 
   const transfer = api && api.tx?.balances && (['All', 'Max'].includes(transferType) ? (api.tx.balances.transferAll) : (api.tx.balances.transferKeepAlive));
-  const recipientName = useMemo(
-    (): string => {
-      if (state?.recipientName) {
-        return state?.recipientName as string;
-      }
 
-      return identity?.display || accounts?.find((a) => getFormattedAddress(a.address, chain, settings?.prefix) === recipientAddress)?.name || t('Unknown');
-    },
-    [state?.recipientName, identity?.display, accounts, t, chain, settings?.prefix, recipientAddress]
-  );
+  useEffect(() => {
+    if (state?.recipientName) {
+      setRecipientName(state?.recipientName as string);
 
-  useEffect((): void => {
-    // eslint-disable-next-line no-void
-    api && recipientAddress && void api.derive.accounts.info(recipientAddress).then((info) => {
-      setIdentity(info?.identity);
-    });
-  }, [api, recipientAddress]);
+      return;
+    }
+
+    setRecipientName(recipientInfo?.identity?.display || recipientNameIfIsInExtension || t('Unknown'));
+  }, [recipientInfo?.identity?.display, recipientNameIfIsInExtension, state?.recipientName, t]);
 
   useEffect((): void => {
     state?.recipientAddress && setRecipientAddress(state?.recipientAddress);
@@ -205,31 +197,17 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
-  const identicon = (
-    <Identicon
-      iconTheme={chain?.icon || 'polkadot'}
-      // isExternal={isExternal}
-      // onCopy={_onCopy}
-      prefix={chain?.ss58Format ?? 42}
-      size={31}
-      value={formatted}
-    />
-  );
-
   const From = () => (
     <>
       <div style={{ fontSize: '16px', fontWeight: 300 }}>
         {t('From')}
       </div>
       <Grid alignItems='center' container justifyContent='felx-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
-        <Grid item mx='5px'>
-          {identicon}
+        <Grid item sx={{ fontSize: '28px', fontWeight: 400, mx: '5px', maxWidth: '67%' }}>
+          <Identity address={address} api={api} chain={chain} identiconSize={31} showSocial={false} name={myIdentity?.display} />
         </Grid>
-        <Grid item sx={{ fontSize: '28px', fontWeight: 400, lineHeight: '25px', maxWidth: '50%', mr: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {accountName}
-        </Grid>
-        <Grid item>
-          <ShortAddress address={formatted} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', pt: '5px' }} />
+        <Grid item sx={{ width: '29%' }}>
+          <ShortAddress address={formatted} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px', pr: '5px' }} />
         </Grid>
       </Grid>
     </>
@@ -256,6 +234,7 @@ export default function Send({ className }: Props): React.ReactElement<Props> {
           label={t('To')}
           setAddress={setRecipientAddress}
           style={{ pt: '15px' }}
+          name={recipientName}
         />
         <Asset
           api={api}

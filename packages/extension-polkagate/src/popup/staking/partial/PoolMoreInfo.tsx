@@ -166,20 +166,14 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
         </Typography>
       </Grid>
       {poolToShow
-        ? (<>
+        ? <>
           <ShowPool api={api} chain={chain} mode='Default' pool={poolToShow} style={{ m: '20px auto', width: '92%' }} />
           <CollapseData mode='Roles' open={openRoles} pool={poolToShow} show={showRoles} title={t<string>('Roles')} />
           {poolToShow.accounts?.rewardId && <CollapseData mode='Ids' open={openIds} pool={poolToShow} show={showIds} title={t<string>('Ids')} />}
           {poolToShow.accounts?.rewardId && <CollapseData mode='Members' open={openMembers} pool={poolToShow} show={showMembers} title={t<string>('Members')} />}
           {poolToShow.accounts?.rewardId && <CollapseData mode='Reward' open={openReward} pool={poolToShow} show={showReward} title={t<string>('Rewards')} />}
-        </>)
-        : (
-          <Progress
-            pt='95px'
-            size={125}
-            title={t('Loading pool information...')}
-          />
-        )
+        </>
+        : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
       <IconButton
         onClick={_closeMenu}

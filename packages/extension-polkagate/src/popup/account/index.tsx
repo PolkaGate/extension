@@ -15,7 +15,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faHistory, faPaperPlane, faRefresh, faCoins } from '@fortawesome/free-solid-svg-icons';
+import { faCoins,faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, useTheme } from '@mui/material';
@@ -27,7 +27,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
-import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
+import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { STAKING_CHAINS } from '../../util/constants';
@@ -94,7 +94,7 @@ export default function AccountDetails({ className }: Props): React.ReactElement
   const theme = useTheme();
   const { pathname, state } = useLocation();
   const { address, genesisHash } = useParams<FormattedAddressState>();
-  const identity = useIdentity(address);
+  const identity = useMyAccountIdentity(address);
   const price = usePrice(address);
   const endpoint = useEndpoint2(address);
   const formatted = useFormatted(address);
@@ -351,14 +351,14 @@ export default function AccountDetails({ className }: Props): React.ReactElement
       </Container>
       {showOthers && balances && chain && formatted &&
         <Others
-          account={account}
+          address={address}
           api={api}
           balances={balances}
           chain={chain}
-          formatted={formatted}
           price={price?.amount}
           setShow={setShowOthers}
           show={showOthers}
+          identity={identity}
         />
       }
     </Motion>

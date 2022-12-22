@@ -12,7 +12,7 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { ShortAddress } from '../../../../../components';
-import { useAccountName, useIdentity, useTranslation } from '../../../../../hooks';
+import { useAccountName, useMyAccountIdentity, useTranslation } from '../../../../../hooks';
 import { SoloSettings } from '../../../../../util/types';
 import getPayee from './util';
 
@@ -24,7 +24,7 @@ export default function RewardsDestination({ settings }: Props): React.ReactElem
   const { t } = useTranslation();
   const address = getPayee(settings);
   const payeeName = useAccountName(address)
-  const payeeIdentity = useIdentity(address);
+  const payeeIdentity = useMyAccountIdentity(address);
 
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center' }}>

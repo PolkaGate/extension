@@ -10,39 +10,42 @@
 
 import '@vaadin/icons';
 
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+
 import { Container, Divider, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Identicon, Motion, Popup, ShowBalance } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useAccountName, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
-  account: AccountJson | null;
   api?: ApiPromise;
+  identity: DeriveAccountRegistration | null | undefined;
   show: boolean;
   chain: Chain;
   price: number | undefined;
   balances: BalancesInfo;
-  formatted: AccountId;
+  address: AccountId | string;
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
-export default function Others({ account, api, balances, chain, formatted, price, setShow, show }: Props): React.ReactElement<void> {
+export default function Others({ address, api, balances, chain, identity, price, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
+  const formatted = useFormatted(address);
+  const accountName = useAccountName(address);
 
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
       // isExternal={isExternal}
-      // onCopy={_onCopy}
+      judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}
@@ -97,9 +100,9 @@ export default function Others({ account, api, balances, chain, formatted, price
           showBackArrow
         />
         <Container disableGutters sx={{ px: '15px' }}>
-          <Grid container item justifyContent='center' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            <Typography sx={{ fontSize: '28px', fontWeight: 400, width: '99%' }}>
-              {account?.name}
+          <Grid container item justifyContent='center' >
+            <Typography sx={{ fontSize: '28px', fontWeight: 400, maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {identity?.display || accountName}
             </Typography>
           </Grid>
           <Grid container item justifyContent='center'>

@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, ShortAddress } from '../../../components';
+import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 import { MyPoolInfo } from '../../../util/types';
@@ -22,7 +22,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
+function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
@@ -48,34 +48,11 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
 
   return (
     <>
-      <Grid
-        container
-        sx={style}
-      >
-        <Typography
-          fontSize='14px'
-          fontWeight={300}
-          sx={{
-            textAlign: 'left'
-          }}
-          width='100%'
-        >
+      <Grid container sx={style}>
+        <Typography fontSize='14px' fontWeight={300} sx={{ textAlign: 'left' }} width='100%'>
           {label}
         </Typography>
-        <Grid
-          container
-          direction='column'
-          item
-          sx={{
-            '> :last-child': {
-              border: 'none'
-            },
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'secondary.main',
-            borderRadius: '5px'
-          }}
-        >
+        <Grid container direction='column' item sx={{ '> :last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px' }}>
           {accountsToShow?.length
             ? accountsToShow.map((acc, index) => (
               <Grid container fontSize='14px' fontWeight={400} item key={index} lineHeight='37px' textAlign='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
@@ -84,7 +61,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='65%'>
                   {acc.address
-                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} showSocial identiconSize={25} style={{ fontSize: '14px', pl: '5px' }} showShortAddress/>
+                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} showSocial identiconSize={25} style={{ fontSize: '14px', pl: '5px' }} showShortAddress />
                     : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
                       {'—'}
                     </Typography>
@@ -127,3 +104,5 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
     </>
   );
 }
+
+export default React.memo(ShowRoles);
