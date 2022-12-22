@@ -53,6 +53,8 @@ function Infotip({ children, iconLeft = 10, iconTop = 4, placement = 'top', show
           }
         }
       }}
+      enterDelay={500}
+      enterNextDelay={7000}
       leaveDelay={500}
       placement={placement}
       title={text || ''}

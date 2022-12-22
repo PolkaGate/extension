@@ -12,12 +12,12 @@ import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
 import { useOutsideClick } from '../hooks';
+import QrScanner from '../popup/import/addAddressOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';
 import ShortAddress from './ShortAddress';
 import { Input } from './TextInputs';
-import QrScanner from '../popup/import/addAddressOnly/QrScanner';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];

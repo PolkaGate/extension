@@ -12,7 +12,7 @@ export default function SettingsHeader(): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
-    <Grid container justifyContent='center' mb='20px' mt='40px'>
+    <Grid container justifyContent='center' mt='40px'>
       <Typography fontSize='16px' fontWeight={400} sx={{ width: '100%', textAlign: 'center' }}>
         {t<string>('Solo Staking')}
       </Typography>

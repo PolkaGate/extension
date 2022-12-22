@@ -14,6 +14,7 @@ import React from 'react';
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useIdentity, useTranslation } from '../../../../../hooks';
 import { SoloSettings } from '../../../../../util/types';
+import getPayee from './util';
 
 interface Props {
   settings: SoloSettings
@@ -21,12 +22,12 @@ interface Props {
 
 export default function RewardsDestination({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const address: string = settings.payee === 'Staked' ? settings.stashId : settings.payee.Account; // just to show the address in review page
+  const address = getPayee(settings);
   const payeeName = useAccountName(address)
   const payeeIdentity = useIdentity(address);
 
   return (
-    <Grid container item justifyContent='center' sx={{ alignSelf: 'center'}}>
+    <Grid container item justifyContent='center' sx={{ alignSelf: 'center' }}>
       <Typography sx={{ fontWeight: 300 }}>
         {t('Rewards destination')}
       </Typography>

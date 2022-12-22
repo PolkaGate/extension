@@ -20,7 +20,6 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
   const controllerName = useAccountName(newSettings?.controllerId);
   const maybePayeeAddress = useMemo(() => getPayee(newSettings), [newSettings]);
   const destinationAccountName = useAccountName(maybePayeeAddress);
-  const token = txInfo.api && txInfo.api.registry.chainTokens[0];
 
   return (
     <>
@@ -34,8 +33,8 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShortAddress
             address={txInfo.from.address}
-            style={{ fontSize: '16px' }}
             inParentheses
+            style={{ fontSize: '16px' }}
           />
         </Grid>
       </Grid>
@@ -56,8 +55,8 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
           <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
             <ShortAddress
               address={newSettings?.controllerId}
-              style={{ fontSize: '16px' }}
               inParentheses
+              style={{ fontSize: '16px' }}
             />
           </Grid>
         </Grid>
@@ -67,19 +66,15 @@ export default function TxDetail({ newSettings, txInfo }: Props): React.ReactEle
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
             {t<string>('Rewards destination')}:
           </Typography>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {destinationAccountName || t('Unknown')}
-          </Typography>
+          {maybePayeeAddress &&
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='34%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+              {destinationAccountName || t('Unknown')}
+            </Typography>
+          }
           <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
             {maybePayeeAddress
-              ? <ShortAddress
-                address={newSettings?.controllerId}
-                style={{ fontSize: '16px' }}
-                inParentheses
-              />
-              : <>
-                {t('Add to staked amount')}
-              </>
+              ? <ShortAddress address={maybePayeeAddress} inParentheses style={{ fontSize: '16px' }} />
+              : <>{t('Add to staked amount')} </>
             }
           </Grid>
         </Grid>

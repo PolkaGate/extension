@@ -37,10 +37,11 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>(getPayee(settings));
 
-  const REWARD_DESTINATIONS = [
-    { text: t('Add to staked amount'), value: 'Staked' },
-    { text: t('Transfer to a specific account'), value: 'Others' }
-  ];
+  const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s.payee === 'Staked' ? 'Staked' : 'Others', []);
+
+  const optionDefaultVal = useMemo(() => isSettingAtBonding
+    ? getOptionLabel(settings)
+    : !newSettings?.payee ? getOptionLabel(settings) : getOptionLabel(newSettings), [getOptionLabel, isSettingAtBonding, newSettings, settings]);
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
@@ -60,7 +61,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
       return 'Stash';
     }
 
-    if (rewardDestinationAccount === settings.controllerId || rewardDestinationAccount === controllerId) {
+    if ([settings.controllerId, controllerId].includes(rewardDestinationAccount)) {
       return 'Controller';
     }
 
@@ -73,6 +74,13 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
 
   const onSet = useCallback(() => {
     set((s) => {
+      if (isSettingAtBonding) {
+        s.controllerId = controllerId;
+        s.payee = makePayee(rewardDestinationValue, rewardDestinationAccount);
+
+        return s;
+      }
+
       if (controllerId && settings.controllerId !== controllerId) {
         s.controllerId = controllerId;
       } else {
@@ -91,7 +99,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
     });
     setShowReview && setShowReview(true);
     !setShowReview && setShow(false); // can be left open when settings accessed from home
-  }, [controllerId, makePayee, rewardDestinationAccount, rewardDestinationValue, set, setShow, setShowReview, settings.controllerId, settings.payee]);
+  }, [controllerId, isSettingAtBonding, makePayee, rewardDestinationAccount, rewardDestinationValue, set, setShow, setShowReview, settings.controllerId, settings.payee]);
 
   const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>
@@ -115,26 +123,18 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
           style={{ pt: '10px', px: '15px' }}
         />
       }
-      {formatted === settings?.controllerId &&
+      {(isSettingAtBonding || formatted === settings?.controllerId) &&
         <>
-          <Grid item mx='15px' mt='30px' width='100%'>
+          <Grid item mx='15px' mt='15px' width='100%'>
             <FormControl>
               <FormLabel sx={{ color: 'text.primary', '&.Mui-focused': { color: 'text.primary' } }}>
                 {t('Reward destination')}
               </FormLabel>
-              <RadioGroup defaultValue='Staked' onChange={onSelectionMethodChange}>
+              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange}>
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label='Add to staked amount' />
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label='Transfer to a specific account' />
               </RadioGroup>
             </FormControl>
-
-            {/* <Select
-              _mt='23px'
-              defaultValue={settings.payee === 'Staked' ? REWARD_DESTINATIONS[0].value : REWARD_DESTINATIONS[1].value}
-              label={'Reward destination'}
-              onChange={onSelectionMethodChange}
-              options={REWARD_DESTINATIONS}
-            /> */}
           </Grid>
           {rewardDestinationValue === 'Others' &&
             <>
@@ -143,7 +143,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
                 chain={chain}
                 label={t('Specific account')}
                 setAddress={setRewardDestinationAccount}
-                style={{ pt: '25px', px: '15px' }}
+                style={{ pt: '15px', px: '15px' }}
               />
               <Warn style={{ mt: '-20px' }} text={t<string>('The balance for the recipient must be at least {{ED}} in order to keep the amount.', { replace: { ED: `${ED} ${token}` } })} />
             </>

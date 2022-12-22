@@ -6,9 +6,9 @@
 import '@vaadin/icons';
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, SoloSettings, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, useTheme } from '@mui/material';
@@ -18,9 +18,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { soloSetting, soloSettingB } from '../../../assets/icons';
+import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useIdentity, useMinToReceiveRewardsInSolo, useStakingAccount, useStakingConsts, useStakingRewards, useStashId, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useIdentity, useMinToReceiveRewardsInSolo, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -55,9 +55,11 @@ export default function Index(): React.ReactElement {
   const rewards = useStakingRewards(address);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const balances = useBalances(address, refresh, setRefresh);
+  const myBalances = useBalances(address, refresh, setRefresh);
+  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId, refresh, setRefresh);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useIdentity(address);
+  const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
@@ -75,6 +77,15 @@ export default function Index(): React.ReactElement {
   const [shake, setShake] = useState<boolean>(false); //  to shake to persuade to stake ;)
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
+  const role = useCallback((): string =>
+    String(stakingAccount?.controllerId) === String(stakingAccount?.stashId)
+      ? 'Both'
+      : String(formatted) === String(stakingAccount?.stashId)
+        ? 'Stash'
+        : String(formatted) === String(stakingAccount?.controllerId)
+          ? 'Controller'
+          : 'undefined' // default
+    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
@@ -331,17 +342,36 @@ export default function Index(): React.ReactElement {
           onClick={goToNominations}
           title={t<string>('Validators')}
         />
-        {stakingAccount?.stakingLedger?.active?.gt(BN_ZERO) &&
+        {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&
           <HorizontalMenuItem
             divider
-            icon={<Box component='img' src={theme.palette.mode === 'dark' ? soloSetting : soloSettingB} />}
+            icon={
+              <Box
+                component='img'
+                src={
+                  ['Both', 'undefined'].includes(role())
+                    ? (theme.palette.mode === 'dark' ? soloSettingWhite : soloSettingBlack)
+                    : role() === 'Stash'
+                      ? (theme.palette.mode === 'dark' ? stashSettingWhite : stashSettingBlack)
+                      : (role() === 'Controller' && theme.palette.mode === 'dark')
+                        ? controllerSettingWhite
+                        : controllerSettingBlack
+                }
+              />
+            }
             labelMarginTop={'-7px'}
             onClick={goToSettings}
             title={t<string>('Setting')}
           />
         }
         <HorizontalMenuItem
-          icon={<vaadin-icon icon='vaadin:info-circle' style={{ height: '28px', color: `${theme.palette.text.primary}` }} />}
+          icon={
+            <FontAwesomeIcon
+              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              icon={faInfoCircle}
+              size='lg'
+            />
+          }
           onClick={goToInfo}
           title={t<string>('Info')}
         />
@@ -354,14 +384,15 @@ export default function Index(): React.ReactElement {
         setShowInfo={setShowInfo}
         showInfo={showInfo}
       />
-      {showSettings &&
+      {showSettings && stakingAccount &&
         <Settings
           address={address}
           api={api}
+          setRefresh={setRefresh}
           setShowSettings={setShowSettings}
           showSettings={showSettings}
-          stakingConsts={stakingConsts}
           stakingAccount={stakingAccount}
+          stakingConsts={stakingConsts}
         />
       }
       {showRedeemableWithdraw && formatted && api && getValue('available', balances) && chain && redeemable && !redeemable?.isZero() &&
