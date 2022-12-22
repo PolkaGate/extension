@@ -22,7 +22,7 @@ interface Props {
   lineHeight?: string;
 }
 
-function SubTitle({ label, mt, withSteps, lineHeight = '20px', style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
+function SubTitle({ label, mt, withSteps, lineHeight = '30px', style = { fontSize: '16px', fontWeight: 500, mb: '5px' } }: Props) {
   return (
     <Grid alignItems='center' container item justifyContent='center' mt={mt ?? 0} style={{ ...style }}>
       <Grid item sx={{ lineHeight, pr: '5px' }} >
@@ -37,7 +37,7 @@ function SubTitle({ label, mt, withSteps, lineHeight = '20px', style = { fontSiz
           />
         </Grid>
       }
-      <Grid container item justifyContent='center' xs={12} >
+      <Grid container item justifyContent='center' xs={12}>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
       </Grid>
     </Grid>

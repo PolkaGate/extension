@@ -14,7 +14,7 @@ function Steps({ current, style = { fontSize: '20px', fontWeight: 400 }, total }
       color='text.primary'
       fontFamily='inherit'
       sx={{ ...style }}
-      p='5px'
+      p='0 5px'
     >
       <span>(</span>
       <span style={{ color: theme.palette.secondary.light }}>{current}</span>
