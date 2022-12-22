@@ -32,6 +32,7 @@ import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, SoloSettings, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
+import ShowValidators from './partials/ShowValidators';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -63,6 +64,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [showSelectedValidators, setShowSelectedValidators] = useState<boolean>(false);
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
@@ -98,6 +100,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
 
     onAction('/');
   }, [onAction, setShow]);
+
+  const openValidatorsTable = useCallback(() => setShowSelectedValidators(true), []);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -206,8 +210,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
-            title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
             style={{ mt: '-5px' }}
+            title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
           />
           {settings.controllerId !== settings.stashId &&
             <Controller />
@@ -224,14 +228,14 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           {isFirstTimeStaking
             ? <Grid alignContent='center' container justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '8px', width: '60%' }}>
-                <Infotip iconLeft={-15} iconTop={5} showQuestionMark text= {t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}>
+                <Infotip iconLeft={-15} iconTop={5} showQuestionMark text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
                   </Typography>
                 </Infotip>
               </Grid>
               <Grid item
-                // onClick={openPoolInfo} 
+                onClick={openValidatorsTable}
                 sx={{ cursor: 'pointer', mt: '5px' }} width='8%'>
                 <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
               </Grid>
@@ -287,6 +291,9 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           >
             <TxDetail settings={settings} txInfo={txInfo} />
           </Confirmation>)
+        }
+        {showSelectedValidators && selectedValidators?.length &&
+          <ShowValidators address={address} api={api} chain={chain} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
         }
       </Popup>
     </Motion>
