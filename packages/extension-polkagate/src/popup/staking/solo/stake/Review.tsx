@@ -224,7 +224,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           {isFirstTimeStaking
             ? <Grid alignContent='center' container justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '8px', width: '60%' }}>
-                <Infotip iconLeft={-15} iconTop={5} showQuestionMark text={t('disclaimer')}>
+                <Infotip iconLeft={-15} iconTop={5} showQuestionMark text= {t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
                   </Typography>

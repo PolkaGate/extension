@@ -125,13 +125,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        iconComponent={
-          <vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-        }
-        // onClick={_goToDeriveAcc}
-        text={t('Contribute to crowdloans')}
-      />
-      <MenuItem
         disabled={!currentChain}
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />

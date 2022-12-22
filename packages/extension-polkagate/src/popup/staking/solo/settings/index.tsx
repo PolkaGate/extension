@@ -23,9 +23,10 @@ interface Props {
   setShowSettings: React.Dispatch<React.SetStateAction<boolean>>
   stakingConsts: StakingConsts | null | undefined;
   stakingAccount: AccountStakingInfo;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Settings({ address, api, setShowSettings, showSettings, stakingAccount, stakingConsts }: Props): React.ReactElement {
+export default function Settings({ address, api, setRefresh, setShowSettings, showSettings, stakingAccount, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const [settings, setSettings] = useState<SoloSettings>();
@@ -65,7 +66,7 @@ export default function Settings({ address, api, setShowSettings, showSettings, 
           text={t<string>('Solo Staking')}
         />
         <SubTitle label={t('Settings')} lineHeight='32px' withSteps={{ current: 1, total: 2 }} />
-        <Grid container sx={{ mt: '10px' }}>
+        <Grid container sx={{ mt: '15px' }}>
           {settings &&
             <SetPayeeController
               address={address}
@@ -84,8 +85,10 @@ export default function Settings({ address, api, setShowSettings, showSettings, 
             api={api}
             newSettings={newSettings}
             setShow={setShowReview}
+            setShowSettings={setShowSettings}
             settings={settings}
             show={showReview}
+            setRefresh={setRefresh}
           />
         }
       </Popup>

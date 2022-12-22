@@ -11,7 +11,7 @@ import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
 import { useAccount, useApi, useChain, useDecimal, useFormatted, useToken } from '.';
 
-export default function useBalances(address: string, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
+export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
   const account = useAccount(address);
   const [pooledBalance, setPooledBalance] = useState<BN | null>();
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
@@ -78,6 +78,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       isFetching.fetching[String(formatted)].pooledBalance = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   const getBalances = useCallback(() => {
@@ -95,6 +96,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, decimal, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh, token]);
 
   useEffect(() => {
@@ -122,6 +124,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
     } else {
       console.log('Balances is fetching not needs to fetch it again!');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.length, token]);
 
   useEffect(() => {
@@ -140,6 +143,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
     } else {
       console.log('pooled balance is fetching not needs to fetch it again!');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, formatted, getPoolBalances, isFetching.fetching[String(formatted)]?.length]);
 
   useEffect(() => {
@@ -186,6 +190,7 @@ export default function useBalances(address: string, refresh?: boolean, setRefre
     const metaData = JSON.stringify({ ['balances']: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, api, pooledBalance, chain, chainName, decimal, overall, token]);
 
   useEffect(() => {

@@ -21,7 +21,6 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { setting } from '../../../../assets/icons';
 import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
@@ -35,19 +34,24 @@ import TxDetail from './partials/TxDetail';
 interface Props {
   address: string;
   api: ApiPromise | undefined;
-  settings: SoloSettings,
+  settings: SoloSettings;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  newSettings: SoloSettings | undefined
+  newSettings: SoloSettings;
+  setShowSettings: React.Dispatch<React.SetStateAction<boolean>>
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSettings, newSettings: SoloSettings, chain: Chain | undefined }) {
   const { t } = useTranslation();
-  const destinationAddress: string = newSettings.payee === 'Stash' ? settings.stashId : newSettings.payee === 'Controller' ? settings.controllerId : newSettings.payee.Account;
+  const destinationAddress = useMemo(() =>
+    newSettings.payee === 'Stash'
+      ? settings.stashId
+      : newSettings.payee === 'Controller'
+        ? newSettings.controllerId || settings.controllerId
+        : newSettings.payee.Account as string
+    , [newSettings.controllerId, newSettings.payee, settings.controllerId, settings.stashId]);
 
-  console.log('destinationAddress:', destinationAddress);
-  console.log('newSettings newSettings:', newSettings);
-  
   return (
     <Grid container item justifyContent='center' sx={{ alignSelf: 'center', my: '5px' }}>
       <Typography sx={{ fontWeight: 300 }}>
@@ -69,14 +73,13 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
   );
 }
 
-export default function Review({ address, api, newSettings, setShow, settings, show }: Props): React.ReactElement {
+export default function Review({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountName(address);
   const theme = useTheme();
   const chain = useChain(address);
   const formatted = useFormatted(address);
-  const token = useToken(address);
   const onAction = useContext(ActionContext);
   const { accounts, hierarchy } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
@@ -103,19 +106,19 @@ export default function Review({ address, api, newSettings, setShow, settings, s
 
     const txs = [];
 
-    if (newSettings?.controllerId && settings.controllerId !== newSettings?.controllerId) {
-      txs.push(setController(newSettings?.controllerId));
+    if (String(formatted) === String(settings.controllerId) && newSettings?.payee && JSON.stringify(settings.payee) !== JSON.stringify(newSettings?.payee)) {
+      txs.push(setPayee(newSettings?.payee)); // First
     }
 
-    if (newSettings?.payee && JSON.stringify(settings.payee) !== JSON.stringify(newSettings?.payee)) {
-      txs.push(setPayee(newSettings?.payee));
+    if (String(formatted) === String(settings.stashId) && newSettings?.controllerId && settings.controllerId !== newSettings?.controllerId) {
+      txs.push(setController(newSettings?.controllerId)); // Second, the order to execute
     }
 
     const tx = txs.length === 2 ? batchAll(txs) : txs[0];
 
     setTx(tx);
-    tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
-  }, [api, batchAll, formatted, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee]);
+    tx && tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
+  }, [api, batchAll, formatted, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -137,15 +140,15 @@ export default function Review({ address, api, newSettings, setShow, settings, s
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
-
+    setShowSettings(false);
     onAction(`/solo/${address}`);
-  }, [address, onAction, setShow]);
+  }, [address, onAction, setShow, setShowSettings]);
 
   const goToMyAccounts = useCallback(() => {
     setShow(false);
-
+    setShowSettings(false);
     onAction('/');
-  }, [onAction, setShow]);
+  }, [onAction, setShow, setShowSettings]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -157,17 +160,17 @@ export default function Review({ address, api, newSettings, setShow, settings, s
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!settings.stashId || !api || !tx) {
+      if (!formatted || !api || !tx) {
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? settings.stashId);
+      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const ptx = selectedProxy ? api.tx.proxy.proxy(settings.stashId, selectedProxy.proxyType, tx) : tx;
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
+      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+      const { block, failureText, fee, status, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
         action: 'solo_stake_settings',
@@ -176,7 +179,7 @@ export default function Review({ address, api, newSettings, setShow, settings, s
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: settings.stashId, name },
+        from: { address: formatted, name },
         status,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
@@ -184,8 +187,8 @@ export default function Review({ address, api, newSettings, setShow, settings, s
 
       history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      saveHistory(chain, hierarchy, settings.stashId, history);
+      setRefresh(true); // to refresh stakingAccount
+      saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -193,7 +196,7 @@ export default function Review({ address, api, newSettings, setShow, settings, s
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [settings.stashId, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [formatted, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, setRefresh, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

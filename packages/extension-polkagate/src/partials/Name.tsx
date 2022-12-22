@@ -28,9 +28,6 @@ export default function Name({ address, className, isFocused, label, onBlur, onE
   const account = accounts.find((account) => account.address === address);
   const startValue = value || account?.name;
 
-  console.log('isfoced:', isFocused)
-  console.log('onEnter:', onEnter)
-
   return (
     <div style={style}>
       <ValidatedInput

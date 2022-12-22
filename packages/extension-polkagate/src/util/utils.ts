@@ -179,7 +179,6 @@ export function getTransactionHistoryFromLocalStorage(
   _chainName?: string): TransactionDetail[] {
   const accountSubstrateAddress = getSubstrateAddress(address);
 
-  console.log('hierarchy:', hierarchy);
   const account = hierarchy.find((h) => h.address === accountSubstrateAddress);
 
   if (!account) {
