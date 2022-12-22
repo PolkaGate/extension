@@ -16,7 +16,6 @@ import { Container, Divider, Grid, Skeleton, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountJson } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
@@ -40,7 +39,7 @@ interface Props {
 export default function Others({ address, api, balances, chain, identity, price, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
-  const accountName = useAccountName(address, true);
+  const accountName = useAccountName(address);
 
   const identicon = (
     <Identicon
@@ -103,7 +102,7 @@ export default function Others({ address, api, balances, chain, identity, price,
         <Container disableGutters sx={{ px: '15px' }}>
           <Grid container item justifyContent='center' >
             <Typography sx={{ fontSize: '28px', fontWeight: 400, maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {accountName}
+              {identity?.display || accountName}
             </Typography>
           </Grid>
           <Grid container item justifyContent='center'>

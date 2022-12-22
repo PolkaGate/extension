@@ -5,21 +5,18 @@ import { useEffect, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useAccount, useMyAccountIdentity } from '.';
+import { getSubstrateAddress } from '../util/utils';
+import { useAccount } from '.';
 
-export default function useAccountName(address: string | AccountId | undefined, withIdentity?: boolean): string | undefined {
+export default function useAccountName (address: string | AccountId | undefined): string | undefined {
   const [name, setName] = useState<string | undefined>();
-  const account = useAccount(address);
-  const info = useMyAccountIdentity(address);
+  const substrateAddress = getSubstrateAddress(address);
 
-  console.log("info:", info)
+  const account = useAccount(substrateAddress);
+
   useEffect((): void => {
-    if (withIdentity && info?.display) {
-      return setName(info.display);
-    }
-
-    address && setName(account?.name);
-  }, [account, address, info?.display, withIdentity]);
+    substrateAddress && setName(account?.name);
+  }, [account, address, substrateAddress]);
 
   return name;
 }
