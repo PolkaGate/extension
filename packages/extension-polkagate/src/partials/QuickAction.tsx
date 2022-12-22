@@ -121,6 +121,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           textDisabled={(!availableProxiesForTransfer?.length && account?.isExternal)}
           title={t<string>('Send')}
           titleFontSize={10}
+          exceptionWidth={40}
         />
         <HorizontalMenuItem
           divider
@@ -147,6 +148,13 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         <HorizontalMenuItem
           divider
           dividerHeight={20}
+          icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${theme.palette.text.primary}` }} />}
+          onClick={goToHistory}
+          title={t<string>('Crowdloans')}
+          titleFontSize={10}
+        />
+        <HorizontalMenuItem
+          dividerHeight={20}
           icon={
             <FontAwesomeIcon
               color={theme.palette.mode === 'dark' ? 'white' : 'black'}
@@ -155,13 +163,6 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
             />}
           onClick={goToHistory}
           title={t<string>('History')}
-          titleFontSize={10}
-        />
-        <HorizontalMenuItem
-          dividerHeight={20}
-          icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${theme.palette.text.primary}` }} />}
-          onClick={goToHistory}
-          title={t<string>('Crowdloans')}
           titleFontSize={10}
         />
       </Grid>
