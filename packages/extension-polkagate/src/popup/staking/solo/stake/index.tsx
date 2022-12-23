@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountStakingInfo, SoloSettings, StakingConsts } from '../../../../util/types';
+import type { AccountStakingInfo, SoloSettings, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -20,6 +20,7 @@ import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, MIN_EXTRA_BOND } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
+import SelectValidators from '../../partial/SelectValidators';
 import Review from './Review';
 import Settings from './Settings';
 
@@ -52,6 +53,9 @@ export default function Index(): React.ReactElement {
   const [settings, setSettings] = useState<SoloSettings>({ controllerId: formatted, payee: 'Staked', stashId: formatted });
   const [showAdvanceSettings, setShowAdvanceSettings] = useState<boolean>();
   const [validatorSelectionMethod, setValidatorSelectionMethod] = useState<'auto' | 'manual'>('auto');
+  const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
+
+  const [manualSelectedValidators, setManualSelectedValidators] = useState<ValidatorInfo[]>([]);
 
   useEffect(() => {
     setSettings({ controllerId: formatted, payee: 'Staked', stashId: formatted });
@@ -167,9 +171,19 @@ export default function Index(): React.ReactElement {
     setAmount(amountToHuman(thresholds[maxMin].toString(), decimal));
   }, [thresholds, decimal]);
 
-  const goToReview = useCallback(() => {
-    setShowReview(true);
-  }, []);
+  const goToNext = useCallback(() => {
+    if (validatorSelectionMethod === 'auto') {
+      setShowReview(true);
+      setShowSelectValidator(false);
+
+      return;
+    }
+
+    if (validatorSelectionMethod === 'manual') {
+      setShowSelectValidator(true);
+      setShowReview(false);
+    }
+  }, [validatorSelectionMethod]);
 
   const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
     console.log('value:', event.target.value);
@@ -193,7 +207,6 @@ export default function Index(): React.ReactElement {
     <Motion>
       <HeaderBrand
         onBackClick={onBackClick}
-        paddingBottom={0}
         shortBorder
         showBackArrow
         showClose
@@ -245,7 +258,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       <PButton
         _isBusy={isFirstTimeStaking && showReview && !autoSelected}
-        _onClick={goToReview}
+        _onClick={goToNext}
         disabled={!!alert || !amount || amount === '0' || !balances?.availableBalance || balances?.availableBalance?.isZero() || balances?.availableBalance?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
         text={t<string>('Next')}
       />
@@ -277,6 +290,23 @@ export default function Index(): React.ReactElement {
             stakingConsts={stakingConsts}
           />
         </Grid>
+      }
+      {validatorSelectionMethod === 'manual' && showSelectValidator && formatted &&
+        <SelectValidators
+          address={address}
+          api={api}
+          chain={chain}
+          newSelectedValidators={manualSelectedValidators}
+          setNewSelectedValidators={setManualSelectedValidators}
+          setShow={setShowSelectValidator}
+          setShowReview={setShowReview}
+          show={showSelectValidator}
+          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          stakingConsts={stakingConsts}
+          stashId={formatted}
+          title={t('Select Validators')}
+
+        />
       }
     </Motion>
   );

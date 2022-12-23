@@ -17,8 +17,8 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
-import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup } from '../../../components';
-import { useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } from '../../../components';
+import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import { DEFAULT_FILTERS } from '../../../util/constants';
 import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
@@ -29,25 +29,32 @@ import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
   address: string;
-  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
-  allValidatorsInfo: AllValidators;
+  validatorsIdentities?: DeriveAccountInfo[] | null | undefined;
+  validatorsInfo?: AllValidators;
   api: ApiPromise;
-  title: string;
+  nominatedValidatorsIds?: AccountId[] | null | undefined;
+  poolId?: BN;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  nominatedValidatorsIds: AccountId[] | null | undefined;
-  stakingConsts: StakingConsts | null | undefined;
   stashId: AccountId;
+  stakingConsts: StakingConsts | null | undefined;
   staked: BN;
-  poolId?: BN;
+  title: string;
+  newSelectedValidators: ValidatorInfo[];
+  setNewSelectedValidators: React.Dispatch<React.SetStateAction<ValidatorInfo[]>>;
+  setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SelectValidators({ address, allValidatorsIdentities, allValidatorsInfo, api, nominatedValidatorsIds, poolId, setShow, show, staked, stakingConsts, stashId, title }: Props): React.ReactElement {
+export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, poolId, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(address);
   const decimal = useDecimal(address);
   const chain = useChain(address);
+
+  const allValidatorsInfo = useValidators(address, validatorsInfo);
+  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
+  const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds, validatorsIdentities);
 
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => !v.validatorPrefs.blocked), [allValidatorsInfo]);
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
@@ -55,12 +62,16 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   const [filteredValidators, setFilteredValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
   const [validatorsToList, setValidatorsToList] = useState<ValidatorInfo[] | undefined>(allValidators);
   const [searchedValidators, setSearchedValidators] = useState<ValidatorInfo[] | undefined>(allValidators);
-  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
-  const [showReview, setShowReview] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>();
   const [filters, setFilters] = useState<Filter>(structuredClone(DEFAULT_FILTERS) as Filter);
   const [sortValue, setSortValue] = useState<number>();
   const [apply, setApply] = useState<boolean>(false);
+
+  useEffect(() => {
+    /** initialization */
+    allValidators?.length && setValidatorsToList(allValidators);
+    allValidators?.length && !filteredValidators?.length && setFilteredValidators(allValidators);
+  }, [allValidators, filteredValidators?.length]);
 
   useEffect(() => {
     /** apply filtered validators on searched validators */
@@ -148,11 +159,14 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
   }, [setShow]);
 
   const onFilters = useCallback(() => {
-    systemSuggestion && setNewSelectedValidators([]);
-    setSystemSuggestion(false); // remove system suggestions when click on filters
+    if (systemSuggestion) {
+      // remove system suggestions when click on filters
+      setNewSelectedValidators([]);
+      setSystemSuggestion(false);
+    }
 
     setShowFilters(true);
-  }, [systemSuggestion]);
+  }, [setNewSelectedValidators, systemSuggestion]);
 
   const onSystemSuggestion = useCallback((event, checked: boolean) => {
     setSearchKeyword('');
@@ -160,13 +174,15 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     checked
       ? allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)])
       : setNewSelectedValidators([]);
-  }, [allValidators, selectBestValidators, stakingConsts]);
+  }, [allValidators, selectBestValidators, setNewSelectedValidators, stakingConsts]);
 
   const onSearch = useCallback((filter: string) => {
-    onSystemSuggestion(undefined, false);// to reset system suggestion on search
+    // onSystemSuggestion(undefined, false);// to reset system suggestion on search
+    setSystemSuggestion(false);
+
     setSearchKeyword(filter);
     applySearch(filter);
-  }, [applySearch, onSystemSuggestion]);
+  }, [applySearch]);
 
   const isSelected = useCallback((v: ValidatorInfo) => !!newSelectedValidators.find((n) => n.accountId === v.accountId), [newSelectedValidators]);
 
@@ -193,7 +209,7 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
     }
 
     setNewSelectedValidators([...newSelected]);
-  }, [newSelectedValidators, stakingConsts?.maxNominations]);
+  }, [newSelectedValidators, setNewSelectedValidators, stakingConsts?.maxNominations]);
 
   const TableSubInfoWithClear = () => (
     <Grid container justifyContent='space-between' pt='5px'>
@@ -225,102 +241,118 @@ export default function SelectValidators({ address, allValidatorsIdentities, all
             total: 2
           }}
         />
-        <Grid container sx={{ justifyContent: 'flex-start', px: '15px' }}>
-          <Grid container item justifyContent='center' ml='-15px'>
-            <Infotip
-              iconLeft={6}
-              iconTop={6}
-              showQuestionMark
-              placement='top'
-              text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}
-            >
-              <Checkbox2
-                checked={systemSuggestion}
-                label={t<string>('System Suggestions')}
-                labelStyle={{ fontSize: '16px', fontWeight: '400' }}
-                onChange={onSystemSuggestion}
-              />
-            </Infotip>
-          </Grid>
-          <Grid item justifyContent='flex-start' py='10px' width='73%'>
-            <InputFilter
-              autoFocus={false}
-              onChange={onSearch}
-              placeholder={t<string>('🔍 Search validator')}
-              theme={theme}
-              value={searchKeyword ?? ''}
+        <>
+          {allValidators === undefined || !nominatedValidatorsIds === undefined
+            ? <Progress
+              pt='125px'
+              size={125}
+              title={t('Loading the validators\' list ...')}
             />
-          </Grid>
-          <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
-            {t('Filters')}
-            <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
-              <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            {validatorsToList &&
-              <ValidatorsTable
-                allValidatorsIdentities={allValidatorsIdentities}
-                api={api}
-                chain={chain}
-                decimal={decimal}
-                formatted={stashId}
-                handleCheck={handleCheck}
-                height={window.innerHeight - 230}
-                isSelected={isSelected}
-                maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
-                nominatedValidatorsIds={nominatedValidatorsIds}
-                setSelectedValidators={setNewSelectedValidators}
-                showCheckbox
-                staked={staked}
-                stakingConsts={stakingConsts}
-                token={token}
-                validatorsToList={validatorsToList}
+            // :<>
+            //   <Warn text={t<string>('No validator found.')} />
+            //   <Grid alignItems='center' container direction='column' pt='98px'>
+            //     <Grid item sx={{ cursor: 'pointer' }}>
+            //       <FontAwesomeIcon
+            //         color={`${theme.palette.secondary.light}`}
+            //         icon={faRefresh}
+            //         onClick={onRefresh}
+            //         size='2x'
+            //         spin={refresh}
+            //       />
+            //     </Grid>
+            //     <Grid item onClick={onRefresh} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+            //       {t('Refresh')}
+            //     </Grid>
+            //   </Grid>
+            // </>
+
+            : <>
+              <Grid container sx={{ justifyContent: 'flex-start', px: '15px' }}>
+                <Grid container item justifyContent='center' ml='-15px'>
+                  <Infotip
+                    iconLeft={6}
+                    iconTop={6}
+                    showQuestionMark
+                    placement='top'
+                    text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}
+                  >
+                    <Checkbox2
+                      checked={systemSuggestion}
+                      label={t<string>('System Suggestions')}
+                      labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+                      onChange={onSystemSuggestion}
+                    />
+                  </Infotip>
+                </Grid>
+                <Grid item justifyContent='flex-start' py='10px' width='73%'>
+                  <InputFilter
+                    autoFocus={false}
+                    onChange={onSearch}
+                    placeholder={t<string>('🔍 Search validator')}
+                    theme={theme}
+                    value={searchKeyword ?? ''}
+                  />
+                </Grid>
+                <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onFilters} pl='15px' py='10px' width='27%' sx={{ cursor: 'pointer' }}>
+                  {t('Filters')}
+                  <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
+                    <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  {validatorsToList &&
+                    <ValidatorsTable
+                      allValidatorsIdentities={allValidatorsIdentities}
+                      api={api}
+                      chain={chain}
+                      decimal={decimal}
+                      formatted={stashId}
+                      handleCheck={handleCheck}
+                      height={window.innerHeight - 230}
+                      isSelected={isSelected}
+                      maxSelected={newSelectedValidators.length === stakingConsts?.maxNominations}
+                      nominatedValidatorsIds={nominatedValidatorsIds}
+                      setSelectedValidators={setNewSelectedValidators}
+                      showCheckbox
+                      staked={staked}
+                      stakingConsts={stakingConsts}
+                      token={token}
+                      validatorsToList={validatorsToList}
+                    />
+                  }
+                </Grid>
+                <TableSubInfoWithClear />
+                {showFilters &&
+                  <Grid ml='-15px' position='absolute'>
+                    <Filters
+                      allValidators={searchKeyword ? searchedValidators : allValidators}
+                      allValidatorsIdentities={allValidatorsIdentities}
+                      apply={apply}
+                      filters={filters}
+                      newSelectedValidators={newSelectedValidators}
+                      onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
+                      setApply={setApply}
+                      setFilteredValidators={setFilteredValidators}
+                      setFilters={setFilters}
+                      setNewSelectedValidators={setNewSelectedValidators}
+                      setShow={setShowFilters}
+                      setSortValue={setSortValue}
+                      show={showFilters}
+                      sortValue={sortValue}
+                      stakingConsts={stakingConsts}
+                    />
+                  </Grid>
+                }
+              </Grid>
+              <PButton
+                _onClick={() => setShowReview(true)}
+                disabled={!newSelectedValidators?.length}
+                text={t<string>('Next')}
               />
-            }
-          </Grid>
-          <TableSubInfoWithClear />
-          {showFilters &&
-            <Grid ml='-15px' position='absolute'>
-              <Filters
-                allValidators={searchKeyword ? searchedValidators : allValidators}
-                allValidatorsIdentities={allValidatorsIdentities}
-                apply={apply}
-                filters={filters}
-                newSelectedValidators={newSelectedValidators}
-                onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
-                setApply={setApply}
-                setFilteredValidators={setFilteredValidators}
-                setFilters={setFilters}
-                setNewSelectedValidators={setNewSelectedValidators}
-                setShow={setShowFilters}
-                setSortValue={setSortValue}
-                show={showFilters}
-                sortValue={sortValue}
-                stakingConsts={stakingConsts}
-              />
-            </Grid>
+            </>
           }
-        </Grid>
-        <PButton
-          _onClick={() => setShowReview(true)}
-          disabled={!newSelectedValidators?.length}
-          text={t<string>('Next')}
-        />
+        </>
       </Popup>
-      {showReview && newSelectedValidators &&
-        <Review
-          address={address}
-          allValidators={searchKeyword ? searchedValidators : allValidators}
-          api={api}
-          newSelectedValidators={newSelectedValidators}
-          poolId={poolId}
-          setShow={setShowReview}
-          show={showReview}
-          staked={staked}
-          stakingConsts={stakingConsts}
-        />
-      }
     </Motion>
   );
 }
