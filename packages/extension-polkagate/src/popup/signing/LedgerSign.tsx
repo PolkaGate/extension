@@ -6,7 +6,7 @@ import type { HexString } from '@polkadot/util/types';
 
 import { faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -25,12 +25,12 @@ interface Props {
   setError: (value: string | null) => void;
 }
 
-function LedgerSign({ accountIndex, addressOffset, className, error, genesisHash, onSignature, payload, setError }: Props): React.ReactElement<Props> {
+function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignature, payload, setError }: Props): React.ReactElement<Props> {
   const [isBusy, setIsBusy] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
   const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useLedger(genesisHash, accountIndex, addressOffset);
-
+  
   useEffect(() => {
     if (ledgerError) {
       setError(ledgerError);
@@ -60,9 +60,9 @@ function LedgerSign({ accountIndex, addressOffset, className, error, genesisHash
     },
     [accountIndex, addressOffset, ledger, onSignature, payload, setError]
   );
-
+  
   return (
-    <div className={className}>
+    <Grid container>
       {!!ledgerWarning && (
         <Warning theme={theme}>
           {ledgerWarning}
@@ -89,7 +89,7 @@ function LedgerSign({ accountIndex, addressOffset, className, error, genesisHash
           />
         )
       }
-    </div>
+    </Grid>
   );
 }
 

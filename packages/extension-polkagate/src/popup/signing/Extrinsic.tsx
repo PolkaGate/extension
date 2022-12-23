@@ -122,8 +122,12 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
   return (
     <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('From')}</Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>{final}</Typography>
+        <Typography fontWeight={300} width='35%'>
+          {t<string>('From')}
+        </Typography>
+        <Typography fontWeight={400} textAlign='right' width='65%'>
+          {final}
+        </Typography>
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>{chain ? t<string>('Chain') : t<string>('Genesis')}</Typography>
@@ -133,17 +137,29 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
         }
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('Version')}</Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>{specVersion.toNumber()}</Typography>
+        <Typography fontWeight={300} width='35%'>
+          {t<string>('Version')}
+        </Typography>
+        <Typography fontWeight={400} textAlign='right' width='65%'>
+          {specVersion.toNumber()}
+        </Typography>
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('Nonce')}</Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>{formatNumber(nonce)}</Typography>
+        <Typography fontWeight={300} width='35%'>
+          {t<string>('Nonce')}
+        </Typography>
+        <Typography fontWeight={400} textAlign='right' width='65%'>
+          {formatNumber(nonce)}
+        </Typography>
       </Grid>
       {!tip.isEmpty && (
         <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-          <Typography fontWeight={300} width='35%'>{t<string>('Tip')}</Typography>
-          <Typography fontWeight={400} textAlign='right' width='65%'>{formatNumber(tip)}</Typography>
+          <Typography fontWeight={300} width='35%'>
+            {t<string>('Tip')}
+          </Typography>
+          <Typography fontWeight={400} textAlign='right' width='65%'>
+            {formatNumber(tip)}
+          </Typography>
         </Grid>
       )}
       {renderMethod(method, decoded, t)}
