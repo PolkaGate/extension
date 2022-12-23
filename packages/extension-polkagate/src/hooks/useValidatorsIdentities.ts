@@ -10,7 +10,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { SavedValidatorsIdentities, ValidatorsIdentities } from '../util/types';
 import { useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
 
-export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined): DeriveAccountInfo[] | null | undefined {
+export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[]): DeriveAccountInfo[] | null | undefined {
   const endpoint = useEndpoint2(address);
   const chainName = useChainName(address);
   const currentEraIndex = useCurrentEraIndex(address);
@@ -59,9 +59,15 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
   }, [chainName, savedEraIndex, validatorsIdentities?.length]);
 
   useEffect(() => {
+    if (identities) {
+      setNewValidatorsIdentities(identities);
+
+      return;
+    }
+
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
     endpoint && allValidatorsIds && !newValidatorsIdentities && currentEraIndex && currentEraIndex !== savedEraIndex && getValidatorsIdentities(endpoint, allValidatorsIds);
-  }, [endpoint, getValidatorsIdentities, allValidatorsIds, newValidatorsIdentities, currentEraIndex, savedEraIndex]);
+  }, [endpoint, getValidatorsIdentities, allValidatorsIds, newValidatorsIdentities, currentEraIndex, savedEraIndex, identities]);
 
   useEffect(() => {
     if (!chainName) {

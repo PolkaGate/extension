@@ -148,7 +148,6 @@ export default function Index(): React.ReactElement {
     <Motion>
       <HeaderBrand
         onBackClick={onBackClick}
-        paddingBottom={0}
         shortBorder
         showBackArrow
         showClose

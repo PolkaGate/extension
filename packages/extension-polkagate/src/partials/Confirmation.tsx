@@ -11,7 +11,7 @@ import { useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import getLogo from '../util/getLogo';
 import { TxInfo } from '../util/types';
-import { HeaderBrand } from '.';
+import { HeaderBrand, SubTitle } from '.';
 
 interface Props {
   showConfirmation: boolean;
@@ -44,9 +44,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <Typography fontSize='16px' fontWeight={500} m='auto' sx={{ borderBottom: '2px solid', borderBottomColor: 'secondary.main' }} textAlign='center' width='39%'>
-          {txInfo.status === 'success' ? t<string>('Completed') : t<string>('Failed')}
-        </Typography>
+        <SubTitle label={txInfo.status === 'success' ? t<string>('Completed') : t<string>('Failed')} />
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
