@@ -24,6 +24,7 @@ import { useTranslation } from '../../../hooks';
 import BalanceFee from './BalanceFee';
 
 interface Props {
+  address?: string;
   balanceLabel: string;
   balanceType?: string;
   balances?: DeriveBalancesAll | null | undefined;
@@ -34,7 +35,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function Asset({ api, balance, balanceLabel, balanceType, balances, fee, genesisHash, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
+export default function Asset({ api, balance, address, balanceLabel, balanceType, balances, fee, genesisHash, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -56,6 +57,7 @@ export default function Asset({ api, balance, balanceLabel, balanceType, balance
         </Grid>
         <Grid container item justifyContent='flex-end' xs>
           <BalanceFee
+            address={address}
             api={api}
             balance={balance}
             balances={balances}

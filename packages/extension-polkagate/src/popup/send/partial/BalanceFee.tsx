@@ -20,9 +20,11 @@ import React from 'react';
 import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../../components';
+import { useDecimal,useToken } from '../../../hooks';
 import { getValue } from '../../account/util';
 
 interface Props {
+  address?: string;
   type: string;
   balances: DeriveBalancesAll | null | undefined;
   fee: Balance | undefined;
@@ -31,8 +33,10 @@ interface Props {
 
 }
 
-export default function BalanceFee({ api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
+export default function BalanceFee({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
   const value = balance ?? getValue(type, balances);
+  const token = useToken(address);
+  const decimal = useDecimal(address);
 
   return (
     <Grid alignItems='flex-end' container direction='column' item py='5px' xs>
@@ -40,15 +44,19 @@ export default function BalanceFee({ api, balance, balances, fee, type }: Props)
         <ShowBalance
           api={api}
           balance={value}
+          decimal={decimal}
           decimalPoint={2}
+          token={token}
         />
       </Grid>
       <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
         <ShowBalance
           api={api}
           balance={fee}
+          decimal={decimal}
           decimalPoint={4}
           height={15}
+          token={token}
         />
       </Grid>
     </Grid>

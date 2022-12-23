@@ -237,6 +237,7 @@ export default function Send(): React.ReactElement {
           name={recipientName}
         />
         <Asset
+          address={address}
           api={api}
           balanceLabel={t('Available balance')}
           balanceType='available'

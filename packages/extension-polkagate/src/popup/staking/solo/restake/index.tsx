@@ -158,7 +158,15 @@ export default function Index(): React.ReactElement {
         withSteps={{ current: 1, total: 2 }}
       />
       <Grid item xs={12} sx={{ mx: '15px' }}>
-        <Asset api={api} balance={unlockingAmount} balanceLabel={t('Unlocking')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
+        <Asset
+          address={address}
+          api={api}
+          balance={unlockingAmount}
+          balanceLabel={t('Unlocking')}
+          fee={estimatedFee}
+          genesisHash={chain?.genesisHash}
+          style={{ pt: '20px' }}
+        />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
             label={t<string>('Amount ({{token}})', { replace: { token } })}
