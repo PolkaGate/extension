@@ -322,19 +322,19 @@ export default function Pool(): React.ReactElement {
           <ShowRoles api={api} chain={chain} label={t<string>('Roles')} mode='Roles' pool={poolsToShow[poolIndex]} style={{ m: 'auto', width: '92%' }} />
           {canChangeState &&
             <Grid alignItems='center' container justifyContent='space-between' m='20px auto' width='92%'>
-              <ActionBtn disabled={poolState === 'Destroying' || !(!poolRoot || !poolStateToggler)} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
-                <AutoDeleteIcon sx={{ color: poolState === 'Destroying' || !(!poolRoot || !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
+              <ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateToggler)} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
+                <AutoDeleteIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
               </ActionBtn>
               {poolState === 'Blocked'
-                ? (<ActionBtn onClick={goUnlock} disabled={!(!poolRoot || !poolStateToggler)} showDivider text={t<string>('Unblock')}>
-                  <UnblockIcon sx={{ color: !(!poolRoot || !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '18px' }} />
+                ? (<ActionBtn onClick={goUnlock} disabled={(!poolRoot && !poolStateToggler)} showDivider text={t<string>('Unblock')}>
+                  <UnblockIcon sx={{ color: (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '18px' }} />
                 </ActionBtn>)
-                : (<ActionBtn disabled={poolState === 'Destroying' || !(!poolRoot || !poolStateToggler)} onClick={goBlock} showDivider text={t<string>('Block')}>
-                  <BlockIcon sx={{ color: poolState === 'Destroying' || !(!poolRoot || !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
+                : (<ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateToggler)} onClick={goBlock} showDivider text={t<string>('Block')}>
+                  <BlockIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
                 </ActionBtn>)
               }
-              <ActionBtn disabled={isRemoveAllDisabled || !(!poolRoot || !poolStateToggler)} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
-                <FontAwesomeIcon color={isRemoveAllDisabled || !(!poolRoot || !poolStateToggler) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
+              <ActionBtn disabled={isRemoveAllDisabled || (!poolRoot && !poolStateToggler)} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
+                <FontAwesomeIcon color={isRemoveAllDisabled || (!poolRoot && !poolStateToggler) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
               </ActionBtn>
               <ActionBtn disabled={poolState === 'Destroying' || !poolRoot} onClick={goEdit} text={t<string>('Edit')}>
                 <FontAwesomeIcon color={poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />
