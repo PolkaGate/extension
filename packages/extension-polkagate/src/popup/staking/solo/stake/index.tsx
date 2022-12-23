@@ -7,7 +7,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, SoloSettings, StakingConsts } from '../../../../util/types';
 
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -233,8 +233,8 @@ export default function Index(): React.ReactElement {
                 {t('Validator selection method')}
               </FormLabel>
               <RadioGroup defaultValue='auto' onChange={onSelectionMethodChange}>
-                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='auto' />} label='Auto' />
-                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='manual' />} label='Manual' />
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='auto' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Auto')}</Typography>} />
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='manual' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Manual')}</Typography>} />
               </RadioGroup>
             </FormControl>
             <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '30px' }} xs={12}>

@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, SxProps, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -125,14 +125,14 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
       }
       {(isSettingAtBonding || formatted === settings?.controllerId) &&
         <>
-          <Grid item mx='15px' mt='15px' width='100%'>
+          <Grid item mt='15px' mx='15px' width='100%'>
             <FormControl>
-              <FormLabel sx={{ color: 'text.primary', '&.Mui-focused': { color: 'text.primary' } }}>
+              <FormLabel sx={{ color: 'text.primary', fontSize: '16px', '&.Mui-focused': { color: 'text.primary' } }}>
                 {t('Reward destination')}
               </FormLabel>
-              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange}>
-                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label='Add to staked amount' />
-                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label='Transfer to a specific account' />
+              <RadioGroup defaultValue={optionDefaultVal} onChange={onSelectionMethodChange} >
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main' }} value='Staked' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Add to staked amount')}</Typography>} />
+                <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='Others' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Transfer to a specific account')}</Typography>} />
               </RadioGroup>
             </FormControl>
           </Grid>
