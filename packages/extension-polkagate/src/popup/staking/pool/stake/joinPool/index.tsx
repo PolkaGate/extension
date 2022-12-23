@@ -192,6 +192,7 @@ export default function JoinPool(): React.ReactElement {
         address={address}
         api={api}
         label={t<string>('Choose a pool to join')}
+        maxHeight={window.innerHeight - 350}
         pools={sortedPools}
         selected={selectedPool}
         setSelected={setSelectedPool}
@@ -199,15 +200,14 @@ export default function JoinPool(): React.ReactElement {
           m: '15px auto 0',
           width: '92%'
         }}
-        maxHeight={window.innerHeight - 350}
       />
       <PButton
+        _isBusy={poolToJoin?.poolId ? Number(poolToJoin.poolId) !== selectedPool?.poolId?.toNumber() : false || !!pools}
         _onClick={toReview}
         disabled={nextBtnDisabled}
         text={t<string>('Next')}
-        _isBusy={poolToJoin?.poolId ? Number(poolToJoin.poolId) !== selectedPool?.poolId?.toNumber() : true}
       />
-      {showReview && poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() &&
+      {showReview && poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() && api &&
         <Review
           address={address}
           api={api}
