@@ -13,7 +13,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 
 import { Label, ShowBalance } from '../../../../../../components';
-import { useChain, useTranslation } from '../../../../../../hooks';
+import { useChain, useDecimal, useTranslation } from '../../../../../../hooks';
 import { PoolInfo } from '../../../../../../util/types';
 import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
 
@@ -32,6 +32,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
+  const decimal = useDecimal(address);
 
   const [showPoolMoreInfo, setShowPoolMoreInfo] = useState<boolean>(false);
   const [poolId, setPoolId] = useState<number>();
@@ -112,6 +113,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
                             balance={poolStaked(pool.bondedPool?.points)}
                             decimalPoint={4}
                             height={22}
+                            decimal={decimal}
                           />
                         </Grid>
                       </Grid>
