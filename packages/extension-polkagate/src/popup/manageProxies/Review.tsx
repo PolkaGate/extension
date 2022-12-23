@@ -17,7 +17,7 @@ import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, Sho
 import { useAccount, useAccountName } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { updateMeta } from '../../messaging';
-import { WaitScreen } from '../../partials';
+import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../util/types';
@@ -158,8 +158,8 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           color='red'
           height='30px'
           m='auto'
-          pt='5px'
           mb='-15px'
+          pt='5px'
           width='92%'
         >
           <Warning
@@ -172,17 +172,9 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           </Warning>
         </Grid>
       }
-      <Typography
-        m='20px auto'
-        sx={{
-          borderBottom: '1px solid',
-          borderBottomColor: 'secondary.main'
-        }}
-        textAlign='center'
-        width='30%'
-      >
-        {t<string>('Review')}
-      </Typography>
+      <Grid container my='20px'>
+        <SubTitle label={t<string>('Review')} />
+      </Grid>
       <Typography
         textAlign='center'
       >
