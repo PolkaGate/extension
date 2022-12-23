@@ -47,7 +47,7 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
       </Grid>
       <Grid container direction='row' item justifyContent='center'>
         <Grid item title={t('is recoverable')}>
-          <IconButton disabled={!recoverable} sx={{ height: '15px', width: '15px', zIndex: 1 }}>
+          <IconButton disabled={!recoverable} sx={{ height: '15px', width: '15px' }}>
             <FontAwesomeIcon
               color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
               fontSize='13px'
@@ -56,7 +56,7 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
           </IconButton>
         </Grid>
         <Grid item title={t('has proxy')}>
-          <IconButton onClick={openManageProxy} sx={{ height: '15px', width: '15px', zIndex: 1 }}>
+          <IconButton onClick={openManageProxy} sx={{ height: '15px', width: '15px' }}>
             <FontAwesomeIcon
               color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
               fontSize='13px'

@@ -5,8 +5,8 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import { Backdrop, Container, Grid } from '@mui/material';
+import React, { useMemo, useCallback } from 'react';
 
 import { useTranslation } from '../../hooks';
 import getParentNameSuri from '../../util/getParentNameSuri';
@@ -22,6 +22,7 @@ export default function AccountsTree({ quickActionOpen, setQuickActionOpen, pare
   const { t } = useTranslation();
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
+  const handleClose = useCallback(() => setQuickActionOpen(undefined), []);
 
   const label = useMemo(
     (): string | undefined => {
@@ -44,16 +45,21 @@ export default function AccountsTree({ quickActionOpen, setQuickActionOpen, pare
 
   return (
     <>
-      <Container className='tree' disableGutters sx={{ borderColor: 'secondary.light', borderTopStyle: account?.parentAddress ? 'dashed' : 'solid', borderTopWidth: '1px', opacity: quickActionOpen === account.address || quickActionOpen === undefined ? 1 : 0.2, transition: 'all 0.3s', position: 'relative' }}>
+      <Container className='tree' disableGutters sx={{ borderColor: 'secondary.light', borderTopStyle: account?.parentAddress ? 'dashed' : 'solid', borderTopWidth: '1px', position: 'relative' }}>
         <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
           {label}
         </Grid>
         <AccountPreview
           {...account}
           parentName={parentName}
-          suri={suri}
           quickActionOpen={quickActionOpen}
           setQuickActionOpen={setQuickActionOpen}
+          suri={suri}
+        />
+        <Backdrop
+          onClick={handleClose}
+          open={quickActionOpen !== undefined}
+          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : '#000000cc', position: 'absolute', top: '-1px' }}
         />
       </Container>
       {account?.children?.map((child, index) => (
