@@ -125,6 +125,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       />
       <SubTitle label={t<string>('Stake')} />
       <Asset
+        address={address}
         api={api}
         balance={availableBalance}
         balanceLabel={t<string>('Available balance')}

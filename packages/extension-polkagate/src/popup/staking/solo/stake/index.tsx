@@ -218,6 +218,7 @@ export default function Index(): React.ReactElement {
       />
       <Grid item sx={{ mx: '15px' }} xs={12}>
         <Asset
+          address={address}
           api={api}
           balance={balances?.availableBalance}
           balanceLabel={t('Available balance')}

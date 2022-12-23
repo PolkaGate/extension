@@ -27,7 +27,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -185,7 +185,15 @@ export default function Index (): React.ReactElement {
         <Warn text={t<string>('Nothing to unstake.')} />
       }
       <Grid item xs={12} sx={{ mx: '15px' }}>
-        <Asset api={api} balance={staked} balanceLabel={t('Staked')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
+        <Asset
+          address={address}
+          api={api}
+          balance={staked}
+          balanceLabel={t('Staked')}
+          fee={estimatedFee}
+          genesisHash={chain?.genesisHash}
+          style={{ pt: '20px' }}
+        />
         <div style={{ paddingTop: '30px' }}>
           <AmountWithOptions
             label={t<string>('Amount ({{token}})', { replace: { token } })}

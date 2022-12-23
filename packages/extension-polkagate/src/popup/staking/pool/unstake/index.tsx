@@ -22,9 +22,9 @@ import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
+import RemoveAll from '../pool/removeAll';
 import SetState from '../pool/SetState';
 import Review from './Review';
-import RemoveAll from '../pool/removeAll';
 
 interface State {
   api: ApiPromise | undefined;
@@ -259,7 +259,16 @@ export default function Index(): React.ReactElement {
         </Grid>
       }
       <Grid item sx={{ mx: '15px' }} xs={12}>
-        <Asset api={api} balance={staked} balanceLabel={t('Staked')} fee={estimatedFee} genesisHash={chain?.genesisHash} style={{ pt: '20px' }} />
+        <Asset
+          address={address}
+          api={api}
+          address={address}
+          balance={staked}
+          balanceLabel={t('Staked')}
+          fee={estimatedFee}
+          genesisHash={chain?.genesisHash}
+          style={{ pt: '20px' }}
+        />
         <div style={{ paddingTop: '15px' }}>
           <AmountWithOptions
             disabled={!!helperButton}
@@ -292,7 +301,7 @@ export default function Index(): React.ReactElement {
         </Typography>}
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0'}
+        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks &&
