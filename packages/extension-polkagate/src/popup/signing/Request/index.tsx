@@ -46,7 +46,7 @@ function isRawPayload(payload: SignerPayloadJSON | SignerPayloadRaw): payload is
   return !!(payload as SignerPayloadRaw).data;
 }
 
-export default function Request({ setError, error, account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, isFirst, request, signId, url }: Props): React.ReactElement<Props> | null {
+export default function Request({ account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, error, isFirst, request, setError, signId, url }: Props): React.ReactElement<Props> | null {
   const onAction = useContext(ActionContext);
   const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
   const { t } = useTranslation();
