@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces';
-import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
+import type { AccountStakingInfo, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,9 +18,10 @@ import { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Infotip, Motion, PButton, Progress, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useStashId, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
+import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import SelectValidators from '../../partial/SelectValidators';
+import Review from '../../partial/SelectValidatorsReview';
 import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
 
@@ -40,15 +41,20 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const chain = useChain(address);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
+
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
+
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const formatted = useFormatted(address);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | string[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
+
+  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
+  const [showReview, setShowReview] = useState<boolean>(false);
 
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
@@ -206,17 +212,32 @@ export default function Index(): React.ReactElement {
       {showSelectValidator && allValidatorsInfo && formatted &&
         <SelectValidators
           address={address}
-          allValidatorsIdentities={allValidatorsIdentities}
-          allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
+          newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
+          setNewSelectedValidators={setNewSelectedValidators}
           setShow={setShowSelectValidator}
+          setShowReview={setShowReview}
           show={showSelectValidator}
           staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}
+          validatorsIdentities={allValidatorsIdentities}
+          validatorsInfo={allValidatorsInfo}
+        />
+      }
+      {showReview && newSelectedValidators &&
+        <Review
+          address={address}
+          allValidators={allValidatorsInfo}
+          api={api}
+          newSelectedValidators={newSelectedValidators}
+          setShow={setShowReview}
+          show={showReview}
+          staked={stakingAccount?.stakingLedger?.active ?? BN_ZERO}
+          stakingConsts={stakingConsts}
         />
       }
     </Motion>

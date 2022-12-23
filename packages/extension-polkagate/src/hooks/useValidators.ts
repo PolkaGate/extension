@@ -14,7 +14,7 @@ import { useChain, useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
  * This hooks return a list of all available validators (current and waiting) on the chain which the address is already tied with.
  */
 
-export default function useValidators(address: string): AllValidators | null | undefined {
+export default function useValidators(address: string, validators?: AllValidators): AllValidators | null | undefined {
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
   const endpoint = useEndpoint2(address);
@@ -63,9 +63,15 @@ export default function useValidators(address: string): AllValidators | null | u
   }, [chainName]);
 
   useEffect(() => {
+    if (validators) {
+      setNewValidatorsInfo(validators);
+
+      return;
+    }
+
     /** get validators info, including current and waiting, should be called after savedValidators gets value */
     endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex && getValidatorsInfo(chain, endpoint, info);
-  }, [endpoint, chain, getValidatorsInfo, info, currentEraIndex]);
+  }, [endpoint, chain, getValidatorsInfo, info, currentEraIndex, validators]);
 
   return newInfo || info;
 }

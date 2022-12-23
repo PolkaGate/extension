@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces';
-import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
+import type { MyPoolInfo, PoolStakingConsts, StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,6 +23,7 @@ import { HeaderBrand, SubTitle } from '../../../../partials';
 import SelectValidators from '../../partial/SelectValidators';
 import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
+import Review from '../../partial/SelectValidatorsReview';
 
 interface State {
   api: ApiPromise | undefined;
@@ -50,7 +51,10 @@ export default function Index(): React.ReactElement {
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);
   const [showSelectValidator, setShowSelectValidator] = useState<boolean>(false);
-  
+
+  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInfo[]>([]);
+  const [showReview, setShowReview] = useState<boolean>(false);
+
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
 
   const selectedValidatorsInfo = useMemo(() =>
@@ -208,18 +212,33 @@ export default function Index(): React.ReactElement {
       {showSelectValidator && pool && allValidatorsInfo && formatted &&
         <SelectValidators
           address={address}
-          allValidatorsIdentities={allValidatorsIdentities}
-          allValidatorsInfo={allValidatorsInfo}
           api={api}
           chain={chain}
+          newSelectedValidators={newSelectedValidators}
           nominatedValidatorsIds={nominatedValidatorsIds}
           poolId={pool.poolId}
+          setNewSelectedValidators={setNewSelectedValidators}
           setShow={setShowSelectValidator}
+          setShowReview={setShowReview}
           show={showSelectValidator}
           staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}
+          validatorsIdentities={allValidatorsIdentities}
+          validatorsInfo={allValidatorsInfo}
+        />
+      }
+      {showReview && newSelectedValidators &&
+        <Review
+          address={address}
+          allValidators={allValidatorsInfo}
+          api={api}
+          newSelectedValidators={newSelectedValidators}
+          setShow={setShowReview}
+          show={showReview}
+          staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}
+          stakingConsts={stakingConsts}
         />
       }
     </Motion>

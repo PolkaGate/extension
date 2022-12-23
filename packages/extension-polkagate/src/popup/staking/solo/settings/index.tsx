@@ -59,13 +59,12 @@ export default function Settings({ address, api, setRefresh, setShowSettings, sh
       <Popup show={showSettings}>
         <HeaderBrand
           onBackClick={onBackClick}
-          paddingBottom={0}
           shortBorder
           showBackArrow
           showClose
           text={t<string>('Solo Staking')}
         />
-        <SubTitle label={t('Settings')} lineHeight='32px' withSteps={{ current: 1, total: 2 }} />
+        <SubTitle label={t('Settings')} withSteps={{ current: 1, total: 2 }} />
         <Grid container sx={{ mt: '15px' }}>
           {settings &&
             <SetPayeeController
