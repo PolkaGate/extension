@@ -58,7 +58,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
         setIsBusy(false);
       }
     },
-    [address, onAction, password]
+    [address, needsPasswordConfirmation, onAction, password]
   );
 
   const _onChangePass = useCallback(
@@ -122,6 +122,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
               isError={isPasswordError}
               label={t<string>('Password for this account')}
               onChange={_onChangePass}
+              onEnter={_onClickForget}
             />
             {isPasswordError && (
               <Warning
