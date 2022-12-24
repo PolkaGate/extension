@@ -9,22 +9,22 @@ import { checkBox, checkedBox } from '../assets/icons';
 
 interface Props {
   checked?: boolean;
+  disabled?: boolean;
   label?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
   style?: SxProps<Theme> | undefined
   labelStyle?: React.CSSProperties | undefined
 }
 
-export default function Checkbox2({ checked = false, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
+export default function Checkbox2({ checked = false, disabled, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
   return (
     <FormControlLabel
       control={
         <Checkbox
           checked={checked}
-          // checkedIcon={<CheckBoxOutlinedIcon sx={{ color: 'secondary.light' }} />}
           checkedIcon={<img src={checkedBox} />}
+          disabled={disabled}
           icon={<img src={checkBox} />}
-          // icon={<CheckBoxOutlineBlankRoundedIcon sx={{ color: 'secondary.light' }} />}
           onChange={onChange}
           sx={{ p: 0, pr: label && '5px' }}
         />
