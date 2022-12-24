@@ -261,7 +261,7 @@ export default function RewardDetails(): React.ReactElement {
         return setRewardsInfo(rewardsFromSubscan);
       }
     });
-  }, [chainName, formatted]);
+  }, [chainName, endpoint, formatted]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
