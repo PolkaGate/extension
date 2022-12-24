@@ -12,9 +12,10 @@ interface Props {
   showQuestionMark?: boolean;
   iconTop?: number;
   iconLeft?: number;
+  fontSize?: string;
 }
 
-function Infotip({ children, iconLeft = 10, iconTop = 4, placement = 'top', showQuestionMark = false, text }: Props): React.ReactElement<Props> {
+function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, placement = 'top', showQuestionMark = false, text }: Props): React.ReactElement<Props> {
   const ref = useRef(null);
   const [tpLocation, setTpLocation] = useState<string | undefined>();
 
@@ -48,7 +49,7 @@ function Infotip({ children, iconLeft = 10, iconTop = 4, placement = 'top', show
             },
             backgroundColor: 'text.primary',
             color: 'text.secondary',
-            fontSize: '14px',
+            fontSize,
             fontWeight: 400
           }
         }
