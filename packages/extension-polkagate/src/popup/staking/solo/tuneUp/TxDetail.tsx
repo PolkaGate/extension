@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { ShortAddress } from '../../../../components';
@@ -13,12 +13,10 @@ import { TxInfo } from '../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
-  label: string;
 }
 
-export default function TxDetail({ label, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const token = txInfo.api?.registry.chainTokens[0];
 
   return (
     <>
@@ -38,15 +36,6 @@ export default function TxDetail({ label, txInfo }: Props): React.ReactElement {
           <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
         </Grid>
       }
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
-      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {label}:
-        </Typography>
-        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          {`${txInfo.amount} ${token}`}
-        </Grid>
-      </Grid>
     </>
   );
 }
