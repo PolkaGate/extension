@@ -9,6 +9,7 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Container, Divider, Grid, useTheme } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -29,8 +30,7 @@ import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
-import TxDetail from '../partials/TxDetail';
-import Typography from '@mui/material/Typography';
+import TxDetail from './TxDetail';
 
 interface Props {
   address: AccountId;
@@ -76,6 +76,8 @@ export default function TuneUp(): React.ReactElement {
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
   const tx = api && api.tx.staking.withdrawUnbonded; // sign by controller
+  const rebaged = api && api.tx.voterList.rebag;
+  const putInFrontOf = api && api.tx.voterList.putInFrontOf;
 
   function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
     if (!history.length) {
@@ -106,16 +108,26 @@ export default function TuneUp(): React.ReactElement {
   }, [proxies]);
 
   useEffect((): void => {
-    const params = [100];/** 100 is a dummy spanCount */
+    if (!rebaged || !putInFrontOf || !formatted) {
+      return;
+    }
 
-    tx && tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted]);
+    if (rebagInfo?.shouldRebag) {
+      const params = [formatted];
+
+      rebaged(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    } else if (putInFrontInfo?.shouldPutInFront) {
+      const params = [putInFrontInfo?.lighter];
+
+      putInFrontOf(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    }
+  }, [formatted, rebaged, putInFrontOf, rebagInfo?.shouldRebag, putInFrontInfo?.shouldPutInFront, putInFrontInfo?.lighter]);
 
   const submit = useCallback(async () => {
     const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
 
     try {
-      if (!formatted || !tx) {
+      if (!formatted || !api || !rebaged || !putInFrontOf) {
         return;
       }
 
@@ -123,14 +135,14 @@ export default function TuneUp(): React.ReactElement {
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const optSpans = await api.query.staking.slashingSpans(formatted);
-      const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
-      const params = [spanCount];
-      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
+
+      const tx = rebagInfo?.shouldRebag ? rebaged : putInFrontOf;
+      const params = rebagInfo?.shouldRebag ? formatted : putInFrontInfo?.lighter;
+      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, [params], signer, formatted, selectedProxy);
 
       const info = {
-        action: 'solo_withdraw_redeemable',
-        amount: amountToHuman(amount, decimal),
+        action: 'solo_tuneup',
+        // amount,
         block,
         date: Date.now(),
         failureText,
@@ -151,7 +163,7 @@ export default function TuneUp(): React.ReactElement {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [formatted, api, rebaged, putInFrontOf, selectedProxyAddress, password, rebagInfo?.shouldRebag, putInFrontInfo?.lighter, selectedProxy, estimatedFee, name, selectedProxyName, chain, hierarchy]);
 
   const _onBackClick = useCallback(() => {
     onAction(`/solo/nominations/${address}`);
@@ -247,18 +259,19 @@ export default function TuneUp(): React.ReactElement {
           show={showWaitScreen}
           title={t('Staking')}
         />
-        {/* {txInfo && (
-              <Confirmation
-                headerTitle={t('Staking')}
-                onPrimaryBtnClick={goToStakingHome}
-                onSecondaryBtnClick={goToMyAccounts}
-                primaryBtnText={t('Staking Home')}
-                secondaryBtnText={t('My Accounts')}
-                showConfirmation={showConfirmation}
-                txInfo={txInfo}
-              >
-                <TxDetail txInfo={txInfo} />
-              </Confirmation>) */}
+        {txInfo &&
+          <Confirmation
+            headerTitle={t('Staking')}
+            onPrimaryBtnClick={goToStakingHome}
+            onSecondaryBtnClick={goToMyAccounts}
+            primaryBtnText={t('Staking Home')}
+            secondaryBtnText={t('My Accounts')}
+            showConfirmation={showConfirmation}
+            txInfo={txInfo}
+          >
+            <TxDetail txInfo={txInfo} />
+          </Confirmation>
+        }
       </>
     </Motion>
   );
