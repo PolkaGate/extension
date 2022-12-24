@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
-import Memoize from 'memoize-one';
+// import Memoize from 'memoize-one';
+import memoize from 'memoizee';
 
+// var memoize = require("memoizee");
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 async function getApi(endpoint: string): Promise<ApiPromise> {
@@ -12,4 +14,6 @@ async function getApi(endpoint: string): Promise<ApiPromise> {
   return await ApiPromise.create({ provider: wsProvider });
 }
 
-export default Memoize(getApi);
+// export default getApi;
+// export default memoize(getApi);
+export default getApi;
