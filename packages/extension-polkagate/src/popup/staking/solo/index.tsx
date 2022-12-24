@@ -20,7 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useMyAccountIdentity, useMinToReceiveRewardsInSolo, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -85,7 +85,7 @@ export default function Index(): React.ReactElement {
         : String(formatted) === String(stakingAccount?.controllerId)
           ? 'Controller'
           : 'undefined' // default
-    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
+  , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
