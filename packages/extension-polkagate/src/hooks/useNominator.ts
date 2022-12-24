@@ -5,6 +5,7 @@ import type { NominatorInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { useEndpoint2, useFormatted, useStashId } from '.';
@@ -16,7 +17,7 @@ export default function useNominator(address: string): NominatorInfo | undefined
 
   const [nominatorInfo, setNominatorInfo] = useState<NominatorInfo | undefined>();
 
-  const getNominatorInfo = useCallback((endpoint: string, stakerAddress: string) => {
+  const getNominatorInfo = useCallback((endpoint: string, stakerAddress: AccountId | string) => {
     const getNominatorInfoWorker: Worker = new Worker(new URL('../util/workers/getNominatorInfo.js', import.meta.url));
 
     getNominatorInfoWorker.postMessage({ endpoint, stakerAddress });
@@ -28,7 +29,7 @@ export default function useNominator(address: string): NominatorInfo | undefined
     getNominatorInfoWorker.onmessage = (e: MessageEvent<any>) => {
       const nominatorInfo = e.data as NominatorInfo;
 
-      nominatorInfo.minNominated = new BN(nominatorInfo.minNominated)
+      nominatorInfo.minNominated = new BN(nominatorInfo.minNominated);
 
       setNominatorInfo(nominatorInfo);
       getNominatorInfoWorker.terminate();

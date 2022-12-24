@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
-import getChainInfo from '../getChainInfo';
+import getApi from '../getApi.ts';
 
-async function getRewards (_chain, _stakerAddress) {
+async function getRewards (endpoint, _stakerAddress) {
   console.log(` rewards worker is called for ${_stakerAddress}`);
 
-  const { api } = await getChainInfo(_chain);
+  const api = await getApi(endpoint);
+
   const rewards = await api.derive.staking.stakerRewards(_stakerAddress, true);
   const nonEmptyRewards = rewards.filter((e) => !e.isEmpty);
 
@@ -25,10 +26,10 @@ async function getRewards (_chain, _stakerAddress) {
 }
 
 onmessage = (e) => {
-  const { chain, stakerAddress } = e.data;
+  const { endpoint, stakerAddress } = e.data;
 
   // eslint-disable-next-line no-void
-  void getRewards(chain, stakerAddress).then((myRewards) => {
+  void getRewards(endpoint, stakerAddress).then((myRewards) => {
     postMessage(myRewards);
   });
 };

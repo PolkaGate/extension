@@ -13,7 +13,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
@@ -36,6 +36,9 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const chain = useChain(address);
   const formatted = useFormatted(address);
+  const token = useToken(address);
+  const decimal = useDecimal(address);
+
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
@@ -45,9 +48,7 @@ export default function Index(): React.ReactElement {
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
-  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const totalAfterUnstake = useMemo(() => staked && decimal && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
 
@@ -65,11 +66,10 @@ export default function Index(): React.ReactElement {
   }, [stakingConsts]);
 
   useEffect(() => {
-    if (!amount) {
+    if (!amount || !decimal) {
       return;
     }
 
-    // const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
     const amountAsBN = amountToMachine(amount, decimal);
 
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
@@ -116,7 +116,7 @@ export default function Index(): React.ReactElement {
   }, [amount, api, chilled, decimal, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
 
   useEffect(() => {
-    if (redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
+    if (decimal && redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
       getFee().catch(console.error);
     }
   }, [amount, api, chilled, decimal, formatted, getFee, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
@@ -131,7 +131,7 @@ export default function Index(): React.ReactElement {
   const onChangeAmount = useCallback((value: string) => {
     setUnstakeAllAmount(false);
 
-    if (value.length > decimal - 1) {
+    if (decimal && value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
@@ -141,7 +141,7 @@ export default function Index(): React.ReactElement {
   }, [decimal]);
 
   const onAllAmount = useCallback(() => {
-    if (!staked) {
+    if (!staked || !decimal) {
       return;
     }
 

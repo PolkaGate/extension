@@ -1,11 +1,10 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
 
 import getApi from '../getApi.ts';
 
 async function needsPutInFrontOf(endpoint, target) {
-  console.log(` needsPutInFrontOf is running for ${target}`);
+  console.log(`NeedsPutInFrontOf is called for id: ${target}`);
 
   const api = await getApi(endpoint);
   const at = await api.rpc.chain.getFinalizedHead();

@@ -294,8 +294,9 @@ export interface Referendum extends DeriveReferendumExt {
 }
 
 export interface RebagInfo {
-  shouldRebag?: boolean;
-  currentBagThreshold?: string;
+  shouldRebag: boolean;
+  currentUpper?: string,
+  currentWeight?: string,
 }
 
 export interface PutInFrontInfo {

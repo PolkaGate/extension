@@ -15,7 +15,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faCoins,faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, useTheme } from '@mui/material';
@@ -39,10 +39,6 @@ import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
-
-interface Props extends ThemeProps {
-  className?: string;
-}
 
 interface Recoded {
   account: AccountJson | null;
@@ -84,7 +80,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
   };
 }
 
-export default function AccountDetails({ className }: Props): React.ReactElement<Props> {
+export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const settings = useContext(SettingsContext);

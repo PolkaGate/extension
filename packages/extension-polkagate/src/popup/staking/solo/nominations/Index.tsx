@@ -89,8 +89,11 @@ export default function Index(): React.ReactElement {
   }, [formatted, stakingAccount?.controllerId]);
 
   const OnTuneUp = useCallback(() => {
-    // setShowRemoveValidator(true);
-  }, []);
+    history.push({
+      pathname: `/tuneup/${address}`,
+      state: { ...state }
+    });
+  }, [address, history, state]);
 
   const onChangeValidators = useCallback(() => {
     stakingAccount?.controllerId === formatted && goToSelectValidator();

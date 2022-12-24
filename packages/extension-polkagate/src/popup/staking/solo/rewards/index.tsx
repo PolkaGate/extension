@@ -19,7 +19,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Progress } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useEndpoint2, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
@@ -52,6 +52,7 @@ export default function RewardDetails(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
+  const endpoint = useEndpoint2(address);
   const api = useApi(address, state?.api);
   const chain = useChain(address, state?.chain);
   const history = useHistory();
@@ -138,7 +139,7 @@ export default function RewardDetails(): React.ReactElement {
     setMostPrize(Number(amountToHuman(estimatedMostPrize, decimal)));
 
     return temp;
-  }, [ascSortedRewards, decimal]);
+  }, [ascSortedRewards, decimal, formateDate]);
 
   const descSortedRewards = useMemo(() => {
     if (!ascSortedRewards?.length || !weeksRewards?.length) {
@@ -219,8 +220,8 @@ export default function RewardDetails(): React.ReactElement {
   }, [aggregatedRewards, formateDate]);
 
   useEffect((): void => {
-    // TODO: to get rewrads info from subquery
-    formatted && chainName && getRewards(chainName, formatted).then((info) => {
+    // TODO: to get rewards info from subquery
+    formatted && endpoint && getRewards(endpoint, formatted).then((info) => {
       const rewardsFromSubQuery: RewardInfo[] | undefined = info?.map(
         (i: SubQueryRewardInfo): RewardInfo => {
           return {

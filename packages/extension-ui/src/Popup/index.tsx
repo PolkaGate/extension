@@ -56,11 +56,11 @@ import SoloNominations from '../../../extension-polkagate/src/popup/staking/solo
 import SoloRestake from '../../../extension-polkagate/src/popup/staking/solo/restake';
 import SoloReward from '../../../extension-polkagate/src/popup/staking/solo/rewards';
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
+import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
-// import ToastProvider from '../components/Toast/ToastProvider';
 
 const startSettings = uiSettings.get();
 
@@ -201,6 +201,7 @@ export default function Popup(): React.ReactElement {
                             <Route path='/solo/reward/:address'>{wrapWithErrorBoundary(<SoloReward />, 'solo-reward')}</Route>
                             <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                             <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
+                            <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                             <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                             <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
