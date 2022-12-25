@@ -20,7 +20,7 @@ import { BN } from '@polkadot/util';
 import { Checkbox2, Infotip, InputFilter, Motion, PButton, Popup, Progress } from '../../../components';
 import { useChain, useDecimal, useToken, useTranslation, useValidators, useValidatorsIdentities } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
-import { DEFAULT_FILTERS } from '../../../util/constants';
+import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants';
 import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
@@ -254,9 +254,9 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                   <Infotip
                     iconLeft={6}
                     iconTop={6}
-                    showQuestionMark
                     placement='top'
-                    text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}
+                    showQuestionMark
+                    text={t<string>(SYSTEM_SUGGESTION_TEXT)}
                   >
                     <Checkbox2
                       checked={systemSuggestion}

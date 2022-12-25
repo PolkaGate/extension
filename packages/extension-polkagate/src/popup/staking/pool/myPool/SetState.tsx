@@ -99,7 +99,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
     setShowConfirmation(false);
     setShow(false);
 
-    onAction(`/pool/stake/pool/${address}`);
+    onAction(`/pool/myPool/${address}`);
   }, [address, onAction, setShow]);
 
   useEffect((): void => {

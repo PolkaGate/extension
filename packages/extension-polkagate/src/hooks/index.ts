@@ -28,6 +28,8 @@ export { useLedger } from './useLedger';
 export { useMapEntries } from './useMapEntries';
 export { default as useMetadata } from './useMetadata';
 // export { default as useNominator } from './useNominator';
+export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
+export { default as useNeedsRebag } from './useNeedsRebag';
 export { default as useMinToReceiveRewardsInSolo } from './useMinToReceiveRewardsInSolo';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePrice } from './usePrice';

@@ -29,6 +29,7 @@ import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
+import { SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
 import { Proxy, ProxyItem, SoloSettings, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
@@ -228,15 +229,13 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           {isFirstTimeStaking
             ? <Grid alignContent='center' container justifyContent='center'>
               <Grid item sx={{ alignSelf: 'center', mr: '8px', width: '60%' }}>
-                <Infotip iconLeft={-15} iconTop={5} showQuestionMark text={t<string>('Our system suggests trusted, high return, low commission validators which not slashed before.')}>
+                <Infotip fontSize='13px' iconLeft={-15} iconTop={5} showQuestionMark text={t<string>(SYSTEM_SUGGESTION_TEXT)}>
                   <Typography sx={{ fontWeight: 300 }}>
                     {t('Selected Validators ({{count}})', { replace: { count: selectedValidators?.length } })}
                   </Typography>
                 </Infotip>
               </Grid>
-              <Grid item
-                onClick={openValidatorsTable}
-                sx={{ cursor: 'pointer', mt: '5px' }} width='8%'>
+              <Grid item onClick={openValidatorsTable} sx={{ cursor: 'pointer', mt: '5px' }} width='8%'>
                 <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />
               </Grid>
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />

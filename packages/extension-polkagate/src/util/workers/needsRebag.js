@@ -1,11 +1,10 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
 
 import getApi from '../getApi.ts';
 
 async function needsRebag(endpoint, currentAccount) {
-  console.log(`needsRebag is running for ${currentAccount}`);
+  console.log(`NeedsRebag is called for id: ${currentAccount}`);
 
   const api = await getApi(endpoint);
   const at = await api.rpc.chain.getFinalizedHead();
@@ -32,15 +31,11 @@ async function needsRebag(endpoint, currentAccount) {
 
   const currentUpper = api.createType('Balance', currentNode.bagUpper);
 
-  if (currentWeight.gt(currentUpper)) {
-    console.log(`\t ☝️ ${currentAccount} needs a rebag from ${currentUpper.toHuman()} to a higher [real weight = ${currentWeight.toHuman()}]`);
-
-    return { currentBagThreshold: currentUpper.toHuman(), shouldRebag: true };
-  } else {
-    console.log(`\t ${currentAccount} doesn't need a rebag. Its weight is ${currentWeight.toHuman()} and its upper's weight is ${currentUpper.toHuman()}`);
-
-    return { currentBagThreshold: currentUpper.toHuman(), shouldRebag: false };
-  }
+  return {
+    currentUpper: currentUpper.toHuman(),
+    currentWeight: currentWeight.toHuman(),
+    shouldRebag: currentWeight.gt(currentUpper)
+  };
 }
 
 onmessage = (e) => {

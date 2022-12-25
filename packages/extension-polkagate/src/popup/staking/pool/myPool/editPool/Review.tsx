@@ -34,6 +34,7 @@ interface Props {
   setShowMyPool: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   state: string;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface ShowRolesProps {
@@ -42,7 +43,7 @@ interface ShowRolesProps {
   showDivider?: boolean
 }
 
-export default function Review({ address, api, chain, changes, formatted, pool, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -177,7 +178,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batchAll, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, txCalls]);
+  }, [api, batchAll, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setRefresh, txCalls]);
 
   const ShowPoolRole = ({ roleAddress, roleTitle, showDivider }: ShowRolesProps) => {
     const roleName = useAccountName(getSubstrateAddress(roleAddress)) ?? t<string>('Unknown');

@@ -162,7 +162,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hierarchy, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, staked, unbonded, unlockingLen]);
+  }, [amount, api, chain, chilled, decimal, estimatedFee, formatted, hasNominator, hierarchy, maxUnlockingChunks, name, password, redeem, selectedProxy, selectedProxyAddress, selectedProxyName, staked, unbonded, unlockingLen]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

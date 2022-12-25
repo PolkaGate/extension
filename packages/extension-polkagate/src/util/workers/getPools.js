@@ -1,6 +1,5 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-/* eslint-disable header/header */
 
 import getApi from '../getApi.ts';
 
@@ -9,7 +8,7 @@ async function getPools(endpoint) {
 
   const lastPoolId = await api.query.nominationPools.lastPoolId();
 
-  console.log(`get pools for poolId:${lastPoolId.toNumber()}`);
+  console.log(`getting ${lastPoolId.toNumber()} pools information.`);
 
   if (!lastPoolId) {
     return null;

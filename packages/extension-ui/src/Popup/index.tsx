@@ -45,8 +45,8 @@ import Send from '../../../extension-polkagate/src/popup/send';
 import Review from '../../../extension-polkagate/src/popup/send/Review';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
+import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/myPool';
 import PoolNominations from '../../../extension-polkagate/src/popup/staking/pool/nominations';
-import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/pool';
 import PoolStake from '../../../extension-polkagate/src/popup/staking/pool/stake';
 import CreatePool from '../../../extension-polkagate/src/popup/staking/pool/stake/createPool';
 import JoinPool from '../../../extension-polkagate/src/popup/staking/pool/stake/joinPool';
@@ -56,11 +56,11 @@ import SoloNominations from '../../../extension-polkagate/src/popup/staking/solo
 import SoloRestake from '../../../extension-polkagate/src/popup/staking/solo/restake';
 import SoloReward from '../../../extension-polkagate/src/popup/staking/solo/rewards';
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
+import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
-// import ToastProvider from '../components/Toast/ToastProvider';
 
 const startSettings = uiSettings.get();
 
@@ -188,7 +188,7 @@ export default function Popup(): React.ReactElement {
                             {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                             {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
                             {/* <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route> */}
-                            <Route path='/pool/stake/pool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
+                            <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                             <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
                             <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
                             <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
@@ -201,6 +201,7 @@ export default function Popup(): React.ReactElement {
                             <Route path='/solo/reward/:address'>{wrapWithErrorBoundary(<SoloReward />, 'solo-reward')}</Route>
                             <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                             <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
+                            <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                             <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                             <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>

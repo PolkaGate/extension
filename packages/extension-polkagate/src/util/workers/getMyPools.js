@@ -12,7 +12,7 @@ async function getMyPools(address, endpoint) {
 
   const lastPoolId = await api.query.nominationPools.lastPoolId();
 
-  console.log(`get pools for poolId:${lastPoolId.toNumber()}`);
+  console.log(`Getting ${lastPoolId.toNumber()} pools information.`);
 
   if (!lastPoolId) {
     return null;
@@ -90,7 +90,7 @@ async function getMyPools(address, endpoint) {
       bondedPool: poolInfo.bondedPool,
       decimal,
       member: undefined,
-      metadata: poolInfo.metadata.length
+      metadata: poolInfo.metadata?.length
         ? poolInfo.metadata.isUtf8
           ? poolInfo.metadata.toUtf8()
           : poolInfo.metadata.toString()

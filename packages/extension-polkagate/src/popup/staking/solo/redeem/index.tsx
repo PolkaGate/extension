@@ -130,11 +130,11 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
       history.push(info);
       setTxInfo({ ...info, api, chain });
-      setRefresh(true);
       saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
