@@ -105,7 +105,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           <List
             height={height}
             itemCount={validatorsToList?.length}
-            itemSize={60}
+            itemSize={55}
             ref={ref}
             width={'100%'}
           >
