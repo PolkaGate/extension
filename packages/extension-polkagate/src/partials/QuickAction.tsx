@@ -76,12 +76,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       justifyContent='space-between'
       sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '0 5px 5px 0', boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)', flexFlow: 'nowrap' }}
     >
-      <Grid
-        container
-        item
-        justifyContent='center'
-        width='13px'
-      >
+      <Grid container item justifyContent='center' width='13px'>
         <IconButton
           onClick={handleClose}
           sx={{
@@ -98,17 +93,11 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           <CloseIcon sx={{ color: theme.palette.mode === 'dark' ? 'black' : 'white', fontSize: 15, ml: '-3px', stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.7px' }} />
         </IconButton>
       </Grid>
-      <Grid
-        container
-        item
-        justifyContent='space-around'
-        mr='10px'
-        sx={{ flexFlow: 'nowrap' }}
-        width='calc(100% - 50px)'
-      >
+      <Grid container item justifyContent='space-around' mr='10px' sx={{ flexFlow: 'nowrap' }} width='calc(100% - 50px)'>
         <HorizontalMenuItem
           divider
           dividerHeight={20}
+          exceptionWidth={40}
           icon={
             <FontAwesomeIcon
               color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -121,7 +110,6 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           textDisabled={(!availableProxiesForTransfer?.length && account?.isExternal)}
           title={t<string>('Send')}
           titleFontSize={10}
-          exceptionWidth={40}
         />
         <HorizontalMenuItem
           divider

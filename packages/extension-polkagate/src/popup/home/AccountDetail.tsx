@@ -51,7 +51,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   }, [balances, chainName]);
 
   const NoChainAlert = () => (
-    <Grid color='text.primary' fontSize='14px' fontWeight={500}>
+    <Grid color='text.primary' fontSize='14px' fontWeight={500} lineHeight='27px'>
       {t('Select a chain to view balance')}
     </Grid>
   );
