@@ -36,6 +36,7 @@ export default function useMyAccountIdentity(address: AccountId | string | undef
     }
 
     const savedIdentities = JSON.parse(account?.identities ?? '{}') as SavedIdentities;
+
     savedIdentities[chainName] = info.identity;
     const metaData = JSON.stringify({ identities: JSON.stringify(savedIdentities) });
 
