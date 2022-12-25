@@ -68,9 +68,13 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
 
   useEffect(() => {
     /** initialization */
-    allValidators?.length && setValidatorsToList(allValidators);
-    allValidators?.length && !filteredValidators?.length && setFilteredValidators(allValidators);
-  }, [allValidators, filteredValidators?.length]);
+    if (allValidators?.length && !filteredValidators?.length) {
+      setValidatorsToList(allValidators);
+      setFilteredValidators(allValidators);
+    }
+
+    filteredValidators?.length && setValidatorsToList(filteredValidators);
+  }, [allValidators, filteredValidators, filteredValidators?.length]);
 
   useEffect(() => {
     /** apply filtered validators on searched validators */
@@ -121,7 +125,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     let indicator = aDeepCopyOfValidators[0];
 
     return aDeepCopyOfValidators.filter((v, index) => {
-      if (indicator.identity?.displayParent && indicator.identity?.displayParent === v.identity?.displayParent && limit >= counter++) {
+      if (indicator.identity?.displayParent && indicator.identity?.displayParent === v.identity?.displayParent && limit > counter++) {
         return true;
       }
 
@@ -170,9 +174,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   const onSystemSuggestion = useCallback((event, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
-    console.log('checked:',checked)
-    console.log('allValidators:',allValidators)
-    console.log('stakingConsts:',stakingConsts)
     checked
       ? allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)])
       : setNewSelectedValidators([]);
