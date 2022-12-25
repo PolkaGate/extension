@@ -13,6 +13,7 @@ import { Proxy } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { ActionContext } from './contexts';
 import Identicon from './Identicon';
+import { Infotip } from '.';
 
 interface Props {
   formatted: string | undefined;
@@ -46,23 +47,27 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
         />
       </Grid>
       <Grid container direction='row' item justifyContent='center'>
-        <Grid item title={t('is recoverable')}>
-          <IconButton disabled={!recoverable} sx={{ height: '15px', width: '15px' }}>
-            <FontAwesomeIcon
-              color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
-              fontSize='13px'
-              icon={faShieldHalved}
-            />
-          </IconButton>
+        <Grid item>
+          <Infotip placement='bottom-start' text={t('Is recoverable')}>
+            <IconButton disabled={!recoverable} sx={{ height: '15px', width: '15px' }}>
+              <FontAwesomeIcon
+                color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
+                fontSize='13px'
+                icon={faShieldHalved}
+              />
+            </IconButton>
+          </Infotip>
         </Grid>
-        <Grid item title={t('has proxy')}>
-          <IconButton onClick={openManageProxy} sx={{ height: '15px', width: '15px' }}>
-            <FontAwesomeIcon
-              color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
-              fontSize='13px'
-              icon={faSitemap}
-            />
-          </IconButton>
+        <Grid item>
+          <Infotip placement='bottom-end' text={t('Has proxy')}>
+            <IconButton onClick={openManageProxy} sx={{ height: '15px', width: '15px' }}>
+              <FontAwesomeIcon
+                color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
+                fontSize='13px'
+                icon={faSitemap}
+              />
+            </IconButton>
+          </Infotip>
         </Grid>
       </Grid>
     </Grid>

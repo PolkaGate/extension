@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, IconButton, Skeleton, Typography } from '@mui/material';
+import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { } from 'react';
 
 interface Props {
@@ -21,10 +21,12 @@ interface Props {
 }
 
 export default function HorizontalMenuItem({ divider = false, dividerHeight = 30, exceptionWidth = 0, labelMarginTop = '0px', icon, isLoading = false, onClick, textDisabled, title, titleFontSize = 12, titleLineHeight = 1.5 }: Props): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <>
       {isLoading
-        ? <Grid container direction='column' alignItems='center' item justifyContent='center' maxWidth='fit-content'>
+        ? <Grid alignItems='center' container direction='column' item justifyContent='center' maxWidth='fit-content'>
           <Skeleton sx={{ borderRadius: '50%', display: 'inline-block', height: '30px', transform: 'none', width: '30px' }} />
           <Skeleton sx={{ display: 'inline-block', height: '12px', mt: '7px', transform: 'none', width: '30px' }} />
         </Grid>
@@ -35,7 +37,7 @@ export default function HorizontalMenuItem({ divider = false, dividerHeight = 30
             </IconButton>
           </Grid>
           <Grid item textAlign='center'>
-            <Typography lineHeight={titleLineHeight} fontSize={`${titleFontSize}px`} fontWeight={300} sx={{ color: textDisabled && 'action.disabledBackground', pt: '3px', mt: labelMarginTop }}>
+            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight} sx={{ color: textDisabled && 'action.disabledBackground', pt: '3px', mt: labelMarginTop }}>
               {title}
             </Typography>
           </Grid>
