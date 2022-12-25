@@ -152,31 +152,32 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
           checked={filters?.withIdentity}
           label={t<string>('With verified identity')}
           onChange={() => onFilters('withIdentity')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '400', mt: '15px' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.noWaiting}
           label={t<string>('Not waiting (currently elected)')}
           onChange={() => onFilters('noWaiting')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '30', mt: '15px' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.noOversubscribed}
           label={t<string>('No oversubscribed')}
           onChange={() => onFilters('noOversubscribed')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '300', mt: '15px' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.noSlashed}
+          disabled
           label={t<string>('No slashed before')}
           onChange={() => onFilters('noSlashed')}
-          style={{ width: '80%', fontSize: '14px', fontWeight: '300', mt: '15px' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.maxCommission?.check}
           label={`${t<string>('Maximum Commission')} %`}
           onChange={() => onFilters('maxCommission')}
-          style={{ width: '63%', fontSize: '14px', fontWeight: '300', mt: '15px' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '63%' }}
         />
         <Input
           autoCapitalize='off'

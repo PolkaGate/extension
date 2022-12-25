@@ -25,21 +25,24 @@ interface OptionProps {
   warningText?: string;
   helperText?: string;
   tipPlace?: string;
+  showIcon?: boolean;
 }
 
-export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, onClick, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, onClick, showIcon, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
       <Grid container item justifyContent='center'>
-        <Grid item mr='5px'>
-          {title === t('Solo Staking')
-            ? <img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />
-            : <img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />
-          }
-        </Grid>
+        {showIcon &&
+          <Grid item mr='5px'>
+            {title === t('Solo Staking')
+              ? <img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />
+              : <img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />
+            }
+          </Grid>
+        }
         <Grid item>
           <Infotip iconLeft={6} iconTop={10} showQuestionMark text={helperText} placement={tipPlace}>
             <Typography fontSize='20px' fontWeight={400}>
