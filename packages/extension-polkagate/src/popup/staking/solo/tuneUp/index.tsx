@@ -6,50 +6,34 @@
  * this component opens withdraw rewards review page
  * */
 
-import type { ApiPromise } from '@polkadot/api';
 
-import { Container, Divider, Grid, useTheme } from '@mui/material';
+import { Divider, Grid, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import State from '@polkadot/extension-base/background/handlers/State';
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, PButton, Popup, Progress, Warning } from '../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, Warning } from '../../../../components';
 import { useAccountName, useApi, useChain, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
 import TxDetail from './TxDetail';
-
-interface Props {
-  address: AccountId;
-  show: boolean;
-  formatted: string;
-  api: ApiPromise;
-  amount: BN;
-  chain: Chain;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  available: BN;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
-}
 
 export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
   const formatted = useFormatted(address);
@@ -57,8 +41,9 @@ export default function TuneUp(): React.ReactElement {
 
   const putInFrontInfo = useNeedsPutInFrontOf(address);
   const rebagInfo = useNeedsRebag(address);
-  console.log('putInFrontInfo:', putInFrontInfo)
-  console.log('rebagInfo:', rebagInfo)
+  
+  putInFrontInfo && console.log('putInFrontInfo:', putInFrontInfo);
+  rebagInfo && console.log('rebagInfo:', rebagInfo);
 
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -75,7 +60,6 @@ export default function TuneUp(): React.ReactElement {
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const tx = api && api.tx.staking.withdrawUnbonded; // sign by controller
   const rebaged = api && api.tx.voterList.rebag;
   const putInFrontOf = api && api.tx.voterList.putInFrontOf;
 
@@ -200,7 +184,7 @@ export default function TuneUp(): React.ReactElement {
         shortBorder
         showBackArrow
         showClose
-        text={t<string>('Tuneup')}
+        text={t<string>('Tune Up')}
       />
       {isPasswordError &&
         <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
@@ -226,8 +210,8 @@ export default function TuneUp(): React.ReactElement {
             <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight} />
             {!putInFrontInfo?.shouldPutInFront
               ? <Grid item xs={12} textAlign='center' mt='10px'>
-                <Typography fontSize='14px' fontWeight={400}>
-                  {t('Your account doesn\'t need Tuneup!')}
+                <Typography fontSize='15px' fontWeight={400}>
+                  {t('Your account doesn\'t need to be Tuned Up!')}
                 </Typography>
               </Grid>
               : <LabelValue label={t('Account to be overtaken')} mt='5px' value={rebagInfo?.lighter} />
