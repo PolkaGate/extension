@@ -203,7 +203,7 @@ export default function Popup(): React.ReactElement {
                             <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
                             <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
-                            <Route exact path='/send/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            <Route exact path='/send/:address/'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                             <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
                             <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                             <Route path='/import/add-address-only'>{wrapWithErrorBoundary(<AddAddressOnly />, 'import-add-address-only')}</Route>

@@ -8,77 +8,62 @@
  * this component opens
  * */
 
-import type { DeriveAccountRegistration, DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Container, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Container } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, AccountInputWithIdentity, AmountWithOptions, Identicon, Identity, Motion, PButton, SettingsContext, ShortAddress } from '../../components';
-import { useAccountInfo, useAccountName, useApi, useDecimal, useEndpoint, useMetadata, useMyAccountIdentity, useTranslation } from '../../hooks';
+import { AccountInputWithIdentity, AmountWithOptions, Motion, PButton } from '../../components';
+import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useEndpoint, useFormatted, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
-import { amountToHuman, getFormattedAddress, isValidAddress } from '../../util/utils';
+import { amountToHuman, isValidAddress } from '../../util/utils';
 import Asset from './partial/Asset';
+import From from './partial/From';
+import Review from './Review';
 
 
 type TransferType = 'All' | 'Max' | 'Normal';
-interface State {
-  recipientAddress: string | undefined;
-  recipientName: string | undefined;
-  amount: string | undefined;
-  balances: DeriveBalancesAll | undefined;
-}
 
 // TODO: can use useMyAccountIdentity
 export default function Send(): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
-  const { pathname, state } = useLocation();
-  const theme = useTheme();
-
-  const { address, formatted, genesisHash } = useParams<FormattedAddressState>();
-  const chain = useMetadata(genesisHash, true);
+  const { address } = useParams<FormattedAddressState>();
+  const formatted = useFormatted(address);
+  const chain = useChain(address);
   const endpoint = useEndpoint(address, chain);
-  const api = useApi(address, state?.api);
+  const api = useApi(address);
   const decimal = useDecimal(address);
   const accountName = useAccountName(address);
   const myIdentity = useMyAccountIdentity(address);
 
-  const [fee, setFee] = useState<Balance>();
+  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
   const [recipientAddress, setRecipientAddress] = useState<string | undefined>();
   const recipientNameIfIsInExtension = useAccountName(recipientAddress);
   const recipientInfo = useAccountInfo(api, recipientAddress);
   const [amount, setAmount] = useState<string>();
-  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>(state?.balances as DeriveBalancesAll);
+  const [balances, setBalances] = useState<DeriveBalancesAll | undefined>();
   const [transferType, setTransferType] = useState<TransferType | undefined>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [recipientName, setRecipientName] = useState<string>();
+  const [showReview, setShowReview] = useState<boolean>();
 
   const transfer = api && api.tx?.balances && (['All', 'Max'].includes(transferType) ? (api.tx.balances.transferAll) : (api.tx.balances.transferKeepAlive));
 
   useEffect(() => {
-    if (state?.recipientName) {
-      setRecipientName(state?.recipientName as string);
-
-      return;
-    }
-
     setRecipientName(recipientInfo?.identity?.display || recipientNameIfIsInExtension || t('Unknown'));
-  }, [recipientInfo?.identity?.display, recipientNameIfIsInExtension, state?.recipientName, t]);
-
-  useEffect((): void => {
-    state?.recipientAddress && setRecipientAddress(state?.recipientAddress);
-  }, [state?.recipientAddress]);
+  }, [recipientInfo?.identity?.display, recipientNameIfIsInExtension, t]);
 
   const setWholeAmount = useCallback((type: TransferType) => {
     if (!api || !balances?.availableBalance || !maxFee || !decimal) {
@@ -111,7 +96,7 @@ export default function Send(): React.ReactElement {
   }, [api, formatted, endpoint]);
 
   useEffect(() => {
-    if (!api || !transfer || amount || !decimal) {
+    if (!api || !transfer || !formatted || !amount || !decimal || !transferType) {
       return;
     }
 
@@ -120,7 +105,7 @@ export default function Send(): React.ReactElement {
     if (['All', 'Max'].includes(transferType)) {
       const keepAlive = transferType === 'Max';
 
-      params = [formatted, keepAlive]; // just for fee calculation, sender and receiver are the same
+      params = [formatted, keepAlive]; // just for estimatedFee calculation, sender and receiver are the same
     } else {
       const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
 
@@ -129,14 +114,11 @@ export default function Send(): React.ReactElement {
 
     // eslint-disable-next-line no-void
     void transfer(...params).paymentInfo(formatted)
-      .then((i) => setFee(i?.partialFee)).catch(console.error);
+      .then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [api, formatted, transfer, amount, decimal, transferType]);
 
   useEffect(() => {
-    if (!api || !transfer || !balances) { return; }
-
-    // eslint-disable-next-line no-void
-    void transfer(formatted, balances.availableBalance).paymentInfo(formatted)
+    api && transfer && balances && formatted && transfer(formatted, balances.availableBalance).paymentInfo(formatted)
       .then((i) => setMaxFee(i?.partialFee)).catch(console.error);
   }, [api, formatted, transfer, balances]);
 
@@ -156,30 +138,14 @@ export default function Send(): React.ReactElement {
   }, []);
 
   const _onBackClick = useCallback(() => {
-    history.push({
-      pathname: `/account/${genesisHash}/${address}/`,
-      state: { balances, api, price: state?.price as number | undefined }
+    chain?.genesisHash && history.push({
+      pathname: `/account/${chain?.genesisHash}/${address}/`,
     });
-  }, [address, api, balances, genesisHash, history, state?.price]);
+  }, [address, chain?.genesisHash, history]);
 
   const goToReview = useCallback(() => {
-    balances && history.push({
-      pathname: `/send/review/${genesisHash}/${address}/${formatted}/`,
-      state: {
-        accountName,
-        amount,
-        api,
-        backPath: pathname,
-        balances,
-        chain,
-        fee,
-        recipientAddress,
-        recipientName,
-        transfer,
-        transferType
-      }
-    });
-  }, [accountName, address, amount, api, balances, chain, fee, formatted, genesisHash, history, pathname, recipientAddress, recipientName, transfer, transferType]);
+    setShowReview(true);
+  }, []);
 
   const _onChangeAmount = useCallback((value: string) => {
     if (!decimal) {
@@ -197,22 +163,6 @@ export default function Send(): React.ReactElement {
     setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
-  const From = () => (
-    <>
-      <div style={{ fontSize: '16px', fontWeight: 300 }}>
-        {t('From')}
-      </div>
-      <Grid alignItems='center' container justifyContent='felx-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
-        <Grid item sx={{ fontSize: '28px', fontWeight: 400, mx: '5px', maxWidth: '67%' }}>
-          <Identity address={address} api={api} chain={chain} identiconSize={31} showSocial={false} name={myIdentity?.display} />
-        </Grid>
-        <Grid item sx={{ width: '29%' }}>
-          <ShortAddress address={formatted} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px', pr: '5px' }} />
-        </Grid>
-      </Grid>
-    </>
-  );
-
   return (
     <Motion>
       <HeaderBrand
@@ -226,15 +176,20 @@ export default function Send(): React.ReactElement {
         }}
       />
       <Container disableGutters sx={{ px: '15px' }}>
-        <From />
+        <From
+          address={address}
+          api={api}
+          judgement={myIdentity?.judgement}
+          name={myIdentity?.display}
+        />
         <AccountInputWithIdentity
           address={recipientAddress}
           chain={chain}
           ignoreAddress={formatted}
           label={t('To')}
+          name={recipientName}
           setAddress={setRecipientAddress}
           style={{ pt: '15px' }}
-          name={recipientName}
         />
         <Asset
           address={address}
@@ -242,8 +197,7 @@ export default function Send(): React.ReactElement {
           balanceLabel={t('Available balance')}
           balanceType='available'
           balances={balances}
-          fee={fee}
-          genesisHash={genesisHash}
+          fee={estimatedFee}
           style={{ pt: '15px' }}
         />
         <AmountWithOptions
@@ -262,6 +216,22 @@ export default function Send(): React.ReactElement {
         disabled={buttonDisabled}
         text={t<string>('Next')}
       />
+      {showReview && amount &&
+        <Review
+          accountName={accountName}
+          address={address}
+          amount={amount}
+          api={api}
+          chain={chain}
+          estimatedFee={estimatedFee}
+          recipientAddress={recipientAddress}
+          recipientName={recipientName}
+          setShow={setShowReview}
+          show={showReview}
+          transfer={transfer}
+          transferType={transferType}
+        />
+      }
     </Motion>
   );
 }
