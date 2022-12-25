@@ -38,11 +38,11 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
       /** if fetched differs from saved then setIdentities and save to local storage */
       if (info && identities?.length && info.eraIndex !== savedEraIndex) {
-        console.log(`setting new identities #old was: ${validatorsIdentities?.length ?? ''} `);
+        console.log(`setting new identities #old was: ${validatorsIdentities?.length || '0'}`);
 
         setNewValidatorsIdentities(info.accountsInfo);
 
-        if (chainName?.toLocaleLowerCase() !== 'westend') {
+        // if (chainName?.toLocaleLowerCase() !== 'westend') {
           chrome.storage.local.get('validatorsIdentities', (res) => {
             const k = `${chainName}`;
             const last = res?.validatorsIdentities ?? {};
@@ -51,7 +51,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
             // eslint-disable-next-line no-void
             void chrome.storage.local.set({ validatorsIdentities: last });
           });
-        }
+        // }
       }
 
       getValidatorsIdWorker.terminate();
@@ -76,7 +76,7 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
     // eslint-disable-next-line no-void
     void chrome.storage.local.get('validatorsIdentities', (res: { [key: string]: SavedValidatorsIdentities }) => {
-      console.log('Saved Validators Identities:', res);
+      console.log('Validators Identities in local storage:', res);
 
       if (res?.validatorsIdentities?.[chainName]) {
         setValidatorsIdentities(res.validatorsIdentities[chainName]?.accountsInfo);
