@@ -42,16 +42,14 @@ export default function useValidatorsIdentities(address: string, allValidatorsId
 
         setNewValidatorsIdentities(info.accountsInfo);
 
-        // if (chainName?.toLocaleLowerCase() !== 'westend') {
-          chrome.storage.local.get('validatorsIdentities', (res) => {
-            const k = `${chainName}`;
-            const last = res?.validatorsIdentities ?? {};
+        chrome.storage.local.get('validatorsIdentities', (res) => {
+          const k = `${chainName}`;
+          const last = res?.validatorsIdentities ?? {};
 
-            last[k] = info;
-            // eslint-disable-next-line no-void
-            void chrome.storage.local.set({ validatorsIdentities: last });
-          });
-        // }
+          last[k] = info;
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ validatorsIdentities: last });
+        });
       }
 
       getValidatorsIdWorker.terminate();
