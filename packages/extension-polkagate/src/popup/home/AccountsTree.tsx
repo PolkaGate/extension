@@ -5,8 +5,8 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { Backdrop, Container, Grid } from '@mui/material';
-import React, { useMemo, useCallback } from 'react';
+import { Backdrop, Container, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
 
 import { useTranslation } from '../../hooks';
 import getParentNameSuri from '../../util/getParentNameSuri';
@@ -20,6 +20,7 @@ interface Props extends AccountWithChildren {
 
 export default function AccountsTree({ quickActionOpen, setQuickActionOpen, parentName, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
   const handleClose = useCallback(() => setQuickActionOpen(undefined), []);
@@ -59,7 +60,7 @@ export default function AccountsTree({ quickActionOpen, setQuickActionOpen, pare
         <Backdrop
           onClick={handleClose}
           open={quickActionOpen !== undefined}
-          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : '#000000cc', position: 'absolute', top: '-1px' }}
+          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? '#000000cc' : '#00000040', position: 'absolute', top: '-1px' }}
         />
       </Container>
       {account?.children?.map((child, index) => (
