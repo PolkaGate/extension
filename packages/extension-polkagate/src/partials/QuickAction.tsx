@@ -190,7 +190,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           </IconButton>
         </div>
       </ClickAwayListener>
-      <Slide direction='right' in={quickActionOpen === address} style={{ backgroundColor: 'background.default', height: '56px', left: 0, position: 'absolute', top: '-20px', width: '96%', zIndex: 10 }}>
+      <Slide direction='right' in={quickActionOpen === address} style={{ backgroundColor: 'background.default', height: '56px', left: 0, position: 'absolute', top: '-14px', width: '96%', zIndex: 10 }}>
         {movingParts}
       </Slide>
     </>
