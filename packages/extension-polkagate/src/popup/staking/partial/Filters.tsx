@@ -5,15 +5,15 @@
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { Checkbox2, Input, PButton, Select, SlidePopUp, TwoButtons } from '../../../components';
+import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { DEFAULT_FILTERS, DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR, DEFAULT_MAX_COMMISSION } from '../../../util/constants';
-import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
-import { Data, getComparator } from './comparators';
+import { DEFAULT_FILTERS } from '../../../util/constants';
+import { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
+import { getComparator } from './comparators';
 
 interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | undefined;
@@ -47,6 +47,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
     { text: t('Nominators: Low to High'), value: 6 }
   ], [t]);
 
+
   useEffect(() => {
     if (!apply || !allValidators) {
       return;
@@ -56,6 +57,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
     let filtered = allValidators?.filter((v) => !v.validatorPrefs.blocked);
 
     filtered = filters.noWaiting ? filtered?.filter((v) => v.exposure.others.length !== 0) : filtered;
+
     filtered = filters.noOversubscribed ? filtered?.filter((v) => v.exposure.others.length < stakingConsts?.maxNominatorRewardedPerValidator) : filtered;
     filtered = filters.maxCommission.check ? filtered?.filter((v) => Number(v.validatorPrefs.commission) / (10 ** 7) <= filters.maxCommission.value) : filtered;
     filtered = filters.limitOfValidatorsPerOperator.check && filters.limitOfValidatorsPerOperator.value ? onLimitValidatorsPerOperator(filtered, filters.limitOfValidatorsPerOperator.value) : filtered;
@@ -189,13 +191,12 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
           max={100}
           onChange={(e) => onLimitChange(e, 'maxCommission')}
           padding='0px'
-          placeholder={String(DEFAULT_FILTERS.maxCommission.value)}
+          placeholder={String(filters.maxCommission.value) || String(DEFAULT_FILTERS.maxCommission.value)}
           spellCheck={false}
           textAlign='center'
           theme={theme}
           type='number'
           width='17%'
-        // value={filters.maxCommission.value ?? EFAULT_FILTERS.maxCommission.value}
         />
         <Checkbox2
           checked={filters?.limitOfValidatorsPerOperator?.check}
@@ -213,7 +214,7 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
           max={100}
           onChange={(e) => onLimitChange(e, 'limitOfValidatorsPerOperator')}
           padding='0px'
-          placeholder={String(DEFAULT_FILTERS.limitOfValidatorsPerOperator.value)}
+          placeholder={String(filters.limitOfValidatorsPerOperator.value) || String(DEFAULT_FILTERS.limitOfValidatorsPerOperator.value)}
           spellCheck={false}
           textAlign='center'
           theme={theme}
