@@ -103,7 +103,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
       <HeaderBrand
         isRefreshing={isRefreshing}
         onBackClick={_onBack}
-        onRefresh={onRefresh}
+        onRefresh={grouped && onRefresh}
         showBackArrow
         text={t<string>('Transaction History')}
       />
