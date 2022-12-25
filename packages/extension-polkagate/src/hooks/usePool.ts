@@ -12,8 +12,6 @@ export default function usePool(address: string, id?: number, statePool?: MyPool
   const formatted = useFormatted(address);
   const endpoint = useEndpoint2(address);
 
-  console.log('formatted:', formatted);
-
   const getPoolInfo = useCallback((endpoint: string, stakerAddress: string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
 

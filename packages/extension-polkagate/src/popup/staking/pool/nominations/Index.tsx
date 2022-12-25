@@ -21,9 +21,9 @@ import { Infotip, Motion, PButton, Progress, Warning } from '../../../../compone
 import { useApi, useChain, useFormatted, usePool, useStakingConsts, useTranslation, useValidators, useValidatorsIdentities } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import SelectValidators from '../../partial/SelectValidators';
+import Review from '../../partial/SelectValidatorsReview';
 import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
-import Review from '../../partial/SelectValidatorsReview';
 
 interface State {
   api: ApiPromise | undefined;
@@ -95,7 +95,7 @@ export default function Index(): React.ReactElement {
   }, [goToSelectValidator]);
 
   const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
-    <Grid container justifyContent='center' sx={style} >
+    <Grid container justifyContent='center' sx={style}>
       <Warning
         fontWeight={400}
         theme={theme}

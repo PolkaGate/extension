@@ -33,23 +33,14 @@ export default function useValidators(address: string, validators?: AllValidator
 
     getValidatorsInfoWorker.onmessage = (e) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const info: Validators | null = e.data;
+      const fetchedValidatorsInfo: Validators | null = e.data;
 
-      if (info && JSON.stringify(savedValidators) !== JSON.stringify(info)) {
-        setNewValidatorsInfo(info);
+      if (fetchedValidatorsInfo && JSON.stringify(savedValidators) !== JSON.stringify(fetchedValidatorsInfo)) {
+        setNewValidatorsInfo(fetchedValidatorsInfo);
 
-        // if (chainName !== 'Westend') {
-        //   window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(info));
-        // }
-
-        chrome.storage.local.get('validatorsInfo', (res) => {
-          const k = `${chainName}`;
-          const last = res?.validatorsInfo ?? {};
-
-          last[k] = info;
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ validatorsInfo: last });
-        });
+        if (chainName?.toLocaleLowerCase() !== 'westend') {
+          window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(fetchedValidatorsInfo));
+        }
       }
 
       getValidatorsInfoWorker.terminate();
@@ -61,23 +52,14 @@ export default function useValidators(address: string, validators?: AllValidator
       return;
     }
 
-    // const localSavedAllValidatorsInfo = window.localStorage.getItem(`${chainName}_allValidatorsInfo`);
+    const localSavedAllValidatorsInfo = window.localStorage.getItem(`${chainName}_allValidatorsInfo`);
 
-    // if (localSavedAllValidatorsInfo) {
-    //   const parsedLocalSavedAllValidatorsInfo = JSON.parse(localSavedAllValidatorsInfo) as Validators;
+    if (localSavedAllValidatorsInfo) {
+      const parsedLocalSavedAllValidatorsInfo = JSON.parse(localSavedAllValidatorsInfo) as Validators;
 
-    //   setValidatorsInfo(parsedLocalSavedAllValidatorsInfo);
-    //   console.log(`validatorsInfo in storage is from era: ${parsedLocalSavedAllValidatorsInfo?.eraIndex} on chain: ${chainName}`);
-    // }
-     // eslint-disable-next-line no-void
-     void chrome.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
-      console.log('Saved validatorsInfo:', res);
-
-      if (res?.validatorsInfo?.[chainName]) {
-        setValidatorsInfo(res.validatorsInfo[chainName]?.accountsInfo);
-        // setSavedEraIndex(res.validatorsInfo[chainName]?.eraIndex);
-      }
-    });
+      setValidatorsInfo(parsedLocalSavedAllValidatorsInfo);
+      console.log(`validatorsInfo in storage is from era: ${parsedLocalSavedAllValidatorsInfo?.eraIndex} on chain: ${chainName}`);
+    }
   }, [chainName]);
 
   useEffect(() => {

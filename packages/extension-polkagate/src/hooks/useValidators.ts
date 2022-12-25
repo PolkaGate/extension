@@ -33,14 +33,19 @@ export default function useValidators(address: string, validators?: AllValidator
 
     getValidatorsInfoWorker.onmessage = (e) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const fetchedValidatorsInfo: Validators | null = e.data;
+      const info: Validators | null = e.data;
 
-      if (fetchedValidatorsInfo && JSON.stringify(savedValidators) !== JSON.stringify(fetchedValidatorsInfo)) {
-        setNewValidatorsInfo(fetchedValidatorsInfo);
+      if (info && JSON.stringify(savedValidators) !== JSON.stringify(info)) {
+        setNewValidatorsInfo(info);
 
-        if (chainName?.toLocaleLowerCase() !== 'westend') {
-          window.localStorage.setItem(`${chainName}_allValidatorsInfo`, JSON.stringify(fetchedValidatorsInfo));
-        }
+        chrome.storage.local.get('validatorsInfo', (res) => {
+          const k = `${chainName}`;
+          const last = res?.validatorsInfo ?? {};
+
+          last[k] = info;
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ validatorsInfo: last });
+        });
       }
 
       getValidatorsInfoWorker.terminate();
@@ -52,14 +57,15 @@ export default function useValidators(address: string, validators?: AllValidator
       return;
     }
 
-    const localSavedAllValidatorsInfo = window.localStorage.getItem(`${chainName}_allValidatorsInfo`);
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.get('validatorsInfo', (res: { [key: string]: Validators }) => {
+      console.log('ValidatorsInfo in local storage:', res);
 
-    if (localSavedAllValidatorsInfo) {
-      const parsedLocalSavedAllValidatorsInfo = JSON.parse(localSavedAllValidatorsInfo) as Validators;
-
-      setValidatorsInfo(parsedLocalSavedAllValidatorsInfo);
-      console.log(`validatorsInfo in storage is from era: ${parsedLocalSavedAllValidatorsInfo?.eraIndex} on chain: ${chainName}`);
-    }
+      if (res?.validatorsInfo?.[chainName]) {
+        setValidatorsInfo(res.validatorsInfo[chainName]);
+        // setSavedEraIndex(res.validatorsInfo[chainName]?.eraIndex);
+      }
+    });
   }, [chainName]);
 
   useEffect(() => {

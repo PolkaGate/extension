@@ -1,15 +1,13 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AllValidators, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity, Validators } from '../util/types';
+import type { StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { getComparator } from '../popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '../util/constants';
-import { useChain, useChainName, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
+import { useChainName, useStakingConsts, useValidators, useValidatorsIdentities } from '.';
 
 /**
  * @description

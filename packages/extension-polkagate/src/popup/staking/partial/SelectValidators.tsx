@@ -24,7 +24,6 @@ import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../util/constants
 import { AllValidators, Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
 import { getComparator } from '../partial/comparators';
 import Filters from '../partial/Filters';
-import Review from './SelectValidatorsReview';
 import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
@@ -171,6 +170,9 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
   const onSystemSuggestion = useCallback((event, checked: boolean) => {
     setSearchKeyword('');
     setSystemSuggestion(checked);
+    console.log('checked:',checked)
+    console.log('allValidators:',allValidators)
+    console.log('stakingConsts:',stakingConsts)
     checked
       ? allValidators && stakingConsts && setNewSelectedValidators([...selectBestValidators(allValidators, stakingConsts)])
       : setNewSelectedValidators([]);
