@@ -116,12 +116,12 @@ export default function Pool(): React.ReactElement {
     if (roleToShow !== 'all') {
       const filteredPools = allMyPools.filter((pool) => pool?.bondedPool?.roles[roleToShow] === formatted);
 
-      setPoolsToShow(filteredPools);
+      setPoolsToShow([...filteredPools]);
 
       return;
     }
 
-    setPoolsToShow(allMyPools);
+    setPoolsToShow([...allMyPools]);
   }, [POOL_ROLES, allMyPools, formatted, roleToShow]);
 
   useEffect(() => {

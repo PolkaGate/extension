@@ -19,7 +19,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -37,7 +37,7 @@ interface SessionIfo {
 }
 
 interface State {
-  api?: ApiPromise;
+  api?: ApiPromise; 
   stakingConsts?: StakingConsts;
   poolConsts?: PoolStakingConsts;
 }
@@ -59,8 +59,8 @@ export default function Index(): React.ReactElement {
   const balances = useBalances(address);
   const identity = useMyAccountIdentity(address);
 
-  const token = (api && api.registry.chainTokens[0]) || pool?.token;
-  const decimal = (api && api.registry.chainDecimals[0]) || pool?.decimal;
+  const token = useToken(address);
+  const decimal =useDecimal(address);
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
@@ -168,7 +168,7 @@ export default function Index(): React.ReactElement {
 
   const goToPool = useCallback(() => {
     history.push({
-      pathname: `/pool/stake/pool/${address}`,
+      pathname: `/pool/myPool/${address}`,
       state: { api, pool }
     });
   }, [address, api, history, pool]);

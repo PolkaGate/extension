@@ -78,7 +78,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       isFetching.fetching[String(formatted)].pooledBalance = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   const getBalances = useCallback(() => {
@@ -96,7 +96,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, decimal, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh, token]);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     } else {
       console.log('Balances is fetching not needs to fetch it again!');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.length, token]);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     } else {
       console.log('pooled balance is fetching not needs to fetch it again!');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, formatted, getPoolBalances, isFetching.fetching[String(formatted)]?.length]);
 
   useEffect(() => {
@@ -161,7 +161,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       getBalances();
       getPoolBalances();
     }
-  }, [api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
+  }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {
     if (!api || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
@@ -190,7 +190,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     const metaData = JSON.stringify({ ['balances']: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, api, pooledBalance, chain, chainName, decimal, overall, token]);
 
   useEffect(() => {
@@ -222,7 +222,11 @@ export default function useBalances(address: string | undefined, refresh?: boole
       };
 
       setBalances(lastBalances);
+
+      return;
     }
+
+    setBalances(undefined);
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName]);

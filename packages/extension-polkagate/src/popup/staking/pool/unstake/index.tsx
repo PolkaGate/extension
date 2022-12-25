@@ -22,8 +22,8 @@ import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
-import RemoveAll from '../pool/removeAll';
-import SetState from '../pool/SetState';
+import RemoveAll from '../myPool/removeAll';
+import SetState from '../myPool/SetState';
 import Review from './Review';
 
 interface State {
