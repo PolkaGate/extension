@@ -32,7 +32,7 @@ export default function Stake(): React.ReactElement {
   const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = useBalances(address);
-  const pool = usePool(address, undefined, state?.pool);
+  const pool = usePool(address);
   const history = useHistory();
 
   const onBackClick = useCallback(() => {

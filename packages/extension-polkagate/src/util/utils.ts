@@ -154,12 +154,12 @@ export function prepareMetaData(chain: Chain | null | string, label: string, met
     metaData = {
       availableBalance: balances.availableBalance.toString(),
       decimals,
-      tokens,
       freeBalance: balances.freeBalance.toString(),
-      reservedBalance: balances.reservedBalance.toString(),
-      frozenMisc: balances.frozenMisc.toString(),
       frozenFee: balances.frozenFee.toString(),
+      frozenMisc: balances.frozenMisc.toString(),
       lockedBalance: balances.lockedBalance.toString(),
+      reservedBalance: balances.reservedBalance.toString(),
+      tokens,
       vestedBalance: balances.vestedBalance.toString(),
       vestedClaimable: balances.vestedClaimable.toString(),
       votingBalance: balances.votingBalance.toString()

@@ -43,7 +43,7 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const chain = useChain(address);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const myPool = usePool(address, undefined, state?.myPool, refresh);
+  const myPool = usePool(address, undefined, refresh);
   const formatted = useFormatted(address);
   const poolConsts = usePoolConsts(address, state?.poolConsts);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);

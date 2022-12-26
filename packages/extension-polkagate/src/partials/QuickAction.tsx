@@ -43,10 +43,10 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
     }
 
     account?.genesisHash && history.push({
-      pathname: `/send/${account.genesisHash}/${String(address)}/${String(formatted)}/`,
+      pathname: `/send/${String(address)}`,
       state: { api }
     });
-  }, [availableProxiesForTransfer?.length, account, history, address, formatted, api]);
+  }, [availableProxiesForTransfer?.length, account, history, address, api]);
 
   const goToPoolStaking = useCallback(() => {
     address && history.push({

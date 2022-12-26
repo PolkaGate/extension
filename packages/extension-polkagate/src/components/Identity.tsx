@@ -32,15 +32,16 @@ interface Props {
   withShortAddress?: boolean;
   showSocial?: boolean;
   noIdenticon?: boolean;
+  judgement?: any;
 }
 
-function Identity({ accountInfo, address, api, chain, noIdenticon = false, formatted, identiconSize = 40, name, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, noIdenticon = false, formatted, identiconSize = 40, judgement, name, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
   const _formatted = useFormatted(address, formatted);
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
-  const judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
+  const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
   const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
 
   return (
@@ -50,7 +51,7 @@ function Identity({ accountInfo, address, api, chain, noIdenticon = false, forma
           <Grid item m='auto 0' pr='5px'>
             <Identicon
               iconTheme={_chain?.icon ?? 'polkadot'}
-              judgement={judgement}
+              judgement={judgement || _judgement}
               prefix={_chain?.ss58Format ?? 42}
               size={identiconSize}
               value={_formatted}

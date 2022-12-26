@@ -35,7 +35,7 @@ interface CollapseProps {
 
 export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const poolToShow = usePool(address, poolId, pool);
+  const poolToShow = usePool(address, poolId);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId.toString());
 
   const membersToShow = useMemo(() => {

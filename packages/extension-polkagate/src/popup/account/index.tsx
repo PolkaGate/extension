@@ -147,7 +147,7 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, newGenesisHash, onAction]);
 
   useEffect(() => {
-    if (balances?.chainName === chainName?.toLowerCase()) {
+    if (balances?.chainName === chainName) {
       return setBalanceToShow(balances);
     }
 
@@ -180,10 +180,10 @@ export default function AccountDetails(): React.ReactElement {
     }
 
     history.push({
-      pathname: `/send/${genesisHash}/${address}/${formatted}/`,
+      pathname: `/send/${address}/`,
       state: { api, balances, price: price?.amount }
     });
-  }, [availableProxiesForTransfer?.length, account?.isExternal, history, genesisHash, address, formatted, balances, api, price]);
+  }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api, price]);
 
   const goToReceive = useCallback(() => {
     history.push({

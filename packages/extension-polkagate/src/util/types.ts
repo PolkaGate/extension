@@ -134,7 +134,8 @@ interface stashAccountDisplay {
 }
 
 export interface TransactionDetail {
-  action?: string; // send, bond, bond_extra, unbound, nominate ...
+  action: string; // send, Solo staking, pool staking ...
+  subAction?: string; // bond_extra, unbound, nominate
   block?: number;
   from: NameAddress;
   amount?: string;
@@ -142,7 +143,7 @@ export interface TransactionDetail {
   txHash?: string;
   fee?: string;
   to?: string;
-  status: 'fail' | 'success',
+  success: boolean,
   failureText?: string;
   throughProxy?: NameAddress;
 }
@@ -465,6 +466,7 @@ export interface SubQueryRewardInfo {
   reward: Reward
 }
 export interface SubQueryHistory {
+  action(action: any): unknown;
   id: string,
   blockNumber: number,
   extrinsicIdx: number,
@@ -603,7 +605,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   decimal: number;
   token: string;
   date: number;
-  pooledBalance: BN;
+  pooledBalance?: BN;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;

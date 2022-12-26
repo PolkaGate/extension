@@ -20,7 +20,7 @@ import React from 'react';
 import { BN } from '@polkadot/util';
 
 import { ChainLogo } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useChain, useTranslation } from '../../../hooks';
 import BalanceFee from './BalanceFee';
 
 interface Props {
@@ -28,16 +28,16 @@ interface Props {
   balanceLabel: string;
   balanceType?: string;
   balances?: DeriveBalancesAll | null | undefined;
-  genesisHash: string | undefined;
   api: ApiPromise | undefined;
   fee: Balance | undefined;
   balance?: BN;
   style?: SxProps<Theme> | undefined;
 }
 
-export default function Asset({ api, balance, address, balanceLabel, balanceType, balances, fee, genesisHash, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
+function Asset({ api, balance, address, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
+  const chain = useChain(address);
 
   return (
     <Grid container item sx={style} xs={12}>
@@ -46,7 +46,7 @@ export default function Asset({ api, balance, address, balanceLabel, balanceType
       </div>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
         <Grid container item xs={1.5}>
-          <ChainLogo genesisHash={genesisHash} size={31} />
+          <ChainLogo genesisHash={chain?.genesisHash} size={31} />
         </Grid>
         <Grid container item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5}>
           <Grid item>
@@ -69,3 +69,5 @@ export default function Asset({ api, balance, address, balanceLabel, balanceType
     </Grid>
   );
 }
+
+export default React.memo(Asset);

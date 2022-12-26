@@ -2,57 +2,81 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, Link, Typography } from '@mui/material';
-import { TransactionDetail } from '../../util/types';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { AccountContext, PButton, Popup } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import getLogo from '../../util/getLogo';
-import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../util/utils';
+import { accountName, toShortAddress, upperCaseFirstChar } from '../../util/utils';
 import Amount from './partials/Amount';
 import FailSuccessIcon from './partials/FailSuccessIcon';
 import Item from './partials/Item';
 
 interface Props {
   chainName: string;
-  info: TransactionDetail;
+  info: Record<string, any>;
   decimal: number;
   token: string;
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
   showDetail: boolean;
-  formatted: string;
 }
 
-export default function Detail({ chainName, formatted, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
+export default function Detail({ chainName, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-  const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.txHash);
+  const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.extrinsicHash);
 
   const _onBack = useCallback(() => {
     setShowDetail(false);
   }, [setShowDetail]);
 
-  const action = useMemo((): string | undefined => upperCaseFirstChar(info?.action), [info?.action]);
+  const action = useMemo((): string | undefined => {
+    if (info?.transfer) {
+      if (info?.id.includes('to')) {
+        return t('Receive');
+      }
 
-  const subAction = useMemo((): string | undefined => info?.subAction ? upperCaseFirstChar(info?.subAction) : '', [info]);
+      return t('Send');
+    }
+
+    if (info?.extrinsic) {
+      return upperCaseFirstChar(info?.extrinsic.module);
+    }
+  }, [info, t]);
+
+  const subAction = useMemo((): string | undefined => {
+    if (info?.extrinsic) {
+      return upperCaseFirstChar(info?.extrinsic.call);
+    }
+  }, [info]);
+
+  const success = useMemo((): boolean =>
+    !!(info?.extrinsic?.success || info?.transfer?.success || info?.reward?.success)
+    , [info]);
 
   const from = useMemo(() => {
-    const name = accountName(accounts, info?.from?.address);
+    const name = accountName(accounts, info?.transfer?.from);
 
-    if (info?.from) {
-      return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.from.address)}${name ? ')' : ''}`;
+    if (info?.transfer) {
+      return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.transfer.from)}${name ? ')' : ''}`;
     }
-  }, [accounts, info?.from, t]);
+  }, [accounts, info?.transfer, t]);
 
   const to = useMemo(() => {
-    const name = accountName(accounts, info?.to);
+    const name = accountName(accounts, info?.transfer?.to);
 
-    if (info?.to) {
-      return `${t('To')}: ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.to)}${name ? ')' : ''}`;
+    if (info?.transfer) {
+      return `${t('To')}: ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.transfer.to)}${name ? ')' : ''}`;
     }
-  }, [accounts, info?.to, t]);
+  }, [info, t]);
+
+  const amount = useMemo((): string | undefined => {
+    if (info?.transfer) {
+      return info.transfer.amount;
+    }
+  }, [info]);
 
   const fee = useMemo((): string | undefined => {
     if (info?.transfer) {
@@ -79,7 +103,7 @@ export default function Detail({ chainName, formatted, decimal, info, setShowDet
           {subAction}
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '35%' }} />
-        <FailSuccessIcon success={info.success} />
+        <FailSuccessIcon success={success} />
         {/* <Typography
           fontSize='16px'
           fontWeight={400}
@@ -90,11 +114,11 @@ export default function Detail({ chainName, formatted, decimal, info, setShowDet
         <Item item={info?.timestamp && (new Date(parseInt(info.timestamp) * 1000)).toLocaleDateString(undefined, options)} mt={15} />
         <Item item={from} toCopy={info?.transfer?.from} />
         <Item item={to} toCopy={info?.transfer?.to} />
-        {info?.amount &&
-          <Amount amount={String(amountToMachine(info.amount, decimal))} decimal={decimal} label={t('Amount')} token={token} />
+        {amount &&
+          <Amount amount={amount} decimal={decimal} label={t('Amount')} token={token} />
         }
-        {info?.fee &&
-          <Amount amount={info?.fee} decimal={decimal} label={t('Fee')} token={token} />
+        {fee &&
+          <Amount amount={fee} decimal={decimal} label={t('Fee')} token={token} />
         }
         <Divider
           sx={{
@@ -104,10 +128,10 @@ export default function Detail({ chainName, formatted, decimal, info, setShowDet
             width: '75%'
           }}
         />
-        <Item item={`${t('Block')}: #${info?.block}`} noDivider />
-        <Item item={`${t('Hash')}: #${toShortAddress(info?.txHash, 6)}`} noDivider toCopy={info?.txHash} />
+        <Item item={`${t('Block')}: #${info?.blockNumber}`} noDivider />
+        <Item item={`${t('Hash')}: #${toShortAddress(info?.extrinsicHash, 6)}`} noDivider toCopy={info?.extrinsicHash} />
         <Grid item sx={{ mt: '20px' }}>
-          <Link href={`${subscanLink()}`} rel='noreferrer' target='_blank' underline='none'>
+          <Link href={`${subscanLink()}`} rel='noreferrer' target='_blank' underline='none'          >
             <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
           </Link>
         </Grid>

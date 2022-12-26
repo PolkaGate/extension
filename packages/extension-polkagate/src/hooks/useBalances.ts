@@ -9,7 +9,7 @@ import { FetchingContext } from '../components';
 import { updateMeta } from '../messaging';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
-import { useAccount, useApi, useChain, useDecimal, useFormatted, useToken } from '.';
+import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useToken } from '.';
 
 export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
   const account = useAccount(address);
@@ -21,8 +21,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const isFetching = useContext(FetchingContext);
-
-  const chainName = chain && chain.name.replace(' Relay Chain', '')?.replace(' Network', '').toLocaleLowerCase();
+  const chainName = useChainName(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
 
@@ -87,11 +86,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     }
 
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      b['token'] = token;
-      b['decimal'] = decimal;
-      b['chainName'] = chainName;
-
-      setNewBalances(b);
+      setNewBalances({ ...b, chainName, date: Date.now(), decimal, token });
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
@@ -164,7 +159,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {
-    if (!api || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
+    if (!address || !api || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
       return;
     }
 
@@ -173,7 +168,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
     const balances = {
       availableBalance: overall.availableBalance.toString(),
-      date: Date.now(),
       freeBalance: overall.freeBalance.toString(),
       frozenFee: overall.frozenFee.toString(),
       frozenMisc: overall.frozenMisc.toString(),
@@ -207,7 +201,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const lastBalances = {
         availableBalance: new BN(sb.availableBalance),
         chainName,
-        date: sb.date,
+        date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
         frozenFee: new BN(sb.frozenFee),

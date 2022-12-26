@@ -62,7 +62,7 @@ export default function Pool(): React.ReactElement {
   const { state } = useLocation<State>();
   const api = useApi(address, state?.api);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const pool = usePool(address, undefined, state?.pool, refresh);
+  const pool = usePool(address, undefined, refresh);
   const history = useHistory();
   const chain = useChain(address);
   const formatted = useFormatted(address);
@@ -102,6 +102,11 @@ export default function Pool(): React.ReactElement {
     return undefined;
   }, [myOtherPools, pool]);
 
+  console.log('pool:', pool)
+  console.log('myOtherPools:', myOtherPools)
+  console.log('allMyPools:', allMyPools)
+  console.log('poolsToShow:', poolsToShow)
+  console.log('-------------------------------------')
   useEffect(() => {
     if (allMyPools === undefined) {
       return;
