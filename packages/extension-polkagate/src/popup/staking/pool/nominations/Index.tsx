@@ -46,7 +46,7 @@ export default function Index(): React.ReactElement {
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
-  const pool = usePool(address, undefined, state?.pool, refresh);
+  const pool = usePool(address, undefined, refresh);
   const formatted = useFormatted(address);
   const [nominatedValidatorsIds, setNominatedValidatorsIds] = useState<AccountId[] | undefined | null>();
   const [showRemoveValidator, setShowRemoveValidator] = useState<boolean>(false);

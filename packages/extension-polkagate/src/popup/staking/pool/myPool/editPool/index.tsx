@@ -35,7 +35,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const { t } = useTranslation();
 
   const api = useApi(address, apiToUse);
-  const myPool = usePool(address, undefined, pool);
+  const myPool = usePool(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const { accounts, hierarchy } = useContext(AccountContext);
