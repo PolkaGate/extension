@@ -33,7 +33,6 @@ export interface Props {
   suri?: string;
   toggleActions?: number;
   type?: KeypairType;
-  balancesOnLocalStorage?: string;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
 }

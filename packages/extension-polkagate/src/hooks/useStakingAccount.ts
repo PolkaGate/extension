@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
 import { AccountStakingInfo } from '../util/types';
-import { useAccount, useApi, useChain, useFormatted, useStashId } from '.';
+import { useAccount, useApi, useChain, useChainName, useFormatted, useStashId } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();
@@ -31,7 +31,7 @@ BN.prototype.toJSON = function () {
 export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const account = useAccount(address);
   const chain = useChain(address);
-  const chainName = chain && chain.name.replace(' Relay Chain', '');
+  const chainName = useChainName(address);
   const api = useApi(address);
   const stashId = useStashId(address);
 

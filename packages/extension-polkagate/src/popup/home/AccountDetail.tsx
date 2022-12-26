@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import CopyAddressButton from '../../components/CopyAddressButton';
 import FormatBalance2 from '../../components/FormatBalance2';
 import FormatPrice from '../../components/FormatPrice';
-import { useTranslation } from '../../hooks';
+import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
@@ -36,14 +36,15 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
+  const chainName = useChainName(address);
   const price = usePrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
   const isPriceOutdated = useMemo(() => price && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
+  console.log('balances:', balances && JSON.parse(JSON.stringify(balances)))
   useEffect(() => {
-    if (balances?.chainName === chainName?.toLowerCase()) {
+    if (balances?.chainName === chainName) {
       return setBalanceToShow(balances);
     }
 

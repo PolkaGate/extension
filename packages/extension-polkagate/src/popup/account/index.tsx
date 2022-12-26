@@ -147,7 +147,7 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, newGenesisHash, onAction]);
 
   useEffect(() => {
-    if (balances?.chainName === chainName?.toLowerCase()) {
+    if (balances?.chainName === chainName) {
       return setBalanceToShow(balances);
     }
 

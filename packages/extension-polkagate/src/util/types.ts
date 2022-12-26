@@ -600,7 +600,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   decimal: number;
   token: string;
   date: number;
-  pooledBalance: BN;
+  pooledBalance?: BN;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;

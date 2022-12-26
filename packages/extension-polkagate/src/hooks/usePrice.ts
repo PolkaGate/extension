@@ -14,23 +14,8 @@ import { useChain } from '.';
  */
 export default function usePrice(address: string, currency = 'usd'): Price | undefined {
   const [price, setPrice] = useState<Price | undefined>();
-  const [newPrice, setNewPrice] = useState<Price | undefined>();
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.toLowerCase();
-
-  // useEffect(() => {
-  //   if (!chainName) {
-  //     return;
-  //   }
-
-  //   getPrices([chainName]).then((res) => {
-  //     setNewPrice({
-  //       amount: res.prices[chainName.toLocaleLowerCase()][currency],
-  //       chainName,
-  //       date: res.date
-  //     });
-  //   }).catch(console.error);
-  // }, [chainName, currency]);
 
   useEffect(() => {
     if (!chainName) {
@@ -49,5 +34,5 @@ export default function usePrice(address: string, currency = 'usd'): Price | und
     }
   }, [address, chainName]);
 
-  return newPrice || price;
+  return price;
 }

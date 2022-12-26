@@ -44,7 +44,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
 
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[chain.name.replace(' Relay Chain', '')] as string[];
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[chain.name.replace(' Relay Chain', '').replace(' Network', '')] as string[];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,
