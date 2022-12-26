@@ -62,6 +62,13 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
     });
   }, [address, api, history]);
 
+  const goToCrowdLoans = useCallback(() => {
+    formatted &&
+      history.push({
+        pathname: `/crowdloans/${address}`
+      });
+  }, [address, formatted, history]);
+
   const goToHistory = useCallback(() => {
     history.push({
       pathname: `/history/${String(address)}`
@@ -137,7 +144,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           divider
           dividerHeight={20}
           icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${theme.palette.text.primary}` }} />}
-          onClick={goToHistory}
+          onClick={goToCrowdLoans}
           title={t<string>('Crowdloans')}
           titleFontSize={10}
         />

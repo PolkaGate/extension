@@ -12,7 +12,6 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
 
-// import CrowdLoans from '../../../extension-polkagate/src/Popup/CrowdLoans';// added for plus
 // import Governance from '../../../extension-polkagate/src/Popup/Governance';// added for plus
 // import SocialRecovery from '../../../extension-polkagate/src/Popup/SocialRecovery';// added for plus
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
@@ -24,6 +23,7 @@ import Others from '../../../extension-polkagate/src/popup/account/Others';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
+import CrowdLoans from '../../../extension-polkagate/src/popup/crowdLoans';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
@@ -178,7 +178,7 @@ export default function Popup(): React.ReactElement {
                       <MetadataReqContext.Provider value={metaRequests}>
                         <SigningReqContext.Provider value={signRequests}>
                           <Switch>
-                            {/* <Route path='/crowdloans/:genesisHash/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route> */}
+                            <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                             <Route path='/selectProxy/:proxiedAddress/:genesisHash'>{wrapWithErrorBoundary(<SelectProxy />, 'select-proxy')}</Route>
