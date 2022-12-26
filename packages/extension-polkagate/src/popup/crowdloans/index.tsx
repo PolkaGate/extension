@@ -259,33 +259,33 @@ export default function CrowdLoans(): React.ReactElement {
                 }
               </Grid>
             </Grid>
-            <Grid container sx={{ borderBlock: '1px solid', borderBlockColor: 'secondary.light', height: '28px' }}>
-              <Grid xs={4}>
+            <Grid container item sx={{ borderBlock: '1px solid', borderBlockColor: 'secondary.light', height: '28px' }}>
+              <Grid item xs={4}>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
                   {t<string>('Date')}
                 </Typography>
               </Grid>
-              <Grid sx={{ borderInline: '1px solid', borderInlineColor: 'secondary.light' }} xs={4}>
+              <Grid item sx={{ borderInline: '1px solid', borderInlineColor: 'secondary.light' }} xs={4}>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
                   {t<string>('Amount')}
                 </Typography>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
                   {t<string>('Release date')}
                 </Typography>
               </Grid>
             </Grid>
-            <Grid container height='27px'>
-              <Grid xs={4}>
+            <Grid container item height='27px'>
+              <Grid item xs={4}>
                 <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
                   {date(crowdloan.fund.contributionTimestamp)}
                 </Typography>
               </Grid>
-              <Grid alignItems='center' sx={{ '> div': { lineHeight: '26px', width: 'auto' }, borderInline: '1px solid', borderInlineColor: 'secondary.light', fontSize: '14px', fontWeight: 400 }} xs={4}>
+              <Grid item alignItems='center' sx={{ '> div': { lineHeight: '26px', width: 'auto' }, borderInline: '1px solid', borderInlineColor: 'secondary.light', fontSize: '14px', fontWeight: 400 }} xs={4}>
                 <ShowBalance balance={myContributions?.get(crowdloan.fund.paraId)} decimal={decimal} decimalPoint={2} token={token} />
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
                   {releaseDate(crowdloan.fund.unlockingBlock, currentBlockNumber)}
                 </Typography>
@@ -293,7 +293,7 @@ export default function CrowdLoans(): React.ReactElement {
             </Grid>
           </Grid>))
         : contributedCrowdloans === null &&
-        <Grid container>
+        <Grid container item>
           <Typography fontSize='16px' fontWeight={400} m='100px auto 0' textAlign='center' width='75%'>
             {t<string>('You haven\'t contributed to any crowdloans yet.')}
           </Typography>
