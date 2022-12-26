@@ -235,6 +235,7 @@ export default function Index(): React.ReactElement {
           allValidators={allValidatorsInfo}
           api={api}
           newSelectedValidators={newSelectedValidators}
+          poolId={pool?.poolId}
           setShow={setShowReview}
           show={showReview}
           staked={new BN(pool?.stashIdAccount?.stakingLedger?.active ?? 0)}

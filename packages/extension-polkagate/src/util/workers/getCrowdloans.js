@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
-import { hexToBn, hexToString } from '@polkadot/util';
+import {
+hexToBn,
+hexToString
+} from '@polkadot/util'
 
-import { DEFAULT_IDENTITY } from '../constants';
-import getChainInfo from '../getChainInfo.ts';
+import {
+  DEFAULT_IDENTITY
+} from '../constants';
+import getApi from '../getApi';
 
-async function getIdentities (_chainName, _address) {
-  console.log(`getting identities of .... on ${_chainName}`);
-
-  const { api } = await getChainInfo(_chainName);
-
+async function getIdentities(api, _address) {
   const identities = await api.query.identity.identityOf.multi(_address);
 
   const ids = identities.map((id) => {
@@ -43,9 +44,10 @@ async function getIdentities (_chainName, _address) {
   return ids;
 }
 
-async function getCrowdloans (_chainName) {
+async function getCrowdloans(endpoint) {
+  const api = await getApi(endpoint);
+
   console.log('getting crowdloans ...');
-  const { api } = await getChainInfo(_chainName);
   const allParaIds = (await api.query.paras.paraLifecycles.entries()).map(([key, _]) => key.args[0]);
 
   const [auctionInfo, auctionCounter, funds, leases, header] = await Promise.all([
@@ -55,6 +57,11 @@ async function getCrowdloans (_chainName) {
     api.query.slots.leases.multi(allParaIds),
     api.rpc.chain.getHeader()
   ]);
+
+  const parsedInfo = auctionInfo.isSome ? JSON.parse(auctionInfo.toString()) : null;
+  const auctionEndBlock = parsedInfo ? parsedInfo[1] : null;
+  const currentBlock = Number(header?.number ?? 0);
+  const blockOffset = auctionEndBlock && currentBlock ? currentBlock - auctionEndBlock + 1 : 0;
 
   const hasLease = [];
 
@@ -83,32 +90,38 @@ async function getCrowdloans (_chainName) {
   const nonEmtyFunds = fundsWithParaId.filter((fund) => fund);
   const depositors = nonEmtyFunds.map((d) => d.depositor);
 
-  const identities = await getIdentities(_chainName, depositors);
+  const identities = await getIdentities(api, depositors);
   const crowdloansWithIdentity = nonEmtyFunds.map((fund, index) => {
     return {
-      fund: fund,
+      fund,
       identity: identities[index]
     };
   });
 
-  const winning = await api.query.auctions.winning(funds);
+  const winning = blockOffset > 1 ? await api.query.auctions.winning(blockOffset) : undefined;
+  console.log('winning :', winning?.toString() ? Array.from(winning.toHuman()):'');
 
   return {
     auctionCounter: Number(auctionCounter),
     auctionInfo: auctionInfo.toString() ? JSON.parse(auctionInfo.toString()) : null,
-    blockchain: _chainName,
+    // blockchain: _chainName,
     crowdloans: crowdloansWithIdentity,
     currentBlockNumber: Number(String(header.number)),
     minContribution: api.consts.crowdloan.minContribution.toString(),
-    winning: winning.toString() ? Array.from(winning.toHuman()) : []
+    winning:
+      // winning.toString() ? Array.from(winning.toHuman()) :
+      []
   };
 }
 
 onmessage = (e) => {
-  const { chain } = e.data;
+  const {
+    endpoint
+  } = e.data;
+
 
   // eslint-disable-next-line no-void
-  void getCrowdloans(chain).then((crowdloans) => {
+  void getCrowdloans(endpoint).then((crowdloans) => {
     // console.log('crowdloans in worker',crowdloans);
     postMessage(crowdloans);
   });

@@ -204,6 +204,13 @@ export default function AccountDetails(): React.ReactElement {
       });
   }, [address, chainName, formatted, history, pathname]);
 
+  const goToCrowdLoans = useCallback(() => {
+    formatted &&
+      history.push({
+        pathname: `/crowdloans/${address}`
+      });
+  }, [address, formatted, history]);
+
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
@@ -323,6 +330,12 @@ export default function AccountDetails(): React.ReactElement {
           />
           <HorizontalMenuItem
             divider
+            icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ color: `${theme.palette.text.primary}`, height: '35px' }} />}
+            onClick={goToCrowdLoans}
+            title={t<string>('Crowdloans')}
+            labelMarginTop='-5px'
+          />
+          <HorizontalMenuItem
             icon={
               <FontAwesomeIcon
                 color={theme.palette.mode === 'dark' ? 'white' : 'black'}
@@ -331,17 +344,6 @@ export default function AccountDetails(): React.ReactElement {
               />}
             onClick={goToHistory}
             title={t<string>('History')}
-          />
-          <HorizontalMenuItem
-            icon={
-              <FontAwesomeIcon
-                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-                icon={faRefresh}
-                size='lg'
-                spin={refresh}
-              />}
-            onClick={onRefreshClick}
-            title={t<string>('Refresh')}
           />
         </Grid>
       </Container>

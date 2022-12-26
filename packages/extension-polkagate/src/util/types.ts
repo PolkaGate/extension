@@ -181,6 +181,9 @@ interface Fund {
   trieIndex: number;
   paraId: string;
   hasLeased: boolean;
+  contributionBlock?: number;
+  contributionTimestamp?: number;
+  unlockingBlock?: number;
 }
 
 interface Identity {

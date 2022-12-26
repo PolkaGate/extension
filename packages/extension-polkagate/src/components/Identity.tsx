@@ -31,10 +31,11 @@ interface Props {
   showShortAddress?: boolean;
   withShortAddress?: boolean;
   showSocial?: boolean;
+  noIdenticon?: boolean;
   judgement?: any;
 }
 
-function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, noIdenticon = false, formatted, identiconSize = 40, judgement, name, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -45,16 +46,17 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
-      <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
-        <Grid item m='auto 0' pr='5px'>
-          <Identicon
-            iconTheme={_chain?.icon ?? 'polkadot'}
-            judgement={judgement || _judgement}
-            prefix={_chain?.ss58Format ?? 42}
-            size={identiconSize}
-            value={_formatted}
-          />
-        </Grid>
+      <Grid alignItems='center' container item xs={showChainLogo || noIdenticon ? 11 : 12}>
+        {!noIdenticon &&
+          <Grid item m='auto 0' pr='5px'>
+            <Identicon
+              iconTheme={_chain?.icon ?? 'polkadot'}
+              judgement={judgement || _judgement}
+              prefix={_chain?.ss58Format ?? 42}
+              size={identiconSize}
+              value={_formatted}
+            />
+          </Grid>}
         <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {_accountInfo?.identity?.displayParent &&
