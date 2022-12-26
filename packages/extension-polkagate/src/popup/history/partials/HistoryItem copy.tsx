@@ -9,14 +9,14 @@ import { BN } from '@polkadot/util';
 
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { SubQueryHistory, TransactionDetail } from '../../../util/types';
-import { amountToHuman, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
+import { SubQueryHistory } from '../../../util/types';
+import { toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 import Detail from '../Detail';
 
 interface Props {
-  formatted: string;
+  address: string;
   anotherDay: boolean;
-  info: TransactionDetail;
+  info: SubQueryHistory;
   decimal: number | undefined;
   token: string | undefined;
   date?: string;
@@ -24,7 +24,7 @@ interface Props {
   chainName: string | undefined;
 }
 
-export default function HistoryItem({ anotherDay, chainName, date, decimal, formatted, info, token }: Props): React.ReactElement {
+export default function HistoryItem({ anotherDay, chainName, date, decimal, info, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -32,21 +32,37 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
     setShowDetail(true);
   }, []);
 
-  const action = useMemo(() => upperCaseFirstChar(info.action), [info]);
+  const action = useMemo(() => {
+    if (info.transfer) {
+      if (info.id.includes('to')) {
+        return t('Receive');
+      }
+
+      return t('Send');
+    }
+
+    if (info.extrinsic) {
+      return upperCaseFirstChar(info.extrinsic.module);
+    }
+  }, [info, t]);
 
   const subAction = useMemo(() => {
-    if (info?.from?.address === formatted) {
-      return `${t('From')}: ${toShortAddress(info.from.address)}`;
+    if (info.transfer) {
+      if (info.id.includes('to')) {
+        return `${t('From')}: ${toShortAddress(info.transfer.from)}`;
+      }
+
+      return `${t('To')}: ${toShortAddress(info.transfer.to)}`;
     }
 
-    if (info?.to === formatted) {
-      return `${t('To')}: ${toShortAddress(info.to)}`;
+    if (info.extrinsic) {
+      return upperCaseFirstChar(info.extrinsic.call);
     }
+  }, [info, t]);
 
-    if (info?.subAction) {
-      return upperCaseFirstChar(info.subAction);
-    }
-  }, [formatted, info?.from?.address, info?.subAction, info?.to, t]);
+  const success = useMemo((): boolean =>
+    !!(info.extrinsic?.success || info.transfer?.success || info.reward?.success)
+    , [info]);
 
   return (
     <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }}>
@@ -64,13 +80,13 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
           </Grid>
           <Grid container direction='column' item pr='10px' textAlign='right' xs={5}>
             <Typography fontSize='20px' fontWeight={300}>
-              {info?.amount && decimal && token
-                ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={amountToMachine(info.amount, decimal)} />
+              {info?.transfer?.amount && decimal && token
+                ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={new BN(info.transfer.amount)} />
                 : 'N/A'
               }
             </Typography>
-            <Typography fontSize='16px' fontWeight={400} color={info.success ? 'green' : 'red'}>
-              {info.success ? t<string>('Completed') : t<string>('Failed')}
+            <Typography fontSize='16px' fontWeight={400} color={success ? 'green' : 'red'}>
+              {success ? t<string>('Completed') : t<string>('Failed')}
             </Typography>
           </Grid>
           <Grid alignItems='center' container item sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light' }} xs={1}>
@@ -85,7 +101,6 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
       </Grid>
       {showDetail && chainName && token && decimal &&
         <Detail
-        formatted={formatted}
           chainName={chainName}
           decimal={decimal}
           info={info}
