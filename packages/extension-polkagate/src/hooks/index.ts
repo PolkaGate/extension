@@ -5,6 +5,7 @@ export { default as useAccount } from './useAccount';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
 export { default as useApi } from './useApi';
+export { default as useAuction } from './useAuction';
 export { default as useApiWithChain } from './useApiWithChain';
 export { default as useMyPools } from './useMyPools';
 export { default as useBalances } from './useBalances';
