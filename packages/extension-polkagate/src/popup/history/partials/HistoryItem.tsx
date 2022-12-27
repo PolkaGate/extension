@@ -38,13 +38,13 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
     }
 
     if (info?.from?.address === formatted) {
-      return `${t('From')}: ${toShortAddress(info.from.address)}`;
+      return `${t('To')}: ${info?.to?.name || toShortAddress(info?.to?.address)}`;
     }
 
-    if (info?.to === formatted) {
-      return `${t('To')}: ${toShortAddress(info.to)}`;
+    if (info?.to?.address === formatted) {
+      return `${t('From')}: ${info?.from?.name || toShortAddress(info?.from?.address)}`;
     }
-  }, [formatted, info?.from?.address, info?.subAction, info?.to, t]);
+  }, [formatted, info?.from?.address, info?.from?.name, info.subAction, info?.to, t]);
 
   return (
     <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }}>

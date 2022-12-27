@@ -118,7 +118,7 @@ export default function Review({ accountName, address, amount, api, chain, estim
         subAction: 'Send',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
-        to: recipientAddress,
+        to: { address: recipientAddress, name: selectedProxyName || recipientName },
         txHash: txHash || ''
       };
 

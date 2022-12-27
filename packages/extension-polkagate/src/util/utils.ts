@@ -135,7 +135,7 @@ export function getSubstrateAddress(address: AccountId | string | undefined): st
   return encodeAddress(publicKey, 42);
 }
 
-export const accountName = (accounts: AccountJson[], address: string): string | undefined => {
+export const accountName = (accounts: AccountJson[], address: string | undefined): string | undefined => {
   if (!accounts.length || !address) {
     return undefined;
   }

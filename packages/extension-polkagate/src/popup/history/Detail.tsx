@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, Link, Typography } from '@mui/material';
-import { TransactionDetail } from '../../util/types';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { AccountContext, PButton, Popup } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import getLogo from '../../util/getLogo';
+import { TransactionDetail } from '../../util/types';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../util/utils';
 import Amount from './partials/Amount';
 import FailSuccessIcon from './partials/FailSuccessIcon';
@@ -39,7 +39,7 @@ export default function Detail({ chainName, formatted, decimal, info, setShowDet
   const subAction = useMemo((): string | undefined => info?.subAction ? upperCaseFirstChar(info?.subAction) : '', [info]);
 
   const from = useMemo(() => {
-    const name = accountName(accounts, info?.from?.address);
+    const name = info?.from?.name || accountName(accounts, info?.from?.address);
 
     if (info?.from) {
       return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.from.address)}${name ? ')' : ''}`;
@@ -47,22 +47,12 @@ export default function Detail({ chainName, formatted, decimal, info, setShowDet
   }, [accounts, info?.from, t]);
 
   const to = useMemo(() => {
-    const name = accountName(accounts, info?.to);
+    const name = info?.to?.name || accountName(accounts, info?.to?.address);
 
     if (info?.to) {
-      return `${t('To')}: ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.to)}${name ? ')' : ''}`;
+      return `${t('To')}: ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.to.address)}${name ? ')' : ''}`;
     }
   }, [accounts, info?.to, t]);
-
-  const fee = useMemo((): string | undefined => {
-    if (info?.transfer) {
-      return info.transfer.fee;
-    }
-
-    if (info?.extrinsic) {
-      return info.extrinsic.fee;
-    }
-  }, [info]);
 
   return (
     <Popup show={showDetail}>
