@@ -37,7 +37,7 @@ interface SessionIfo {
 }
 
 interface State {
-  api?: ApiPromise; 
+  api?: ApiPromise;
   stakingConsts?: StakingConsts;
   poolConsts?: PoolStakingConsts;
 }
@@ -60,7 +60,7 @@ export default function Index(): React.ReactElement {
   const identity = useMyAccountIdentity(address);
 
   const token = useToken(address);
-  const decimal =useDecimal(address);
+  const decimal = useDecimal(address);
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
@@ -79,7 +79,7 @@ export default function Index(): React.ReactElement {
   const [shake, setShake] = useState<boolean>(false); // to shake to persuade to stake ;)
 
   useEffect(() => {
-    if (staked?.isZero() && (pool === null || !['Blocked', 'Destroying'].includes(String(pool?.bondedPool?.state)))) {
+    if (staked?.isZero() && pool === null) {
       setShake(true);
       setTimeout(() => setShake(false), TIME_TO_SHAKE_STAKE_ICON);
     }
