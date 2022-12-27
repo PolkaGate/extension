@@ -12,7 +12,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Identicon, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, Identicon, Infotip, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
@@ -47,7 +47,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const name = useAccountName(address);
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -197,142 +197,140 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   };
 
   return (
-    <Motion>
-      <Popup show={show}>
-        <HeaderBrand
-          onBackClick={onBackClick}
-          shortBorder
-          showBackArrow
-          showClose
-          text={t<string>('Edit Pool')}
-          withSteps={{ current: 2, total: 2 }}
+    <Popup show={show}>
+      <HeaderBrand
+        onBackClick={onBackClick}
+        shortBorder
+        showBackArrow
+        showClose
+        text={t<string>('Edit Pool')}
+        withSteps={{ current: 2, total: 2 }}
+      />
+      {isPasswordError &&
+        <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
+          <Warning
+            fontWeight={400}
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {t<string>('You’ve used an incorrect password. Try again.')}
+          </Warning>
+        </Grid>
+      }
+      <SubTitle label={t<string>('Review')} />
+      {changes?.newPoolName !== undefined &&
+        <>
+          <Infotip text={changes?.newPoolName}>
+            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+                {t<string>('Pool name')}
+              </Typography>
+              <Typography fontSize='28px' fontWeight={400} lineHeight='25px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                {changes?.newPoolName}
+              </Typography>
+            </Grid>
+          </Infotip>
+          {changes?.newRoles && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />}
+        </>}
+      {changes?.newRoles?.newRoot !== undefined &&
+        <ShowPoolRole
+          roleAddress={changes?.newRoles?.newRoot}
+          roleTitle={t<string>('Root')}
+          showDivider
         />
-        {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
-        }
-        <SubTitle label={t<string>('Review')} />
-        {changes?.newPoolName !== undefined &&
-          <>
-            <Infotip text={changes?.newPoolName}>
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '8px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
-                  {t<string>('Pool name')}
+      }
+      {changes?.newRoles?.newNominator !== undefined &&
+        <ShowPoolRole
+          roleAddress={changes?.newRoles?.newNominator}
+          roleTitle={t<string>('Nominator')}
+          showDivider
+        />
+      }
+      {changes?.newRoles?.newStateToggler !== undefined &&
+        <ShowPoolRole
+          roleAddress={changes?.newRoles?.newStateToggler}
+          roleTitle={t<string>('State toggler')}
+          showDivider
+        />
+      }
+      <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
+        <Grid item>
+          {t('Fee')}:
+        </Grid>
+        <Grid item sx={{ pl: '5px' }}>
+          <ShowValue value={estimatedFee?.toHuman()} height={16} />
+        </Grid>
+      </Grid>
+      <PasswordUseProxyConfirm
+        api={api}
+        genesisHash={chain?.genesisHash}
+        isPasswordError={isPasswordError}
+        label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+        onChange={setPassword}
+        onConfirmClick={goEditPool}
+        proxiedAddress={formatted}
+        proxies={proxyItems}
+        proxyTypeFilter={['Any', 'NonTransfer']}
+        selectedProxy={selectedProxy}
+        setIsPasswordError={setIsPasswordError}
+        setSelectedProxy={setSelectedProxy}
+        style={{
+          bottom: '80px',
+          left: '4%',
+          position: 'absolute',
+          width: '92%'
+        }}
+      />
+      <WaitScreen
+        show={showWaitScreen}
+        title={t(`${state} Pool`)}
+      />
+      {
+        txInfo && (
+          <Confirmation
+            headerTitle={t('Pool Staking')}
+            onPrimaryBtnClick={goToStakingHome}
+            onSecondaryBtnClick={goToMyPool}
+            primaryBtnText={t('Staking Home')}
+            secondaryBtnText={t('My pool')}
+            showConfirmation={showConfirmation}
+            txInfo={txInfo}
+          >
+            <>
+              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                  {t<string>('Account holder:')}
                 </Typography>
-                <Typography fontSize='28px' fontWeight={400} lineHeight='25px' maxWidth='100%' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {changes?.newPoolName}
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                  {txInfo.from.name}
+                </Typography>
+                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                  <ShortAddress
+                    address={txInfo.from.address}
+                    inParentheses
+                    style={{ fontSize: '16px' }}
+                  />
+                </Grid>
+              </Grid>
+              {txInfo.throughProxy &&
+                <Grid container m='auto' maxWidth='92%'>
+                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
+                </Grid>
+              }
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                  {t<string>('Pool:')}
+                </Typography>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                  {pool.metadata}
                 </Typography>
               </Grid>
-            </Infotip>
-            {changes?.newRoles && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />}
-          </>}
-        {changes?.newRoles?.newRoot !== undefined &&
-          <ShowPoolRole
-            roleAddress={changes?.newRoles?.newRoot}
-            roleTitle={t<string>('Root')}
-            showDivider
-          />
-        }
-        {changes?.newRoles?.newNominator !== undefined &&
-          <ShowPoolRole
-            roleAddress={changes?.newRoles?.newNominator}
-            roleTitle={t<string>('Nominator')}
-            showDivider
-          />
-        }
-        {changes?.newRoles?.newStateToggler !== undefined &&
-          <ShowPoolRole
-            roleAddress={changes?.newRoles?.newStateToggler}
-            roleTitle={t<string>('State toggler')}
-            showDivider
-          />
-        }
-        <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
-          <Grid item>
-            {t('Fee')}:
-          </Grid>
-          <Grid item sx={{ pl: '5px' }}>
-            <ShowValue value={estimatedFee?.toHuman()} height={16} />
-          </Grid>
-        </Grid>
-        <PasswordUseProxyConfirm
-          api={api}
-          genesisHash={chain?.genesisHash}
-          isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
-          onChange={setPassword}
-          onConfirmClick={goEditPool}
-          proxiedAddress={formatted}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
-          selectedProxy={selectedProxy}
-          setIsPasswordError={setIsPasswordError}
-          setSelectedProxy={setSelectedProxy}
-          style={{
-            bottom: '80px',
-            left: '4%',
-            position: 'absolute',
-            width: '92%'
-          }}
-        />
-        <WaitScreen
-          show={showWaitScreen}
-          title={t(`${state} Pool`)}
-        />
-        {
-          txInfo && (
-            <Confirmation
-              headerTitle={t('Pool Staking')}
-              onPrimaryBtnClick={goToStakingHome}
-              onSecondaryBtnClick={goToMyPool}
-              primaryBtnText={t('Staking Home')}
-              secondaryBtnText={t('My pool')}
-              showConfirmation={showConfirmation}
-              txInfo={txInfo}
-            >
-              <>
-                <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                  <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                    {t<string>('Account holder:')}
-                  </Typography>
-                  <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                    {txInfo.from.name}
-                  </Typography>
-                  <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                    <ShortAddress
-                      address={txInfo.from.address}
-                      inParentheses
-                      style={{ fontSize: '16px' }}
-                    />
-                  </Grid>
-                </Grid>
-                {txInfo.throughProxy &&
-                  <Grid container m='auto' maxWidth='92%'>
-                    <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
-                  </Grid>
-                }
-                <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
-                <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                  <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                    {t<string>('Pool:')}
-                  </Typography>
-                  <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                    {pool.metadata}
-                  </Typography>
-                </Grid>
-                <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
-              </>
-            </Confirmation>)
-        }
-      </Popup >
-    </Motion >
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+            </>
+          </Confirmation>)
+      }
+    </Popup>
   );
 }
