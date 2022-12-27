@@ -10,7 +10,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../../components';
-import { usePrices, useTranslation } from '../../hooks';
+import { useChainNames, usePrices, useTranslation } from '../../hooks';
 import HeaderBrand from '../../partials/HeaderBrand';
 import getNetworkMap from '../../util/getNetworkMap';
 import AddAccount from '../welcome/AddAccount';
@@ -23,26 +23,12 @@ export default function Home(): React.ReactElement {
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const { hierarchy } = useContext(AccountContext);
-  const [chainNames, setChainNames] = useState<string[]>();
-  const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
+  const chainNames = useChainNames();
 
   usePrices(chainNames); // get balances for all chains available in accounts
+  const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
+
   const networkMap = useMemo(() => getNetworkMap(), []);
-
-  useEffect(() => {
-    const chainsToFetchPrice = new Set<string>();
-
-    hierarchy.forEach((h) => {
-      if (h?.balances) {
-        const parsed = JSON.parse(h.balances) as string[];
-
-        Object.keys(parsed).forEach((key) => chainsToFetchPrice.add(key.toLocaleLowerCase()));
-      }
-    });
-
-    setChainNames(Array.from(chainsToFetchPrice));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hierarchy?.length]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
