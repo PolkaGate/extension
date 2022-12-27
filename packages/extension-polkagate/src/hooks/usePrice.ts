@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { getPrices } from '../util/api';
 import { Price, Prices } from '../util/types';
 import { useChain } from '.';
 
@@ -16,23 +15,20 @@ export default function usePrice(address: string, currency = 'usd'): Price | und
   const [price, setPrice] = useState<Price | undefined>();
   const chain = useChain(address);
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.toLowerCase();
+  const localSavedPrices = window.localStorage.getItem('prices');
 
   useEffect(() => {
-    if (!chainName) {
+    if (!chainName || !localSavedPrices) {
       return;
     }
 
-    const localSavedPrices = window.localStorage.getItem('prices');
+    const parsedPrices = JSON.parse(localSavedPrices) as Prices;
+    const priceInUsd = parsedPrices?.prices[chainName]?.usd;
 
-    if (localSavedPrices) {
-      const parsedPrices = JSON.parse(localSavedPrices) as Prices;
-      const priceInUsd = parsedPrices?.prices[chainName]?.usd;
-
-      if (priceInUsd !== undefined) {
-        setPrice({ amount: priceInUsd, chainName, date: parsedPrices.date });
-      }
+    if (priceInUsd !== undefined && parsedPrices?.date) {
+      setPrice({ amount: priceInUsd, chainName, date: parsedPrices.date });
     }
-  }, [address, chainName]);
+  }, [address, chainName, localSavedPrices]);
 
   return price;
 }

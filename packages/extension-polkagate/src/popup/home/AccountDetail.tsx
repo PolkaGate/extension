@@ -39,7 +39,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   const chainName = useChainName(address);
   const price = usePrice(address);
   const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => price && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
+  const isPriceOutdated = useMemo(() => price !== undefined && Date.now() - price.date > BALANCES_VALIDITY_PERIOD, [price]);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
 
   useEffect(() => {
