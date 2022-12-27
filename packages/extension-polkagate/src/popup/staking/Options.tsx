@@ -60,6 +60,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           helperText={t('All the members of a pool act as a single nominator and the earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
           onClick={goToPoolStaking}
           showIcon
+          showQuestionMark
           style={{
             m: '5px auto',
             width: '100%'
@@ -75,6 +76,7 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
           onClick={goToSoloStaking}
           showIcon
+          showQuestionMark
           style={{
             m: 'auto',
             width: '100%'

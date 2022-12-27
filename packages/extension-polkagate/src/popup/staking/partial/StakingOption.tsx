@@ -27,9 +27,10 @@ interface OptionProps {
   tipPlace?: string;
   showIcon?: boolean;
   noToolTip?: boolean;
+  showQuestionMark?: boolean;
 }
 
-export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, noToolTip, onClick, showIcon, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, noToolTip, onClick, showIcon, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
