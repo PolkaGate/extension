@@ -28,7 +28,7 @@ import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -69,24 +69,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -106,14 +88,13 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   }, [proxies]);
 
   const unstake = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted || !unbonded || !poolWithdrawUnbonded) {
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -121,22 +102,23 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       const params = [formatted, amountAsBN];
 
       if (unlockingLen < maxUnlockingChunks) {
-        const { block, failureText, fee, status, txHash } = await broadcast(api, unbonded, params, signer, formatted, selectedProxy);
+        const { block, failureText, fee, success, txHash } = await broadcast(api, unbonded, params, signer, formatted, selectedProxy);
 
         const info = {
-          action: 'pool_unbond',
+          action: 'Pool Staking',
           amount,
           block,
           date: Date.now(),
           failureText,
           fee: fee || String(estimatedFee || 0),
-          from: { address: formatted, name },
-          status,
+          from: { address: from, name: selectedProxyName || name },
+          subAction: 'Unstake',
+          success,
           throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
           txHash
         };
 
-        history.push(info);
+        saveAsHistory(from, info);
         setTxInfo({ ...info, api, chain });
       } else { // hence a poolWithdrawUnbonded is needed
         const optSpans = await api.query.staking.slashingSpans(formatted);
@@ -148,27 +130,25 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         ]);
 
         const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, batch) : batch;
-        const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
+        const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
         const info = {
-          action: 'pool_WithdrawUnbonded_unbond',
+          action: 'Pool Staking',
           amount,
           block,
           date: Date.now(),
           failureText,
           fee: fee || String(estimatedFee || 0),
-          from: { address: formatted, name },
-          status,
+          from: { address: from, name: selectedProxyName || name },
+          subAction: 'Unstake',
+          success,
           throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
           txHash
         };
 
-        history.push(info);
+        saveAsHistory(from, info);
         setTxInfo({ ...info, api, chain });
       }
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, history);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -176,7 +156,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimals, estimatedFee, formatted, hierarchy, maxUnlockingChunks, name, password, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
+  }, [amount, api, chain, decimals, estimatedFee, formatted, maxUnlockingChunks, name, password, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

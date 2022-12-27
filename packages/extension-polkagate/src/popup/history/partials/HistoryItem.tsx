@@ -5,12 +5,10 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons
 import { Container, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { SubQueryHistory, TransactionDetail } from '../../../util/types';
-import { amountToHuman, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
+import { TransactionDetail } from '../../../util/types';
+import { amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 import Detail from '../Detail';
 
 interface Props {
@@ -35,16 +33,16 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
   const action = useMemo(() => upperCaseFirstChar(info.action), [info]);
 
   const subAction = useMemo(() => {
+    if (info?.subAction) {
+      return upperCaseFirstChar(info.subAction);
+    }
+
     if (info?.from?.address === formatted) {
       return `${t('From')}: ${toShortAddress(info.from.address)}`;
     }
 
     if (info?.to === formatted) {
       return `${t('To')}: ${toShortAddress(info.to)}`;
-    }
-
-    if (info?.subAction) {
-      return upperCaseFirstChar(info.subAction);
     }
   }, [formatted, info?.from?.address, info?.subAction, info?.to, t]);
 
@@ -85,7 +83,7 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
       </Grid>
       {showDetail && chainName && token && decimal &&
         <Detail
-        formatted={formatted}
+          formatted={formatted}
           chainName={chainName}
           decimal={decimal}
           info={info}

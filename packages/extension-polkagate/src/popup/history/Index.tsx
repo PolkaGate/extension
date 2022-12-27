@@ -13,6 +13,7 @@ import { getTxTransfers } from '../../util/api/getTransfers';
 import { STAKING_ACTIONS } from '../../util/constants';
 import { getHistory } from '../../util/subquery/history';
 import { SubQueryHistory, TransactionDetail, Transfers } from '../../util/types';
+import { getHistoryFromStorage } from '../../util/utils';
 import HistoryItem from './partials/HistoryItem';
 
 const TAB_MAP = {
@@ -117,7 +118,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
     let history = (localHistories.current as TransactionDetail[]).concat(filteredFetchedHistoriesFromSubscan);
 
-    // history = history.sort((a, b) => b.date - a.date);
+    history = history.sort((a, b) => b.date - a.date);
 
     switch (tabIndex) {
       case (TAB_MAP.TRANSFERS):
@@ -137,6 +138,12 @@ export default function TransactionHistory(): React.ReactElement<''> {
     setRefresh(true);
     setTxHistory(null);
   }, []);
+
+  useEffect(() => {
+    formatted && getHistoryFromStorage(formatted).then((h) => {
+      localHistories.current = h || [];
+    }).catch(console.error);
+  }, [formatted, chainName, isRefreshing]);
 
   useEffect(() => {
     chainName && formatted && isRefreshing && getHistory(chainName, formatted).then((res) => {
@@ -198,9 +205,6 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
     if (target) { observerInstance.current.observe(target); }
   }, [chainName, formatted, getTransfers, tabHistory]);
-
-  console.log('grouped-history:', grouped);
-  console.log('tabHistory:', tabHistory);
 
   const _onBack = useCallback(() => {
     history.push({
@@ -340,7 +344,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
               {t('Nothing to show')}
             </Grid>
           }
-          <div id='observerObj'>
+          <Grid container justifyContent='center' id='observerObj'>
             {
               // staking transaction history is saved locally
               tabIndex !== TAB_MAP.STAKING &&
@@ -352,7 +356,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 </Box>
               )
             }
-          </div>
+          </Grid>
         </Grid>
         : <Progress pt='150px' size={50} title={t('Loading history')} />
       }

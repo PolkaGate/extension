@@ -8,7 +8,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import { ApiPromise } from '@polkadot/api';
 import { KeyringPair } from '@polkadot/keyring/types';
 
-import { Proxy, TxInfo } from '../types';
+import { Proxy, TxResult } from '../types';
 import { signAndSend } from './signAndSend';
 
 export default async function broadcast (
@@ -18,7 +18,7 @@ export default async function broadcast (
   signer: KeyringPair,
   senderAddress: string | AccountId,
   proxy?: Proxy
-): Promise<TxInfo> {
+): Promise<TxResult> {
   try {
     console.log(`Broadcasting a ${proxy ? 'proxy ' : ''}tx ....`);
 
@@ -28,6 +28,6 @@ export default async function broadcast (
   } catch (e) {
     console.log('something went wrong while broadcasting', e);
 
-    return { status: 'fail' };
+    return { success: false };
   }
 }

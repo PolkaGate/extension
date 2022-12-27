@@ -203,7 +203,9 @@ export function getTransactionHistoryFromLocalStorage(
 }
 
 export const getWebsiteFavico = (url: string | undefined): string => {
-  if (!url) { return ''; }
+  if (!url) {
+    return '';
+  }
 
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
@@ -299,25 +301,38 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
   return JSON.stringify(a1Sorted) === JSON.stringify(a2Sorted);
 };
 
-export function saveHistory(chain: Chain | null, hierarchy: AccountWithChildren[], address: string, currentTransactionDetail: TransactionDetail, _chainName?: string): [string, string] {
-  const accountSubstrateAddress = getSubstrateAddress(address);
-  const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress, _chainName);
+// export function saveHistory(chain: Chain | null, hierarchy: AccountWithChildren[], address: string, currentTransactionDetail: TransactionDetail, _chainName?: string): [string, string] {
+//   const accountSubstrateAddress = getSubstrateAddress(address);
+//   const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress, _chainName);
 
-  savedHistory.push(currentTransactionDetail);
+//   savedHistory.push(currentTransactionDetail);
 
-  return [accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)];
+//   return [accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)];
+// }
+
+export function saveAsHistory(formatted: string, info: TransactionDetail) {
+  chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
+    const k = `${formatted}`;
+    const last = res?.history ?? {};
+
+    if (last[k]) {
+      last[k].push(info);
+    } else {
+      last[k] = [info];
+    }
+
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.set({ history: last });
+  });
 }
 
-// export function median(values: number[]): number {
-//   if (values.length === 0) { return 0; }
+export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
+      const k = `${formatted}`;
+      const last = res?.history;
 
-//   values.sort(function (a, b) {
-//     return a - b;
-//   });
-
-//   const half = Math.floor(values.length / 2);
-
-//   if (values.length % 2) { return values[half]; }
-
-//   return (values[half - 1] + values[half]) / 2.0;
-// }
+      resolve(last && last[k]);
+    });
+  });
+}

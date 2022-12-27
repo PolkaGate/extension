@@ -7,7 +7,6 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
@@ -15,12 +14,11 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Identicon, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
-import { updateMeta } from '../../../../../messaging';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
-import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import { ChangesProps } from '.';
 
 interface Props {
@@ -104,24 +102,6 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     });
   }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.metadata, pool.poolId, setMetadata, setTxCalls]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -144,6 +124,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         return;
       }
 
+      const from = selectedProxyAddress ?? formatted;
       const signer = keyring.getPair(selectedProxyAddress ?? formatted);
 
       signer.unlock(password);
@@ -152,24 +133,23 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
       const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
 
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
       const info = {
-        action: 'pool_edit',
+        action: 'Pool Staking',
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Edit Pool',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -178,7 +158,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batchAll, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setRefresh, txCalls]);
+  }, [api, batchAll, chain, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setRefresh, txCalls]);
 
   const ShowPoolRole = ({ roleAddress, roleTitle, showDivider }: ShowRolesProps) => {
     const roleName = useAccountName(getSubstrateAddress(roleAddress)) ?? t<string>('Unknown');

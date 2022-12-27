@@ -12,9 +12,9 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useFormatted, usePool, usePoolConsts, usePools, useTranslation } from '../../../../../hooks';
+import { useApi, useDecimal, useFormatted, usePool, usePoolConsts, usePools, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
+import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
@@ -36,6 +36,8 @@ export default function JoinPool(): React.ReactElement {
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
   const pools = usePools(address);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>();
@@ -46,9 +48,7 @@ export default function JoinPool(): React.ReactElement {
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
 
-  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
-  const amountAsBN = useMemo(() => new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimals), [decimals, stakeAmount]);
+  const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
   const poolToJoin = usePool(address, selectedPool?.poolId?.toNumber());
 
   const backToStake = useCallback(() => {
@@ -59,42 +59,44 @@ export default function JoinPool(): React.ReactElement {
   }, [address, api, history, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
-    if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+    if (decimal && value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setStakeAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
+  }, [decimal]);
 
   const onMinAmount = useCallback(() => {
-    poolStakingConsts?.minJoinBond && setStakeAmount(amountToHuman(poolStakingConsts.minJoinBond.toString(), decimals));
-  }, [decimals, poolStakingConsts?.minJoinBond]);
+    poolStakingConsts?.minJoinBond && decimal && setStakeAmount(amountToHuman(poolStakingConsts.minJoinBond.toString(), decimal));
+  }, [decimal, poolStakingConsts?.minJoinBond]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedMaxFee) {
+    if (!api || !availableBalance || !estimatedMaxFee || !decimal) {
       return;
     }
 
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
-    const maxToHuman = amountToHuman(max.toString(), decimals);
+    const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setStakeAmount(maxToHuman);
-  }, [api, availableBalance, decimals, estimatedMaxFee]);
+  }, [api, availableBalance, decimal, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
     api && selectedPool && setShowReview(!showReview);
   }, [api, selectedPool, showReview]);
 
   useEffect(() => {
-    if (!pools) { return; }
+    if (!pools) {
+      return;
+    }
 
     if (selectedPool === undefined) {
-      const PLUS_POOL = pools?.find((pool) => pool.metadata?.includes(PREFERRED_POOL_NAME));
+      const POLKAGATE_POOL = pools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLocaleLowerCase()));
 
-      setSelectedPool(PLUS_POOL);
+      setSelectedPool(POLKAGATE_POOL);
     } else {
       // const bringFront = pools.filter((pool) => pool.poolId === selectedPool.poolId)[0];
       const restOf = pools.filter((pool) => pool.poolId !== selectedPool.poolId && pool.bondedPool?.state.toString() === 'Open');
@@ -117,7 +119,7 @@ export default function JoinPool(): React.ReactElement {
     api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
-  }, [formatted, api, availableBalance, stakeAmount, decimals, selectedPool, amountAsBN]);
+  }, [formatted, api, availableBalance, selectedPool, amountAsBN]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -135,7 +137,7 @@ export default function JoinPool(): React.ReactElement {
     const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
 
     setNextBtnDisabled(!(selectedPool && stakeAmount && stakeAmount !== '0' && !isAmountInRange));
-  }, [amountAsBN, availableBalance, decimals, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
+  }, [amountAsBN, availableBalance, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
   return (
     <>
@@ -160,26 +162,11 @@ export default function JoinPool(): React.ReactElement {
         }}
         value={stakeAmount}
       />
-      <Grid
-        alignItems='end'
-        container
-        sx={{
-          m: 'auto',
-          width: '92%'
-        }}
-      >
-        <Typography
-          fontSize='14px'
-          fontWeight={300}
-          lineHeight='23px'
-        >
+      <Grid alignItems='end' container sx={{ m: 'auto', width: '92%' }}>
+        <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
         </Typography>
-        <Grid
-          item
-          lineHeight='22px'
-          pl='5px'
-        >
+        <Grid item lineHeight='22px' pl='5px'>
           <ShowBalance
             api={api}
             balance={estimatedFee}
@@ -207,7 +194,7 @@ export default function JoinPool(): React.ReactElement {
         disabled={nextBtnDisabled}
         text={t<string>('Next')}
       />
-      {showReview && poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() && api &&
+      {showReview && poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() && api && amountAsBN &&
         <Review
           address={address}
           api={api}

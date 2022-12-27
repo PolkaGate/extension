@@ -13,7 +13,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 
 import { Label, ShowBalance } from '../../../../../../components';
-import { useChain, useDecimal, useTranslation } from '../../../../../../hooks';
+import { useChain, useDecimal, useToken, useTranslation } from '../../../../../../hooks';
 import { PoolInfo } from '../../../../../../util/types';
 import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
 
@@ -33,6 +33,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   const ref = useRef(null);
   const chain = useChain(address);
   const decimal = useDecimal(address);
+  const token = useToken(address);
 
   const [showPoolMoreInfo, setShowPoolMoreInfo] = useState<boolean>(false);
   const [poolId, setPoolId] = useState<number>();
@@ -96,24 +97,23 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
                       <Grid item width='22px'>
                         <Select index={index} pool={pool} />
                       </Grid>
-                      <Grid item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width='calc(100% - 22px)'>                        {pool.metadata}                      </Grid>
+                      <Grid item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width='calc(100% - 22px)'>
+                        {pool.metadata}
+                      </Grid>
                     </Grid>
                     <Grid container item>
                       <Grid alignItems='center' container item maxWidth='50%' width='fit-content'>
-                        <Typography
-                          fontSize='12px'
-                          fontWeight={300}
-                          lineHeight='23px'
-                        >
+                        <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
                           {t<string>('Staked:')}
                         </Typography>
                         <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
                           <ShowBalance
                             api={api}
                             balance={poolStaked(pool.bondedPool?.points)}
+                            decimal={decimal}
                             decimalPoint={4}
                             height={22}
-                            decimal={decimal}
+                            token={token}
                           />
                         </Grid>
                       </Grid>
@@ -143,28 +143,16 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
                 </Grid>
               ))
               : <Grid display='inline-flex' p='10px'>
-                <FontAwesomeIcon
-                  className='warningImage'
-                  icon={faExclamationTriangle}
-                />
-                <Typography
-                  fontSize='12px'
-                  fontWeight={400}
-                  lineHeight='20px'
-                  pl='8px'
-                >
-                  {t<string>('hooom! There is a problem, please let us know❤')}
+                <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
+                <Typography fontSize='12px' fontWeight={400} lineHeight='20px' pl='8px'>
+                  {t<string>('There isn no pool to join!')}
                 </Typography>
               </Grid>
             : <Grid alignItems='center' container justifyContent='center'>
               <Grid item>
                 <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
               </Grid>
-              <Typography
-                fontSize='13px'
-                lineHeight='59px'
-                pl='10px'
-              >
+              <Typography fontSize='13px' lineHeight='59px' pl='10px'>
                 {t<string>('Loading pools...')}
               </Typography>
             </Grid>
@@ -178,6 +166,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
             api={api}
             chain={chain}
             poolId={poolId}
+            pool={poolId === selected?.poolId?.toNumber() && selected}
             setShowPoolInfo={setShowPoolMoreInfo}
             showPoolInfo={showPoolMoreInfo} />
         </Grid>}

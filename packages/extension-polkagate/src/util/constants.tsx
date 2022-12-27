@@ -4,7 +4,7 @@
 
 import { BN } from '@polkadot/util';
 
-export const EXTENSION_NAME = 'Polkadot js plus ❤️';
+export const EXTENSION_NAME = 'Polkagate';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
@@ -73,7 +73,8 @@ export const STAKING_CHAINS = [
 ];
 
 // used in history to categorize transactions
-export const STAKING_ACTIONS = ['bond', 'unbond', 'bond_extra', 'nominate', 'redeem', 'stop_nominating', 'chill', 'tuneUp'];
+export const STAKING_ACTIONS = ['Solo Staking', 'Pool Staking'];
+// export const STAKING_ACTIONS = ['bond', 'unbond', 'bond_extra', 'nominate', 'redeem', 'stop_nominating', 'chill', 'tuneUp'];
 
 // used in confirm page
 export const STATES_NEEDS_MESSAGE = ['withdrawUnbound', 'unstake', 'stopNominating', 'tuneUp'];

@@ -24,7 +24,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -61,24 +61,6 @@ export default function RewardsStakeReview({ address, amount, setRefresh, api, c
   const params = useMemo(() => ['Rewards'], []);
   const decimal = api.registry.chainDecimals[0];
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -101,36 +83,38 @@ export default function RewardsStakeReview({ address, amount, setRefresh, api, c
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_stake_reward',
+        action: 'Pool Staking',
         amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Stake Rewards',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
       setRefresh(true);
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, tx, chain, amount, decimal, setRefresh, estimatedFee, formatted, hierarchy, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, tx, chain, amount, decimal, setRefresh, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -199,10 +183,12 @@ export default function RewardsStakeReview({ address, amount, setRefresh, api, c
         </Container>
         <PasswordUseProxyConfirm
           api={api}
+          confirmText={t<string>('Confirm')}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
+          onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer']}
@@ -215,8 +201,6 @@ export default function RewardsStakeReview({ address, amount, setRefresh, api, c
             position: 'absolute',
             width: '92%'
           }}
-          onConfirmClick={submit}
-          confirmText={t<string>('Confirm')}
         />
         <WaitScreen
           show={showWaitScreen}

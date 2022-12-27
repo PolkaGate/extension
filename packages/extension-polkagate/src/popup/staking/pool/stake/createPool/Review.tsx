@@ -23,7 +23,7 @@ import { updateMeta } from '../../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
 import { PoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import CreatePoolTxDetail from './partial/CreatePoolTxDetail';
 
@@ -73,24 +73,6 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
     onAction(`pool/stake/${address}`);
   }, [address, onAction]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -103,7 +85,8 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
     }
 
     try {
-      const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
+      const from = selectedProxy?.delegate ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -111,30 +94,31 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
       // const params = [surAmount, rootId, nominatorId, stateTogglerId];
       const nextPoolId = poolToCreate.poolId.toNumber();
 
-      const { block, failureText, fee, status, txHash } = await createPool(api, address, signer, createAmount, nextPoolId, poolToCreate.bondedPool?.roles, poolToCreate.metadata ?? '', selectedProxy);
+      const { block, failureText, fee, success, txHash } = await createPool(api, address, signer, createAmount, nextPoolId, poolToCreate.bondedPool?.roles, poolToCreate.metadata ?? '', selectedProxy);
 
       const info = {
-        action: 'pool_create',
+        action: 'Pool Staking',
         amount: amountToHuman(createAmount?.toString(), decimals),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Create Pool',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, chain, create, createAmount, decimals, estimatedFee, formatted, hierarchy, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [address, api, chain, create, createAmount, decimals, estimatedFee, formatted, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   return (
     <>

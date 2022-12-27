@@ -20,7 +20,7 @@ import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
 import { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 
 interface Props {
@@ -136,24 +136,6 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
     }
   }, [api, batchAll, formatted, maxUnlockingChunks, membersToRemoveAll, membersToUnboundAll, mode, poolWithdrawUnbonded, redeem, setTxCalls, unbonded, unlockingLen]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -166,7 +148,8 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -174,24 +157,25 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       const updated = txCalls.length > 1 ? batchAll(txCalls) : txCalls[0];
       const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, updated) : updated;
 
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
-      const action = mode === 'UnbondAll' ? 'pool_unstakeAll' : 'pool_removeAll';
+      const subAction = mode === 'UnbondAll' ? 'Unstake All' : 'Remove All';
 
       const info = {
-        action,
+        action: 'Pool Staking',
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction,
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
       setRefresh(true);
@@ -199,7 +183,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batchAll, chain, estimatedFee, formatted, hierarchy, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, txCalls]);
+  }, [api, batchAll, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setRefresh, txCalls]);
 
   return (
     <Motion>

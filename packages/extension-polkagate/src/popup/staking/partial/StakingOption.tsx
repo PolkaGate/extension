@@ -26,9 +26,10 @@ interface OptionProps {
   helperText?: string;
   tipPlace?: string;
   showIcon?: boolean;
+  noToolTip?: boolean;
 }
 
-export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, onClick, showIcon, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, noToolTip, onClick, showIcon, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -44,7 +45,7 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
           </Grid>
         }
         <Grid item>
-          <Infotip iconLeft={6} iconTop={10} showQuestionMark text={helperText} placement={tipPlace}>
+          <Infotip iconLeft={6} iconTop={10} showQuestionMark={!noToolTip && showQuestionMark} text={helperText} placement={tipPlace}>
             <Typography fontSize='20px' fontWeight={400}>
               {title}
             </Typography>

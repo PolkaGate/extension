@@ -133,18 +133,20 @@ interface stashAccountDisplay {
   parent: any;
 }
 
-export interface TransactionDetail {
+export interface TxResult {
+  block: number;
+  txHash: string;
+  fee?: string;
+  success: boolean,
+  failureText?: string;
+}
+export interface TransactionDetail extends TxResult{
   action: string; // send, Solo staking, pool staking ...
   subAction?: string; // bond_extra, unbound, nominate
-  block?: number;
   from: NameAddress;
   amount?: string;
   date: number;
-  txHash?: string;
-  fee?: string;
   to?: string;
-  success: boolean,
-  failureText?: string;
   throughProxy?: NameAddress;
 }
 

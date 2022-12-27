@@ -44,11 +44,11 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <SubTitle label={txInfo.status === 'success' ? t<string>('Completed') : t<string>('Failed')} />
+        <SubTitle label={txInfo.success ? t<string>('Completed') : t<string>('Failed')} />
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
-          success={txInfo.status === 'success'}
+          success={txInfo.success}
         />
         {txInfo?.failureText &&
           <Typography
