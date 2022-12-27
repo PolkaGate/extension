@@ -31,8 +31,9 @@ export default function YouHave(): React.ReactElement {
 
       Object.keys(balances).forEach((chainName) => {
         const localSavedPrices = window.localStorage.getItem('prices');
+
         const parsedPrices = localSavedPrices && JSON.parse(localSavedPrices) as Prices;
-        const price = parsedPrices?.prices[chainName]?.usd;
+        const price = (parsedPrices?.prices[chainName] || parsedPrices?.prices[chainName.toLocaleLowerCase()])?.usd;
 
         const bal = balances[chainName];
 
