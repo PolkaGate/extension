@@ -11,8 +11,7 @@ import { useChainName, useDecimal, useFormatted, useToken, useTranslation } from
 import { HeaderBrand } from '../../partials';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { STAKING_ACTIONS } from '../../util/constants';
-import { getHistory } from '../../util/subquery/history';
-import { SubQueryHistory, TransactionDetail, Transfers } from '../../util/types';
+import { TransactionDetail, Transfers } from '../../util/types';
 import { getHistoryFromStorage } from '../../util/utils';
 import HistoryItem from './partials/HistoryItem';
 
@@ -49,14 +48,8 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const decimal = useDecimal(formatted);
   const token = useToken(formatted);
   const [tabIndex, setTabIndex] = useState<number>(state?.tabIndex ?? 1);
-  const [isRefreshing, setRefresh] = useState<boolean>(true);
-  const [txHistory, setTxHistory] = useState<SubQueryHistory[] | undefined | null>();
-  // const [groupedHistory, setGroupedHistory] = useState<Record<string, SubQueryHistory[]> | undefined>();
-  const [filtered, setFiltered] = useState<SubQueryHistory[] | undefined>();
-
-
+  const [isRefreshing, setRefresh] = useState<boolean>(false);
   const localHistories = useRef<TransactionDetail[] | []>([]);
-  const [selectedTransaction, setSelectedTransaction] = useState<TransactionDetail | undefined>();
   const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
 
@@ -103,20 +96,36 @@ export default function TransactionHistory(): React.ReactElement<''> {
         block: tx.block_num,
         date: tx.block_timestamp * 1000, // to be consistent with the locally saved times
         fee: tx.fee,
-        from: { address: tx.from },
+        from: { address: tx.from, name: tx.from_account_display?.display },
         success: tx.success,
-        to: tx.to,
+        to: { address: tx.to, name: tx.to_account_display?.display },
         txHash: tx.hash
       });
+    });
+
+    /** fetch some pool tx from subscan  */
+    historyFromSubscan.forEach((tx) => {
+      if (tx.action === 'send' && tx?.to?.name?.match(/^Pool#\d+/)) {
+        tx.action = 'Pool Staking';
+        tx.subAction = 'Stake';
+      } else if (tx.action === 'receive') {
+        if (tx?.from?.name?.match(/^Pool#([0-9]+)\(Reward\)$/)) {
+          tx.action = 'Pool Staking';
+          tx.subAction = 'Withdraw Rewards';
+        } else if (tx?.from?.name?.match(/^Pool#\d+\(Stash\)$/)) {
+          tx.action = 'Pool Staking';
+          tx.subAction = 'Redeem';
+        }
+      }
     });
 
     setFetchedHistoriesFromSubscan(historyFromSubscan);
   }, [formatted, transfersTx]);
 
   useEffect(() => {
-    const filteredFetchedHistoriesFromSubscan = fetchedHistoriesFromSubscan.filter((h1) => !localHistories.current.find((h2) => h1.txHash === h2.txHash));
+    const filteredLocalHistories = localHistories.current.filter((h1) => !fetchedHistoriesFromSubscan.find((h2) => h1.txHash === h2.txHash));
 
-    let history = (localHistories.current as TransactionDetail[]).concat(filteredFetchedHistoriesFromSubscan);
+    let history = filteredLocalHistories.concat(fetchedHistoriesFromSubscan);
 
     history = history.sort((a, b) => b.date - a.date);
 
@@ -132,25 +141,17 @@ export default function TransactionHistory(): React.ReactElement<''> {
     }
 
     setTabHistory(history);
+    setRefresh(false);
   }, [tabIndex, fetchedHistoriesFromSubscan]);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    setTxHistory(null);
   }, []);
 
   useEffect(() => {
     formatted && getHistoryFromStorage(formatted).then((h) => {
       localHistories.current = h || [];
     }).catch(console.error);
-  }, [formatted, chainName, isRefreshing]);
-
-  useEffect(() => {
-    chainName && formatted && isRefreshing && getHistory(chainName, formatted).then((res) => {
-      setTxHistory(res ? [...res] : undefined);
-      setRefresh(false);
-    }
-    ).catch(console.error);
   }, [formatted, chainName, isRefreshing]);
 
   const getTransfers = useCallback(async (outerState: RecordTabStatus): Promise<void> => {
@@ -163,7 +164,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
     const res = await getTxTransfers(chainName, String(formatted), pageNum, SINGLE_PAGE_SIZE);
 
-    console.log('received raw data from subscan:', res);
+    console.log('Received raw data from subscan:', res);
 
     const { count, transfers } = res.data || {};
     const nextPageNum = pageNum + 1;
@@ -214,28 +215,14 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
-
-    if (txHistory) {
-      // filter history
-
-      if (tabIndex === TAB_MAP.TRANSFERS) {
-        return setFiltered(txHistory.filter((h) => h.id.includes('to') || h.id.includes('from')));
-      }
-
-      if (tabIndex === TAB_MAP.STAKING) {
-        return setFiltered(txHistory.filter((h) => h.extrinsic?.module === 'staking' || h.extrinsic?.module === 'nominationPools'));
-      }
-
-      return setFiltered(undefined); // for the All tab
-    }
-  }, [txHistory]);
+  }, []);
 
   return (
     <>
       <HeaderBrand
         isRefreshing={isRefreshing}
         onBackClick={_onBack}
-        onRefresh={grouped && onRefresh}
+        // onRefresh={grouped && onRefresh}
         showBackArrow
         text={t<string>('Transaction History')}
       />
@@ -327,11 +314,11 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
             return info.map((h, index) => (
               <HistoryItem
-                formatted={formatted}
                 anotherDay={index === 0}
                 chainName={chainName}
                 date={date}
                 decimal={decimal}
+                formatted={formatted}
                 info={h}
                 key={index}
                 path={pathname}

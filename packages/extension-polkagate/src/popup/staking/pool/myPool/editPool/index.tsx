@@ -106,7 +106,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
         <Grid container m='20px auto 10px' width='92%'>
           <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
         </Grid>
-        <Typography fontSize='18px' fontWeight={300} m='30px auto 15px' textAlign='center'>
+        <Typography fontSize='16px' fontWeight={400} m='30px auto 15px' textAlign='center'>
           {t<string>('Roles')}
         </Typography>
         <InputWithLabelAndIdenticon

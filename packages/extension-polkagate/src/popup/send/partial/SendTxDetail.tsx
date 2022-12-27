@@ -7,10 +7,10 @@ import React from 'react';
 import { ShortAddress } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ThroughProxy from '../../../partials/ThroughProxy';
-import { TransferTxInfo } from '../../../util/types';
+import { TxInfo } from '../../../util/types';
 
 interface Props {
-  txInfo: TransferTxInfo;
+  txInfo: TxInfo;
 }
 
 export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
@@ -56,9 +56,9 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShortAddress
             address={txInfo.to.address}
-            style={{ fontSize: '16px' }}
             inParentheses
             showCopy
+            style={{ fontSize: '16px' }}
           />
         </Grid>
       </Grid>

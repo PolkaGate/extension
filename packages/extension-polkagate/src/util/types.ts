@@ -140,13 +140,13 @@ export interface TxResult {
   success: boolean,
   failureText?: string;
 }
-export interface TransactionDetail extends TxResult{
+export interface TransactionDetail extends TxResult {
   action: string; // send, Solo staking, pool staking ...
   subAction?: string; // bond_extra, unbound, nominate
   from: NameAddress;
   amount?: string;
   date: number;
-  to?: string;
+  to?: NameAddress;
   throughProxy?: NameAddress;
 }
 
