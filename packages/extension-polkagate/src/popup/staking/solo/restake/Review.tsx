@@ -26,7 +26,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToMachine, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { amountToMachine, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -63,24 +63,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -100,38 +82,36 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   }, [proxies]);
 
   const unstake = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted || !rebonded) {
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
       const amountAsBN = amountToMachine(amount, decimal);
       const params = [amountAsBN];
-      const { block, failureText, fee, status, txHash } = await broadcast(api, rebonded, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, rebonded, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'solo_rebond',
+        action: 'Solo Staking',
         amount,
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Restake',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      saveHistory(chain, hierarchy, formatted, history);
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -139,7 +119,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimal, estimatedFee, formatted, hierarchy, name, password, rebonded, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [amount, api, chain, decimal, estimatedFee, formatted, name, password, rebonded, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

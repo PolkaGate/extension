@@ -24,7 +24,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
@@ -61,24 +61,6 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
   const decimal = api.registry.chainDecimals[0];
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -103,38 +85,40 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
       const optSpans = await api.query.staking.slashingSpans(formatted);
       const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
       const params = [formatted, spanCount];
-      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_withdraw_redeemable',
+        action: 'Pool Staking',
         amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Redeem',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
       setRefresh(true);
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, formatted, selectedProxyAddress, password, setRefresh, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [api, formatted, selectedProxyAddress, password, setRefresh, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

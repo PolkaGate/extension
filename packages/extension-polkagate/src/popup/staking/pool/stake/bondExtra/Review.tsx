@@ -23,7 +23,7 @@ import { updateMeta } from '../../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
 
 interface Props {
@@ -69,62 +69,45 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
     onAction(`pool/${address}`);
   }, [address, onAction, setShowReview, showReview]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const BondExtra = useCallback(async () => {
     if (!formatted || !bondExtra) {
       return;
     }
 
     try {
-      const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
+      const from = selectedProxy?.delegate ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
       const params = [{ FreeBalance: bondAmount }];
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, bondExtra, params, signer, address, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, bondExtra, params, signer, address, selectedProxy);
 
       const info = {
-        action: 'pool_bondExtra',
+        action: 'Pool Staking',
         amount: amountToHuman(bondAmount?.toString(), decimals),
         block,
-        chain,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Stake',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, bondAmount, bondExtra, chain, decimals, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [address, api, bondAmount, bondExtra, chain, decimals, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

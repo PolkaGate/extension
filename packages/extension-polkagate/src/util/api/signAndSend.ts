@@ -8,19 +8,19 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 
-import { TxInfo } from '../types';
+import { TxResult } from '../types';
 
 export async function signAndSend(
   api: ApiPromise,
   submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
   _signer: KeyringPair,
   senderAddress: string | AccountId
-): Promise<TxInfo> {
+): Promise<TxResult> {
   return new Promise((resolve) => {
     console.log('signing and sending a tx ...');
     // eslint-disable-next-line no-void
     void submittable.signAndSend(_signer, async (result) => {
-      let txFailed = false;
+      let success = true;
       let failureText = '';
 
       console.log(JSON.parse(JSON.stringify(result)));
@@ -31,7 +31,7 @@ export async function signAndSend(
           const decoded = api.registry.findMetaError(result.dispatchError.asModule);
           const { docs, name, section } = decoded;
 
-          txFailed = true;
+          success = false;
           failureText = `${docs.join(' ')}`;
 
           console.log(`dispatchError module: ${section}.${name}: ${docs.join(' ')}`);
@@ -60,14 +60,14 @@ export async function signAndSend(
 
         const fee = undefined; //queryInfo.partialFee.toString();
 
-        resolve({ block: Number(blockNumber), failureText, fee, status: txFailed ? 'fail' : 'success', txHash });
+        resolve({ block: Number(blockNumber), failureText, fee, success, txHash });
         //     }
         //   }
         // });
       }
     }).catch((e) => {
       console.log('catch error', e);
-      resolve({ block: 0, failureText: String(e), fee: '', status: 'fail', txHash: '' });
+      resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
     });
   });
 }

@@ -21,7 +21,7 @@ import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../par
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import ShowPool from '../../partial/ShowPool';
 
 interface Props {
@@ -71,24 +71,6 @@ export default function SetState({ address, api, chain, formatted, headerText, h
     void poolSetState?.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
   }, [formatted, poolSetState]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -109,8 +91,6 @@ export default function SetState({ address, api, chain, formatted, headerText, h
   }, [proxies]);
 
   const changeState = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     setRefresh(false);
 
     try {
@@ -118,7 +98,8 @@ export default function SetState({ address, api, chain, formatted, headerText, h
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -127,28 +108,25 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
 
       const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, tx, signer, formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
 
-      const action = state === 'Destroying' ? 'pool_destroy' : state === 'Open' ? 'pool_unblock' : 'pool_block';
+      const subAction = state === 'Destroying' ? 'Destroy Pool' : state === 'Open' ? 'Unblock Pool' : 'Block Pool';
 
       const info = {
-        action,
-        api,
+        action: 'Pool Staking',
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction,
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      // eslint-disable-next-line no-void
-      void saveHistory(chain, hierarchy, String(formatted), history);
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -157,7 +135,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batchAll, chain, chilled, estimatedFee, formatted, hierarchy, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state, setRefresh]);
+  }, [api, batchAll, chain, chilled, estimatedFee, formatted, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state, setRefresh]);
 
   return (
     <Motion>

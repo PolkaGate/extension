@@ -23,7 +23,7 @@ import { updateMeta } from '../../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { PoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import JoinPoolTxDetail from './partials/JoinPoolTxDetail';
 
@@ -69,61 +69,45 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
     onAction(`/pool/${address}`);
   }, [address, onAction]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const joinPool = useCallback(async () => {
     if (!poolToJoin || !formatted || !joined) {
       return;
     }
 
     try {
-      const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
+      const from = selectedProxy?.delegate ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
       const params = [joinAmount, poolToJoin.poolId];
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, joined, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, joined, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'pool_join',
+        action: 'Pool Staking',
         amount: amountToHuman(joinAmount?.toString(), decimals),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: String(from), name: selectedProxyName || name },
+        subAction: 'Join Pool',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
         txHash
       };
 
       setTxInfo({ ...info, api, chain });
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(String(from), info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, decimals, estimatedFee, formatted, hierarchy, joinAmount, joined, name, password, poolToJoin, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, chain, decimals, estimatedFee, formatted, joinAmount, joined, name, password, poolToJoin, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

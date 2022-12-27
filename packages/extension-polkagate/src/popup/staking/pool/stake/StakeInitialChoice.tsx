@@ -109,6 +109,7 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
         }}
         title={t<string>('Join Pool')}
         warningText={joinWarningText}
+        noToolTip
       />
       <Option
         api={api}
@@ -123,6 +124,7 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
         }}
         title={t<string>('Create Pool')}
         warningText={createWarningText}
+        noToolTip
       />
     </>
   );

@@ -8,7 +8,6 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
@@ -16,12 +15,11 @@ import { BN } from '@polkadot/util';
 import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, Warning } from '../../components';
 import { useAccount, useAccountName } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
-import { updateMeta } from '../../messaging';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../util/types';
-import { getFormattedAddress, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../util/utils';
+import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
 interface Props {
@@ -57,24 +55,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
   const batchAll = api.tx.utility.batchAll;
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToMyAccounts = useCallback(() => {
     setShowConfirmation(false);
     setShowWaitScreen(false);
@@ -105,36 +85,39 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
 
   const onNext = useCallback(async (): Promise<void> => {
     try {
-      const signer = keyring.getPair(selectedProxy?.delegate ?? formatted);
+      const from = selectedProxy?.delegate ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
       const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
 
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
 
       const info = {
+        action: 'Manage Proxy',
         block: block || 0,
         chain,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Add/Remove Proxy',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash: txHash || ''
       };
 
       setTxInfo({ ...info, api, chain });
-      saveHistory(chain, hierarchy, formatted, [info]);
+      saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, estimatedFee, formatted, hierarchy, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
+  }, [api, chain, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
 
   useEffect(() => {
     const addingLength = proxies.filter((item) => item.status === 'new').length;
@@ -154,14 +137,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   return (
     <>
       {isPasswordError &&
-        <Grid
-          color='red'
-          height='30px'
-          m='auto'
-          mb='-15px'
-          pt='5px'
-          width='92%'
-        >
+        <Grid color='red' height='30px' m='auto' mb='-15px' pt='5px' width='92%'>
           <Warning
             fontWeight={400}
             isBelowInput
@@ -191,29 +167,12 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           width: '92%'
         }}
       />
-      <Grid
-        alignItems='center'
-        container
-        justifyContent='center'
-        m='20px auto 5px'
-        width='92%'
-      >
-        <Grid
-          display='inline-flex'
-          item
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
+      <Grid alignItems='center' container justifyContent='center' m='20px auto 5px' width='92%'>
+        <Grid display='inline-flex' item>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
             {t<string>('Deposit:')}
           </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
+          <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance
               api={api}
               balance={depositValue}
@@ -222,31 +181,12 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
             />
           </Grid>
         </Grid>
-        <Divider
-          orientation='vertical'
-          sx={{
-            backgroundColor: 'secondary.main',
-            height: '30px',
-            mx: '5px',
-            my: 'auto'
-          }}
-        />
-        <Grid
-          display='inline-flex'
-          item
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
+        <Divider orientation='vertical' sx={{ backgroundColor: 'secondary.main', height: '30px', mx: '5px', my: 'auto' }} />
+        <Grid display='inline-flex' item >
+          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
+          <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance
               api={api}
               balance={estimatedFee}

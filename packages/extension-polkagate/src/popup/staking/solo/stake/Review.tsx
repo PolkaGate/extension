@@ -31,7 +31,7 @@ import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
 import { Proxy, ProxyItem, SoloSettings, TransactionDetail, TxInfo, ValidatorInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
 import ShowValidators from './partials/ShowValidators';
 import TxDetail from './partials/TxDetail';
@@ -72,24 +72,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
 
@@ -111,14 +93,13 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
   }, [proxies]);
 
   const stake = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!settings.stashId || !tx) {
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? settings.stashId);
+      const from = selectedProxyAddress ?? settings.stashId;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -138,27 +119,26 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       const extrinsic = batchCall || tx(...params);
       const ptx = selectedProxy ? api.tx.proxy.proxy(settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
 
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
 
       // var { block, failureText, fee, status, txHash } = await broadcast(api, tx, params, signer, settings.stashId, selectedProxy);
 
       const info = {
-        action: 'solo_stake',
+        action: 'Solo Staking',
         amount,
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: settings.stashId, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: isFirstTimeStaking && selectedValidators ? 'Stake/Nominate' : 'Stake',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-
-      saveHistory(chain, hierarchy, settings.stashId, history);
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -166,7 +146,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [settings.stashId, settings.controllerId, tx, selectedProxyAddress, password, isFirstTimeStaking, selectedValidators, api, params, selectedProxy, amount, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [settings.stashId, settings.controllerId, tx, selectedProxyAddress, password, isFirstTimeStaking, selectedValidators, api, params, selectedProxy, amount, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

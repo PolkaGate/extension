@@ -102,11 +102,6 @@ export default function Pool(): React.ReactElement {
     return undefined;
   }, [myOtherPools, pool]);
 
-  console.log('pool:', pool)
-  console.log('myOtherPools:', myOtherPools)
-  console.log('allMyPools:', allMyPools)
-  console.log('poolsToShow:', poolsToShow)
-  console.log('-------------------------------------')
   useEffect(() => {
     if (allMyPools === undefined) {
       return;

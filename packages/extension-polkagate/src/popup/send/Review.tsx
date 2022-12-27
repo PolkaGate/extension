@@ -29,7 +29,7 @@ import ThroughProxy from '../../partials/ThroughProxy';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getSubstrateAddress } from '../../util/utils';
+import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
 type TransferType = 'All' | 'Max' | 'Normal';
@@ -87,7 +87,8 @@ export default function Review({ accountName, address, amount, api, chain, estim
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
 
@@ -104,21 +105,25 @@ export default function Review({ accountName, address, amount, api, chain, estim
         params = [recipientAddress, amountAsBN];
       }
 
-      const { block, failureText, fee, status, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, transfer, params, signer, formatted, selectedProxy);
 
-      setTxInfo({
+      const info = {
+        action: 'Transfer',
         amount,
-        api,
         block: block || 0,
-        chain,
+        date: Date.now(),
         failureText,
         fee: estimatedFee || fee,
-        from: { address: formatted, name: accountName },
-        status,
-        to: { address: recipientAddress, name: recipientName },
+        from: { address: from, name: selectedProxyName || accountName },
+        subAction: 'Send',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        to: recipientAddress,
         txHash: txHash || ''
-      });
+      };
+
+      setTxInfo({ ...info, api, chain });
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -126,7 +131,7 @@ export default function Review({ accountName, address, amount, api, chain, estim
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, amount, api, chain, decimal, estimatedFee, formatted, password, recipientAddress, recipientName, selectedProxy, selectedProxyAddress, selectedProxyName, transfer, transferType]);
+  }, [accountName, amount, api, chain, decimal, estimatedFee, formatted, password, recipientAddress, selectedProxy, selectedProxyAddress, selectedProxyName, transfer, transferType]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

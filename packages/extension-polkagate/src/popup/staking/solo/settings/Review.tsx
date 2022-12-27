@@ -28,7 +28,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, SoloSettings, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -120,24 +120,6 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     tx && tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
   }, [api, batchAll, formatted, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
 
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
-
   const goToStakingHome = useCallback(() => {
     setShow(false);
     setShowSettings(false);
@@ -157,38 +139,37 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   }, [proxies]);
 
   const applySettings = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted || !api || !tx) {
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
       const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
-      const { block, failureText, fee, status, txHash } = await signAndSend(api, ptx, signer, formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
-        action: 'solo_stake_settings',
+        action: 'Solo Staking',
         // amount,
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Settings',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
       setRefresh(true); // to refresh stakingAccount
-      saveHistory(chain, hierarchy, formatted, history);
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -196,7 +177,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, setRefresh, hierarchy]);
+  }, [formatted, api, tx, selectedProxyAddress, password, selectedProxy, estimatedFee, name, selectedProxyName, chain, setRefresh]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

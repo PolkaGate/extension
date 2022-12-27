@@ -26,7 +26,7 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData } from '../../../../util/utils';
+import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
 export default function TuneUp(): React.ReactElement {
@@ -41,7 +41,7 @@ export default function TuneUp(): React.ReactElement {
 
   const putInFrontInfo = useNeedsPutInFrontOf(address);
   const rebagInfo = useNeedsRebag(address);
-  
+
   putInFrontInfo && console.log('putInFrontInfo:', putInFrontInfo);
   rebagInfo && console.log('rebagInfo:', rebagInfo);
 
@@ -62,24 +62,6 @@ export default function TuneUp(): React.ReactElement {
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
   const rebaged = api && api.tx.voterList.rebag;
   const putInFrontOf = api && api.tx.voterList.putInFrontOf;
-
-  function saveHistory(chain: Chain, hierarchy: AccountWithChildren[], address: string, history: TransactionDetail[]) {
-    if (!history.length) {
-      return;
-    }
-
-    const accountSubstrateAddress = getSubstrateAddress(address);
-
-    if (!accountSubstrateAddress) {
-      return; // should not happen !
-    }
-
-    const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress);
-
-    savedHistory.push(...history);
-
-    updateMeta(accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)).catch(console.error);
-  }
 
   const goToStakingHome = useCallback(() => {
     onAction(`/solo/${address}`);
@@ -108,38 +90,37 @@ export default function TuneUp(): React.ReactElement {
   }, [formatted, rebaged, putInFrontOf, rebagInfo?.shouldRebag, putInFrontInfo?.shouldPutInFront, putInFrontInfo?.lighter]);
 
   const submit = useCallback(async () => {
-    const history: TransactionDetail[] = []; /** collects all records to save in the local history at the end */
-
     try {
       if (!formatted || !api || !rebaged || !putInFrontOf) {
         return;
       }
 
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const from = selectedProxyAddress ?? formatted;
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
 
       const tx = rebagInfo?.shouldRebag ? rebaged : putInFrontOf;
       const params = rebagInfo?.shouldRebag ? formatted : putInFrontInfo?.lighter;
-      const { block, failureText, fee, status, txHash } = await broadcast(api, tx, [params], signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, tx, [params], signer, formatted, selectedProxy);
 
       const info = {
-        action: 'solo_tuneup',
+        action: 'Solo Staking',
         // amount,
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        status,
+        from: { address: from, name: selectedProxyName || name },
+        subAction: 'Tune Up',
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
-      history.push(info);
       setTxInfo({ ...info, api, chain });
-      saveHistory(chain, hierarchy, formatted, history);
+      saveAsHistory(from, info);
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -147,7 +128,7 @@ export default function TuneUp(): React.ReactElement {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, api, rebaged, putInFrontOf, selectedProxyAddress, password, rebagInfo?.shouldRebag, putInFrontInfo?.lighter, selectedProxy, estimatedFee, name, selectedProxyName, chain, hierarchy]);
+  }, [formatted, api, rebaged, putInFrontOf, selectedProxyAddress, password, rebagInfo?.shouldRebag, putInFrontInfo?.lighter, selectedProxy, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     onAction(`/solo/nominations/${address}`);

@@ -7,8 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useEndpoint2, useFormatted } from '.';
 
-// export default function usePool(address: string, id?: number, statePool?: MyPoolInfo, refresh?: boolean): MyPoolInfo | null | undefined {
-export default function usePool(address: string, id?: number, refresh?: boolean): MyPoolInfo | null | undefined {
+export default function usePool(address: string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
   const formatted = useFormatted(address);
   const endpoint = useEndpoint2(address);
@@ -65,12 +64,12 @@ export default function usePool(address: string, id?: number, refresh?: boolean)
   }, [formatted]);
 
   useEffect(() => {
-    // if (statePool !== undefined) {
-    //   return setMyPool(statePool);
-    // }
+    if (pool !== undefined) {
+      setMyPool(pool);
+    }
 
     endpoint && formatted && getPoolInfo(endpoint, formatted, id);
-  }, [endpoint, formatted, getPoolInfo, id]);
+  }, [endpoint, formatted, getPoolInfo, id, pool]);
 
   useEffect(() => {
     if (!formatted) {
