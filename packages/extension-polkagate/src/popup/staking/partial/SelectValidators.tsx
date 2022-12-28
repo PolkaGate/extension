@@ -256,7 +256,6 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
                 <Grid container item justifyContent='center' ml='-15px'>
                   <Infotip
                     iconLeft={6}
-                    iconTop={6}
                     placement='top'
                     showQuestionMark
                     text={t<string>(SYSTEM_SUGGESTION_TEXT)}
