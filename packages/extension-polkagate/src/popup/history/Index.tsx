@@ -134,7 +134,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
         history = history.filter((h) => ['send', 'receive'].includes(h.action.toLowerCase()));
         break;
       case (TAB_MAP.STAKING):
-        history = history.filter((h) => STAKING_ACTIONS.includes(h.action) || h.action.includes('pool'));
+        history = history.filter((h) => STAKING_ACTIONS.includes(h.action));
         break;
       default:
         break;
