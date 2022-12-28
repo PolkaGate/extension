@@ -22,8 +22,11 @@ export async function signAndSend(
     void submittable.signAndSend(_signer, async (result) => {
       let success = true;
       let failureText = '';
+      const parsedRes = JSON.parse(JSON.stringify(result));
+      const event = new CustomEvent('transactionState', { detail: parsedRes.status });
 
-      console.log(JSON.parse(JSON.stringify(result)));
+      window.dispatchEvent(event);
+      console.log(parsedRes);
 
       if (result.dispatchError) {
         if (result.dispatchError.isModule) {
@@ -42,7 +45,7 @@ export async function signAndSend(
       }
 
       if (result.status.isFinalized || result.status.isInBlock) {
-        console.log('result.status', result.status);
+        console.log('Tx. Status: ', result.status);
         const hash = result.status.isFinalized ? result.status.asFinalized : result.status.asInBlock;
 
         const signedBlock = await api.rpc.chain.getBlock(hash);
