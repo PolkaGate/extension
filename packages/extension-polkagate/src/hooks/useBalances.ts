@@ -159,11 +159,11 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {
-    if (!address || !api || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
+    if (!address || !api || api.genesisHash.toString() !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
       return;
     }
 
-    // load save balances of different chaines
+    /** to save fetched balance in local storage, first load saved balances of different chaines if any */
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     const balances = {
@@ -194,6 +194,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
+    console.log('savedBalancesL', savedBalances)
     if (savedBalances[chainName]) {
       const sb = savedBalances[chainName].balances;
 
