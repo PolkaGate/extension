@@ -6,7 +6,7 @@ import { Grid, Tooltip } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Props {
-  text: string | null | undefined;
+  text: NonNullable<React.ReactNode> | string | null | undefined;
   children: React.ReactElement<any, any>;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
   showQuestionMark?: boolean;

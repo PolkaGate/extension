@@ -11,7 +11,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { BN, bnToBn, formatNumber } from '@polkadot/util';
 
-import { ShortAddress } from '../../components';
+import { Infotip, ShortAddress } from '../../components';
 import { useMetadata, useTranslation } from '../../hooks';
 import RemainingDateByBlock from '../../util/remainingDateByBlock';
 
@@ -56,36 +56,57 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
     return (
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
         <Typography fontWeight={300} width='35%'>{t<string>('Method data')}</Typography>
-        <ShortAddress charsCount={6} address={data} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
+        <ShortAddress address={data} charsCount={6} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
       </Grid>
     );
   }
 
+  console.log('args:', JSON.stringify(args, null, 2))
+
+  const PrettyArgs = () => (
+    <Grid container fontSize='11px' overflow='scroll' sx={{
+      '&::-webkit-scrollbar': {
+        display: 'none',
+        width: '3px'
+      },
+      scrollbarWidth: 'none'
+    }} textAlign='left'>
+      <pre>
+        {JSON.stringify(args, null, 1)}
+      </pre>
+    </Grid>
+  );
+
   return (
     <>
-      <tr>
-        <td className='label'>{t<string>('method')}</td>
-        <td className='data'>
-          <details>
-            <summary>{method.section}.{method.method}{
-              method.meta
-                ? `(${method.meta.args.map(({ name }) => name).join(', ')})`
-                : ''
-            }</summary>
-            <pre>{JSON.stringify(args, null, 2)}</pre>
-          </details>
-        </td>
-      </tr>
-      {method.meta && (
-        <tr>
-          <td className='label'>{t<string>('info')}</td>
-          <td className='data'>
-            <details>
-              <summary>{method.meta.docs.map((d) => d.toString().trim()).join(' ')}</summary>
-            </details>
-          </td>
-        </tr>
-      )}
+      <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+        <Grid container item justifyContent='flex-start' width='20%'>
+          <Infotip showQuestionMark text={<PrettyArgs />}>
+            <Typography fontWeight={300}>
+              {t<string>('Method')}
+            </Typography>
+          </Infotip>
+        </Grid>
+        <Grid container item justifyContent='flex-end' width='80%'>
+          <Infotip text={<PrettyArgs />}>
+            <Typography fontWeight={400} textAlign='right'>
+              {`${method.method}(${method.meta.args.map(({ name }) => name).join(', ')})`}
+            </Typography>
+          </Infotip>
+        </Grid>
+      </Grid>
+      {
+        method.meta && (
+          <tr>
+            <td className='label'>{t<string>('info')}</td>
+            <td className='data'>
+              <details>
+                <summary>{method.meta.docs.map((d) => d.toString().trim()).join(' ')}</summary>
+              </details>
+            </td>
+          </tr>
+        )
+      }
     </>
   );
 }
@@ -133,7 +154,7 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
         <Typography fontWeight={300} width='35%'>{chain ? t<string>('Chain') : t<string>('Genesis')}</Typography>
         {chain
           ? <Typography fontWeight={400} textAlign='right' width='65%'>{chain.name}</Typography>
-          : <ShortAddress charsCount={6} address={genesisHash} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
+          : <ShortAddress address={genesisHash} charsCount={6} showCopy style={{ '& :last-child': { mr: '-5px' }, fontWeight: 400, justifyContent: 'flex-end', textAlign: 'right', width: '65%' }} />
         }
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
