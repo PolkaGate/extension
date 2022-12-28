@@ -7,7 +7,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import settings from '@polkadot/ui-settings';
 
 import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
-import { ActionContext, Checkbox, ColorContext, MenuItem, Select, Switch } from '../components';
+import { ActionContext, Checkbox, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
@@ -145,10 +145,7 @@ export default function SettingSubMenu(): React.ReactElement {
             value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
           />
         </Grid>
-        <Grid
-          item
-          pt='10px'
-        >
+        <Grid item pt='10px'>
           <Select
             label={t<string>('Notification')}
             onChange={_onChangeNotification}
@@ -156,16 +153,12 @@ export default function SettingSubMenu(): React.ReactElement {
             value={notification ?? notificationOptions[1].value}
           />
         </Grid>
-        <Grid
-          item
-          pt='15px'
-        >
-          <Checkbox
+        <Grid item pt='15px' textAlign='left'>
+          <Checkbox2
             checked={camera}
             label={t<string>('Allow QR camera access')}
-            onChange={setCamera}
-            style={{ fontSize: '18px' }}
-            theme={theme}
+            labelStyle={{ fontWeight: '300', fontSize: '18px' }}
+            onChange={() => setCamera(!camera)}
           />
         </Grid>
         <Grid
