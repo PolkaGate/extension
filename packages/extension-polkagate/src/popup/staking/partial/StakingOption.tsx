@@ -46,7 +46,7 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
           </Grid>
         }
         <Grid item>
-          <Infotip iconLeft={6} iconTop={10} showQuestionMark={!noToolTip && showQuestionMark} text={helperText} placement={tipPlace}>
+          <Infotip iconLeft={6} iconTop={8} showQuestionMark={!noToolTip && showQuestionMark} text={helperText} placement={tipPlace}>
             <Typography fontSize='20px' fontWeight={400}>
               {title}
             </Typography>

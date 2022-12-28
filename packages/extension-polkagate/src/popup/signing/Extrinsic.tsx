@@ -80,14 +80,14 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
   return (
     <>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Grid container item justifyContent='flex-start' width='20%'>
-          <Infotip showQuestionMark text={<PrettyArgs />}>
+        <Grid container item justifyContent='flex-start' width='25%'>
+          <Infotip showQuestionMark iconLeft={5} text={<PrettyArgs />}>
             <Typography fontWeight={300}>
               {t<string>('Method')}
             </Typography>
           </Infotip>
         </Grid>
-        <Grid container item justifyContent='flex-end' width='80%'>
+        <Grid container item justifyContent='flex-end' width='75%'>
           <Infotip text={<PrettyArgs />}>
             <Typography fontWeight={400} textAlign='right'>
               {`${method.method}(${method.meta.args.map(({ name }) => name).join(', ')})`}
@@ -95,7 +95,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
           </Infotip>
         </Grid>
       </Grid>
-      {
+      {/* {
         method.meta && (
           <tr>
             <td className='label'>{t<string>('info')}</td>
@@ -106,7 +106,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
             </td>
           </tr>
         )
-      }
+      } */}
     </>
   );
 }

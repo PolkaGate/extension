@@ -233,6 +233,7 @@ export default function Index(): React.ReactElement {
         <Review
           address={address}
           allValidators={allValidatorsInfo}
+          allValidatorsIdentities={allValidatorsIdentities}
           api={api}
           newSelectedValidators={newSelectedValidators}
           poolId={pool?.poolId}
