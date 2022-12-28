@@ -92,7 +92,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             placeholder={placeHolder}
             ref={ref}
             style={{
-              backgroundColor: disabled ? '#212121' : theme.palette.background.paper,
+              backgroundColor: disabled ? theme.palette.primary.contrastText : theme.palette.background.paper,
               borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,
               borderWidth: address !== undefined && !isValidAddress(address) ? '3px' : '1px',
               fontSize: '14px',
