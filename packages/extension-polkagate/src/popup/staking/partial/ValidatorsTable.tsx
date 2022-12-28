@@ -21,6 +21,7 @@ import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { StakingConsts, ValidatorInfo } from '../../../util/types';
 import ValidatorInfoPage from './ValidatorInfo';
+import ShowValidator from './ShowValidator';
 
 interface Props {
   api?: ApiPromise;
@@ -43,15 +44,11 @@ interface Props {
 }
 
 export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
-  const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef();
 
   const [showValidatorInfo, setShowValidatorInfo] = useState<boolean>(false);
   const [validatorToShowInfo, setValidatorToShowInfo] = useState<ValidatorInfo>();
-
-  const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
-  const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won\'t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
   const openValidatorInfo = useCallback((v: ValidatorInfo) => {
     setValidatorToShowInfo(v);
@@ -91,12 +88,6 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
     });
   }, [validatorsToList, activeValidators]);
 
-  const Div = () => (
-    <Grid alignItems='center' item justifyContent='center'>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 5px', width: '1px' }} />
-    </Grid>
-  );
-
   return (
     <Grid sx={{ ...style }}>
       <Grid container direction='column'
@@ -119,74 +110,20 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
               return (
                 <Grid container item key={key} sx={{ backgroundColor: isNominated && alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2), borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, ...style }}>
-                  <Grid container direction='column' item p='3px 5px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='94%'>
-                    <Grid alignItems='center' container item>
-                      {showCheckbox &&
-                        <Grid item width='10%'>
-                          <Checkbox2
-                            checked={check}
-                            onChange={(e) => handleCheck(e, v)}
-                          />
-                        </Grid>
-                      }
-                      <Grid container fontSize='12px' item overflow='hidden' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width={showCheckbox ? '90%' : '100%'} >
-                        <Identity
-                          accountInfo={accountInfo}
-                          api={api}
-                          chain={chain}
-                          formatted={String(v.accountId)}
-                          identiconSize={24}
-                          showShortAddress
-                          style={{ fontSize: '12px' }}
-                        />
-                      </Grid>
-                    </Grid>
-                    <Grid alignItems='center' container item>
-                      <Grid alignItems='center' container item maxWidth='50%' sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-                        {t<string>('Staked:')}
-                        <Grid fontSize='12px' fontWeight={400} item pl='3px'>
-                          {v.exposure.total
-                            ? <ShowBalance
-                              api={api}
-                              balance={v.exposure.total}
-                              decimal={decimal}
-                              decimalPoint={1}
-                              height={15}
-                              skeletonWidth={50}
-                              token={token}
-                            />
-                            : t('waiting')
-                          }
-                        </Grid>
-                      </Grid>
-                      <Div />
-                      <Grid alignItems='center' container item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-                        {t<string>('Com.')}
-                        <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='3px'>
-                          {Number(v.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(v.validatorPrefs.commission) / (10 ** 7)}%
-                        </Grid>
-                      </Grid>
-                      <Div />
-                      <Grid alignItems='end' container item sx={{ fontSize: '12px', fontWeight: 300, lineHeight: '23px' }} width='fit-content'>
-                        {t<string>('Nominators:')}
-                        <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='3px'>
-                          {v.exposure.others.length || t('N/A')}
-                        </Grid>
-                      </Grid>
-                      <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '4px' }} width='fit-content'>
-                        {isActive &&
-                          <Infotip text={t('Active')}>
-                            <DirectionsRunIcon sx={{ color: '#1F7720', fontSize: '15px' }} />
-                          </Infotip>
-                        }
-                        {(isOversubscribed?.safe || isOversubscribed?.notSafe) &&
-                          <Infotip text={isOversubscribed?.safe ? overSubscriptionAlert1 : overSubscriptionAlert2}>
-                            <WarningRoundedIcon sx={{ color: isOversubscribed?.safe ? '#FFB800' : '#FF002B', fontSize: '15px' }} />
-                          </Infotip>
-                        }
-                      </Grid>
-                    </Grid>
-                  </Grid>
+                  <ShowValidator
+                    accountInfo={accountInfo}
+                    api={api}
+                    chain={chain}
+                    check={check}
+                    decimal={decimal}
+                    handleCheck={handleCheck}
+                    isActive={isActive}
+                    isOversubscribed={isOversubscribed}
+                    showCheckbox={showCheckbox}
+                    stakingConsts={stakingConsts}
+                    token={token}
+                    v={v}
+                  />
                   <Grid alignItems='center' container item justifyContent='center' onClick={() => openValidatorInfo(v)} sx={{ cursor: 'pointer' }} width='6%'>
                     <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
                   </Grid>
@@ -211,6 +148,6 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
           />
         </Grid>
       }
-    </Grid >
+    </Grid>
   );
 }

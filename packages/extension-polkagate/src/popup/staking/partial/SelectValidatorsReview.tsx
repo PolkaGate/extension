@@ -13,6 +13,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
@@ -29,6 +30,7 @@ import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
   address: string;
+  allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
   api: ApiPromise | undefined;
   newSelectedValidators: ValidatorInfo[]
   poolId?: BN;
@@ -38,7 +40,7 @@ interface Props {
   staked: BN;
 }
 
-export default function Review({ address, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
+export default function Review({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -48,7 +50,7 @@ export default function Review({ address, api, newSelectedValidators, poolId, se
   const name = useAccountName(address);
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -163,6 +165,7 @@ export default function Review({ address, api, newSelectedValidators, poolId, se
             {t('Validators ({{count}})', { replace: { count: newSelectedValidators.length } })}
           </Grid>
           <ValidatorsTable
+            allValidatorsIdentities={allValidatorsIdentities}
             api={api}
             chain={chain}
             decimal={decimal}
