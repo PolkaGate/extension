@@ -194,7 +194,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
-    console.log('savedBalancesL', savedBalances)
     if (savedBalances[chainName]) {
       const sb = savedBalances[chainName].balances;
 
