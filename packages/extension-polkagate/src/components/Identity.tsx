@@ -35,7 +35,7 @@ interface Props {
   judgement?: any;
 }
 
-function Identity({ accountInfo, address, api, chain, noIdenticon = false, formatted, identiconSize = 40, judgement, name, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
