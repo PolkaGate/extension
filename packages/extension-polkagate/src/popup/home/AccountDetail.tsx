@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
-import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -19,6 +19,7 @@ import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
+import getLogo from '../../util/getLogo';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from '../account/util';
 
@@ -67,7 +68,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={103} />
+        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={86} />
       }
     </>
   );
@@ -75,7 +76,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   const Price = () => (
     <>
       {price === undefined || !balanceToShow //|| balances?.token !== price?.token
-        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
+        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={86} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
@@ -88,15 +89,16 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   );
 
   const BalanceRow = () => (
-    <Grid container fontSize='18px'>
+    <Grid container fontSize='18px' alignItems='center'>
+      <Avatar src={getLogo(chain)} sx={{ borderRadius: '50%', height: 16, width: 16, mr: '4px' }} variant='square' />
       <Balance />
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
       <Price />
     </Grid>);
 
   return (
-    <Grid container direction='column' xs={7.5}>
-      <Grid container direction='row' item>
+    <Grid container direction='column' sx={{ width: '64%' }}>
+      <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
         <Grid item maxWidth='65%'>
           <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {identity?.display || name}

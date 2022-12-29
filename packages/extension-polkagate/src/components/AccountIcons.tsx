@@ -36,7 +36,7 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
   }, [address, onAction]);
 
   return (
-    <Grid container direction='column' xs={3}>
+    <Grid container direction='column' sx={{width:'20%', ml:'8px'}}>
       <Grid item m='auto' width='fit-content'>
         <Identicon
           iconTheme={identiconTheme}
