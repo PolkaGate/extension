@@ -10,6 +10,7 @@ import React, { useMemo } from 'react';
 import { formatBalance, isString } from '@polkadot/util';
 
 import { useTranslation } from '../hooks';
+import { FLOATING_POINT_DIGIT } from '../util/constants';
 
 interface Props {
   decimals: number[],
@@ -72,7 +73,7 @@ function applyFormat(decimalPoint: number, value: Compact<any> | BN | string, [d
   return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint);
 }
 
-function FormatBalance({ children, className = '', decimalPoint = 4, decimals, format, formatIndex, isShort, label, labelPost, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
+function FormatBalance({ children, className = '', decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const formatInfo = useMemo(

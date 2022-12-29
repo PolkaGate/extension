@@ -21,6 +21,7 @@ import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../../components';
 import { useDecimal,useToken } from '../../../hooks';
+import { FLOATING_POINT_DIGIT } from '../../../util/constants';
 import { getValue } from '../../account/util';
 
 interface Props {
@@ -45,7 +46,7 @@ export default function BalanceFee({ address, api, balance, balances, fee, type 
           api={api}
           balance={value}
           decimal={decimal}
-          decimalPoint={2}
+          decimalPoint={FLOATING_POINT_DIGIT}
           token={token}
         />
       </Grid>
@@ -54,7 +55,7 @@ export default function BalanceFee({ address, api, balance, balances, fee, type 
           api={api}
           balance={fee}
           decimal={decimal}
-          decimalPoint={4}
+          decimalPoint={FLOATING_POINT_DIGIT}
           height={15}
           token={token}
         />

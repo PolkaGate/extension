@@ -12,6 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 import { formatBalance, isString } from '@polkadot/util';
 
 import { useTranslation } from '../hooks';
+import { FLOATING_POINT_DIGIT } from '../util/constants';
 
 interface Props {
   api: ApiPromise;
@@ -76,7 +77,7 @@ function applyFormat(decimalPoint: number, value: Compact<any> | BN | string, [d
   return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint);
 }
 
-function FormatBalance({ api, children, className = '', decimalPoint = 4, format, formatIndex, isShort, label, labelPost, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
+function FormatBalance({ api, children, className = '', decimalPoint = FLOATING_POINT_DIGIT, format, formatIndex, isShort, label, labelPost, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const formatInfo = useMemo(
