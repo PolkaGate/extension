@@ -68,7 +68,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
             value={getValue('total', balanceToShow)}
           />
         </Grid>
-        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={86} />
+        : <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
     </>
   );
@@ -76,7 +76,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   const Price = () => (
     <>
       {price === undefined || !balanceToShow //|| balances?.token !== price?.token
-        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={86} />
+        ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
             amount={getValue('total', balanceToShow)}
