@@ -156,8 +156,8 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         >
           <SettingSubMenu />
         </MenuItem>
-        <Grid container justifyContent='center' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width:'80%' }}>
-          Version {data?.version}
+        <Grid container justifyContent='center' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '80%' }}>
+          {`${t('Version')} ${data?.version || ''}`}
         </Grid>
       </Grid>
       <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
