@@ -16,7 +16,7 @@ export const lightTheme: ThemeOptions = {
     background: { default: '#E8E0E5', paper: '#fff' },
     text: { primary: '#000', secondary: '#FFFFFF', disabled: '#747474' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
-    success: { main: '#46890C' },
+    success: { main: '#1F7720' },
     warning: { main: '#FF002B' }
   },
   components: {
