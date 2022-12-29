@@ -11,20 +11,18 @@ import type { ApiPromise } from '@polkadot/api';
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
+import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
@@ -45,7 +43,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   const name = useAccountName(address);
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -63,9 +61,10 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
+    setRefresh(true);
 
     onAction(`/pool/${address}`);
-  }, [address, onAction, setShow]);
+  }, [address, onAction, setRefresh, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -110,7 +109,6 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       };
 
       setTxInfo({ ...info, api, chain });
-      setRefresh(true);
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
@@ -118,7 +116,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, formatted, selectedProxyAddress, password, setRefresh, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
+  }, [api, formatted, selectedProxyAddress, password, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

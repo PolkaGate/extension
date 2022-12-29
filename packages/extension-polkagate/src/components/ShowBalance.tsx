@@ -15,6 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import FormatBalance from './FormatBalance';
 import { FormatBalance2 } from '.';
+import { FLOATING_POINT_DIGIT } from '../util/constants';
 
 export interface Props {
   balance: Balance | string | BN | null | undefined;
@@ -39,12 +40,12 @@ export default function ShowBalance({ api, balance, decimalPoint, height = 20, s
         : api
           ? <FormatBalance
             api={api}
-            decimalPoint={decimalPoint}
+            decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
             value={balance}
           />
           : decimal && token &&
           <FormatBalance2
-            decimalPoint={decimalPoint}
+            decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
             decimals={[decimal]}
             tokens={[token]}
             value={balance}

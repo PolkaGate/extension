@@ -12,10 +12,9 @@ import { HeaderBrand } from '.';
 interface Props {
   title: string;
   show: boolean;
-  event?: any;
 }
 
-function WaitScreen({ event, show, title }: Props): React.ReactElement {
+function WaitScreen({ show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [text, setText] = useState<string>(t<string>('We are working on your transaction.'));
 
@@ -41,12 +40,17 @@ function WaitScreen({ event, show, title }: Props): React.ReactElement {
           setText(t<string>(`Transaction is in ${state} state`));
       }
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     window.addEventListener('transactionState', handleTxEvent);
-    // return () => window.removeEventListener("click", handleClick);
   }, [handleTxEvent]);
+
+  // useEffect(() => {
+  //   if (!show) {
+  //     return () => window.removeEventListener('transactionState', handleTxEvent);
+  //   }
+  // }, [handleTxEvent, show]);
 
   return (
     <Popup show={show}>

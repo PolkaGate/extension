@@ -38,7 +38,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const myPool = usePool(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { hierarchy } = useContext(AccountContext);
 
   const myPoolName = myPool?.metadata;
   const myPoolRoles = myPool?.bondedPool?.roles;
@@ -52,7 +52,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | undefined>();
   const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | undefined>();
 
-  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
+  const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
 
   const backToPool = useCallback(() => {
     setShowEdit(!showEdit);
