@@ -196,7 +196,7 @@ export default function Index(): React.ReactElement {
             {new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)}
           </Grid>
           <Grid fontWeight={400} item>
-            <FormatBalance api={api} decimalPoint={4} value={amount} />
+            <FormatBalance api={api} value={amount} />
           </Grid>
         </Grid>))
       }
@@ -214,8 +214,8 @@ export default function Index(): React.ReactElement {
             <Grid alignItems='flex-end' container direction='column' item xs>
               <Grid item sx={{ color: isPoolInfoOutdated ? 'primary.light' : 'text.primary', fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} >
                 {value && token && decimal
-                  ? <FormatBalance2 decimalPoint={4} decimals={[decimal]} tokens={[token]} value={value} />
-                  : <ShowBalance api={api} balance={value} decimalPoint={2} />
+                  ? <FormatBalance2 decimals={[decimal]} tokens={[token]} value={value} />
+                  : <ShowBalance api={api} balance={value} />
                 }
               </Grid>
               <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, mt: '5px' }}>
