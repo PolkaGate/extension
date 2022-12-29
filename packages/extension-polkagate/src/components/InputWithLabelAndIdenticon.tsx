@@ -214,7 +214,11 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
         </Grid>
       }
       {openCamera &&
-        <QrScanner openCamera={openCamera} setAddress={_selectAddress} setOpenCamera={setOpenCamera} />
+        <QrScanner
+          openCamera={openCamera}
+          setAddress={_selectAddress}
+          setOpenCamera={setOpenCamera}
+        />
       }
     </Grid>
   );
