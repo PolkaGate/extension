@@ -13,11 +13,11 @@ export const darkTheme: ThemeOptions = {
   palette: {
     mode: 'dark',
     primary: { main: '#99004F', light: '#838383', contrastText: '#212121' },
-    secondary: { main: '#BA2882', light: '#BA2682', contrastText:'#747474' },
+    secondary: { main: '#BA2882', light: '#BA2682', contrastText: '#747474' },
     background: { default: '#180710', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
-    success: { main: '#46890C' },
+    success: { main: '#1F7720' }, //'#46890C'
     warning: { main: '#FF002B' }
   },
   components: {
