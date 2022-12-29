@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
@@ -44,6 +44,23 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
   const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
   const onAction = useContext(ActionContext);
   const { master } = useContext(AccountContext);
+
+  const [data, setData] = useState<{ version: 'string' }>();
+
+  const fetchJson = () => {
+    fetch('./manifest.json')
+      .then((response) => {
+        return response.json();
+      }).then((data) => {
+        setData(data);
+      }).catch((e: Error) => {
+        console.log(e.message);
+      });
+  };
+
+  useEffect(() => {
+    fetchJson();
+  }, []);
 
   const toggleImportSubMenu = useCallback(() => {
     setShowImportSubMenu(!showImportSubMenu);
@@ -97,16 +114,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
       }]}
       zIndex={10}
     >
-      <Grid
-        alignItems='flex-start'
-        bgcolor='background.default'
-        container
-        display='block'
-        item
-        p='10px 24px'
-        sx={{ height: 'parent.innerHeight' }}
-        width='86%'
-      >
+      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
         <MenuItem
           icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
           onClick={_goToCreateAcc}
@@ -148,16 +156,11 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         >
           <SettingSubMenu />
         </MenuItem>
+        <Grid container justifyContent='center' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width:'80%' }}>
+          Version {data?.version}
+        </Grid>
       </Grid>
-      <IconButton
-        onClick={_toggleSettings}
-        sx={{
-          left: '3%',
-          p: 0,
-          position: 'absolute',
-          top: '2%'
-        }}
-      >
+      <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
     </Grid>
