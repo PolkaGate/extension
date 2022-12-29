@@ -67,7 +67,6 @@ export default function Review({ accountName, address, amount, api, chain, estim
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [event, setEvent] = useState<any>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
@@ -82,19 +81,11 @@ export default function Review({ accountName, address, amount, api, chain, estim
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  function handleTxEvent (s: CustomEventInit<any>) {
-    setEvent(s.detail);
-    console.log('state:', s.detail);
-  }
-
   const send = useCallback(async () => {
     try {
       if (!formatted || !transfer || !api || !decimal) {
         return;
       }
-
-      window.addEventListener('transactionState', handleTxEvent);
-      // return () => window.removeEventListener("click", handleClick);
 
       const from = selectedProxyAddress ?? formatted;
       const signer = keyring.getPair(from);
@@ -263,7 +254,6 @@ export default function Review({ accountName, address, amount, api, chain, estim
         <WaitScreen
           show={showWaitScreen}
           title={t('Send Fund')}
-          event={event}
         />
         {txInfo && (
           <Confirmation
