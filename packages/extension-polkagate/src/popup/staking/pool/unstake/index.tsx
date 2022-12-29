@@ -65,7 +65,15 @@ export default function Index(): React.ReactElement {
   }, [myPool]);
   const decimal = useDecimal(address) ?? DEFAULT_TOKEN_DECIMALS;
   const token = useToken(address) ?? '...';
-  const totalAfterUnstake = useMemo(() => staked && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const totalAfterUnstake = useMemo(() => {
+    if (unstakeAllAmount) {
+      return BN_ZERO;
+    }
+
+    if (staked && !unstakeAllAmount) {
+      return staked.sub(amountToMachine(amount, decimal));
+    }
+  }, [amount, decimal, staked, unstakeAllAmount]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
@@ -171,14 +179,11 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    if (isPoolRoot && poolState === 'Destroying' && poolMemberCounter === 1) {
+    if ((isPoolRoot || isPoolDepositor) && poolState === 'Destroying' && poolMemberCounter === 1) {
       setUnstakeAllAmount(true);
       setAmount(amountToHuman(staked.toString(), decimal));
-    }
 
-    if (isPoolDepositor && poolState === 'Destroying' && poolMemberCounter === 1) {
-      setUnstakeAllAmount(true);
-      setAmount(amountToHuman(staked, decimal));
+      return;
     }
 
     if (isPoolDepositor && (poolState !== 'Destroying' || poolMemberCounter !== 1)) {
@@ -186,9 +191,11 @@ export default function Index(): React.ReactElement {
 
       setUnstakeAllAmount(false);
       !partial.isZero() && setAmount(amountToHuman(partial, decimal));
+
+      return;
     }
 
-    if (!isPoolDepositor && !isPoolRoot) {
+    if (!isPoolDepositor && !isPoolRoot) { // TODO: do we really need this condition @Amir
       setUnstakeAllAmount(true);
       setAmount(amountToHuman(staked.toString(), decimal));
     }
@@ -206,7 +213,7 @@ export default function Index(): React.ReactElement {
     helperButton === 2 && setGoChange(!goChange);
   }, [goChange, helperButton]);
 
-  const Warn = ({ text, isDanger, iconDanger }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
+  const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
     <Grid color='red' container sx={{ 'div.belowInput': { m: '5px 0 -8px', p: 0, width: '92%' }, 'div.belowInput.danger': { m: 0, mt: '10px' } }}>
       <Warning
         fontWeight={400}
@@ -304,7 +311,7 @@ export default function Index(): React.ReactElement {
         disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee}
         text={t<string>('Next')}
       />
-      {showReview && amount && api && formatted && maxUnlockingChunks &&
+      {showReview && amount && api && formatted && maxUnlockingChunks && myPool &&
         <Review
           address={address}
           amount={amount}
@@ -313,7 +320,7 @@ export default function Index(): React.ReactElement {
           estimatedFee={estimatedFee}
           formatted={formatted}
           maxUnlockingChunks={maxUnlockingChunks}
-          poolId={myPool?.poolId}
+          pool={myPool}
           poolWithdrawUnbonded={poolWithdrawUnbonded}
           redeemDate={redeemDate}
           setShow={setShowReview}
@@ -321,6 +328,7 @@ export default function Index(): React.ReactElement {
           total={totalAfterUnstake}
           unbonded={unbonded}
           unlockingLen={unlockingLen ?? 0}
+          unstakeAllAmount={unstakeAllAmount}
         />
       }
       {goChange && helperButton === 1 && myPool && formatted &&

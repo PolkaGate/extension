@@ -20,14 +20,14 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordUseProxyConfirm, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountName, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
+import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -42,20 +42,23 @@ interface Props {
   unlockingLen: number;
   maxUnlockingChunks: number
   unbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  poolId: BN | undefined;
   poolWithdrawUnbonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   redeemDate: string | undefined;
   total: BN | undefined;
+  unstakeAllAmount?: boolean;
+  pool: MyPoolInfo
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, poolId, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, pool, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
   const theme = useTheme();
+  const token = useToken(address);
+  const decimal = useDecimal(address);
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -64,8 +67,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const decimals = api?.registry?.chainDecimals[0] ?? 1;
-  const token = api?.registry?.chainTokens[0] ?? '';
+  const poolId = pool.poolId
+
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
@@ -89,7 +92,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
 
   const unstake = useCallback(async () => {
     try {
-      if (!formatted || !unbonded || !poolWithdrawUnbonded) {
+      if (!formatted || !unbonded || !poolWithdrawUnbonded || !decimal || (!pool?.member?.points && unstakeAllAmount)) {
         return;
       }
 
@@ -98,7 +101,9 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimals - FLOATING_POINT_DIGIT)));
+      const amountAsBN = unstakeAllAmount
+        ? new BN(pool.member.points)
+        : new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
       const params = [formatted, amountAsBN];
 
       if (unlockingLen < maxUnlockingChunks) {
@@ -156,7 +161,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimals, estimatedFee, formatted, maxUnlockingChunks, name, password, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen]);
+  }, [amount, api, chain, decimal, estimatedFee, formatted, maxUnlockingChunks, name, password, pool?.member?.points, poolId, poolWithdrawUnbonded, selectedProxy, selectedProxyAddress, selectedProxyName, unbonded, unlockingLen, unstakeAllAmount]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -177,13 +182,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           }}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
