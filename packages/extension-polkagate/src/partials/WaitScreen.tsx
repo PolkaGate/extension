@@ -3,7 +3,7 @@
 
 import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Popup from '../components/Popup';
 import { useTranslation } from '../hooks';
@@ -17,29 +17,36 @@ interface Props {
 
 function WaitScreen({ event, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const [text, setText] = useState<string>();
+  const [text, setText] = useState<string>(t<string>('We are working on your transaction.'));
+
+  const handleTxEvent = useCallback((s: CustomEventInit<any>) => {
+    const event = s.detail
+
+    console.log('state:', s.detail);
+
+    if (event) {
+      const state = Object.keys(event)[0];
+
+      switch (state) {
+        case ('ready'):
+          setText(t<string>('Transaction is ready.'));
+          break;
+        case ('broadcast'):
+          setText(t<string>('Transaction is sent.'));
+          break;
+        case ('inBlock'):
+          setText(t<string>('Transaction is now in Blockchain.'));
+          break;
+        default:
+          setText(t<string>(`Transaction is in ${state} state`));
+      }
+    }
+  }, []);
 
   useEffect(() => {
-    if (!event) {
-      return setText(t<string>('We are working on your transaction.'))
-    }
-
-    const state = Object.keys(event)[0];
-
-    switch (state) {
-      case ('ready'):
-        setText(t<string>('Transaction is ready.'));
-        break;
-      case ('broadcast'):
-        setText(t<string>('Transaction is sent.'));
-        break;
-      case ('inBlock'):
-        setText(t<string>('Transaction is now in Blockchain.'));
-        break;
-      default:
-        setText(t<string>(`Transaction is in ${state} state`));
-    }
-  }, [event, t]);
+    window.addEventListener('transactionState', handleTxEvent);
+    // return () => window.removeEventListener("click", handleClick);
+  }, [handleTxEvent]);
 
   return (
     <Popup show={show}>
@@ -48,7 +55,7 @@ function WaitScreen({ event, show, title }: Props): React.ReactElement {
         text={title}
       />
       <Grid container px='20px' justifyContent='center'>
-        <Grid item height='50px' xs={12} pb='70px' pt='40px'>
+        <Grid item height='50px' xs={12} pb='90px' pt='40px'>
           <Typography fontSize='22px' fontWeight={300} m='auto' align='center'>
             {text}
           </Typography>
