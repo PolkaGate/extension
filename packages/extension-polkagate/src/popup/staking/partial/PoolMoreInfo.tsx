@@ -151,9 +151,15 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
         </Grid>
       </Grid>
       <Collapse in={show} sx={{ width: '100%' }} timeout='auto' unmountOnExit>
-        {(mode === 'Ids' || mode === 'Roles') && <ShowRoles api={api} chain={chain} mode={mode} pool={pool} style={{ my: '10px' }} />}
-        {mode === 'Members' && <ShowMembers />}
-        {mode === 'Reward' && <ShowReward />}
+        {(mode === 'Ids' || mode === 'Roles') &&
+          <ShowRoles api={api} chain={chain} mode={mode} pool={pool} style={{ my: '10px' }} />
+        }
+        {mode === 'Members' &&
+          <ShowMembers />
+        }
+        {mode === 'Reward' &&
+          <ShowReward />
+        }
       </Collapse>
     </Grid>
   );
