@@ -14,7 +14,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, InputWithLabel, InputWithLabelAndIdenticon, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useChain, useFormatted, usePoolConsts, useTranslation } from '../../../../../hooks';
+import { useApi, useChain, useFormatted, usePoolConsts, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
@@ -35,7 +35,7 @@ export default function CreatePool(): React.ReactElement {
   const formatted = useFormatted(address);
   const api = useApi(address, state?.api);
   const history = useHistory();
-  const token = api?.registry?.chainTokens[0] ?? '...';
+  const token = useToken(address);
   const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const chain = useChain(address);
@@ -165,7 +165,7 @@ export default function CreatePool(): React.ReactElement {
       <Grid container m='20px auto 10px' width='92%'>
         <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} placeholder={DEFAULT_POOLNAME} value={poolName} />
       </Grid>
-      <AmountWithOptions label={t<string>(`Amount(${token ?? '...'})`)} onChangeAmount={stakeAmountChange} onPrimary={onMinAmount} onSecondary={onMaxAmount} primaryBtnText={t<string>('Min amount')} secondaryBtnText={t<string>('Max amount')} style={{ m: '10px auto', width: '92%' }} value={createAmount} />
+      <AmountWithOptions label={t<string>(`Amount (${token || '...'})`)} onChangeAmount={stakeAmountChange} onPrimary={onMinAmount} onSecondary={onMaxAmount} primaryBtnText={t<string>('Min amount')} secondaryBtnText={t<string>('Max amount')} style={{ m: '10px auto', width: '92%' }} value={createAmount} />
       <Grid alignItems='end' container sx={{ m: '0 auto 10px', width: '92%' }}>
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
