@@ -22,6 +22,7 @@ import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from '../account/util';
+import { InvertColors } from '@mui/icons-material';
 
 interface Props {
   address: string;
@@ -90,7 +91,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
 
   const BalanceRow = () => (
     <Grid alignItems='center' container fontSize='18px'>
-      <Avatar src={getLogo(chain)} sx={{ borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
+      <Avatar src={getLogo(chain)} sx={{ filter: chainName === 'Kusama' && theme.palette.mode === 'dark' && 'invert(1)', borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
       <Balance />
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
       <Price />
