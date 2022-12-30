@@ -89,12 +89,13 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   );
 
   const BalanceRow = () => (
-    <Grid container fontSize='18px' alignItems='center'>
-      <Avatar src={getLogo(chain)} sx={{ borderRadius: '50%', height: 16, width: 16, mr: '4px' }} variant='square' />
+    <Grid alignItems='center' container fontSize='18px'>
+      <Avatar src={getLogo(chain)} sx={{ borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
       <Balance />
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
       <Price />
-    </Grid>);
+    </Grid>
+  );
 
   return (
     <Grid container direction='column' sx={{ width: '64%' }}>
