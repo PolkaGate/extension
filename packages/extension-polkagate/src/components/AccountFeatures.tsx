@@ -15,7 +15,7 @@ interface Props {
 
 export default function AccountFeatures({ chain, goToAccount, menuOnClick }: Props): React.ReactElement<Props> {
   return (
-    <Grid container direction='column' xs={1.5}>
+    <Grid container direction='column' sx={{ width: '10%' }}>
       <Grid item m='auto' width='fit-content'>
         <IconButton
           onClick={menuOnClick}
@@ -39,6 +39,6 @@ export default function AccountFeatures({ chain, goToAccount, menuOnClick }: Pro
           />
         </IconButton>
       </Grid>
-    </Grid>
+    </Grid >
   );
 }
