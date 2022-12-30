@@ -50,7 +50,7 @@ interface Props {
   pool: MyPoolInfo
 }
 
-export default function Review({ address, pool, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, estimatedFee, formatted, maxUnlockingChunks, pool, poolWithdrawUnbonded, redeemDate, setShow, show, total, unbonded, unlockingLen, unstakeAllAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
