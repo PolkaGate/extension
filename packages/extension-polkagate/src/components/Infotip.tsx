@@ -29,45 +29,45 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
 
   return (
     <Grid item ref={ref} style={{ position: 'relative' }}>
-      <div>
-        {children}
-      </div>
-      <Tooltip
-        arrow
-        componentsProps={{
-          popper: {
-            sx: {
-              '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                mb: '3px',
-                p: '3px 15px'
+      {showQuestionMark
+        ? <>
+          <div>
+            {children}
+          </div>
+          <Tooltip
+            arrow
+            componentsProps={{
+              popper: {
+                sx: {
+                  '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                    mb: '3px',
+                    p: '3px 15px'
+                  },
+                  '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                    mb: '3px',
+                    p: '3px 15px'
+                  }
+                }
               },
-              '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                mb: '3px',
-                p: '3px 15px'
+              tooltip: {
+                sx: {
+                  '& .MuiTooltip-arrow': {
+                    color: 'text.primary',
+                    height: '10px'
+                  },
+                  backgroundColor: 'text.primary',
+                  color: 'text.secondary',
+                  fontSize,
+                  fontWeight: 400
+                }
               }
-            }
-          },
-          tooltip: {
-            sx: {
-              '& .MuiTooltip-arrow': {
-                color: 'text.primary',
-                height: '10px'
-              },
-              backgroundColor: 'text.primary',
-              color: 'text.secondary',
-              fontSize,
-              fontWeight: 400
-            }
-          }
-        }}
-        enterDelay={500}
-        // enterNextDelay={7000}
-        leaveDelay={500}
-        placement={placement}
-        title={text || ''}
-      >
-        <div>
-          {showQuestionMark &&
+            }}
+            enterDelay={500}
+            // enterNextDelay={7000}
+            leaveDelay={500}
+            placement={placement}
+            title={text || ''}
+          >
             <QuestionMarkRoundedIcon
               sx={{
                 bgcolor: 'secondary.light',
@@ -80,9 +80,45 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
                 width: '15px'
               }}
             />
-          }
-        </div>
-      </Tooltip>
+          </Tooltip>
+        </>
+        : <Tooltip
+          arrow
+          componentsProps={{
+            popper: {
+              sx: {
+                '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                  mb: '3px',
+                  p: '3px 15px'
+                },
+                '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                  mb: '3px',
+                  p: '3px 15px'
+                }
+              }
+            },
+            tooltip: {
+              sx: {
+                '& .MuiTooltip-arrow': {
+                  color: 'text.primary',
+                  height: '10px'
+                },
+                backgroundColor: 'text.primary',
+                color: 'text.secondary',
+                fontSize,
+                fontWeight: 400
+              }
+            }
+          }}
+          enterDelay={500}
+          enterNextDelay={7000}
+          leaveDelay={500}
+          placement={placement}
+          title={text || ''}
+        >
+          {children}
+        </Tooltip>
+      }
     </Grid>
   );
 }

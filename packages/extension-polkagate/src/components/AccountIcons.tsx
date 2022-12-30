@@ -36,7 +36,7 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
   }, [address, onAction]);
 
   return (
-    <Grid container direction='column' sx={{width:'20%', ml:'8px'}}>
+    <Grid container direction='column' sx={{ width: '17%', ml: '8px' }}>
       <Grid item m='auto' width='fit-content'>
         <Identicon
           iconTheme={identiconTheme}
@@ -49,7 +49,9 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
       <Grid container direction='row' item justifyContent='center'>
         <Grid item>
           <Infotip placement='bottom-start' text={t('Is recoverable')}>
-            <IconButton disabled={!recoverable} sx={{ height: '15px', width: '15px' }}>
+            <IconButton 
+            // disabled={!recoverable}
+             sx={{ height: '15px', width: '15px' }}>
               <FontAwesomeIcon
                 color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
                 fontSize='13px'
