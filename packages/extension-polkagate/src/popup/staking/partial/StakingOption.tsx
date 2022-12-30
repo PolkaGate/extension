@@ -7,7 +7,6 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../../../assets/icons';
 import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
 
@@ -25,24 +24,20 @@ interface OptionProps {
   warningText?: string;
   helperText?: string;
   tipPlace?: string;
-  showIcon?: boolean;
   noToolTip?: boolean;
   showQuestionMark?: boolean;
+  logo?: any;
 }
 
-export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, noToolTip, onClick, showIcon, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
-  const { t } = useTranslation();
+export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, logo, noToolTip, onClick, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
-      <Grid container item justifyContent='center'>
-        {showIcon &&
-          <Grid item mr='5px'>
-            {title === t('Solo Staking')
-              ? <img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />
-              : <img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />
-            }
+      <Grid container item justifyContent='center' alignItems='center'>
+        {logo &&
+          <Grid item mr='7px'>
+            {logo}
           </Grid>
         }
         <Grid item>

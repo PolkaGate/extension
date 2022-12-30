@@ -1,13 +1,14 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Slide } from '@mui/material';
+import { Box, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, bnMax } from '@polkadot/util';
 
+import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../../assets/icons';
 import { useApi, useMinToReceiveRewardsInSolo, usePoolConsts, useStakingConsts, useTranslation } from '../../hooks';
 import Option from './partial/StakingOption';
 
@@ -18,6 +19,7 @@ interface Props {
 export default function Options({ showStakingOptions }: Props): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
+  const theme = useTheme();
   const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
@@ -58,8 +60,8 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           balanceText={t('Minimum to join a pool')}
           buttonText={t<string>('Enter')}
           helperText={t('All the members of a pool act as a single nominator and the earnings of the pool are split pro rata to a member\'s stake in the bonded pool.')}
+          logo={<img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />}
           onClick={goToPoolStaking}
-          showIcon
           showQuestionMark
           style={{
             m: '5px auto',
@@ -74,8 +76,8 @@ export default function Options({ showStakingOptions }: Props): React.ReactEleme
           balanceText={t('Minimum to receive rewards')}
           buttonText={t<string>('Enter')}
           helperText={t('Each solo staker will be responsible to nominate validators and keep eyes on them to re-nominate if needed.')}
+          logo={<img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />}
           onClick={goToSoloStaking}
-          showIcon
           showQuestionMark
           style={{
             m: 'auto',

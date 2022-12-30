@@ -16,7 +16,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
@@ -61,6 +61,8 @@ export default function Index(): React.ReactElement {
 
   const token = useToken(address);
   const decimal = useDecimal(address);
+
+  // const staked = useMemo(() => !pool?.member?.points ? undefined : pool.member.points === 0 ? BN_ZERO : (new BN(String(pool.member.points)).mul(new BN(String(pool.stashIdAccount.stakingLedger.active)))).div(new BN(String(pool.bondedPool.points ?? BN_ONE))), [pool]);
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);

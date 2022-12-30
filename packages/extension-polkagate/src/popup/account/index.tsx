@@ -298,7 +298,6 @@ export default function AccountDetails(): React.ReactElement {
         <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
           <HorizontalMenuItem
             divider
-            isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
             icon={
               <FontAwesomeIcon
                 color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -306,6 +305,7 @@ export default function AccountDetails(): React.ReactElement {
                 size='lg'
               />
             }
+            isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
             onClick={goToSend}
             textDisabled={(!availableProxiesForTransfer?.length && account?.isExternal)}
             title={t<string>('Send')}
@@ -331,9 +331,9 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ color: `${theme.palette.text.primary}`, height: '35px' }} />}
+            labelMarginTop='-5px'
             onClick={goToCrowdLoans}
             title={t<string>('Crowdloans')}
-            labelMarginTop='-5px'
           />
           <HorizontalMenuItem
             icon={
@@ -353,10 +353,10 @@ export default function AccountDetails(): React.ReactElement {
           api={api}
           balances={balances}
           chain={chain}
+          identity={identity}
           price={price?.amount}
           setShow={setShowOthers}
           show={showOthers}
-          identity={identity}
         />
       }
     </Motion>
