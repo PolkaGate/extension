@@ -9,8 +9,9 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Grid, Link, Typography } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
@@ -34,19 +35,20 @@ interface Props {
   token?: string;
 }
 
-export default function ShowCrowdloan ({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, showStatus = false, token }: Props): React.ReactElement {
+export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, showStatus = false, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
   const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
   const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavicon(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+  const [identity, returnIdentity] = useState<DeriveAccountRegistration>();
 
   return (
     <Grid container direction='column' height='fit-content' item key={key} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mt: '8px' }}>
       <Grid container height='46px' item lineHeight='46px'>
         <Grid alignItems='center' container item justifyContent='center' xs={1.5}>
           <Avatar
-            src={logo(crowdloan)}
+            src={logo(crowdloan) || getWebsiteFavicon(identity?.web)}
             sx={{ height: 20, width: 20 }}
           />
         </Grid>
@@ -64,7 +66,7 @@ export default function ShowCrowdloan ({ api, chain, crowdloan, crowdloansId, cu
                 </Grid>
               }
             </Grid>
-            : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px' }} />
+            : <Identity returnIdentity={returnIdentity} address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px' }} />
           }
         </Grid>
         {showStatus &&

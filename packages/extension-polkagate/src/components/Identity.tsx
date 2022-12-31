@@ -6,10 +6,10 @@
 import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Box, Grid, Link, SxProps, Theme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
@@ -33,9 +33,10 @@ interface Props {
   showSocial?: boolean;
   noIdenticon?: boolean;
   judgement?: any;
+  returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
 }
 
-function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -43,6 +44,10 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
   const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
+
+  useEffect(() => {
+    returnIdentity && _accountInfo?.identity && returnIdentity(_accountInfo.identity);
+  }, [_accountInfo, returnIdentity]);
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
