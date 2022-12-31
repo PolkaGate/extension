@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { FormControl, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputBase, MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
 
@@ -57,7 +57,7 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
   return (
     <FormControl
       disabled={isDisabled}
-      sx={{ width: '100%', mt: `${_mt}` }}
+      sx={{ mt: `${_mt}`, width: '100%' }}
       variant='standard'
     >
       <Label
@@ -96,10 +96,10 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
+              disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
               key={value}
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value || text}
-              disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
             >
               {text}
             </MenuItem>

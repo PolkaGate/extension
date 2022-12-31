@@ -160,7 +160,7 @@ function ImportLedger(): React.ReactElement {
         />
       </div>
       <DropdownWithIcon
-        defaultValue={networkOps.current[0].text}
+        defaultValue={newChain?.genesisHash || networkOps.current[0].text}
         icon={getLogo(newChain ?? undefined)}
         label={t<string>('Select the chain')}
         onChange={setGenesis}

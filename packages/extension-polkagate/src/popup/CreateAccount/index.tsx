@@ -128,7 +128,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
             : (
               <>
                 <DropdownWithIcon
-                  defaultValue={options[0].text}
+                  defaultValue={newChain?.genesisHash || options[0].text}
                   icon={getLogo(newChain ?? undefined)}
                   label={t<string>('Select the chain')}
                   onChange={_onChangeNetwork}
