@@ -202,7 +202,7 @@ export function getTransactionHistoryFromLocalStorage(
   return [];
 }
 
-export const getWebsiteFavico = (url: string | undefined): string => {
+export const getWebsiteFavicon = (url: string | undefined): string => {
   if (!url) {
     return '';
   }

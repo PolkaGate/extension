@@ -17,7 +17,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Identity, PButton, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
-import { getWebsiteFavico } from '../../../util/utils';
+import { getWebsiteFavicon } from '../../../util/utils';
 import blockToDate from './blockToDate';
 
 interface Props {
@@ -39,7 +39,7 @@ export default function ShowCrowdloan ({ api, chain, crowdloan, crowdloansId, cu
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
   const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
-  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavico(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavicon(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
 
   return (
     <Grid container direction='column' height='fit-content' item key={key} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mt: '8px' }}>

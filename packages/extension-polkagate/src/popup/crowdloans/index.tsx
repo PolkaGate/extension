@@ -28,7 +28,7 @@ import { HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getContributions from '../../util/api/getContributions';
 import getLogo from '../../util/getLogo';
-import { getWebsiteFavico } from '../../util/utils';
+import { getWebsiteFavicon } from '../../util/utils';
 import AccountBrief from '../account/AccountBrief';
 import blockToDate from './partials/blockToDate';
 import ActiveCrowdloans from './ActiveCrowdloans';
@@ -117,7 +117,7 @@ export default function CrowdLoans(): React.ReactElement {
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
   const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
-  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavico(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavicon(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
   const date = useCallback((timestamp?: number) => timestamp ? new Date(timestamp * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A', []);
 
   const getHexEncodedAddress = (api: ApiPromise, chain: Chain, address: string, settings: SettingsStruct): string => {
