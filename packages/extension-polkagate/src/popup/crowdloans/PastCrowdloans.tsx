@@ -19,6 +19,7 @@ import { useTranslation } from '../../hooks';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getLogo from '../../util/getLogo';
 import { getWebsiteFavico } from '../../util/utils';
+import blockToDate from './blockToDate';
 
 interface Props {
   api?: ApiPromise;
@@ -28,12 +29,12 @@ interface Props {
   crowdloansId?: LinkOption[];
   decimal?: number;
   token?: string;
+  currentBlockNumber: number | undefined
 }
 
-export default function PastCrowdloans({ api, chain, contributedCrowdloans, crowdloansId, decimal, pastCrowdloans, token }: Props): React.ReactElement {
+export default function PastCrowdloans({ api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, pastCrowdloans, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
   const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
@@ -94,7 +95,7 @@ export default function PastCrowdloans({ api, chain, contributedCrowdloans, crow
             {t<string>('End')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='34px' pr='10px' width='fit-content'>
-            {crowdloan.fund.end}
+            {blockToDate(crowdloan.fund.end, currentBlockNumber)}
           </Typography>
         </Grid>
         <Grid container item justifyContent='space-between'>
