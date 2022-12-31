@@ -19,13 +19,15 @@ import { useTranslation } from '../../hooks';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getLogo from '../../util/getLogo';
 import { getWebsiteFavico } from '../../util/utils';
+import blockToDate from './blockToDate';
 
 interface Props {
   api?: ApiPromise;
   activeCrowdloans?: Crowdloan[] | null;
   chain?: Chain | null;
-  contributedCrowdloans?: Map<string, Balance>;
+  contributedCrowdloans?: Map<strig, Balance>;
   crowdloansId?: LinkOption[];
+  currentBlockNumber: number | undefined;
   decimal?: number;
   token?: string;
 }
@@ -35,7 +37,7 @@ interface ArrowsProps {
   onNext: () => void;
 }
 
-export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contributedCrowdloans, crowdloansId, decimal, token }: Props): React.ReactElement {
+export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -126,7 +128,7 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
             {t<string>('End')}
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='34px' pr='10px' width='fit-content'>
-            {crowdloan.fund.end}
+            {blockToDate(crowdloan.fund.end, currentBlockNumber)}
           </Typography>
         </Grid>
         <Grid container item justifyContent='space-between'>

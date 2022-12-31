@@ -269,13 +269,15 @@ export default function CrowdLoans(): React.ReactElement {
 
   const MyContributedCrowdloans = ({ contributedCrowdloans }: { contributedCrowdloans?: Crowdloan[] | null }) => (
     <>
-      {contributedCrowdloans &&
+      {contributedCrowdloans !== undefined &&
         <>
           <BouncingSubTitle label={t<string>('Contributed Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
-          <MyContribution
-            amount={allContributionAmount}
-            number={myContributions?.size}
-          />
+          {!!contributedCrowdloans?.length &&
+            <MyContribution
+              amount={allContributionAmount}
+              number={myContributions?.size}
+            />
+          }
           <Grid container sx={{ height: window.innerHeight - 360, m: 'auto', width: '92%' }}>
             {contributedCrowdloans?.length
               ? contributedCrowdloans.map((crowdloan, index) => (
@@ -339,7 +341,7 @@ export default function CrowdLoans(): React.ReactElement {
                   </Grid>
                 </Grid>))
               : contributedCrowdloans === null &&
-              <Grid container item height='15px' justifyContent='center' mt='30px'>
+              <Grid container height='15px' item justifyContent='center' mt='30px'>
                 <Warning
                   fontWeight={400}
                   theme={theme}
@@ -395,6 +397,7 @@ export default function CrowdLoans(): React.ReactElement {
                   chain={chain}
                   contributedCrowdloans={myContributions}
                   crowdloansId={crowdloansId}
+                  currentBlockNumber={currentBlockNumber}
                   decimal={decimal}
                   token={token}
                 />
