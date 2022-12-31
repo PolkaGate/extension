@@ -9,7 +9,8 @@ import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Avatar, Box, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Language as LanguageIcon } from '@mui/icons-material';
+import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -19,16 +20,19 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { auction, crowdloanActive, pastCrowdloan } from '../../assets/icons'
+import { auctionB, auctionW, crowdloanActiveB, crowdloanActiveW, pastCrowdloanB, pastCrowdloanW } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
-import { useAccount, useApi, useAuction, useChain, useChainName, useFormatted, useMyAccountIdentity, useTranslation } from '../../hooks';
+import { useAccount, useApi, useAuction, useChain, useChainName, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getContributions from '../../util/api/getContributions';
 import getLogo from '../../util/getLogo';
 import { getWebsiteFavico } from '../../util/utils';
 import AccountBrief from '../account/AccountBrief';
+import ActiveCrowdloans from './ActiveCrowdloans';
+import PastCrowdloans from './PastCrowdloans';
+import AuctionTab from './Auction';
 
 interface MCS {
   contributionBlock: number;
@@ -42,14 +46,14 @@ export default function CrowdLoans(): React.ReactElement {
   const theme = useTheme();
   const settings = useContext(SettingsContext);
   const { address } = useParams<{ address: string }>();
+  const auction = useAuction(address);
   const account = useAccount(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const api = useApi(address);
   const identity = useMyAccountIdentity(address);
-  const auctions = useAuction(address);
-  const token = (api && api.registry.chainTokens[0]);
-  const decimal = (api && api.registry.chainDecimals[0]);
+  const token = useToken(address);
+  const decimal = useDecimal(address);
   const chainName = useChainName(address);
   const [myContributions, setMyContributions] = useState<Map<string, Balance> | undefined>();
   const [contributions, setContributions] = useState<Map<string, Balance> | undefined>();
@@ -57,10 +61,42 @@ export default function CrowdLoans(): React.ReactElement {
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
   const [myContributionsSubscan, setMyContributionsSubscan] = useState<Map<number, MCS>>();
   const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
+  const [itemShow, setItemShow] = useState<number>(0);
 
+  const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
+  const sortingCrowdloansReverse = (a: Crowdloan, b: Crowdloan) => Number(b.fund.paraId) - Number(a.fund.paraId);// newest first
+  const activeCrowdloans = useMemo(() => {
+    if (auction === undefined || !auction?.crowdloans) {
+      return undefined;
+    }
+
+    if (auction === null || auction.crowdloans.length === 0) {
+      return null;
+    }
+
+    const actives = auction.crowdloans.filter((c) => c.fund.end > auction.currentBlockNumber && !c.fund.hasLeased).sort(sortingCrowdloans);
+
+    return actives.length ? actives : null;
+  }, [auction]);
+
+  const endedCrowdloans = useMemo(() => {
+    if (auction === undefined || !auction?.crowdloans) {
+      return undefined;
+    }
+
+    if (auction === null || auction.crowdloans.length === 0) {
+      return null;
+    }
+
+    const endeds = auction.crowdloans.filter((c) => c.fund.end < auction.currentBlockNumber || c.fund.hasLeased).sort(sortingCrowdloansReverse);
+
+    return endeds.length ? endeds : null;
+  }, [auction]);
+  // const auctionWinners = useMemo(() => auction?.crowdloans?.filter((c) => c.fund.hasLeased).sort(sortingCrowdloans), [auction]);
+  console.log('endedCrowdloans:', endedCrowdloans)
   const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
-  const paraIds = useMemo(() => auctions?.crowdloans.map((c: Crowdloan) => c.fund.paraId), [auctions?.crowdloans]);
-  const crowdloansID = useMemo(() => {
+  const paraIds = useMemo(() => auction?.crowdloans.map((c: Crowdloan) => c.fund.paraId), [auction?.crowdloans]);
+  const crowdloansId = useMemo(() => {
     if (!paraIds || !allEndpoints.length) {
       return;
     }
@@ -71,11 +107,11 @@ export default function CrowdLoans(): React.ReactElement {
     return endpoints;
   }, [account?.genesisHash, allEndpoints, paraIds]);
 
-  const getName = useCallback((paraId: string): string | undefined => (crowdloansID?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansID]);
-  // const getText = useCallback((paraId: string): string | undefined => (crowdloansID?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansID]);
-  const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansID?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansID]);
-  const getInfo = useCallback((paraId: string): string | undefined => (crowdloansID?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansID]);
-  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavico(crowdloan.identity.info.web || getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+  const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
+  // const getText = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
+  const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
+  const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
+  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavico(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
   const date = useCallback((timestamp?: number) => timestamp ? new Date(timestamp * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A', []);
   const releaseDate = useCallback((blockNumber?: number, currentBlock?: number) => {
     if (!blockNumber || !currentBlock) {
@@ -105,11 +141,11 @@ export default function CrowdLoans(): React.ReactElement {
   };
 
   useEffect(() => {
-    api && api.rpc.chain.getHeader().then((h) => setCurrentBlockNumber(h.number.unwrap()))
+    api && api.rpc.chain.getHeader().then((h) => setCurrentBlockNumber(h.number.unwrap()));
   }, [api]);
 
   useEffect(() => {
-    if (!auctions || !chain || !settings || !api || !paraIds) {
+    if (!auction || !chain || !settings || !api || !paraIds) {
       return;
     }
 
@@ -133,7 +169,7 @@ export default function CrowdLoans(): React.ReactElement {
 
         myContibutionsMap.forEach((item, index) => {
           contributedAmount = contributedAmount?.add(item) as Balance;
-          const mCC = auctions.crowdloans.find((item) => item.fund.paraId === index);
+          const mCC = auction.crowdloans.find((item) => item.fund.paraId === index);
 
           mCC && filterMyContributedCrowdloans.push(mCC);
         });
@@ -142,7 +178,7 @@ export default function CrowdLoans(): React.ReactElement {
 
         setAllContributionamount(contributedAmount);
       }).catch(console.error);
-  }, [address, chain, settings, auctions, api, paraIds]);
+  }, [address, chain, settings, auction, api, paraIds]);
 
   const onBackClick = useCallback(() => {
     const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
@@ -150,17 +186,17 @@ export default function CrowdLoans(): React.ReactElement {
     onAction(url);
   }, [address, chain?.genesisHash, onAction]);
 
-  const goToNominations = useCallback(() => {
-    console.log('true');
-  }, []);
+  const showActiveCrowdloans = useCallback(() => {
+    setItemShow(itemShow !== 1 ? 1 : 0);
+  }, [itemShow]);
 
-  const goToInfo = useCallback(() => {
-    console.log('true');
-  }, []);
+  const showAuction = useCallback(() => {
+    setItemShow(itemShow !== 2 ? 2 : 0);
+  }, [itemShow]);
 
-  const goToPool = useCallback(() => {
-    console.log('true');
-  }, []);
+  const showPastCrowdloans = useCallback(() => {
+    setItemShow(itemShow !== 3 ? 3 : 0);
+  }, [itemShow]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -217,90 +253,114 @@ export default function CrowdLoans(): React.ReactElement {
 
   const MyContribution = ({ amount, number }: { amount: Balance | undefined, number?: number }) => {
     return (
-      <Grid container direction='column' lineHeight='30px' m='10px auto' width='92%'>
-        <Grid container justifyContent='space-between'>
-          <Typography fontSize='16px' fontWeight={300} width='fit-content'>
-            {t<string>('Amount')}
-          </Typography>
-          <Grid fontSize='20px' fontWeight={400} item>
-            <ShowBalance balance={amount} decimal={decimal} decimalPoint={2} token={token} />
-          </Grid>
-        </Grid>
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-        <Grid container justifyContent='space-between'>
-          <Typography fontSize='16px' fontWeight={300} width='fit-content'>
-            {t<string>('Contributed parachains')}
-          </Typography>
-          <Typography fontSize='20px' fontWeight={400} width='fit-content'>
-            {number}
-          </Typography>
-        </Grid>
-      </Grid>);
-  };
-
-  const MyContributedCrowdloans = ({ contributedCrowdloans }: { contributedCrowdloans?: Crowdloan[] }) => (
-    <Grid container sx={{ height: window.innerHeight - 350, m: '10px auto 0', width: '92%' }}>
-      {contributedCrowdloans
-        ? contributedCrowdloans.map((crowdloan, index) => (
-          <Grid container direction='column' height='87px' item key={index} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
-            <Grid container height='30px' item lineHeight='30px'>
-              <Grid alignItems='center' container item justifyContent='center' xs={1.5}>
-                <Avatar
-                  src={logo(crowdloan)}
-                  sx={{ height: 20, width: 20 }}
-                />
-              </Grid>
-              <Grid item xs={10.5}>
-                {!crowdloan.identity.info.display
-                  ? <Typography fontSize='16px' fontWeight={400} lineHeight='30px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-                    {getName(crowdloan.fund.paraId)}
-                  </Typography>
-                  : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} identiconSize={15} noIdenticon />
-                }
-              </Grid>
-            </Grid>
-            <Grid container item sx={{ borderBlock: '1px solid', borderBlockColor: 'secondary.light', height: '28px' }}>
-              <Grid item xs={4}>
-                <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
-                  {t<string>('Date')}
-                </Typography>
-              </Grid>
-              <Grid item sx={{ borderInline: '1px solid', borderInlineColor: 'secondary.light' }} xs={4}>
-                <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
+      <>
+        {
+          number !== undefined
+            ? <Grid container direction='column' lineHeight='30px' m='10px auto' width='92%'>
+              <Grid container justifyContent='space-between'>
+                <Typography fontSize='16px' fontWeight={300} width='fit-content'>
                   {t<string>('Amount')}
                 </Typography>
+                <Grid fontSize='20px' fontWeight={400} item>
+                  <ShowBalance balance={amount} decimal={decimal} decimalPoint={2} token={token} />
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
-                  {t<string>('Release date')}
+              <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+              <Grid container justifyContent='space-between'>
+                <Typography fontSize='16px' fontWeight={300} width='fit-content'>
+                  {t<string>('Contributed parachains')}
+                </Typography>
+                <Typography fontSize='20px' fontWeight={400} width='fit-content'>
+                  {number}
                 </Typography>
               </Grid>
             </Grid>
-            <Grid container item height='27px'>
-              <Grid item xs={4}>
-                <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
-                  {date(crowdloan.fund.contributionTimestamp)}
-                </Typography>
+            : <Progress pt='100px' size={100} title={t('Loading your contribution...')} />
+        }
+      </>
+    );
+  };
+
+  const MyContributedCrowdloans = ({ contributedCrowdloans }: { contributedCrowdloans?: Crowdloan[] | null }) => (
+    <>
+      <BouncingSubTitle label={t<string>('Contributed Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
+      {myContributedCrowdloansToShow && <MyContribution amount={allContributionAmount} number={myContributions?.size} />}
+      <Grid container sx={{ height: window.innerHeight - 360, m: 'auto', width: '92%' }}>
+        {contributedCrowdloans?.length
+          ? contributedCrowdloans.map((crowdloan, index) => (
+            <Grid container direction='column' height='87px' item key={index} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
+              <Grid container height='30px' item lineHeight='30px'>
+                <Grid alignItems='center' container item justifyContent='center' xs={1.5}>
+                  <Avatar
+                    src={logo(crowdloan)}
+                    sx={{ height: 20, width: 20 }}
+                  />
+                </Grid>
+                <Grid item xs={10.5}>
+                  {getName(crowdloan.fund.paraId)
+                    ? <Grid container item width={getHomePage(crowdloan.fund.paraId) ? '90%' : '100%'}>
+                      <Typography fontSize='16px' fontWeight={400} lineHeight='30px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                        {getName(crowdloan.fund.paraId)}
+                      </Typography>
+                      {getHomePage(crowdloan.fund.paraId) &&
+                        <Grid alignItems='center' container item justifyContent='center' lineHeight='15px' width='10%'>
+                          <Link href={getHomePage(crowdloan.fund.paraId)} rel='noreferrer' target='_blank'>
+                            <LanguageIcon sx={{ color: '#007CC4', fontSize: 17 }} />
+                          </Link>
+                        </Grid>
+                      }
+                    </Grid>
+                    : <Identity address={crowdloan.fund.depositor} formatted={crowdloan.fund.depositor} api={api} chain={chain} identiconSize={15} noIdenticon />
+                  }
+                </Grid>
               </Grid>
-              <Grid item alignItems='center' sx={{ '> div': { lineHeight: '26px', width: 'auto' }, borderInline: '1px solid', borderInlineColor: 'secondary.light', fontSize: '14px', fontWeight: 400 }} xs={4}>
-                <ShowBalance balance={myContributions?.get(crowdloan.fund.paraId)} decimal={decimal} decimalPoint={2} token={token} />
+              <Grid container item sx={{ borderBlock: '1px solid', borderColor: 'secondary.light', height: '28px' }}>
+                <Grid item xs={4}>
+                  <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
+                    {t<string>('Date')}
+                  </Typography>
+                </Grid>
+                <Grid item sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} xs={4}>
+                  <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
+                    {t<string>('Amount')}
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography fontSize='12px' fontWeight={300} lineHeight='26px' textAlign='center'>
+                    {t<string>('Release date')}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
-                  {releaseDate(crowdloan.fund.unlockingBlock, currentBlockNumber)}
-                </Typography>
+              <Grid container height='27px' item>
+                <Grid item xs={4}>
+                  <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
+                    {date(crowdloan.fund.contributionTimestamp)}
+                  </Typography>
+                </Grid>
+                <Grid alignItems='center' item sx={{ '> div': { lineHeight: '26px', width: 'auto' }, borderInline: '1px solid', borderColor: 'secondary.light', fontSize: '14px', fontWeight: 400 }} xs={4}>
+                  <ShowBalance balance={myContributions?.get(crowdloan.fund.paraId)} decimal={decimal} decimalPoint={2} token={token} />
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
+                    {releaseDate(crowdloan.fund.unlockingBlock, currentBlockNumber)}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-          </Grid>))
-        : contributedCrowdloans === null &&
-        <Grid container item>
-          <Typography fontSize='16px' fontWeight={400} m='100px auto 0' textAlign='center' width='75%'>
-            {t<string>('You haven\'t contributed to any crowdloans yet.')}
-          </Typography>
-        </Grid>
-      }
-    </Grid>
+            </Grid>))
+          : contributedCrowdloans === null &&
+          <Grid container item height='15px' justifyContent='center' mt='30px'>
+            <Warning
+              fontWeight={400}
+              theme={theme}
+            >
+              {t<string>('No contribution found.')}
+            </Warning>
+          </Grid>
+        }
+      </Grid>
+    </>
   );
+  // t<string>(`Action ${auction.auctionCounter}#`) : t<string>('Past Crowdloans')
 
   return (
     <>
@@ -314,12 +374,11 @@ export default function CrowdLoans(): React.ReactElement {
       />
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} identity={identity} />
-        <BouncingSubTitle label={t<string>('Contributed Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
       </Container>
       <Grid container>
-        {auctions === undefined &&
-          <Progress pt='95px' size={125} title={t('Loading Auction/Crowdloans...')} />}
-        {auctions === null &&
+        {auction === undefined &&
+          <Progress pt='105px' size={125} title={t('Loading Auction/Crowdloans...')} />}
+        {auction === null &&
           <Grid color='red' height='30px' m='auto' pt='50px' width='92%'>
             <Warning
               fontWeight={400}
@@ -331,30 +390,56 @@ export default function CrowdLoans(): React.ReactElement {
             </Warning>
           </Grid>
         }
-        {auctions &&
+        {auction &&
           <>
-            <MyContribution amount={allContributionAmount} number={myContributions?.size} />
-            <MyContributedCrowdloans contributedCrowdloans={myContributedCrowdloansToShow} />
+            {itemShow === 0 &&
+              <MyContributedCrowdloans contributedCrowdloans={myContributedCrowdloansToShow} />
+            }
+            {itemShow === 1 &&
+              <ActiveCrowdloans
+                activeCrowdloans={activeCrowdloans}
+                api={api}
+                chain={chain}
+                contributedCrowdloans={myContributions}
+                crowdloansId={crowdloansId}
+                decimal={decimal}
+                token={token}
+              />
+            }
+            {/* {itemShow === 2 &&
+              <AuctionTab />
+            } */}
+            {itemShow === 3 &&
+              <PastCrowdloans
+                api={api}
+                chain={chain}
+                contributedCrowdloans={myContributions}
+                crowdloansId={crowdloansId}
+                decimal={decimal}
+                pastCrowdloans={endedCrowdloans}
+                token={token}
+              />
+            }
           </>
         }
       </Grid>
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '3px', width: '92%' }}>
         <HorizontalMenuItem
           divider
-          icon={<Box component='img' src={crowdloanActive as string} sx={{ height: '35px' }} />}
-          onClick={goToNominations}
+          icon={<Box component='img' src={theme.palette.mode === 'light' ? crowdloanActiveB as string : crowdloanActiveW as string} sx={{ height: '35px' }} />}
+          onClick={showActiveCrowdloans}
           title={t<string>('Active Crowdloans')}
         />
         <HorizontalMenuItem
           divider
           exceptionWidth={85}
-          icon={<Box component='img' src={auction as string} sx={{ height: '35px' }} />}
-          onClick={goToPool}
+          icon={<Box component='img' src={theme.palette.mode === 'light' ? auctionB as string : auctionW as string} sx={{ height: '35px' }} />}
+          onClick={showAuction}
           title={t<string>('Auction')}
         />
         <HorizontalMenuItem
-          icon={<Box component='img' src={pastCrowdloan as string} sx={{ height: '35px' }} />}
-          onClick={goToInfo}
+          icon={<Box component='img' src={theme.palette.mode === 'light' ? pastCrowdloanB as string : pastCrowdloanW as string} sx={{ height: '35px' }} />}
+          onClick={showPastCrowdloans}
           title={t<string>('Past Crowdloans')}
         />
       </Grid>
