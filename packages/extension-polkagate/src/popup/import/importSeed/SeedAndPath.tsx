@@ -41,7 +41,7 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
     if (!seed) {
       onAccountChange(null);
       setError('');
-      
+
       return;
     }
 
@@ -104,7 +104,7 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
           </Warning>
         )}
         <DropdownWithIcon
-          defaultValue={genesisOptions[0].text}
+          defaultValue={newChain?.genesisHash || genesisOptions[0].text}
           icon={getLogo(newChain ?? undefined)}
           label={t<string>('Select the chain')}
           onChange={_onChangeNetwork}

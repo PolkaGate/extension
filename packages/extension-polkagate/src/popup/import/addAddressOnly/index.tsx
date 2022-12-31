@@ -82,7 +82,7 @@ export default function AddProxy(): React.ReactElement {
         {t('Enter just your account\'s public information (no private key), this can be used as e.g., watch only, and proxied account.')}
       </Typography>
       <DropdownWithIcon
-        defaultValue={genesisOptions[0].text}
+        defaultValue={chain?.genesisHash || genesisOptions[0].text}
         icon={getLogo(chain ?? undefined)}
         label={t<string>('Select the chain')}
         onChange={_onChangeGenesis}
