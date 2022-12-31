@@ -49,9 +49,10 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const token = useToken(formatted);
   const [tabIndex, setTabIndex] = useState<number>(state?.tabIndex ?? 1);
   const [isRefreshing, setRefresh] = useState<boolean>(false);
-  const localHistories = useRef<TransactionDetail[] | []>([]);
+  // const localHistories = useRef<TransactionDetail[] | []>([]);
   const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
+  const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null>([]);
 
   function stateReducer(state: object, action: RecordTabStatus) {
     return Object.assign({}, state, action);
@@ -123,7 +124,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
   }, [formatted, transfersTx]);
 
   useEffect(() => {
-    const filteredLocalHistories = localHistories.current.filter((h1) => !fetchedHistoriesFromSubscan.find((h2) => h1.txHash === h2.txHash));
+    const filteredLocalHistories = localHistories?.filter((h1) => !fetchedHistoriesFromSubscan.find((h2) => h1.txHash === h2.txHash));
 
     let history = filteredLocalHistories.concat(fetchedHistoriesFromSubscan);
 
@@ -142,15 +143,15 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
     setTabHistory(history);
     setRefresh(false);
-  }, [tabIndex, fetchedHistoriesFromSubscan]);
+  }, [tabIndex, fetchedHistoriesFromSubscan, localHistories]);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
   }, []);
 
   useEffect(() => {
-    formatted && getHistoryFromStorage(formatted).then((h) => {
-      localHistories.current = h || [];
+    formatted && getHistoryFromStorage(String(formatted)).then((h) => {
+      setLocalHistories(h || []);
     }).catch(console.error);
   }, [formatted, chainName, isRefreshing]);
 
@@ -307,7 +308,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
           />
         </Tabs>
       </Box>
-      {grouped
+      {Object.keys(grouped).length !== 0
         ? <Grid container id='scrollArea' item sx={{ height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
           {Object.entries(grouped)?.map((group) => {
             const [date, info] = group;
@@ -336,7 +337,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
               // staking transaction history is saved locally
               tabIndex !== TAB_MAP.STAKING &&
               ((transfersTx?.hasMore)
-                ? 'Loading ...'
+                ? 'loading...'
                 : !!tabHistory.length &&
                 <Box fontSize={11}>
                   {t('No more transactions to load')}
