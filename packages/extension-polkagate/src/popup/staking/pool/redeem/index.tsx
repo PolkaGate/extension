@@ -180,6 +180,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
         </Container>
         <PasswordUseProxyConfirm
           api={api}
+          estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}

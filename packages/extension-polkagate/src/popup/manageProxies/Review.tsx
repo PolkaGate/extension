@@ -199,6 +199,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       <PasswordUseProxyConfirm
         api={api}
         confirmText={t<string>('Next')}
+        estimatedFee={estimatedFee}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}
         label={`${t<string>('Password')} for ${selectedProxyName || account?.name}`}

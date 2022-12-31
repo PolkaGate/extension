@@ -122,7 +122,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
           type={type}
         />
       }
-      <Grid sx={{ bottom: '20px', left: 0, position: 'absolute', transition: 'all 0.3s', width: quickActionOpen === undefined ? '14px' : '100%' }}>
+      <Grid sx={{ bottom: '20px', left: 0, position: 'absolute', transition: ' 0.3s', width: quickActionOpen === undefined ? '14px' : '100%' }}>
         <QuickAction address={address} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>
     </Grid>

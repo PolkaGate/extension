@@ -3,20 +3,24 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+
 import { Grid, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useAccount, useMetadata, useTranslation } from '../hooks';
+import { useAccount, useCanPayFee, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
 import { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 import { Identity, Password, PButton, Warning } from '.';
 
 interface Props {
   api: ApiPromise | undefined;
-  proxiedAddress: string | AccountId | undefined | null;
+  estimatedFee?: BN;
+  confirmDisabled?: boolean;
+  confirmText?: string
   defaultValue?: string | null;
   disabled?: boolean;
   isPasswordError?: boolean;
@@ -26,9 +30,10 @@ interface Props {
   onChange: React.Dispatch<React.SetStateAction<string | undefined>>
   onEnter?: () => void;
   placeholder?: string;
+  proxiedAddress: string | AccountId | undefined | null;
   value?: string;
   withoutMargin?: boolean;
-  genesisHash: string;
+  genesisHash: string | undefined;
   prevState?: Record<string, any>;
   proxyTypeFilter: ProxyTypes[];
   style?: SxProps<Theme>;
@@ -37,13 +42,12 @@ interface Props {
   selectedProxy: Proxy | undefined;
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirmClick: () => Promise<void>
-  confirmText?: string
-  confirmDisabled?: boolean;
 }
 
-export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, defaultValue, disabled, genesisHash, isFocused, isPasswordError, isReadOnly, label = '', onChange, onConfirmClick, onEnter, placeholder, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, defaultValue, disabled, estimatedFee, genesisHash, isFocused, isPasswordError, isReadOnly, label = '', onChange, onConfirmClick, onEnter, placeholder, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const canPayFee = useCanPayFee(selectedProxy || proxiedAddress, estimatedFee);
   const account = useAccount(proxiedAddress);
   const chain = useMetadata(genesisHash, true);
   const [password, setPassword] = useState<string>();
@@ -85,79 +89,88 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
               text={t<string>('Use Proxy')}
             />
           </>
-          : <>
-            <Grid alignItems='center' container sx={{ ...style }}>
-              <Grid item xs={proxies?.length ? 8 : 12}>
-                <Password
-                  defaultValue={defaultValue}
-                  disabled={disabled}
-                  isError={isPasswordError}
-                  isFocused={isFocused}
-                  isReadOnly={isReadOnly}
-                  label={label}
-                  onChange={_onChange}
-                  onEnter={onConfirmClick}
-                  placeholder={placeholder}
-                  withoutMargin={withoutMargin}
-                />
-              </Grid>
-              {(!!proxies?.length || prevState?.selectedProxyAddress) &&
-                <Tooltip
-                  arrow
-                  componentsProps={{
-                    popper: {
-                      sx: {
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        visibility: selectedProxy ? 'visible' : 'hidden'
-                      }
-                    },
-                    tooltip: {
-                      sx: {
-                        '& .MuiTooltip-arrow': {
-                          color: '#fff',
-                          height: '10px'
-                        },
-                        backgroundColor: '#fff',
-                        color: '#000',
-                        // fontSize: copied ? '16px' : '14px',
-                        fontWeight: 400
-                      }
-                    }
-                  }}
-                  leaveDelay={300}
-                  placement='top-start'
-                  title={
-                    <>
-                      {selectedProxy &&
-                        <Identity
-                          chain={chain}
-                          formatted={selectedProxy?.delegate}
-                          identiconSize={30}
-                          style={{ fontSize: '14px' }}
-                        />
-                      }
-                    </>
-                  }
-                >
-                  <Grid item onClick={goToSelectProxy} pl='10px' pt='10px' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
-                    {selectedProxy ? t('Update proxy') : t('Use proxy')}
-                  </Grid>
-                </Tooltip>
-              }
+          : canPayFee === false
+            ? <Grid container item sx={{ bottom: '50px', position: 'absolute' }}>
+              <Warning
+                fontWeight={300}
+                theme={theme}
+              >
+                {t('This account doesn\'t have enough available balance to pay the transaction fee.')}
+              </Warning>
             </Grid>
-            <PButton
-              _onClick={onConfirmClick}
-              disabled={!password || isPasswordError || confirmDisabled}
-              text={confirmText ?? t<string>('Confirm')}
-            />
-          </>
+            : <>
+              <Grid alignItems='center' container sx={{ ...style }}>
+                <Grid item xs={proxies?.length ? 8 : 12}>
+                  <Password
+                    defaultValue={defaultValue}
+                    disabled={disabled}
+                    isError={isPasswordError}
+                    isFocused={isFocused}
+                    isReadOnly={isReadOnly}
+                    label={label}
+                    onChange={_onChange}
+                    onEnter={onConfirmClick}
+                    placeholder={placeholder}
+                    withoutMargin={withoutMargin}
+                  />
+                </Grid>
+                {(!!proxies?.length || prevState?.selectedProxyAddress) &&
+                  <Tooltip
+                    arrow
+                    componentsProps={{
+                      popper: {
+                        sx: {
+                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                            mb: '3px',
+                            p: '3px 15px'
+                          },
+                          '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                            mb: '3px',
+                            p: '3px 15px'
+                          },
+                          visibility: selectedProxy ? 'visible' : 'hidden'
+                        }
+                      },
+                      tooltip: {
+                        sx: {
+                          '& .MuiTooltip-arrow': {
+                            color: '#fff',
+                            height: '10px'
+                          },
+                          backgroundColor: '#fff',
+                          color: '#000',
+                          // fontSize: copied ? '16px' : '14px',
+                          fontWeight: 400
+                        }
+                      }
+                    }}
+                    leaveDelay={300}
+                    placement='top-start'
+                    title={
+                      <>
+                        {selectedProxy &&
+                          <Identity
+                            chain={chain}
+                            formatted={selectedProxy?.delegate}
+                            identiconSize={30}
+                            style={{ fontSize: '14px' }}
+                          />
+                        }
+                      </>
+                    }
+                  >
+                    <Grid item onClick={goToSelectProxy} pl='10px' pt='10px' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
+                      {selectedProxy ? t('Update proxy') : t('Use proxy')}
+                    </Grid>
+                  </Tooltip>
+                }
+              </Grid>
+              <PButton
+                _onClick={onConfirmClick}
+                disabled={!password || isPasswordError || confirmDisabled}
+                text={confirmText ?? t<string>('Confirm')}
+              />
+            </>
         }
       </Grid>
       <SelectProxy

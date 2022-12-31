@@ -34,14 +34,14 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
-      <Grid container item justifyContent='center' alignItems='center'>
+      <Grid alignItems='center' container item justifyContent='center'>
         {logo &&
-          <Grid item mr='7px'>
+          <Grid container sx={{ width: 'fit-content' }} item mr='7px' alignItems='center'>
             {logo}
           </Grid>
         }
         <Grid item>
-          <Infotip iconLeft={6} iconTop={8} showQuestionMark={!noToolTip && showQuestionMark} text={helperText} placement={tipPlace}>
+          <Infotip iconLeft={6} iconTop={8} placement={tipPlace} showQuestionMark={!noToolTip && showQuestionMark} text={helperText}>
             <Typography fontSize='20px' fontWeight={400}>
               {title}
             </Typography>
