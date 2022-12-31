@@ -96,6 +96,7 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
+              disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
               key={value}
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value || text}
