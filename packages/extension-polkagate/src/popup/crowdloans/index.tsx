@@ -30,9 +30,9 @@ import getContributions from '../../util/api/getContributions';
 import getLogo from '../../util/getLogo';
 import { getWebsiteFavico } from '../../util/utils';
 import AccountBrief from '../account/AccountBrief';
+import blockToDate from './partials/blockToDate';
 import ActiveCrowdloans from './ActiveCrowdloans';
 import AuctionTab from './Auction';
-import blockToDate from './blockToDate';
 import PastCrowdloans from './PastCrowdloans';
 
 interface MCS {
@@ -101,9 +101,6 @@ export default function CrowdLoans(): React.ReactElement {
     return endeds.length ? endeds : null;
   }, [auction]);
 
-  // const auctionWinners = useMemo(() => auction?.crowdloans?.filter((c) => c.fund.hasLeased).sort(sortingCrowdloans), [auction]);
-  console.log('endedCrowdloans:', endedCrowdloans);
-
   const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
   const paraIds = useMemo(() => auction?.crowdloans.map((c: Crowdloan) => c.fund.paraId), [auction?.crowdloans]);
   const crowdloansId = useMemo(() => {
@@ -118,7 +115,6 @@ export default function CrowdLoans(): React.ReactElement {
   }, [account?.genesisHash, allEndpoints, paraIds]);
 
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
-  // const getText = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
   const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
   const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavico(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
@@ -355,7 +351,6 @@ export default function CrowdLoans(): React.ReactElement {
       }
     </>
   );
-  // t<string>(`Action ${auction.auctionCounter}#`) : t<string>('Past Crowdloans')
 
   return (
     <>
