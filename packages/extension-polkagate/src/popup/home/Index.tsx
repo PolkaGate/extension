@@ -33,7 +33,7 @@ export default function Home(): React.ReactElement {
   useEffect(() => {
     cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
-    }).catch(null);
+    }).catch(() => null);
   }, []);
 
   useEffect(() => {
