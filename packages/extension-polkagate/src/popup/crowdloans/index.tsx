@@ -32,6 +32,7 @@ import { getWebsiteFavico } from '../../util/utils';
 import AccountBrief from '../account/AccountBrief';
 import ActiveCrowdloans from './ActiveCrowdloans';
 import AuctionTab from './Auction';
+import blockToDate from './blockToDate';
 import PastCrowdloans from './PastCrowdloans';
 
 interface MCS {
@@ -99,7 +100,7 @@ export default function CrowdLoans(): React.ReactElement {
 
     return endeds.length ? endeds : null;
   }, [auction]);
-  
+
   // const auctionWinners = useMemo(() => auction?.crowdloans?.filter((c) => c.fund.hasLeased).sort(sortingCrowdloans), [auction]);
   console.log('endedCrowdloans:', endedCrowdloans);
 
@@ -122,23 +123,6 @@ export default function CrowdLoans(): React.ReactElement {
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
   const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavico(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
   const date = useCallback((timestamp?: number) => timestamp ? new Date(timestamp * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A', []);
-  const releaseDate = useCallback((blockNumber?: number, currentBlock?: number) => {
-    if (!blockNumber || !currentBlock) {
-      return 'N/A';
-    }
-
-    if (blockNumber >= currentBlock) {
-      const time = (blockNumber - currentBlock) * 6000;
-      const now = Date.now();
-
-      return new Date(now + time).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-    }
-
-    const diff = (currentBlock - blockNumber) * 6000;
-    const now = Date.now();
-
-    return new Date(now - diff).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-  }, []);
 
   const getHexEncodedAddress = (api: ApiPromise, chain: Chain, address: string, settings: SettingsStruct): string => {
     const prefix: number = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
@@ -349,7 +333,7 @@ export default function CrowdLoans(): React.ReactElement {
                     </Grid>
                     <Grid item xs={4}>
                       <Typography fontSize='14px' fontWeight={400} lineHeight='27px' textAlign='center'>
-                        {releaseDate(crowdloan.fund.unlockingBlock, currentBlockNumber)}
+                        {blockToDate(crowdloan.fund.unlockingBlock, currentBlockNumber)}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -424,6 +408,7 @@ export default function CrowdLoans(): React.ReactElement {
                   chain={chain}
                   contributedCrowdloans={myContributions}
                   crowdloansId={crowdloansId}
+                  currentBlockNumber={currentBlockNumber}
                   decimal={decimal}
                   pastCrowdloans={endedCrowdloans}
                   token={token}
