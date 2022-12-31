@@ -185,8 +185,12 @@ function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genes
       )}
       {renderMethod(method, decoded, t)}
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('Time to sign')}</Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>{mortalityAsString(era, blockNumber, t)}</Typography>
+        <Typography fontWeight={300} width='35%'>
+          {t<string>('Time to sign')}
+        </Typography>
+        <Typography fontWeight={400} textAlign='right' width='65%'>
+          {mortalityAsString(era, blockNumber, t)}
+        </Typography>
       </Grid>
     </Grid>
   );
