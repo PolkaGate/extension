@@ -23,7 +23,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
-import { useAccount, useApi, useAuction, useChain, useChainName, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
+import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getContributions from '../../util/api/getContributions';
@@ -45,7 +45,7 @@ const TAB_MAP = {
   ACTIVE_CROWDLOANS: 1,
   AUCTION: 2,
   PAST_CROWDLOANS: 3
-}
+};
 
 export default function CrowdLoans(): React.ReactElement {
   const { t } = useTranslation();
@@ -53,6 +53,7 @@ export default function CrowdLoans(): React.ReactElement {
   const theme = useTheme();
   const settings = useContext(SettingsContext);
   const { address } = useParams<{ address: string }>();
+  const currentBlockNumber = useCurrentBlockNumber(address);
   const auction = useAuction(address);
   const account = useAccount(address);
   const formatted = useFormatted(address);
@@ -67,7 +68,6 @@ export default function CrowdLoans(): React.ReactElement {
   const [allContributionAmount, setAllContributionAmount] = useState<Balance | undefined>();
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
-  const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
   const [itemShow, setItemShow] = useState<number>(0);
 
   const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
@@ -99,8 +99,10 @@ export default function CrowdLoans(): React.ReactElement {
 
     return endeds.length ? endeds : null;
   }, [auction]);
+  
   // const auctionWinners = useMemo(() => auction?.crowdloans?.filter((c) => c.fund.hasLeased).sort(sortingCrowdloans), [auction]);
-  console.log('endedCrowdloans:', endedCrowdloans)
+  console.log('endedCrowdloans:', endedCrowdloans);
+
   const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
   const paraIds = useMemo(() => auction?.crowdloans.map((c: Crowdloan) => c.fund.paraId), [auction?.crowdloans]);
   const crowdloansId = useMemo(() => {
@@ -146,10 +148,6 @@ export default function CrowdLoans(): React.ReactElement {
 
     return api.createType('AccountId', encodedAddress).toHex();
   };
-
-  useEffect(() => {
-    api && api.rpc.chain.getHeader().then((h) => setCurrentBlockNumber(h.number.unwrap()));
-  }, [api]);
 
   useEffect(() => {
     if (!auction || !chain || !settings || !api || !paraIds) {

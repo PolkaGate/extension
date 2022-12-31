@@ -52,7 +52,7 @@ export default function PastCrowdloans({ api, chain, contributedCrowdloans, crow
         <Grid container item xs={8}>
           {getName(crowdloan.fund.paraId)
             ? <Grid container item>
-              <Typography fontSize='16px' fontWeight={400} lineHeight='47px' maxWidth={getHomePage(crowdloan.fund.paraId) ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
+              <Typography sx={{ fontSize: '16px', fontWeight: 500 }} lineHeight='47px' maxWidth={getHomePage(crowdloan.fund.paraId) ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
                 {getName(crowdloan.fund.paraId)}
               </Typography>
               {getHomePage(crowdloan.fund.paraId) &&
