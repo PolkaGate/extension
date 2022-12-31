@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { auctionB, auctionW, crowdloanActiveB, crowdloanActiveW, pastCrowdloanB, pastCrowdloanW } from '../../assets/icons';
+import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAccount, useApi, useAuction, useChain, useChainName, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
@@ -31,13 +31,20 @@ import getLogo from '../../util/getLogo';
 import { getWebsiteFavico } from '../../util/utils';
 import AccountBrief from '../account/AccountBrief';
 import ActiveCrowdloans from './ActiveCrowdloans';
-import PastCrowdloans from './PastCrowdloans';
 import AuctionTab from './Auction';
+import PastCrowdloans from './PastCrowdloans';
 
 interface MCS {
   contributionBlock: number;
   contributionTimestamp: number;
   unlockingBlock: number;
+}
+
+const TAB_MAP = {
+  MY_CONTRIBUTION: 0,
+  ACTIVE_CROWDLOANS: 1,
+  AUCTION: 2,
+  PAST_CROWDLOANS: 3
 }
 
 export default function CrowdLoans(): React.ReactElement {
@@ -57,7 +64,7 @@ export default function CrowdLoans(): React.ReactElement {
   const chainName = useChainName(address);
   const [myContributions, setMyContributions] = useState<Map<string, Balance> | undefined>();
   const [contributions, setContributions] = useState<Map<string, Balance> | undefined>();
-  const [allContributionAmount, setAllContributionamount] = useState<Balance | undefined>();
+  const [allContributionAmount, setAllContributionAmount] = useState<Balance | undefined>();
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
   const [myContributionsSubscan, setMyContributionsSubscan] = useState<Map<number, MCS>>();
   const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
@@ -176,7 +183,7 @@ export default function CrowdLoans(): React.ReactElement {
 
         setMyContributedCrowdloans(filterMyContributedCrowdloans);
 
-        setAllContributionamount(contributedAmount);
+        setAllContributionAmount(contributedAmount);
       }).catch(console.error);
   }, [address, chain, settings, auction, api, paraIds]);
 
@@ -187,20 +194,19 @@ export default function CrowdLoans(): React.ReactElement {
   }, [address, chain?.genesisHash, onAction]);
 
   const showActiveCrowdloans = useCallback(() => {
-    setItemShow(itemShow !== 1 ? 1 : 0);
+    setItemShow(itemShow !== TAB_MAP.ACTIVE_CROWDLOANS ? TAB_MAP.ACTIVE_CROWDLOANS : TAB_MAP.MY_CONTRIBUTION);
   }, [itemShow]);
 
   const showAuction = useCallback(() => {
-    setItemShow(itemShow !== 2 ? 2 : 0);
+    setItemShow(itemShow !== TAB_MAP.AUCTION ? TAB_MAP.AUCTION : TAB_MAP.MY_CONTRIBUTION);
   }, [itemShow]);
 
   const showPastCrowdloans = useCallback(() => {
-    setItemShow(itemShow !== 3 ? 3 : 0);
+    setItemShow(itemShow !== TAB_MAP.PAST_CROWDLOANS ? TAB_MAP.PAST_CROWDLOANS : TAB_MAP.MY_CONTRIBUTION);
   }, [itemShow]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    chainName && formatted && void getContributions(chainName, String(formatted)).then((c) => {
+    chainName && formatted && getContributions(chainName, String(formatted)).then((c) => {
       const mCS = c.data.list;
 
       if (mCS?.length) {
@@ -377,7 +383,8 @@ export default function CrowdLoans(): React.ReactElement {
       </Container>
       <Grid container>
         {auction === undefined &&
-          <Progress pt='105px' size={125} title={t('Loading Auction/Crowdloans...')} />}
+          <Progress pt='105px' size={125} title={t('Loading Auction/Crowdloans...')} />
+        }
         {auction === null &&
           <Grid color='red' height='30px' m='auto' pt='50px' width='92%'>
             <Warning
@@ -393,7 +400,9 @@ export default function CrowdLoans(): React.ReactElement {
         {auction &&
           <>
             {itemShow === 0 &&
-              <MyContributedCrowdloans contributedCrowdloans={myContributedCrowdloansToShow} />
+              <MyContributedCrowdloans
+                contributedCrowdloans={myContributedCrowdloansToShow}
+              />
             }
             {itemShow === 1 &&
               <ActiveCrowdloans
@@ -426,19 +435,48 @@ export default function CrowdLoans(): React.ReactElement {
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '3px', width: '92%' }}>
         <HorizontalMenuItem
           divider
-          icon={<Box component='img' src={theme.palette.mode === 'light' ? crowdloanActiveB as string : crowdloanActiveW as string} sx={{ height: '35px' }} />}
+          icon={
+            <Box
+              component='img'
+              src={
+                itemShow === TAB_MAP.ACTIVE_CROWDLOANS
+                  ? activeCrowdloanRed as string
+                  : theme.palette.mode === 'light'
+                    ? activeCrowdloanBlack as string
+                    : activeCrowdloanWhite as string}
+              sx={{ height: '35px' }} />
+          }
           onClick={showActiveCrowdloans}
           title={t<string>('Active Crowdloans')}
         />
         <HorizontalMenuItem
           divider
           exceptionWidth={85}
-          icon={<Box component='img' src={theme.palette.mode === 'light' ? auctionB as string : auctionW as string} sx={{ height: '35px' }} />}
+          icon={
+            <Box
+              component='img'
+              src={
+                itemShow === TAB_MAP.AUCTION
+                  ? auctionRed as string
+                  : theme.palette.mode === 'light'
+                    ? auctionBlack as string
+                    : auctionWhite as string}
+              sx={{ height: '35px' }} />}
           onClick={showAuction}
           title={t<string>('Auction')}
         />
         <HorizontalMenuItem
-          icon={<Box component='img' src={theme.palette.mode === 'light' ? pastCrowdloanB as string : pastCrowdloanW as string} sx={{ height: '35px' }} />}
+          icon={
+            <Box
+              component='img'
+              src={
+                itemShow === TAB_MAP.PAST_CROWDLOANS
+                  ? pastCrowdloanRed as string
+                  : theme.palette.mode === 'light'
+                    ? pastCrowdloanBlack as string
+                    : pastCrowdloanWhite as string
+              }
+              sx={{ height: '35px' }} />}
           onClick={showPastCrowdloans}
           title={t<string>('Past Crowdloans')}
         />
