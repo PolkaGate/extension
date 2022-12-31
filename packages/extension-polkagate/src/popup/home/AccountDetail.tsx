@@ -101,7 +101,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   return (
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
-        <Grid item maxWidth='65%'>
+        <Grid item maxWidth='70%'>
           <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {identity?.display || name}
           </Typography>
