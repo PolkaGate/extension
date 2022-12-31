@@ -27,9 +27,9 @@ interface Props {
   chain?: Chain | null;
   contributedCrowdloans?: Map<string, Balance>;
   crowdloansId?: LinkOption[];
+  currentBlockNumber: number | undefined
   decimal?: number;
   token?: string;
-  currentBlockNumber: number | undefined
 }
 
 export default function PastCrowdloans({ api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, pastCrowdloans, token }: Props): React.ReactElement {
