@@ -201,6 +201,7 @@ export default function TuneUp(): React.ReactElement {
         }
         <PasswordUseProxyConfirm
           api={api}
+          estimatedFee={estimatedFee}
           confirmDisabled={!putInFrontInfo?.shouldPutInFront}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}

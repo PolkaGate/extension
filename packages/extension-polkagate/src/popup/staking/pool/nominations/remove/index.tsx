@@ -170,6 +170,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
         </Grid>
         <PasswordUseProxyConfirm
           api={api}
+          estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}

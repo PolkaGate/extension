@@ -13,9 +13,9 @@ import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
+import { FLOATING_POINT_DIGIT } from '../util/constants';
 import FormatBalance from './FormatBalance';
 import { FormatBalance2 } from '.';
-import { FLOATING_POINT_DIGIT } from '../util/constants';
 
 export interface Props {
   balance: Balance | string | BN | null | undefined;

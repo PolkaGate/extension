@@ -28,16 +28,16 @@ function WaitScreen({ show, title }: Props): React.ReactElement {
 
       switch (state) {
         case ('ready'):
-          setText(t<string>('Transaction is ready.'));
+          setText(t<string>('The transaction is ready.'));
           break;
         case ('broadcast'):
-          setText(t<string>('Transaction is sent.'));
+          setText(t<string>('The transaction is sent.'));
           break;
         case ('inBlock'):
-          setText(t<string>('Transaction is now in Blockchain.'));
+          setText(t<string>('The transaction is now in Blockchain.'));
           break;
         default:
-          setText(t<string>(`Transaction is in ${state} state`));
+          setText(t<string>(`The transaction is in ${state} state`));
       }
     }
   }, [t]);

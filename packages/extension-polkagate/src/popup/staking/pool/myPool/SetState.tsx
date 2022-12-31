@@ -193,6 +193,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
         </Typography>
         <PasswordUseProxyConfirm
           api={api}
+          estimatedFee={estimatedFee}
           confirmDisabled={!estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}

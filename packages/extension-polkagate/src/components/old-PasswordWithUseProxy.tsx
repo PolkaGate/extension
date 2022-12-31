@@ -9,7 +9,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useAccount, useMetadata, useTranslation } from '../hooks';
 import SelectProxy from '../partials/SelectProxy';
 import { Proxy, ProxyItem } from '../util/types';
-import { Identity, Password, Warning } from './';
+import { Identity, Password, Warning } from '.';
 
 interface Props {
   api: ApiPromise | undefined;

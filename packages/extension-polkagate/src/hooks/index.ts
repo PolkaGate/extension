@@ -11,6 +11,7 @@ export { default as useMyPools } from './useMyPools';
 export { default as useBalances } from './useBalances';
 export { default as useBalancesInPool } from './useBalancesInPool';
 export { default as useChain } from './useChain';
+export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';
 export { default as useIsMounted } from './useIsMounted';
 export { default as useChainName } from './useChainName';

@@ -13,22 +13,20 @@ import type { AnyTuple } from '@polkadot/types/types';
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, ButtonWithCancel, FormatBalance, Motion, PasswordUseProxyConfirm, PasswordWithUseProxy, PButton, Popup, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
 import { useAccountName, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
-import { MyPoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
+import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -228,6 +226,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
         </Container>
         <PasswordUseProxyConfirm
           api={api}
+          estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}

@@ -248,6 +248,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         </Grid>
         <PasswordUseProxyConfirm
           api={api}
+          estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}

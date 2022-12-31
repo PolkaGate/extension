@@ -9,8 +9,8 @@ import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 import { useChain, useTranslation } from '../hooks';
-import { ChainLogo, Infotip, ShowValue } from '.';
 import { TOTAL_STAKE_HELPER_TEXT } from '../util/constants';
+import { ChainLogo, Infotip, ShowValue } from '.';
 
 interface Props {
   address: string;
