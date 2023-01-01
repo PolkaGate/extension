@@ -1,6 +1,9 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Balance } from '@polkadot/types/interfaces';
+import type { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -31,7 +34,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     }
 
     api && formatted && api.query.nominationPools.poolMembers(formatted).then(async (res) => {
-      const member = res.unwrapOr(undefined);
+      const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
         console.log(`can not find member for ${formatted}`);
@@ -42,7 +45,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
         return setPooledBalance(BN_ZERO); // user does not joined a pool yet. or pool id does not exist
       }
 
-      const poolId = member?.poolId?.toNumber();
+      const poolId = member.poolId;
       const accounts = poolId && getPoolAccounts(api, poolId);
 
       if (!accounts) {
@@ -61,7 +64,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       ]);
 
       const active = member.points.isZero() ? BN_ZERO : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
-      const rewards = new BN(myClaimable);
+      const rewards = myClaimable as Balance;
       let unlockingValue = BN_ZERO;
 
       const parsedUnbondingEras = JSON.parse(JSON.stringify(member?.unbondingEras));
@@ -108,6 +111,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       return;
     }
 
+    /** to fetch a formatted address's balance if not already fetching */
     if (!isFetching.fetching[String(formatted)]?.balances) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {};
@@ -117,7 +121,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       isFetching.set(isFetching.fetching);
       getBalances();
     } else {
-      console.log('Balances is fetching not needs to fetch it again!');
+      console.log(`Balance is fetching for ${formatted}, hence doesn't need to fetch it again!`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.length, token]);
