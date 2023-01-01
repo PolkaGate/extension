@@ -9,9 +9,11 @@ Polkagate extension not only has all the abilities of the original Polkadot exte
 ## New functionalities
 
 Currently, the following features are available:
+  - Add address only account ( to be used as a watch only and proxied address) 
   - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
   - Staking (Solo and Pool Staking)
   - Proxy management
+  - Support different endpoints
   - Transfer funds
   - View balances (crypto/USD)
   - View transaction history
@@ -21,6 +23,7 @@ The following features will be available in the next milestone:
 
   - Governance 1 (vote referendums, endorse proposals, vote/unvote councils, propose treasury proposals and tips, etc.)
   - Identity management
+  - Light client integration 
   - OPenGov (Governance 2)
   - Social Recovery
   
