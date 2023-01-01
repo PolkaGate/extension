@@ -10,7 +10,7 @@ Polkagate extension not only has all the abilities of the original Polkadot exte
 
 Currently, the following features are available:
   - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
-  - Easy staking (Solo and Pool Staking)
+  - Staking (Solo and Pool Staking)
   - Proxy management
   - Transfer funds
   - View balances (crypto/USD)
