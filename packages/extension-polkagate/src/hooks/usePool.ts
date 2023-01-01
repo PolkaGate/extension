@@ -59,6 +59,10 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       setMyPool(parsedInfo);
 
+      /** reset isFetching */
+      isFetching.fetching[String(formatted)].getPool = false;
+      isFetching.set(isFetching.fetching);
+
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${formatted}`;
@@ -72,7 +76,8 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       getPoolWorker.terminate();
     };
-  }, [formatted]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formatted, isFetching.fetching[String(formatted)]?.length]);
 
   useEffect(() => {
     if (pool !== undefined) {
@@ -90,6 +95,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       isFetching.fetching[String(formatted)].getPool = true;
       isFetching.set(isFetching.fetching);
+
       getPoolInfo(endpoint, formatted, id);
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
