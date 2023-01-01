@@ -21,10 +21,9 @@ interface Props {
   token: string;
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
   showDetail: boolean;
-  formatted: string;
 }
 
-export default function Detail({ chainName, formatted, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
+export default function Detail({ chainName, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
@@ -61,11 +60,11 @@ export default function Detail({ chainName, formatted, decimal, info, setShowDet
         showBackArrow
         text={t<string>('Transaction Detail')}
       />
-      <Grid alignItems='center' justifyContent='center' pt='10px' textAlign='center'      >
-        <Typography fontSize='20px' fontWeight={400}        >
+      <Grid alignItems='center' justifyContent='center' pt='10px' textAlign='center'>
+        <Typography fontSize='20px' fontWeight={400}>
           {action}
         </Typography>
-        <Typography fontSize='18px' fontWeight={300}        >
+        <Typography fontSize='18px' fontWeight={300}>
           {subAction}
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '35%' }} />
