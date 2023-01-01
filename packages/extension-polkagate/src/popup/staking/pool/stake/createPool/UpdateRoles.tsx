@@ -51,8 +51,6 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
     setUpdateBtnDisable(!newNominatorId || !newStateTogglerId || (newStateTogglerId === stateTogglerId && newNominatorId === nominatorId));
   }, [newNominatorId, newStateTogglerId, nominatorId, stateTogglerId]);
 
-  console.log('updateBtnDisable:', updateBtnDisable)
-
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='10px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' mb='0' my='20px'>
