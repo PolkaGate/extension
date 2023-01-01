@@ -125,16 +125,9 @@ export default function Send(): React.ReactElement {
   useEffect(() => {
     cryptoWaitReady()
       .then((): void => {
-        console.log('keyring is loading');
-
-        // load all the keyring data
         keyring.loadAll({ store: new AccountsStore() });
-
-        console.log('keyring load completed');
       })
-      .catch((error): void => {
-        console.error('keyring load failed', error);
-      });
+      .catch(() => null);
   }, []);
 
   const _onBackClick = useCallback(() => {
