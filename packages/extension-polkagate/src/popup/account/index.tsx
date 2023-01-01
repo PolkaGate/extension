@@ -30,7 +30,7 @@ import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Id
 import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
-import { STAKING_CHAINS } from '../../util/constants';
+import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
@@ -205,11 +205,11 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, chainName, formatted, history, pathname]);
 
   const goToCrowdLoans = useCallback(() => {
-    formatted &&
+    formatted && CROWDLOANS_CHAINS.includes(genesisHash) &&
       history.push({
         pathname: `/crowdloans/${address}`
       });
-  }, [address, formatted, history]);
+  }, [address, formatted, genesisHash, history]);
 
   const identicon = (
     <Identicon
@@ -330,7 +330,12 @@ export default function AccountDetails(): React.ReactElement {
           />
           <HorizontalMenuItem
             divider
-            icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ color: `${theme.palette.text.primary}`, height: '35px' }} />}
+            icon={
+              <vaadin-icon
+                icon='vaadin:piggy-bank-coin'
+                style={{ color: `${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`, height: '35px' }}
+              />
+            }
             labelMarginTop='-5px'
             onClick={goToCrowdLoans}
             title={t<string>('Crowdloans')}
