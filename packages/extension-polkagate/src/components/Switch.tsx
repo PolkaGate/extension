@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React from 'react';
 import styled from 'styled-components';
@@ -19,7 +19,7 @@ interface Props {
 
 function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, onChange, theme, uncheckedLabel, isChecked = false }: Props): React.ReactElement<Props> {
   return (
-    <div className={className}>
+    <Grid alignItems='center' className={className} container item width='fit-content'>
       <Typography
         display='inline'
         fontSize={fontSize}
@@ -43,7 +43,7 @@ function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, 
       >
         {checkedLabel}
       </Typography>
-    </div>
+    </Grid>
   );
 }
 

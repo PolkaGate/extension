@@ -397,9 +397,9 @@ export default function CrowdLoans(): React.ReactElement {
                   token={token}
                 />
               }
-              {/* {itemShow === 2 &&
-              <AuctionTab />
-            } */}
+              {itemShow === TAB_MAP.AUCTION &&
+                <AuctionTab api={api} auction={auction} currentBlockNumber={currentBlockNumber} />
+              }
               {itemShow === TAB_MAP.PAST_CROWDLOANS &&
                 <PastCrowdloans
                   api={api}
