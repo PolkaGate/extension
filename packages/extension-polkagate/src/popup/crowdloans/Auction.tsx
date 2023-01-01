@@ -58,7 +58,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
     setTimeout(() => setTime(now + 1000), 1000);
 
     return new Date(now).toLocaleDateString('en-US', { day: 'numeric', hour: '2-digit', hourCycle: 'h24', minute: '2-digit', month: 'short', second: '2-digit' })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewType, time]);
 
   const ShowAuction = () => (
@@ -109,7 +109,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
         {end &&
           <LinearProgress
             color='success'
-            sx={{ bgcolor: 'white', border: '0.1px solid', borderColor: 'white', borderRadius: '5px', height: '20px', m: '10px auto 5px', width: '95%' }}
+            sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderColor: 'white', borderRadius: '5px', height: '20px', m: '10px auto 5px', width: '95%' }}
             value={100 * (Number(currentBlockNumber) - start) / (end - start)}
             variant='determinate'
           />
@@ -129,19 +129,19 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
   return (
     <>
+      <BouncingSubTitle label={t<string>(`Auction #${auction.auctionCounter}`)} style={{ fontSize: '20px', fontWeight: 400 }} />
       {auction && !auction.auctionInfo &&
         <Grid container height='15px' item justifyContent='center' mt='30px'>
           <Warning
             fontWeight={400}
             theme={theme}
           >
-            {t<string>('No available active crowdloan.')}
+            {t<string>('No available auction.')}
           </Warning>
         </Grid>
       }
       {auction && auction.auctionInfo &&
         <Grid container item m='auto' width='92%'>
-          <BouncingSubTitle label={t<string>(`Auction #${auction.auctionCounter}`)} style={{ fontSize: '20px', fontWeight: 400 }} />
           <Grid container item justifyContent='flex-end' mt='15px'>
             <Switch
               checkedLabel={t<string>('Block')}
