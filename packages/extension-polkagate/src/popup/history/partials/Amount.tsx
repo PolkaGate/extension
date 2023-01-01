@@ -10,14 +10,7 @@ import { FormatBalance2 } from '../../../components';
 
 export default function Amount({ amount, decimal, label, token }: { label: string, amount: string, decimal: number, token: string }) {
   return (
-    <Grid
-      container
-      fontSize='16px'
-      fontWeight={400}
-      item
-      justifyContent='center'
-      spacing={1}
-    >
+    <Grid container fontSize='16px' fontWeight={400} item justifyContent='center' spacing={1}>
       <Grid item>
         {label}
       </Grid>

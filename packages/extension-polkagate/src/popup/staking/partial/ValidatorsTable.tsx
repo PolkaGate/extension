@@ -15,13 +15,13 @@ import { FixedSizeList as List } from 'react-window';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
+import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { StakingConsts, ValidatorInfo } from '../../../util/types';
-import ValidatorInfoPage from './ValidatorInfo';
 import ShowValidator from './ShowValidator';
+import ValidatorInfoPage from './ValidatorInfo';
 
 interface Props {
   api?: ApiPromise;
@@ -62,7 +62,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
     const sortedNominators = v.exposure.others.sort((a, b) => b.value - a.value);
-    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => n.value < staked.toNumber()) : -1;
+    const maybeMyIndex = staked ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked)) : -1;
 
     return {
       notSafe: v.exposure.others.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),

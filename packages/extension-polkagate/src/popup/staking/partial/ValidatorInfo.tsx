@@ -38,7 +38,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const total = api.createType('Balance', validatorInfo?.exposure.total);
   const commission = Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7);
   const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
-  const myPossibleIndex = staked && myIndex === -1 ? sortedNominators?.findIndex((n) => n.value < staked.toNumber()) : -1;
+  const myPossibleIndex = staked && myIndex === -1 ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked)) : -1;
 
   const closeMenu = useCallback(
     () => setShowValidatorInfo(false),
