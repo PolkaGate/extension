@@ -9,32 +9,10 @@
  * rewardPool.balance: The pool balance at the time of the last payout
  * rewardPool.totalEarnings: The total earnings ever at the time of the last payout
  */
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO, bnMax } from '@polkadot/util';
 
 import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
-
-async function getMyPendingRewards(api, member, poolPoints, rewardPool, rewardAccount) {
-  const existentialDeposit = api.consts.balances.existentialDeposit;
-  const balance = (await api.query.system.account(rewardAccount)).data.free.sub(
-    existentialDeposit
-  );
-
-  const payoutSinceLastRecord = balance
-    .add(new BN(rewardPool.totalRewardsClaimed))
-    .sub(new BN(rewardPool.lastRecordedTotalPayouts));
-  const rewardCounterBase = new BN(10).pow(new BN(18));
-  const currentRewardCounter = (
-    poolPoints.isZero()
-      ? BN_ZERO
-      : payoutSinceLastRecord.mul(rewardCounterBase).div(poolPoints)
-  ).add(rewardPool.lastRecordedRewardCounter);
-
-  return currentRewardCounter
-    .sub(member.lastRecordedRewardCounter)
-    .mul(member.points)
-    .div(rewardCounterBase);
-}
 
 async function getPool(endpoint, stakerAddress, id = undefined) {
   console.log(`getPool is called for ${stakerAddress} id:${id}`);

@@ -3,7 +3,7 @@
 
 import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback,useEffect, useState } from 'react';
 
 import Popup from '../components/Popup';
 import { useTranslation } from '../hooks';
@@ -20,8 +20,6 @@ function WaitScreen({ show, title }: Props): React.ReactElement {
 
   const handleTxEvent = useCallback((s: CustomEventInit<any>) => {
     const event = s.detail
-
-    console.log('state:', s.detail);
 
     if (event) {
       const state = Object.keys(event)[0];

@@ -9,18 +9,28 @@ Polkagate extension not only has all the abilities of the original Polkadot exte
 ## New functionalities
 
 Currently, the following features are available:
-  - View balances (crypto/USD)
+  - Add address only account ( to be used as a watch only and proxied address) 
+  - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
+  - Staking (Solo and Pool Staking)
+  - Proxy management
+  - Support different endpoints
   - Transfer funds
+  - View balances (crypto/USD)
   - View transaction history
   - View an address as QR code
-  - Easy staking (Solo and Pool Staking)
-  - Crowdloans (View Auctions and contribute to Crowdloans)
-  - Governance (vote referendums, second proposals, vote/unvote councils, propose treasury proposals and tips, etc.)
+
+The following features will be available in the next milestone:
+
+  - Governance 1 (vote referendums, endorse proposals, vote/unvote councils, propose treasury proposals and tips, etc.)
+  - Identity management
+  - Light client integration 
+  - OPenGov (Governance 2)
+  - Social Recovery
   
 
 # ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)
 
-### More photos [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki/How-To's)
+<!-- ### More photos [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki/How-To's) -->
 
 
 ## Installation 

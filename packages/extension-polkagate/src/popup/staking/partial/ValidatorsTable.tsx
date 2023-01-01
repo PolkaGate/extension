@@ -7,8 +7,7 @@ import '@vaadin/icons';
 
 import type { AccountId } from '@polkadot/types/interfaces';
 
-import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
-import { alpha, Divider, Grid, hexToRgb, SxProps, Theme, useTheme } from '@mui/material';
+import { alpha, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -17,8 +16,6 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
-import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../components';
-import { useTranslation } from '../../../hooks';
 import { StakingConsts, ValidatorInfo } from '../../../util/types';
 import ShowValidator from './ShowValidator';
 import ValidatorInfoPage from './ValidatorInfo';

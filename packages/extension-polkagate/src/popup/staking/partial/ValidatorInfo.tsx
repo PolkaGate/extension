@@ -5,12 +5,12 @@
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
+import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -38,7 +38,19 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const total = api.createType('Balance', validatorInfo?.exposure.total);
   const commission = Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo?.validatorPrefs.commission) / (10 ** 7);
   const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
-  const myPossibleIndex = staked && myIndex === -1 ? sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked)) : -1;
+  const myPossibleIndex = useMemo(() => {
+    if (staked && myIndex === -1 && sortedNominators) {
+      const index = sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked));
+
+      if (index === -1) {/** will be the last nominator */
+        return sortedNominators.length;
+      }
+
+      return -1;
+    }
+
+    return -1;
+  }, [myIndex, sortedNominators, staked]);
 
   const closeMenu = useCallback(
     () => setShowValidatorInfo(false),
@@ -178,7 +190,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             {sortedNominators?.map(({ value, who }, index) => (
               <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
                 <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
-                  <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress style={{ fontSize: '16px' }} />
+                  <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px' }} />
                 </Grid>
                 <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                   <ShowBalance
