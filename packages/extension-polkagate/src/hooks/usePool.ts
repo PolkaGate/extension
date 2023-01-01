@@ -32,6 +32,11 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       if (!info) {
         setMyPool(null);
+
+        /** reset isFetching */
+        isFetching.fetching[String(formatted)].getPool = false;
+        isFetching.set(isFetching.fetching);
+
         /** remove saved old pool from local storage if any */
         chrome.storage.local.get('MyPools', (res) => {
           const k = `${formatted}`;
@@ -49,8 +54,12 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       const parsedInfo = JSON.parse(info) as MyPoolInfo;
 
+      console.log('* My pool info returned from worker is:', parsedInfo);
+
       /** convert hex strings to BN strings*/
-      parsedInfo.member.points = (isHex(parsedInfo.member.points) ? hexToBn(parsedInfo.member.points) : new BN(parsedInfo.member.points)).toString();
+      if (parsedInfo.member) {
+        parsedInfo.member.points = (isHex(parsedInfo.member.points) ? hexToBn(parsedInfo.member.points) : new BN(parsedInfo.member.points)).toString();
+      }
       parsedInfo.bondedPool.points = (isHex(parsedInfo.bondedPool.points) ? hexToBn(parsedInfo.bondedPool.points) : new BN(parsedInfo.bondedPool.points)).toString();
       parsedInfo.stashIdAccount.stakingLedger.active = (isHex(parsedInfo.stashIdAccount.stakingLedger.active) ? hexToBn(parsedInfo.stashIdAccount.stakingLedger.active) : new BN(parsedInfo.stashIdAccount.stakingLedger.active)).toString();
       parsedInfo.stashIdAccount.stakingLedger.total = (isHex(parsedInfo.stashIdAccount.stakingLedger.total) ? hexToBn(parsedInfo.stashIdAccount.stakingLedger.total) : new BN(parsedInfo.stashIdAccount.stakingLedger.total)).toString();
@@ -76,7 +85,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       getPoolWorker.terminate();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted, isFetching.fetching[String(formatted)]?.length]);
 
   useEffect(() => {
