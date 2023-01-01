@@ -3,21 +3,24 @@
 
 import type { MyPoolInfo } from '../util/types';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
+import { FetchingContext } from '../components';
 import { useEndpoint2, useFormatted } from '.';
 
-export default function usePool(address: string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+export default function usePool(address: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
   const formatted = useFormatted(address);
   const endpoint = useEndpoint2(address);
+  const isFetching = useContext(FetchingContext);
 
-  const getPoolInfo = useCallback((endpoint: string, stakerAddress: string, id: number | undefined = undefined) => {
+  const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
 
-    getPoolWorker.postMessage({ endpoint, stakerAddress, id });
+    getPoolWorker.postMessage({ endpoint, id, stakerAddress });
 
     getPoolWorker.onerror = (err) => {
       console.log(err);
@@ -76,8 +79,28 @@ export default function usePool(address: string, id?: number, refresh?: boolean,
       setMyPool(pool);
     }
 
-    endpoint && formatted && getPoolInfo(endpoint, formatted, id);
-  }, [endpoint, formatted, getPoolInfo, id, pool]);
+    if (!endpoint || !formatted) {
+      return;
+    }
+
+    if (!isFetching.fetching[String(formatted)]?.getPool) {
+      if (!isFetching.fetching[String(formatted)]) {
+        isFetching.fetching[String(formatted)] = {}; // to initialize
+      }
+
+      isFetching.fetching[String(formatted)].getPool = true;
+      isFetching.set(isFetching.fetching);
+      getPoolInfo(endpoint, formatted, id);
+    } else {
+      console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetching.fetching[String(formatted)]?.length, endpoint, formatted, getPoolInfo, id, pool]);
+
+  useEffect(() => {
+    refresh && console.log('refreshing ...');
+    endpoint && refresh && formatted && getPoolInfo(endpoint, formatted, id);
+  }, [endpoint, formatted, getPoolInfo, id, refresh]);
 
   useEffect(() => {
     if (!formatted) {
@@ -97,11 +120,6 @@ export default function usePool(address: string, id?: number, refresh?: boolean,
       setMyPool(undefined);
     });
   }, [formatted]);
-
-  useEffect(() => {
-    refresh && console.log('refreshing ...');
-    endpoint && refresh && formatted && getPoolInfo(endpoint, formatted, id);
-  }, [endpoint, formatted, getPoolInfo, id, refresh]);
 
   return myPool;
 }
