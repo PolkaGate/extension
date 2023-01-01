@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/polkagate authors & contributors
+// Copyright 2019-2023 @polkadot/polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -137,7 +137,12 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   return (
     <>
       {isPasswordError &&
-        <Grid color='red' height='30px' m='auto' mb='-15px' pt='5px' width='92%'>
+        <Grid color='red'
+          height='30px'
+          m='auto'
+          mb='-15px'
+          pt='5px'
+          width='92%'>
           <Warning
             fontWeight={400}
             isBelowInput
@@ -148,7 +153,8 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           </Warning>
         </Grid>
       }
-      <Grid container my='20px'>
+      <Grid container
+        my='20px'>
         <SubTitle label={t<string>('Review')} />
       </Grid>
       <Typography
@@ -167,12 +173,21 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           width: '92%'
         }}
       />
-      <Grid alignItems='center' container justifyContent='center' m='20px auto 5px' width='92%'>
-        <Grid display='inline-flex' item>
-          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
+      <Grid alignItems='center'
+        container
+        justifyContent='center'
+        m='20px auto 5px'
+        width='92%'>
+        <Grid display='inline-flex'
+          item>
+          <Typography fontSize='14px'
+            fontWeight={300}
+            lineHeight='23px'>
             {t<string>('Deposit:')}
           </Typography>
-          <Grid item lineHeight='22px' pl='5px'>
+          <Grid item
+            lineHeight='22px'
+            pl='5px'>
             <ShowBalance
               api={api}
               balance={depositValue}
@@ -181,12 +196,18 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
             />
           </Grid>
         </Grid>
-        <Divider orientation='vertical' sx={{ backgroundColor: 'secondary.main', height: '30px', mx: '5px', my: 'auto' }} />
-        <Grid display='inline-flex' item >
-          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
+        <Divider orientation='vertical'
+          sx={{ backgroundColor: 'secondary.main', height: '30px', mx: '5px', my: 'auto' }} />
+        <Grid display='inline-flex'
+          item >
+          <Typography fontSize='14px'
+            fontWeight={300}
+            lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
-          <Grid item lineHeight='22px' pl='5px'>
+          <Grid item
+            lineHeight='22px'
+            pl='5px'>
             <ShowBalance
               api={api}
               balance={estimatedFee}
@@ -218,7 +239,8 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           width: '92%'
         }}
       />
-      {<WaitScreen show={showWaitScreen} title={t('Manage Proxies')} />}
+      {<WaitScreen show={showWaitScreen}
+        title={t('Manage Proxies')} />}
       {txInfo &&
         <Confirmation
           headerTitle={t<string>('Manage Proxies')}
