@@ -28,7 +28,7 @@ interface RecordTabStatus {
   transactions?: Transfers[]
 }
 
-const SINGLE_PAGE_SIZE = 25;
+const SINGLE_PAGE_SIZE = 50;
 const MAX_PAGE = 4;
 
 const INITIAL_STATE = {
@@ -49,10 +49,9 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const token = useToken(formatted);
   const [tabIndex, setTabIndex] = useState<number>(state?.tabIndex ?? 1);
   const [isRefreshing, setRefresh] = useState<boolean>(false);
-  // const localHistories = useRef<TransactionDetail[] | []>([]);
   const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
-  const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null>([]);
+  const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
   function stateReducer(state: object, action: RecordTabStatus) {
     return Object.assign({}, state, action);
@@ -86,7 +85,9 @@ export default function TransactionHistory(): React.ReactElement<''> {
   }, [tabHistory]);
 
   useEffect(() => {
-    if (!transfersTx?.transactions?.length) return;
+    if (!transfersTx?.transactions?.length) {
+      return;
+    }
 
     const historyFromSubscan: TransactionDetail[] = [];
 
@@ -205,7 +206,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
     observerInstance.current = new IntersectionObserver(observerCallback, options);
     const target = document.getElementById('observerObj');
 
-    if (target) { observerInstance.current.observe(target); }
+    target && observerInstance.current.observe(target);
   }, [chainName, formatted, getTransfers, tabHistory]);
 
   const _onBack = useCallback(() => {
@@ -308,46 +309,49 @@ export default function TransactionHistory(): React.ReactElement<''> {
           />
         </Tabs>
       </Box>
-      {Object.keys(grouped).length !== 0
-        ? <Grid container id='scrollArea' item sx={{ height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
-          {Object.entries(grouped)?.map((group) => {
-            const [date, info] = group;
+      <Grid container item sx={{ height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>
+        {Object.keys(grouped).length !== 0
+          ? <>
+            {Object.entries(grouped)?.map((group) => {
+              const [date, info] = group;
 
-            return info.map((h, index) => (
-              <HistoryItem
-                anotherDay={index === 0}
-                chainName={chainName}
-                date={date}
-                decimal={decimal}
-                formatted={formatted}
-                info={h}
-                key={index}
-                path={pathname}
-                token={token}
-              />
-            ));
-          })}
-          {tabHistory === null &&
-            <Grid item mt='50px' textAlign='center'>
-              {t('Nothing to show')}
-            </Grid>
-          }
-          <Grid container justifyContent='center' id='observerObj'>
-            {
-              // staking transaction history is saved locally
-              tabIndex !== TAB_MAP.STAKING &&
-              ((transfersTx?.hasMore)
-                ? 'loading...'
-                : !!tabHistory.length &&
-                <Box fontSize={11}>
-                  {t('No more transactions to load')}
-                </Box>
-              )
+              return info.map((h, index) => (
+                <HistoryItem
+                  anotherDay={index === 0}
+                  chainName={chainName}
+                  date={date}
+                  decimal={decimal}
+                  formatted={formatted}
+                  info={h}
+                  key={index}
+                  path={pathname}
+                  token={token}
+                />
+              ));
+            })}
+            {tabHistory === null &&
+              <Grid item mt='50px' textAlign='center'>
+                {t('Nothing to show')}
+              </Grid>
             }
-          </Grid>
-        </Grid>
-        : <Progress pt='150px' size={50} title={t('Loading history')} />
-      }
+            <Grid container justifyContent='center'>
+              {
+                // staking transaction history is saved locally
+                tabIndex !== TAB_MAP.STAKING &&
+                ((transfersTx?.hasMore)
+                  ? 'loading...'
+                  : !!tabHistory.length &&
+                  <Box fontSize={11}>
+                    {t('No more transactions to load')}
+                  </Box>
+                )
+              }
+            </Grid>
+          </>
+          : <Progress pt='150px' size={50} title={t('Loading history')} />
+        }
+        <div id='observerObj' />
+      </Grid>
     </>
   );
 }
