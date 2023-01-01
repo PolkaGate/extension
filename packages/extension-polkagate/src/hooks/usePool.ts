@@ -5,6 +5,8 @@ import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { BN, hexToBn, isHex } from '@polkadot/util';
+
 import { useEndpoint2, useFormatted } from '.';
 
 export default function usePool(address: string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
@@ -43,6 +45,12 @@ export default function usePool(address: string, id?: number, refresh?: boolean,
       }
 
       const parsedInfo = JSON.parse(info) as MyPoolInfo;
+
+      /** convert hex strings to BN strings*/
+      parsedInfo.member.points = (isHex(parsedInfo.member.points) ? hexToBn(parsedInfo.member.points) : new BN(parsedInfo.member.points)).toString();
+      parsedInfo.bondedPool.points = (isHex(parsedInfo.bondedPool.points) ? hexToBn(parsedInfo.bondedPool.points) : new BN(parsedInfo.bondedPool.points)).toString();
+      parsedInfo.stashIdAccount.stakingLedger.active = (isHex(parsedInfo.stashIdAccount.stakingLedger.active) ? hexToBn(parsedInfo.stashIdAccount.stakingLedger.active) : new BN(parsedInfo.stashIdAccount.stakingLedger.active)).toString();
+      parsedInfo.stashIdAccount.stakingLedger.total = (isHex(parsedInfo.stashIdAccount.stakingLedger.total) ? hexToBn(parsedInfo.stashIdAccount.stakingLedger.total) : new BN(parsedInfo.stashIdAccount.stakingLedger.total)).toString();
 
       console.log('*** My pool info returned from worker is:', parsedInfo);
 
