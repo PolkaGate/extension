@@ -14,9 +14,10 @@ import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { poolStakingBlack, poolStakingWhite } from '../assets/icons';
+import { poolStakingBlack, poolStakingDisabled, poolStakingWhite } from '../assets/icons';
 import { HorizontalMenuItem } from '../components';
 import { useAccount, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
+import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -49,25 +50,25 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
   }, [availableProxiesForTransfer?.length, account, history, address, api]);
 
   const goToPoolStaking = useCallback(() => {
-    address && history.push({
+    address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
       pathname: `/pool/${String(address)}/`,
       state: { api }
     });
-  }, [address, api, history]);
+  }, [account?.genesisHash, address, api, history]);
 
   const goToSoloStaking = useCallback(() => {
-    address && history.push({
+    address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
       pathname: `/solo/${String(address)}/`,
       state: { api }
     });
-  }, [address, api, history]);
+  }, [account?.genesisHash, address, api, history]);
 
   const goToCrowdLoans = useCallback(() => {
-    formatted &&
+    formatted && CROWDLOANS_CHAINS.includes(account?.genesisHash) &&
       history.push({
         pathname: `/crowdloans/${address}`
       });
-  }, [address, formatted, history]);
+  }, [account?.genesisHash, address, formatted, history]);
 
   const goToHistory = useCallback(() => {
     history.push({
@@ -122,7 +123,18 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           divider
           dividerHeight={20}
           exceptionWidth={45}
-          icon={<Box component='img' src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} sx={{ height: '30px' }} />}
+          icon={
+            <Box
+              component='img'
+              src={!STAKING_CHAINS.includes(account?.genesisHash)
+                ? poolStakingDisabled
+                : theme.palette.mode === 'dark'
+                  ? poolStakingWhite
+                  : poolStakingBlack
+              }
+              sx={{ height: '30px' }}
+            />
+          }
           labelMarginTop='-5px'
           onClick={goToPoolStaking}
           title={t<string>('Pool Staking')}
@@ -133,7 +145,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           divider
           dividerHeight={20}
           exceptionWidth={37}
-          icon={<BoyIcon sx={{ color: 'text.primary', fontSize: '30px' }} />}
+          icon={<BoyIcon sx={{ color: STAKING_CHAINS.includes(account?.genesisHash) ? 'text.primary' : 'action.disabledBackground', fontSize: '30px' }} />}
           labelMarginTop='-5px'
           onClick={goToSoloStaking}
           title={t<string>('Solo Staking')}
@@ -143,7 +155,12 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
         <HorizontalMenuItem
           divider
           dividerHeight={20}
-          icon={<vaadin-icon icon='vaadin:piggy-bank-coin' style={{ height: '23px', color: `${theme.palette.text.primary}` }} />}
+          icon={
+            <vaadin-icon
+              icon='vaadin:piggy-bank-coin'
+              style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }}
+            />
+          }
           onClick={goToCrowdLoans}
           title={t<string>('Crowdloans')}
           titleFontSize={10}

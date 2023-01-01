@@ -54,6 +54,7 @@ export { default as soloSettingWhite } from './soloSettingWhite.svg';
 export { default as soloSettingBlack } from './soloSettingBlack.svg';
 export { default as soloStakingWhite } from './soloStakingWhite.svg';
 export { default as soloStakingBlack } from './soloStakingBlack.svg';
+export { default as poolStakingDisabled } from './poolStakingDisabled.svg';
 export { default as poolStakingWhite } from './poolStakingWhite.svg';
 export { default as poolStakingBlack } from './poolStakingBlack.svg';
 export { default as stashSettingBlack } from './stashSettingBlack.svg';
