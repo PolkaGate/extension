@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @polkadot/extension-polkadot authors & contributors
+// Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
