@@ -4,6 +4,7 @@
 import React from 'react';
 
 import { BN } from '@polkadot/util';
+import { amountToHuman } from '../util/utils';
 
 interface Props {
   num?: number;
@@ -37,7 +38,7 @@ function nFormatter(num: number, digits: number) {
 }
 
 function FormatPrice({ amount, decimalPoint = 2, decimals, num, price }: Props): React.ReactElement<Props> {
-  const total = num ?? (amount.toNumber() * 10 ** -decimals) * price;
+  const total = num ?? parseFloat(amountToHuman(amount, decimals)) * price;
 
   return (
     <>
