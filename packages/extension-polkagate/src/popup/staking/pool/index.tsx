@@ -151,11 +151,11 @@ export default function Index(): React.ReactElement {
   }, [address, api, consts, history, pool, pathname, stakingConsts]);
 
   const goToUnstake = useCallback(() => {
-    history.push({
+    staked && !staked?.isZero() && history.push({
       pathname: `/pool/unstake/${address}`,
       state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
     });
-  }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
+  }, [staked, history, address, api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount]);
 
   const goToNominations = useCallback(() => {
     history.push({
@@ -294,7 +294,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
-            onLink1={staked && !staked?.isZero() && goToUnstake}
+            onLink1={ goToUnstake}
             value={staked}
           />
           <Row
