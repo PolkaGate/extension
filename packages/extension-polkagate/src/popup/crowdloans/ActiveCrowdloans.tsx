@@ -13,10 +13,12 @@ import React, { useCallback, useState } from 'react';
 
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Progress, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
+import Contribute from './contribute/Contribute';
 import ShowCrowdloan from './partials/ShowCrowdloans';
 
 interface Props {
@@ -28,6 +30,8 @@ interface Props {
   currentBlockNumber: number | undefined;
   decimal?: number;
   token?: string;
+  formatted?: string | AccountId;
+  minContribution?: string;
 }
 
 interface ArrowsProps {
@@ -35,16 +39,18 @@ interface ArrowsProps {
   onNext: () => void;
 }
 
-export default function ActiveCrowdloans ({ activeCrowdloans, api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, token }: Props): React.ReactElement {
+export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contributedCrowdloans, crowdloansId, currentBlockNumber, decimal, formatted, minContribution, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [itemToShow, setItemToShow] = useState<number>(0);
+  const [selectedCrowdloan, setSelectedCrowdloan] = useState<Crowdloan>();
+  const [showContribute, setShowContribute] = useState<boolean>(false);
 
   const getMyContribution = useCallback((paraId: string) => contributedCrowdloans?.get(paraId) ?? '0', [contributedCrowdloans]);
 
   const contributeToCrowdloan = useCallback(() => {
-    console.log('hello');
+    setShowContribute(true);
   }, []);
 
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
@@ -97,6 +103,7 @@ export default function ActiveCrowdloans ({ activeCrowdloans, api, chain, contri
               decimal={decimal}
               myContribution={getMyContribution(activeCrowdloans[itemToShow].fund.paraId)}
               onContribute={contributeToCrowdloan}
+              setSelectedCrowdloan={setSelectedCrowdloan}
               token={token}
             />
           </>
@@ -112,6 +119,20 @@ export default function ActiveCrowdloans ({ activeCrowdloans, api, chain, contri
             : <Progress pt='95px' size={125} title={t('Loading active crowdloans...')} />
         }
       </Grid>
+      {showContribute && selectedCrowdloan &&
+        <Contribute
+          api={api}
+          chain={chain}
+          crowdloan={selectedCrowdloan}
+          crowdloansId={crowdloansId}
+          currentBlockNumber={currentBlockNumber}
+          formatted={formatted}
+          minContribution={minContribution}
+          myContribution={getMyContribution(selectedCrowdloan.fund.paraId)}
+          setShowContribute={setShowContribute}
+          showContribute={showContribute}
+        />
+      }
     </>
   );
 }

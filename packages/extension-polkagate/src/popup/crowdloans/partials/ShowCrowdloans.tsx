@@ -33,15 +33,26 @@ interface Props {
   decimal?: number;
   currentBlockNumber?: number;
   token?: string;
+  setSelectedCrowdloan?: React.Dispatch<React.SetStateAction<Crowdloan | undefined>>;
 }
 
-export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, showStatus = false, token }: Props): React.ReactElement {
+export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, setSelectedCrowdloan, showStatus = false, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
   const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
   const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
   const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavicon(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+
   const [identity, returnIdentity] = useState<DeriveAccountRegistration>();
+
+  const onContributeBtnClicked = useCallback(() => {
+    if (!onContribute || !crowdloan || !setSelectedCrowdloan) {
+      return;
+    }
+
+    setSelectedCrowdloan(crowdloan);
+    onContribute();
+  }, [crowdloan, onContribute, setSelectedCrowdloan]);
 
   return (
     <Grid container direction='column' height='fit-content' item key={key} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mt: '8px' }}>
@@ -66,7 +77,7 @@ export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, cur
                 </Grid>
               }
             </Grid>
-            : <Identity returnIdentity={returnIdentity} address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px' }} />
+            : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon returnIdentity={returnIdentity} style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px' }} />
           }
         </Grid>
         {showStatus &&
@@ -131,7 +142,7 @@ export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, cur
         <Grid container item pb='15px'>
           <PButton
             _mt='10px'
-            _onClick={onContribute}
+            _onClick={onContributeBtnClicked}
             text={t<string>('Contribute')}
           />
         </Grid>

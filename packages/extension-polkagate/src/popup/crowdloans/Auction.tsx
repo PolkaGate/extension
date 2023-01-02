@@ -48,6 +48,8 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
   const end = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? candlePhaseStartBlock : endingPeriod && candlePhaseStartBlock + endingPeriod;
   const stageInHuman = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? t('auction stage') : t('ending stage');
 
+  const dateFormat = useMemo(() => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
+
   const currentTime = useMemo(() => {
     if (viewType === 'Block') {
       return;
@@ -57,7 +59,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
     setTimeout(() => setTime(now + 1000), 1000);
 
-    return new Date(now).toLocaleDateString('en-US', { day: 'numeric', hour: '2-digit', hourCycle: 'h24', minute: '2-digit', month: 'short', second: '2-digit' })
+    return new Date(now).toLocaleDateString('en-US', { ...dateFormat, second: '2-digit' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewType, time]);
 
@@ -85,7 +87,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
           {viewType === 'Block' && `${AUCTION_START_BLOCK} - ${candlePhaseStartBlock}`}
-          {viewType === 'Date' && `${blockToDate(AUCTION_START_BLOCK, currentBlockNumber, { day: 'numeric', hour: '2-digit', hourCycle: 'h24', minute: '2-digit', month: 'short' })} - ${blockToDate(candlePhaseStartBlock, currentBlockNumber, { day: 'numeric', hour: '2-digit', hourCycle: 'h24', minute: '2-digit', month: 'short' })}`}
+          {viewType === 'Date' && `${blockToDate(AUCTION_START_BLOCK, currentBlockNumber, dateFormat)} - ${blockToDate(candlePhaseStartBlock, currentBlockNumber, dateFormat)}`}
         </Typography>
       </Grid>
       <Grid container item justifyContent='space-between' px='10px' sx={{ borderBlock: '1px solid', borderColor: 'secondary.light' }}>
@@ -94,7 +96,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
           {viewType === 'Block' && `${candlePhaseStartBlock} - ${endingPeriod && candlePhaseStartBlock + endingPeriod}`}
-          {viewType === 'Date' && `${blockToDate(candlePhaseStartBlock, currentBlockNumber, { day: 'numeric', hour: '2-digit', hourCycle: 'h24', minute: '2-digit', month: 'short' })} - ${blockToDate(candlePhaseStartBlock + endingPeriod, currentBlockNumber, { day: 'numeric', hour: '2-digit', hourCycle: 'h24', minute: '2-digit', month: 'short' })}`}
+          {viewType === 'Date' && `${blockToDate(candlePhaseStartBlock, currentBlockNumber, dateFormat)} - ${blockToDate(candlePhaseStartBlock + endingPeriod, currentBlockNumber, dateFormat)}`}
         </Typography>
       </Grid>
       <Grid container item justifyContent='space-between' mt='20px' px='10px'>
