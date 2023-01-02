@@ -126,7 +126,6 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         />
         <SubTitle
           label={t<string>('Contribute')}
-          mt='5px'
           withSteps={{ current: 1, total: 2 }}
         />
         <From
