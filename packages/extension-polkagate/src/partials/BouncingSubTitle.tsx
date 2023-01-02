@@ -6,8 +6,6 @@
  * this component shows a subtitle beneath the header
  * */
 
-import '@vaadin/icons';
-
 import { Divider, Grid, Typography } from '@mui/material';
 import { keyframes } from '@mui/system';
 import React from 'react';

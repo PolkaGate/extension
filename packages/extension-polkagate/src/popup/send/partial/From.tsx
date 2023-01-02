@@ -8,20 +8,13 @@
  * this component shows ..
  * */
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React from 'react';
 
-import { BN } from '@polkadot/util';
-
-import { ChainLogo, Identity, ShortAddress } from '../../../components';
+import { Identity, ShortAddress } from '../../../components';
 import { useChain, useFormatted, useTranslation } from '../../../hooks';
-import BalanceFee from './BalanceFee';
 
 interface Props {
   address?: string;
