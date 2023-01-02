@@ -9,7 +9,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Grid, Link, Typography } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
@@ -38,10 +38,11 @@ interface Props {
 
 export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, setSelectedCrowdloan, showStatus = false, token }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
-  const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
-  const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
-  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavicon(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+  const paraId = crowdloan.fund.paraId;
+  const name = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId, paraId]);
+  const homePage = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId, paraId]);
+  const info = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId, paraId]);
+  const logo = useMemo(() => getLogo(info) || getWebsiteFavicon(homePage), [homePage, info]);
 
   const [identity, returnIdentity] = useState<DeriveAccountRegistration>();
 
@@ -50,28 +51,29 @@ export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, cur
       return;
     }
 
+    crowdloan.identity = crowdloan.identity || identity;
     setSelectedCrowdloan(crowdloan);
     onContribute();
-  }, [crowdloan, onContribute, setSelectedCrowdloan]);
+  }, [crowdloan, identity, onContribute, setSelectedCrowdloan]);
 
   return (
     <Grid container direction='column' height='fit-content' item key={key} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mt: '8px' }}>
       <Grid container height='46px' item lineHeight='46px'>
         <Grid alignItems='center' container item justifyContent='center' xs={1.5}>
           <Avatar
-            src={logo(crowdloan) || getWebsiteFavicon(identity?.web)}
+            src={logo || getWebsiteFavicon(identity?.web)}
             sx={{ height: 20, width: 20 }}
           />
         </Grid>
         <Grid container item xs={showStatus ? 8 : 10.5}>
-          {getName(crowdloan.fund.paraId)
+          {name
             ? <Grid container item>
-              <Typography fontSize='16px' fontWeight={400} lineHeight='47px' maxWidth={getHomePage(crowdloan.fund.paraId) ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
-                {getName(crowdloan.fund.paraId)}
+              <Typography fontSize='16px' fontWeight={400} lineHeight='47px' maxWidth={homePage ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
+                {name}
               </Typography>
-              {getHomePage(crowdloan.fund.paraId) &&
+              {homePage &&
                 <Grid alignItems='center' container item justifyContent='center' lineHeight='15px' width='10%'>
-                  <Link href={getHomePage(crowdloan.fund.paraId)} rel='noreferrer' target='_blank'>
+                  <Link href={homePage} rel='noreferrer' target='_blank'>
                     <LanguageIcon sx={{ color: '#007CC4', fontSize: 17 }} />
                   </Link>
                 </Grid>
@@ -117,7 +119,7 @@ export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, cur
           <Typography fontSize='16px' fontWeight={300} lineHeight='34px' pl='10px' width='40%'>
             {t<string>('Raised/Cap')}
           </Typography>
-          <Grid container item justifyContent='flex-end' sx={{ fontSize: '14px', fontWeight: 400 }} width='60%'>
+          <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} width='60%'>
             <Grid item sx={{ '> div': { lineHeight: '34px' } }} width='fit-content'>
               <ShowBalance balance={crowdloan.fund.raised} decimal={decimal} decimalPoint={2} skeletonWidth={60} token={token} />
             </Grid>
@@ -133,7 +135,7 @@ export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, cur
           <Typography fontSize='16px' fontWeight={300} lineHeight='34px' pl='10px' width='fit-content'>
             {t<string>('My Contribution')}
           </Typography>
-          <Grid item sx={{ '> div': { lineHeight: '34px' }, fontSize: '14px', fontWeight: 400, pr: '10px' }} width='fit-content'>
+          <Grid item sx={{ '> div': { lineHeight: '34px' }, fontSize: '16px', fontWeight: 400, pr: '10px' }} width='fit-content'>
             <ShowBalance balance={myContribution} decimal={decimal} decimalPoint={2} skeletonWidth={60} token={token} />
           </Grid>
         </Grid>
