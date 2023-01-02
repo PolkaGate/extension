@@ -394,6 +394,8 @@ export default function CrowdLoans(): React.ReactElement {
                   crowdloansId={crowdloansId}
                   currentBlockNumber={currentBlockNumber}
                   decimal={decimal}
+                  formatted={formatted}
+                  minContribution={auction.minContribution}
                   token={token}
                 />
               }
