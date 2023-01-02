@@ -54,8 +54,6 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       const parsedInfo = JSON.parse(info) as MyPoolInfo;
 
-      console.log('* My pool info returned from worker is:', parsedInfo);
-
       /** convert hex strings to BN strings*/
       if (parsedInfo.member) {
         parsedInfo.member.points = (isHex(parsedInfo.member.points) ? hexToBn(parsedInfo.member.points) : new BN(parsedInfo.member.points)).toString();
