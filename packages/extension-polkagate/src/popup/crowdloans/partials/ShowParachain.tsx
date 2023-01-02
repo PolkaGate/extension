@@ -8,7 +8,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { Language as LanguageIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, SxProps, Theme, Typography } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
@@ -31,12 +31,15 @@ interface Props {
 
 export default function ShowParachain({ api, chain, crowdloan, crowdloansId, labelPosition = 'left', setShowCrowdloanInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
-  const getHomePage = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId]);
-  const getInfo = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId]);
-  const logo = useCallback((crowdloan: Crowdloan) => getLogo(getInfo(crowdloan.fund.paraId)) || getWebsiteFavicon(getHomePage(crowdloan.fund.paraId)), [getHomePage, getInfo]);
+
+  const paraId = crowdloan.fund.paraId;
+  const name = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId, paraId]);
+  const homePage = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.homepage as string), [crowdloansId, paraId]);
+  const info = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.info as string), [crowdloansId, paraId]);
+  const logo = useMemo(() => getLogo(info) || getWebsiteFavicon(homePage), [homePage, info]);
 
   const [identity, returnIdentity] = useState<DeriveAccountRegistration>();
+  const accountInfo = crowdloan.identity && { identity: crowdloan.identity };
 
   const openCrowdloanInfo = useCallback(() => {
     setShowCrowdloanInfo(true);
@@ -50,25 +53,34 @@ export default function ShowParachain({ api, chain, crowdloan, crowdloansId, lab
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '48px' }}>
         <Grid alignItems='center' container item justifyContent='center' xs={1.5}>
           <Avatar
-            src={logo(crowdloan) || getWebsiteFavicon(identity?.web)}
+            src={logo || getWebsiteFavicon(identity?.web)}
             sx={{ height: 25, width: 25 }}
           />
         </Grid>
         <Grid container item xs={9}>
-          {getName(crowdloan.fund.paraId)
+          {name
             ? <Grid container item>
-              <Typography fontSize='22px' fontWeight={400} lineHeight='47px' maxWidth={getHomePage(crowdloan.fund.paraId) ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
-                {getName(crowdloan.fund.paraId)}
+              <Typography fontSize='22px' fontWeight={400} lineHeight='47px' maxWidth={homePage ? '90%' : '100%'} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='fit-content'>
+                {name}
               </Typography>
-              {getHomePage(crowdloan.fund.paraId) &&
+              {homePage &&
                 <Grid alignItems='center' container item justifyContent='center' lineHeight='15px' width='10%'>
-                  <Link href={getHomePage(crowdloan.fund.paraId)} rel='noreferrer' target='_blank'>
+                  <Link href={homePage} rel='noreferrer' target='_blank'>
                     <LanguageIcon sx={{ color: '#007CC4', fontSize: 17 }} />
                   </Link>
                 </Grid>
               }
             </Grid>
-            : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} noIdenticon returnIdentity={returnIdentity} style={{ fontSize: '22px', fontWeight: 400 }} />
+            : <Identity
+              accountInfo={accountInfo}
+              address={crowdloan.fund.depositor}
+              api={api}
+              chain={chain}
+              formatted={crowdloan.fund.depositor}
+              noIdenticon
+              returnIdentity={returnIdentity}
+              style={{ fontSize: '22px', fontWeight: 400 }}
+            />
           }
         </Grid>
         <Grid container item xs={1.5}>
