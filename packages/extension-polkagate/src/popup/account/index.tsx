@@ -17,7 +17,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { faCoins, faHistory, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Grid, IconButton, useTheme } from '@mui/material';
+import { Box, Container, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -25,6 +25,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
+import { stakingClose } from '../../assets/icons';
 import { AccountContext, ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select, SettingsContext } from '../../components';
 import { useApi, useBalances, useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../../messaging';
@@ -294,7 +295,7 @@ export default function AccountDetails(): React.ReactElement {
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
+        <Grid container justifyContent='space-around' sx={{ bgcolor:'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height:'62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
           <HorizontalMenuItem
             divider
             icon={
@@ -318,11 +319,13 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={
-              <FontAwesomeIcon
-                color={stakingIconColor}
-                icon={faCoins}
-                size='lg'
-              />
+              showStakingOptions ?
+                <Box component='img' width='30px' src={stakingClose} />
+                : <FontAwesomeIcon
+                  color={stakingIconColor}
+                  icon={faCoins}
+                  size='lg'
+                />
             } onClick={goToStaking}
             // textDisabled={!STAKING_CHAINS.includes(genesisHash)}
             title={t<string>('Stake')}

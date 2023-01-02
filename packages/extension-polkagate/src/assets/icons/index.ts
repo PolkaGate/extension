@@ -60,4 +60,5 @@ export { default as poolStakingBlack } from './poolStakingBlack.svg';
 export { default as stashSettingBlack } from './stashSettingBlack.svg';
 export { default as controllerSettingBlack } from './controllerSettingBlack.svg';
 export { default as stashSettingWhite } from './stashSettingWhite.svg';
+export { default as stakingClose } from './stakingClose.svg';
 export { default as controllerSettingWhite } from './controllerSettingWhite.svg';
