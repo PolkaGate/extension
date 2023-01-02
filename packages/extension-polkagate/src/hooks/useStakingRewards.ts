@@ -8,28 +8,28 @@
 
 import { useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
-import { useChain, useFormatted, useStashId } from '.';
+import { AccountStakingInfo } from '../util/types';
+import { useChainName } from '.';
 
-export async function getStakingReward(_chain: Chain | null | undefined, _stakerAddress: AccountId | string | null): Promise<string | null> {
-  if (!_stakerAddress) {
-    console.log('_stakerAddress is null in getting getStakingReward ');
+export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
+  if (!address) {
+    console.log('address is null in getting getStakingReward ');
 
     return null;
   }
 
+  console.log('Getting Staking Reward from subscan ... ');
+
   return new Promise((resolve) => {
     try {
-      const network = _chain ? _chain.name.replace(' Relay Chain', '') : 'westend';
-
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + network + '.api.subscan.io/api/scan/staking_history',
+      postData('https://' + chainName + '.api.subscan.io/api/scan/staking_history',
         {
-          address: _stakerAddress,
+          address,
           page: 0,
           row: 20
         })
@@ -50,21 +50,30 @@ export async function getStakingReward(_chain: Chain | null | undefined, _staker
   });
 }
 
-export default function useStakingRewards(address: AccountId | undefined): BN | undefined {
+export default function useStakingRewards(address: string, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
   const [rewards, setRewards] = useState<BN>();
-  const chain = useChain(address);
-  const formatted = useFormatted(address);
-  const stashId = useStashId(formatted);
-  
+  const chainName = useChainName(address);
+
   useEffect(() => {
-    if (!stashId) {
+    if (!stakingAccount || !chainName) {
       return;
     }
 
-    getStakingReward(chain, stashId).then((r) => {
+    const destinationType = Object.keys(stakingAccount.rewardDestination)[0];
+    let payeeAddress: string | AccountId;
+
+    if (destinationType === 'account') {
+      payeeAddress = stakingAccount.rewardDestination.account;
+    } else if (['staked', 'stash'].includes(destinationType)) {
+      payeeAddress = stakingAccount.stashId;
+    } else {
+      payeeAddress = stakingAccount.controllerId;
+    }
+
+    getStakingReward(chainName, payeeAddress).then((r) => {
       setRewards(r ? new BN(r) : BN_ZERO);
     }).catch(console.error);
-  }, [chain, stashId]);
+  }, [chainName, stakingAccount]);
 
   return rewards;
 }

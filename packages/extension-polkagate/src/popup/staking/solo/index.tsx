@@ -52,7 +52,7 @@ export default function Index(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
   const chain = useChain(address);
-  const rewards = useStakingRewards(address);
+  const rewards = useStakingRewards(address, stakingAccount);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const myBalances = useBalances(address, refresh, setRefresh);
@@ -85,7 +85,7 @@ export default function Index(): React.ReactElement {
         : String(formatted) === String(stakingAccount?.controllerId)
           ? 'Controller'
           : 'undefined' // default
-  , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
+    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {

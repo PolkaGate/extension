@@ -19,7 +19,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Progress } from '../../../../components';
-import { useApi, useChain, useDecimal, useEndpoint2, useFormatted, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useEndpoint2, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
@@ -50,6 +50,7 @@ interface State {
 
 export default function RewardDetails(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
   const endpoint = useEndpoint2(address);
@@ -57,7 +58,9 @@ export default function RewardDetails(): React.ReactElement {
   const chain = useChain(address, state?.chain);
   const history = useHistory();
   const formatted = useFormatted(address);
-  const theme = useTheme();
+  const chainName = useChainName(address);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
 
   const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
   const [pageIndex, setPageIndex] = useState<number>(0);
@@ -65,9 +68,6 @@ export default function RewardDetails(): React.ReactElement {
   const [dataToShow, setDataToShow] = useState<[string[], string[]][]>();
   const [weeksRewards, setWeekRewards] = useState<{ amount: BN, amountInHuman: string, date: string, timestamp: number, }[][]>();
 
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-  const decimal = useDecimal(address);
-  const token = useToken(address);
   const [expanded, setExpanded] = useState<number>(-1);
 
   const dateOptions = useMemo(() => ({ day: 'numeric', month: 'short' }), []);
@@ -241,8 +241,7 @@ export default function RewardDetails(): React.ReactElement {
       }
     });
 
-    // eslint-disable-next-line no-void
-    formatted && chainName && void getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(formatted)).then((r) => {
+    formatted && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(formatted)).then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
       const rewardsFromSubscan: RewardInfo[] | undefined = list?.map((i: SubscanRewardInfo): RewardInfo => {
         return {
