@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Link, Typography } from '@mui/material';
+import { Box, Divider, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
+import { subscan } from '../assets/icons/';
 import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../components';
 import { useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
-import getLogo from '../util/getLogo';
 import { TxInfo } from '../util/types';
 import { HeaderBrand, SubTitle } from '.';
 
@@ -56,11 +56,11 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
             fontWeight={400}
             m='auto'
             sx={{
-              display: '-webkit-box',
-              overflow: 'hidden',
-              mb: '15px',
-              WebkitLineClamp: '2',
               WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: '2',
+              display: '-webkit-box',
+              mb: '15px',
+              overflow: 'hidden',
               textOverflow: 'ellipsis'
             }}
             textAlign='center'
@@ -112,7 +112,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
               target='_blank'
               underline='none'
             >
-              <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 44, width: 44 }} />
+              <Box alt={'subscan'} component='img' height='30px' mt='5px' src={subscan} width='30px' />
             </Link>
           </Grid>
         }
