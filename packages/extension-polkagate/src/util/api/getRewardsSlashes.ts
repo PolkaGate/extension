@@ -3,13 +3,15 @@
 
 import request from 'umi-request';
 
-import { TransferRequest } from '../plusTypes';
+import { TransferRequest } from '../types';
 
 export default function getRewardsSlashes(chainName: string, pageNum: number, pageSize: number, address: string): Promise<TransferRequest> {
+  console.log('getting RewardsSlashes from Subscan ...');
+
   return postReq(`https://${chainName}.api.subscan.io/api/v2/scan/account/reward_slash`, {
+    address,
     page: pageNum,
-    row: pageSize,
-    address: address
+    row: pageSize
   });
 }
 
