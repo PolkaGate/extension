@@ -163,7 +163,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
         />
         <Grid container m='5px auto 0' width='92%'>
           <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-            {t<string>('Min Cintribution')}:
+            {t<string>('Min Contribution')}:
           </Typography>
           <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='5px'>
             <ShowBalance balance={minContribution} decimal={decimal} decimalPoint={3} token={token} />

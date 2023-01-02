@@ -29,13 +29,13 @@ import ShowParachain from '../partials/ShowParachain';
 
 interface Props {
   api?: ApiPromise;
+  contributionAmount?: BN;
+  crowdloansId?: LinkOption[];
+  crowdloanToContribute: Crowdloan;
   formatted: string | AccountId;
   showReview: boolean;
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
-  contributionAmount?: BN;
   estimatedFee?: Balance;
-  crowdloanToContribute: Crowdloan;
-  crowdloansId?: LinkOption[];
   currentBlockNumber?: number;
   myContribution?: string | Balance;
   decimal?: number;
