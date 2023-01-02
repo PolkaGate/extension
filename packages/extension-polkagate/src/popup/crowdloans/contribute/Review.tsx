@@ -18,9 +18,9 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../components';
 import { useAccountName, useChain, useProxies, useTranslation } from '../../../hooks';
-import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
+import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../partials';
 import { broadcast } from '../../../util/api';
 import { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
@@ -66,6 +66,8 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
+  const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
+
   const _onBackClick = useCallback(() => {
     setShowReview(!showReview);
   }, [setShowReview, showReview]);
@@ -74,7 +76,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
     address && onAction(`/crowdloans/${address}`);
   }, [address, onAction]);
 
-  const joinPool = useCallback(async () => {
+  const goContribute = useCallback(async () => {
     if (!crowdloanToContribute || !formatted || !contribute) {
       return;
     }
@@ -188,7 +190,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
-          onConfirmClick={joinPool}
+          onConfirmClick={goContribute}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer']}
@@ -229,7 +231,42 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           showConfirmation={showConfirmation}
           txInfo={txInfo}
         >
-          {/* <JoinPoolTxDetail pool={poolToJoin} txInfo={txInfo} /> */}
+          <>
+            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t<string>('Account holder')}:
+              </Typography>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                {txInfo.from.name}
+              </Typography>
+              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
+              </Grid>
+            </Grid>
+            {txInfo.throughProxy &&
+              <Grid container m='auto' maxWidth='92%'>
+                <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
+              </Grid>
+            }
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t<string>('Parachain')}:
+              </Typography>
+              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                {getName(crowdloanToContribute.fund.paraId) ?? `Unknown(${crowdloanToContribute.fund.paraId})`}
+              </Grid>
+            </Grid>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t<string>('Amount')}:
+              </Typography>
+              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                {`${txInfo.amount} ${token}`}
+              </Grid>
+            </Grid>
+          </>
         </Confirmation>)
       }
     </>
