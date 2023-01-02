@@ -221,25 +221,25 @@ export default function RewardDetails(): React.ReactElement {
 
   useEffect((): void => {
     // TODO: to get rewards info from subquery
-    formatted && endpoint && getRewards(endpoint, formatted).then((info) => {
-      const rewardsFromSubQuery: RewardInfo[] | undefined = info?.map(
-        (i: SubQueryRewardInfo): RewardInfo => {
-          return {
-            amount: new BN(i.reward.amount),
-            era: i.reward.era,
-            event: i.reward.isReward ? 'Rewarded' : '',
-            stash: i.reward.stash,
-            timeStamp: Number(i.timestamp),
-            validator: i.reward.validator
-          };
-        });
+    // formatted && chainName && getRewards(chainName, formatted).then((info) => {
+    //   const rewardsFromSubQuery: RewardInfo[] | undefined = info?.map(
+    //     (i: SubQueryRewardInfo): RewardInfo => {
+    //       return {
+    //         amount: new BN(i.reward.amount),
+    //         era: i.reward.era,
+    //         event: i.reward.isReward ? 'Rewarded' : '',
+    //         stash: i.reward.stash,
+    //         timeStamp: Number(i.timestamp),
+    //         validator: i.reward.validator
+    //       };
+    //     });
 
-      console.log('rewardsFromSubQuery:', rewardsFromSubQuery);
+    //   console.log('rewardsFromSubQuery:', rewardsFromSubQuery);
 
-      if (rewardsFromSubQuery?.length) {
-        return setRewardsInfo(rewardsFromSubQuery);
-      }
-    });
+    //   if (rewardsFromSubQuery?.length) {
+    //     return setRewardsInfo(rewardsFromSubQuery);
+    //   }
+    // });
 
     formatted && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(formatted)).then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
