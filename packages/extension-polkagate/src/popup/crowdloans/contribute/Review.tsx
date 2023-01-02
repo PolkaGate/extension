@@ -26,6 +26,7 @@ import { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
+import ShowParachainBrief from '../partials/ShowParachainBrief';
 
 interface Props {
   api?: ApiPromise;
@@ -175,12 +176,11 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           </Grid>
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-        <ShowParachain
+        <ShowParachainBrief
           api={api}
           chain={chain}
           crowdloan={crowdloanToContribute}
           crowdloansId={crowdloansId}
-          labelPosition='center'
           setShowCrowdloanInfo={setShowCrowdloanInfo}
           style={{ m: '15px auto 0', width: '92%' }}
         />
