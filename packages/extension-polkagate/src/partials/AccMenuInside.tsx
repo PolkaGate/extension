@@ -6,7 +6,7 @@ import '@vaadin/icons';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
@@ -15,10 +15,9 @@ import { useHistory } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { sitemap, sitemapB } from '../assets/icons';
+import { poolStakingBlack, poolStakingWhite, sitemap, sitemapB, soloStakingBlack, soloStakingWhite } from '../assets/icons';
 import { ActionContext, Identicon, MenuItem, SettingsContext } from '../components';
 import { useTranslation } from '../hooks';
-import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -115,17 +114,21 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
         iconComponent={
-          <vaadin-icon icon='vaadin:coin-piles' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            icon={faCoins}
+            size='lg'
+          />
         }
         text={t('Staking')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', ml: '20px' }} />
       <MenuItem
-        pl='20px'
         iconComponent={
           <img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />
         }
         onClick={goToSoloStaking}
+        pl='20px'
         text={t('Solo staking')}
       />
       <MenuItem
