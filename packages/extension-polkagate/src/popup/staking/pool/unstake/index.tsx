@@ -34,6 +34,11 @@ interface State {
   myPool: MyPoolInfo | undefined;
 }
 
+const CONDITION_MAP = {
+  DESTROY: 1,
+  REMOVE_ALL: 2
+}
+
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
@@ -53,7 +58,7 @@ export default function Index(): React.ReactElement {
   const [helperText, setHelperText] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
-  const [helperButton, setShowHelperButton] = useState<number>(0);
+  const [helperButton, setShowHelperButton] = useState<number>();
   const [goChange, setGoChange] = useState<boolean>(false);
 
   const staked = useMemo(() => {
@@ -105,6 +110,10 @@ export default function Index(): React.ReactElement {
       return setAlert(t('It is more than already staked.'));
     }
 
+    if (isPoolDepositor && (poolMemberCounter > 1 || poolState !== 'Destroying') && poolConsts && staked.sub(amountAsBN).lt(poolConsts.minCreateBond)) {
+      return setAlert(t('Remaining stake amount should not be less than {{min}} {{token}}', { replace: { min: amountToHuman(poolConsts.minCreateBond, decimal), token } }));
+    }
+
     if (api && staked && poolConsts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(poolConsts.minJoinBond)) {
       const remained = api.createType('Balance', staked.sub(amountAsBN)).toHuman();
       const min = api.createType('Balance', poolConsts.minJoinBond).toHuman();
@@ -113,7 +122,7 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount]);
+  }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount, isPoolDepositor, poolMemberCounter, poolState, token]);
 
   useEffect(() => {
     const params = [formatted, amountToMachine(amount, decimal)];
@@ -146,13 +155,19 @@ export default function Index(): React.ReactElement {
 
     if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
       setHelperText(t<string>('You need to change the pool state to Destroying first to be able to unstake.'));
-      setShowHelperButton(1);
+      setShowHelperButton(CONDITION_MAP.DESTROY);
+
+      return;
     }
 
     if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
       setHelperText(t<string>('You need to remove all members first to be able to unstake.'));
-      setShowHelperButton(2);
+      setShowHelperButton(CONDITION_MAP.REMOVE_ALL);
+
+      return;
     }
+
+    setShowHelperButton(undefined)
   }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
 
   const onBackClick = useCallback(() => {
@@ -308,7 +323,7 @@ export default function Index(): React.ReactElement {
         </Typography>}
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee}
+        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks && myPool &&

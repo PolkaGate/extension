@@ -4,14 +4,14 @@
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, PButton } from '../../../../../components';
+import { AmountWithOptions, PButton, Warning } from '../../../../../components';
 import { useAccount, useChain, useDecimal, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
@@ -34,6 +34,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const account = useAccount(address);
   const chain = useChain(address);
   const history = useHistory();
+  const theme = useTheme();
 
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [bondAmount, setBondAmount] = useState<string | undefined>();
@@ -111,8 +112,22 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const isAmountInRange = amountAsBN.gt(availableBalance?.sub(ED.muln(2)).sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO);
 
-    setNextBtnDisabled(!(bondAmount && bondAmount !== '0' && !isAmountInRange) && !pool);
+    setNextBtnDisabled((!(bondAmount && bondAmount !== '0' && !isAmountInRange) && !pool) || pool?.member?.points === '0');
   }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, bondAmount, api, pool]);
+
+  const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
+    <Grid color='red' container sx={{ height:'65px', 'div.belowInput': { m: '5px 15px 5px', p: 0, width: '95%' }, 'div.belowInput.danger': { ml: '20px', mt: '10px' } }}>
+      <Warning
+        fontWeight={400}
+        iconDanger={iconDanger}
+        isBelowInput
+        isDanger={isDanger}
+        theme={theme}
+      >
+        {text}
+      </Warning>
+    </Grid>
+  );
 
   return (
     <>
@@ -124,6 +139,9 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         text={t<string>('Pool Staking')}
       />
       <SubTitle label={t<string>('Stake')} />
+      {pool?.member?.points === '0' &&
+        <Warn isDanger text={t('The account is fully unstaked, so can\'t stake anymore until you withdraw entire unstaked / redeemable amount.')} />
+      }
       <Asset
         address={address}
         api={api}
@@ -162,7 +180,11 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
         {t<string>('Your rewards will be automatically withdrawn.')}
       </Typography>
-      <PButton _onClick={toReview} disabled={nextBtnDisabled} text={t<string>('Next')} />
+      <PButton
+        _onClick={toReview}
+        disabled={nextBtnDisabled}
+        text={t<string>('Next')}
+      />
       {showReview &&
         <Review
           address={address}
