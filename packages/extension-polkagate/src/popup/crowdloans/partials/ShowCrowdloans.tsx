@@ -9,7 +9,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Grid, Link, Typography } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
@@ -34,9 +34,10 @@ interface Props {
   currentBlockNumber?: number;
   token?: string;
   setSelectedCrowdloan?: React.Dispatch<React.SetStateAction<Crowdloan | undefined>>;
+  selectedCrowdloan?: Crowdloan;
 }
 
-export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, setSelectedCrowdloan, showStatus = false, token }: Props): React.ReactElement {
+export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan, crowdloansId, currentBlockNumber, decimal, key, myContribution, onContribute, setSelectedCrowdloan, showStatus = false, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const paraId = crowdloan.fund.paraId;
   const name = useMemo(() => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId, paraId]);
@@ -51,10 +52,15 @@ export default function ShowCrowdloan({ api, chain, crowdloan, crowdloansId, cur
       return;
     }
 
-    crowdloan.identity = crowdloan.identity || identity;
     setSelectedCrowdloan(crowdloan);
     onContribute();
-  }, [crowdloan, identity, onContribute, setSelectedCrowdloan]);
+  }, [crowdloan, onContribute, setSelectedCrowdloan]);
+
+  useEffect(() => {
+    if (selectedCrowdloan && selectedCrowdloan?.fund?.paraId === crowdloan.fund.paraId) {
+      selectedCrowdloan.identity = selectedCrowdloan?.identity || identity;
+    }
+  }, [crowdloan.fund.paraId, identity, selectedCrowdloan, selectedCrowdloan?.fund?.paraId, selectedCrowdloan?.identity]);
 
   return (
     <Grid container direction='column' height='fit-content' item key={key} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mt: '8px' }}>

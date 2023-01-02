@@ -103,6 +103,7 @@ export default function ActiveCrowdloans({ activeCrowdloans, api, chain, contrib
               decimal={decimal}
               myContribution={getMyContribution(activeCrowdloans[itemToShow].fund.paraId)}
               onContribute={contributeToCrowdloan}
+              selectedCrowdloan={selectedCrowdloan}
               setSelectedCrowdloan={setSelectedCrowdloan}
               token={token}
             />
