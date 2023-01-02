@@ -20,46 +20,20 @@ interface Props {
 export default function MenuItem({ children, disabled = false, icon, onClick, pl = '0', py = '8px', showSubMenu = false, text, iconComponent }: Props): React.ReactElement<Props> {
   return (
     <>
-      <Grid
-        alignItems='center'
-        container
-        item
-        justifyContent='space-between'
-        my='4px'
-        onClick={disabled ? () => null : onClick}
-        pl={pl}
-        py={py}
-        sx={{ cursor: disabled ? '' : 'pointer' }}
-        textAlign='left'
-        xs={12}
-        color={disabled ? '#4B4B4B' : 'inherit'}
-      >
-        <Grid
-          container
-          item
-          xs
-        >
-          <Grid
-            alignItems='center'
-            container
-            item
-            xs={1}
-          >
+      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? () => null : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer' }} textAlign='left' xs={12}>
+        <Grid alignItems='center' container item xs>
+          <Grid alignItems='center' container item xs={1}>
             {iconComponent ??
               <Box
-                component='img'
                 alt={'logo'}
                 color={disabled ? '#4B4B4B' : 'inherit'}
+                component='img'
                 src={icon}
                 sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '18px', width: '18px' }}
               />
             }
           </Grid>
-          <Grid
-            item
-            pl='10px'
-          // xs={10}
-          >
+          <Grid item pl='10px'>
             <Typography
               color={disabled ? 'text.disabled' : 'inherit'}
               fontSize='18px'
@@ -70,13 +44,7 @@ export default function MenuItem({ children, disabled = false, icon, onClick, pl
             </Typography>
           </Grid>
         </Grid>
-        <Grid
-          alignItems='center'
-          container
-          item
-          sx={{ display: children ? 'inherit' : 'none' }}
-          xs={1}
-        >
+        <Grid alignItems='center' container item sx={{ display: children ? 'inherit' : 'none' }} xs={1}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showSubMenu ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
         </Grid>
       </Grid>

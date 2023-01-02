@@ -13,9 +13,8 @@ import '@vaadin/icons';
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { ThemeProps } from '../../../../extension-ui/src/types';
 
-import { faCoins, faHistory, faPaperPlane, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, useTheme } from '@mui/material';
