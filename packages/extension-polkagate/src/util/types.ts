@@ -374,7 +374,7 @@ export interface PoolStakingConsts {
 }
 
 export interface PoolInfo {
-  poolId: BN;
+  poolId: number;
   bondedPool: PalletNominationPoolsBondedPoolInner | null;
   metadata: string | null;
   rewardPool: PalletNominationPoolsRewardPool | null

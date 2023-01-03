@@ -6,7 +6,7 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -113,7 +113,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
         <PoolMoreInfo
           api={api}
           chain={chain}
-          poolId={pool.poolId.toNumber()}
+          poolId={pool.poolId}
           pool={pool}
           setShowPoolInfo={setOpenPoolInfo}
           showPoolInfo={isOpenPoolInfo}

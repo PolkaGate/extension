@@ -5,8 +5,6 @@ import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { useEndpoint2, useFormatted } from '.';
 
 export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
@@ -37,10 +35,11 @@ export default function useMyPools(address: string): MyPoolInfo[] | null | undef
 
       parsedPoolsInfo?.forEach((p: MyPoolInfo) => {
         if (p?.bondedPool?.points) {
-          p.bondedPool.points = new BN(String(p.bondedPool.points));
+          p.bondedPool.points =  isHexToBn(p.bondedPool.points);
+          // new BN(String(p.bondedPool.points));
         }
 
-        p.poolId = new BN(p.poolId);
+        // p.poolId = new BN(p.poolId);
       });
 
       setMyPools(parsedPoolsInfo.length ? parsedPoolsInfo : null);

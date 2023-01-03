@@ -10,6 +10,7 @@ import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
 import { useEndpoint2, useFormatted } from '.';
+import { isHexToBn } from '../util/utils';
 
 export default function usePool(address: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
@@ -54,13 +55,14 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       const parsedInfo = JSON.parse(info) as MyPoolInfo;
 
-      /** convert hex strings to BN strings*/
+      /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
       if (parsedInfo.member) {
-        parsedInfo.member.points = (isHex(parsedInfo.member.points) ? hexToBn(parsedInfo.member.points) : new BN(parsedInfo.member.points)).toString();
+        parsedInfo.member.points = isHexToBn(parsedInfo.member.points).toString();
       }
-      parsedInfo.bondedPool.points = (isHex(parsedInfo.bondedPool.points) ? hexToBn(parsedInfo.bondedPool.points) : new BN(parsedInfo.bondedPool.points)).toString();
-      parsedInfo.stashIdAccount.stakingLedger.active = (isHex(parsedInfo.stashIdAccount.stakingLedger.active) ? hexToBn(parsedInfo.stashIdAccount.stakingLedger.active) : new BN(parsedInfo.stashIdAccount.stakingLedger.active)).toString();
-      parsedInfo.stashIdAccount.stakingLedger.total = (isHex(parsedInfo.stashIdAccount.stakingLedger.total) ? hexToBn(parsedInfo.stashIdAccount.stakingLedger.total) : new BN(parsedInfo.stashIdAccount.stakingLedger.total)).toString();
+
+      parsedInfo.bondedPool.points = isHexToBn(parsedInfo.bondedPool.points).toString();
+      parsedInfo.stashIdAccount.stakingLedger.active = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.active).toString();
+      parsedInfo.stashIdAccount.stakingLedger.total = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.total).toString();
 
       console.log('*** My pool info returned from worker is:', parsedInfo);
 
