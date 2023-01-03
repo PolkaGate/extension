@@ -11,7 +11,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { Identity, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { usePool, usePoolMembers, useTranslation } from '../../../hooks';
-import { MemberPoints, MyPoolInfo } from '../../../util/types';
+import { MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
 
@@ -19,7 +19,7 @@ interface Props {
   address?: string;
   api: ApiPromise;
   chain: Chain;
-  pool: MyPoolInfo | undefined;
+  pool: MyPoolInfo | PoolInfo | undefined;
   poolId?: number;
   showPoolInfo: boolean;
   setShowPoolInfo: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,7 +36,7 @@ interface CollapseProps {
 export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
-  const poolMembers = usePoolMembers(api, poolToShow?.poolId?.toString());
+  const poolMembers = usePoolMembers(api, poolToShow?.poolId);
 
   const membersToShow = useMemo(() => {
     if (!poolMembers) {

@@ -9,8 +9,7 @@ import type { Compact, u128 } from '@polkadot/types-codec';
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
-import { hexToU8a, isHex } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { BLOCK_RATE, FLOATING_POINT_DIGIT, SHORT_ADDRESS_CHARACTERS } from './constants';
@@ -336,3 +335,5 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
     });
   });
 }
+
+export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);

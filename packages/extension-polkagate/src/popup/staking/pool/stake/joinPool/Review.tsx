@@ -209,7 +209,10 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           showConfirmation={showConfirmation}
           txInfo={txInfo}
         >
-          <JoinPoolTxDetail pool={poolToJoin} txInfo={txInfo} />
+          <JoinPoolTxDetail
+            pool={poolToJoin}
+            txInfo={txInfo}
+          />
         </Confirmation>)
       }
     </>
