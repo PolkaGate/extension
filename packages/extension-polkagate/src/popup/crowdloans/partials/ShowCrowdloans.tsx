@@ -122,10 +122,10 @@ export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan
           </Typography>
         </Grid>
         <Grid container item justifyContent='space-between'>
-          <Typography fontSize='16px' fontWeight={300} lineHeight='34px' pl='10px' width='40%'>
+          <Typography fontSize='16px' fontWeight={300} lineHeight='34px' pl='10px' width='29%'>
             {t<string>('Raised/Cap')}
           </Typography>
-          <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} width='60%'>
+          <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} width='71%'>
             <Grid item sx={{ '> div': { lineHeight: '34px' } }} width='fit-content'>
               <ShowBalance balance={crowdloan.fund.raised} decimal={decimal} decimalPoint={2} skeletonWidth={60} token={token} />
             </Grid>
