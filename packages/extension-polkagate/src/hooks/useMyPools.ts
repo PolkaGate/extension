@@ -6,6 +6,7 @@ import type { MyPoolInfo } from '../util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useEndpoint2, useFormatted } from '.';
+import { isHexToBn } from '../util/utils';
 
 export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
   const [myPools, setMyPools] = useState<MyPoolInfo[] | undefined | null>();
@@ -35,13 +36,14 @@ export default function useMyPools(address: string): MyPoolInfo[] | null | undef
 
       parsedPoolsInfo?.forEach((p: MyPoolInfo) => {
         if (p?.bondedPool?.points) {
-          p.bondedPool.points =  isHexToBn(p.bondedPool.points);
+          p.bondedPool.points = isHexToBn(p.bondedPool.points);
           // new BN(String(p.bondedPool.points));
         }
 
         // p.poolId = new BN(p.poolId);
       });
 
+      console.log(': : :my other pools:', parsedPoolsInfo);
       setMyPools(parsedPoolsInfo.length ? parsedPoolsInfo : null);
 
       getMyPoolsWorker.terminate();
