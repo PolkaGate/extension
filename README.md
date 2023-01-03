@@ -42,10 +42,10 @@ The following features will be available in the next milestone:
 FireFox: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/)
 
 Chrome: 
-   1. download the [zip file](https://github.com/Nick-1979/polkagate-chrome-developer-version/archive/refs/heads/main.zip)
-   2. go to [`chrome://extensions/`](chrome://extensions/)
-   3. switch on the "Developer mode" on top right
-   4. click on "Load unpacked" button and point to the unzipped downloaded folder
+   1. Download the [zip file](https://github.com/Nick-1979/polkagate-chrome-developer-version/archive/refs/heads/main.zip)
+   2. Go to [`chrome://extensions/`](chrome://extensions/)
+   3. Switch on the "Developer mode" on top right
+   4. Click on "Load unpacked" button and point to the unzipped downloaded folder
 
 ### Development version
 
