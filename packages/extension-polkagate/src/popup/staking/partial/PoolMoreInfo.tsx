@@ -77,7 +77,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
             <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ borderRight: '1px solid', borderRightColor: 'secondary.main', fontSize: '18px', minHeight: '45px', pl: '10px', width: '70%' }} />
-            <Grid alignItems='center' container item justifyContent='center' width='30%'>
+            <Grid alignItems='center' container item justifyContent='center' fontSize='14px' fontWeight='400' width='30%'>
               <ShowBalance
                 api={api}
                 balance={poolMemberStaked(member.points)}
@@ -117,9 +117,11 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
 
   const CollapseData = ({ mode, open, pool, show, title }: CollapseProps) => (
     <Grid container direction='column' m='auto' width='92%'>
-      <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-        <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>{title}</Typography>
-        <Grid alignItems='center' container item onClick={open} sx={{ cursor: 'pointer' }} xs={1}>
+      <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+        <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
+          {title}
+        </Typography>
+        <Grid alignItems='center' container item sx={{ cursor: 'pointer' }} xs={1}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: show ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
         </Grid>
       </Grid>
@@ -154,7 +156,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
             style={{ m: '20px auto', width: '92%' }}
           />
           <CollapseData
-            mode='Roles'
+            mode={itemToShow}
             open={() => openTab('Roles')}
             pool={poolToShow}
             show={itemToShow === 'Roles'}
@@ -162,7 +164,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
           />
           {poolToShow.accounts?.rewardId &&
             <CollapseData
-              mode='Ids'
+              mode={itemToShow}
               open={() => openTab('Ids')}
               pool={poolToShow}
               show={itemToShow === 'Ids'}
@@ -171,7 +173,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
           }
           {poolToShow.accounts?.rewardId &&
             <CollapseData
-              mode='Members'
+              mode={itemToShow}
               open={() => openTab('Members')}
               pool={poolToShow}
               show={itemToShow === 'Members'}
@@ -180,7 +182,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
           }
           {poolToShow.accounts?.rewardId &&
             <CollapseData
-              mode='Reward'
+              mode={itemToShow}
               open={() => openTab('Reward')}
               pool={poolToShow}
               show={itemToShow === 'Reward'}

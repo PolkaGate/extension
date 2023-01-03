@@ -1,13 +1,21 @@
-// Copyright 2017-2022 @polkadot/react-hooks authors & contributors
+// Copyright 2017-2023 @polkadot/react-hooks authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+
+import { useEffect, useState } from 'react';
+
 import { ApiPromise } from '@polkadot/api';
-import { useState, useEffect } from 'react';
 
 import { MembersMapEntry } from '../util/types';
 
-export function usePoolMembers(api: ApiPromise, poolID: string): MembersMapEntry[] | undefined {
-  const [poolMembers, setPoolMembers] = useState();
+interface Member {
+  accountId: string;
+  member: PalletNominationPoolsPoolMember;
+}
+
+export function usePoolMembers(api: ApiPromise, poolId: string): MembersMapEntry[] | undefined {
+  const [poolMembers, setPoolMembers] = useState<Member[]>();
 
   useEffect(() => {
     if (!api) {
@@ -31,9 +39,14 @@ export function usePoolMembers(api: ApiPromise, poolID: string): MembersMapEntry
         return all;
       }, {});
 
-      setPoolMembers(members[poolID]);
+      console.log('members[poolId]', members[poolId]);
+      const output = members[poolId] as Member[];
+
+      output?.length >= 2 && output.sort((a, b) => b.member.points.sub(a.member.points).gtn(0) ? 1 : -1);
+
+      setPoolMembers(output);
     });
-  }, [api?.query.nominationPools.poolMembers, poolID]);
+  }, [api, poolId]);
 
   return poolMembers;
 }
