@@ -140,7 +140,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
       />
       <SubTitle label={t<string>('Stake')} />
       {pool?.member?.points === '0' &&
-        <Warn isDanger text={t('The account is fully unstaked, so can\'t stake anymore until you withdraw entire unstaked / redeemable amount.')} />
+        <Warn isDanger text={t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.')} />
       }
       <Asset
         address={address}
