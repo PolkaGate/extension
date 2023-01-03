@@ -20,42 +20,14 @@ export default function JoinPoolTxDetail({ pool, txInfo }: Props): React.ReactEl
 
   return (
     <>
-      <Grid
-        alignItems='end'
-        container
-        justifyContent='center'
-        sx={{
-          m: 'auto',
-          pt: '5px',
-          width: '90%'
-        }}
-      >
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-        >
+      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
           {t<string>('Account holder:')}
         </Typography>
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-          maxWidth='45%'
-          overflow='hidden'
-          pl='5px'
-          textOverflow='ellipsis'
-          whiteSpace='nowrap'
-        >
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
         </Typography>
-        <Grid
-          fontSize='16px'
-          fontWeight={400}
-          item
-          lineHeight='22px'
-          pl='5px'
-        >
+        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShortAddress
             address={txInfo.from.address}
             style={{ fontSize: '16px' }}
@@ -68,73 +40,21 @@ export default function JoinPoolTxDetail({ pool, txInfo }: Props): React.ReactEl
           <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} name={txInfo.throughProxy.name} />
         </Grid>
       }
-      <Divider sx={{
-        bgcolor: 'secondary.main',
-        height: '2px',
-        m: '5px auto',
-        width: '75%'
-      }}
-      />
-      <Grid
-        alignItems='end'
-        container
-        justifyContent='center'
-        sx={{
-          m: 'auto',
-          pt: '5px',
-          width: '90%'
-        }}
-      >
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-        >
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
           {t<string>('Pool:')}
         </Typography>
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-          maxWidth='45%'
-          overflow='hidden'
-          pl='5px'
-          textOverflow='ellipsis'
-          whiteSpace='nowrap'
-        >
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {pool.metadata}
         </Typography>
       </Grid>
-      <Divider sx={{
-        bgcolor: 'secondary.main',
-        height: '2px',
-        m: '5px auto',
-        width: '75%'
-      }}
-      />
-      <Grid
-        alignItems='end'
-        container
-        justifyContent='center'
-        sx={{
-          m: 'auto',
-          width: '90%'
-        }}
-      >
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          lineHeight='23px'
-        >
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
+      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
           {t<string>('Staked:')}
         </Typography>
-        <Grid
-          fontSize='16px'
-          fontWeight={400}
-          item
-          lineHeight='22px'
-          pl='5px'
-        >
+        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           {`${txInfo.amount} ${token}`}
         </Grid>
       </Grid>

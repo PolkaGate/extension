@@ -49,7 +49,7 @@ export default function JoinPool(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
-  const poolToJoin = usePool(address, selectedPool?.poolId?.toNumber());
+  // const poolToJoin = usePool(address, selectedPool?.poolId?.toNumber());
 
   const backToStake = useCallback(() => {
     history.push({
@@ -134,9 +134,9 @@ export default function JoinPool(): React.ReactElement {
       return;
     }
 
-    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
+    const amountNotInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
 
-    setNextBtnDisabled(!(selectedPool && stakeAmount && stakeAmount !== '0' && !isAmountInRange));
+    setNextBtnDisabled(!selectedPool || !stakeAmount || stakeAmount === '0' || amountNotInRange);
   }, [amountAsBN, availableBalance, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
   return (
@@ -189,18 +189,19 @@ export default function JoinPool(): React.ReactElement {
         }}
       />
       <PButton
-        _isBusy={poolToJoin?.poolId ? Number(poolToJoin.poolId) !== selectedPool?.poolId?.toNumber() : false || !!pools}
+        // _isBusy={poolToJoin?.poolId ? Number(poolToJoin.poolId) !== selectedPool?.poolId?.toNumber() : false || !!pools}
         _onClick={toReview}
         disabled={nextBtnDisabled}
         text={t<string>('Next')}
       />
-      {showReview && poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() && api && amountAsBN &&
+      {showReview && selectedPool && api && amountAsBN &&
+        // poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() && api && amountAsBN &&
         <Review
           address={address}
           api={api}
           estimatedFee={estimatedFee}
           joinAmount={amountAsBN}
-          poolToJoin={poolToJoin}
+          poolToJoin={selectedPool}
           setShowReview={setShowReview}
           showReview={showReview}
         />
