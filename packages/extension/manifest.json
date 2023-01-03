@@ -1,11 +1,11 @@
 {
   "author": "Polkagate",
   "description": "The gateway to the Polkadot ecosystem",
-  "homepage_url": "http://polkagate.xyz",
+  "homepage_url": "https://polkagate.xyz",
   "name": "PolkaGate",
   "short_name": "PG",
   "manifest_version": 2,
-  "version": "0.44.1.1",
+  "version": "0.1.0.0",
   "permissions": [
     "storage",
     "unlimitedStorage",

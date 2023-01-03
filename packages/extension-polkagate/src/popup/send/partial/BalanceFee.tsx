@@ -8,8 +8,6 @@
  * this component shows a balance and a fee
  * */
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';

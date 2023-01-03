@@ -8,8 +8,6 @@
  * this component shows an account information in detail
  * */
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Skeleton } from '@mui/material';

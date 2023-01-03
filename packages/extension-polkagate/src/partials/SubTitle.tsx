@@ -6,8 +6,6 @@
  * this component shows a subtitle beneath the header
  * */
 
-import '@vaadin/icons';
-
 import { Divider, Grid } from '@mui/material';
 import React from 'react';
 

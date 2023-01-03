@@ -8,15 +8,13 @@
  * this component shows ..
  * */
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
 
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { Identity, ShortAddress } from '../../../components';
-import { useChain, useFormatted, useTranslation } from '../../../hooks';
+import { useChain, useTranslation } from '../../../hooks';
 
 interface Props {
   address?: string;

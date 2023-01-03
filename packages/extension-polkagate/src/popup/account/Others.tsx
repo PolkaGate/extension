@@ -8,8 +8,6 @@
  * this component shows an account balances information in detail
  * */
 
-import '@vaadin/icons';
-
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { Container, Divider, Grid, Skeleton, Typography } from '@mui/material';

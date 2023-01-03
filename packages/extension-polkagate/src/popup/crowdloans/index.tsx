@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
