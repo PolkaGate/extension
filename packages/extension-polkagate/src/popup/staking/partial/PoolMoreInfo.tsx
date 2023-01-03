@@ -46,43 +46,16 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
     return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
   }, [poolMembers]);
 
-  const [showRoles, setShowRoles] = useState<boolean>(true);
-  const [showIds, setShowIds] = useState<boolean>(false);
-  const [showMembers, setShowMembers] = useState<boolean>(false);
-  const [showReward, setShowReward] = useState<boolean>(false);
+  const [itemToShow, setShow] = useState<'Ids' | 'Members' | 'Reward' | 'Roles'>('Roles');
 
   const _closeMenu = useCallback(
     () => setShowPoolInfo(false),
     [setShowPoolInfo]
   );
 
-  const openRoles = useCallback(() => {
-    setShowReward(false);
-    setShowIds(false);
-    setShowMembers(false);
-    setShowRoles(!showRoles);
-  }, [showRoles]);
-
-  const openIds = useCallback(() => {
-    setShowReward(false);
-    setShowRoles(false);
-    setShowMembers(false);
-    setShowIds(!showIds);
-  }, [showIds]);
-
-  const openMembers = useCallback(() => {
-    setShowRoles(false);
-    setShowIds(false);
-    setShowReward(false);
-    setShowMembers(!showMembers);
-  }, [showMembers]);
-
-  const openReward = useCallback(() => {
-    setShowRoles(false);
-    setShowIds(false);
-    setShowMembers(false);
-    setShowReward(!showReward);
-  }, [showReward]);
+  const openTab = useCallback((tab: 'Ids' | 'Members' | 'Reward' | 'Roles') => {
+    setShow(tab);
+  }, []);
 
   const poolMemberStaked = (points) => {
     const staked = points ? api?.createType('Balance', points) : undefined;
@@ -173,23 +146,51 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
       </Grid>
       {poolToShow
         ? <>
-          <ShowPool api={api} chain={chain} mode='Default' pool={poolToShow} style={{ m: '20px auto', width: '92%' }} />
-          <CollapseData mode='Roles' open={openRoles} pool={poolToShow} show={showRoles} title={t<string>('Roles')} />
-          {poolToShow.accounts?.rewardId && <CollapseData mode='Ids' open={openIds} pool={poolToShow} show={showIds} title={t<string>('Ids')} />}
-          {poolToShow.accounts?.rewardId && <CollapseData mode='Members' open={openMembers} pool={poolToShow} show={showMembers} title={t<string>('Members')} />}
-          {poolToShow.accounts?.rewardId && <CollapseData mode='Reward' open={openReward} pool={poolToShow} show={showReward} title={t<string>('Rewards')} />}
+          <ShowPool
+            api={api}
+            chain={chain}
+            mode='Default'
+            pool={poolToShow}
+            style={{ m: '20px auto', width: '92%' }}
+          />
+          <CollapseData
+            mode='Roles'
+            open={() => openTab('Roles')}
+            pool={poolToShow}
+            show={itemToShow === 'Roles'}
+            title={t<string>('Roles')}
+          />
+          {poolToShow.accounts?.rewardId &&
+            <CollapseData
+              mode='Ids'
+              open={() => openTab('Ids')}
+              pool={poolToShow}
+              show={itemToShow === 'Ids'}
+              title={t<string>('Ids')}
+            />
+          }
+          {poolToShow.accounts?.rewardId &&
+            <CollapseData
+              mode='Members'
+              open={() => openTab('Members')}
+              pool={poolToShow}
+              show={itemToShow === 'Members'}
+              title={t<string>('Members')}
+            />
+          }
+          {poolToShow.accounts?.rewardId &&
+            <CollapseData
+              mode='Reward'
+              open={() => openTab('Reward')}
+              pool={poolToShow}
+              show={itemToShow === 'Reward'}
+              title={t<string>('Rewards')}
+            />
+          }
         </>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
-      <IconButton
-        onClick={_closeMenu}
-        sx={{
-          left: '15px',
-          p: 0,
-          position: 'absolute',
-          top: '65px'
-        }}
-      >
+      <IconButton onClick={_closeMenu} sx={{ left: '15px', p: 0, position: 'absolute', top: '65px' }}>
         <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
       </IconButton>
     </Grid>
