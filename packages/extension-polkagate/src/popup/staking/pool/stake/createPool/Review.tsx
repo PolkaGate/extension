@@ -12,18 +12,15 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyConfirm, PButton, Popup, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
-import { updateMeta } from '../../../../../messaging';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
-import { PoolInfo, Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../../util/types';
-import { amountToHuman, getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../../util/utils';
+import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
+import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import CreatePoolTxDetail from './partial/CreatePoolTxDetail';
 
@@ -42,7 +39,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const theme = useTheme();
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const formatted = useFormatted(address);
   const name = useAccountName(address);
   const proxies = useProxies(api, address);
@@ -70,7 +67,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   }, [address, onAction]);
 
   const goToStakingHome = useCallback(() => {
-    onAction(`pool/stake/${address}`);
+    onAction(`pool/${address}`);
   }, [address, onAction]);
 
   useEffect(() => {
