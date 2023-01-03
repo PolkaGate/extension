@@ -1,6 +1,8 @@
 <img src="https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/logo/534b.PNG" data-canonical-src="https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/logo/534b.PNG" width="100" height="100" />
 
 # PolkaGate
+![license](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&style=flat-square)
+![supported by](https://img.shields.io/badge/Supported%20by-Kusama%20Treasury-%20black?logo=polkadot&style=flat-square)
 
 A user-friendly wallet to interact with the Polkadot/Substrate based blockchains through a browser. It allows users to access their Polkadot/Kusama ecosystem account(s), which can also be used to interact with decentralized apps. It injects a [@polkadot/api](https://github.com/polkadot-js/api) signer into a page, along with any associated accounts.
 
@@ -37,8 +39,13 @@ The following features will be available in the next milestone:
 
 ### Add-on
 
-The extension for firefox can be downloaded from [here](https://addons.mozilla.org/en-US/firefox/addon/polkadot-js-plus-extension/)
+FireFox: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/)
 
+Chrome: 
+   1. Download the [zip file](https://github.com/Nick-1979/polkagate-chrome-developer-version/archive/refs/heads/main.zip)
+   2. Go to [`chrome://extensions/`](chrome://extensions/)
+   3. Switch on the "Developer mode" on top right
+   4. Click on "Load unpacked" button and point to the unzipped downloaded folder
 
 ### Development version
 
