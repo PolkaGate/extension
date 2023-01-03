@@ -95,6 +95,12 @@ export default function usePool(address: AccountId | string, id?: number, refres
       return;
     }
 
+    if (id) { /** do not save pool in local storage when pool is fetched via id, which is used in join pool page */
+      getPoolInfo(endpoint, formatted, id);
+
+      return;
+    }
+
     if (!isFetching.fetching[String(formatted)]?.getPool) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {}; // to initialize

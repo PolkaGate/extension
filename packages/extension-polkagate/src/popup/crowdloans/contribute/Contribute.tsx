@@ -63,11 +63,9 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
     const feeDummyParams = ['2000', amountAsBN ?? new BN(minContribution), null];
     const maxFeeDummyParams = ['2000', balances?.availableBalance, null];
 
-    // eslint-disable-next-line no-void
-    void tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
 
-    // eslint-disable-next-line no-void
-    void tx(...maxFeeDummyParams).paymentInfo(formatted).then((i) => setEstimatedMaxFee(i?.partialFee)).catch(console.error);
+    tx(...maxFeeDummyParams).paymentInfo(formatted).then((i) => setEstimatedMaxFee(i?.partialFee)).catch(console.error);
   }, [amountAsBN, balances?.availableBalance, contributionAmount, formatted, minContribution, tx]);
 
   const nextBtnDisabled = useMemo(() => {
@@ -157,7 +155,6 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
           primaryBtnText={t<string>('Min amount')}
           secondaryBtnText={t<string>('Max amount')}
           style={{ m: '15px auto 0', width: '92%' }}
-          // disabled={ }
           value={contributionAmount}
         />
         <Grid container m='5px auto 0' width='92%'>
@@ -173,7 +170,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
           disabled={nextBtnDisabled}
           text={t<string>('Next')}
         />
-        {showCrowdloanInfo &&
+        {showCrowdloanInfo && chain &&
           <ParachainInfo
             api={api}
             chain={chain}

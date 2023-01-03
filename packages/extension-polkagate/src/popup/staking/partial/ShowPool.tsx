@@ -113,6 +113,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
         <PoolMoreInfo
           api={api}
           chain={chain}
+          poolId={pool.poolId.toNumber()}
           pool={pool}
           setShowPoolInfo={setOpenPoolInfo}
           showPoolInfo={isOpenPoolInfo}
