@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Avatar, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useMemo } from 'react';
@@ -22,7 +24,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
+export default function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
 
@@ -104,5 +106,3 @@ function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.React
     </>
   );
 }
-
-export default React.memo(ShowRoles);
