@@ -10,11 +10,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo, DeriveStakingQuery } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, hexToBn, isHex } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
+import { isHexToBn } from '../../../util/utils';
 
 interface Props {
   api: ApiPromise;
@@ -40,13 +41,13 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const myIndex = sortedNominators?.findIndex((n) => n.who.toString() === stakerAddress);
   const myPossibleIndex = useMemo(() => {
     if (staked && myIndex === -1 && sortedNominators) {
-      const index = sortedNominators.findIndex((n) => new BN(isHex(n.value) ? hexToBn(n.value) : n.value).lt(staked));
+      const index = sortedNominators.findIndex((n) => isHexToBn(n.value).lt(staked));
 
       if (index === -1) {/** will be the last nominator */
         return sortedNominators.length;
       }
 
-      return -1;
+      return index;
     }
 
     return -1;
