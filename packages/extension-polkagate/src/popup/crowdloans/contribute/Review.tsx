@@ -25,25 +25,24 @@ import { broadcast } from '../../../util/api';
 import { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
-import ShowParachain from '../partials/ShowParachain';
 import ShowParachainBrief from '../partials/ShowParachainBrief';
 
 interface Props {
-  api?: ApiPromise;
-  contributionAmount?: BN;
-  crowdloansId?: LinkOption[];
+  api: ApiPromise | undefined;
+  contributionAmount: BN;
+  crowdloansId: LinkOption[] | undefined;
   crowdloanToContribute: Crowdloan;
   formatted: string | AccountId;
   showReview: boolean;
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
-  estimatedFee?: Balance;
-  currentBlockNumber?: number;
-  myContribution?: string | Balance;
-  decimal?: number;
-  token?: string;
+  estimatedFee: Balance | undefined;
+  currentBlockNumber: number | undefined;
+  myContribution: string | Balance | undefined;
+  decimal: number | undefined;
+  token: string | undefined;
 }
 
-export default function Review({ api, contributionAmount, crowdloanToContribute, crowdloansId, currentBlockNumber, decimal, estimatedFee, formatted, myContribution, poolToJoin, setShowReview, showReview = false, token }: Props): React.ReactElement {
+export default function Review({ api, contributionAmount, crowdloanToContribute, crowdloansId, currentBlockNumber, decimal, estimatedFee, formatted, myContribution, setShowReview, showReview, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const address = getSubstrateAddress(formatted);
@@ -78,7 +77,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   }, [address, onAction]);
 
   const goContribute = useCallback(async () => {
-    if (!crowdloanToContribute || !formatted || !contribute) {
+    if (!crowdloanToContribute || !formatted || !contribute || !decimal) {
       return;
     }
 
@@ -95,7 +94,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
 
       const info = {
         action: 'Crowdloan',
-        amount: amountToHuman(contributionAmount?.toString(), decimal),
+        amount: amountToHuman(contributionAmount.toString(), decimal),
         block,
         date: Date.now(),
         failureText,
@@ -103,7 +102,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         from: { address: String(from), name: selectedProxyName || name },
         subAction: 'Contribute',
         success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : null,
+        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
       };
 
