@@ -14,7 +14,6 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
@@ -22,13 +21,12 @@ import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
+import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
-import { Proxy, ProxyItem, SoloSettings, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
+import { Proxy, ProxyItem, SoloSettings, TxInfo } from '../../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -81,7 +79,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();

@@ -6,7 +6,6 @@
  * this component opens withdraw rewards review page
  * */
 
-
 import { Divider, Grid, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -14,19 +13,16 @@ import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import State from '@polkadot/extension-base/background/handlers/State';
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
-import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, Warning } from '../../../../components';
 import { useAccountName, useApi, useChain, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
-import { updateMeta } from '../../../../messaging';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, getTransactionHistoryFromLocalStorage, prepareMetaData, saveAsHistory } from '../../../../util/utils';
+import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
 export default function TuneUp(): React.ReactElement {
@@ -48,7 +44,7 @@ export default function TuneUp(): React.ReactElement {
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
 
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
