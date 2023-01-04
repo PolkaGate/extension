@@ -69,8 +69,6 @@ export default function CrowdLoans(): React.ReactElement {
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
   const [itemShow, setItemShow] = useState<number>(0);
 
-  console.log('currentBlockNumber:', currentBlockNumber)
-
   const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
   const sortingCrowdloansReverse = (a: Crowdloan, b: Crowdloan) => Number(b.fund.paraId) - Number(a.fund.paraId);// newest first
   const activeCrowdloans = useMemo(() => {
@@ -424,6 +422,7 @@ export default function CrowdLoans(): React.ReactElement {
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '3px', width: '92%' }}>
         <HorizontalMenuItem
           divider
+          exceptionWidth={60}
           icon={
             <Box
               component='img'
@@ -440,6 +439,7 @@ export default function CrowdLoans(): React.ReactElement {
         />
         <HorizontalMenuItem
           divider
+          exceptionWidth={33}
           icon={
             <Box
               component='img'
@@ -456,7 +456,7 @@ export default function CrowdLoans(): React.ReactElement {
         />
         <HorizontalMenuItem
           divider
-          // exceptionWidth={85}
+          exceptionWidth={39}
           icon={
             <Box
               component='img'
@@ -471,6 +471,7 @@ export default function CrowdLoans(): React.ReactElement {
           title={t<string>('Auction')}
         />
         <HorizontalMenuItem
+          exceptionWidth={34}
           icon={
             <Box
               component='img'
