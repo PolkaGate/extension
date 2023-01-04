@@ -6,11 +6,10 @@ import type { MyPoolInfo } from '../util/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
-import { useEndpoint2, useFormatted } from '.';
 import { isHexToBn } from '../util/utils';
+import { useEndpoint2, useFormatted } from '.';
 
 export default function usePool(address: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
@@ -79,6 +78,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
         parsedInfo.date = Date.now();
         last[k] = parsedInfo;
+        
         // eslint-disable-next-line no-void
         void chrome.storage.local.set({ MyPools: last });
       });
