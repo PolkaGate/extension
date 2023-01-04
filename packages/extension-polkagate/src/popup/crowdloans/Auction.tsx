@@ -58,7 +58,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
     const now = Date.now();
 
-    setTimeout(() => setTime(now + 60000), 60000);
+    // setTimeout(() => setTime(now + 60000), 60000);
 
     return new Date(now).toLocaleDateString('en-US', { ...dateFormat });
     // eslint-disable-next-line react-hooks/exhaustive-deps
