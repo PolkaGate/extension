@@ -18,7 +18,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
+import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
@@ -68,6 +68,8 @@ export default function CrowdLoans(): React.ReactElement {
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
   const [itemShow, setItemShow] = useState<number>(0);
+
+  console.log('currentBlockNumber:', currentBlockNumber)
 
   const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
   const sortingCrowdloansReverse = (a: Crowdloan, b: Crowdloan) => Number(b.fund.paraId) - Number(a.fund.paraId);// newest first
@@ -169,17 +171,21 @@ export default function CrowdLoans(): React.ReactElement {
     onAction(url);
   }, [address, chain?.genesisHash, onAction]);
 
+  const showMyContribution = useCallback(() => {
+    setItemShow(TAB_MAP.MY_CONTRIBUTION);
+  }, []);
+
   const showActiveCrowdloans = useCallback(() => {
-    setItemShow(itemShow !== TAB_MAP.ACTIVE_CROWDLOANS ? TAB_MAP.ACTIVE_CROWDLOANS : TAB_MAP.MY_CONTRIBUTION);
-  }, [itemShow]);
+    setItemShow(TAB_MAP.ACTIVE_CROWDLOANS);
+  }, []);
 
   const showAuction = useCallback(() => {
-    setItemShow(itemShow !== TAB_MAP.AUCTION ? TAB_MAP.AUCTION : TAB_MAP.MY_CONTRIBUTION);
-  }, [itemShow]);
+    setItemShow(TAB_MAP.AUCTION);
+  }, []);
 
   const showPastCrowdloans = useCallback(() => {
-    setItemShow(itemShow !== TAB_MAP.PAST_CROWDLOANS ? TAB_MAP.PAST_CROWDLOANS : TAB_MAP.MY_CONTRIBUTION);
-  }, [itemShow]);
+    setItemShow(TAB_MAP.PAST_CROWDLOANS);
+  }, []);
 
   useEffect(() => {
     chainName && formatted && getContributions(chainName, String(formatted)).then((c) => {
@@ -422,6 +428,22 @@ export default function CrowdLoans(): React.ReactElement {
             <Box
               component='img'
               src={
+                itemShow === TAB_MAP.MY_CONTRIBUTION
+                  ? crowdloanHomeRed as string
+                  : theme.palette.mode === 'light'
+                    ? crowdloanHomeBlack as string
+                    : crowdloanHomeWhite as string}
+              sx={{ height: '35px' }} />
+          }
+          onClick={showMyContribution}
+          title={t<string>('Contributed')}
+        />
+        <HorizontalMenuItem
+          divider
+          icon={
+            <Box
+              component='img'
+              src={
                 itemShow === TAB_MAP.ACTIVE_CROWDLOANS
                   ? activeCrowdloanRed as string
                   : theme.palette.mode === 'light'
@@ -430,11 +452,11 @@ export default function CrowdLoans(): React.ReactElement {
               sx={{ height: '35px' }} />
           }
           onClick={showActiveCrowdloans}
-          title={t<string>('Active Crowdloans')}
+          title={t<string>('Active')}
         />
         <HorizontalMenuItem
           divider
-          exceptionWidth={85}
+          // exceptionWidth={85}
           icon={
             <Box
               component='img'
@@ -461,7 +483,7 @@ export default function CrowdLoans(): React.ReactElement {
               }
               sx={{ height: '35px' }} />}
           onClick={showPastCrowdloans}
-          title={t<string>('Past Crowdloans')}
+          title={t<string>('Past')}
         />
       </Grid>
     </>

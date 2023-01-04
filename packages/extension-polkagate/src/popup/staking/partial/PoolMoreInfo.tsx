@@ -122,7 +122,9 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   const ShowReward = () => (
     <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px' }}>
       <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-        <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>{t<string>('Pool Claimable')}</Typography>
+        <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
+          {t<string>('Pool Claimable')}
+        </Typography>
       </Grid>
       <Grid alignItems='center' container height='37px' item justifyContent='center'>
         <ShowBalance
