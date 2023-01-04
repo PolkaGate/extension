@@ -63,7 +63,6 @@ export default function CrowdLoans(): React.ReactElement {
   const decimal = useDecimal(address);
   const chainName = useChainName(address);
   const [myContributions, setMyContributions] = useState<Map<string, Balance> | undefined>();
-  const [contributions, setContributions] = useState<Map<string, Balance> | undefined>();
   const [allContributionAmount, setAllContributionAmount] = useState<Balance | undefined>();
   const [myContributedCrowdloans, setMyContributedCrowdloans] = useState<Crowdloan[] | undefined>();
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
@@ -145,7 +144,6 @@ export default function CrowdLoans(): React.ReactElement {
           !m[myHexAddress].isZero() && myContributionsMap.set(paraIds[index], m[myHexAddress]);
         });
 
-        setContributions(contributionsMap);
         setMyContributions(myContributionsMap);
         let contributedAmount = api?.createType('Balance', 0);
         const filterMyContributedCrowdloans: Crowdloan[] = [];
@@ -402,7 +400,11 @@ export default function CrowdLoans(): React.ReactElement {
                 />
               }
               {itemShow === TAB_MAP.AUCTION &&
-                <AuctionTab api={api} auction={auction} currentBlockNumber={currentBlockNumber} />
+                <AuctionTab
+                  api={api}
+                  auction={auction}
+                  currentBlockNumber={currentBlockNumber}
+                />
               }
               {itemShow === TAB_MAP.PAST_CROWDLOANS &&
                 <PastCrowdloans
