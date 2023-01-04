@@ -13,7 +13,7 @@ export default function useCurrentBlockNumber(address: AccountId | string | unde
   const [blockNumber, setCurrentBlockNumber] = useState<number | undefined>();
 
   useEffect(() => {
-    api && api.rpc.chain.getHeader().then((b) => setCurrentBlockNumber(b.number.unwrap()));
+    api && api.rpc.chain.getHeader().then((b) => setCurrentBlockNumber(b.number.unwrap().toNumber()));
   }, [api]);
 
   return blockNumber;
