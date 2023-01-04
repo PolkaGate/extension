@@ -8,6 +8,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { usePool, usePoolMembers, useTranslation } from '../../../hooks';
@@ -37,6 +38,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
+  const totalStaked = useMemo(() => (poolToShow ? new BN(String(poolToShow.bondedPool?.points)) : BN_ZERO), [poolToShow]);
 
   const membersToShow = useMemo(() => {
     if (!poolMembers) {
@@ -63,21 +65,36 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
     return staked;
   };
 
+  const percent = (value: BN) => {
+    const percentToShow = Number((value.muln(100)).div(totalStaked)).toFixed(2);
+
+    return percentToShow;
+  };
+
   const ShowMembers = () => (
     <Grid container direction='column' display='block' sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll', scrollbarWidth: 'none' }}>
-      <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-        <Grid item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='70%'>
-          <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>{t<string>('Identity')}</Typography>
+      <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+        <Grid item width='50%'>
+          <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
+            {t<string>('Identity')}
+          </Typography>
         </Grid>
-        <Grid item width='30%'>
-          <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>{t<string>('Staked')}</Typography>
+        <Grid item sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
+          <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
+            {t<string>('Staked')}
+          </Typography>
+        </Grid>
+        <Grid item width='20%'>
+          <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
+            {t<string>('Percent')}
+          </Typography>
         </Grid>
       </Grid>
       {membersToShow?.length
         ? membersToShow.map((member, index) => (
-          <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-            <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ borderRight: '1px solid', borderRightColor: 'secondary.main', fontSize: '18px', minHeight: '45px', pl: '10px', width: '70%' }} />
-            <Grid alignItems='center' container item justifyContent='center' fontSize='14px' fontWeight='400' width='30%'>
+          <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+            <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
+            <Grid alignItems='center' container item justifyContent='center' fontSize='14px' fontWeight='400' sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
               <ShowBalance
                 api={api}
                 balance={poolMemberStaked(member.points)}
@@ -85,6 +102,9 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
                 height={22}
               />
             </Grid>
+            <Typography fontSize='14px' fontWeight='400' lineHeight='45px' textAlign='center' width='20%'>
+              {percent(member.points)}%
+            </Typography>
           </Grid>
         ))
         : <Grid alignItems='center' container justifyContent='center'>
