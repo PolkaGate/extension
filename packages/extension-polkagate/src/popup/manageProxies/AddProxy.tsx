@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
@@ -31,7 +33,7 @@ interface DropdownOption {
   value: string;
 }
 
-const isEqualProxiy = (a: Proxy, b: Proxy) => {
+const isEqualProxy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
@@ -80,7 +82,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
     }
 
     const possibleProxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;
-    const alreadyExisting = proxyItems?.find((item) => isEqualProxiy(item.proxy, possibleProxy));
+    const alreadyExisting = proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy));
 
     if (alreadyExisting) {
       setAddButtonDisabled(true);
@@ -103,20 +105,14 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
 
   return (
     <>
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='20px auto 15px'
-        textAlign='left'
-        width='90%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='20px auto 15px' textAlign='left' width='90%'>
         {t<string>("You can add an account included in this extension as a proxy of Alice to sign certain types of transactions on Alice's behalf.")}
       </Typography>
       <InputWithLabelAndIdenticon
         address={realAddress}
         allAddresses={allAddresses}
         chain={chain}
-        helperText='TODO'
+        helperText={t<string>('The account address which will be a proxy account')}
         label='Account ID'
         setAddress={setRealAddress}
         showIdenticon
@@ -127,16 +123,18 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
       />
       <Grid sx={{ m: 'auto', width: '92%' }}>
         <Select
-          helperText={t<string>('TODO')}
+          defaultValue={proxyTypeOptions[0].value}
+          helperText={t<string>('The permissions allowed for this proxy account')}
           label={t<string>('Proxy type')}
           onChange={_selectProxyType}
           options={proxyTypeOptions}
+          value={selectedProxyType || proxyTypeOptions[0].value}
         />
       </Grid>
       <Grid alignItems='end' container sx={{ m: '15px auto', width: '92%' }}>
         <Grid item xs={4}>
           <InputWithLabel
-            helperText={t<string>('TODO')}
+            helperText={t<string>('The announcement period required of the initial proxy.Generally will be zero.')}
             label={t<string>('Delay')}
             onChange={_selectDelay}
             value={delay}
