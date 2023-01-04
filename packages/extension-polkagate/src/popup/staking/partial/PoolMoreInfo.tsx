@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { usePool, usePoolMembers, useTranslation } from '../../../hooks';
@@ -38,7 +38,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
-  const totalStaked = useMemo(() => (poolToShow ? new BN(String(poolToShow.bondedPool?.points)) : BN_ZERO), [poolToShow]);
+  const totalStaked = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
 
   const membersToShow = useMemo(() => {
     if (!poolMembers) {
@@ -48,7 +48,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
     return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
   }, [poolMembers]);
 
-  const [itemToShow, setShow] = useState<'Ids' | 'Members' | 'Reward' | 'Roles'>('Roles');
+  const [itemToShow, setShow] = useState<'Ids' | 'Members' | 'Reward' | 'Roles' | 'None'>('Roles');
 
   const _closeMenu = useCallback(
     () => setShowPoolInfo(false),
@@ -56,8 +56,8 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   );
 
   const openTab = useCallback((tab: 'Ids' | 'Members' | 'Reward' | 'Roles') => {
-    setShow(tab);
-  }, []);
+    setShow(tab === itemToShow ? 'None' : tab);
+  }, [itemToShow]);
 
   const poolMemberStaked = (points) => {
     const staked = points ? api?.createType('Balance', points) : undefined;
@@ -66,7 +66,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   };
 
   const percent = (value: BN) => {
-    const percentToShow = Number((value.muln(100)).div(totalStaked)).toFixed(2);
+    const percentToShow = Number((value.muln(100)).div(totalStaked.isZero() ? BN_ONE : totalStaked)).toFixed(2);
 
     return percentToShow;
   };
