@@ -33,13 +33,13 @@ const TextBox = css(({ disabled = false, fontSize, height, margin, max, padding,
   max:${max}
   padding: ${padding || '12px'};
   text-align: ${textAlign || 'left'};
-  font - weight: 400;
+  font-weight: 400;
   &:: -webkit-outer-spin-button,
   &:: -webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
--moz - appearance: textfield;
+-moz-appearance: textfield;
 resize: none;
 width: ${width || '100%'};
 font - family: ${theme.typography.allVariants.fontFamily};
@@ -48,7 +48,7 @@ font - family: ${theme.typography.allVariants.fontFamily};
     ? `outline: 2px solid ${theme.palette.action.focus};
     border: none;`
     : 'outline: none;'
-}
+  }
   filter: drop - shadow(0px 0px 3px rgba(204, 88, 123, 0.83));
 }
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
