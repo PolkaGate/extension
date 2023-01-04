@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { MyPoolInfo, PoolInfo } from '../util/types';
+import type { PoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -34,8 +34,6 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
 
       const parsedPoolsInfo = JSON.parse(poolsInfo);
       const info = parsedPoolsInfo.info as PoolInfo[];
-
-      // setNextPoolId(new BN(parsedPoolsInfo.nextPoolId));
 
       info?.forEach((p: PoolInfo) => {
         if (p?.bondedPool?.points) {
