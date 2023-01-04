@@ -192,7 +192,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           onConfirmClick={goContribute}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'Auction', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

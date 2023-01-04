@@ -136,15 +136,7 @@ export default function ManageProxies(): React.ReactElement {
                   fontSize: '36px'
                 }}
               />
-              <Typography
-                fontSize='16px'
-                fontWeight={400}
-                lineHeight='36px'
-                pl='10px'
-                sx={{
-                  textDecoration: 'underline'
-                }}
-              >
+              <Typography fontSize='16px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
                 {t<string>('Add proxy')}
               </Typography>
             </Grid>
@@ -153,8 +145,8 @@ export default function ManageProxies(): React.ReactElement {
             chain={chain}
             label={t<string>('Proxies')}
             maxHeight={window.innerHeight / 2.5}
-            notFoundText={t<string>('No proxies found.')}
             mode='Delete'
+            notFoundText={t<string>('No proxies found.')}
             onSelect={onSelect}
             proxies={proxyItems}
             style={{
@@ -162,14 +154,7 @@ export default function ManageProxies(): React.ReactElement {
               width: '92%'
             }}
           />
-          <Grid
-            alignItems='end'
-            container
-            sx={{
-              m: 'auto',
-              width: '92%'
-            }}
-          >
+          <Grid alignItems='end' container sx={{ m: 'auto', width: '92%' }}>
             <Typography
               fontSize='14px'
               fontWeight={300}
@@ -177,11 +162,7 @@ export default function ManageProxies(): React.ReactElement {
             >
               {t<string>('Deposit:')}
             </Typography>
-            <Grid
-              item
-              lineHeight='22px'
-              pl='5px'
-            >
+            <Grid item lineHeight='22px' pl='5px'>
               <ShowBalance
                 api={api}
                 balance={depositValue}
