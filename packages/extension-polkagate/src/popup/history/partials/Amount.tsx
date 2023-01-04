@@ -12,7 +12,7 @@ export default function Amount({ amount, decimal, label, token }: { label: strin
   return (
     <Grid container fontSize='16px' fontWeight={400} item justifyContent='center' spacing={1}>
       <Grid item>
-        {label}
+        {label}:
       </Grid>
       <Grid item>
         <FormatBalance2
