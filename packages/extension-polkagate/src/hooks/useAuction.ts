@@ -6,17 +6,16 @@ import type { Auction } from '../util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { hexToBn, hexToString } from '@polkadot/util';
+import { hexToBn } from '@polkadot/util';
 
-import { DEFAULT_IDENTITY } from '../util/constants';
-import { useAccountInfo, useApi } from '.';
+import { useApi } from '.';
 
 export default function useAuction(address: string): Auction | null | undefined {
   const api = useApi(address);
   const [auction, setAuction] = useState<Auction | null>();
 
   const getCrowdloans = useCallback(async (api: ApiPromise) => {
-    console.log('getting crowdloans ...');
+    console.log('Getting crowdloans ...');
     const allParaIds = (await api.query.paras.paraLifecycles.entries()).map(([key, _]) => key.args[0]);
 
     const [auctionInfo, auctionCounter, funds, leases, header] = await Promise.all([
@@ -35,7 +34,7 @@ export default function useAuction(address: string): Auction | null | undefined 
     const hasLease = [];
 
     leases.forEach((lease, index) => {
-      if (lease.length) {
+      if (lease?.length) {
         hasLease.push(allParaIds[index].toString());
       }
     }
@@ -56,23 +55,20 @@ export default function useAuction(address: string): Auction | null | undefined 
 
       return null;
     });
-    const nonEmtyFunds = fundsWithParaId.filter((fund) => fund);
-    // const depositors = nonEmtyFunds.map((d) => d.depositor);
-
-    // const identities = await getIdentities(api, depositors);
-    const crowdloansWithIdentity = nonEmtyFunds.map((fund, index) => {
+    const nonEmptyFunds = fundsWithParaId.filter((fund) => fund);
+    const crowdloansWithIdentity = nonEmptyFunds.map((fund) => {
       return {
         fund
-        // identity: identities[index]
       };
     });
 
     const winning = blockOffset > 1 ? await api.query.auctions.winning(blockOffset) : undefined;
+
     console.log('winning :', winning?.toString() ? Array.from(winning.toHuman()) : '');
 
     return {
       auctionCounter: Number(auctionCounter),
-      auctionInfo: auctionInfo.toString() ? JSON.parse(auctionInfo.toString()) : null,
+      auctionInfo: auctionInfo?.toString() ? JSON.parse(auctionInfo.toString()) : null,
       // blockchain: _chainName,
       crowdloans: crowdloansWithIdentity,
       currentBlockNumber: Number(String(header.number)),
@@ -84,7 +80,6 @@ export default function useAuction(address: string): Auction | null | undefined 
   }, []);
 
   useEffect(() => {
-    console.log('api:', !!api)
     api && getCrowdloans(api).then((fetchedAuction) => {
       setAuction(fetchedAuction);
     });
