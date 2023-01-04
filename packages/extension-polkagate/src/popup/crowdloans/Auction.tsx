@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
 
 /** 
  * @description
@@ -17,7 +18,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { Switch, Warning } from '../../components';
+import { Infotip, Switch, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import { AUCTION_GRACE_PERIOD } from '../../util/constants';
@@ -42,11 +43,11 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
   const candlePhaseStartBlock = auction?.auctionInfo && Number(auction?.auctionInfo[1]);
   const lastLease = api && Number(api.consts.auctions.leasePeriodsPerSlot.toString()) - 1;
   const endingPeriod = api && Number(api.consts.auctions?.endingPeriod.toString());
-  const AUCTION_START_BLOCK = candlePhaseStartBlock - AUCTION_GRACE_PERIOD;
+  const auctionStartBlock = candlePhaseStartBlock - AUCTION_GRACE_PERIOD;
 
-  const start = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? AUCTION_START_BLOCK : candlePhaseStartBlock;
+  const start = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? auctionStartBlock : candlePhaseStartBlock;
   const end = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? candlePhaseStartBlock : endingPeriod && candlePhaseStartBlock + endingPeriod;
-  const stageInHuman = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? t('auction stage') : t('ending stage');
+  // const stageInHuman = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? t('auction stage') : t('ending stage');
 
   const dateFormat = useMemo(() => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
 
@@ -57,9 +58,9 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
     const now = Date.now();
 
-    setTimeout(() => setTime(now + 1000), 1000);
+    setTimeout(() => setTime(now + 60000), 60000);
 
-    return new Date(now).toLocaleDateString('en-US', { ...dateFormat, second: '2-digit' })
+    return new Date(now).toLocaleDateString('en-US', { ...dateFormat });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewType, time]);
 
@@ -86,8 +87,8 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
           {t<string>('Auction stage')}
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
-          {viewType === 'Block' && `${AUCTION_START_BLOCK} - ${candlePhaseStartBlock}`}
-          {viewType === 'Date' && `${blockToDate(AUCTION_START_BLOCK, currentBlockNumber, dateFormat)} - ${blockToDate(candlePhaseStartBlock, currentBlockNumber, dateFormat)}`}
+          {viewType === 'Block' && `${auctionStartBlock} - ${candlePhaseStartBlock}`}
+          {viewType === 'Date' && `${blockToDate(auctionStartBlock, currentBlockNumber, dateFormat)} - ${blockToDate(candlePhaseStartBlock, currentBlockNumber, dateFormat)}`}
         </Typography>
       </Grid>
       <Grid container item justifyContent='space-between' px='10px' sx={{ borderBlock: '1px solid', borderColor: 'secondary.light' }}>
@@ -101,25 +102,55 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
       </Grid>
       <Grid container item justifyContent='space-between' mt='20px' px='10px'>
         <Typography fontSize='16px' fontWeight={300} lineHeight='34px' width='fit-content'>
-          {t<string>('Remaining Time')}
+          {viewType === 'Block' ? t<string>('Remaining block') : t<string>('Remaining time')}
         </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
+        {/* <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
           {currentBlockNumber && end && remainingTime(end - currentBlockNumber)}
-        </Typography>
+        </Typography> */}
       </Grid>
-      <Grid container item>
-        {end &&
-          <LinearProgress
-            color='success'
-            sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderColor: 'white', borderRadius: '5px', height: '20px', m: '10px auto 5px', width: '95%' }}
-            value={100 * (Number(currentBlockNumber) - start) / (end - start)}
-            variant='determinate'
-          />
+      <Grid container item m='auto' width='95%'>
+        {end && currentBlockNumber &&
+          <>
+            <Grid container item sx={{ width: '30%' }}>
+              <Infotip placement='bottom' text={
+                currentBlockNumber > candlePhaseStartBlock
+                  ? t('Done')
+                  : viewType === 'Date'
+                    ? remainingTime(candlePhaseStartBlock - currentBlockNumber) + 'left'
+                    : t<string>('{{blocks}} blocks left', { replace: { blocks: candlePhaseStartBlock - currentBlockNumber } })}
+              >
+                <LinearProgress
+                  color='inherit'
+                  sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderColor: 'rgba(255, 255, 255, 0.65)', borderRight: 'none', borderBottomLeftRadius: '5px', borderTopLeftRadius: '5px', color: '#1F7720', height: '20px', width: '93px' }}
+                  value={currentBlockNumber > candlePhaseStartBlock ? 100 : 100 * (Number(currentBlockNumber) - candlePhaseStartBlock) / candlePhaseStartBlock}
+                  variant='determinate'
+                />
+              </Infotip>
+            </Grid>
+            <Grid container item width='70%'>
+              <Infotip placement='bottom' text={
+                currentBlockNumber >= candlePhaseStartBlock
+                  ? viewType === 'Date'
+                    ? remainingTime(end - currentBlockNumber) + 'left'
+                    : t('{{blocks}} blocks left', { replace: { blocks: end - currentBlockNumber } })
+                  : t('Not started yet')}>
+                <LinearProgress
+                  color='inherit'
+                  sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderLeft: 'none', borderColor: 'rgba(255, 255, 255, 0.65)', borderBottomRightRadius: '5px', borderTopRightRadius: '5px', color: '#629460', height: '20px', width: '217px' }}
+                  value={100 * (Number(currentBlockNumber) - start) / (end - start)}
+                  variant='determinate'
+                />
+              </Infotip>
+            </Grid>
+          </>
         }
       </Grid>
-      <Grid container item justifyContent='center' mb='20px'>
-        <Typography fontSize='16px' fontWeight={400} textAlign='center'>
-          {t('In')} {stageInHuman}
+      <Grid container item justifyContent='center' m='0 auto 20px' width='95%'>
+        <Typography fontSize='12px' fontWeight={300} textAlign='center' width='30%'>
+          {t('Auction Stage')}
+        </Typography>
+        <Typography fontSize='12px' fontWeight={300} textAlign='center' width='70%'>
+          {t('Ending stage')}
         </Typography>
       </Grid>
     </Grid>
