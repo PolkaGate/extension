@@ -37,7 +37,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const account = useAccount(address);
   const onAction = useContext(ActionContext);
 
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [helperText, setHelperText] = useState<string | undefined>();
   const [proxiesToChange, setProxiesToChange] = useState<ProxyItem[] | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();

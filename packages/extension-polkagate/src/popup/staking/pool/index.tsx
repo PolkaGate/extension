@@ -16,7 +16,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
@@ -56,7 +56,7 @@ export default function Index(): React.ReactElement {
   const pool = usePool(address, undefined, refresh);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const consts = usePoolConsts(address, state?.poolConsts);
-  const balances = useBalances(address);
+  const balances = useBalances(address, refresh, setRefresh);
   const identity = useMyAccountIdentity(address);
 
   const token = useToken(address);
@@ -294,7 +294,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
-            onLink1={ goToUnstake}
+            onLink1={goToUnstake}
             value={staked}
           />
           <Row

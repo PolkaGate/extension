@@ -12,10 +12,11 @@ import { isHexToBn } from '../util/utils';
 import { useEndpoint2, useFormatted } from '.';
 
 export default function usePool(address: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
-  const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
   const formatted = useFormatted(address);
   const endpoint = useEndpoint2(address);
   const isFetching = useContext(FetchingContext);
+  const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
+  const [waiting, setWaiting] = useState<boolean>();
 
   const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
@@ -78,7 +79,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
         parsedInfo.date = Date.now();
         last[k] = parsedInfo;
-        
+
         // eslint-disable-next-line no-void
         void chrome.storage.local.set({ MyPools: last });
       });
@@ -114,6 +115,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
       getPoolInfo(endpoint, formatted, id);
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
+      setWaiting(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetching.fetching[String(formatted)]?.length, endpoint, formatted, getPoolInfo, id, pool]);
@@ -141,6 +143,21 @@ export default function usePool(address: AccountId | string, id?: number, refres
       setMyPool(undefined);
     });
   }, [formatted]);
+
+  useEffect(() => {
+    if (!formatted || !waiting) {
+      return;
+    }
+
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+        if (key === 'MyPools' && namespace === 'local') {
+          setMyPool(newValue[formatted]);
+          setWaiting(false);
+        }
+      }
+    });
+  }, [formatted, waiting]);
 
   return myPool;
 }

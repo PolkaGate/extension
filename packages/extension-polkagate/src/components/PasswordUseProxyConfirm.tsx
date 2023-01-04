@@ -30,7 +30,7 @@ interface Props {
   onChange: React.Dispatch<React.SetStateAction<string | undefined>>
   onEnter?: () => void;
   placeholder?: string;
-  proxiedAddress: string | AccountId | undefined | null;
+  proxiedAddress: string | AccountId | undefined;
   value?: string;
   withoutMargin?: boolean;
   genesisHash: string | undefined;
@@ -47,7 +47,7 @@ interface Props {
 export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, defaultValue, disabled, estimatedFee, genesisHash, isFocused, isPasswordError, isReadOnly, label = '', onChange, onConfirmClick, onEnter, placeholder, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const canPayFee = useCanPayFee(selectedProxy || proxiedAddress, estimatedFee);
+  const canPayFee = useCanPayFee(selectedProxy?.delegate || proxiedAddress, estimatedFee);
   const account = useAccount(proxiedAddress);
   const chain = useMetadata(genesisHash, true);
   const [password, setPassword] = useState<string>();

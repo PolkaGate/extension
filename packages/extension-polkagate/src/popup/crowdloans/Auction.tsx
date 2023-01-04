@@ -47,7 +47,6 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
   const start = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? auctionStartBlock : candlePhaseStartBlock;
   const end = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? candlePhaseStartBlock : endingPeriod && candlePhaseStartBlock + endingPeriod;
-  // const stageInHuman = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? t('auction stage') : t('ending stage');
 
   const dateFormat = useMemo(() => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
 
@@ -58,7 +57,7 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
     const now = Date.now();
 
-    setTimeout(() => setTime(now + 60000), 60000);
+    // setTimeout(() => setTime(now + 60000), 60000);
 
     return new Date(now).toLocaleDateString('en-US', { ...dateFormat });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { AccountInputWithIdentity, PButton, Select, Warning } from '../../../../../components';
+import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
 import { useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../../hooks';
 import { SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
