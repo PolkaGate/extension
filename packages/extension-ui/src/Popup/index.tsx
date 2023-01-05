@@ -23,7 +23,7 @@ import Others from '../../../extension-polkagate/src/popup/account/Others';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
-import CrowdLoans from '../../../extension-polkagate/src/popup/crowdLoans';
+import CrowdLoans from '../../../extension-polkagate/src/popup/crowdloans';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
