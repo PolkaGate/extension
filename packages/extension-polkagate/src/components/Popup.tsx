@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
-import type { ThemeProps } from '../../../extension-ui/src/types';
-
 import { Container, Modal, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -53,7 +51,7 @@ function Popup({ children, handleClose, id, show }: Props): React.ReactElement<P
   );
 }
 
-export default styled(Popup)(({ theme }: ThemeProps) => `
+export default styled(Popup)(() => `
   box-sizing: border-box;
   border-radius: 4px;
   margin-bottom: 8px;

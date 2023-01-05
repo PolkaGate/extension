@@ -51,7 +51,7 @@ export { default as Steps } from './Steps';
 export { default as AmountWithOptions } from './AmountWithOptions';
 export { Input } from './TextInputs';
 export { default as ValidatedInput } from './ValidatedInput';
-export { chooseTheme } from './Themes';
+export { chooseTheme } from './chooseTheme';
 export { default as Label } from './Label';
 export { default as Main } from './Main';
 export { default as Loading } from './Loading';
@@ -62,4 +62,3 @@ export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 
 export * from './contexts';
-// export * from './themes';

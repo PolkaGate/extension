@@ -27,7 +27,7 @@ import CrowdLoans from '../../../extension-polkagate/src/popup/crowdLoans';
 import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
-import ForgetAccount from '../../../extension-polkagate/src/popup/ForgetAccount';
+import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
 import History from '../../../extension-polkagate/src/popup/history';
 import Detail from '../../../extension-polkagate/src/popup/history/Detail';
 import Accounts from '../../../extension-polkagate/src/popup/home';
