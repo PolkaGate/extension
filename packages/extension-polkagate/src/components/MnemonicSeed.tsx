@@ -11,10 +11,9 @@ import TextAreaWithLabel from './TextAreaWithLabel';
 interface Props {
   seed: string;
   onCopy: MouseEventHandler<HTMLDivElement>;
-  className?: string;
 }
 
-export default function MnemonicSeed({ className, onCopy, seed }: Props): React.ReactElement<Props> {
+export default function MnemonicSeed({ onCopy, seed }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (

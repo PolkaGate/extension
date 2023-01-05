@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import type { ThemeProps } from '../../../extension-ui/src/types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { MouseEventHandler } from 'react';
@@ -27,7 +26,7 @@ function ActionText({ className, icon, onClick, text }: Props): React.ReactEleme
   );
 }
 
-export default styled(ActionText)(({ theme }: ThemeProps) => `
+export default styled(ActionText)(() => `
   cursor: pointer;
   margin-top: 10px;
   span {
