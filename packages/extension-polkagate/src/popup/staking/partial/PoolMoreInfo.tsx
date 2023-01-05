@@ -38,7 +38,7 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
-  const totalStaked = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
+  const poolPoints = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
 
   const membersToShow = useMemo(() => {
     if (!poolMembers) {
@@ -59,17 +59,15 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
     setShow(tab === itemToShow ? 'None' : tab);
   }, [itemToShow]);
 
-  const poolMemberStaked = (points) => {
+  const toBalance = (points: BN) => {
     const staked = points ? api?.createType('Balance', points) : undefined;
 
     return staked;
   };
 
-  const percent = (value: BN) => {
-    const percentToShow = Number((value.muln(100)).div(totalStaked.isZero() ? BN_ONE : totalStaked)).toFixed(2);
-
-    return percentToShow;
-  };
+  const percent = useCallback((memberPoints: BN) => {
+    return Number((memberPoints.muln(100)).div(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
+  }, [poolPoints]);
 
   const ShowMembers = () => (
     <Grid container direction='column' display='block' sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll', scrollbarWidth: 'none' }}>
@@ -94,10 +92,10 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
         ? membersToShow.map((member, index) => (
           <Grid container item key={index} sx={{ '&:last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
             <Identity address={member.accountId} api={api} chain={chain} formatted={member.accountId} identiconSize={25} showShortAddress style={{ fontSize: '14px', minHeight: '45px', pl: '10px', width: '50%' }} />
-            <Grid alignItems='center' container item justifyContent='center' fontSize='14px' fontWeight='400' sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
+            <Grid alignItems='center' container fontSize='14px' fontWeight='400' item justifyContent='center' sx={{ borderInline: '1px solid', borderColor: 'secondary.light' }} width='30%'>
               <ShowBalance
                 api={api}
-                balance={poolMemberStaked(member.points)}
+                balance={toBalance(member.points)}
                 decimalPoint={2}
                 height={22}
               />
