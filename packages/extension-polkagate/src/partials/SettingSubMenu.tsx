@@ -6,8 +6,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { externalLink, ManageAccess, ManageAccessB } from '../assets/icons';
-import { ActionContext, Checkbox, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
+import { externalLink, manageAccess, manageAccessB } from '../assets/icons';
+import { ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
@@ -166,7 +166,7 @@ export default function SettingSubMenu(): React.ReactElement {
           item
         >
           <MenuItem
-            icon={theme.palette.mode === 'dark' ? ManageAccess : ManageAccessB}
+            icon={theme.palette.mode === 'dark' ? manageAccess : manageAccessB}
             onClick={_onAuthManagement}
             text={t<string>('Manage website access')}
           />
