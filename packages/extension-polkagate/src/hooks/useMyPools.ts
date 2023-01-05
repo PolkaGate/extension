@@ -5,8 +5,8 @@ import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useEndpoint2, useFormatted } from '.';
 import { isHexToBn } from '../util/utils';
+import { useEndpoint2, useFormatted } from '.';
 
 export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
   const [myPools, setMyPools] = useState<MyPoolInfo[] | undefined | null>();

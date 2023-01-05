@@ -4,6 +4,7 @@
 import React from 'react';
 
 import { BN } from '@polkadot/util';
+
 import { amountToHuman } from '../util/utils';
 
 interface Props {
