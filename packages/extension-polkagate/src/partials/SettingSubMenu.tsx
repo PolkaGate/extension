@@ -1,12 +1,15 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Divider, Grid, IconButton, useTheme } from '@mui/material';
+import '@vaadin/icons';
+
+import { faListCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { externalLink, manageAccess, manageAccessB } from '../assets/icons';
 import { ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
@@ -80,21 +83,9 @@ export default function SettingSubMenu(): React.ReactElement {
   return (
     <>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-      <Grid
-        container
-        direction='column'
-        pl='30px'
-        pt='10px'
-      >
-        <Grid
-          alignItems='center'
-          container
-          item
-          justifyContent='space-between'
-        >
-          <Grid
-            item
-          >
+      <Grid container direction='column' pl='30px' pt='10px'>
+        <Grid alignItems='center' container item justifyContent='space-between'>
+          <Grid item>
             <Switch
               checkedLabel={t<string>('Dark')}
               isChecked={theme.palette.mode === 'dark'}
@@ -105,9 +96,7 @@ export default function SettingSubMenu(): React.ReactElement {
           </Grid>
           {isPopup &&
             <>
-              <Grid
-                item
-              >
+              <Grid item>
                 <Divider
                   orientation='vertical'
                   sx={{
@@ -117,27 +106,18 @@ export default function SettingSubMenu(): React.ReactElement {
                   }}
                 />
               </Grid>
-              <Grid
-                item
-              >
+              <Grid item>
                 <IconButton
                   onClick={_onWindowOpen}
                   sx={{ height: '35px', width: '35px' }}
                 >
-                  <Avatar
-                    alt={'logo'}
-                    src={externalLink}
-                    sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '28px', width: '28px' }}
-                  />
+                  <vaadin-icon icon='vaadin:external-link' style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
                 </IconButton>
               </Grid>
             </>
           }
         </Grid>
-        <Grid
-          item
-          pt='12px'
-        >
+        <Grid item pt='12px'>
           <Select
             label={t<string>('Language')}
             onChange={_onChangeLang}
@@ -161,20 +141,20 @@ export default function SettingSubMenu(): React.ReactElement {
             onChange={() => setCamera(!camera)}
           />
         </Grid>
-        <Grid
-          container
-          item
-        >
+        <Grid container item >
           <MenuItem
-            icon={theme.palette.mode === 'dark' ? manageAccess : manageAccessB}
+            iconComponent={
+              <FontAwesomeIcon
+                color={theme.palette.secondary.light }
+                fontSize='18px'
+                icon={faListCheck}
+              />
+            }
             onClick={_onAuthManagement}
             text={t<string>('Manage website access')}
           />
         </Grid>
-        <Grid
-          item
-          pt='7px'
-        >
+        <Grid item pt='7px'>
           <Select
             label={t<string>('Default display address format')}
             onChange={_onChangePrefix}

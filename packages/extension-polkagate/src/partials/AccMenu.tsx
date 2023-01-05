@@ -14,7 +14,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { sitemap, sitemapB } from '../assets/icons';
 import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
 import { useEndpoint2, useEndpoints, useGenesisHashOptions, useTranslation } from '../hooks';
 import { getMetadata, tieAccount, updateMeta } from '../messaging';
@@ -144,7 +143,6 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       />
       {canDerive &&
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }

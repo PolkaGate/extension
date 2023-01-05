@@ -9,7 +9,7 @@ import React, { useCallback, useContext } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { connect, connectB, key, keyB, restore, restoreB, sitemap, sitemapB } from '../assets/icons';
+import { connect, connectB } from '../assets/icons';
 import { ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
@@ -63,19 +63,25 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
         sx={{ p: '18px 0 15px 10px' }}
       >
         <MenuItem
-          icon={theme.palette.mode === 'light' ? restoreB : restore}
+          iconComponent={
+            <vaadin-icon icon='vaadin:cloud-upload-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
           onClick={_goToRestoreFromJson}
           py='4px'
           text={t('Restore from JSON file')}
         />
         <MenuItem
-          icon={theme.palette.mode === 'light' ? keyB : key}
+          iconComponent={
+            <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
           onClick={_goToImportAcc}
           py='4px'
           text={t('Import from mnemonic')}
         />
         <MenuItem
-          icon={theme.palette.mode === 'light' ? sitemapB : sitemap}
+          iconComponent={
+            <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
           onClick={_goToAddAddressOnly}
           py='4px'
           text='Add address only'

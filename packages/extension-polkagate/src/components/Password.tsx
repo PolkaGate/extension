@@ -1,11 +1,12 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, IconButton, useTheme } from '@mui/material';
+import '@vaadin/icons';
+
+import { IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import { eye, eyeSlashP } from '../assets/icons';
 import useTranslation from '../hooks/useTranslation';
 import Label from './Label';
 import { Input } from './TextInputs';
@@ -99,11 +100,7 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
         }}
         tabIndex={-1}
       >
-        <Avatar
-          alt={'logo'}
-          src={showPass ? eye : eyeSlashP}
-          sx={{ '> img': { objectFit: 'scale-down' }, borderRadius: 0, height: '18px', width: '18px' }}
-        />
+        <vaadin-icon icon={showPass ? 'vaadin:eye' : 'vaadin:eye-slash'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
       </IconButton>
       {isCapsLock && (
         <Warning
