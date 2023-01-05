@@ -33,11 +33,11 @@ function From({ address, api, style }: Props): React.ReactElement<Props> {
         {t('Account holder')}
       </Typography>
       <Grid alignItems='center' container justifyContent='felx-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
-        <Grid item sx={{ fontSize: '28px', fontWeight: 400, mx: '5px', maxWidth: '67%' }}>
+        <Grid item sx={{ fontSize: '28px', fontWeight: 400, maxWidth: '67%' }}>
           <Identity address={address} api={api} chain={chain} formatted={address} identiconSize={31} showSocial={false} />
         </Grid>
         <Grid item sx={{ width: '30%' }}>
-          <ShortAddress address={address} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px', pr: '5px' }} />
+          <ShortAddress address={address} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px' }} />
         </Grid>
       </Grid>
     </Grid>
