@@ -1,10 +1,10 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Checkbox, MnemonicSeed, PButton, Warning } from '../../components';
+import { Checkbox2 as Checkbox, MnemonicSeed, PButton, Warning } from '../../components';
 import { useToast, useTranslation } from '../../hooks';
 
 interface Props {
@@ -43,13 +43,15 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
       <Warning theme={theme}>
         {t<string>('Please write down your wallet’s mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.')}
       </Warning>
-      <Checkbox
-        checked={isMnemonicSaved}
-        label={t<string>('I have saved my mnemonic seed safely.')}
-        onChange={setIsMnemonicSaved}
-        style={{ fontSize: '16px', marginTop: '55px', mx: 'auto', width: '92%' }}
-        theme={theme}
-      />
+      <Grid item>
+        <Checkbox
+          checked={isMnemonicSaved}
+          label={t<string>('I have saved my mnemonic seed safely.')}
+          labelStyle={{ fontSize: '16px', marginTop: '55px' }}
+          onChange={() => setIsMnemonicSaved(!isMnemonicSaved)}
+          style={{ ml: '15px', width: '92%' }}
+        />
+      </Grid>
       <PButton
         _onClick={onNextStep}
         _variant='contained'
