@@ -109,7 +109,7 @@ export default function SettingSubMenu(): React.ReactElement {
               <Grid item>
                 <IconButton
                   onClick={_onWindowOpen}
-                  sx={{ height: '35px', width: '35px' }}
+                  sx={{ height: '35px', width: '35px', mr: '-5px' }}
                 >
                   <vaadin-icon icon='vaadin:external-link' style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
                 </IconButton>
@@ -145,7 +145,7 @@ export default function SettingSubMenu(): React.ReactElement {
           <MenuItem
             iconComponent={
               <FontAwesomeIcon
-                color={theme.palette.secondary.light }
+                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
                 fontSize='18px'
                 icon={faListCheck}
               />
