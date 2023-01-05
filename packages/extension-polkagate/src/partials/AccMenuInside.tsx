@@ -15,7 +15,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { poolStakingBlack, poolStakingWhite, sitemap, sitemapB, soloStakingBlack, soloStakingWhite } from '../assets/icons';
+import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
 import { ActionContext, Identicon, MenuItem, SettingsContext } from '../components';
 import { useTranslation } from '../hooks';
 
@@ -151,7 +151,6 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
       />
       {canDerive &&
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? sitemap : sitemapB}
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }

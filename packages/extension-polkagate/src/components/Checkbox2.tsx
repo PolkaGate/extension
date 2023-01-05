@@ -1,8 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CheckBoxOutlineBlankRounded as CheckBoxOutlineBlankRoundedIcon, CheckBoxOutlined as CheckBoxOutlinedIcon } from '@mui/icons-material';
-import { Box, Checkbox, FormControlLabel, SxProps, Theme } from '@mui/material';
+import { Checkbox, FormControlLabel, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 import { checkBox, checkedBox } from '../assets/icons';

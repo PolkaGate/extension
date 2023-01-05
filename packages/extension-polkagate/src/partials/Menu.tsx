@@ -3,16 +3,15 @@
 
 import '@vaadin/icons';
 
-import { faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
-import React, { useCallback, useContext, useState, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { addCircle, addCircleB, importIcon, importIconB, setting, settingB } from '../assets/icons';
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
@@ -116,13 +115,20 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
     >
       <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? addCircle : addCircleB}
+          iconComponent={
+            <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
           onClick={_goToCreateAcc}
           text={t('Create new account')}
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? importIcon : importIconB}
+          iconComponent={
+            <FontAwesomeIcon
+              color={theme.palette.text.primary}
+              icon={faFileImport}
+            />
+          }
           onClick={toggleImportSubMenu}
           showSubMenu={showImportSubMenu}
           text={t('Import account')}
@@ -134,7 +140,8 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
           iconComponent={
             <FontAwesomeIcon
               color={theme.palette.text.primary}
-              icon={faFileExport} />
+              icon={faFileExport}
+            />
           }
           onClick={_goToExportAll}
           text={t('Export all accounts')}
@@ -149,7 +156,9 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
         />
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
-          icon={theme.palette.mode === 'dark' ? setting : settingB}
+          iconComponent={
+            <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          }
           onClick={toggleSettingSubMenu}
           showSubMenu={showSettingSubMenu}
           text={t('Setting')}
