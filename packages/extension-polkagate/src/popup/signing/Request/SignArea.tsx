@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { PASSWORD_EXPIRY_MIN } from '@polkadot/extension-base/defaults';
 
-import { ActionContext, Checkbox, PButton } from '../../../components';
+import { ActionContext, Checkbox2 as Checkbox, PButton } from '../../../components';
 import useTranslation from '../../../hooks/useTranslation';
 import { approveSignPassword, isSignLocked } from '../../../messaging';
 import Unlock from '../Unlock';
@@ -83,24 +83,24 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
               setPassword={setPassword}
             />
           )}
-          <Checkbox
-            checked={savePass}
-            height={20}
-            label={isLocked
-              ? t<string>(
-                'Remember my password for the next {{expiration}} minutes',
-                { replace: { expiration: PASSWORD_EXPIRY_MIN } }
-              )
-              : t<string>(
-                'Extend the period without password by {{expiration}} minutes',
-                { replace: { expiration: PASSWORD_EXPIRY_MIN } }
-              )
-            }
-            onChange={setSavePass}
-            style={{ fontSize: '14px', fontWeight: 400, margin: '10px auto 0', width: 'fit-content' }}
-            theme={theme}
-            width={20}
-          />
+          <Grid item>
+            <Checkbox
+              checked={savePass}
+              label={isLocked
+                ? t<string>(
+                  'Remember my password for the next {{expiration}} minutes',
+                  { replace: { expiration: PASSWORD_EXPIRY_MIN } }
+                )
+                : t<string>(
+                  'Extend the period without password by {{expiration}} minutes',
+                  { replace: { expiration: PASSWORD_EXPIRY_MIN } }
+                )
+              }
+              labelStyle={{ fontSize: '14px', fontWeight: 400 }}
+              onChange={() => setSavePass(!savePass)}
+              style={{ ml: '10px', mt: '5px' }}
+            />
+          </Grid>
           <PButton
             _isBusy={isBusy}
             _onClick={_onSign}

@@ -14,7 +14,7 @@ import { useTranslation } from '../hooks';
 import { NameAddress, Proxy, ProxyItem } from '../util/types';
 import { getSubstrateAddress, toShortAddress } from '../util/utils';
 import Label from './Label';
-import { AccountContext, Checkbox, Identicon } from '.';
+import { AccountContext, Checkbox2 as Checkbox, Identicon } from '.';
 
 interface Props {
   chain?: Chain | undefined | null;
@@ -76,7 +76,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   );
 
   const Delete = ({ proxyItem }: { proxyItem: ProxyItem }) => (
-    <Grid height={25} onClick={() => handleDelete(proxyItem.proxy)}    >
+    <Grid height={25} onClick={() => handleDelete(proxyItem.proxy)}>
       {proxyItem.status === 'new'
         ? <BackspaceIcon
           sx={{
@@ -88,11 +88,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
         />
         : <Checkbox
           checked={proxyItem.status === 'remove'}
-          height={25}
-          label=''
-          style={{ margin: 'auto', width: 'fit-content' }}
-          theme={theme}
-          width={25}
+          style={{ transform: 'scale(1.4)' }}
         />
       }
     </Grid>

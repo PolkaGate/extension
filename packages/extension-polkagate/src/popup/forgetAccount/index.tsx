@@ -7,7 +7,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { ActionContext, Address, ButtonWithCancel, Checkbox, Password, Warning } from '../../components';
+import { ActionContext, Address, ButtonWithCancel, Checkbox2 as Checkbox, Password, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
 import { forgetAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -80,13 +80,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
         text={t<string>('Forget Account')}
       />
       {isPasswordError &&
-        <Grid
-          color='red'
-          height='30px'
-          m='auto'
-          pt='5px'
-          width='92%'
-        >
+        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
           <Warning
             fontWeight={400}
             isBelowInput
@@ -100,10 +94,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
       <Address
         address={address}
       />
-      <Grid
-        m='-20px auto 0'
-        width='100%'
-      >
+      <Grid m='-20px auto 0' width='100%'>
         <Warning
           // isBelowInput
           isDanger
@@ -138,9 +129,9 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
             <Checkbox
               checked={checkConfirmed}
               label={t<string>('I want to forget this account.')}
-              onChange={setCheckConfirmed}
-              style={{ fontSize: '16px' }}
-              theme={theme}
+              labelStyle={{ fontSize: '16px' }}
+              onChange={() => setCheckConfirmed(!checkConfirmed)}
+              style={{ ml: '5px' }}
             />)
         }
       </Grid>

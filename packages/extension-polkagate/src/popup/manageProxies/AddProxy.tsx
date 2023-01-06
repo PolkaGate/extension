@@ -39,7 +39,7 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
 
 export default function AddProxy({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
   const [realAddress, setRealAddress] = useState<string | undefined>();
-  const [selectedProxyType, setSelectedProxyType] = useState<string | null>(null);
+  const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined | null>();
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
