@@ -81,12 +81,6 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
         return s;
       }
 
-      if (controllerId && settings.controllerId !== controllerId) {
-        s.controllerId = controllerId;
-      } else {
-        s.controllerId = undefined;
-      }
-
       const payee = makePayee(rewardDestinationValue, rewardDestinationAccount);
 
       if (payee && JSON.stringify(settings.payee) !== JSON.stringify(payee)) {
@@ -95,11 +89,23 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
         s.payee = undefined;
       }
 
+      if (controllerId && (s.payee === 'Controller' || settings.controllerId !== controllerId)) {
+        s.controllerId = controllerId;
+      } else {
+        s.controllerId = undefined;
+      }
+
+      if (rewardDestinationAccount && s.payee === 'Stash') {
+        s.stashId = rewardDestinationAccount;
+      } else {
+        s.stashId = undefined;
+      }
+
       return s;
     });
     setShowReview && setShowReview(true);
     !setShowReview && setShow(false); // can be left open when settings accessed from home
-  }, [controllerId, isSettingAtBonding, makePayee, rewardDestinationAccount, rewardDestinationValue, set, setShow, setShowReview, settings.controllerId, settings.payee]);
+  }, [controllerId, isSettingAtBonding, makePayee, rewardDestinationAccount, rewardDestinationValue, set, setShow, setShowReview, settings]);
 
   const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>

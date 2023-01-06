@@ -269,7 +269,10 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
             showConfirmation={showConfirmation}
             txInfo={txInfo}
           >
-            <TxDetail newSettings={newSettings} txInfo={txInfo} />
+            <TxDetail
+              newSettings={newSettings}
+              txInfo={txInfo}
+            />
           </Confirmation>)
         }
       </Popup>

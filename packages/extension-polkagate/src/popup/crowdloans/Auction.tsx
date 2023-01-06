@@ -103,9 +103,6 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
         <Typography fontSize='16px' fontWeight={300} lineHeight='34px' width='fit-content'>
           {viewType === 'Block' ? t<string>('Remaining block') : t<string>('Remaining time')}
         </Typography>
-        {/* <Typography fontSize='16px' fontWeight={400} lineHeight='34px' width='fit-content'>
-          {currentBlockNumber && end && remainingTime(end - currentBlockNumber)}
-        </Typography> */}
       </Grid>
       <Grid container item m='auto' width='95%'>
         {end && currentBlockNumber &&
@@ -121,7 +118,11 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                 <LinearProgress
                   color='inherit'
                   sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderColor: 'rgba(255, 255, 255, 0.65)', borderRight: 'none', borderBottomLeftRadius: '5px', borderTopLeftRadius: '5px', color: '#1F7720', height: '20px', width: '93px' }}
-                  value={currentBlockNumber > candlePhaseStartBlock ? 100 : 100 * (Number(currentBlockNumber) - candlePhaseStartBlock) / candlePhaseStartBlock}
+                  value={
+                    currentBlockNumber > candlePhaseStartBlock
+                      ? 100
+                      : 100 * (Number(currentBlockNumber) - auctionStartBlock) / (candlePhaseStartBlock - auctionStartBlock)
+                  }
                   variant='determinate'
                 />
               </Infotip>
@@ -136,7 +137,11 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                 <LinearProgress
                   color='inherit'
                   sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderLeft: 'none', borderColor: 'rgba(255, 255, 255, 0.65)', borderBottomRightRadius: '5px', borderTopRightRadius: '5px', color: '#629460', height: '20px', width: '217px' }}
-                  value={100 * (Number(currentBlockNumber) - start) / (end - start)}
+                  value={
+                    currentBlockNumber < candlePhaseStartBlock
+                      ? 0
+                      : 100 * (Number(currentBlockNumber) - auctionStartBlock) / (end - start)
+                  }
                   variant='determinate'
                 />
               </Infotip>
