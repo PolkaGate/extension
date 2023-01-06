@@ -83,11 +83,11 @@ export default function Settings({ address, api, setRefresh, setShowSettings, sh
             address={address}
             api={api}
             newSettings={newSettings}
+            setRefresh={setRefresh}
             setShow={setShowReview}
             setShowSettings={setShowSettings}
             settings={settings}
             show={showReview}
-            setRefresh={setRefresh}
           />
         }
       </Popup>
