@@ -363,7 +363,6 @@ export default function Index(): React.ReactElement {
       </Grid>
       <Info
         address={address}
-        api={api}
         info={consts}
         setShowInfo={setShowInfo}
         showInfo={showInfo}

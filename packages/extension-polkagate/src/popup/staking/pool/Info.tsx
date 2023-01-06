@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { PoolStakingConsts } from '../../../util/types';
 
 import { Container, Divider, Grid } from '@mui/material';
@@ -11,13 +10,13 @@ import React, { useCallback } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { Popup, ShowBalance, ShowValue } from '../../../components';
-import { useToken, useTranslation } from '../../../hooks';
+import { Popup, ShowValue } from '../../../components';
+import { useDecimal, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
+import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   address: string;
-  api: ApiPromise | undefined;
   backPath: string;
   showInfo: boolean;
   info: PoolStakingConsts;
@@ -25,9 +24,10 @@ interface Props {
 
 }
 
-export default function Info({ address, api, info, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
+  const decimal = useDecimal(address);
 
   const onBackClick = useCallback(() => {
     setShowInfo(false);
@@ -53,7 +53,7 @@ export default function Info({ address, api, info, setShowInfo, showInfo }: Prop
           </Grid>
           <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em' }} >
             {BN.isBN(value)
-              ? <ShowBalance api={api} balance={value} decimalPoint={2} />
+              ? decimal && <>{amountToHuman(value, decimal)}</>
               : <ShowValue value={value} />
             }
           </Grid>
