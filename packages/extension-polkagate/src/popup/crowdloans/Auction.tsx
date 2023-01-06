@@ -37,7 +37,6 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
   const theme = useTheme();
 
   const [viewType, setViewType] = useState<'Date' | 'Block'>('Date');
-  const [time, setTime] = useState<number>();
 
   const firstLease = auction?.auctionInfo && Number(auction?.auctionInfo[0]);
   const candlePhaseStartBlock = auction?.auctionInfo && Number(auction?.auctionInfo[1]);
@@ -57,11 +56,8 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
 
     const now = Date.now();
 
-    // setTimeout(() => setTime(now + 60000), 60000);
-
     return new Date(now).toLocaleDateString('en-US', { ...dateFormat });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewType, time]);
+  }, [dateFormat, viewType]);
 
   const ShowAuction = () => (
     <Grid container direction='column' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mt: '-2px' }}>
