@@ -12,9 +12,9 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useDecimal, useFormatted, usePool, usePoolConsts, usePools, useToken, useTranslation } from '../../../../../hooks';
+import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
+import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
@@ -49,7 +49,6 @@ export default function JoinPool(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
-  // const poolToJoin = usePool(address, selectedPool?.poolId?.toNumber());
 
   const backToStake = useCallback(() => {
     history.push({
@@ -189,13 +188,11 @@ export default function JoinPool(): React.ReactElement {
         }}
       />
       <PButton
-        // _isBusy={poolToJoin?.poolId ? Number(poolToJoin.poolId) !== selectedPool?.poolId?.toNumber() : false || !!pools}
         _onClick={toReview}
         disabled={nextBtnDisabled}
         text={t<string>('Next')}
       />
       {showReview && selectedPool && api && amountAsBN &&
-        // poolToJoin?.poolId && Number(poolToJoin.poolId) === selectedPool?.poolId?.toNumber() && api && amountAsBN &&
         <Review
           address={address}
           api={api}
