@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { MinToReceiveRewardsInSolo, StakingConsts } from '../../../util/types';
 
 import { Container, Divider, Grid } from '@mui/material';
@@ -18,14 +17,13 @@ import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   address: string;
-  api: ApiPromise | undefined;
   showInfo: boolean;
   info: StakingConsts | null | undefined;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
   nominatorInfo: MinToReceiveRewardsInSolo | undefined
 }
 
-export default function Info({ address, api, info, nominatorInfo, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, info, nominatorInfo, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -54,7 +52,6 @@ export default function Info({ address, api, info, nominatorInfo, setShowInfo, s
           </Grid>
           <Grid item sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em' }} >
             {BN.isBN(value)
-              // ? <ShowBalance api={api} balance={value} decimalPoint={2} />
               ? decimal && <>{amountToHuman(value, decimal)}</>
               : <ShowValue value={value} width='50px' />
             }

@@ -274,10 +274,10 @@ export default function CrowdLoans(): React.ReactElement {
               number={myContributions?.size}
             />
           }
-          <Grid container sx={{ height: window.innerHeight - 360, m: 'auto', width: '92%' }}>
+          <Grid container sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, height: window.innerHeight - 360, m: 'auto', overflow: 'scroll', scrollbarWidth: 'none', width: '92%' }}>
             {contributedCrowdloans?.length
               ? contributedCrowdloans.map((crowdloan, index) => (
-                <Grid container direction='column' height='87px' item key={index} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
+                <Grid container direction='column' height='87px' item key={index} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mb: '10px' }}>
                   <Grid container height='30px' item lineHeight='30px'>
                     <Grid alignItems='center' container item justifyContent='center' xs={1.5}>
                       <Avatar
@@ -299,7 +299,7 @@ export default function CrowdLoans(): React.ReactElement {
                             </Grid>
                           }
                         </Grid>
-                        : <Identity address={crowdloan.fund.depositor} formatted={crowdloan.fund.depositor} api={api} chain={chain} identiconSize={15} noIdenticon />
+                        : <Identity address={crowdloan.fund.depositor} formatted={crowdloan.fund.depositor} api={api} chain={chain} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
                       }
                     </Grid>
                   </Grid>
