@@ -14,6 +14,7 @@ import { BN } from '@polkadot/util';
 import { updateMeta } from '../messaging';
 import { AccountStakingInfo } from '../util/types';
 import { useAccount, useApi, useChain, useChainName, useFormatted, useStashId } from '.';
+import { isHexToBn } from '../util/utils';
 
 BN.prototype.toJSON = function () {
   return this.toString();
@@ -57,8 +58,8 @@ export default function useStakingAccount(address: AccountId | string | undefine
 
     const temp = { ...accountInfo };
 
-    temp.stakingLedger.set('active', accountInfo.stakingLedger.active.unwrap());
-    temp.stakingLedger.set('total', accountInfo.stakingLedger.total.unwrap());
+    temp.stakingLedger.set('active', isHexToBn(String(accountInfo.stakingLedger.active)));
+    temp.stakingLedger.set('total', isHexToBn(String(accountInfo.stakingLedger.total)));
     temp.accountId = temp.accountId.toString();
     temp.controllerId = temp.controllerId?.toString() || null;
 
