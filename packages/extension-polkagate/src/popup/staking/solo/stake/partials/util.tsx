@@ -5,11 +5,11 @@ import { SoloSettings } from '../../../../../util/types';
 
 export default function getPayee(settings: SoloSettings): string | undefined {
   if (settings.payee === 'Stash') {
-    return String(settings.stashId);
+    return settings?.stashId && String(settings.stashId);
   }
 
   if (settings.payee === 'Controller') {
-    return String(settings.controllerId);
+    return settings?.controllerId && String(settings.controllerId);
   }
 
   return settings.payee?.Account ? String(settings.payee.Account) : undefined;
