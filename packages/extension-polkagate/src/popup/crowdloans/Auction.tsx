@@ -44,7 +44,6 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
   const endingPeriod = api && Number(api.consts.auctions?.endingPeriod.toString());
   const auctionStartBlock = candlePhaseStartBlock - AUCTION_GRACE_PERIOD;
 
-  const start = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? auctionStartBlock : candlePhaseStartBlock;
   const end = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? candlePhaseStartBlock : endingPeriod && candlePhaseStartBlock + endingPeriod;
 
   const dateFormat = useMemo(() => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
