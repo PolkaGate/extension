@@ -27,6 +27,7 @@ export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { usePoolMembers } from './usePoolMembers';
 export { default as useToken } from './useToken';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';
+export { default as useIsEligibleForUnstake } from './useIsEligibleForUnstake';
 export { default as useIsPopup } from './useIsPopup';
 export { useLedger } from './useLedger';
 export { useMapEntries } from './useMapEntries';

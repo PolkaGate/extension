@@ -57,6 +57,7 @@ export default function Index(): React.ReactElement {
   const mayBeMyStashBalances = useBalances(stakingAccount?.stashId, refresh, setRefresh);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useMyAccountIdentity(address);
+
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
@@ -148,6 +149,13 @@ export default function Index(): React.ReactElement {
     });
   }, [history, address, api, balances, pathname, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
 
+  const goToFastUnstake = useCallback(() => {
+    history.push({
+      pathname: `/solo/fastUnstake/${address}`,
+      state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
+    });
+  }, [address, api, balances, history, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
+
   const goToRestake = useCallback(() => {
     history.push({
       pathname: `/solo/restake/${address}`,
@@ -199,7 +207,8 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
+  const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value, link2Disabled }
+    : { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Disabled?: boolean, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
@@ -220,9 +229,9 @@ export default function Index(): React.ReactElement {
                 {link2Text &&
                   <>
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
-                      <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
+                      <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() || link2Disabled ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
-                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() || link2Disabled ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                       {link2Text}
                     </Grid>
                   </>
@@ -285,7 +294,10 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
-            onLink1={staked && !staked?.isZero() && goToUnstake}
+            link2Disabled={!api || (api && !api.tx?.fastUnstake?.deposit)}
+            link2Text={t('Fast Unstake')}
+            onLink1={goToUnstake}
+            onLink2={api && api.tx?.fastUnstake?.deposit && goToFastUnstake}
             value={staked}
           />
           <Row
