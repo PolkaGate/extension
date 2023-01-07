@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, SxProps, Theme, useTheme } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useAccountName, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
 import { AccountContext, Identity, InputWithLabelAndIdenticon } from '.';
+import isValidAddress from '../util/validateAddress';
 
 interface Props {
   address: string | undefined;
@@ -25,18 +26,32 @@ export default function AccountInputWithIdentity({ address, chain, ignoreAddress
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format, ignoreAddress);
+  const [recipientAddr, setRecipientAddr] = useState<string>();
+
+  useEffect(() => {
+    if (!recipientAddr) {
+      setAddress(undefined);
+    } else if (!isValidAddress(recipientAddr)) {
+      setAddress(undefined);
+
+      return;
+    }
+
+
+    setAddress(recipientAddr);
+  }, [recipientAddr]);
 
   const selectedAddrName = useAccountName(address);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <InputWithLabelAndIdenticon
-        address={address}
+        address={recipientAddr}
         allAddresses={allAddresses}
         chain={chain}
         label={label}
         placeHolder={t<string>('Paste the address here')}
-        setAddress={setAddress}
+        setAddress={setRecipientAddr}
         showIdenticon={false}
       />
       {address && chain &&

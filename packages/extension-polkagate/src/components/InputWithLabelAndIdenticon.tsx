@@ -11,13 +11,14 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { useOutsideClick } from '../hooks';
+import { useOutsideClick, useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addAddressOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';
 import ShortAddress from './ShortAddress';
 import { Input } from './TextInputs';
+import { Warning } from '.';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];
@@ -34,8 +35,10 @@ interface Props {
 }
 
 export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const [offFocus, setOffFocus] = useState(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
+  const [inValidAddress, setInValidAddress] = useState<boolean>(false);
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -48,15 +51,13 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
       setAddress(undefined);
+      setInValidAddress(false);
 
       return;
     }
 
-    if (isValidAddress(value)) {
-      setAddress(value);
-    } else {
-      setAddress(undefined);
-    }
+    setInValidAddress(!(isValidAddress(value)));
+    setAddress(value);
   }, [setAddress]);
 
   const _selectAddress = useCallback((newAddr: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
@@ -70,9 +71,15 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
   }, []);
 
   const pasteAddress = useCallback(() => {
-    address
-      ? setAddress(undefined)
-      : navigator.clipboard.readText().then((clipText) => isValidAddress(clipText) && setAddress(clipText)).catch(console.error);
+    if (address) {
+      setAddress(undefined);
+      setInValidAddress(false);
+    } else {
+      navigator.clipboard.readText().then((clipText) => {
+        setAddress(clipText);
+        setInValidAddress(!(isValidAddress(clipText)))
+      }).catch(console.error);
+    }
   }, [address, setAddress]);
 
   return (
@@ -93,8 +100,8 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             ref={ref}
             style={{
               backgroundColor: disabled ? theme.palette.primary.contrastText : theme.palette.background.paper,
-              borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,
-              borderWidth: address !== undefined && !isValidAddress(address) ? '3px' : '1px',
+              borderColor: address !== undefined && inValidAddress ? theme.palette.warning.main : theme.palette.secondary.light,
+              borderWidth: address !== undefined && inValidAddress ? '3px' : '1px',
               fontSize: '14px',
               fontWeight: 300,
               padding: 0,
@@ -104,7 +111,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             theme={theme}
             type='text'
             value={address ?? ''}
-            withError={offFocus && address !== undefined && !isValidAddress(address)}
+            withError={offFocus && address !== undefined && inValidAddress}
           />
           {!disabled &&
             <>
@@ -144,7 +151,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
       </Grid>
       {showIdenticon &&
         <Grid item xs={1.2}>
-          {isValidAddress(address)
+          {!inValidAddress
             ? <Identicon
               iconTheme={chain?.icon || 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
@@ -156,6 +163,16 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             </Grid>
           }
         </Grid>
+      }
+      {inValidAddress &&
+        <Warning
+          theme={theme}
+          iconDanger
+          marginTop={0}
+          isBelowInput
+        >
+          {t<string>('Invalid address')}
+        </Warning>
       }
       {allAddresses.length > 0 &&
         <Grid

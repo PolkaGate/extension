@@ -12,6 +12,7 @@ import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../.
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
 import Review from './Review';
+import isValidAddress from '../../../../../util/validateAddress';
 
 interface Props {
   address: string;
@@ -78,16 +79,15 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   useEffect(() => {
     setChanges({
       newPoolName: myPoolName !== newPoolName ? newPoolName ?? '' : undefined,
-      newRoles: (newRootAddress !== myPoolRoles?.root?.toString() || newNominatorAddress !== myPoolRoles?.nominator?.toString() || newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
+      newRoles: (isValidAddress(newRootAddress) && newRootAddress !== myPoolRoles?.root?.toString() || isValidAddress(newNominatorAddress) && newNominatorAddress !== myPoolRoles?.nominator?.toString() || isValidAddress(newStateTogglerAddress) && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
         ? {
-          newNominator: newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
-          newRoot: newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
-          newStateToggler: newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
+          newNominator: isValidAddress(newNominatorAddress) && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
+          newRoot: isValidAddress(newRootAddress) && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
+          newStateToggler: isValidAddress(newStateTogglerAddress) && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
         }
         : undefined
     });
   }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
-
   useEffect(() => {
     setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles));
   }, [changes]);
