@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, useTheme } from '@mui/material';
+import { Typography } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 
@@ -10,14 +10,9 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccounts } from '../../messaging';
 import { HeaderBrand, Passwords } from '../../partials';
 
-interface Props {
-  className?: string;
-}
-
-export default function ExportAll({ className }: Props): React.ReactElement<Props> {
+export default function ExportAll(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [pass, setPass] = useState('');
