@@ -13,11 +13,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 
-interface Props {
-  className?: string;
-}
-
-export default function Export({ className }: Props): React.ReactElement<Props> {
+export default function Export(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const theme = useTheme();
@@ -67,13 +63,7 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
         text={t<string>('Export Account')}
       />
       {isPasswordError &&
-        <Grid
-          color='red'
-          height='30px'
-          m='auto'
-          pt='5px'
-          width='92%'
-        >
+        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
           <Warning
             fontWeight={400}
             isBelowInput
@@ -88,39 +78,21 @@ export default function Export({ className }: Props): React.ReactElement<Props> 
         address={address}
         showCopy
       />
-      <Grid
-        display='inline-flex'
-        ml='6%'
-        width='88%'
-      >
+      <Grid display='inline-flex' ml='6%' width='88%'>
         <FontAwesomeIcon
           className='warningImage'
           icon={faExclamationTriangle}
         />
-        <Typography
-          fontSize='14px'
-          fontWeight={300}
-          pl='10px'
-          textAlign='left'
-        >
+        <Typography fontSize='14px' fontWeight={300} pl='10px' textAlign='left'>
           {t<string>('You are exporting your account. Keep it safe and don’t share it with anyone.')}
         </Typography>
       </Grid>
-      {/* <Password
-        label={t<string>('Create password')}
-        onChange={onPassChange}
-        onEnter={_onExportButtonClick}
-      /> */}
-      <Grid
-        sx={{
-          m: '20px auto',
-          width: '92%'
-        }}
-      >
+      <Grid sx={{ m: '20px auto', width: '92%' }}>
         <Password
           isError={isPasswordError}
           label={t<string>('Password for this account')}
           onChange={onPassChange}
+          onEnter={_onExportButtonClick}
         />
         {isPasswordError && (
           <Warning
