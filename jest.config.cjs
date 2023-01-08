@@ -5,6 +5,7 @@ const config = require('@polkadot/dev/config/jest.cjs');
 // config.transformIgnorePatterns= ["/!node_modules\@mangata-finance"]
 
 module.exports = {
+  transformIgnorePatterns: ['/!node_modules'],
   ...config,
   moduleNameMapper: {
     '@polkadot/extension-(base|chains|compat-metamask|dapp|inject|mocks|ui)(.*)$': '<rootDir>/packages/extension-$1/src/$2',
