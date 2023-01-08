@@ -39,6 +39,8 @@ interface State {
   poolConsts?: PoolStakingConsts;
 }
 
+const noop = () => null;
+
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -59,7 +61,6 @@ export default function Index(): React.ReactElement {
   const identity = useMyAccountIdentity(address);
 
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
-
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const decimal = stakingAccount?.decimal;
@@ -207,8 +208,10 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value, link2Disabled }
-    : { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Disabled?: boolean, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
+  const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Disabled?: boolean, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
+    const _link1Disable = !value || value?.isZero() || formatted !== stakingAccount?.controllerId;
+    const _link2Disable = !value || value?.isZero() || link2Disabled;
+
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
@@ -222,16 +225,16 @@ export default function Index(): React.ReactElement {
               </Grid>
               <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em' }}>
                 {link1Text &&
-                  <Grid item onClick={onLink1} sx={{ color: !value || value?.isZero() || formatted !== stakingAccount?.controllerId ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                  <Grid item onClick={_link1Disable ? noop : onLink1} sx={{ color: _link1Disable ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                     {link1Text}
                   </Grid>
                 }
                 {link2Text &&
                   <>
                     <Grid alignItems='center' item justifyContent='center' mx='6px'>
-                      <Divider orientation='vertical' sx={{ bgcolor: !value || value?.isZero() || link2Disabled ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
+                      <Divider orientation='vertical' sx={{ bgcolor: _link2Disable ? 'text.disabled' : 'text.primary', height: '19px', mt: '10px', width: '2px' }} />
                     </Grid>
-                    <Grid item onClick={onLink2} sx={{ color: !value || value?.isZero() || link2Disabled ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
+                    <Grid item onClick={_link2Disable ? noop : onLink2} sx={{ color: _link2Disable ? 'text.disabled' : 'inherit', cursor: 'pointer', letterSpacing: '-0.015em', lineHeight: '36px', textDecorationLine: 'underline' }} >
                       {link2Text}
                     </Grid>
                   </>
@@ -294,10 +297,10 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
-            link2Disabled={!api || (api && !api.tx?.fastUnstake?.deposit)}
+            link2Disabled={!api || (api && !api.consts?.fastUnstake?.deposit)}
             link2Text={t('Fast Unstake')}
             onLink1={goToUnstake}
-            onLink2={api && api.tx?.fastUnstake?.deposit && goToFastUnstake}
+            onLink2={api && api.consts?.fastUnstake?.deposit && goToFastUnstake}
             value={staked}
           />
           <Row

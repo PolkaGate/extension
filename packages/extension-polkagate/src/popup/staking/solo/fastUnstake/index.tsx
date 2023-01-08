@@ -1,18 +1,20 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { Motion, PButton, Warning } from '../../../../components';
+import { Motion, PButton } from '../../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsEligibleForUnstake, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { amountToHuman } from '../../../../util/utils';
@@ -51,7 +53,10 @@ export default function Index(): React.ReactElement {
   const [erasToCheckPerBlock, setErasToCheckPerBlock] = useState<number | undefined>();
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
   const haveEnoughDeposit = fastUnstakeDeposit && stakingConsts && balances && estimatedFee && getValue('available', balances) && fastUnstakeDeposit.add(estimatedFee).lt(getValue('available', balances));
-  const unlockingAndRedeemable = redeemable && redeemable.isZero() && stakingAccount && stakingAccount.unlocking?.length === 0;
+  const unlockingAndRedeemable = redeemable && stakingAccount
+    ? redeemable.isZero() || stakingAccount.unlocking?.length === 0
+    : undefined;
+
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
   const tx = api && api.tx.fastUnstake.registerFastUnstake;
 
@@ -96,7 +101,7 @@ export default function Index(): React.ReactElement {
         <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
           {haveEnoughDeposit
             ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
-            : <Typography fontSize='13px' sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+            : <Typography fontSize='13px' sx={{ bgcolor: haveEnoughDeposit === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
               1
             </Typography>}
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
@@ -104,21 +109,23 @@ export default function Index(): React.ReactElement {
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
-          {unlockingAndRedeemable
-            ? <Typography fontSize='13px' sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+          {unlockingAndRedeemable === false
+            ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
+            : <Typography fontSize='13px' sx={{ bgcolor: unlockingAndRedeemable === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
               2
             </Typography>
-            : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
+          }
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
             {t<string>('No unlocking or redeemable funds')}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
-          {!isEligibleForFastUnstake
-            ? <Typography fontSize='13px' sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
+          {isEligibleForFastUnstake === true
+            ? <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />
+            : <Typography fontSize='13px' sx={{ bgcolor: isEligibleForFastUnstake === undefined ? 'action.disabledBackground' : 'warning.main', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
               3
             </Typography>
-            : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
+          }
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
             {t<string>('Not being exposed in the last {{erasToCheckPerBlock}} eras', { replace: { erasToCheckPerBlock: erasToCheckPerBlock || '...' } })}
           </Typography>

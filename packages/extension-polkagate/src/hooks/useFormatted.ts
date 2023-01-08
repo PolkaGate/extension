@@ -9,7 +9,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { AccountContext, SettingsContext } from '../components/contexts';
 import { useChain } from './';
 
-export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): AccountId |string| undefined {
+export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): AccountId | string | undefined {
   const { accounts } = useContext(AccountContext);
   const settings = useContext(SettingsContext);
   const chain = useChain(address);
@@ -21,7 +21,7 @@ export default function useFormatted(address?: AccountId | string, formatted?: A
 
     const prefix: number = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
-    if (prefix !== undefined && accounts?.length) {
+    if (address && prefix !== undefined && accounts?.length) {
       const selectedAddressJson = accounts.find((acc) => acc.address === address);
 
       if (!selectedAddressJson) {
