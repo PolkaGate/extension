@@ -44,7 +44,6 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
   const endingPeriod = api && Number(api.consts.auctions?.endingPeriod.toString());
   const auctionStartBlock = candlePhaseStartBlock - AUCTION_GRACE_PERIOD;
 
-  const start = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? auctionStartBlock : candlePhaseStartBlock;
   const end = currentBlockNumber && currentBlockNumber < candlePhaseStartBlock ? candlePhaseStartBlock : endingPeriod && candlePhaseStartBlock + endingPeriod;
 
   const dateFormat = useMemo(() => ({ day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' }), []);
@@ -113,7 +112,17 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
               >
                 <LinearProgress
                   color='inherit'
-                  sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderColor: 'rgba(255, 255, 255, 0.65)', borderRight: 'none', borderBottomLeftRadius: '5px', borderTopLeftRadius: '5px', color: '#1F7720', height: '20px', width: '93px' }}
+                  sx={{
+                    bgcolor: theme.palette.mode === 'light' ? 'background.paper' : 'white',
+                    border: '0.1px solid',
+                    borderBottomLeftRadius: '5px',
+                    borderColor: 'rgba(255, 255, 255, 0.65)',
+                    borderRight: 'none',
+                    borderTopLeftRadius: '5px',
+                    color: '#1F7720',
+                    height: '20px',
+                    width: '93px'
+                  }}
                   value={
                     currentBlockNumber > candlePhaseStartBlock
                       ? 100
@@ -129,14 +138,25 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                   ? viewType === 'Date'
                     ? remainingTime(end - currentBlockNumber) + 'left'
                     : t('{{blocks}} blocks left', { replace: { blocks: end - currentBlockNumber } })
-                  : t('Not started yet')}>
+                  : t('Not started yet')}
+              >
                 <LinearProgress
                   color='inherit'
-                  sx={{ bgcolor: theme.palette.mode === 'light' ? 'action.disabledBackground' : 'white', border: '0.1px solid', borderLeft: 'none', borderColor: 'rgba(255, 255, 255, 0.65)', borderBottomRightRadius: '5px', borderTopRightRadius: '5px', color: '#629460', height: '20px', width: '217px' }}
+                  sx={{
+                    bgcolor: theme.palette.mode === 'light' ? 'background.paper' : 'white',
+                    border: '0.1px solid',
+                    borderBottomRightRadius: '5px',
+                    borderColor: 'rgba(255, 255, 255, 0.65)',
+                    borderLeft: 'none',
+                    borderTopRightRadius: '5px',
+                    color: '#629460',
+                    height: '20px',
+                    width: '217px'
+                  }}
                   value={
                     currentBlockNumber < candlePhaseStartBlock
                       ? 0
-                      : 100 * (Number(currentBlockNumber) - auctionStartBlock) / (end - start)
+                      : 100 * (Number(currentBlockNumber) - candlePhaseStartBlock) / (endingPeriod || 1)
                   }
                   variant='determinate'
                 />

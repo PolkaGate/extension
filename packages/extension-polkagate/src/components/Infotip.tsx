@@ -111,7 +111,7 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
             }
           }}
           enterDelay={500}
-          enterNextDelay={7000}
+          // enterNextDelay={7000}
           leaveDelay={500}
           placement={placement}
           title={text || ''}
