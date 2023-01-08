@@ -7,18 +7,14 @@ import React, { useCallback } from 'react';
 import Label from './Label';
 
 interface Props {
-  isError?: boolean;
-  isFocused?: boolean;
-  isReadOnly?: boolean;
-  fontSize?: string;
-  rowsCount?: number;
+  maxRows?: number;
   label: string;
   onChange?: (value: string) => void;
   value?: string;
   style?: React.CSSProperties | undefined;
 }
 
-export default function AutoResizeTextarea({ label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
+export default function AutoResizeTextarea({ label, maxRows = 3, onChange, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(
@@ -40,25 +36,25 @@ export default function AutoResizeTextarea({ label, onChange, rowsCount, style, 
         }}
       >
         <TextareaAutosize
-          maxRows={3}
+          defaultValue={value}
+          maxRows={maxRows}
+          onChange={_onChange}
           style={{
-            overflowY: 'scroll',
-            resize: 'none',
             backgroundColor: theme.palette.background.paper,
             border: '1px solid',
             borderColor: theme.palette.secondary.light,
             borderRadius: '5px',
+            fontFamily: 'inherit',
             fontSize: '18px',
             fontWeight: 300,
-            padding: '0 10px',
-            minHeight: '31px',
             lineHeight: '31px',
-            fontFamily: 'inherit',
-            width: '327px',
-            scrollbarWidth: 'none'
+            minHeight: '31px',
+            overflowY: 'scroll',
+            padding: '0 10px',
+            resize: 'none',
+            scrollbarWidth: 'none',
+            width: '327px'
           }}
-          onChange={_onChange}
-          defaultValue={value}
         />
       </Grid>
     </Label>
