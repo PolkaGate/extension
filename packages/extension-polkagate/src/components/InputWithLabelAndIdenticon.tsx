@@ -6,7 +6,7 @@ import '@vaadin/icons';
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
@@ -25,8 +25,8 @@ interface Props {
   label: string;
   style?: SxProps<Theme>;
   chain?: Chain;
-  address: string | undefined;
-  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  address: string | null | undefined;
+  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
   placeHolder?: string;
@@ -42,22 +42,29 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _toggleDropdown = useCallback(() => allAddresses.length > 0 && setDropdownVisible(!isDropdownVisible), [allAddresses.length, isDropdownVisible]);
 
   useOutsideClick([ref], _hideDropdown);
 
+  useEffect(() => {
+    address && setEnteredAddress(enteredAddress);
+  }, [address, enteredAddress]);
+
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
-      setAddress(undefined);
+      setAddress(null);
+      setEnteredAddress(undefined);
       setInValidAddress(false);
 
       return;
     }
 
     setInValidAddress(!(isValidAddress(value)));
-    setAddress(value);
+    setEnteredAddress(value);
+    isValidAddress(value) ? setAddress(value) : setAddress(undefined);
   }, [setAddress]);
 
   const _selectAddress = useCallback((newAddr: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
@@ -71,16 +78,18 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
   }, []);
 
   const pasteAddress = useCallback(() => {
-    if (address) {
-      setAddress(undefined);
+    if (enteredAddress || address) {
+      setAddress(null);
+      setEnteredAddress(undefined);
       setInValidAddress(false);
     } else {
       navigator.clipboard.readText().then((clipText) => {
-        setAddress(clipText);
-        setInValidAddress(!(isValidAddress(clipText)))
+        isValidAddress(clipText) ? setAddress(clipText) : setAddress(undefined);
+        setEnteredAddress(clipText);
+        setInValidAddress(!(isValidAddress(clipText)));
       }).catch(console.error);
     }
-  }, [address, setAddress]);
+  }, [address, enteredAddress, setAddress]);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ position: 'relative', ...style }}>
@@ -110,8 +119,8 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             }}
             theme={theme}
             type='text'
-            value={address ?? ''}
-            withError={offFocus && address !== undefined && inValidAddress}
+            value={enteredAddress ?? address ?? ''}
+            withError={offFocus && enteredAddress !== undefined && inValidAddress}
           />
           {!disabled &&
             <>
@@ -128,7 +137,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
                 <FontAwesomeIcon
                   color={theme.palette.secondary.light}
                   fontSize='15px'
-                  icon={address ? faXmarkCircle : faPaste}
+                  icon={enteredAddress || address ? faXmarkCircle : faPaste}
                 />
               </IconButton>
               {addWithQr &&

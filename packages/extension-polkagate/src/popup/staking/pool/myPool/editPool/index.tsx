@@ -12,7 +12,6 @@ import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../.
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
 import Review from './Review';
-import isValidAddress from '../../../../../util/validateAddress';
 
 interface Props {
   address: string;
@@ -48,10 +47,10 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
-  const [depositorAddress, setDepositorAddress] = useState<string | undefined>();
-  const [newRootAddress, setNewRootAddress] = useState<string | undefined>();
-  const [newNominatorAddress, setNewNominatorAddress] = useState<string | undefined>();
-  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | undefined>();
+  const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
+  const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
+  const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
+  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | null | undefined>();
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
 
@@ -79,18 +78,19 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   useEffect(() => {
     setChanges({
       newPoolName: myPoolName !== newPoolName ? newPoolName ?? '' : undefined,
-      newRoles: (isValidAddress(newRootAddress) && newRootAddress !== myPoolRoles?.root?.toString() || isValidAddress(newNominatorAddress) && newNominatorAddress !== myPoolRoles?.nominator?.toString() || isValidAddress(newStateTogglerAddress) && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
+      newRoles: ((newNominatorAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) || (newRootAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) || (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString()))
         ? {
-          newNominator: isValidAddress(newNominatorAddress) && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
-          newRoot: isValidAddress(newRootAddress) && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
-          newStateToggler: isValidAddress(newStateTogglerAddress) && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
+          newNominator: newNominatorAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
+          newRoot: newRootAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
+          newStateToggler: newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
         }
         : undefined
     });
   }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
+
   useEffect(() => {
-    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles));
-  }, [changes]);
+    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles) || [newNominatorAddress, newRootAddress, newStateTogglerAddress].includes(undefined));
+  }, [changes, newNominatorAddress, newRootAddress, newStateTogglerAddress]);
 
   return (
     <>

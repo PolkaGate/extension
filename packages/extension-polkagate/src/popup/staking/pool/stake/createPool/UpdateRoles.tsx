@@ -4,7 +4,6 @@
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import { Chain } from '@substrate/connect';
-import isValidAddress from '../../../../../util/validateAddress';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { AccountContext, InputWithLabelAndIdenticon, PButton } from '../../../../../components';
@@ -29,8 +28,8 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
-  const [newNominatorId, setNewNominatorId] = useState<string | undefined>(nominatorId);
-  const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(stateTogglerId);
+  const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
+  const [newStateTogglerId, setNewStateTogglerId] = useState<string | null | undefined>(stateTogglerId);
 
   const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
@@ -39,7 +38,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   }, [setShow, show]);
 
   const onUpdateRoles = useCallback(() => {
-    if (!isValidAddress(newNominatorId) || !isValidAddress(newStateTogglerId)) {
+    if (!newNominatorId || !newStateTogglerId) {
       return;
     }
 
@@ -49,7 +48,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   }, [newNominatorId, newStateTogglerId, setNominatorId, setShow, setStateTogglerId, show]);
 
   useEffect(() => {
-    setUpdateBtnDisable(!isValidAddress(newNominatorId) || !isValidAddress(newStateTogglerId) || (newStateTogglerId === stateTogglerId && newNominatorId === nominatorId));
+    setUpdateBtnDisable(!newNominatorId || !newStateTogglerId || (newStateTogglerId === stateTogglerId && newNominatorId === nominatorId));
   }, [newNominatorId, newStateTogglerId, nominatorId, stateTogglerId]);
 
   const movingParts = (

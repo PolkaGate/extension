@@ -16,7 +16,6 @@ import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
-import isValidAddress from '../../util/validateAddress';
 
 interface Props {
   address: string;
@@ -75,7 +74,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   }, []);
 
   useEffect(() => {
-    if (!isValidAddress(realAddress) || !selectedProxyType) {
+    if (!realAddress || !selectedProxyType) {
       setAddButtonDisabled(true);
       setAccountInfo(undefined);
 
@@ -95,7 +94,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   }, [delay, proxyItems, realAddress, selectedProxyType]);
 
   useEffect(() => {
-    isValidAddress(realAddress) && api && api.derive.accounts.info(realAddress).then((info) => {
+    realAddress && api && api.derive.accounts.info(realAddress).then((info) => {
       if (info.identity.display) {
         setAccountInfo(info.identity);
       } else {
@@ -150,7 +149,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
           {t<string>('Block(s)')}
         </Typography>
       </Grid>
-      {isValidAddress(realAddress) && accountInfo !== undefined &&
+      {accountInfo !== undefined &&
         <ShowIdentity
           accountIdentity={accountInfo}
           style={{
