@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -13,14 +15,14 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 
-export default function Export(): React.ReactElement {
+export default function Export (): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const [isBusy, setIsBusy] = useState(false);
-  const [pass, setPass] = useState('');
-  const [isPasswordError, setIsPasswordError] = useState(false);
+  const [isBusy, setIsBusy] = useState<boolean>(false);
+  const [pass, setPass] = useState<string>('');
+  const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
 
   const _goHome = useCallback(
     () => onAction('/'),
@@ -29,7 +31,7 @@ export default function Export(): React.ReactElement {
 
   const onPassChange = useCallback(
     (password: string | null) => {
-      setPass(password);
+      setPass(password || '');
       setIsPasswordError(false);
     }
     , []);
