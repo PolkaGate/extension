@@ -32,7 +32,7 @@ describe('Testing Welcome page', () => {
     expect(getByRole('button', { name: 'Understood, let me continue' })).toBeTruthy();
   });
 
-  test('Checking the button functionality', async () => {
+  test('Checking the button functionality', () => {
     jest.spyOn(Storage.prototype, 'setItem');
     Storage.prototype.setItem = jest.fn();
 
