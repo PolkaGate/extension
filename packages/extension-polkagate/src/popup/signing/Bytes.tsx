@@ -27,16 +27,25 @@ export default function Bytes({ bytes, url }: Props): React.ReactElement<Props> 
   const secondSlash = url.indexOf('/', firstSlash + 1);
   const thirdSlash = url.indexOf('/', secondSlash + 1);
   const final = url.substring(0, thirdSlash);
+  console.log('text',text)
 
   return (
     <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('from')}</Typography>
-        <Typography fontWeight={400} textAlign='right' width='65%'>{final}</Typography>
+        <Typography fontWeight={300} width='17%'>
+          {t<string>('from')}
+        </Typography>
+        <Typography fontWeight={400} overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis' textAlign='right' width='83%'>
+          {final}
+        </Typography>
       </Grid>
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Typography fontWeight={300} width='35%'>{t<string>('bytes')}</Typography>
-        <Typography fontWeight={400} overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis' textAlign='right' width='65%'>{text}</Typography>
+        <Typography fontWeight={300} width='17%'>
+          {t<string>('bytes')}
+        </Typography>
+        <Typography fontWeight={400} overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis' textAlign='right' width='83%'>
+          {text}
+        </Typography>
       </Grid>
     </Grid>
   );

@@ -44,8 +44,8 @@ export default function Stake(): React.ReactElement {
 
   return (
     <>
-      {pool === undefined &&
-        <>
+      {pool === undefined && state?.pool === undefined
+        ? <>
           <HeaderBrand
             onBackClick={onBackClick}
             shortBorder
@@ -63,12 +63,20 @@ export default function Stake(): React.ReactElement {
             {t<string>('Please wait a few seconds and don’t close the extension.')}
           </Typography>
         </>
-      }
-      {pool === null &&
-        <StakeInitialChoice address={address} api={api} balances={balances} consts={poolStakingConsts} />
-      }
-      {pool &&
-        <BondExtra address={address} api={api} balances={balances} formatted={formatted} pool={pool} />
+        : pool
+          ? <BondExtra
+            address={address}
+            api={api}
+            balances={balances}
+            formatted={formatted}
+            pool={pool}
+          />
+          : <StakeInitialChoice
+            address={address}
+            api={api}
+            balances={balances}
+            consts={poolStakingConsts}
+          />
       }
     </>
   );
