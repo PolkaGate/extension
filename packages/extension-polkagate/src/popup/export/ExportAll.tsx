@@ -1,7 +1,9 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, useTheme } from '@mui/material';
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { Typography } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 
@@ -10,18 +12,13 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccounts } from '../../messaging';
 import { HeaderBrand, Passwords } from '../../partials';
 
-interface Props {
-  className?: string;
-}
-
-export default function ExportAll({ className }: Props): React.ReactElement<Props> {
+export default function ExportAll (): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const [isBusy, setIsBusy] = useState(false);
-  const [pass, setPass] = useState('');
-  const [error, setError] = useState('');
+  const [isBusy, setIsBusy] = useState<boolean>(false);
+  const [pass, setPass] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const _goHome = useCallback(
     () => onAction('/'),
@@ -29,8 +26,8 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
   );
 
   const onPassChange = useCallback(
-    (password: string) => {
-      setPass(password);
+    (password: string | null) => {
+      setPass(password || '');
       setError('');
     }
     , []);
@@ -63,22 +60,10 @@ export default function ExportAll({ className }: Props): React.ReactElement<Prop
         showBackArrow
         text={t<string>('Export All Accounts')}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='15px auto'
-        textAlign='left'
-        width='88%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='15px auto' textAlign='left' width='88%'>
         {t<string>('All your accounts will be encrypted with a password and stored in a JSON file.')}
       </Typography>
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='5px auto'
-        textAlign='left'
-        width='88%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='5px auto' textAlign='left' width='88%'>
         {t<string>('You can later use this JSON file to import your accounts into the extension using the provided password.')}
       </Typography>
       <Passwords

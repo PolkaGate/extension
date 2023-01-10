@@ -1,11 +1,13 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, IconButton, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
@@ -80,10 +82,19 @@ export default function SettingSubMenu(): React.ReactElement {
     }, []
   );
 
+  const slide = keyframes`
+  0% {
+    transform: translateY(-350px);
+  }
+  100%{
+    transform: translateY(0);
+  }
+`;
+
   return (
-    <>
+    <Grid container display='block' item overflow='hidden'>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-      <Grid container direction='column' pl='30px' pt='10px'>
+      <Grid container direction='column' pl='30px' pt='10px' sx={{ animationDuration: '0.3s', animationFillMode: 'backwards', animationName: `${slide}`, p: '18px 0 15px 10px' }}>
         <Grid alignItems='center' container item justifyContent='space-between'>
           <Grid item>
             <Switch
@@ -163,6 +174,6 @@ export default function SettingSubMenu(): React.ReactElement {
           />
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 }
