@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
@@ -9,11 +11,7 @@ import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
-interface Props {
-  className?: string;
-}
-
-function AddAccount({ className }: Props): React.ReactElement<Props> {
+function AddAccount (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
@@ -57,21 +55,19 @@ function AddAccount({ className }: Props): React.ReactElement<Props> {
         showMenu
         text={t<string>('Polkagate')}
       />
-      <div>
-        <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}        >
-          {t('Welcome')}
-        </Typography>
-        <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, px: '24px' }}        >
-          {t<string>('You currently don’t have any account. Create your first account or import an existing one to get started.')}
-        </Typography>
-      </div>
+      <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
+        {t('Welcome')}
+      </Typography>
+      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, px: '24px' }}>
+        {t<string>('You currently don’t have any account. Create your first account or import an existing one to get started.')}
+      </Typography>
       <PButton
         _mt='30px'
         _onClick={_goToCreate}
         _variant={'contained'}
         text={t<string>('Create a new account')}
       />
-      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '20px', textAlign: 'center' }}      >
+      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '20px', textAlign: 'center' }}>
         {t<string>('Or')}
       </Typography>
       <PButton
