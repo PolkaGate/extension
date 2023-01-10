@@ -5,17 +5,20 @@
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
+import { MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
+import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
-import { Label, ShowBalance } from '../../../../../../components';
+import { InputFilter, ShowBalance } from '../../../../../../components';
 import { useChain, useDecimal, useToken, useTranslation } from '../../../../../../hooks';
+import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
 import { PoolInfo } from '../../../../../../util/types';
 import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
+import Filters from './Filters';
 
 interface Props {
   api?: ApiPromise;
@@ -34,9 +37,17 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const theme = useTheme();
 
   const [showPoolMoreInfo, setShowPoolMoreInfo] = useState<boolean>(false);
   const [poolId, setPoolId] = useState<number>();
+  const [searchKeyword, setSearchKeyword] = useState<string>();
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>(pools);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [apply, setApply] = useState<boolean>(false);
+  const [sortValue, setSortValue] = useState<number>();
+  const [filters, setFilters] = useState<Filter>(structuredClone(DEFAULT_POOL_FILTERS) as Filter);
 
   const openPoolMoreInfo = useCallback((poolId: number) => {
     setPoolId(poolId);
@@ -44,9 +55,9 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   }, [showPoolMoreInfo]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    pools && setSelected && setSelected(pools[Number(event.target.value)]);
+    filteredPools && setSelected && setSelected(filteredPools[Number(event.target.value)]);
     ref.current.scrollTop = 0;
-  }, [pools, setSelected]);
+  }, [filteredPools, setSelected]);
 
   const Select = ({ index, pool }: { pool: PoolInfo, index: number }) => (
     <FormControlLabel
@@ -66,110 +77,159 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
     />
   );
 
-  const poolStaked = (points) => {
-    const staked = points ? api?.createType('Balance', points) : undefined;
+  const poolStaked = (points: BN) => api?.createType('Balance', points);
 
-    return staked;
-  };
+  const unableToJoinPools = (pool: PoolInfo) => pool.bondedPool?.state?.toString() !== 'Open';
 
-  const unableToJoinPools = (pool: PoolInfo) => {
-    const blockedOrDestroying = pool.bondedPool?.state?.toString() !== 'Open';
+  const onSearch = useCallback((filter: string) => {
+    setSearchKeyword(filter);
+    setFilteredPools(pools?.filter((pool) => pool.metadata?.includes(filter) || String(pool.poolId) === filter));
+  }, [pools]);
 
-    return blockedOrDestroying;
-  };
+  const onFilters = useCallback(() => {
+    setShowFilters(true);
+  }, []);
 
-  const Div = () => (
+  const Div = ({ height = '15px' }) => (
     <Grid alignItems='center' item justifyContent='center'>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 5px', width: '1px' }} />
+      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height, m: '3px 5px', width: '1px' }} />
     </Grid>
   );
 
   return (
     <Grid sx={{ ...style }}>
-      <Label label={label} style={{ position: 'relative' }}>
-        <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
-          {pools
-            ? pools.length
-              ? pools.map((pool, index) => (
-                <Grid container item key={index} sx={{ bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', opacity: unableToJoinPools(pool) ? 0.7 : 1 }}>
-                  <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', }} width='92%'>
-                    <Grid container item lineHeight='30px'>
-                      <Grid item width='22px'>
-                        <Select index={index} pool={pool} />
-                      </Grid>
-                      <Grid item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width='calc(100% - 22px)'>
-                        {pool.metadata}
-                      </Grid>
-                    </Grid>
-                    <Grid container item>
-                      <Grid alignItems='center' container item maxWidth='50%' width='fit-content'>
-                        <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
-                          {t<string>('Staked:')}
-                        </Typography>
-                        <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                          <ShowBalance
-                            api={api}
-                            balance={poolStaked(pool.bondedPool?.points)}
-                            decimal={decimal}
-                            decimalPoint={4}
-                            height={22}
-                            token={token}
-                          />
-                        </Grid>
-                      </Grid>
-                      <Div />
-                      <Grid alignItems='center' container item width='fit-content'>
-                        <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
-                          {t<string>('Index:')}
-                        </Typography>
-                        <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                          {pool.poolId?.toString()}
-                        </Grid>
-                      </Grid>
-                      <Div />
-                      <Grid alignItems='end' container item width='fit-content'>
-                        <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
-                          {t<string>('Members:')}
-                        </Typography>
-                        <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                          {pool.bondedPool?.memberCounter?.toString()}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid alignItems='center' container item justifyContent='center' onClick={() => openPoolMoreInfo(pool.poolId.toNumber())} sx={{ cursor: 'pointer' }} width='8%'>
-                    <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
-                  </Grid>
-                </Grid>
-              ))
-              : <Grid display='inline-flex' p='10px'>
-                <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
-                <Typography fontSize='12px' fontWeight={400} lineHeight='20px' pl='8px'>
-                  {t<string>('There isn no pool to join!')}
-                </Typography>
-              </Grid>
-            : <Grid alignItems='center' container justifyContent='center'>
-              <Grid item>
-                <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
-              </Grid>
-              <Typography fontSize='13px' lineHeight='59px' pl='10px'>
-                {t<string>('Loading pools...')}
-              </Typography>
-            </Grid>
+      <Grid alignItems='center' container item justifyContent='space-between'>
+        {label}
+        <Div height='19px' />
+        <Grid alignItems='center' container item onClick={() => setIsSearching(!isSearching)} sx={{ cursor: 'pointer' }} width='fit-content'>
+          <Typography mr='5px' >
+            {t('Search')}
+          </Typography>
+          {isSearching
+            ? <SearchOffIcon sx={{ color: 'secondary.light' }} />
+            : <SearchOutlinedIcon sx={{ color: 'secondary.light' }} />
           }
         </Grid>
-      </Label>
-      {showPoolMoreInfo &&
+        <Div height='19px' />
+        <Grid alignItems='center' container item sx={{ cursor: 'pointer' }} width='fit-content' onClick={onFilters}>
+          <Typography mr='5px' >
+            {t('Filters')}
+          </Typography>
+          <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+        </Grid>
+      </Grid>
+      {isSearching &&
+        <Grid item py='10px'>
+          <InputFilter
+            autoFocus={false}
+            onChange={onSearch}
+            placeholder={t<string>('🔍 Search pool')}
+            theme={theme}
+            value={searchKeyword ?? ''}
+          />
+        </Grid>
+      }
+      <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: maxHeight - (isSearching ? 50 : 0), minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
+        {filteredPools
+          ? filteredPools.length
+            ? filteredPools.map((pool, index) => (
+              <Grid container item key={index} sx={{ bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', opacity: unableToJoinPools(pool) ? 0.7 : 1 }}>
+                <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', }} width='92%'>
+                  <Grid container item lineHeight='30px'>
+                    <Grid item width='22px'>
+                      <Select index={index} pool={pool} />
+                    </Grid>
+                    <Grid item overflow='hidden' pl='5px' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width='calc(100% - 22px)'>
+                      {pool.metadata}
+                    </Grid>
+                  </Grid>
+                  <Grid container item>
+                    <Grid alignItems='center' container item maxWidth='50%' width='fit-content'>
+                      <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
+                        {t<string>('Staked:')}
+                      </Typography>
+                      <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                        <ShowBalance
+                          api={api}
+                          balance={poolStaked(pool.bondedPool?.points)}
+                          decimal={decimal}
+                          decimalPoint={4}
+                          height={22}
+                          token={token}
+                        />
+                      </Grid>
+                    </Grid>
+                    <Div />
+                    <Grid alignItems='center' container item width='fit-content'>
+                      <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
+                        {t<string>('Index:')}
+                      </Typography>
+                      <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                        {pool.poolId?.toString()}
+                      </Grid>
+                    </Grid>
+                    <Div />
+                    <Grid alignItems='end' container item width='fit-content'>
+                      <Typography fontSize='12px' fontWeight={300} lineHeight='23px'>
+                        {t<string>('Members:')}
+                      </Typography>
+                      <Grid fontSize='12px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                        {pool.bondedPool?.memberCounter?.toString()}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid alignItems='center' container item justifyContent='center' onClick={() => openPoolMoreInfo(pool.poolId.toNumber())} sx={{ cursor: 'pointer' }} width='8%'>
+                  <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+                </Grid>
+              </Grid>
+            ))
+            : <Grid display='inline-flex' p='10px'>
+              <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
+              <Typography fontSize='12px' fontWeight={400} lineHeight='20px' pl='8px'>
+                {t<string>('There isn no pool to join!')}
+              </Typography>
+            </Grid>
+          : <Grid alignItems='center' container justifyContent='center'>
+            <Grid item>
+              <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
+            </Grid>
+            <Typography fontSize='13px' lineHeight='59px' pl='10px'>
+              {t<string>('Loading pools...')}
+            </Typography>
+          </Grid>
+        }
+      </Grid>
+      {
+        showPoolMoreInfo &&
         <Grid ml='-15px'>
           <PoolMoreInfo
             address={address}
             api={api}
             chain={chain}
-            poolId={poolId}
             pool={poolId === selected?.poolId?.toNumber() && selected}
+            poolId={poolId}
             setShowPoolInfo={setShowPoolMoreInfo}
             showPoolInfo={showPoolMoreInfo} />
-        </Grid>}
+        </Grid>
+      }
+      {/* {showFilters && !!pools?.length &&
+        <Grid ml='-15px' position='absolute'>
+          <Filters
+            apply={apply}
+            filters={filters}
+            // onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
+            pools={pools}
+            setApply={setApply}
+            setFilteredPools={setFilteredPools}
+            setFilters={setFilters}
+            setShow={setShowFilters}
+            setSortValue={setSortValue}
+            show={showFilters}
+            sortValue={sortValue}
+          />
+        </Grid>
+      } */}
     </Grid>
   );
 }

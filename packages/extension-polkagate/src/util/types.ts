@@ -642,6 +642,13 @@ export interface Filter {
   limitOfValidatorsPerOperator: Limit;
   sortBy: string;
 }
+export interface PoolFilter {
+  hasNominated: boolean;
+  hasVerifiedIdentity: boolean;
+  stakedMoreThan: Limit;
+  membersMoreThan: Limit;
+  sortBy: string;
+}
 interface Limit {
   check?: boolean;
   value?: number;

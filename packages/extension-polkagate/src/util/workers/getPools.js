@@ -31,7 +31,12 @@ async function getPools(endpoint) {
       const bondedPool = i[1].unwrap();
 
       return {
-        bondedPool: { memberCounter: String(bondedPool.memberCounter), points: String(bondedPool.points), roles: bondedPool.roles, state: bondedPool.state },
+        bondedPool: {
+          memberCounter: String(bondedPool.memberCounter),
+          points: String(bondedPool.points),
+          roles: bondedPool.roles,
+          state: bondedPool.state
+        },
         metadata: i[0]?.length
           ? i[0]?.isUtf8
             ? i[0]?.toUtf8()
