@@ -27,7 +27,6 @@ export default function Bytes({ bytes, url }: Props): React.ReactElement<Props> 
   const secondSlash = url.indexOf('/', firstSlash + 1);
   const thirdSlash = url.indexOf('/', secondSlash + 1);
   const final = url.substring(0, thirdSlash);
-  console.log('text',text)
 
   return (
     <Grid container fontSize='16px' sx={{ '> div:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '15px auto', width: '92%' }}>
