@@ -28,7 +28,7 @@ interface Props {
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfo ({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
@@ -168,7 +168,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
       label={label}
       style={{ margin: '20px auto', width: '92%' }}
     >
-      <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
+      <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll' }}>
         {sortedNominators?.length
           ? (<>
             <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>

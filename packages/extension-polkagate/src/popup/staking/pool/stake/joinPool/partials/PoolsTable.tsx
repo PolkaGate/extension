@@ -87,7 +87,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   return (
     <Grid sx={{ ...style }}>
       <Label label={label} style={{ position: 'relative' }}>
-        <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
+        <Grid container direction='column' ref={ref} sx={{ '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', textAlign: 'center' }}>
           {pools
             ? pools.length
               ? pools.map((pool, index) => (

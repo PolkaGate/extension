@@ -433,7 +433,7 @@ export default function RewardDetails(): React.ReactElement {
                 {t('Reward')}
               </Typography>
             </Grid>
-            <Grid container sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> .MuiPaper-root': { boxShadow: 'none', backgroundImage: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll', scrollbarWidth: 'none' }}>
+            <Grid container sx={{ '> .MuiPaper-root': { boxShadow: 'none', backgroundImage: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
               {descSortedRewards.length
                 ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
                   <>

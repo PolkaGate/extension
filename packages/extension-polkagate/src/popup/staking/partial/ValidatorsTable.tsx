@@ -40,7 +40,7 @@ interface Props {
   nominatedValidatorsIds: AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTable({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTable ({ activeValidators, allValidatorsIdentities, api, chain, decimal, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, token, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
 
@@ -87,8 +87,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
 
   return (
     <Grid sx={{ ...style }}>
-      <Grid container direction='column'
-        sx={{ scrollBehavior: 'smooth', '> div': { scrollbarWidth: 'none' }, ' > div::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', textAlign: 'center' }}>
+      <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', scrollBehavior: 'smooth', textAlign: 'center' }}>
         {validatorsToList?.length !== 0 &&
           <List
             height={height}
@@ -106,7 +105,7 @@ export default function ValidatorsTable({ activeValidators, allValidatorsIdentit
               const isNominated = !!nominatedValidatorsIds?.find((n) => n === v.accountId);
 
               return (
-                <Grid container item key={key} sx={{ backgroundColor: isNominated && alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2), borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 }, ...style }}>
+                <Grid container item key={key} sx={{ backgroundColor: isNominated && alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2), borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', ...style }}>
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}

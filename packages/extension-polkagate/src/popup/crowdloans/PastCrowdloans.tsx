@@ -37,7 +37,7 @@ export default function PastCrowdloans ({ api, chain, contributedCrowdloans, cro
   return (
     <>
       <BouncingSubTitle label={t<string>('Past Crowdloans')} style={{ fontSize: '20px', fontWeight: 400 }} />
-      <Grid container sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, height: window.innerHeight - 270, m: 'auto', overflow: 'scroll', scrollbarWidth: 'none', width: '92%' }}>
+      <Grid container sx={{ height: window.innerHeight - 270, m: 'auto', overflow: 'scroll', width: '92%' }}>
         {pastCrowdloans?.length
           ? pastCrowdloans.map((crowdloan, index) => (
             <ShowCrowdloan

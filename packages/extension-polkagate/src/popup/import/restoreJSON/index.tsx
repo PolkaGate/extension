@@ -19,11 +19,7 @@ import { isKeyringPairs$Json } from '../../../util/typeGuards';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-interface Props {
-  className?: string;
-}
-
-export default function RestoreJson({ className }: Props): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -136,13 +132,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         }}
       />
       {isPasswordError && !stepOne &&
-        <Grid
-          color='red'
-          height='30px'
-          m='auto'
-          pt='5px'
-          width='92%'
-        >
+        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
           <Warning
             fontWeight={400}
             isBelowInput
@@ -154,34 +144,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         </Grid>
       }
       {!stepOne && accountsInfo.length &&
-        <Grid
-          container
-          direction='column'
-          sx={{
-            '&::-webkit-scrollbar': {
-              display: 'none',
-              width: 0
-            },
-            '> .tree:first-child': {
-              borderTopLeftRadius: '5px',
-              borderTopRightRadius: '5px'
-            },
-            '> .tree:last-child': {
-              border: 'none',
-              borderBottomLeftRadius: '5px',
-              borderBottomRightRadius: '5px'
-            },
-            border: '0.5px solid',
-            borderColor: 'secondary.light',
-            borderRadius: '5px',
-            display: 'block',
-            m: '20px auto 0',
-            maxHeight: parent.innerHeight * 1 / 3,
-            overflowY: 'scroll',
-            scrollbarWidth: 'none',
-            width: '92%'
-          }}
-        >
+        <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', m: '20px auto 0', maxHeight: parent.innerHeight * 1 / 3, overflowY: 'scroll', width: '92%' }}>
           {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => (
             <Address
               address={address}
@@ -203,13 +166,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         </Grid>
       }
       {stepOne &&
-        <Typography
-          fontSize='14px'
-          fontWeight={300}
-          m='20px auto'
-          textAlign='left'
-          width='88%'
-        >
+        <Typography fontSize='14px' fontWeight={300} m='20px auto' textAlign='left' width='88%'>
           {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
         </Typography>
       }
@@ -230,15 +187,12 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         </Warning>
       )}
       {requirePassword && !stepOne && (
-        <Grid
-          m='auto'
-          pt='10px'
-          width='92%'
-        >
+        <Grid m='auto' pt='10px' width='92%'>
           <Password
             isError={isPasswordError}
             label={t<string>('Password for this file')}
             onChange={_onChangePass}
+            onEnter={_onRestore}
           />
           {isPasswordError && (
             <Warning

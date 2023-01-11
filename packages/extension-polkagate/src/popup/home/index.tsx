@@ -17,7 +17,7 @@ import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import YouHave from './YouHave';
 
-export default function Home(): React.ReactElement {
+export default function Home (): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
@@ -76,7 +76,7 @@ export default function Home(): React.ReactElement {
         ? <AddAccount />
         : (
           <>
-            <Grid padding='0px' textAlign='center' xs={12} >
+            <Grid padding='0px' textAlign='center' xs={12}>
               <HeaderBrand
                 showBrand
                 showMenu
@@ -87,10 +87,6 @@ export default function Home(): React.ReactElement {
             <Container
               disableGutters
               sx={[{
-                '&::-webkit-scrollbar': {
-                  display: 'none',
-                  width: 0
-                },
                 '> .tree:first-child': { border: 'none' },
                 backgroundColor: 'background.paper',
                 border: '0.5px solid',
@@ -101,7 +97,6 @@ export default function Home(): React.ReactElement {
                 mt: '10px',
                 overflowY: 'scroll',
                 p: 0,
-                scrollbarWidth: 'none',
                 width: '92%'
               }]}
             >

@@ -31,7 +31,6 @@ interface Props {
 
 export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selected, onSelect, mode, chain, label, style, proxies = undefined, maxHeight = '112px' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { accounts } = useContext(AccountContext);
   const [warningText, setWarningTest] = useState<string>();
 
@@ -122,28 +121,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   return (
     <Grid sx={{ ...style }}>
       <Label label={label} style={{ position: 'relative', fontWeight: 300 }}>
-        <Grid container direction='column'
-          sx={{
-            '&::-webkit-scrollbar': {
-              display: 'none',
-              width: 0
-            },
-            '> div:not(:last-child:not(:only-child))': {
-              borderBottom: '1px solid',
-              borderBottomColor: 'secondary.light'
-            },
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'secondary.light',
-            borderRadius: '5px',
-            display: 'block',
-            maxHeight,
-            minHeight: '68px',
-            overflowY: 'scroll',
-            scrollbarWidth: 'none',
-            textAlign: 'center'
-          }}
-        >
+        <Grid container direction='column' sx={{ '> div:not(:last-child:not(:only-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '68px', overflowY: 'scroll', textAlign: 'center' }}>
           <Grid container item sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, textAlign: 'center' }} xs={12}>
             <Grid item xs={mode === 'None' ? 6.1 : 4.7}>
               <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
@@ -173,19 +151,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
               ? proxies.length
                 ? proxies.map((proxyItem, index) => {
                   return (
-                    <Grid container item key={index}
-                      sx={{
-                        '> div:not(:last-child)': {
-                          borderRight: '1px solid',
-                          borderRightColor: 'secondary.light'
-                        },
-                        bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent',
-                        height: '41px',
-                        opacity: fade(proxyItem) ? 0.7 : 1,
-                        textAlign: 'center'
-                      }}
-                      xs={12}
-                    >
+                    <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent', height: '41px', opacity: fade(proxyItem) ? 0.7 : 1, textAlign: 'center' }} xs={12}>
                       <Grid alignItems='center' container height='100%' item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
                         <Grid item width='30px'>
                           <Identicon
@@ -195,15 +161,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                             value={proxyItem.proxy.delegate}
                           />
                         </Grid>
-                        <Typography
-                          fontSize='12px'
-                          fontWeight={400}
-                          maxWidth='calc(100% - 35px)'
-                          overflow='hidden'
-                          pl='5px'
-                          textOverflow='ellipsis'
-                          whiteSpace='nowrap'
-                        >
+                        <Typography fontSize='12px' fontWeight={400} maxWidth='calc(100% - 35px)' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                           {getProxyName(proxyItem.proxy) || toShortAddress(proxyItem.proxy.delegate)}
                         </Typography>
                       </Grid>

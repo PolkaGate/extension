@@ -11,31 +11,12 @@ interface Props {
   show: boolean;
 }
 
-export default function SlidePopUp({ children, show }: Props): React.ReactElement<Props> {
+export default function SlidePopUp ({ children, show }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const ref = React.useRef(null);
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      ref={ref}
-      sx={[{
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        },
-        top: 0
-      }]}
-      width='357px'
-      zIndex={10}
-    >
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={ref} sx={[{ mixBlendMode: 'normal', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
       <Slide
         container={ref.current}
         direction='up'

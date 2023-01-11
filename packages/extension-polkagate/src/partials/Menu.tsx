@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
@@ -10,34 +12,17 @@ import { Divider, Grid, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import settings from '@polkadot/ui-settings';
-
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 
-interface Option {
-  text: string;
-  value: string;
-}
-
 interface Props {
-  className?: string;
-  reference: React.MutableRefObject<null>;
   theme: Theme;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  isMenuOpen: boolean;
 }
 
-const notificationOptions = ['Extension', 'PopUp', 'Window']
-  .map((item) => ({ text: item, value: item.toLowerCase() }));
-
-const prefixOptions = settings.availablePrefixes
-  .filter(({ value }) => value !== -1)
-  .map(({ text, value }): Option => ({ text, value: `${value}` }));
-
-function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
   const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
@@ -95,24 +80,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
   );
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      sx={[{
-        position: 'absolute',
-        top: 0,
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        }
-      }]}
-      zIndex={10}
-    >
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ position: 'absolute', top: 0, mixBlendMode: 'normal', overflowY: 'scroll', }]} zIndex={10}>
       <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
         <MenuItem
           iconComponent={

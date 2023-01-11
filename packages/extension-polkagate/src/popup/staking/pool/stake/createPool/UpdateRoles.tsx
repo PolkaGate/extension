@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import { Chain } from '@substrate/connect';
@@ -54,10 +56,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='10px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' mb='0' my='20px'>
-        <Typography
-          fontSize='20px'
-          fontWeight={400}
-        >
+        <Typography fontSize='20px' fontWeight={400}>
           {t<string>('Update Roles')}
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px', m: '30px auto 5px', width: '80%' }} />
@@ -107,7 +106,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   );
 
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, mixBlendMode: 'normal', overflowY: 'scroll', position: 'fixed', scrollbarWidth: 'none', top: 0 }]} width='357px' zIndex={10}>
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ mixBlendMode: 'normal', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
       <Slide
         container={containerRef.current}
         direction='up'

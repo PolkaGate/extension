@@ -55,7 +55,7 @@ const BodyTheme = createGlobalStyle<Theme>`
   div#root{
    background-color: ${(props) => props.theme.palette.background.default};
   }
-  html {
+  * {
     scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none;
