@@ -68,10 +68,40 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
         <Select
           defaultValue={defaultValue}
           id='selectChain'
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                  width: 0
+                },
+                boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)',
+                mt: '10px',
+                overflow: 'hidden',
+                overflowY: 'scroll',
+                // maxHeight: innerHeight - 300
+              }
+            },
+            MenuListProps: {
+              sx: {
+                '> li.Mui-selected': {
+                  bgcolor: 'text.disabled'
+                },
+                '> li:hover':{
+                  bgcolor: 'secondary.contrastText'
+                },
+                border: '2px solid',
+                borderColor: 'secondary.light',
+                borderRadius: '5px',
+                bgcolor: 'background.paper'
+              }
+            }
+          }}
           input={<BootstrapInput />}
           onChange={_onChange}
           sx={{
             '> #selectChain': {
+              border: '1px solid',
               borderColor: 'secondary.light',
               borderRadius: '5px',
               fontSize: '18px',
