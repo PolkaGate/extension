@@ -7,38 +7,38 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useApi, useCurrentEraIndex, useEndpoint2, useFormatted } from '.';
 
-export default function useIsEligibleForUnstake(address: AccountId | string | undefined): boolean | undefined {
+export default function useIsExposed(address: AccountId | string | undefined): boolean | undefined {
   const api = useApi(address);
   const formatted = useFormatted(address);
   const currentEraIndex = useCurrentEraIndex(address);
   // const endpoint = useEndpoint2(address);
-  const [isEligible, setEligible] = useState<boolean>();
+  const [exposed, setIsExposed] = useState<boolean>();
 
   const checkFastUnstakeEligibility = (endpoint: string, stakerAddress: AccountId | string) => {
-    const isEligible: Worker = new Worker(new URL('../util/workers/isEligibleToFastUnstake.js', import.meta.url));
+    const exposedWorker: Worker = new Worker(new URL('../util/workers/isExposedInPreviousEras.js', import.meta.url));
 
-    isEligible.postMessage({ endpoint, stakerAddress });
+    exposedWorker.postMessage({ endpoint, stakerAddress });
 
-    isEligible.onerror = (err) => {
+    exposedWorker.onerror = (err) => {
       console.log(err);
     };
 
-    isEligible.onmessage = (e: MessageEvent<any>) => {
+    exposedWorker.onmessage = (e: MessageEvent<any>) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const eligibility: boolean | undefined = e.data;
+      const exposed: boolean | undefined = e.data;
 
-      console.log(`fastUnstake eligibility for ${stakerAddress} is ${eligibility}`);
-      setEligible(eligibility);
+      console.log(`fastUnstake eligibility for ${stakerAddress} is ${exposed}`);
+      setIsExposed(exposed);
 
-      isEligible.terminate();
+      exposedWorker.terminate();
     };
   };
 
-  const checkEligibility = useCallback(async (formatted: AccountId | string): Promise<undefined> => {
+  const checkIsExposed = useCallback(async (formatted: AccountId | string): Promise<undefined> => {
     const erasToCheck = (await api.query.fastUnstake.erasToCheckPerBlock()).toNumber();
 
     if (!erasToCheck) {
-      setEligible(false);
+      setIsExposed(true); // TODO: double check
 
       return;
     }
@@ -49,12 +49,12 @@ export default function useIsEligibleForUnstake(address: AccountId | string | un
       )
     );
 
-    setEligible(!erasStakers.flat().map((x) => x[1].others).flat().find((x) => String(x.who) === formatted));
+    setIsExposed(!!erasStakers.flat().map((x) => x[1].others).flat().find((x) => String(x.who) === formatted));
   }, [api, currentEraIndex]);
 
   useEffect(() => {
-    api && formatted && api.query?.fastUnstake && currentEraIndex && checkEligibility(formatted);
-  }, [api, checkEligibility, currentEraIndex, formatted]);
+    api && formatted && api.query?.fastUnstake && currentEraIndex && checkIsExposed(formatted);
+  }, [api, checkIsExposed, currentEraIndex, formatted]);
 
-  return isEligible;
+  return exposed;
 }

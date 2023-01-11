@@ -4,7 +4,7 @@
 
 import getApi from '../getApi';
 
-async function isEligibleToFastUnstake(endpoint, stakerAddress) {
+async function isExposedInPreviousEras(endpoint, stakerAddress) {
   console.log(`Checking fastUnstake eligibility for ${stakerAddress}`);
   const api = await getApi(endpoint);
 
@@ -22,14 +22,14 @@ async function isEligibleToFastUnstake(endpoint, stakerAddress) {
     )
   );
 
-  return !erasStakers.flat().map((x) => x[1].others).flat().find((x) => String(x.who) === stakerAddress);
+  return !!erasStakers.flat().map((x) => x[1].others).flat().find((x) => String(x.who) === stakerAddress);
 }
 
 onmessage = (e) => {
   const { endpoint, stakerAddress } = e.data;
 
   // eslint-disable-next-line no-void
-  void isEligibleToFastUnstake(endpoint, stakerAddress).then((eligibility) => {
-    postMessage(eligibility);
+  void isExposedInPreviousEras(endpoint, stakerAddress).then((isExposed) => {
+    postMessage(isExposed);
   });
 };
