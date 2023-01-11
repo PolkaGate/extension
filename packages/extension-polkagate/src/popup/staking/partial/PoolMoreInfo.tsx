@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Collapse, Grid, IconButton, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
@@ -34,7 +36,7 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo ({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
@@ -67,11 +69,11 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
 
   const percent = useCallback((memberPoints: BN) => {
     // return Number((memberPoints.muln(100)).div(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
-    return (Number(memberPoints.muln(100))/Number(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
+    return (Number(memberPoints.muln(100)) / Number(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
   }, [poolPoints]);
 
   const ShowMembers = () => (
-    <Grid container direction='column' display='block' sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll', scrollbarWidth: 'none' }}>
+    <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
       <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Grid item width='50%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>

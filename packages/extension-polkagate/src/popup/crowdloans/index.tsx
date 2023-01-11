@@ -274,7 +274,7 @@ export default function CrowdLoans(): React.ReactElement {
               number={myContributions?.size}
             />
           }
-          <Grid container sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, height: window.innerHeight - 360, m: 'auto', overflow: 'scroll', scrollbarWidth: 'none', width: '92%' }}>
+          <Grid container sx={{ height: window.innerHeight - 360, m: 'auto', overflow: 'scroll', width: '92%' }}>
             {contributedCrowdloans?.length
               ? contributedCrowdloans.map((crowdloan, index) => (
                 <Grid container direction='column' height='87px' item key={index} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', mb: '10px' }}>

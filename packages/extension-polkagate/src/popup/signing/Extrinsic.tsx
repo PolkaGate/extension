@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Call, ExtrinsicEra, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
@@ -64,13 +66,7 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
   console.log('args:', JSON.stringify(args, null, 2))
 
   const PrettyArgs = () => (
-    <Grid container fontSize='11px' overflow='scroll' sx={{
-      '&::-webkit-scrollbar': {
-        display: 'none',
-        width: '3px'
-      },
-      scrollbarWidth: 'none'
-    }} textAlign='left'>
+    <Grid container fontSize='11px' overflow='scroll' textAlign='left'>
       <pre>
         {JSON.stringify(args, null, 1)}
       </pre>
@@ -78,36 +74,22 @@ function renderMethod(data: string, { args, method }: Decoded, t: TFunction): Re
   );
 
   return (
-    <>
-      <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
-        <Grid container item justifyContent='flex-start' width='25%'>
-          <Infotip showQuestionMark iconLeft={5} text={<PrettyArgs />}>
-            <Typography fontWeight={300}>
-              {t<string>('Method')}
-            </Typography>
-          </Infotip>
-        </Grid>
-        <Grid container item justifyContent='flex-end' width='75%'>
-          <Infotip text={<PrettyArgs />}>
-            <Typography fontWeight={400} textAlign='right'>
-              {`${method.method}(${method.meta.args.map(({ name }) => name).join(', ')})`}
-            </Typography>
-          </Infotip>
-        </Grid>
+    <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
+      <Grid container item justifyContent='flex-start' width='25%'>
+        <Infotip showQuestionMark iconLeft={5} text={<PrettyArgs />}>
+          <Typography fontWeight={300}>
+            {t<string>('Method')}
+          </Typography>
+        </Infotip>
       </Grid>
-      {/* {
-        method.meta && (
-          <tr>
-            <td className='label'>{t<string>('info')}</td>
-            <td className='data'>
-              <details>
-                <summary>{method.meta.docs.map((d) => d.toString().trim()).join(' ')}</summary>
-              </details>
-            </td>
-          </tr>
-        )
-      } */}
-    </>
+      <Grid container item justifyContent='flex-end' width='75%'>
+        <Infotip text={<PrettyArgs />}>
+          <Typography fontWeight={400} textAlign='right'>
+            {`${method.method}(${method.meta.args.map(({ name }) => name).join(', ')})`}
+          </Typography>
+        </Infotip>
+      </Grid>
+    </Grid>
   );
 }
 

@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -154,7 +156,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
         iconComponent={
           <FontAwesomeIcon
             color={theme.palette.text.primary}
-            icon={faEdit} />
+            icon={faEdit}
+          />
         }
         onClick={_onRenameAccount}
         text={t('Rename')}
@@ -199,27 +202,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   );
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      ref={containerRef}
-      sx={[{
-        mixBlendMode: 'normal',
-        ml: '-15px',
-        overflowY: 'scroll',
-        position: 'fixed',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        },
-        top: 0
-      }]}
-      width='357px'
-      zIndex={10}
-    >
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ mixBlendMode: 'normal', ml: '-15px', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
       <Slide
         container={containerRef.current}
         direction='up'
