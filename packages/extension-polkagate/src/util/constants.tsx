@@ -128,11 +128,11 @@ export const DEFAULT_FILTERS = {
 };
 
 export const DEFAULT_POOL_FILTERS = {
-  hasNominated: false,
+  hasNominated: { check: false, value: 10 },
   hasVerifiedIdentity: false,
   membersMoreThan: { check: false, value: 100 },
   sortBy: 'Index (Default)',
-  stakedMoreThan: { check: false, value: 1 } // kiloTOKEN
+  stakedMoreThan: { check: false, value: 200 } // TOKEN
 };
 
 export const TOTAL_STAKE_HELPER_TEXT = 'Your total amount of stake after completing this transaction.';

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import getApi from '../getApi.ts';
-import getPoolAccounts from '../getPoolAccounts';
 
 async function getPools(endpoint) {
   const api = await getApi(endpoint);
@@ -15,31 +14,17 @@ async function getPools(endpoint) {
     return null;
   }
 
-  let info = [];
-  const page = 100;
-  let totalFetched = 0;
+  const queries = [];
 
-  while (lastPoolId > totalFetched) {
-    console.log(`Fetching pools info : ${totalFetched}/${lastPoolId}`);
-    const queries = [];
-    const upperBond = totalFetched + page < lastPoolId ? totalFetched + page : lastPoolId;
-
-    for (let poolId = totalFetched + 1; poolId <= upperBond; poolId++) {
-      const { stashId } = getPoolAccounts(api, poolId);
-
-      queries.push(Promise.all([
-        api.query.nominationPools.metadata(poolId),
-        api.query.nominationPools.bondedPools(poolId),
-        api.query.nominationPools.rewardPools(poolId),
-        api.derive.staking.account(stashId)
-      ]));
-    }
-
-    const i = await Promise.all(queries);
-
-    info = info.concat(i);
-    totalFetched += page;
+  for (let poolId = 1; poolId <= lastPoolId.toNumber(); poolId++) {
+    queries.push(Promise.all([
+      api.query.nominationPools.metadata(poolId),
+      api.query.nominationPools.bondedPools(poolId),
+      api.query.nominationPools.rewardPools(poolId)
+    ]));
   }
+
+  const info = await Promise.all(queries);
 
   const poolsInfo = info.map((i, index) => {
     if (i[1].isSome) {
@@ -58,8 +43,7 @@ async function getPools(endpoint) {
             : i[0]?.toString()
           : null,
         poolId: index + 1, // works because pools id is not reuseable for now
-        rewardPool: i[2]?.isSome ? i[2].unwrap() : null,
-        stashIdAccount: i[3]
+        rewardPool: i[2]?.isSome ? i[2].unwrap() : null
       };
     } else {
       return undefined;

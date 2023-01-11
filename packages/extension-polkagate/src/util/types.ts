@@ -633,6 +633,10 @@ export interface FetchingsContext {
   set: (change: Fetching) => void;
 }
 
+interface Limit {
+  check?: boolean;
+  value?: number;
+}
 export interface Filter {
   withIdentity: boolean;
   noWaiting: boolean;
@@ -643,16 +647,13 @@ export interface Filter {
   sortBy: string;
 }
 export interface PoolFilter {
-  hasNominated: boolean;
+  hasNominated: Limit;
   hasVerifiedIdentity: boolean;
   stakedMoreThan: Limit;
   membersMoreThan: Limit;
   sortBy: string;
 }
-interface Limit {
-  check?: boolean;
-  value?: number;
-}
+
 
 export interface ValidatorInfoWithIdentity extends ValidatorInfo {
   identity?: DeriveAccountRegistration;

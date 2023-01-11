@@ -8,15 +8,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
 import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
 import { InputFilter, ShowBalance } from '../../../../../../components';
-import { useChain, useDecimal, useToken, useTranslation } from '../../../../../../hooks';
+import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
-import { PoolInfo } from '../../../../../../util/types';
+import { PoolFilter, PoolInfo } from '../../../../../../util/types';
 import PoolMoreInfo from '../../../../partial/PoolMoreInfo';
 import Filters from './Filters';
 
@@ -29,25 +29,28 @@ interface Props {
   selected?: PoolInfo;
   setSelected: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
   maxHeight?: number;
+  setFilteredPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
+  filteredPools: PoolInfo[] | null | undefined
+  poolsToShow: PoolInfo[] | null | undefined
 }
 
-export default function PoolsTable({ address, api, label, pools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable({ address, api, label, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
   const theme = useTheme();
+  const stakingConsts = useStakingConsts(address);
 
   const [showPoolMoreInfo, setShowPoolMoreInfo] = useState<boolean>(false);
   const [poolId, setPoolId] = useState<number>();
   const [searchKeyword, setSearchKeyword] = useState<string>();
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>(pools);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [apply, setApply] = useState<boolean>(false);
   const [sortValue, setSortValue] = useState<number>();
-  const [filters, setFilters] = useState<Filter>(structuredClone(DEFAULT_POOL_FILTERS) as Filter);
+  const [filters, setFilters] = useState<PoolFilter>(structuredClone(DEFAULT_POOL_FILTERS) as PoolFilter);
 
   const openPoolMoreInfo = useCallback((poolId: number) => {
     setPoolId(poolId);
@@ -55,9 +58,9 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
   }, [showPoolMoreInfo]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    filteredPools && setSelected && setSelected(filteredPools[Number(event.target.value)]);
+    poolsToShow && setSelected && setSelected(poolsToShow[Number(event.target.value)]);
     ref.current.scrollTop = 0;
-  }, [filteredPools, setSelected]);
+  }, [poolsToShow, setSelected]);
 
   const Select = ({ index, pool }: { pool: PoolInfo, index: number }) => (
     <FormControlLabel
@@ -83,8 +86,15 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
 
   const onSearch = useCallback((filter: string) => {
     setSearchKeyword(filter);
-    setFilteredPools(pools?.filter((pool) => pool.metadata?.includes(filter) || String(pool.poolId) === filter));
-  }, [pools]);
+    setFilteredPools(pools?.filter((pool) => pool.metadata?.toLowerCase().includes(filter?.toLowerCase()) || String(pool.poolId) === filter));
+  }, [pools, setFilteredPools]);
+
+  useEffect(() => {
+    if (!isSearching) {
+      setSearchKeyword(undefined);
+      filteredPools && setFilteredPools(pools); // to revert search
+    }
+  }, [filteredPools, isSearching, pools, setFilteredPools]);
 
   const onFilters = useCallback(() => {
     setShowFilters(true);
@@ -102,7 +112,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
         {label}
         <Div height='19px' />
         <Grid alignItems='center' container item onClick={() => setIsSearching(!isSearching)} sx={{ cursor: 'pointer' }} width='fit-content'>
-          <Typography mr='5px' >
+          <Typography fontWeight={400} mr='5px'>
             {t('Search')}
           </Typography>
           {isSearching
@@ -111,17 +121,17 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
           }
         </Grid>
         <Div height='19px' />
-        <Grid alignItems='center' container item sx={{ cursor: 'pointer' }} width='fit-content' onClick={onFilters}>
-          <Typography mr='5px' >
+        <Grid alignItems='center' container item onClick={onFilters} sx={{ cursor: 'pointer' }} width='fit-content'>
+          <Typography fontWeight={400} mr='5px'>
             {t('Filters')}
           </Typography>
-          <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+          <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '30px' }} />
         </Grid>
       </Grid>
       {isSearching &&
         <Grid item py='10px'>
           <InputFilter
-            autoFocus={false}
+            autoFocus={isSearching}
             onChange={onSearch}
             placeholder={t<string>('🔍 Search pool')}
             theme={theme}
@@ -130,9 +140,9 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
         </Grid>
       }
       <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: maxHeight - (isSearching ? 50 : 0), minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
-        {filteredPools
-          ? filteredPools.length
-            ? filteredPools.map((pool, index) => (
+        {poolsToShow
+          ? poolsToShow.length
+            ? poolsToShow.map((pool, index) => (
               <Grid container item key={index} sx={{ bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', opacity: unableToJoinPools(pool) ? 0.7 : 1 }}>
                 <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', }} width='92%'>
                   <Grid container item lineHeight='30px'>
@@ -187,7 +197,7 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
             : <Grid display='inline-flex' p='10px'>
               <FontAwesomeIcon className='warningImage' icon={faExclamationTriangle} />
               <Typography fontSize='12px' fontWeight={400} lineHeight='20px' pl='8px'>
-                {t<string>('There isn no pool to join!')}
+                {t<string>('There is no pool to join!')}
               </Typography>
             </Grid>
           : <Grid alignItems='center' container justifyContent='center'>
@@ -213,12 +223,12 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
             showPoolInfo={showPoolMoreInfo} />
         </Grid>
       }
-      {/* {showFilters && !!pools?.length &&
+      {showFilters && !!pools?.length && token && decimal &&
         <Grid ml='-15px' position='absolute'>
           <Filters
             apply={apply}
+            decimal={decimal}
             filters={filters}
-            // onLimitValidatorsPerOperator={onLimitValidatorsPerOperator}
             pools={pools}
             setApply={setApply}
             setFilteredPools={setFilteredPools}
@@ -227,9 +237,11 @@ export default function PoolsTable({ address, api, label, pools, selected, setSe
             setSortValue={setSortValue}
             show={showFilters}
             sortValue={sortValue}
+            stakingConsts={stakingConsts}
+            token={token}
           />
         </Grid>
-      } */}
+      }
     </Grid>
   );
 }

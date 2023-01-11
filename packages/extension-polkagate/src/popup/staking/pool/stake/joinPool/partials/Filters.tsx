@@ -7,20 +7,19 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { BN } from '@polkadot/util';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '../../../../../../components';
 import { useTranslation } from '../../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
-import { PoolFilter, PoolInfo, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../../../../util/types';
+import { PoolFilter, PoolInfo, StakingConsts } from '../../../../../../util/types';
+import { amountToMachine } from '../../../../../../util/utils';
 import { getComparator } from './comparators';
 
 interface Props {
   pools: PoolInfo[];
   show: boolean;
   setFilteredPools: (value: React.SetStateAction<PoolInfo[] | null | undefined>) => void;
-
-  // setNewSelectedValidators: React.Dispatch<React.SetStateAction<ValidatorInfo[]>>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   filters: PoolFilter;
   setFilters: React.Dispatch<React.SetStateAction<PoolFilter>>;
@@ -28,10 +27,12 @@ interface Props {
   sortValue: number;
   apply: boolean;
   setApply: React.Dispatch<React.SetStateAction<boolean>>;
-  // onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];
+  token: string;
+  decimal: number;
+  stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Filters({ apply, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue }: Props): React.ReactElement<Props> {
+export default function Filters({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -45,18 +46,30 @@ export default function Filters({ apply, filters, pools, setApply, setFilteredPo
     // { text: t('Commissions: Low to High'), value: 6 }
   ], [t]);
 
-
   useEffect(() => {
     if (!apply || !pools) {
       return;
     }
 
+    let filtered = pools;
 
+    filtered = filters.stakedMoreThan.check
+      ? filtered.filter((p) => p.bondedPool && filters.stakedMoreThan.value && p.bondedPool.points.gt(amountToMachine(String(filters.stakedMoreThan.value), decimal)))
+      : filtered;
+    filtered = filters.hasNominated.check
+      ? filtered.filter((p) => p.stashIdAccount && filters.hasNominated.value && p.stashIdAccount.nominators.length > filters.hasNominated.value)
+      : filtered;
+    filtered = filters.membersMoreThan.check
+      ? filtered.filter((p) => p.bondedPool && filters.membersMoreThan.value && new BN(p.bondedPool.memberCounter).gtn(filters.membersMoreThan.value))
+      : filtered;
 
-    setFilteredPools();
+    // SORT
+    filtered.sort(getComparator(filters.sortBy));
+
+    setFilteredPools([...filtered]);
     setApply(false);
     setShow(false);
-  }, [apply, pools, setApply, setFilteredPools, setShow]);
+  }, [apply, decimal, filters, pools, setApply, setFilteredPools, setShow]);
 
   const onFilters = useCallback((filter: keyof PoolFilter | undefined, sortValue?: number) => {
     if (filter && !sortValue) {
@@ -72,18 +85,24 @@ export default function Filters({ apply, filters, pools, setApply, setFilteredPo
         return setFilters({ ...filters });
       }
 
+      if (filter === 'hasNominated') {
+        filters.hasNominated.check = !filters.hasNominated.check;
+
+        return setFilters({ ...filters });
+      }
+
       filters[filter] = !filters[filter];
       setFilters({ ...filters });
     }
 
     if (sortValue) {
-      filters.sortBy = SORT_OPTIONS.find((o) => o.value === sortValue)?.text ?? 'None';
+      filters.sortBy = SORT_OPTIONS.find((o) => o.value === sortValue)?.text ?? 'Index';
 
       return setFilters({ ...filters });
     }
   }, [SORT_OPTIONS, filters, setFilters]);
 
-  const onLimitChange = useCallback((event: HTMLInputElement, type: 'membersMoreThan' | 'stakedMoreThan') => {
+  const onLimitChange = useCallback((event: HTMLInputElement, type: 'membersMoreThan' | 'stakedMoreThan' | 'hasNominated') => {
     const value = parseInt(event.target.value);
 
     if (value) {
@@ -121,25 +140,44 @@ export default function Filters({ apply, filters, pools, setApply, setFilteredPo
           {t<string>('Filters')}
         </Typography>
       </Grid>
-      <Grid container justifyContent='center' >
+      <Grid alignItems='center' container justifyContent='center' >
         <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
         <Checkbox2
           checked={filters?.hasVerifiedIdentity}
-          label={t<string>('Pool creators has verified identity')}
+          label={t<string>('Pool creator has verified identity')}
           onChange={() => onFilters('withIdentity')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
-          checked={filters?.hasNominated}
-          label={t<string>('Pool has selected validators')}
+          checked={filters?.hasNominated?.check}
+          label={t<string>('Selected more than')}
           onChange={() => onFilters('hasNominated')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '45%' }}
         />
+        <Input
+          autoCapitalize='off'
+          autoCorrect='off'
+          fontSize='18px'
+          height='32px'
+          margin='auto 0 0'
+          max={100}
+          onChange={(e) => onLimitChange(e, 'hasNominated')}
+          padding='0px'
+          placeholder={String(filters.hasNominated.value) || String(DEFAULT_POOL_FILTERS.hasNominated.value)}
+          spellCheck={false}
+          textAlign='center'
+          theme={theme}
+          type='number'
+          width='8%'
+        />
+        <Typography ml='5px' pt='15px'>
+          /{stakingConsts?.maxNominations || 16} {t('validators')}
+        </Typography>
         <Checkbox2
           checked={filters?.stakedMoreThan?.check}
           label={t<string>('Staked more than')}
           onChange={() => onFilters('stakedMoreThan')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '63%' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '45%' }}
         />
         <Input
           autoCapitalize='off'
@@ -156,21 +194,24 @@ export default function Filters({ apply, filters, pools, setApply, setFilteredPo
           textAlign='center'
           theme={theme}
           type='number'
-          width='17%'
+          width='20%'
         />
+        <Typography ml='5px' pt='15px' width='14%'>
+          {token}
+        </Typography>
         <Checkbox2
           checked={filters?.membersMoreThan?.check}
           label={t<string>('Membersmore than')}
           onChange={() => onFilters('membersMoreThan')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '63%' }}
+          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '45%' }}
         />
         <Input
           autoCapitalize='off'
           autoCorrect='off'
-          // disabled={!filters.limitOfValidatorsPerOperator.check}
           fontSize='18px'
           height='32px'
-          margin='auto 0 0'
+          // margin='auto 0 0'
+          margin='0 15% 0 0'
           max={100}
           onChange={(e) => onLimitChange(e, 'membersMoreThan')}
           padding='0px'
@@ -179,7 +220,7 @@ export default function Filters({ apply, filters, pools, setApply, setFilteredPo
           textAlign='center'
           theme={theme}
           type='number'
-          width='17%'
+          width='20%'
         />
         <div style={{ paddingTop: '10px', width: '80%' }}>
           {(filters.sortBy || DEFAULT_POOL_FILTERS.sortBy) &&
