@@ -11,11 +11,11 @@ import getAllAddresses from '../util/getAllAddresses';
 import { AccountContext, Identity, InputWithLabelAndIdenticon } from '.';
 
 interface Props {
-  address: string | undefined;
+  address: string | null | undefined;
   chain: Chain | null;
   label: string;
   style?: SxProps<Theme>;
-  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   ignoreAddress?: string
   name?: string;
 }
