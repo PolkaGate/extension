@@ -142,7 +142,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
       </Grid>
       <Grid alignItems='center' container justifyContent='center' >
         <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
-        <Grid container item m='3px 34px 3px'>
+        <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.hasVerifiedIdentity}
             label={t<string>('Pool creator has verified identity')}
@@ -150,7 +150,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
             style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
           />
         </Grid>
-        <Grid container item m='3px 34px 3px'>
+        <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.hasNominated?.check}
             label={t<string>('Selected more than')}
@@ -175,7 +175,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
             /{stakingConsts?.maxNominations || 16} {t('validators')}
           </Typography>
         </Grid>
-        <Grid container item m='3px 34px 3px'>
+        <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.stakedMoreThan?.check}
             label={t<string>('Staked more than')}
@@ -200,7 +200,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
             {token}
           </Typography>
         </Grid>
-        <Grid container item m='3px 34px 3px'>
+        <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.membersMoreThan?.check}
             label={t<string>('Members more than')}
