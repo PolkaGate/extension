@@ -142,86 +142,87 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
       </Grid>
       <Grid alignItems='center' container justifyContent='center' >
         <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
-        <Checkbox2
-          checked={filters?.hasVerifiedIdentity}
-          label={t<string>('Pool creator has verified identity')}
-          onChange={() => onFilters('withIdentity')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
-        />
-        <Checkbox2
-          checked={filters?.hasNominated?.check}
-          label={t<string>('Selected more than')}
-          onChange={() => onFilters('hasNominated')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '45%' }}
-        />
-        <Input
-          autoCapitalize='off'
-          autoCorrect='off'
-          fontSize='18px'
-          height='32px'
-          margin='auto 0 0'
-          max={100}
-          onChange={(e) => onLimitChange(e, 'hasNominated')}
-          padding='0px'
-          placeholder={String(filters.hasNominated.value) || String(DEFAULT_POOL_FILTERS.hasNominated.value)}
-          spellCheck={false}
-          textAlign='center'
-          theme={theme}
-          type='number'
-          width='8%'
-        />
-        <Typography ml='5px' pt='15px'>
-          /{stakingConsts?.maxNominations || 16} {t('validators')}
-        </Typography>
-        <Checkbox2
-          checked={filters?.stakedMoreThan?.check}
-          label={t<string>('Staked more than')}
-          onChange={() => onFilters('stakedMoreThan')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '45%' }}
-        />
-        <Input
-          autoCapitalize='off'
-          autoCorrect='off'
-          // disabled={!filters.maxCommission.check}
-          fontSize='18px'
-          height='32px'
-          margin='auto 0 0'
-          max={100}
-          onChange={(e) => onLimitChange(e, 'stakedMoreThan')}
-          padding='0px'
-          placeholder={String(filters.stakedMoreThan.value) || String(DEFAULT_POOL_FILTERS.stakedMoreThan.value)}
-          spellCheck={false}
-          textAlign='center'
-          theme={theme}
-          type='number'
-          width='20%'
-        />
-        <Typography ml='5px' pt='15px' width='14%'>
-          {token}
-        </Typography>
-        <Checkbox2
-          checked={filters?.membersMoreThan?.check}
-          label={t<string>('Membersmore than')}
-          onChange={() => onFilters('membersMoreThan')}
-          style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '45%' }}
-        />
-        <Input
-          autoCapitalize='off'
-          autoCorrect='off'
-          fontSize='18px'
-          height='32px'
-          // margin='auto 0 0'
-          margin='0 15% 0 0'
-          max={100}
-          onChange={(e) => onLimitChange(e, 'membersMoreThan')}
-          padding='0px'
-          placeholder={String(filters.membersMoreThan.value) || String(DEFAULT_POOL_FILTERS.membersMoreThan.value)}
-          spellCheck={false}
-          textAlign='center'
-          theme={theme}
-          type='number'
-          width='20%'
-        />
+        <Grid container item m='3px 34px 3px'>
+          <Checkbox2
+            checked={filters?.hasVerifiedIdentity}
+            label={t<string>('Pool creator has verified identity')}
+            onChange={() => onFilters('withIdentity')}
+            style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
+          />
+        </Grid>
+        <Grid container item m='3px 34px 3px'>
+          <Checkbox2
+            checked={filters?.hasNominated?.check}
+            label={t<string>('Selected more than')}
+            onChange={() => onFilters('hasNominated')}
+            style={{ fontSize: '14px', fontWeight: '300', width: '56%' }}
+          />
+          <Input
+            autoCapitalize='off'
+            autoCorrect='off'
+            fontSize='18px'
+            max={100}
+            onChange={(e) => onLimitChange(e, 'hasNominated')}
+            padding='0px'
+            placeholder={String(filters.hasNominated.value) || String(DEFAULT_POOL_FILTERS.hasNominated.value)}
+            spellCheck={false}
+            textAlign='center'
+            theme={theme}
+            type='number'
+            width='10%'
+          />
+          <Typography ml='5px' >
+            /{stakingConsts?.maxNominations || 16} {t('validators')}
+          </Typography>
+        </Grid>
+        <Grid container item m='3px 34px 3px'>
+          <Checkbox2
+            checked={filters?.stakedMoreThan?.check}
+            label={t<string>('Staked more than')}
+            onChange={() => onFilters('stakedMoreThan')}
+            style={{ fontSize: '14px', fontWeight: '300', width: '56%' }}
+          />
+          <Input
+            autoCapitalize='off'
+            autoCorrect='off'
+            fontSize='18px'
+            max={100}
+            onChange={(e) => onLimitChange(e, 'stakedMoreThan')}
+            padding='0px'
+            placeholder={String(filters.stakedMoreThan.value) || String(DEFAULT_POOL_FILTERS.stakedMoreThan.value)}
+            spellCheck={false}
+            textAlign='center'
+            theme={theme}
+            type='number'
+            width='20%'
+          />
+          <Typography ml='5px' width='14%'>
+            {token}
+          </Typography>
+        </Grid>
+        <Grid container item m='3px 34px 3px'>
+          <Checkbox2
+            checked={filters?.membersMoreThan?.check}
+            label={t<string>('Members more than')}
+            onChange={() => onFilters('membersMoreThan')}
+            style={{ fontSize: '14px', fontWeight: '300', width: '56%' }}
+          />
+          <Input
+            autoCapitalize='off'
+            autoCorrect='off'
+            fontSize='18px'
+            margin='0 15% 0 0'
+            max={100}
+            onChange={(e) => onLimitChange(e, 'membersMoreThan')}
+            padding='0px'
+            placeholder={String(filters.membersMoreThan.value) || String(DEFAULT_POOL_FILTERS.membersMoreThan.value)}
+            spellCheck={false}
+            textAlign='center'
+            theme={theme}
+            type='number'
+            width='20%'
+          />
+        </Grid>
         <div style={{ paddingTop: '10px', width: '80%' }}>
           {(filters.sortBy || DEFAULT_POOL_FILTERS.sortBy) &&
             <Select

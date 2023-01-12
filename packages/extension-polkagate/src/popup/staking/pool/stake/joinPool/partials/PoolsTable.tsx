@@ -30,11 +30,12 @@ interface Props {
   setSelected: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
   maxHeight?: number;
   setFilteredPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
-  filteredPools: PoolInfo[] | null | undefined
-  poolsToShow: PoolInfo[] | null | undefined
+  filteredPools: PoolInfo[] | null | undefined;
+  poolsToShow: PoolInfo[] | null | undefined;
+  setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, api, label, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable({ address, setSearchedPools, api, label, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
@@ -86,15 +87,17 @@ export default function PoolsTable({ address, api, label, pools, poolsToShow, fi
 
   const onSearch = useCallback((filter: string) => {
     setSearchKeyword(filter);
-    setFilteredPools(pools?.filter((pool) => pool.metadata?.toLowerCase().includes(filter?.toLowerCase()) || String(pool.poolId) === filter));
-  }, [pools, setFilteredPools]);
+    setSearchedPools(filteredPools?.filter((pool) => pool.metadata?.toLowerCase().includes(filter?.toLowerCase()) || String(pool.poolId) === filter));
+  }, [filteredPools, setSearchedPools]);
 
-  useEffect(() => {
-    if (!isSearching) {
+  const onSearchClick = useCallback(() => {
+    if (isSearching) {
       setSearchKeyword(undefined);
-      filteredPools && setFilteredPools(pools); // to revert search
+      setSearchedPools(null); // to revert search
     }
-  }, [filteredPools, isSearching, pools, setFilteredPools]);
+
+    setIsSearching(!isSearching)
+  }, [isSearching, setSearchedPools]);
 
   const onFilters = useCallback(() => {
     setShowFilters(true);
@@ -111,7 +114,7 @@ export default function PoolsTable({ address, api, label, pools, poolsToShow, fi
       <Grid alignItems='center' container item justifyContent='space-between'>
         {label}
         <Div height='19px' />
-        <Grid alignItems='center' container item onClick={() => setIsSearching(!isSearching)} sx={{ cursor: 'pointer' }} width='fit-content'>
+        <Grid alignItems='center' container item onClick={onSearchClick} sx={{ cursor: 'pointer' }} width='fit-content'>
           <Typography fontWeight={400} mr='5px'>
             {t('Search')}
           </Typography>

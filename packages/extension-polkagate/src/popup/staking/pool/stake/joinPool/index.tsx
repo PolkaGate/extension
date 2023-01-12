@@ -40,7 +40,6 @@ export default function JoinPool(): React.ReactElement {
   const token = useToken(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
-  const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
@@ -48,12 +47,14 @@ export default function JoinPool(): React.ReactElement {
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
+  const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
+  const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
-  useEffect(() => {
-    setFilteredPools(pools);
-  }, [pools]);
+  // useEffect(() => {
+  //   setFilteredPools(pools);
+  // }, [pools]);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -102,11 +103,11 @@ export default function JoinPool(): React.ReactElement {
 
       setSelectedPool(POLKAGATE_POOL);
     } else {
-      const restOf = (filteredPools || pools)?.filter((pool) => pool.poolId !== selectedPool.poolId && pool.bondedPool?.state.toString() === 'Open');
+      const restOf = (searchedPools || filteredPools || pools)?.filter((p) => p.poolId !== selectedPool.poolId && p.bondedPool?.state.toString() === 'Open');
 
       setPoolsToShow([selectedPool, ...restOf]);
     }
-  }, [filteredPools, pools, selectedPool]);
+  }, [filteredPools, pools, searchedPools, selectedPool]);
 
   useEffect(() => {
     if (!api || !availableBalance || !formatted) {
@@ -190,6 +191,7 @@ export default function JoinPool(): React.ReactElement {
         poolsToShow={poolsToShow}
         selected={selectedPool}
         setFilteredPools={setFilteredPools}
+        setSearchedPools={setSearchedPools}
         setSelected={setSelectedPool}
         style={{
           m: '15px auto 0',
