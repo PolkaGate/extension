@@ -37,7 +37,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        console.log(`can not find member for ${formatted}`);
+        console.log(`useBalances: can not find member for ${formatted}`);
 
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
@@ -49,7 +49,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const accounts = poolId && getPoolAccounts(api, poolId);
 
       if (!accounts) {
-        console.log(`can not find a pool with id:${poolId}`);
+        console.log(`useBalances: can not find a pool with id: ${poolId}`);
 
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
@@ -63,17 +63,15 @@ export default function useBalances(address: string | undefined, refresh?: boole
         api.call.nominationPoolsApi.pendingRewards(formatted)
       ]);
 
-      const active = member.points.isZero() ? BN_ZERO : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
+      const active = member.points.isZero()
+        ? BN_ZERO
+        : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
       const rewards = myClaimable as Balance;
       let unlockingValue = BN_ZERO;
 
-      const parsedUnbondingEras = JSON.parse(JSON.stringify(member?.unbondingEras));
-
-      if (parsedUnbondingEras?.length) {
-        for (const [_, unbondingPoint] of Object.entries(parsedUnbondingEras)) {
-          unlockingValue = unlockingValue.add(new BN(String(unbondingPoint)));
-        }
-      }
+      member?.unbondingEras?.forEach((value) => {
+        unlockingValue = unlockingValue.add(value);
+      });
 
       setPooledBalance(active.add(rewards).add(unlockingValue));
       setRefresh && setRefresh(false);
