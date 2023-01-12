@@ -53,6 +53,9 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
 
     let filtered = pools;
 
+    filtered = filters.hasVerifiedIdentity
+      ? filtered?.filter((p) => !!p?.identity?.judgements?.length)
+      : filtered;
     filtered = filters.stakedMoreThan.check
       ? filtered.filter((p) => p.bondedPool && filters.stakedMoreThan.value && p.bondedPool.points.gt(amountToMachine(String(filters.stakedMoreThan.value), decimal)))
       : filtered;
@@ -118,7 +121,6 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
   }, [setApply]);
 
   const onClear = useCallback(() => {
-    console.log('DEFAULT_POOL_FILTERS:', DEFAULT_POOL_FILTERS)
     setFilters(structuredClone(DEFAULT_POOL_FILTERS) as PoolFilter);
     setSortValue(0);
     setApply(false);
@@ -146,7 +148,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
           <Checkbox2
             checked={filters?.hasVerifiedIdentity}
             label={t<string>('Pool creator has verified identity')}
-            onChange={() => onFilters('withIdentity')}
+            onChange={() => onFilters('hasVerifiedIdentity')}
             style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
           />
         </Grid>

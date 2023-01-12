@@ -52,10 +52,6 @@ export default function JoinPool(): React.ReactElement {
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
-  // useEffect(() => {
-  //   setFilteredPools(pools);
-  // }, [pools]);
-
   const backToStake = useCallback(() => {
     history.push({
       pathname: `/pool/stake/${address}`,

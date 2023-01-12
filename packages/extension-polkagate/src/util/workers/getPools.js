@@ -16,7 +16,7 @@ async function getPools(endpoint) {
   }
 
   let info = [];
-  const page = 100;
+  const page = 50;
   let totalFetched = 0;
 
   while (lastPoolId > totalFetched) {
@@ -41,7 +41,7 @@ async function getPools(endpoint) {
     totalFetched += page;
   }
 
-  const poolsInfo = info.map((i, index) => {
+  let poolsInfo = info.map((i, index) => {
     if (i[1].isSome) {
       const bondedPool = i[1].unwrap();
 
@@ -65,6 +65,17 @@ async function getPools(endpoint) {
       return undefined;
     }
   })?.filter((f) => f !== undefined);
+
+  console.log('getting pools owners identities...');
+  const identities = await Promise.all(poolsInfo.map((pool) => api.derive.accounts.info(pool.bondedPool.roles?.root || pool.bondedPool.roles.depositor)));
+
+  poolsInfo = poolsInfo.map((p, index) => {
+    p.identity = identities[index].identity;
+
+    return p;
+  });
+
+  console.log(`${identities?.length} identities of pool owners are fetched`);
 
   return JSON.stringify({ info: poolsInfo, nextPoolId: lastPoolId.addn(1).toString() });
 }

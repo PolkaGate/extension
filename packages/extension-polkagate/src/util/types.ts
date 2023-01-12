@@ -377,7 +377,9 @@ export interface PoolInfo {
   poolId: number;
   bondedPool: PalletNominationPoolsBondedPoolInner | null;
   metadata: string | null;
-  rewardPool: PalletNominationPoolsRewardPool | null
+  rewardPool: PalletNominationPoolsRewardPool | null;
+  identity?: Identity;
+  stashIdAccount?: DeriveStakingAccount;
 }
 
 export interface MyPoolInfo extends PoolInfo {
@@ -387,7 +389,6 @@ export interface MyPoolInfo extends PoolInfo {
   redeemable?: BN;
   rewardClaimable?: BN;
   rewardIdBalance?: DeriveStakingAccount;
-  stashIdAccount?: DeriveStakingAccount;
   token: string;
   decimal: number;
   date: number;
