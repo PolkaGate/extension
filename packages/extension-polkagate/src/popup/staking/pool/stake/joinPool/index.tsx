@@ -40,13 +40,15 @@ export default function JoinPool(): React.ReactElement {
   const token = useToken(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
-  const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
+  const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
+  const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
+  const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
@@ -97,15 +99,16 @@ export default function JoinPool(): React.ReactElement {
 
       setSelectedPool(POLKAGATE_POOL);
     } else {
-      // const bringFront = pools.filter((pool) => pool.poolId === selectedPool.poolId)[0];
-      const restOf = pools.filter((pool) => pool.poolId !== selectedPool.poolId && pool.bondedPool?.state.toString() === 'Open');
+      const restOf = (searchedPools || filteredPools || pools)?.filter((p) => p.poolId !== selectedPool.poolId && p.bondedPool?.state.toString() === 'Open');
 
-      setSortedPools([selectedPool, ...restOf]);
+      setPoolsToShow([selectedPool, ...restOf]);
     }
-  }, [pools, selectedPool]);
+  }, [filteredPools, pools, searchedPools, selectedPool]);
 
   useEffect(() => {
-    if (!api || !availableBalance || !formatted) { return; }
+    if (!api || !availableBalance || !formatted) {
+      return;
+    }
 
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
@@ -177,10 +180,14 @@ export default function JoinPool(): React.ReactElement {
       <PoolsTable
         address={address}
         api={api}
+        filteredPools={filteredPools}
         label={t<string>('Choose a pool to join')}
         maxHeight={window.innerHeight - 350}
-        pools={sortedPools}
+        pools={pools}
+        poolsToShow={poolsToShow}
         selected={selectedPool}
+        setFilteredPools={setFilteredPools}
+        setSearchedPools={setSearchedPools}
         setSelected={setSelectedPool}
         style={{
           m: '15px auto 0',

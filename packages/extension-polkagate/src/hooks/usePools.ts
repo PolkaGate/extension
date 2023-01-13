@@ -33,6 +33,7 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
       }
 
       const parsedPoolsInfo = JSON.parse(poolsInfo);
+
       const info = parsedPoolsInfo.info as PoolInfo[];
 
       info?.forEach((p: PoolInfo) => {
@@ -44,7 +45,6 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
       });
 
       setPools(info);
-
       getPoolsWorker.terminate();
     };
   }, []);

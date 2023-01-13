@@ -377,7 +377,9 @@ export interface PoolInfo {
   poolId: number;
   bondedPool: PalletNominationPoolsBondedPoolInner | null;
   metadata: string | null;
-  rewardPool: PalletNominationPoolsRewardPool | null
+  rewardPool: PalletNominationPoolsRewardPool | null;
+  identity?: Identity;
+  stashIdAccount?: DeriveStakingAccount;
 }
 
 export interface MyPoolInfo extends PoolInfo {
@@ -387,7 +389,6 @@ export interface MyPoolInfo extends PoolInfo {
   redeemable?: BN;
   rewardClaimable?: BN;
   rewardIdBalance?: DeriveStakingAccount;
-  stashIdAccount?: DeriveStakingAccount;
   token: string;
   decimal: number;
   date: number;
@@ -633,6 +634,10 @@ export interface FetchingsContext {
   set: (change: Fetching) => void;
 }
 
+interface Limit {
+  check?: boolean;
+  value?: number;
+}
 export interface Filter {
   withIdentity: boolean;
   noWaiting: boolean;
@@ -642,10 +647,14 @@ export interface Filter {
   limitOfValidatorsPerOperator: Limit;
   sortBy: string;
 }
-interface Limit {
-  check?: boolean;
-  value?: number;
+export interface PoolFilter {
+  hasNominated: Limit;
+  hasVerifiedIdentity: boolean;
+  stakedMoreThan: Limit;
+  membersMoreThan: Limit;
+  sortBy: string;
 }
+
 
 export interface ValidatorInfoWithIdentity extends ValidatorInfo {
   identity?: DeriveAccountRegistration;

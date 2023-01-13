@@ -151,7 +151,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
             <ChainLogo genesisHash={chain?.genesisHash} />
           </Grid>
           <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-            <FormatBalance api={api} decimalPoint={2} value={joinAmount} />
+            <FormatBalance api={api} decimalPoint={4} value={joinAmount} />
           </Grid>
         </Grid>
         <Grid container justifyContent='center'>
