@@ -20,11 +20,11 @@ import YouHave from './YouHave';
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
+  const { hierarchy } = useContext(AccountContext);
+  const chainNames = useChainNames();
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>(false);
-  const { hierarchy } = useContext(AccountContext);
-  const chainNames = useChainNames();
 
   usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
@@ -115,6 +115,7 @@ export default function Home(): React.ReactElement {
                   key={`${index}:${json.address}`}
                   quickActionOpen={quickActionOpen}
                   setQuickActionOpen={setQuickActionOpen}
+                  hideNumbers={hideNumbers}
                 />
               ))}
             </Container>

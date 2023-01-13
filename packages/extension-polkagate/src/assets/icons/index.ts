@@ -33,3 +33,7 @@ export { default as controllerSettingBlack } from './controllerSettingBlack.svg'
 export { default as stashSettingWhite } from './stashSettingWhite.svg';
 export { default as stakingClose } from './stakingClose.svg';
 export { default as controllerSettingWhite } from './controllerSettingWhite.svg';
+export { default as stars6Black } from './stars6Black.svg';
+export { default as stars6White } from './stars6White.svg';
+export { default as stars5White } from './stars5White.svg';
+export { default as stars5Black } from './stars5Black.svg';
