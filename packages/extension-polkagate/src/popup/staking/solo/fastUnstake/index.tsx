@@ -55,23 +55,12 @@ export default function Index(): React.ReactElement {
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && balances && estimatedFee && getValue('available', balances) && fastUnstakeDeposit.add(estimatedFee).lt(getValue('available', balances));
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
-    ? !redeemable.isZero() || stakingAccount.unlocking?.length 
-      ? true
-      : false
+    ? !!(!redeemable.isZero() || stakingAccount.unlocking?.length)
     : undefined;
-
-    console.log('redeemable:',redeemable?.toString())
-    console.log('stakingAccount:',stakingAccount)
 
   const isEligible = isExposed !== undefined && hasUnlockingAndRedeemable !== undefined && hasEnoughDeposit !== undefined
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
     : undefined;
-
-    console.log('isExposed:',isExposed)
-    console.log('hasUnlockingAndRedeemable:',hasUnlockingAndRedeemable)
-    console.log('hasEnoughDeposit:',hasEnoughDeposit)
-    console.log('isEligible:',isEligible)
-
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
   const tx = api && api.tx.fastUnstake.registerFastUnstake;
@@ -133,7 +122,7 @@ export default function Index(): React.ReactElement {
             </Typography>
           }
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('No unlocking or redeemable funds')}
+            {t<string>('No redeemable or unstaking funds')}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
@@ -144,7 +133,7 @@ export default function Index(): React.ReactElement {
             </Typography>
           }
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Not being exposed in the last {{erasToCheckPerBlock}} eras', { replace: { erasToCheckPerBlock: erasToCheckPerBlock || '...' } })}
+            {t<string>('Not being rewarded in the past {{erasToCheckPerBlock}} eras', { replace: { erasToCheckPerBlock: erasToCheckPerBlock || '...' } })}
           </Typography>
         </Grid>
       </Grid>
@@ -154,7 +143,7 @@ export default function Index(): React.ReactElement {
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={75} />
           </Grid>
           <Typography fontSize='15px' fontWeight={300} m='20px auto 0' textAlign='center'>
-            {t<string>('Checking fast unstake eligibility ...')}
+            {t<string>('Please wait a few seconds and don\'t close the extension.')}
           </Typography>
         </>
       }
@@ -173,7 +162,7 @@ export default function Index(): React.ReactElement {
             iconDanger
             theme={theme}
           >
-            {t<string>('This account is not eligible for fast unstake, the reason(s) are highlighted above in red color.')}
+            {t<string>('This account is not eligible for fast unstake, because the requirements (highlighted above) are not met.')}
           </Warning>
         }
       </Grid>
