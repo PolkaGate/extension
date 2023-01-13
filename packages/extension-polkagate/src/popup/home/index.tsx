@@ -22,6 +22,7 @@ export default function Home(): React.ReactElement {
   const [filter, setFilter] = useState('');
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
+  const [hideNumbers, setHideNumbers] = useState<boolean>(false);
   const { hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
 
@@ -83,7 +84,10 @@ export default function Home(): React.ReactElement {
                 text={t<string>('Polkagate')}
               />
             </Grid>
-            <YouHave />
+            <YouHave
+              hideNumbers={hideNumbers}
+              setHideNumbers={setHideNumbers}
+            />
             <Container
               disableGutters
               sx={[{
