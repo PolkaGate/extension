@@ -97,22 +97,18 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
           />
         </div>
         {isExternal && !isHardware
-          ? (
-            <Qr
-              address={json.address}
-              cmd={CMD_MORTAL}
-              genesisHash={json.genesisHash}
-              onSignature={_onSignature}
-              payload={payload}
-            />
-          )
-          : (
-            <Extrinsic
-              payload={payload}
-              request={json}
-              url={url}
-            />
-          )
+          ? <Qr
+            address={json.address}
+            cmd={CMD_MORTAL}
+            genesisHash={json.genesisHash}
+            onSignature={_onSignature}
+            payload={payload}
+          />
+          : <Extrinsic
+            payload={payload}
+            request={json}
+            url={url}
+          />
         }
         {isHardware && (
           <LedgerSign
