@@ -137,9 +137,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
             </Warning>
           </Grid>
         }
-        <SubTitle
-          label={t<string>('Review')}
-        />
+        <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
           address={address}
           chain={chain}

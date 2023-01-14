@@ -15,7 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
@@ -132,13 +132,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           }}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
+          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
             <Warning
               fontWeight={400}
               isBelowInput
@@ -149,39 +143,20 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
             </Warning>
           </Grid>
         }
-        <SubTitle
-          label={t<string>('Review')}
-          withSteps={{ current: 2, total: 2 }}
+        <SubTitle label={t<string>('Review')} />
+        <AccountHolderWithProxy
+          address={formatted}
+          chain={chain}
+          selectedProxyAddress={selectedProxyAddress}
+          showDivider
+          style={{ m: 'auto', width: '90%' }}
+          title={t('Depositor')}
         />
-        {/* <AccountHolderWithProxy address={formatted} selectedProxyAddress={selectedProxyAddress} showDivider style={{ m: 'auto', width: '90%' }} /> */}
-        {selectedProxyAddress &&
-          <>
-            <ThroughProxy
-              address={selectedProxyAddress}
-              style={{
-                pt: '10px'
-              }}
-            />
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
-          </>
-        }
-        <Grid
-          container
-          justifyContent='center'
-          pt='5px'
-        >
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-            lineHeight='23px'
-          >
+        <Grid container justifyContent='center' pt='5px'>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
-          <Grid
-            item
-            lineHeight='22px'
-            pl='5px'
-          >
+          <Grid item lineHeight='22px' pl='5px'>
             <FormatBalance api={api} decimalPoint={4} value={estimatedFee} />
           </Grid>
         </Grid>
@@ -199,14 +174,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
             width: '92%'
           }}
         />
-        <Typography
-          fontSize='12px'
-          fontWeight={300}
-          sx={{
-            m: '20px auto 0',
-            width: '90%'
-          }}
-        >
+        <Typography fontSize='12px' fontWeight={300} sx={{ m: '5px auto 0', width: '90%' }}>
           {t<string>('* 0.0100 WND will be bonded in Reward Id, and will be returned back when unbound all.')}
         </Typography>
         <PasswordUseProxyConfirm
@@ -238,9 +206,9 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
         <Confirmation
           headerTitle={t('Create Pool')}
           onPrimaryBtnClick={goToMyAccounts}
+          onSecondaryBtnClick={goToStakingHome}
           primaryBtnText={t<string>('Select Validators')}
           secondaryBtnText={t<string>('Staking Home')}
-          onSecondaryBtnClick={goToStakingHome}
           showConfirmation={showConfirmation}
           txInfo={txInfo}
         >
