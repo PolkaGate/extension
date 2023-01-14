@@ -126,6 +126,10 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           showBackArrow
           showClose
           text={t<string>('Create Pool')}
+          withSteps={{
+            current: 2,
+            total: 2
+          }}
         />
         {isPasswordError &&
           <Grid

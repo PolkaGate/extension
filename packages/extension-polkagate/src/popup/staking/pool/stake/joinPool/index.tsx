@@ -150,7 +150,7 @@ export default function JoinPool(): React.ReactElement {
         showClose
         text={t<string>('Pool Staking')}
       />
-      <SubTitle label={t<string>('Join Pool')} />
+      <SubTitle label={t<string>('Join Pool')} withSteps={{ current: 1, total: 2 }} />
       <AmountWithOptions
         label={t<string>(`Amount (${token ?? '...'})`)}
         onChangeAmount={stakeAmountChange}
