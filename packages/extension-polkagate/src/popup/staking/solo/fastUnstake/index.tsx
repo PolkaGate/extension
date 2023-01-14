@@ -102,7 +102,7 @@ export default function Index(): React.ReactElement {
       />
       <Grid container direction='column' m='20px auto' width='85%'>
         <Typography fontSize='14px' fontWeight={300}>
-          {t<string>('To be eligible for fast unstake')}:
+          {t<string>('Checking fast unstake eligibility')}:
         </Typography>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
           {hasEnoughDeposit
