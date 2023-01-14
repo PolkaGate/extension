@@ -87,8 +87,8 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
 
   const onSearch = useCallback((filter: string) => {
     setSearchKeyword(filter);
-    setSearchedPools(filteredPools?.filter((pool) => pool.metadata?.toLowerCase().includes(filter?.toLowerCase()) || String(pool.poolId) === filter));
-  }, [filteredPools, setSearchedPools]);
+    setSearchedPools((filteredPools || pools)?.filter((pool) => pool.metadata?.toLowerCase().includes(filter?.toLowerCase()) || String(pool.poolId) === filter));
+  }, [filteredPools, pools, setSearchedPools]);
 
   const onSearchClick = useCallback(() => {
     if (isSearching) {
@@ -96,7 +96,7 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
       setSearchedPools(null); // to revert search
     }
 
-    setIsSearching(!isSearching)
+    setIsSearching(!isSearching);
   }, [isSearching, setSearchedPools]);
 
   const onFilters = useCallback(() => {

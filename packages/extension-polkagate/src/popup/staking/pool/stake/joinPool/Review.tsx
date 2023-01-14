@@ -120,6 +120,10 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           shortBorder
           showBackArrow
           text={t<string>('Join Pool')}
+          withSteps={{
+            current: 2,
+            total: 2
+          }}
         />
         {isPasswordError &&
           <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>

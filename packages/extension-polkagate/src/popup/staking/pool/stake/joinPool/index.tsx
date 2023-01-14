@@ -150,7 +150,7 @@ export default function JoinPool(): React.ReactElement {
         showClose
         text={t<string>('Pool Staking')}
       />
-      <SubTitle label={t<string>('Join Pool')} />
+      <SubTitle label={t<string>('Join Pool')} withSteps={{ current: 1, total: 2 }} />
       <AmountWithOptions
         label={t<string>(`Amount (${token ?? '...'})`)}
         onChangeAmount={stakeAmountChange}
@@ -159,7 +159,7 @@ export default function JoinPool(): React.ReactElement {
         primaryBtnText={t<string>('Min amount')}
         secondaryBtnText={t<string>('Max amount')}
         style={{
-          m: '20px auto 10px',
+          m: '20px auto 7px',
           width: '92%'
         }}
         value={stakeAmount}
@@ -168,7 +168,7 @@ export default function JoinPool(): React.ReactElement {
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
         </Typography>
-        <Grid item lineHeight='22px' pl='5px'>
+        <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShowBalance
             api={api}
             balance={estimatedFee}
