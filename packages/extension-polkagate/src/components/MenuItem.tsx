@@ -1,8 +1,10 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Avatar, Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 
 interface Props {
@@ -17,7 +19,7 @@ interface Props {
   pl?: string;
 }
 
-export default function MenuItem({ children, disabled = false, icon, onClick, pl = '0', py = '8px', showSubMenu = false, text, iconComponent }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, icon, iconComponent, onClick, pl = '0', py = '8px', showSubMenu = false, text }: Props): React.ReactElement<Props> {
   return (
     <>
       <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? () => null : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer' }} textAlign='left' xs={12}>
@@ -49,7 +51,7 @@ export default function MenuItem({ children, disabled = false, icon, onClick, pl
         </Grid>
       </Grid>
       {
-        showSubMenu && children
+        children
       }
     </>
   );
