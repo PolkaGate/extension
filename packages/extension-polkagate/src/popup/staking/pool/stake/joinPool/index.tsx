@@ -182,7 +182,7 @@ export default function JoinPool(): React.ReactElement {
         api={api}
         filteredPools={filteredPools}
         label={t<string>('Choose a pool to join')}
-        maxHeight={window.innerHeight - 350}
+        maxHeight={window.innerHeight - 345}
         pools={pools}
         poolsToShow={poolsToShow}
         selected={selectedPool}
