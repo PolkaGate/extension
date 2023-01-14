@@ -28,7 +28,6 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
   const [isBusy, setIsBusy] = useState(false);
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
-  const theme = useTheme();
 
   useEffect(() => {
     setIsLocked(null);
