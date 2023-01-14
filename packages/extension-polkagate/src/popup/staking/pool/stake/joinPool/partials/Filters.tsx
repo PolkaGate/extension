@@ -173,7 +173,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
             type='number'
             width='10%'
           />
-          <Typography ml='5px' >
+          <Typography fontWeight={300} ml='5px'>
             /{stakingConsts?.maxNominations || 16} {t('validators')}
           </Typography>
         </Grid>
@@ -198,7 +198,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
             type='number'
             width='20%'
           />
-          <Typography ml='5px' width='14%'>
+          <Typography fontWeight={300} ml='5px' width='14%'>
             {token}
           </Typography>
         </Grid>
