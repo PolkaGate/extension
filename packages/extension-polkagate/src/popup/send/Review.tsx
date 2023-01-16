@@ -12,7 +12,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
-import { Container, Divider, Grid, useTheme } from '@mui/material';
+import { Container, Divider, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -20,7 +20,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
 import { useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -54,7 +54,6 @@ export default function Review({ accountName, address, amount, api, chain, estim
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
-  const theme = useTheme();
   const decimal = useDecimal(address);
   const token = useToken(address);
   const onAction = useContext(ActionContext);
@@ -137,14 +136,14 @@ export default function Review({ accountName, address, amount, api, chain, estim
     setShow(false);
   }, [setShow]);
 
-  const Info = ({ pt1 = 0, pt2 = 5, mb = 10, data1, data2, fontSize1 = 28, label, noDivider = false, showIdenticon, showProxy }: { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, showIdenticon?: boolean, showProxy?: boolean }) => (
+  const Info = ({ data1, data2, fontSize1 = 28, label, mb = 10, noDivider = false, pt1 = 0, pt2 = 5, showIdenticon, showProxy }: { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, showIdenticon?: boolean, showProxy?: boolean }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
         {label}
       </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ pt: `${pt2}px`, lineHeight: '28px' }}>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px', pt: `${pt2}px` }}>
         {showIdenticon && chain &&
-          <Grid item pr='10px' >
+          <Grid item pr='10px'>
             <Identicon
               iconTheme={chain?.icon || 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
@@ -194,22 +193,7 @@ export default function Review({ accountName, address, amount, api, chain, estim
           }}
         />
         {isPasswordError &&
-          <Grid
-            color='red'
-            height='30px'
-            m='auto'
-            mt='-10px'
-            width='92%'
-          >
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>

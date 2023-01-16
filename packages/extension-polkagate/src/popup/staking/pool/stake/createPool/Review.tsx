@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens create pool review page
@@ -15,9 +17,9 @@ import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
-import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
+import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
 import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
@@ -36,7 +38,6 @@ interface Props {
 
 export default function Review({ address, api, createAmount, estimatedFee, poolToCreate, setShowReview, showReview = false }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
@@ -132,16 +133,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
           }}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy

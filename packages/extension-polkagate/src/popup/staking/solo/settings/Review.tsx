@@ -11,7 +11,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 
-import { Container, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -20,7 +20,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../components';
+import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -75,7 +75,6 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountName(address);
-  const theme = useTheme();
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
@@ -204,11 +203,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning fontWeight={400} isBelowInput isDanger theme={theme}>
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
