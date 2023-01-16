@@ -8,6 +8,7 @@ export { default as AmountFee } from './AmountFee';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as ActionText } from './ActionText';
+export { default as WrongPasswordAlert } from './WrongPasswordAlert';
 export { default as Button } from './Button';
 export { default as ChainLogo } from './ChainLogo';
 export { default as Checkbox2 } from './Checkbox2';
