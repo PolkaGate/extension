@@ -274,6 +274,7 @@ export default function AccountDetails(): React.ReactElement {
                 onChange={_onChangeGenesis}
                 options={genesisOptions}
                 style={{ width: '100%' }}
+                disabledItems={['Allow use on any chain']}
               />
             </Grid>
             <Grid height='20px' item mt='10px' xs>
@@ -283,6 +284,7 @@ export default function AccountDetails(): React.ReactElement {
                   onChange={_onChangeEndpoint}
                   options={endpointOptions}
                   value={newEndpoint || endpoint}
+
                 />
               }
             </Grid>
@@ -295,7 +297,7 @@ export default function AccountDetails(): React.ReactElement {
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ bgcolor:'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height:'62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
+        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }} >
           <HorizontalMenuItem
             divider
             icon={
