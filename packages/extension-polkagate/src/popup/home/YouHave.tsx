@@ -67,7 +67,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   useEffect(() => {
     const isHide = window.localStorage.getItem('hide_numbers');
 
-    isHide === 'true' ? setHideNumbers(true) : setHideNumbers(false);
+    isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
   }, [setHideNumbers]);
 
   return (

@@ -342,8 +342,11 @@ export default function CrowdLoans(): React.ReactElement {
                   fontWeight={400}
                   theme={theme}
                 >
-                  {t<string>('No contribution found.')}
+                  {t<string>('No contribution yet.')}
                 </Warning>
+                <Typography fontWeight={400} fontSize='14px' p='7px 41px'>
+                  {t('You can find Crowdloans to contribute by clicking on “Active” button below.')}
+                </Typography>
               </Grid>
             }
           </Grid>
@@ -452,8 +455,8 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? activeCrowdloanBlack as string
                     : activeCrowdloanWhite as string}
-              sx={{ height: '35px' }} 
-              />
+              sx={{ height: '35px' }}
+            />
           }
           onClick={showActiveCrowdloans}
           textSelected={itemShow === TAB_MAP.ACTIVE_CROWDLOANS}

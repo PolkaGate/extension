@@ -94,7 +94,7 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   const BalanceRow = () => (
     <Grid alignItems='center' container fontSize='18px'>
       <Avatar src={getLogo(chain)} sx={{ filter: chainName === 'Kusama' && theme.palette.mode === 'dark' && 'invert(1)', borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
-      {hideNumbers
+      {hideNumbers || hideNumbers === undefined
         ? <Box
           component='img'
           src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
