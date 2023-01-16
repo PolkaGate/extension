@@ -29,7 +29,7 @@ function CreateAccount({ className }: Props): React.ReactElement {
   const [seed, setSeed] = useState<null | string>(null);
   const [type, setType] = useState(DEFAULT_TYPE);
   const [name, setName] = useState('');
-  const [genesisHash, setGenesis] = useState<string | undefined>('');
+  const [genesisHash, setGenesis] = useState<string | undefined>();
   const chain = useMetadata(genesisHash, true);
 
   useEffect((): void => {
@@ -82,10 +82,13 @@ function CreateAccount({ className }: Props): React.ReactElement {
     []
   );
 
-  const _onChangeNetwork = useCallback(
-    (newGenesisHash: string) => setGenesis(newGenesisHash),
-    []
-  );
+  const _onChangeNetwork = useCallback((newGenesisHash: string) => {
+    const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : undefined;
+
+    setGenesis(availableGenesisHash);
+
+    !availableGenesisHash && setNewChain(null);
+  }, []);
 
   const _onBackClick = useCallback(() => {
     step === 1 ? onAction('/') : _onPreviousStep();
