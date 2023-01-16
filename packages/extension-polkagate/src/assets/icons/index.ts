@@ -15,6 +15,7 @@ export { default as auctionWhite } from './auctionWhite.svg';
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
 export { default as hide } from './hide.svg';
+export { default as show } from './show.svg';
 export { default as pastCrowdloanWhite } from './pastCrowdloanWhite.svg';
 export { default as pastCrowdloanBlack } from './pastCrowdloanBlack.svg';
 export { default as crowdloanHomeBlack } from './crowdloanHomeBlack.svg';
