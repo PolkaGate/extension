@@ -18,14 +18,16 @@ interface Props {
   label: string;
   icon?: string;
   style: SxProps<Theme> | undefined;
+  disabledItems?: string[] | number[];
 }
 
-export default function DropdownWithIcon({ defaultValue, icon = undefined, label, onChange, options, style }: Props) {
+export default function DropdownWithIcon({ defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' pt={1} sx={{ ...style }}>
       <Grid item xs={10.5}>
         <Select
           defaultValue={defaultValue}
+          disabledItems={disabledItems}
           label={label}
           onChange={onChange}
           options={options}
