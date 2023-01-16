@@ -133,7 +133,7 @@ export default function Index(): React.ReactElement {
             </Typography>
           }
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Not being rewarded in the past {{erasToCheckPerBlock}} era(s)', { replace: { erasToCheckPerBlock: erasToCheckPerBlock || '...' } })}
+            {t<string>('Not being rewarded in the past {{erasToCheckPerBlock}} {{era}}', { replace: { erasToCheckPerBlock: erasToCheckPerBlock || '...', era: erasToCheckPerBlock && erasToCheckPerBlock > 1 ? 'eras' : 'era' } })}
           </Typography>
         </Grid>
       </Grid>
