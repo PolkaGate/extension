@@ -53,11 +53,11 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         </Grid>
         <AccountPreview
           {...account}
+          hideNumbers={hideNumbers}
           parentName={parentName}
           quickActionOpen={quickActionOpen}
           setQuickActionOpen={setQuickActionOpen}
           suri={suri}
-          hideNumbers={hideNumbers}
         />
         <Backdrop
           onClick={handleClose}

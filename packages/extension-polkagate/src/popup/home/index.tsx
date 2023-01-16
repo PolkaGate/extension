@@ -24,7 +24,7 @@ export default function Home(): React.ReactElement {
   const chainNames = useChainNames();
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
-  const [hideNumbers, setHideNumbers] = useState<boolean>(false);
+  const [hideNumbers, setHideNumbers] = useState<boolean>();
 
   usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
@@ -112,10 +112,10 @@ export default function Home(): React.ReactElement {
               {sortedAccount.map((json, index): React.ReactNode => (
                 <AccountsTree
                   {...json}
+                  hideNumbers={hideNumbers}
                   key={`${index}:${json.address}`}
                   quickActionOpen={quickActionOpen}
                   setQuickActionOpen={setQuickActionOpen}
-                  hideNumbers={hideNumbers}
                 />
               ))}
             </Container>
