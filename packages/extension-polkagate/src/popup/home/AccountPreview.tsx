@@ -33,9 +33,10 @@ export interface Props {
   type?: KeypairType;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
+  hideNumbers: boolean;
 }
 
-export default function AccountPreview({ address, genesisHash, isExternal, isHardware, isHidden, name, toggleActions, type, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, hideNumbers, isExternal, isHardware, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const history = useHistory();
   const chain = useChain(address);
   const api = useApi(address);
@@ -93,6 +94,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
         address={address}
         chain={chain}
         formatted={formatted}
+        hideNumbers={hideNumbers}
         identity={identity}
         isHidden={isHidden}
         name={name}

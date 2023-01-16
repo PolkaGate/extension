@@ -6,17 +6,13 @@ import React from 'react';
 
 import { CopyAddressButton } from '../../../components';
 
-export default function Item({ item, mt = 0, noDivider = false, toCopy }: { item: string | undefined, mt?: number, noDivider?: boolean, toCopy?: string }) {
+export default function ToFrom({ item, mt = 0, noDivider = false, toCopy }: { item: string | undefined, mt?: number, noDivider?: boolean, toCopy?: string }) {
   return (
     <>
       {item &&
         <>
           <Grid alignItems='center' container justifyContent='center'>
-            <Grid item>
-              <Typography fontSize='16px' fontWeight={400} sx={{ mt: `${mt}px` }}>
-                {item}
-              </Typography>
-            </Grid>
+            {item}
             <Grid item>
               {toCopy &&
                 <CopyAddressButton
