@@ -269,12 +269,12 @@ export default function AccountDetails(): React.ReactElement {
             <Grid alignItems='flex-end' container pt='10px'>
               <DropdownWithIcon
                 defaultValue={genesisHash}
+                disabledItems={['Allow use on any chain']}
                 icon={getLogo(newChain || chain || undefined)}
                 label={t<string>('Chain')}
                 onChange={_onChangeGenesis}
                 options={genesisOptions}
                 style={{ width: '100%' }}
-                disabledItems={['Allow use on any chain']}
               />
             </Grid>
             <Grid height='20px' item mt='10px' xs>
