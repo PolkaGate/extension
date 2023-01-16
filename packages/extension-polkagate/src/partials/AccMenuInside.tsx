@@ -3,9 +3,6 @@
 
 import '@vaadin/icons';
 
-import type { IconTheme } from '@polkadot/react-identicon/types';
-import type { KeypairType } from '@polkadot/util-crypto/types';
-
 import { faCoins, faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -13,37 +10,35 @@ import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/mat
 import React, { useCallback, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Chain } from '@polkadot/extension-chains/types';
-
 import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
 import { ActionContext, Identicon, MenuItem, SettingsContext } from '../components';
-import { useTranslation } from '../hooks';
+import { useAccount, useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
-  chain: Chain | null;
-  formatted: string | undefined;
   address: string | null;
-  isHardware: boolean | null | undefined
-  isExternal: boolean | null | undefined
-  type: KeypairType | undefined;
-  name: string | undefined;
 }
 
-function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
+function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
   const settings = useContext(SettingsContext);
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
-  const canDerive = !(isExternal || isHardware);
+
+  const account = useAccount(address);
+  const chain = useChain(address);
+  const formatted = useFormatted(address);
+  const name = useAccountName(address);
+
+  const canDerive = !(account?.isExternal || account?.isHardware);
   const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
   const _onForgetAccount = useCallback(() => {
-    onAction(`/forget/${address}/${isExternal}`);
-  }, [address, isExternal, onAction]);
+    account && onAction(`/forget/${address}/${account?.isExternal}`);
+  }, [address, account, onAction]);
 
   const _goToDeriveAcc = useCallback(
     () => {
@@ -56,20 +51,13 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
     [setShowMenu]
   );
 
-  const identiconTheme = (
-    (chain?.definition.chainType === 'ethereum' ||
-      type === 'ethereum')
-      ? 'ethereum'
-      : (chain?.icon || 'polkadot')
-  ) as IconTheme;
-
   const _onRenameAccount = useCallback(() => {
     address && onAction(`/rename/${address}`);
   }, [address, onAction]);
 
   const _onExportAccount = useCallback(() => {
-    address && name && onAction(`/export/${address}`);
-  }, [address, name, onAction]);
+    address && onAction(`/export/${address}`);
+  }, [address, onAction]);
 
   const _onManageProxies = useCallback(() => {
     address && onAction(`/manageProxies/${address}`);
@@ -92,8 +80,8 @@ function AccMenuInside({ address, chain, formatted, isExternal, isHardware, isMe
       <Grid container justifyContent='center' my='20px'>
         <Identicon
           className='identityIcon'
-          iconTheme={identiconTheme}
-          isExternal={isExternal}
+          iconTheme={chain?.icon ?? 'polkadot'}
+          isExternal={account?.isExternal}
           prefix={prefix}
           size={40}
           value={formatted || address}

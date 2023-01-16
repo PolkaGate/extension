@@ -7,7 +7,6 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
-import { InvertColors } from '@mui/icons-material';
 import { Avatar, Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -33,7 +32,7 @@ interface Props {
   chain: Chain | null;
   isHidden: boolean | undefined;
   identity: DeriveAccountRegistration | null | undefined;
-  hideNumbers: boolean;
+  hideNumbers: boolean | undefined;
 }
 
 export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
@@ -78,7 +77,7 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
 
   const Price = () => (
     <>
-      {price === undefined || !balanceToShow //|| balances?.token !== price?.token
+      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
         ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice

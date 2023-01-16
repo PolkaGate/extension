@@ -33,7 +33,7 @@ export interface Props {
   type?: KeypairType;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
-  hideNumbers: boolean;
+  hideNumbers: boolean | undefined;
 }
 
 export default function AccountPreview({ address, genesisHash, hideNumbers, isExternal, isHardware, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {

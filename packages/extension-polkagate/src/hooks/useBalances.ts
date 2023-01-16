@@ -73,7 +73,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
         unlockingValue = unlockingValue.add(value);
       });
 
-      setPooledBalance(active.add(rewards).add(unlockingValue));
+      api.genesisHash.toString() === chain?.genesisHash && setPooledBalance(active.add(rewards).add(unlockingValue));
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].pooledBalance = false;
       isFetching.set(isFetching.fetching);
@@ -82,27 +82,32 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   const getBalances = useCallback(() => {
-    if (!token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if ( !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return;
     }
 
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      setNewBalances({ ...b, chainName, date: Date.now(), decimal, token });
+      const decimal = api.registry.chainDecimals[0];
+      const token = api.registry.chainTokens[0];
+
+      setNewBalances({ ...b, chainName, genesisHash: api.genesisHash.toString(), date: Date.now(), decimal, token });
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, chainName, decimal, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh, token]);
+  }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   useEffect(() => {
-    if (newBalances && pooledBalance) {
+    if (newBalances && pooledBalance && api?.genesisHash?.toString() === newBalances?.genesisHash) {
       setOverall({
         ...newBalances,
         pooledBalance
       });
+    } else {
+      setOverall(undefined);
     }
-  }, [pooledBalance, newBalances]);
+  }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash]);
 
   useEffect(() => {
     if (!token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
@@ -125,7 +130,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.length, token]);
 
   useEffect(() => {
-    if (!chain?.genesisHash || !api || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!chain?.genesisHash || !api || !formatted || api.genesisHash.toString() !== chain.genesisHash) {
       return;
     }
 
@@ -196,6 +201,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
+    console.log('savedBalances[chainName]:', savedBalances[chainName]);
+
     if (savedBalances[chainName]) {
       const sb = savedBalances[chainName].balances;
 
@@ -227,5 +234,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName]);
 
-  return overall ?? balances;
+  console.log('overall:', overall);
+
+  return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
 }
