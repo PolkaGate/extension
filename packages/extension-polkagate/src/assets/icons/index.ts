@@ -14,6 +14,8 @@ export { default as activeCrowdloanRed } from './activeCrowdloanRed.svg';
 export { default as auctionWhite } from './auctionWhite.svg';
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
+export { default as hide } from './hide.svg';
+export { default as show } from './show.svg';
 export { default as pastCrowdloanWhite } from './pastCrowdloanWhite.svg';
 export { default as pastCrowdloanBlack } from './pastCrowdloanBlack.svg';
 export { default as crowdloanHomeBlack } from './crowdloanHomeBlack.svg';
@@ -32,3 +34,7 @@ export { default as controllerSettingBlack } from './controllerSettingBlack.svg'
 export { default as stashSettingWhite } from './stashSettingWhite.svg';
 export { default as stakingClose } from './stakingClose.svg';
 export { default as controllerSettingWhite } from './controllerSettingWhite.svg';
+export { default as stars6Black } from './stars6Black.svg';
+export { default as stars6White } from './stars6White.svg';
+export { default as stars5White } from './stars5White.svg';
+export { default as stars5Black } from './stars5Black.svg';

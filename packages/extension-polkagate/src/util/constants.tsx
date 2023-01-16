@@ -127,5 +127,13 @@ export const DEFAULT_FILTERS = {
   withIdentity: false
 };
 
+export const DEFAULT_POOL_FILTERS = {
+  hasNominated: { check: false, value: 10 },
+  hasVerifiedIdentity: false,
+  membersMoreThan: { check: false, value: 100 },
+  sortBy: 'Index (Default)',
+  stakedMoreThan: { check: false, value: 200 } // TOKEN
+};
+
 export const TOTAL_STAKE_HELPER_TEXT = 'Your total amount of stake after completing this transaction.';
 export const SYSTEM_SUGGESTION_TEXT = 'Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.'// which not slashed before.' //TODO: add a disclaimer to the text too

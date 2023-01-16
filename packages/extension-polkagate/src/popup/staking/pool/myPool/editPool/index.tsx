@@ -7,7 +7,7 @@ import type { MyPoolInfo } from '../../../../../util/types';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Popup } from '../../../../../components';
+import { AccountContext, AutoResizeTextarea, InputWithLabelAndIdenticon, PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
@@ -103,8 +103,8 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           text={t<string>('Edit Pool')}
           withSteps={{ current: 1, total: 2 }}
         />
-        <Grid container m='20px auto 10px' width='92%'>
-          <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
+        <Grid container m='10px auto' width='92%'>
+          <AutoResizeTextarea label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
         </Grid>
         <Typography fontSize='16px' fontWeight={400} m='30px auto 15px' textAlign='center'>
           {t<string>('Roles')}

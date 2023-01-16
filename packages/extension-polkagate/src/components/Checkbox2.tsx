@@ -13,22 +13,27 @@ interface Props {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
   style?: SxProps<Theme> | undefined
   labelStyle?: React.CSSProperties | undefined
+  iconStyle?: React.CSSProperties | undefined
 }
 
-export default function Checkbox2({ checked = false, disabled, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
+export default function Checkbox2({ checked = false, disabled, iconStyle, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
   return (
     <FormControlLabel
       control={
         <Checkbox
           checked={checked}
-          checkedIcon={<img src={checkedBox} />}
+          checkedIcon={<img src={checkedBox} style={{ ...iconStyle }} />}
           disabled={disabled}
-          icon={<img src={checkBox} />}
+          icon={<img src={checkBox} style={{ ...iconStyle }} />}
           onChange={onChange}
           sx={{ p: 0, pr: label && '5px' }}
         />
       }
-      label={<span style={{ ...labelStyle }}>{label}</span>}
+      label={
+        <span style={{ ...labelStyle }}>
+          {label}
+        </span>
+      }
       sx={{ m: 0, p: 0, ...style }}
     />
   );

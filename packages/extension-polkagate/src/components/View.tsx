@@ -52,12 +52,11 @@ const BodyTheme = createGlobalStyle<Theme>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
   }
-div#root{
-  background-color: ${(props) => props.theme.palette.background.default};
-}
+  div#root{
+   background-color: ${(props) => props.theme.palette.background.default};
+  }
   html {
     scrollbar-width: none;
-
     &::-webkit-scrollbar {
       display: none;
     }

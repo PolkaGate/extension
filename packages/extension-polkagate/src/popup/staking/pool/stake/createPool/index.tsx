@@ -170,7 +170,7 @@ export default function CreatePool(): React.ReactElement {
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
         </Typography>
-        <Grid item lineHeight='22px' pl='5px'>
+        <Grid item lineHeight='22px' pl='5px' fontSize='14px' fontWeight={400}>
           <ShowBalance api={api} balance={estimatedFee} decimalPoint={4} height={22} />
         </Grid>
       </Grid>

@@ -7,7 +7,7 @@ import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton } from '@mui/material';
-import { Theme } from '@mui/material/styles';
+import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
@@ -45,6 +45,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
   const { master } = useContext(AccountContext);
 
   const [data, setData] = useState<{ version: 'string' }>();
+  const [closeMenu, setCloseMenu] = useState<boolean>(false);
 
   const fetchJson = () => {
     fetch('./manifest.json')
@@ -77,10 +78,10 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
     }, [onAction]
   );
 
-  const _toggleSettings = useCallback(
-    () => setShowMenu((isMenuOpen) => !isMenuOpen),
-    [setShowMenu]
-  );
+  const _toggleSettings = useCallback(() => {
+    setCloseMenu(true);
+    setTimeout(() => setShowMenu(false), 300);
+  }, [setShowMenu]);
 
   const _goToDeriveAcc = useCallback(
     () => {
@@ -94,6 +95,24 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
     }, [onAction]
   );
 
+  const slideLeft = keyframes`
+  0% {
+    width: 0;
+  }
+  100%{
+    width: 100%;
+  }
+`;
+
+  const slideRight = keyframes`
+  0% {
+    width: 100%;
+  }
+  100%{
+    width: 0;
+  }
+`;
+
   return (
     <Grid
       bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
@@ -101,6 +120,11 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
       height='100%'
       justifyContent='end'
       sx={[{
+        animationDuration: '0.2s',
+        animationFillMode: 'forwards',
+        animationName: `${!closeMenu ? slideLeft : slideRight}`,
+        position: 'absolute',
+        right: 0,
         position: 'absolute',
         top: 0,
         mixBlendMode: 'normal',
@@ -133,7 +157,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
           showSubMenu={showImportSubMenu}
           text={t('Import account')}
         >
-          <ImportAccSubMenu toggleSettingSubMenu={toggleSettingSubMenu} />
+          <ImportAccSubMenu toggleSettingSubMenu={toggleSettingSubMenu} show={showImportSubMenu} />
         </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
@@ -163,7 +187,7 @@ function Menu({ className, isMenuOpen, reference, setShowMenu, theme }: Props): 
           showSubMenu={showSettingSubMenu}
           text={t('Setting')}
         >
-          <SettingSubMenu />
+          <SettingSubMenu show={showSettingSubMenu} />
         </MenuItem>
         <Grid container justifyContent='center' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '80%' }}>
           {`${t('Version')} ${data?.version || ''}`}

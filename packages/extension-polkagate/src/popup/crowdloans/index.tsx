@@ -299,7 +299,7 @@ export default function CrowdLoans(): React.ReactElement {
                             </Grid>
                           }
                         </Grid>
-                        : <Identity address={crowdloan.fund.depositor} formatted={crowdloan.fund.depositor} api={api} chain={chain} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
+                        : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
                       }
                     </Grid>
                   </Grid>
@@ -437,6 +437,7 @@ export default function CrowdLoans(): React.ReactElement {
               sx={{ height: '35px' }} />
           }
           onClick={showMyContribution}
+          textSelected={itemShow === TAB_MAP.MY_CONTRIBUTION}
           title={t<string>('Contributed')}
         />
         <HorizontalMenuItem
@@ -451,9 +452,11 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? activeCrowdloanBlack as string
                     : activeCrowdloanWhite as string}
-              sx={{ height: '35px' }} />
+              sx={{ height: '35px' }} 
+              />
           }
           onClick={showActiveCrowdloans}
+          textSelected={itemShow === TAB_MAP.ACTIVE_CROWDLOANS}
           title={t<string>('Active')}
         />
         <HorizontalMenuItem
@@ -470,6 +473,7 @@ export default function CrowdLoans(): React.ReactElement {
                     : auctionWhite as string}
               sx={{ height: '35px' }} />}
           onClick={showAuction}
+          textSelected={itemShow === TAB_MAP.AUCTION}
           title={t<string>('Auction')}
         />
         <HorizontalMenuItem
@@ -486,6 +490,7 @@ export default function CrowdLoans(): React.ReactElement {
               }
               sx={{ height: '35px' }} />}
           onClick={showPastCrowdloans}
+          textSelected={itemShow === TAB_MAP.PAST_CROWDLOANS}
           title={t<string>('Past')}
         />
       </Grid>

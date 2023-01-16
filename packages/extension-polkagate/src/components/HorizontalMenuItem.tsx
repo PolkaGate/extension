@@ -18,9 +18,10 @@ interface Props {
   titleFontSize?: number;
   titleLineHeight?: number;
   dividerHeight?: number;
+  textSelected?: boolean;
 }
 
-export default function HorizontalMenuItem({ divider = false, dividerHeight = 30, exceptionWidth = 0, labelMarginTop = '0px', icon, isLoading = false, onClick, textDisabled, title, titleFontSize = 12, titleLineHeight = 1.5 }: Props): React.ReactElement {
+export default function HorizontalMenuItem({ divider = false, dividerHeight = 30, exceptionWidth = 0, icon, isLoading = false, labelMarginTop = '0px', onClick, textDisabled, textSelected, title, titleFontSize = 12, titleLineHeight = 1.5 }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -37,7 +38,8 @@ export default function HorizontalMenuItem({ divider = false, dividerHeight = 30
             </IconButton>
           </Grid>
           <Grid item textAlign='center'>
-            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight} sx={{ color: textDisabled && 'action.disabledBackground', pt: '3px', mt: labelMarginTop }}>
+            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight}
+              sx={{ color: textDisabled ? 'action.disabledBackground' : textSelected && 'secondary.light', pt: '3px', mt: labelMarginTop }}>
               {title}
             </Typography>
           </Grid>

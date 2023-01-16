@@ -47,7 +47,6 @@ export default function Filters({ allValidators, allValidatorsIdentities, apply,
     { text: t('Nominators: Low to High'), value: 6 }
   ], [t]);
 
-
   useEffect(() => {
     if (!apply || !allValidators) {
       return;

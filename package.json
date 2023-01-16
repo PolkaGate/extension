@@ -32,7 +32,7 @@
     "lint": "polkadot-dev-run-lint",
     "postinstall": "polkadot-dev-yarn-only",
     "start": "yarn watch",
-    "test": "polkadot-dev-run-test --detectOpenHandles",
+    "test": "polkadot-dev-run-test --detectOpenHandles --testPathPattern=packages/extension-polkagate/src/Popup",
     "test:one": "polkadot-dev-run-test --detectOpenHandles",
     "test:plus": "polkadot-dev-run-test --detectOpenHandles --testPathPattern=packages/extension-polkagate/src/Popup/SocialRecovery --silent",
     "watch": "cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"

@@ -30,7 +30,7 @@ function Warning({ children, className = '', isBelowInput, isDanger }: Props): R
   );
 }
 
-export default React.memo(styled(Warning)<Props>(({ fontWeight = 300, isDanger, iconDanger, marginTop = 30, theme }: Props) => `
+export default React.memo(styled(Warning)<Props>(({ fontWeight = 300, iconDanger, isDanger, marginTop = 30, theme }: Props) => `
   display: flex;
   flex-direction: row;
   padding-left: 18px;

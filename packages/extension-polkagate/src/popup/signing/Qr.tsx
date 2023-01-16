@@ -62,7 +62,7 @@ function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Prop
     <div className={className}>
       {!isScanning
         ? <Typography fontSize='14px' fontWeight={300} m='5px auto' width='90%'>
-          {t<string>('First scan the QR code with your mobile wallet. Then scan the generated QR code on your mobile wallet on the next screen.')}
+          {t<string>('First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen.')}
         </Typography>
         : <Typography fontSize='14px' fontWeight={300} m='5px auto' textAlign='center' width='90%'>
           {t<string>('Scan your mobile wallet generated QR code.')}
