@@ -60,10 +60,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   }, [onAction]);
 
   const LeftIcon = () => (
-    <Grid
-      item
-      xs={1}
-    >
+    <Grid item sx={{ width: 'fit-content' }}>
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
@@ -87,7 +84,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   );
 
   const CenterItem = () => (
-    <Grid display='inline-flex' item    >
+    <Grid display='inline-flex' item>
       <Typography color={showBrand ? '#ffffff' : 'text.primary'} fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '30px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
         {text}
       </Typography>
@@ -101,15 +98,23 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={1}>
+    <Grid item textAlign='right' sx={{ width: 'fit-content' }}>
       {!onRefresh && !showClose &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu && <MenuIcon sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 38 }} />}
-          {showAccountMenu && <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />}
+          {showMenu &&
+            <MenuIcon
+              sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 39 }}
+            />
+          }
+          {showAccountMenu &&
+            <MoreVertIcon
+              sx={{ color: 'secondary.light', fontSize: '33px' }}
+            />
+          }
         </IconButton>
       }
       {!!onRefresh &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }} >
+        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
           <FontAwesomeIcon
             color={theme.palette.secondary.light}
             icon={faRefresh}
@@ -155,15 +160,17 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
           type={accountMenuInfo.type}
         />
       }
-      <Container sx={{
-        background: showBrand ? 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)' : 'transparent',
-        borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
-        borderColor: 'secondary.light',
-        lineHeight: 0,
-        p: `18px 30px ${paddingBottom}px`
-      }}
+      <Container
+        disableGutters
+        sx={{
+          background: showBrand ? 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)' : 'transparent',
+          borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
+          borderColor: 'secondary.light',
+          lineHeight: 0,
+          p: `18px 30px ${paddingBottom}px`
+        }}
       >
-        <Grid alignItems='center' container justifyContent='space-between'        >
+        <Grid alignItems='center' container justifyContent='space-between'>
           <LeftIcon />
           {_centerItem ?? <CenterItem />}
           <RightItem />
