@@ -452,7 +452,8 @@ export default function CrowdLoans(): React.ReactElement {
                   : theme.palette.mode === 'light'
                     ? activeCrowdloanBlack as string
                     : activeCrowdloanWhite as string}
-              sx={{ height: '35px' }} />
+              sx={{ height: '35px' }} 
+              />
           }
           onClick={showActiveCrowdloans}
           textSelected={itemShow === TAB_MAP.ACTIVE_CROWDLOANS}
