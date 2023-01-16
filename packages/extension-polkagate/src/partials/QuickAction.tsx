@@ -71,7 +71,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
   }, [account?.genesisHash, address, formatted, history]);
 
   const goToHistory = useCallback(() => {
-    history.push({
+    account?.genesisHash && history.push({
       pathname: `/history/${String(address)}`
     });
   }, [address, history]);
