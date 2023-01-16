@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
@@ -167,21 +169,22 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
               size={31}
               value={address}
             />
-
             : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
             </Grid>
           }
         </Grid>
       }
       {inValidAddress &&
-        <Warning
-          theme={theme}
-          iconDanger
-          marginTop={0}
-          isBelowInput
-        >
-          {t<string>('Invalid address')}
-        </Warning>
+        <Grid container sx={{ '> div': { pl: '3px' } }}>
+          <Warning
+            iconDanger
+            isBelowInput
+            marginTop={0}
+            theme={theme}
+          >
+            {t<string>('Invalid address')}
+          </Warning>
+        </Grid>
       }
       {allAddresses.length > 0 &&
         <Grid
@@ -227,7 +230,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
                   <ShortAddress address={address} clipped />
                 </Grid>
               </Grid>
-              <Grid item xs={1.2} justifyContent='center'>
+              <Grid item justifyContent='center' xs={1.2}>
                 <Identicon
                   iconTheme={chain?.icon || 'polkadot'}
                   prefix={chain?.ss58Format ?? 42}

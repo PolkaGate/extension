@@ -58,6 +58,6 @@ export default React.memo(styled(Warning)<Props>(({ fontWeight = 300, isDanger, 
   .warningImage {
     margin: 5px 10px 5px 0;
     color: ${isDanger || iconDanger ? theme.palette.warning.main : theme.palette.text.primary};
-    font-size: 19px
+    font-size: 17px
   }
 `));
