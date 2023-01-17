@@ -195,6 +195,7 @@ export default function Index(): React.ReactElement {
       <Warning
         fontWeight={400}
         iconDanger
+        isBelowInput
         theme={theme}
       >
         {text}

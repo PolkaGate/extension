@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
@@ -10,12 +12,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import Review from './Review';
@@ -74,7 +76,6 @@ export default function Index(): React.ReactElement {
     setUnlockingAmount(unlockingValue);
   }, [stakingAccount]);
 
-
   useEffect(() => {
     if (!amount) {
       return;
@@ -132,11 +133,11 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid color='red' container justifyContent='center' py='15px'>
+    <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' } }}>
       <Warning
         fontWeight={400}
+        iconDanger
         isBelowInput
-        isDanger
         theme={theme}
       >
         {text}

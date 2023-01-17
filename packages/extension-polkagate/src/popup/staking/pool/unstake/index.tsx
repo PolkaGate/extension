@@ -232,11 +232,12 @@ export default function Index(): React.ReactElement {
     helperButton === 2 && setGoChange(!goChange);
   }, [goChange, helperButton]);
 
-  const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
+  const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
     <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' }, mt: isDanger ? '15px' : 0 }}>
       <Warning
         fontWeight={400}
         iconDanger={iconDanger}
+        isBelowInput={belowInput}
         isDanger={isDanger}
         theme={theme}
       >
@@ -304,7 +305,7 @@ export default function Index(): React.ReactElement {
             value={amount}
           />
           {alert &&
-            <Warn iconDanger text={alert} />
+            <Warn belowInput iconDanger text={alert} />
           }
         </div>
       </Grid>
