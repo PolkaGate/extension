@@ -9,12 +9,14 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
 import { ActionContext, Steps } from '../components';
+import { useAccount, useChain, useFormatted } from '../hooks';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { AccountMenuInfo, Step } from '../util/types';
 import AccMenuInside from './AccMenuInside';
 import Menu from './Menu';
 
 interface Props {
+  address?: string;
   showBackArrow?: boolean;
   showBrand?: boolean;
   showMenu?: boolean;
@@ -29,10 +31,9 @@ interface Props {
   noBorder?: boolean;
   shortBorder?: boolean;
   paddingBottom?: number;
-  accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -44,16 +45,13 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
     isMenuOpen && setOpenMenu(!isMenuOpen);
   });
 
-  const _handleMenuClick = useCallback(
-    () => {
-      if (accountMenuInfo) {
-        setShowAccountMenu((open) => !open);
-      } else {
-        setOpenMenu((open) => !open);
-      }
-    },
-    [accountMenuInfo]
-  );
+  const _handleMenuClick = useCallback(() => {
+    if (address) {
+      setShowAccountMenu((open) => !open);
+    } else {
+      setOpenMenu((open) => !open);
+    }
+  }, [address]);
 
   const onClose = useCallback(() => {
     onAction('/');
@@ -147,17 +145,11 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
         />
       }
       {
-        isAccountMenuOpen && accountMenuInfo?.account && accountMenuInfo?.chain &&
+        isAccountMenuOpen && address &&
         <AccMenuInside
-          address={accountMenuInfo.account.address}
-          chain={accountMenuInfo.chain}
-          formatted={accountMenuInfo.formatted}
-          isExternal={accountMenuInfo.account.isExternal}
-          isHardware={accountMenuInfo.account.isHardware}
+          address={address}
           isMenuOpen={isAccountMenuOpen}
-          name={accountMenuInfo.account.name}
           setShowMenu={setShowAccountMenu}
-          type={accountMenuInfo.type}
         />
       }
       <Container

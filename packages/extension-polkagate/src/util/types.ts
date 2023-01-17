@@ -609,6 +609,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   token: string;
   date: number;
   pooledBalance?: BN;
+  genesisHash: string;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
   era: number;

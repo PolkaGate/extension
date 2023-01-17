@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { poolStakingBlack, poolStakingDisabled, poolStakingWhite } from '../assets/icons';
+import { poolStakingBlack, poolStakingDisabledDark, poolStakingDisabledLight, poolStakingWhite } from '../assets/icons';
 import { HorizontalMenuItem } from '../components';
 import { useAccount, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
 import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../util/constants';
@@ -38,16 +38,13 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
+  const sendDisabled = !account?.genesisHash || (!availableProxiesForTransfer?.length && account?.isExternal);
   const goToSend = useCallback(() => {
-    if (!availableProxiesForTransfer?.length && account?.isExternal) {
-      return; // Account is external and does not have any available proxy for transfer funds
-    }
-
-    account?.genesisHash && history.push({
+    !sendDisabled && history.push({
       pathname: `/send/${String(address)}`,
       state: { api }
     });
-  }, [availableProxiesForTransfer?.length, account, history, address, api]);
+  }, [sendDisabled, history, address, api]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
@@ -74,7 +71,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
     account?.genesisHash && history.push({
       pathname: `/history/${String(address)}`
     });
-  }, [address, history]);
+  }, [account?.genesisHash, address, history]);
 
   const movingParts = (
     <Grid
@@ -108,14 +105,14 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           exceptionWidth={40}
           icon={
             <FontAwesomeIcon
-              color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+              color={sendDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
               icon={faPaperPlane}
               style={{ height: '20px' }}
             />
           }
           isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
           onClick={goToSend}
-          textDisabled={(!availableProxiesForTransfer?.length && account?.isExternal)}
+          textDisabled={sendDisabled}
           title={t<string>('Send')}
           titleFontSize={10}
         />
@@ -126,28 +123,39 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           icon={
             <Box
               component='img'
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               src={!STAKING_CHAINS.includes(account?.genesisHash)
-                ? poolStakingDisabled
-                : theme.palette.mode === 'dark'
-                  ? poolStakingWhite
-                  : poolStakingBlack
+                ? theme.palette.mode === 'dark' ? poolStakingDisabledDark : poolStakingDisabledLight
+                : theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack
               }
               sx={{ height: '30px' }}
             />
           }
           labelMarginTop='-5px'
           onClick={goToPoolStaking}
+          textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
           title={t<string>('Pool Staking')}
           titleFontSize={10}
           titleLineHeight={1}
+
         />
         <HorizontalMenuItem
           divider
           dividerHeight={20}
           exceptionWidth={37}
-          icon={<BoyIcon sx={{ color: STAKING_CHAINS.includes(account?.genesisHash) ? 'text.primary' : 'action.disabledBackground', fontSize: '30px' }} />}
+          icon={
+            <BoyIcon
+              sx={{
+                color: STAKING_CHAINS.includes(account?.genesisHash)
+                  ? 'text.primary'
+                  : 'action.disabledBackground',
+                fontSize: '30px'
+              }}
+            />
+          }
           labelMarginTop='-5px'
           onClick={goToSoloStaking}
+          textDisabled={!STAKING_CHAINS.includes(account?.genesisHash)}
           title={t<string>('Solo Staking')}
           titleFontSize={10}
           titleLineHeight={1}
@@ -162,20 +170,27 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
             />
           }
           onClick={goToCrowdLoans}
+          textDisabled={!CROWDLOANS_CHAINS.includes(account?.genesisHash)}
           title={t<string>('Crowdloans')}
           titleFontSize={10}
+
         />
         <HorizontalMenuItem
           dividerHeight={20}
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              color={account?.genesisHash
+                ? theme.palette.mode === 'dark' ? 'white' : 'black'
+                : `${theme.palette.action.disabledBackground}`
+              }
               icon={faHistory}
               style={{ height: '20px' }}
             />}
           onClick={goToHistory}
+          textDisabled={!account?.genesisHash}
           title={t<string>('History')}
           titleFontSize={10}
+
         />
       </Grid>
     </Grid>

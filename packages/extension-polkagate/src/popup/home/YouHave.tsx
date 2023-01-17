@@ -15,8 +15,8 @@ import useTranslation from '../../hooks/useTranslation';
 import { Prices, SavedBalances } from '../../util/types';
 
 interface Props {
-  hideNumbers: boolean;
-  setHideNumbers: React.Dispatch<React.SetStateAction<boolean>>
+  hideNumbers: boolean | undefined;
+  setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
 export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
