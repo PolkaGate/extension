@@ -158,7 +158,7 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string, isDanger?: boolean, iconDanger?: boolean }) => (
-    <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' } }}>
+    <Grid container sx={{ '> div': { mr: '0', mt: isDanger ? '15px' : 0, pl: '5px' }, justifyContent: isDanger ? 'center' : 'unset' }}>
       <Warning
         fontWeight={400}
         iconDanger={iconDanger}
