@@ -62,7 +62,7 @@ export default styled(Switch)(({ theme }: Props) => `
     height: 0;
 
     &:checked + .slider:before {
-      transform: translateX(22px);
+      transform: translateX(21.7px);
     }
   }
 
@@ -83,8 +83,8 @@ export default styled(Switch)(({ theme }: Props) => `
       content: '';
       height: 16.2px;
       width: 16.2px;
-      left: 0.5px;
-      bottom: 0.7px;
+      left: 0.7px;
+      bottom: 0.75px;
       background-color: ${theme.palette.secondary.light};
       transition: 0.4s;
       border-radius: 50%;
