@@ -369,7 +369,7 @@ export default function CrowdLoans(): React.ReactElement {
         {(auction === undefined || !myContributedCrowdloans)
           ? <Progress pt='105px' size={125} title={t('Loading Auction/Crowdloans...')} />
           : auction === null
-            ? <Grid color='red' height='30px' m='auto' pt='50px' width='92%'>
+            ? <Grid container pt='50px'>
               <Warning
                 fontWeight={400}
                 theme={theme}
