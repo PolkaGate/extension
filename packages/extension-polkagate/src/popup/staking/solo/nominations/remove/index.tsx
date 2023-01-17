@@ -8,7 +8,7 @@
  * this component opens unstake review page
  * */
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
@@ -39,7 +39,6 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
@@ -132,16 +131,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
           text={title}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Grid container justifyContent='center' sx={{ px: '30px' }}>
