@@ -372,8 +372,6 @@ export default function CrowdLoans(): React.ReactElement {
             ? <Grid color='red' height='30px' m='auto' pt='50px' width='92%'>
               <Warning
                 fontWeight={400}
-                isBelowInput
-                isDanger
                 theme={theme}
               >
                 {t<string>('No Auction/Crowdloan found!')}
