@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { Infotip, PButton, ShowBalance, WrongPasswordAlert } from '../../../components';
+import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
 
 interface OptionProps {
   api?: ApiPromise;
@@ -31,6 +31,8 @@ interface OptionProps {
 }
 
 export default function StakingOption({ api, balance, balanceText, buttonText, helperText, isBusy, isDisabled, logo, noToolTip, onClick, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
       <Grid alignItems='center' container item justifyContent='center'>
@@ -48,7 +50,15 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
         </Grid>
       </Grid>
       {warningText &&
-        <WrongPasswordAlert />
+        <Grid container item justifyContent='center' sx={{ '> div': { mt: '5px' } }}>
+          <Warning
+            fontWeight={400}
+            isDanger
+            theme={theme}
+          >
+            {warningText}
+          </Warning>
+        </Grid>
       }
       {text &&
         <Grid item pt='5px'>
