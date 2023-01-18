@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
 import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
@@ -74,7 +74,6 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
           value={index}
         />
       }
-      disabled={unableToJoinPools(pool)}
       label=''
       sx={{ '> span': { p: 0 }, m: 'auto' }}
       value={index}
@@ -82,8 +81,6 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
   );
 
   const poolStaked = (points: BN) => api?.createType('Balance', points);
-
-  const unableToJoinPools = (pool: PoolInfo) => pool.bondedPool?.state?.toString() !== 'Open';
 
   const onSearch = useCallback((filter: string) => {
     setSearchKeyword(filter);
@@ -146,8 +143,8 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => (
-              <Grid container item key={index} sx={{ bgcolor: unableToJoinPools(pool) ? '#212121' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', opacity: unableToJoinPools(pool) ? 0.7 : 1 }}>
-                <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', }} width='92%'>
+              <Grid container item key={index} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+                <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='92%'>
                   <Grid container item lineHeight='30px'>
                     <Grid item width='22px'>
                       <Select index={index} pool={pool} />
@@ -223,7 +220,8 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
             pool={poolId === selected?.poolId?.toNumber() && selected}
             poolId={poolId}
             setShowPoolInfo={setShowPoolMoreInfo}
-            showPoolInfo={showPoolMoreInfo} />
+            showPoolInfo={showPoolMoreInfo}
+          />
         </Grid>
       }
       {showFilters && !!pools?.length && token && decimal &&
