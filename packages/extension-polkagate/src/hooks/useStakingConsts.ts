@@ -5,21 +5,18 @@ import type { StakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
-import { useChain, useCurrentEraIndex, useEndpoint2 } from '.';
+import { useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
 
 export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
   const [consts, setConsts] = useState<StakingConsts | undefined | null>();
   const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
   const endpoint = useEndpoint2(address);
-  const chain = useChain(address);
+  const chainName = useChainName(address);
   const eraIndex = useCurrentEraIndex(address);
 
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-
-  const getStakingConsts = useCallback((chain: Chain, endpoint: string) => {
+  const getStakingConsts = useCallback((chainName: string, endpoint: string) => {
     const getStakingConstsWorker: Worker = new Worker(new URL('../util/workers/getStakingConsts.js', import.meta.url));
 
     getStakingConstsWorker.postMessage({ endpoint });
@@ -44,7 +41,7 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
 
       getStakingConstsWorker.terminate();
     };
-  }, [chainName]);
+  }, []);
 
   useEffect(() => {
     if (!chainName) {
@@ -68,8 +65,8 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
       return setConsts(stateConsts);
     }
 
-    endpoint && chain && eraIndex && eraIndex !== consts?.eraIndex && getStakingConsts(chain, endpoint);
-  }, [endpoint, chain, getStakingConsts, stateConsts, eraIndex, consts]);
+    endpoint && chainName && eraIndex && eraIndex !== consts?.eraIndex && getStakingConsts(chainName, endpoint);
+  }, [endpoint, chainName, getStakingConsts, stateConsts, eraIndex, consts]);
 
   return newConsts || consts;
 }
