@@ -101,7 +101,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         />
         <Item item={`${t('Block')}: #${info?.block}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.txHash, 6)}`} noDivider toCopy={info?.txHash} />
-        <Grid item sx={{ mt: '20px' }}>
+        <Grid item sx={{ mt: '12px' }}>
           <Link href={`${subscanLink()}`} rel='noreferrer' target='_blank' underline='none'>
             <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
           </Link>
