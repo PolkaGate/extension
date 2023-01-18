@@ -33,6 +33,7 @@ export default function DropdownWithIcon ({ defaultValue, disabledItems, icon = 
           label={label}
           onChange={onChange}
           options={options}
+          showLogo
         />
       </Grid>
       <Grid item pl={1} xs={1.5}>
