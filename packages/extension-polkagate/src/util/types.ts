@@ -49,12 +49,13 @@ export interface AccountsBalanceType {
 }
 
 export interface StakingConsts {
+  bondingDuration: number; // eras
   eraIndex: number;
   existentialDeposit: BN;
   maxNominations: number;
   maxNominatorRewardedPerValidator: number;
   minNominatorBond: BN;
-  unbondingDuration: number
+  unbondingDuration: number; // days
 }
 
 export interface NominatorInfo {
