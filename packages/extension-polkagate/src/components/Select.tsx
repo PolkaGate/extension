@@ -73,17 +73,17 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
       >
         <Select
           MenuProps={{
-            // MenuListProps: {
-            //   sx: {
-            //     '> li.Mui-selected': {
-            //       bgcolor: 'text.disabled'
-            //     },
-            //     '> li:hover': {
-            //       bgcolor: 'secondary.contrastText'
-            //     },
-            //     bgcolor: 'background.paper'
-            //   }
-            // },
+            MenuListProps: {
+              sx: {
+                //     '> li.Mui-selected': {
+                //       bgcolor: 'text.disabled'
+                //     },
+                //     '> li:hover': {
+                //       bgcolor: 'secondary.contrastText'
+                //     },
+                bgcolor: 'background.paper'
+              }
+            },
             PaperProps: {
               sx: {
                 '&::-webkit-scrollbar': {
@@ -107,15 +107,9 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
           onChange={_onChange}
           // eslint-disable-next-line react/jsx-no-bind
           renderValue={(value) => {
-            if (value === 'Allow use on any chain') {
-              return value;
-            } else {
-              const text = options.find((option) => value === option.value)?.text;
+            const textToShow = options.find((option) => value === option.value)?.text;
 
-              return text;
-            }
-
-            return;
+            return textToShow ?? options[0].text;
           }
           }
           sx={{
@@ -150,14 +144,14 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value || text}
             >
-              <Grid container justifyContent='space-between'>
-                <Grid item>
-                  <Typography lineHeight='30px'>
+              <Grid container height={showLogo ? '32px' : 'auto'} justifyContent='space-between'>
+                <Grid alignItems='center' container item width='fit-content'>
+                  <Typography fontWeight={300}>
                     {text}
                   </Typography>
                 </Grid>
                 {showLogo &&
-                  <Grid item>
+                  <Grid alignItems='center' container item width='fit-content'>
                     {<Avatar src={getLogo(chainName(text))} sx={{ height: 29, width: 29, borderRadius: '50%' }} variant='square' />}
                   </Grid>
                 }
