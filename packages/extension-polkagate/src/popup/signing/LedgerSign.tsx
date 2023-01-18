@@ -64,12 +64,12 @@ function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignatu
   return (
     <Grid container>
       {!!ledgerWarning && (
-        <Warning theme={theme}>
+        <Warning marginTop={0} theme={theme}>
           {ledgerWarning}
         </Warning>
       )}
       {error && (
-        <Warning isDanger theme={theme}>
+        <Warning marginTop={0} isDanger theme={theme}>
           {error}
         </Warning>
       )}

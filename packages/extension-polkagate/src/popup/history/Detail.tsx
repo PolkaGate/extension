@@ -8,11 +8,12 @@ import { AccountContext, PButton, Popup } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import getLogo from '../../util/getLogo';
-import { TransactionDetail } from '../../util/types';
+import { NameAddress, TransactionDetail } from '../../util/types';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../util/utils';
 import Amount from './partials/Amount';
 import FailSuccessIcon from './partials/FailSuccessIcon';
 import Item from './partials/Item';
+import ToFrom from './partials/ToFrom';
 
 interface Props {
   chainName: string;
@@ -37,21 +38,22 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
 
   const subAction = useMemo((): string | undefined => info?.subAction ? upperCaseFirstChar(info?.subAction) : '', [info]);
 
-  const from = useMemo(() => {
-    const name = info?.from?.name || accountName(accounts, info?.from?.address);
+  const ShowNameAddress = ({ nameAddress, title }: { title: string, nameAddress: NameAddress }) => {
+    const name = nameAddress?.name || accountName(accounts, nameAddress?.address);
 
-    if (info?.from) {
-      return `${t('From')}:  ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.from.address)}${name ? ')' : ''}`;
-    }
-  }, [accounts, info?.from, t]);
-
-  const to = useMemo(() => {
-    const name = info?.to?.name || accountName(accounts, info?.to?.address);
-
-    if (info?.to) {
-      return `${t('To')}: ${name ?? ''}${name ? '(' : ''}${toShortAddress(info.to.address)}${name ? ')' : ''}`;
-    }
-  }, [accounts, info?.to, t]);
+    return (
+      <Grid container item maxWidth='85%' width='fit-content'>
+        <Grid item sx={{ width: 'fit-content', maxWidth: '65%' }}>
+          <Typography fontSize='16px' fontWeight={400} sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {title}: {name}
+          </Typography>
+        </Grid>
+        <Grid item width='fit-content'>
+          {`${name ? ' (' : ''}${toShortAddress(nameAddress.address)}${name ? ')' : ''}`}
+        </Grid>
+      </Grid>
+    );
+  };
 
   return (
     <Popup show={showDetail}>
@@ -76,9 +78,13 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         >
           Reason
         </Typography> */}
-        <Item item={info?.timestamp && (new Date(parseInt(info.timestamp) * 1000)).toLocaleDateString(undefined, options)} mt={15} />
-        <Item item={from} toCopy={info?.transfer?.from} />
-        <Item item={to} toCopy={info?.transfer?.to} />
+        <Item item={info?.date && new Date(info.date).toLocaleDateString(undefined, options)} mt={15} />
+        {info?.from &&
+          <ToFrom item={<ShowNameAddress title={t('From')} nameAddress={info.from} />} toCopy={info?.from?.address} />
+        }
+        {info?.to &&
+          <ToFrom item={<ShowNameAddress title={t('To')} nameAddress={info.to} />} toCopy={info?.to?.address} />
+        }
         {info?.amount &&
           <Amount amount={String(amountToMachine(info.amount, decimal))} decimal={decimal} label={t('Amount')} token={token} />
         }

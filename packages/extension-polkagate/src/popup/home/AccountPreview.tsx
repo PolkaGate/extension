@@ -7,17 +7,15 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { SettingsContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
-import { useApi, useChain, useMyAccountIdentity, useProxies } from '../../hooks';
+import { useApi, useChain, useFormatted, useMyAccountIdentity, useProxies } from '../../hooks';
 import { showAccount } from '../../messaging';
 import { AccMenu } from '../../partials';
 import QuickAction from '../../partials/QuickAction';
-import { getFormattedAddress } from '../../util/utils';
 import AccountDetail from './AccountDetail';
 
 export interface Props {
@@ -35,14 +33,14 @@ export interface Props {
   type?: KeypairType;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
+  hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview({ address, genesisHash, isExternal, isHardware, isHidden, name, toggleActions, type, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, hideNumbers, isExternal, isHardware, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const history = useHistory();
-  const settings = useContext(SettingsContext);
   const chain = useChain(address);
   const api = useApi(address);
-  const [formatted, setFormatted] = useState<string>();
+  const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
@@ -52,12 +50,6 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
     // eslint-disable-next-line no-void
     api && api.query?.recovery && api.query.recovery.recoverable(formatted).then((r) => r.isSome && setRecoverable(r.unwrap()));
   }, [api, formatted]);
-
-  useEffect((): void => {
-    if (address && chain && settings?.prefix) {
-      setFormatted(getFormattedAddress(address, chain, settings.prefix));
-    }
-  }, [address, chain, settings]);
 
   useEffect((): void => {
     setShowActionsMenu(false);
@@ -102,6 +94,7 @@ export default function AccountPreview({ address, genesisHash, isExternal, isHar
         address={address}
         chain={chain}
         formatted={formatted}
+        hideNumbers={hideNumbers}
         identity={identity}
         isHidden={isHidden}
         name={name}

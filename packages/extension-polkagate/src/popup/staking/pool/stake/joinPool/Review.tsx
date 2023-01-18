@@ -120,6 +120,10 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           shortBorder
           showBackArrow
           text={t<string>('Join Pool')}
+          withSteps={{
+            current: 2,
+            total: 2
+          }}
         />
         {isPasswordError &&
           <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
@@ -133,9 +137,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
             </Warning>
           </Grid>
         }
-        <SubTitle
-          label={t<string>('Review')}
-        />
+        <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
           address={address}
           chain={chain}
@@ -151,7 +153,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
             <ChainLogo genesisHash={chain?.genesisHash} />
           </Grid>
           <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-            <FormatBalance api={api} decimalPoint={2} value={joinAmount} />
+            <FormatBalance api={api} decimalPoint={4} value={joinAmount} />
           </Grid>
         </Grid>
         <Grid container justifyContent='center'>

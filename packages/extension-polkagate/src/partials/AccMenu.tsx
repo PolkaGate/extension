@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -10,21 +12,17 @@ import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-
-import { Chain } from '@polkadot/extension-chains/types';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
-import { useEndpoint2, useEndpoints, useGenesisHashOptions, useTranslation } from '../hooks';
-import { getMetadata, tieAccount, updateMeta } from '../messaging';
+import { useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
-  chain: Chain | null;
-  formatted: string | undefined;
   address: string | null;
   isHardware: boolean | null | undefined
   isExternal: boolean | null | undefined
@@ -32,16 +30,16 @@ interface Props {
   name: string | undefined;
 }
 
-function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
+function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const settings = useContext(SettingsContext);
   const options = useGenesisHashOptions();
-  const [newChain, setNewChain] = useState<Chain | null | undefined>();
-  const [genesisHash, setGenesis] = useState<string | undefined>('');
-  const endpointOptions = useEndpoints(genesisHash || newChain?.genesisHash || chain?.genesisHash);
+  const chain = useChain(address);
+  const formatted = useFormatted(address);
+  const [genesisHash, setGenesis] = useState<string | undefined>();
+  const endpointOptions = useEndpoints(genesisHash || chain?.genesisHash);
 
-  const currentChain = newChain ?? chain;
   const endpoint = useEndpoint2(address);
 
   const onAction = useContext(ActionContext);
@@ -64,20 +62,17 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
     [setShowMenu]
   );
 
-  const identiconTheme = (
-    (chain?.definition.chainType === 'ethereum' ||
-      type === 'ethereum')
-      ? 'ethereum'
-      : (chain?.icon || 'polkadot')
+  const identiconTheme = ((chain?.definition.chainType === 'ethereum' || type === 'ethereum')
+    ? 'ethereum'
+    : (chain?.icon || 'polkadot')
   ) as IconTheme;
 
-  const _onChangeNetwork = useCallback(
-    (newGenesisHash: string) => {
-      address && tieAccount(address, newGenesisHash || null).catch(console.error);
-      setGenesis(newGenesisHash);
-    },
-    [address]
-  );
+  const _onChangeNetwork = useCallback((newGenesisHash: string) => {
+    const availableGensisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
+
+    address && tieAccount(address, availableGensisHash).catch(console.error);
+    setGenesis(availableGensisHash ?? undefined);
+  }, [address]);
 
   const _onRenameAccount = useCallback(() => {
     address && onAction(`/rename/${address}`);
@@ -88,15 +83,8 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
   }, [address, name, onAction]);
 
   const _onManageProxies = useCallback(() => {
-    address && currentChain && onAction(`/manageProxies/${address}`);
-  }, [address, currentChain, onAction]);
-
-  useEffect(() => {
-    genesisHash && getMetadata(genesisHash, true).then(setNewChain).catch((error): void => {
-      console.error(error);
-      setNewChain(null);
-    });
-  }, [genesisHash]);
+    address && chain && onAction(`/manageProxies/${address}`);
+  }, [address, chain, onAction]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
@@ -124,7 +112,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        disabled={!currentChain}
+        disabled={!chain}
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
@@ -169,7 +157,7 @@ function AccMenu({ address, chain, formatted, isExternal, isHardware, isMenuOpen
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <DropdownWithIcon
         defaultValue={chain?.genesisHash ?? options[0].text}
-        icon={getLogo(newChain || chain || undefined)}
+        icon={getLogo(chain || undefined)}
         label={t<string>('Chain')}
         onChange={_onChangeNetwork}
         options={options}

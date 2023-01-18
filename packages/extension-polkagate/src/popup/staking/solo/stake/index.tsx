@@ -272,7 +272,7 @@ export default function Index(): React.ReactElement {
           estimatedFee={estimatedFee}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
-          selectedValidators={autoSelected}
+          selectedValidators={validatorSelectionMethod === 'auto' ? autoSelected : manualSelectedValidators}
           setShow={setShowReview}
           settings={settings}
           show={showReview}

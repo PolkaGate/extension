@@ -1,11 +1,13 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, IconButton, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
@@ -15,7 +17,7 @@ import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, windowOpen } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
 
-export default function SettingSubMenu(): React.ReactElement {
+export default function SettingSubMenu({ show }: { show: boolean }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
@@ -28,6 +30,12 @@ export default function SettingSubMenu(): React.ReactElement {
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
+
+  const [firstTime, setFirstTime] = useState<boolean>(true);
+
+  useEffect(() => {
+    show === false && setFirstTime(false);
+  }, [show]);
 
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
@@ -80,10 +88,32 @@ export default function SettingSubMenu(): React.ReactElement {
     }, []
   );
 
+  const slideIn = keyframes`
+  0% {
+    display: none;
+    height: 0;
+  }
+  100%{
+    display: block;
+    height: 350px;
+  }
+`;
+
+  const slideOut = keyframes`
+  0% {
+    display: block;
+    height: 350px;
+  }
+  100%{
+    display: none;
+    height: 0;
+  }
+`;
+
   return (
-    <>
+    <Grid container display='inherit' item overflow='hidden' sx={{ animationDelay: firstTime ? '0.2s' : '0s', animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-      <Grid container direction='column' pl='30px' pt='10px'>
+      <Grid container direction='column' pl='30px' pt='10px' sx={{ p: '18px 0 15px 10px' }}>
         <Grid alignItems='center' container item justifyContent='space-between'>
           <Grid item>
             <Switch
@@ -136,8 +166,9 @@ export default function SettingSubMenu(): React.ReactElement {
         <Grid item pt='15px' textAlign='left'>
           <Checkbox2
             checked={camera}
+            iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Allow QR camera access')}
-            labelStyle={{ fontWeight: '300', fontSize: '18px' }}
+            labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
             onChange={() => setCamera(!camera)}
           />
         </Grid>
@@ -163,6 +194,6 @@ export default function SettingSubMenu(): React.ReactElement {
           />
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 }

@@ -7,11 +7,12 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
-import { Avatar, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
+import { stars5Black, stars5White } from '../../assets/icons';
 import CopyAddressButton from '../../components/CopyAddressButton';
 import FormatBalance2 from '../../components/FormatBalance2';
 import FormatPrice from '../../components/FormatPrice';
@@ -22,7 +23,6 @@ import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from '../account/util';
-import { InvertColors } from '@mui/icons-material';
 
 interface Props {
   address: string;
@@ -32,9 +32,10 @@ interface Props {
   chain: Chain | null;
   isHidden: boolean | undefined;
   identity: DeriveAccountRegistration | null | undefined;
+  hideNumbers: boolean | undefined;
 }
 
-export default function AccountDetail({ address, chain, formatted, identity, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -76,7 +77,7 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
 
   const Price = () => (
     <>
-      {price === undefined || !balanceToShow //|| balances?.token !== price?.token
+      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
         ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
@@ -92,9 +93,23 @@ export default function AccountDetail({ address, chain, formatted, identity, isH
   const BalanceRow = () => (
     <Grid alignItems='center' container fontSize='18px'>
       <Avatar src={getLogo(chain)} sx={{ filter: chainName === 'Kusama' && theme.palette.mode === 'dark' && 'invert(1)', borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
-      <Balance />
+      {hideNumbers || hideNumbers === undefined
+        ? <Box
+          component='img'
+          src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
+          sx={{ height: '27px', width: '77px' }}
+        />
+        : <Balance />
+      }
       <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
-      <Price />
+      {hideNumbers
+        ? <Box
+          component='img'
+          src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
+          sx={{ height: '27px', width: '77px' }}
+        />
+        : <Price />
+      }
     </Grid>
   );
 

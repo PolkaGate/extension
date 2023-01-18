@@ -96,17 +96,14 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
       />
       <Grid m='-20px auto 0' width='100%'>
         <Warning
-          // isBelowInput
-          isDanger
+          iconDanger
           theme={theme}
+          marginTop={40}
         >
           {t('You are about to remove this account. This means you will not be able to access it via this extension anymore. If you want to recover it after, you need to use the mnemonic seed.')}
         </Warning>
       </Grid>
-      <Grid
-        m='40px auto 0'
-        width='92%'
-      >
+      <Grid m='40px auto 0' width='92%'>
         {needsPasswordConfirmation
           ? <>
             <Password
@@ -128,8 +125,9 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           : (
             <Checkbox
               checked={checkConfirmed}
+              iconStyle={{ transform: 'scale:(1.13)' }}
               label={t<string>('I want to forget this account.')}
-              labelStyle={{ fontSize: '16px' }}
+              labelStyle={{ fontSize: '16px', marginLeft: '7px' }}
               onChange={() => setCheckConfirmed(!checkConfirmed)}
               style={{ ml: '5px' }}
             />)

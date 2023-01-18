@@ -178,11 +178,21 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
               : t<string>('day and')}
           </Typography>
         }
-        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>{remainingTimeCounter?.hourCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
-        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>:</Typography>
-        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>{remainingTimeCounter?.minCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
-        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>:</Typography>
-        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>{remainingTimeCounter?.secCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}</Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>
+          {remainingTimeCounter?.hourCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}
+        </Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>
+          :
+        </Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>
+          {remainingTimeCounter?.minCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}
+        </Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>
+          :
+        </Typography>
+        <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>
+          {remainingTimeCounter?.secCounter.toLocaleString('en-US', { minimumIntegerDigits: 2 })}
+        </Typography>
       </Grid>
     </Grid>
   );
@@ -207,7 +217,9 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
             : <Typography fontSize='13px' sx={{ bgcolor: step === 1 ? 'success.main' : 'action.disabledBackground', border: '1px solid', borderColor: '#fff', borderRadius: '50%', height: '18px', lineHeight: 1.4, textAlign: 'center', width: '18px' }}>
               1
             </Typography>}
-          <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Unstake all members’ tokens')}</Typography>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
+            {t<string>('Unstake all members’ tokens')}
+          </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
           {step <= 2
@@ -215,7 +227,9 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
               2
             </Typography>
             : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
-          <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Wait for unstaking locking period')}</Typography>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
+            {t<string>('Wait for unstaking locking period')}
+          </Typography>
         </Grid>
         <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
           {step <= 3
@@ -223,7 +237,9 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
               3
             </Typography>
             : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
-          <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>{t<string>('Come back here, and remove all')}</Typography>
+          <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
+            {t<string>('Come back here, and remove all')}
+          </Typography>
         </Grid>
       </Grid>
       {!poolMembers && step !== 2 &&

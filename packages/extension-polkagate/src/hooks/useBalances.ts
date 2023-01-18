@@ -16,7 +16,7 @@ import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, u
 
 export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
   const account = useAccount(address);
-  const [pooledBalance, setPooledBalance] = useState<BN | null>();
+  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
   const [overall, setOverall] = useState<BalancesInfo | undefined>();
   const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
@@ -30,31 +30,31 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
   const getPoolBalances = useCallback(() => {
     if (api && !api.query.nominationPools) {
-      return setPooledBalance(BN_ZERO);
+      return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() });
     }
 
     api && formatted && api.query.nominationPools.poolMembers(formatted).then(async (res) => {
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        console.log(`can not find member for ${formatted}`);
+        console.log(`useBalances: can not find member for ${formatted}`);
 
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
 
-        return setPooledBalance(BN_ZERO); // user does not joined a pool yet. or pool id does not exist
+        return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() }); // user does not joined a pool yet. or pool id does not exist
       }
 
       const poolId = member.poolId;
       const accounts = poolId && getPoolAccounts(api, poolId);
 
       if (!accounts) {
-        console.log(`can not find a pool with id:${poolId}`);
+        console.log(`useBalances: can not find a pool with id: ${poolId}`);
 
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
 
-        return setPooledBalance(BN_ZERO);
+        return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() });
       }
 
       const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
@@ -63,19 +63,17 @@ export default function useBalances(address: string | undefined, refresh?: boole
         api.call.nominationPoolsApi.pendingRewards(formatted)
       ]);
 
-      const active = member.points.isZero() ? BN_ZERO : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
+      const active = member.points.isZero()
+        ? BN_ZERO
+        : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
       const rewards = myClaimable as Balance;
       let unlockingValue = BN_ZERO;
 
-      const parsedUnbondingEras = JSON.parse(JSON.stringify(member?.unbondingEras));
+      member?.unbondingEras?.forEach((value) => {
+        unlockingValue = unlockingValue.add(value);
+      });
 
-      if (parsedUnbondingEras?.length) {
-        for (const [_, unbondingPoint] of Object.entries(parsedUnbondingEras)) {
-          unlockingValue = unlockingValue.add(new BN(String(unbondingPoint)));
-        }
-      }
-
-      setPooledBalance(active.add(rewards).add(unlockingValue));
+      api.genesisHash.toString() === chain?.genesisHash && setPooledBalance({ balance: active.add(rewards).add(unlockingValue), genesisHash: api.genesisHash.toString() });
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].pooledBalance = false;
       isFetching.set(isFetching.fetching);
@@ -84,27 +82,32 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [api, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   const getBalances = useCallback(() => {
-    if (!token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return;
     }
 
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      setNewBalances({ ...b, chainName, date: Date.now(), decimal, token });
+      const decimal = api.registry.chainDecimals[0];
+      const token = api.registry.chainTokens[0];
+
+      setNewBalances({ ...b, chainName, genesisHash: api.genesisHash.toString(), date: Date.now(), decimal, token });
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].balances = false;
       isFetching.set(isFetching.fetching);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, chain?.genesisHash, chainName, decimal, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh, token]);
+  }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   useEffect(() => {
-    if (newBalances && pooledBalance) {
+    if (newBalances && pooledBalance && api?.genesisHash?.toString() === chain?.genesisHash && api?.genesisHash?.toString() === newBalances?.genesisHash && api?.genesisHash?.toString() === pooledBalance.genesisHash) {
       setOverall({
         ...newBalances,
-        pooledBalance
+        pooledBalance: pooledBalance.balance
       });
+    } else {
+      setOverall(undefined);
     }
-  }, [pooledBalance, newBalances]);
+  }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash]);
 
   useEffect(() => {
     if (!token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
@@ -127,7 +130,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [api, chain?.genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.length, token]);
 
   useEffect(() => {
-    if (!chain?.genesisHash || !api || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!chain?.genesisHash || !api || !formatted || api.genesisHash.toString() !== chain.genesisHash) {
       return;
     }
 
@@ -201,7 +204,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
     if (savedBalances[chainName]) {
       const sb = savedBalances[chainName].balances;
 
-      // if (Date.now() - sb.date < MILLISECONDS_TO_UPDATE) {
       const lastBalances = {
         availableBalance: new BN(sb.availableBalance),
         chainName,
@@ -225,9 +227,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
     }
 
     setBalances(undefined);
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName]);
 
-  return overall ?? balances;
+  return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
 }
