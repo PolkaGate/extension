@@ -277,8 +277,6 @@ export default function Index(): React.ReactElement {
     />
   );
 
-  console.log('refresh:', refresh);
-
   return (
     <>
       <HeaderBrand
