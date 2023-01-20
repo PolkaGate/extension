@@ -90,7 +90,7 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
                   display: 'none',
                   width: 0
                 },
-                border: '2px solid',
+                border: '0.5px solid',
                 borderColor: 'secondary.light',
                 borderRadius: '7px',
                 filter: 'drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.15))',
