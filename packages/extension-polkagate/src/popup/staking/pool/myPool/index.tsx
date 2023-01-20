@@ -8,6 +8,7 @@ import type { MyPoolInfo } from '../../../../util/types';
 
 import { faPenToSquare, faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { AutoDelete as AutoDeleteIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
@@ -73,6 +74,7 @@ export default function Pool(): React.ReactElement {
   const [showRemoveAll, setShowRemoveAll] = useState<boolean>(false);
   const [roleToShow, setRoleToShow] = useState<string>('all');
   const [poolsToShow, setPoolsToShow] = useState<(MyPoolInfo | null | undefined)[] | null | undefined>();
+  const [showPoolNavigation, setShowPoolNavigation] = useState<boolean>(false);
 
   const allMyPools = useMemo(() => {
     if (pool === undefined && myOtherPools === undefined) {
@@ -213,6 +215,10 @@ export default function Pool(): React.ReactElement {
     setRoleToShow(value);
   }, []);
 
+  const onShowAllMyPools = useCallback((): void => {
+    myOtherPools?.length && myOtherPools.length > 1 && setShowPoolNavigation(!showPoolNavigation);
+  }, [myOtherPools, showPoolNavigation]);
+
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='15px auto 10px' width='92%'>
       <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='35%' onClick={onPrevious} sx={{ cursor: (!poolsToShow?.length || poolIndex === 0) ? 'default' : 'pointer' }} width='fit_content'>
@@ -252,6 +258,27 @@ export default function Pool(): React.ReactElement {
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '19px', m: 'auto 2px', width: '2px' }} />
       }
     </>
+  );
+
+  const AllMyPoolsButton = () => (
+    <Grid alignItems='center' container item justifyContent='center' position='relative'>
+      <Grid alignItems='center' container item justifyContent='center' lineHeight='36px' mb={`${showPoolNavigation ? '10px' : '30px'}`} onClick={onShowAllMyPools} pt='5px' sx={{ cursor: 'pointer', color: `${(!myOtherPools || myOtherPools?.length <= 1) ? theme.palette.text.disabled : ''}`, borderBottom: `2px solid ${theme.palette.primary.main}` }} width='30%'>
+        <Grid item >
+          <Typography fontSize='14px' fontWeight={400} >
+            {t('All My Pools')}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <ArrowForwardIosIcon sx={{ color: `${!myOtherPools ? theme.palette.text.disabled : 'secondary.light'}`, fontSize: 16, ml: '2px', stroke: `${(!myOtherPools || myOtherPools?.length <= 1) ? theme.palette.text.disabled : '#BA2882'}`, strokeWidth: '2px', transform: showPoolNavigation ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+        </Grid>
+
+      </Grid>
+      {myOtherPools === undefined &&
+        <Grid item ml='5px' position='absolute' right='93px' mb='23px'>
+          <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={25} />
+        </Grid>
+      }
+    </Grid>
   );
 
   return (
@@ -294,18 +321,23 @@ export default function Pool(): React.ReactElement {
         </>
       }
       {poolsToShow?.length &&
-        <>
-          <Grid m='10px auto 0' width='92%'>
-            <Select
-              defaultValue={POOL_ROLES[0].value}
-              disabledItems={disabledItems}
-              isDisabled={allMyPools?.length === 1}
-              label={'Select role'}
-              onChange={onSelectionMethodChange}
-              options={POOL_ROLES}
-            />
-          </Grid>
-          <Arrows onNext={goNextPool} onPrevious={goPreviousPool} />
+        <Grid container justifyContent='center'>
+          <AllMyPoolsButton />
+          {myOtherPools && showPoolNavigation &&
+            <>
+              <Grid width='92%'>
+                <Select
+                  defaultValue={POOL_ROLES[0].value}
+                  disabledItems={disabledItems}
+                  isDisabled={allMyPools?.length === 1}
+                  label={'Select role'}
+                  onChange={onSelectionMethodChange}
+                  options={POOL_ROLES}
+                />
+              </Grid>
+              <Arrows onNext={goNextPool} onPrevious={goPreviousPool} />
+            </>
+          }
           <ShowPool
             api={api}
             chain={chain}
@@ -313,7 +345,7 @@ export default function Pool(): React.ReactElement {
             pool={poolsToShow[poolIndex]}
             showInfo
             style={{
-              m: '20px auto',
+              m: '0 auto',
               width: '92%'
             }}
           />
@@ -323,10 +355,10 @@ export default function Pool(): React.ReactElement {
             label={t<string>('Roles')}
             mode='Roles'
             pool={poolsToShow[poolIndex]}
-            style={{ m: 'auto', width: '92%' }}
+            style={{ m: '15px auto', width: '92%' }}
           />
           {canChangeState &&
-            <Grid alignItems='center' container justifyContent='space-between' m='20px auto' width='92%'>
+            <Grid alignItems='center' bottom='10px' container justifyContent='space-between' m='auto' position='absolute' width='92%'>
               <ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateToggler)} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
                 <AutoDeleteIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
               </ActionBtn>
@@ -346,7 +378,7 @@ export default function Pool(): React.ReactElement {
               </ActionBtn>
             </Grid>
           }
-        </>
+        </Grid>
       }
       {goChange && changeState && poolsToShow?.length && formatted &&
         <SetState
