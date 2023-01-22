@@ -35,17 +35,21 @@ export default function usePool(address: AccountId | string, id?: number, refres
         setMyPool(null);
 
         /** reset isFetching */
-        isFetching.fetching[String(formatted)].getPool = false;
+        isFetching.fetching[String(stakerAddress)].getPool = false;
         isFetching.set(isFetching.fetching);
 
         /** remove saved old pool from local storage if any */
         chrome.storage.local.get('MyPools', (res) => {
-          const k = `${formatted}`;
-          const last = res?.MyPools ?? {};
+          const k = `${stakerAddress}`;
+          const mySavedPools = res?.MyPools;
 
-          last[k] = null;
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ MyPools: last });
+          if (mySavedPools) {
+            if (mySavedPools[k]) {
+              delete mySavedPools[k];
+              // eslint-disable-next-line no-void
+              void chrome.storage.local.set({ MyPools: mySavedPools });
+            }
+          }
         });
 
         getPoolWorker.terminate();
@@ -69,12 +73,12 @@ export default function usePool(address: AccountId | string, id?: number, refres
       setMyPool(parsedInfo);
 
       /** reset isFetching */
-      isFetching.fetching[String(formatted)].getPool = false;
+      isFetching.fetching[String(stakerAddress)].getPool = false;
       isFetching.set(isFetching.fetching);
 
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
-        const k = `${formatted}`;
+        const k = `${stakerAddress}`;
         const last = res?.MyPools ?? {};
 
         parsedInfo.date = Date.now();
@@ -86,8 +90,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       getPoolWorker.terminate();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formatted, isFetching.fetching[String(formatted)]?.length]);
+  }, [isFetching]);
 
   useEffect(() => {
     if (pool !== undefined) {

@@ -262,19 +262,19 @@ export default function Pool(): React.ReactElement {
 
   const AllMyPoolsButton = () => (
     <Grid alignItems='center' container item justifyContent='center' position='relative'>
-      <Grid alignItems='center' container item justifyContent='center' lineHeight='36px' mb={`${showPoolNavigation ? '10px' : '30px'}`} onClick={onShowAllMyPools} pt='5px' sx={{ cursor: 'pointer', color: `${(!myOtherPools || myOtherPools?.length <= 1) ? theme.palette.text.disabled : ''}`, borderBottom: `2px solid ${theme.palette.primary.main}` }} width='30%'>
-        <Grid item >
-          <Typography fontSize='14px' fontWeight={400} >
+      <Grid alignItems='center' container item justifyContent='center' lineHeight='36px' mb={`${showPoolNavigation ? '10px' : '30px'}`} onClick={onShowAllMyPools} sx={{ cursor: 'pointer', color: `${(!myOtherPools || myOtherPools?.length <= 1) ? theme.palette.text.disabled : ''}`, borderBottom: `2px solid ${theme.palette.secondary.light}` }} width='30%'>
+        <Grid item>
+          <Typography fontSize='14px' fontWeight={400}>
             {t('All My Pools')}
           </Typography>
         </Grid>
         <Grid item>
-          <ArrowForwardIosIcon sx={{ color: `${!myOtherPools ? theme.palette.text.disabled : 'secondary.light'}`, fontSize: 16, ml: '2px', stroke: `${(!myOtherPools || myOtherPools?.length <= 1) ? theme.palette.text.disabled : '#BA2882'}`, strokeWidth: '2px', transform: showPoolNavigation ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+          <ArrowForwardIosIcon sx={{ color: `${!myOtherPools ? theme.palette.text.disabled : 'secondary.light'}`, fontSize: 16, ml: '2px', mt: '12px', stroke: `${(!myOtherPools || myOtherPools?.length <= 1) ? theme.palette.text.disabled : '#BA2882'}`, strokeWidth: '2px', transform: showPoolNavigation ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
 
       </Grid>
       {myOtherPools === undefined &&
-        <Grid item ml='5px' position='absolute' right='93px' mb='23px'>
+        <Grid item ml='5px' position='absolute' right='93px' mb='32px'>
           <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={25} />
         </Grid>
       }

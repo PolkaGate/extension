@@ -12,7 +12,7 @@ async function getMyPools(address, endpoint) {
 
   const lastPoolId = await api.query.nominationPools.lastPoolId();
 
-  console.log(`Getting ${lastPoolId.toNumber()} pools information.`);
+  console.log(`getMyPools: Getting ${lastPoolId.toNumber()} pools information.`);
 
   if (!lastPoolId) {
     return null;

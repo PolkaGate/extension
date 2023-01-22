@@ -6,12 +6,11 @@ import { useContext, useMemo } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, SettingsContext } from '../components/contexts';
+import { AccountContext } from '../components/contexts';
 import { useChain } from './';
 
 export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): AccountId | string | undefined {
   const { accounts } = useContext(AccountContext);
-  const settings = useContext(SettingsContext);
   const chain = useChain(address);
 
   const encodedAddress = useMemo(() => {
@@ -19,7 +18,12 @@ export default function useFormatted(address?: AccountId | string, formatted?: A
       return formatted;
     }
 
-    const prefix: number = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
+    if (!chain) {
+      return;
+    }
+
+    // const prefix: number = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
+    const prefix: number = chain.ss58Format;// : (settings.prefix === -1 ? 42 : settings.prefix);
 
     if (address && prefix !== undefined && accounts?.length) {
       const selectedAddressJson = accounts.find((acc) => acc.address === address);
@@ -36,7 +40,7 @@ export default function useFormatted(address?: AccountId | string, formatted?: A
     }
 
     return undefined;
-  }, [formatted, chain, settings.prefix, accounts, address]);
+  }, [formatted, chain, accounts, address]);
 
   return encodedAddress;
 }
