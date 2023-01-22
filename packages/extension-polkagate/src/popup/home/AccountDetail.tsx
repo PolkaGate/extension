@@ -19,6 +19,7 @@ import FormatPrice from '../../components/FormatPrice';
 import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
+import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo } from '../../util/types';
@@ -91,8 +92,7 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   );
 
   const BalanceRow = () => (
-    <Grid alignItems='center' container fontSize='18px'>
-      <Avatar src={getLogo(chain)} sx={{ filter: chainName === 'Kusama' && theme.palette.mode === 'dark' && 'invert(1)', borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
+    <Grid alignItems='center' container fontSize='18px' item xs>
       {hideNumbers || hideNumbers === undefined
         ? <Box
           component='img'
@@ -137,7 +137,10 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
       <Grid alignItems='center' container item>
         {!chain
           ? <NoChainAlert />
-          : <BalanceRow />
+          : <Grid alignItems='center' container>
+            <RecentChains address={address} currentChainName={chainName} />
+            <BalanceRow />
+          </Grid>
         }
       </Grid>
     </Grid>
