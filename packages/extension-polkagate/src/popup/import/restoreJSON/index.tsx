@@ -136,13 +136,7 @@ export default function RestoreJson({ className }: Props): React.ReactElement {
         }}
       />
       {isPasswordError && !stepOne &&
-        <Grid
-          color='red'
-          height='30px'
-          m='auto'
-          pt='5px'
-          width='92%'
-        >
+        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
           <Warning
             fontWeight={400}
             isBelowInput
