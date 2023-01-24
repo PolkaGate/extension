@@ -58,7 +58,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
   }, [onAction]);
 
   const LeftIcon = () => (
-    <Grid item sx={{ width: 'fit-content' }}>
+    <Grid item xs={1.4}>
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
@@ -96,7 +96,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' sx={{ width: 'fit-content' }}>
+    <Grid item textAlign='right' xs={1.4}>
       {!onRefresh && !showClose &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
           {showMenu &&
@@ -135,25 +135,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
 
   return (
     <>
-      {
-        isMenuOpen &&
-        <Menu
-          isMenuOpen={isMenuOpen}
-          reference={setMenuRef}
-          setShowMenu={setOpenMenu}
-          theme={theme}
-        />
-      }
-      {
-        isAccountMenuOpen && address &&
-        <AccMenuInside
-          address={address}
-          isMenuOpen={isAccountMenuOpen}
-          setShowMenu={setShowAccountMenu}
-        />
-      }
-      <Container
-        disableGutters
+      <Container disableGutters
         sx={{
           background: showBrand ? 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)' : 'transparent',
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
@@ -171,6 +153,21 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
         }
       </Container>
+      {isMenuOpen &&
+        <Menu
+          isMenuOpen={isMenuOpen}
+          reference={setMenuRef}
+          setShowMenu={setOpenMenu}
+          theme={theme}
+        />
+      }
+      {isAccountMenuOpen && address &&
+        <AccMenuInside
+          address={address}
+          isMenuOpen={isAccountMenuOpen}
+          setShowMenu={setShowAccountMenu}
+        />
+      }
     </>
   );
 }
