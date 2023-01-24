@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import { objectSpread } from '@polkadot/util';
 
-import { DropdownWithIcon, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../../components';
+import { SelectChain, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../../components';
 import { useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { getMetadata, validateSeed } from '../../../messaging';
 import getLogo from '../../../util/getLogo';
@@ -103,7 +103,8 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
             {error}
           </Warning>
         )}
-        <DropdownWithIcon
+        <SelectChain
+          address={address}
           defaultValue={newChain?.genesisHash || genesisOptions[0].text}
           icon={getLogo(newChain ?? undefined)}
           label={t<string>('Select the chain')}

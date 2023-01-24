@@ -19,7 +19,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, DropdownWithIcon, HorizontalMenuItem, Identicon, Motion, Select } from '../../components';
+import { ActionContext, SelectChain, HorizontalMenuItem, Identicon, Motion, Select } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
@@ -185,7 +185,8 @@ export default function AccountDetails(): React.ReactElement {
         {!showStakingOptions
           ? <>
             <Grid alignItems='flex-end' container pt='10px'>
-              <DropdownWithIcon
+              <SelectChain
+                address={address}
                 defaultValue={genesisHash}
                 disabledItems={['Allow use on any chain']}
                 icon={getLogo(chain)}
