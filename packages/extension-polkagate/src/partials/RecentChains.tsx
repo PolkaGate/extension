@@ -9,9 +9,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Backdrop, Box, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite, twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
-import { useGenesisHashOptions } from '../hooks';
+import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
+import { useAccount, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
+import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -21,11 +22,38 @@ interface Props {
 
 function RecentChains({ address, currentChainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const SUGGESTED_CHAINS = useMemo(() => (['Polkadot', 'Kusama', 'Westend']), []);
-  const chainsToSHow = useMemo(() => SUGGESTED_CHAINS.filter((chainname) => chainname !== currentChainName), [SUGGESTED_CHAINS, currentChainName]);
+  const account = useAccount(address);
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
   const genesisHashes = useGenesisHashOptions();
+  const [recentChains, setRecentChains] = useState<string[]>();
+
+  useEffect(() => {
+    if (!address || !account) {
+      return;
+    }
+
+    chrome.storage.local.get('RecentChains', (res) => {
+      const allRecentChains = res?.RecentChains;
+      const myRecentChains = allRecentChains?.[address] as string[];
+
+      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
+
+      myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
+    });
+  }, [account, account?.genesisHash, address]);
+
+  const chainNamesToShow = useMemo(() => {
+    if (!(genesisHashes.length) || !(recentChains?.length) || !account) {
+      return undefined;
+    }
+
+    const chains = genesisHashes.filter((genesis) => recentChains?.includes(genesis.value));
+    const filteredChains = chains.filter((chain) => chain.value !== account.genesisHash);
+    const chainNames = filteredChains.map((chain) => chain.text?.replace(' Relay Chain', '')?.replace(' Network', ''));
+
+    return chainNames;
+  }, [account, genesisHashes, recentChains]);
 
   useEffect(() => {
     showRecentChains && setFirstTime(true);
@@ -161,8 +189,8 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const toggleRecentChains = useCallback(() => setShowRecentChains(!showRecentChains), [showRecentChains]);
   const closeRecentChains = useCallback(() => setShowRecentChains(false), [setShowRecentChains]);
 
-  const selectNetwork = useCallback((newGenesisHash: string) => {
-    const selectedGenesisHash = genesisHashes.find((option) => option.text.replace(' Relay Chain', '')?.replace(' Network', '').toLowerCase() === newGenesisHash)?.value;
+  const selectNetwork = useCallback((newChainName: string) => {
+    const selectedGenesisHash = genesisHashes.find((option) => option.text.replace(' Relay Chain', '')?.replace(' Network', '') === newChainName)?.value;
 
     setFirstTime(false);
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
@@ -179,7 +207,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       <Grid alignItems='center' container height='20px' mr='5px' position='relative' width='20px'>
         {showRecentChains
           ? <ClickAwayListener onClickAway={closeRecentChains}>
-            <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', height: '20px', left: 0, position: 'absolute', top: '-2px', width: '20px', zIndex: 2 }}>
+            <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', height: '20px', left: 0, position: 'absolute', top: 0, width: '20px', zIndex: 2 }}>
               <FontAwesomeIcon
                 color={theme.palette.secondary.light}
                 fontSize='20px'
@@ -199,52 +227,49 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           component='img'
           display={notFirstTime ? 'inherit' : 'none'}
           src={theme.palette.mode === 'dark'
-            ? (chainsToSHow.length === 2 ? twoItemCurveBackgroundBlack : threeItemCurveBackgroundBlack) as string
-            : (chainsToSHow.length === 2 ? twoItemCurveBackgroundWhite : threeItemCurveBackgroundWhite) as string
+            ? threeItemCurveBackgroundBlack as string
+            : threeItemCurveBackgroundWhite as string
           }
           sx={{
-            animationDuration: '100ms',
+            animationDuration: '150ms',
             animationFillMode: 'forwards',
             animationName: `${showRecentChains ? backgroundSlide.up : backgroundSlide.down}`,
-            left: chainsToSHow.length === 2 ? '-32px' : '-41px',
+            left: '-42px',
             position: 'absolute',
-            top: '-20px',
+            top: '-18px',
             zIndex: 2
           }}
         />
-        {notFirstTime && chainsToSHow.map((chain, index) => {
-          return chain !== currentChainName
-            ? (
-              <Grid
-                item
-                key={index}
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick={() => selectNetwork(chain.toLowerCase())}
-                position='absolute'
-                sx={{
-                  animationDuration: '150ms',
-                  animationFillMode: 'forwards',
-                  animationName: `${showRecentChains
-                    ? (chainsToSHow.length === 2 ? twoItemSlide.up[index] : threeItemSlide.up[index])
-                    : chainsToSHow.length === 2 ? twoItemSlide.down[index] : threeItemSlide.down[index]}`,
-                  cursor: 'pointer',
-                  left: 0,
-                  top: '-5px'
-                }}
-              >
-                <Avatar
-                  src={getLogo(chain)}
-                  sx={{
-                    border: '0.5px solid',
-                    borderColor: 'text.primary',
-                    borderRadius: '50%',
-                    height: '22px',
-                    width: '22px'
-                  }}
-                />
-              </Grid>)
-            : undefined;
-        })}
+        {notFirstTime && chainNamesToShow?.map((name, index) => (
+          <Grid
+            item
+            key={index}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={() => selectNetwork(name)}
+            position='absolute'
+            sx={{
+              animationDuration: '150ms',
+              animationFillMode: 'forwards',
+              animationName: `${showRecentChains
+                ? threeItemSlide.up[index]
+                : threeItemSlide.down[index]}`,
+              cursor: 'pointer',
+              left: 0,
+              top: '-5px'
+            }}
+          >
+            <Avatar
+              src={getLogo(name)}
+              sx={{
+                border: '0.5px solid',
+                borderColor: 'text.primary',
+                borderRadius: '50%',
+                height: '22px',
+                width: '22px'
+              }}
+            />
+          </Grid>)
+        )}
       </Grid>
     </>
   );

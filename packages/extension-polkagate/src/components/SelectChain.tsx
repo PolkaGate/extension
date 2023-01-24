@@ -6,7 +6,7 @@
 import { Avatar, Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { INITIAL_RECENT_CHAINS } from '../util/constants';
+import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import Select from './Select';
 
 interface DropdownOption {
@@ -41,11 +41,11 @@ export default function SelectChain ({ address, defaultValue, disabledItems, ico
         let myRecentChains = accountsAndChains[address] as string[];
 
         if (!myRecentChains) {
-          if (INITIAL_RECENT_CHAINS.includes(currentGenesisHash)) {
-            accountsAndChains[address] = INITIAL_RECENT_CHAINS;
+          if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
+            accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
           } else {
-            INITIAL_RECENT_CHAINS.length = 3;
-            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS, currentGenesisHash];
+            INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
+            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
           }
 
           // eslint-disable-next-line no-void
