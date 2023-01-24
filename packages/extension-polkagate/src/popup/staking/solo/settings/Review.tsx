@@ -165,11 +165,10 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
       };
 
       setTxInfo({ ...info, api, chain });
-      setRefresh(true); // to refresh stakingAccount
       saveAsHistory(from, info);
-
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true); // to refresh stakingAccount
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);

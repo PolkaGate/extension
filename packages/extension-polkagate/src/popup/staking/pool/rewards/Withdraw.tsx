@@ -104,10 +104,10 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
       };
 
       setTxInfo({ ...info, api, chain });
-      setRefresh(true);
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
