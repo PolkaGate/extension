@@ -136,13 +136,14 @@ export default function Review({ accountName, address, amount, api, chain, estim
     setShow(false);
   }, [setShow]);
 
-  const Info = ({ data1, data2, fontSize1 = 28, label, mb = 10, noDivider = false, pt1 = 0, pt2 = 5, showIdenticon, showProxy }: { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2?: string, noDivider?: boolean, showIdenticon?: boolean, showProxy?: boolean }) => (
+  const Info = ({ data1, data2, fontSize1 = 28, label, mb = 10, pt1 = 0, pt2 = 5 }:
+    { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2: string }) => (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
         {label}
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px', pt: `${pt2}px` }}>
-        {showIdenticon && chain &&
+        {chain &&
           <Grid item pr='10px'>
             <Identicon
               iconTheme={chain?.icon || 'polkadot'}
@@ -156,26 +157,8 @@ export default function Review({ accountName, address, amount, api, chain, estim
           {data1}
         </Grid>
       </Grid>
-      {data2 &&
-        <>
-          {showIdenticon
-            ? <ShortAddress address={data2} />
-            : <Grid item sx={{ fontSize: '16px', fontWeight: 300 }}>
-              {data2}
-            </Grid>
-          }
-        </>
-      }
-      {selectedProxyAddress && showProxy &&
-        <ThroughProxy
-          address={selectedProxyAddress}
-          chain={chain}
-          name={selectedProxyName}
-        />
-      }
-      {!noDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
-      }
+      <ShortAddress address={data2} />
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
     </Grid>
   );
 
@@ -186,6 +169,7 @@ export default function Review({ accountName, address, amount, api, chain, estim
           onBackClick={_onBackClick}
           shortBorder
           showBackArrow
+          showClose
           text={t<string>('Send Fund')}
           withSteps={{
             current: 2,
@@ -204,7 +188,7 @@ export default function Review({ accountName, address, amount, api, chain, estim
             showDivider
             title={t('From')}
           />
-          <Info data1={recipientName} data2={recipientAddress} label={t('To')} pt1={0} pt2={0} showIdenticon />
+          <Info data1={recipientName} data2={recipientAddress} label={t('To')} pt1={0} pt2={0} />
           <AmountFee
             address={address}
             amount={amount}

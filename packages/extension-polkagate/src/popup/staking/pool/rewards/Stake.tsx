@@ -103,10 +103,10 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
       };
 
       setTxInfo({ ...info, api, chain });
-      setRefresh(true);
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
