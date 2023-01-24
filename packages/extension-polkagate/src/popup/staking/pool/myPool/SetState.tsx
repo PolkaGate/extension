@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -13,7 +13,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, Warning } from '../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -36,13 +36,12 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState({ address, api, chain, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState ({ address, api, chain, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { accounts, hierarchy } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -146,16 +145,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
           text={headerText}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t<string>('Review')} />
         <ShowPool
@@ -182,19 +172,13 @@ export default function SetState({ address, api, chain, formatted, headerText, h
             />
           </Grid>
         </Grid>
-        <Typography
-          fontSize='12px'
-          fontWeight={300}
-          m='20px auto 0'
-          textAlign='left'
-          width='90%'
-        >
+        <Typography fontSize='12px' fontWeight={300} m='20px auto 0' textAlign='left' width='90%'>
           {helperText}
         </Typography>
         <PasswordUseProxyConfirm
           api={api}
-          estimatedFee={estimatedFee}
           confirmDisabled={!estimatedFee}
+          estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}

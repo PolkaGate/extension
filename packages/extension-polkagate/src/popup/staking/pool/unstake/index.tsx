@@ -1,6 +1,9 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
@@ -167,7 +170,8 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    setShowHelperButton(undefined)
+    setShowHelperButton(undefined);
+    setHelperText(undefined);
   }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
 
   const onBackClick = useCallback(() => {
@@ -228,12 +232,12 @@ export default function Index(): React.ReactElement {
     helperButton === 2 && setGoChange(!goChange);
   }, [goChange, helperButton]);
 
-  const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
-    <Grid color='red' container sx={{ 'div.belowInput': { m: '5px 0 -8px', p: 0, width: '92%' }, 'div.belowInput.danger': { m: 0, mt: '10px' } }}>
+  const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
+    <Grid container sx={{ '> div': { mr: '0', mt: '5px', pl: '5px' }, mt: isDanger ? '15px' : 0 }}>
       <Warning
         fontWeight={400}
         iconDanger={iconDanger}
-        isBelowInput
+        isBelowInput={belowInput}
         isDanger={isDanger}
         theme={theme}
       >
@@ -273,7 +277,7 @@ export default function Index(): React.ReactElement {
                       icon={faPersonCircleXmark}
                     />)
               }
-              sx={{ color: 'text.primary', fontSize: '14px', fontWeight: 400, mt: '60px', textDecorationLine: 'underline', textTransform: 'capitalize' }}
+              sx={{ color: 'text.primary', fontSize: '14px', fontWeight: 400, mt: '10px', textDecorationLine: 'underline', textTransform: 'capitalize' }}
               variant='text'
             >
               {helperButton === 1 ? t<string>('Destroying') : t<string>('RemoveAll')}
@@ -301,7 +305,7 @@ export default function Index(): React.ReactElement {
             value={amount}
           />
           {alert &&
-            <Warn iconDanger text={alert} />
+            <Warn belowInput iconDanger text={alert} />
           }
         </div>
       </Grid>

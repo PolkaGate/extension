@@ -28,8 +28,8 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
-  const [newNominatorId, setNewNominatorId] = useState<string | undefined>(nominatorId);
-  const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(stateTogglerId);
+  const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
+  const [newStateTogglerId, setNewStateTogglerId] = useState<string | null | undefined>(stateTogglerId);
 
   const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 

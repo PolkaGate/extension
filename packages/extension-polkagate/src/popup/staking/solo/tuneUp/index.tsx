@@ -1,12 +1,14 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens withdraw rewards review page
  * */
 
-import { Divider, Grid, useTheme } from '@mui/material';
+import { Divider, Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -16,7 +18,7 @@ import State from '@polkadot/extension-base/background/handlers/State';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, Warning } from '../../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useApi, useChain, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -28,7 +30,6 @@ import TxDetail from './TxDetail';
 export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
-  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
@@ -138,12 +139,12 @@ export default function TuneUp(): React.ReactElement {
 
   const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string, mt?: string, noDivider?: boolean }) => (
     <>
-      <Grid item xs={12} mt={mt} textAlign='center'>
-        <Typography fontSize='14px' fontWeight={300} >
+      <Grid item mt={mt} textAlign='center' xs={12}>
+        <Typography fontSize='14px' fontWeight={300}>
           {label}
         </Typography>
       </Grid>
-      <Grid item xs={12} textAlign='center'>
+      <Grid item textAlign='center' xs={12}>
         <Typography fontSize='28px' fontWeight={400}>
           {value}
         </Typography>
@@ -164,16 +165,7 @@ export default function TuneUp(): React.ReactElement {
         text={t<string>('Tune Up')}
       />
       {isPasswordError &&
-        <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You’ve used an incorrect password. Try again.')}
-          </Warning>
-        </Grid>
+        <WrongPasswordAlert />
       }
       <SubTitle label={t('Review')} />
       <>
@@ -186,7 +178,7 @@ export default function TuneUp(): React.ReactElement {
             <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper} />
             <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight} />
             {!putInFrontInfo?.shouldPutInFront
-              ? <Grid item xs={12} textAlign='center' mt='10px'>
+              ? <Grid item mt='10px' textAlign='center' xs={12}>
                 <Typography fontSize='15px' fontWeight={400}>
                   {t('Your account doesn\'t need to be Tuned Up!')}
                 </Typography>
@@ -197,8 +189,8 @@ export default function TuneUp(): React.ReactElement {
         }
         <PasswordUseProxyConfirm
           api={api}
-          estimatedFee={estimatedFee}
           confirmDisabled={!putInFrontInfo?.shouldPutInFront}
+          estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}

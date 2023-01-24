@@ -5,7 +5,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -14,16 +14,16 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Identicon, Infotip, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, Warning } from '../../../../../components';
+import { AccountContext, ActionContext, Infotip, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
-import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
+import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
 import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
-import { ChangesProps } from '.';
 import ShowPoolRole from './ShowPoolRole';
 import TxDetail from './TxDetail';
+import { ChangesProps } from '.';
 
 interface Props {
   address: string;
@@ -39,11 +39,10 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
@@ -169,16 +168,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         withSteps={{ current: 2, total: 2 }}
       />
       {isPasswordError &&
-        <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You’ve used an incorrect password. Try again.')}
-          </Warning>
-        </Grid>
+        <WrongPasswordAlert />
       }
       <SubTitle label={t<string>('Review')} />
       {changes?.newPoolName !== undefined &&

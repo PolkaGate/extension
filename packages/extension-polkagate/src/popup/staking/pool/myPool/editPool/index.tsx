@@ -46,10 +46,10 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
-  const [depositorAddress, setDepositorAddress] = useState<string | undefined>();
-  const [newRootAddress, setNewRootAddress] = useState<string | undefined>();
-  const [newNominatorAddress, setNewNominatorAddress] = useState<string | undefined>();
-  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | undefined>();
+  const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
+  const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
+  const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
+  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | null | undefined>();
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
 
@@ -77,19 +77,19 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   useEffect(() => {
     setChanges({
       newPoolName: myPoolName !== newPoolName ? newPoolName ?? '' : undefined,
-      newRoles: (newRootAddress !== myPoolRoles?.root?.toString() || newNominatorAddress !== myPoolRoles?.nominator?.toString() || newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
+      newRoles: ((newNominatorAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) || (newRootAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) || (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString()))
         ? {
-          newNominator: newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
-          newRoot: newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
-          newStateToggler: newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
+          newNominator: newNominatorAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
+          newRoot: newRootAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
+          newStateToggler: newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
         }
         : undefined
     });
   }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
 
   useEffect(() => {
-    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles));
-  }, [changes]);
+    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles) || [newNominatorAddress, newRootAddress, newStateTogglerAddress].includes(undefined));
+  }, [changes, newNominatorAddress, newRootAddress, newStateTogglerAddress]);
 
   return (
     <>

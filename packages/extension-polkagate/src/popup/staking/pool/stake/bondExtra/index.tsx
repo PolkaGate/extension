@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
@@ -116,11 +118,10 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, bondAmount, api, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
-    <Grid color='red' container sx={{ height:'65px', 'div.belowInput': { m: '5px 15px 5px', p: 0, width: '95%' }, 'div.belowInput.danger': { ml: '20px', mt: '10px' } }}>
+    <Grid container sx={{ 'div.danger': { mr: '10px', mt: 0, pl: '10px' }, mt: '25px' }}>
       <Warning
         fontWeight={400}
         iconDanger={iconDanger}
-        isBelowInput
         isDanger={isDanger}
         theme={theme}
       >

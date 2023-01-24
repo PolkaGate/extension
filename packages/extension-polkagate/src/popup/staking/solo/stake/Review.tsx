@@ -13,7 +13,7 @@ import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Container, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -22,7 +22,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -54,7 +54,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountName(address);
-  const theme = useTheme();
   const token = useToken(address);
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
@@ -176,11 +175,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           }}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning fontWeight={400} isBelowInput isDanger theme={theme}>
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
