@@ -279,7 +279,7 @@ export default function Index(): React.ReactElement {
       value={String(formatted)}
     />
   );
-  
+
   return (
     <>
       <HeaderBrand
