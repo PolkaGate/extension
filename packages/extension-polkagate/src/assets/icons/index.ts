@@ -12,9 +12,6 @@ export { default as twoItemCurveBackgroundBlack } from './twoItemCurveBackground
 export { default as twoItemCurveBackgroundWhite } from './twoItemCurveBackgroundWhite.svg';
 export { default as threeItemCurveBackgroundWhite } from './threeItemCurveBackgroundWhite.svg';
 export { default as threeItemCurveBackgroundBlack } from './threeItemCurveBackgroundBlack.svg';
-export { default as activeCrowdloanWhite } from './activeCrowdloanWhite.svg';
-export { default as activeCrowdloanBlack } from './activeCrowdloanBlack.svg';
-export { default as activeCrowdloanRed } from './activeCrowdloanRed.svg';
 export { default as auctionWhite } from './auctionWhite.svg';
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
