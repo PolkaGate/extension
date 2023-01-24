@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountNamePasswordCreation, ActionContext, Address, DropdownWithIcon, Loading } from '../../components';
+import { AccountNamePasswordCreation, ActionContext, Address, Loading, SelectChain } from '../../components';
 import { useGenesisHashOptions, useMetadata, useTranslation } from '../../hooks';
 import { createAccountSuri, createSeed, getMetadata, validateSeed } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -14,18 +14,14 @@ import { DEFAULT_TYPE } from '../../util/defaultType';
 import getLogo from '../../util/getLogo';
 import Mnemonic from './Mnemonic';
 
-interface Props {
-  className?: string;
-}
-
-function CreateAccount({ className }: Props): React.ReactElement {
+function CreateAccount (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const options = useGenesisHashOptions();
   const [isBusy, setIsBusy] = useState(false);
   const [newChain, setNewChain] = useState<Chain | null>(null);
   const [step, setStep] = useState(1);
-  const [address, setAddress] = useState<null | string>(null);
+  const [address, setAddress] = useState<string>();
   const [seed, setSeed] = useState<null | string>(null);
   const [type, setType] = useState(DEFAULT_TYPE);
   const [name, setName] = useState('');
@@ -130,7 +126,8 @@ function CreateAccount({ className }: Props): React.ReactElement {
             )
             : (
               <>
-                <DropdownWithIcon
+                <SelectChain
+                  address={address}
                   defaultValue={newChain?.genesisHash || options[0].text}
                   icon={getLogo(newChain ?? undefined)}
                   label={t<string>('Select the chain')}

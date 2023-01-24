@@ -14,7 +14,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, DropdownWithIcon, Identicon, MenuItem, Select, SettingsContext } from '../components';
+import { ActionContext, SelectChain, Identicon, MenuItem, Select, SettingsContext } from '../components';
 import { useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
@@ -23,7 +23,7 @@ import { prepareMetaData } from '../util/utils';
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
-  address: string | null;
+  address: string;
   isHardware: boolean | null | undefined
   isExternal: boolean | null | undefined
   type: KeypairType | undefined;
@@ -155,7 +155,8 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
         text={t('Forget account')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      <DropdownWithIcon
+      <SelectChain
+        address={address}
         defaultValue={chain?.genesisHash ?? options[0].text}
         icon={getLogo(chain || undefined)}
         label={t<string>('Chain')}
