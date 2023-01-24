@@ -48,9 +48,8 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       return undefined;
     }
 
-    const chains = genesisHashes.filter((genesis) => recentChains?.includes(genesis.value));
-    const filteredChains = chains.filter((chain) => chain.value !== account.genesisHash);
-    const chainNames = filteredChains.map((chain) => chain.text?.replace(' Relay Chain', '')?.replace(' Network', ''));
+    const filteredChains = recentChains.map((r) => genesisHashes.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash);
+    const chainNames = filteredChains.map((chain) => chain && chain.text?.replace(' Relay Chain', '')?.replace(' Network', ''));
 
     return chainNames;
   }, [account, genesisHashes, recentChains]);
@@ -126,7 +125,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       keyframes`
       from{
         z-index: 2;
-        transform: scale(1) translate3d(-28px, -20px, 0);
+        transform: scale(1) translate3d(-26px, -18px, 0);
       }
       to{
         z-index: 0;
@@ -136,7 +135,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       keyframes`
       from{
         z-index: 2;
-        transform: scale(1) translate3d(0, -31px, 0);
+        transform: scale(1) translate3d(0, -30px, 0);
       }
       to{
         z-index: 0;
@@ -146,7 +145,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       keyframes`
       from{
         z-index: 2;
-        transform: scale(1) translate3d(28px, -20px, 0);
+        transform: scale(1) translate3d(26px, -18px, 0);
       }
       to{
         z-index: 0;
@@ -161,7 +160,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       }
       to{
         z-index: 2;
-        transform: scale(1) translate3d(-28px, -20px, 0);
+        transform: scale(1) translate3d(-26px, -18px, 0);
       }
     `,
       keyframes`
@@ -171,7 +170,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       }
       to{
         z-index: 2;
-        transform: scale(1) translate3d(0, -31px, 0);
+        transform: scale(1) translate3d(0, -30px, 0);
       }
     `,
       keyframes`
@@ -181,7 +180,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       }
       to{
         z-index: 2;
-        transform: scale(1) translate3d(28px, -20px, 0);
+        transform: scale(1) translate3d(26px, -18px, 0);
       }
     `]
   };
@@ -219,7 +218,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
               src={getLogo(currentChainName)}
-              sx={{ borderRadius: '50%', height: '20px', width: '20px' }}
+              sx={{ borderRadius: '50%', filter: (currentChainName === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }
@@ -234,7 +233,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
             animationDuration: '150ms',
             animationFillMode: 'forwards',
             animationName: `${showRecentChains ? backgroundSlide.up : backgroundSlide.down}`,
-            left: '-42px',
+            left: '-41.7px',
             position: 'absolute',
             top: '-18px',
             zIndex: 2
@@ -261,9 +260,10 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
             <Avatar
               src={getLogo(name)}
               sx={{
-                border: '0.5px solid',
+                border: '1px solid',
                 borderColor: 'text.primary',
                 borderRadius: '50%',
+                filter: (name === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '',
                 height: '22px',
                 width: '22px'
               }}
