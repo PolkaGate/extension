@@ -28,38 +28,28 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
 
   useEffect(() => {
-    show && setFirstTime(true);
+    show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
   }, [show]);
 
-  const _goToRestoreFromJson = useCallback(
-    (): void => {
-      windowOpen('/account/restore-json').catch(console.error);
-    }, []
-  );
+  const _goToRestoreFromJson = useCallback((): void => {
+    windowOpen('/account/restore-json').catch(console.error);
+  }, []);
 
-  const _goToImportAcc = useCallback(
-    () => {
-      onAction('/account/import-seed');
-    }, [onAction]
-  );
+  const _goToImportAcc = useCallback(() => {
+    onAction('/account/import-seed');
+  }, [onAction]);
 
-  const _goToAddAddressOnly = useCallback(
-    () => {
-      onAction('/import/add-address-only');
-    }, [onAction]
-  );
+  const _goToAddAddressOnly = useCallback(() => {
+    onAction('/import/add-address-only');
+  }, [onAction]);
 
-  const _goToAttachQR = useCallback(
-    () => {
-      onAction('/import/attach-qr');
-    }, [onAction]
-  );
+  const _goToAttachQR = useCallback(() => {
+    onAction('/import/attach-qr');
+  }, [onAction]);
 
-  const _goToImportLedger = useCallback(
-    (): void => {
-      windowOpen('/account/import-ledger').catch(console.error);
-    }, []
-  );
+  const _goToImportLedger = useCallback((): void => {
+    windowOpen('/account/import-ledger').catch(console.error);
+  }, []);
 
   const slideIn = keyframes`
   0% {
@@ -68,14 +58,14 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
   }
   100%{
     display: block;
-    height: 230px;
+    height: ${settings.camera !== 'on' ? '230px' : '200px'};
   }
 `;
 
   const slideOut = keyframes`
   0% {
     display: block;
-    height: 230px;
+    height: ${settings.camera !== 'on' ? '230px' : '200px'};
   }
   100%{
     display: none;

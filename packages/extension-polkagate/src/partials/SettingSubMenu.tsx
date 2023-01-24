@@ -50,43 +50,37 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
     .filter(({ value }) => value !== -1)
     .map(({ text, value }): Option => ({ text, value: `${value}` }));
 
-  const _onWindowOpen = useCallback(
-    (): void => {
-      windowOpen('/').catch(console.error);
-    }, []
-  );
+  const _onWindowOpen = useCallback((): void => {
+    windowOpen('/').catch(console.error);
+  }, []);
 
   const _onAuthManagement = useCallback(() => {
     onAction('/auth-list');
   }, [onAction]);
 
-  const _onChangeLang = useCallback(
-    (value: string): void => {
-      settings.set({ i18nLang: value });
-    }, []
-  );
+  const _onChangeLang = useCallback((value: string): void => {
+    settings.set({ i18nLang: value });
+  }, []);
 
-  const _onChangePrefix = useCallback(
-    (value: string): void => {
-      setPrefix(value);
-      settings.set({ prefix: parseInt(value, 10) });
-    }, []
-  );
+  const _onChangePrefix = useCallback((value: string): void => {
+    setPrefix(value);
+    settings.set({ prefix: parseInt(value, 10) });
+  }, []);
 
-  const _onChangeTheme = useCallback(
-    (): void => {
-      colorMode.toggleColorMode();
-    }, [colorMode]
-  );
+  const _onChangeTheme = useCallback((): void => {
+    colorMode.toggleColorMode();
+  }, [colorMode]);
 
-  const _onChangeNotification = useCallback(
-    (value: string): void => {
-      setNotification(value).catch(console.error);
+  const _onChangeNotification = useCallback((value: string): void => {
+    setNotification(value).catch(console.error);
 
-      updateNotification(value);
-      settings.set({ notification: value });
-    }, []
-  );
+    updateNotification(value);
+    settings.set({ notification: value });
+  }, []);
+
+  const toggleCamera = useCallback(() => {
+    setCamera(!camera);
+  }, [camera]);
 
   const slideIn = keyframes`
   0% {
@@ -169,7 +163,7 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
             iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Allow QR camera access')}
             labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
-            onChange={() => setCamera(!camera)}
+            onChange={toggleCamera}
           />
         </Grid>
         <Grid container item >
