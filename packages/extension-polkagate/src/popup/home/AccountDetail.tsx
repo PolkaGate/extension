@@ -7,7 +7,6 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
-import { InvertColors } from '@mui/icons-material';
 import { Avatar, Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -20,6 +19,7 @@ import FormatPrice from '../../components/FormatPrice';
 import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
+import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo } from '../../util/types';
@@ -33,7 +33,7 @@ interface Props {
   chain: Chain | null;
   isHidden: boolean | undefined;
   identity: DeriveAccountRegistration | null | undefined;
-  hideNumbers: boolean;
+  hideNumbers: boolean | undefined;
 }
 
 export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
@@ -78,7 +78,7 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
 
   const Price = () => (
     <>
-      {price === undefined || !balanceToShow //|| balances?.token !== price?.token
+      {price === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== price?.chainName
         ? <Skeleton height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
@@ -92,9 +92,8 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   );
 
   const BalanceRow = () => (
-    <Grid alignItems='center' container fontSize='18px'>
-      <Avatar src={getLogo(chain)} sx={{ filter: chainName === 'Kusama' && theme.palette.mode === 'dark' && 'invert(1)', borderRadius: '50%', height: 18, mr: '4px', width: 18 }} variant='square' />
-      {hideNumbers
+    <Grid alignItems='center' container fontSize='18px' item xs>
+      {hideNumbers || hideNumbers === undefined
         ? <Box
           component='img'
           src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
@@ -138,7 +137,10 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
       <Grid alignItems='center' container item>
         {!chain
           ? <NoChainAlert />
-          : <BalanceRow />
+          : <Grid alignItems='center' container>
+            <RecentChains address={address} currentChainName={chainName} />
+            <BalanceRow />
+          </Grid>
         }
       </Grid>
     </Grid>

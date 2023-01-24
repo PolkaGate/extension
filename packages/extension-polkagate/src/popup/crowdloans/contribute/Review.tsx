@@ -73,8 +73,9 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   }, [setShowReview, showReview]);
 
   const goToCrowdloans = useCallback(() => {
+    setShowReview(false);
     address && onAction(`/crowdloans/${address}`);
-  }, [address, onAction]);
+  }, [address, onAction, setShowReview]);
 
   const goContribute = useCallback(async () => {
     if (!crowdloanToContribute || !formatted || !contribute || !decimal) {

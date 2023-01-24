@@ -51,7 +51,6 @@ export default function Index(): React.ReactElement {
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
-  const [erasToCheckPerBlock, setErasToCheckPerBlock] = useState<number | undefined>();
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && balances && estimatedFee && getValue('available', balances) && fastUnstakeDeposit.add(estimatedFee).lt(getValue('available', balances));
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
@@ -64,12 +63,6 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
   const tx = api && api.tx.fastUnstake.registerFastUnstake;
-
-  useEffect(() => {
-    api && api.query.fastUnstake.erasToCheckPerBlock().then((result) => {
-      setErasToCheckPerBlock(result?.toNumber());
-    }).catch(console.error);
-  }, [api]);
 
   useEffect((): void => {
     tx && formatted && tx().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
@@ -133,16 +126,16 @@ export default function Index(): React.ReactElement {
             </Typography>
           }
           <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-            {t<string>('Not being rewarded in the past {{erasToCheckPerBlock}} era(s)', { replace: { erasToCheckPerBlock: erasToCheckPerBlock || '...' } })}
+            {t<string>('Not being rewarded in the past {{unbondingDuration}} {{day}}', { replace: { unbondingDuration: stakingConsts?.unbondingDuration || '...', day: stakingConsts?.unbondingDuration && stakingConsts.unbondingDuration > 1 ? 'days' : 'day' } })}
           </Typography>
         </Grid>
       </Grid>
       {isEligible === undefined &&
         <>
           <Grid alignItems='center' container justifyContent='center' mt='60px'>
-            <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={75} />
+            <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={115} />
           </Grid>
-          <Typography fontSize='15px' fontWeight={300} m='20px auto 0' textAlign='center'>
+          <Typography fontSize='18px' fontWeight={300} mt='20px' px='20px' width='fit-content' align='center'>
             {t<string>('Please wait a few seconds and don\'t close the extension.')}
           </Typography>
         </>

@@ -15,7 +15,7 @@ export { default as Checkbox2 } from './Checkbox2';
 export { default as AccountHolder } from './AccountHolder';
 export { default as ColorContext } from './ColorContext';
 export { default as CopyAddressButton } from './CopyAddressButton';
-export { default as DropdownWithIcon } from './DropdownWithIcon';
+export { default as SelectChain } from './SelectChain';
 export { default as AutoResizeTextarea } from './AutoResizeTextarea';
 export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';

@@ -15,8 +15,8 @@ import useTranslation from '../../hooks/useTranslation';
 import { Prices, SavedBalances } from '../../util/types';
 
 interface Props {
-  hideNumbers: boolean;
-  setHideNumbers: React.Dispatch<React.SetStateAction<boolean>>
+  hideNumbers: boolean | undefined;
+  setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
 export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
@@ -67,7 +67,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   useEffect(() => {
     const isHide = window.localStorage.getItem('hide_numbers');
 
-    isHide === 'true' ? setHideNumbers(true) : setHideNumbers(false);
+    isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
   }, [setHideNumbers]);
 
   return (

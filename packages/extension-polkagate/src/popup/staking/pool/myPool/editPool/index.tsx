@@ -16,7 +16,7 @@ import Review from './Review';
 interface Props {
   address: string;
   apiToUse: ApiPromise;
-  pool?: MyPoolInfo;
+  pool: MyPoolInfo;
   showEdit: boolean;
   setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,13 +35,12 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const { t } = useTranslation();
 
   const api = useApi(address, apiToUse);
-  const myPool = usePool(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const { hierarchy } = useContext(AccountContext);
 
-  const myPoolName = myPool?.metadata;
-  const myPoolRoles = myPool?.bondedPool?.roles;
+  const myPoolName = pool?.metadata;
+  const myPoolRoles = pool?.bondedPool?.roles;
 
   const [nextBtnDisable, setNextBtnDisable] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
@@ -68,12 +67,12 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
 
   useEffect(() => {
     !newPoolName && myPoolName && setNewPoolName(myPoolName);
-    !depositorAddress && myPool?.bondedPool?.roles && setDepositorAddress(myPool?.bondedPool?.roles.depositor.toString());
-    !newRootAddress && myPool?.bondedPool?.roles && setNewRootAddress(myPool?.bondedPool?.roles.root?.toString());
-    !newNominatorAddress && myPool?.bondedPool?.roles && setNewNominatorAddress(myPool?.bondedPool?.roles.nominator?.toString());
-    !newStateTogglerAddress && myPool?.bondedPool?.roles && setNewStateTogglerAddress(myPool?.bondedPool?.roles.stateToggler?.toString());
+    !depositorAddress && pool?.bondedPool?.roles && setDepositorAddress(pool?.bondedPool?.roles.depositor.toString());
+    !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
+    !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
+    !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myPool?.bondedPool?.roles]);
+  }, [pool?.bondedPool?.roles]);
 
   useEffect(() => {
     setChanges({
@@ -163,14 +162,14 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview && myPool && formatted &&
+      {showReview && pool && formatted &&
         <Review
           address={address}
           api={api}
           chain={chain}
           changes={changes}
           formatted={formatted}
-          pool={myPool}
+          pool={pool}
           setRefresh={setRefresh}
           setShow={setShowReview}
           setShowMyPool={setShowEdit}

@@ -6,6 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import '@vaadin/icons';
 
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
@@ -342,8 +343,11 @@ export default function CrowdLoans(): React.ReactElement {
                   fontWeight={400}
                   theme={theme}
                 >
-                  {t<string>('No contribution found.')}
+                  {t<string>('No contribution yet.')}
                 </Warning>
+                <Typography fontWeight={400} fontSize='14px' p='7px 41px' align='center'>
+                  {t('You can find Crowdloans to contribute by clicking on “Active” button below.')}
+                </Typography>
               </Grid>
             }
           </Grid>
@@ -442,16 +446,18 @@ export default function CrowdLoans(): React.ReactElement {
           divider
           exceptionWidth={33}
           icon={
-            <Box
-              component='img'
-              src={
-                itemShow === TAB_MAP.ACTIVE_CROWDLOANS
-                  ? activeCrowdloanRed as string
+            <vaadin-icon
+              icon='vaadin:piggy-bank-coin'
+              style={{
+                height: '32px',
+                color: `${itemShow === TAB_MAP.ACTIVE_CROWDLOANS
+                  ? theme.palette.primary.main
                   : theme.palette.mode === 'light'
-                    ? activeCrowdloanBlack as string
-                    : activeCrowdloanWhite as string}
-              sx={{ height: '35px' }} 
-              />
+                    ? 'black'
+                    : 'white'
+                  }`
+              }}
+            />
           }
           onClick={showActiveCrowdloans}
           textSelected={itemShow === TAB_MAP.ACTIVE_CROWDLOANS}

@@ -200,8 +200,8 @@ export default function Send(): React.ReactElement {
           onSecondary={() => setWholeAmount('All')}
           primaryBtnText={t<string>('Max amount')}
           secondaryBtnText={t<string>('All amount')}
-          value={amount}
           style={{ pt: '15px' }}
+          value={amount}
         />
       </Container>
       <PButton

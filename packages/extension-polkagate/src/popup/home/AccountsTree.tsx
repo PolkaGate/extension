@@ -16,7 +16,7 @@ interface Props extends AccountWithChildren {
   parentName?: string;
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
-  hideNumbers: boolean;
+  hideNumbers: boolean | undefined;
 }
 
 export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
@@ -53,11 +53,11 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         </Grid>
         <AccountPreview
           {...account}
+          hideNumbers={hideNumbers}
           parentName={parentName}
           quickActionOpen={quickActionOpen}
           setQuickActionOpen={setQuickActionOpen}
           suri={suri}
-          hideNumbers={hideNumbers}
         />
         <Backdrop
           onClick={handleClose}
@@ -69,10 +69,10 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         <AccountsTree
           key={`${index}:${child.address}`}
           {...child}
+          hideNumbers={hideNumbers}
           parentName={account.name}
           quickActionOpen={quickActionOpen}
           setQuickActionOpen={setQuickActionOpen}
-          hideNumbers={hideNumbers}
         />
       ))}
     </>
