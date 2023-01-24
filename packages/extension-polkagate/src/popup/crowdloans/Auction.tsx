@@ -99,10 +99,10 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
           {viewType === 'Block' ? t<string>('Remaining block') : t<string>('Remaining time')}
         </Typography>
       </Grid>
-      <Grid container item m='auto' width='95%'>
+      <Grid container item m='auto' pb='40px' width='95%'>
         {end && currentBlockNumber &&
           <>
-            <Grid container item sx={{ width: '30%' }}>
+            <Grid container item sx={{ position: 'relative', width: '30%' }}>
               <Infotip placement='bottom' text={
                 currentBlockNumber > candlePhaseStartBlock
                   ? t('Done')
@@ -110,29 +110,40 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                     ? remainingTime(candlePhaseStartBlock - currentBlockNumber) + 'left'
                     : t<string>('{{blocks}} blocks left', { replace: { blocks: candlePhaseStartBlock - currentBlockNumber } })}
               >
-                <LinearProgress
-                  color='inherit'
-                  sx={{
-                    bgcolor: theme.palette.mode === 'light' ? 'background.paper' : 'white',
-                    border: '0.1px solid',
-                    borderBottomLeftRadius: '5px',
-                    borderColor: 'rgba(255, 255, 255, 0.65)',
-                    borderRight: 'none',
-                    borderTopLeftRadius: '5px',
-                    color: '#1F7720',
-                    height: '20px',
-                    width: '93px'
-                  }}
-                  value={
-                    currentBlockNumber > candlePhaseStartBlock
-                      ? 100
-                      : 100 * (Number(currentBlockNumber) - auctionStartBlock) / (candlePhaseStartBlock - auctionStartBlock)
-                  }
-                  variant='determinate'
-                />
+                <div style={{
+                  border: '2px solid',
+                  borderBottomLeftRadius: '5px',
+                  borderColor: 'rgba(255, 255, 255, 0.65)',
+                  borderRight: 'none',
+                  borderTopLeftRadius: '5px'
+                }}
+                >
+                  <LinearProgress
+                    color='inherit'
+                    sx={{
+                      bgcolor: '#fff',
+                      borderBottomLeftRadius: '3px',
+                      borderRight: '1px solid',
+                      borderRightColor: '#1F7720',
+                      borderTopLeftRadius: '3px',
+                      color: '#1F7720',
+                      height: '19px',
+                      width: '93px'
+                    }}
+                    value={
+                      currentBlockNumber > candlePhaseStartBlock
+                        ? 100
+                        : 100 * (Number(currentBlockNumber) - auctionStartBlock) / (candlePhaseStartBlock - auctionStartBlock)
+                    }
+                    variant='determinate'
+                  />
+                  <Typography color='white' fontSize='12px' fontWeight={400} sx={{ WebkitTextStroke: '3px transparent', backgroundClip: 'text', backgroundColor: '#1F7720', bottom: '2px', cursor: 'default', left: '10px', position: 'absolute', textAlign: 'center', width: '75px' }}>
+                    {t('Auction Stage')}
+                  </Typography>
+                </div>
               </Infotip>
             </Grid>
-            <Grid container item width='70%'>
+            <Grid container item sx={{ position: 'relative', width: '70%' }}>
               <Infotip placement='bottom' text={
                 currentBlockNumber >= candlePhaseStartBlock
                   ? viewType === 'Date'
@@ -140,38 +151,39 @@ export default function AuctionTab({ api, auction, currentBlockNumber }: Props):
                     : t('{{blocks}} blocks left', { replace: { blocks: end - currentBlockNumber } })
                   : t('Not started yet')}
               >
-                <LinearProgress
-                  color='inherit'
-                  sx={{
-                    bgcolor: theme.palette.mode === 'light' ? 'background.paper' : 'white',
-                    border: '0.1px solid',
-                    borderBottomRightRadius: '5px',
-                    borderColor: 'rgba(255, 255, 255, 0.65)',
-                    borderLeft: 'none',
-                    borderTopRightRadius: '5px',
-                    color: '#629460',
-                    height: '20px',
-                    width: '217px'
-                  }}
-                  value={
-                    currentBlockNumber < candlePhaseStartBlock
-                      ? 0
-                      : 100 * (Number(currentBlockNumber) - candlePhaseStartBlock) / (endingPeriod || 1)
-                  }
-                  variant='determinate'
-                />
+                <div style={{
+                  border: '2px solid',
+                  borderBottomRightRadius: '5px',
+                  borderColor: 'rgba(255, 255, 255, 0.65)',
+                  borderLeft: 'none',
+                  borderTopRightRadius: '5px'
+                }}
+                >
+                  <LinearProgress
+                    color='inherit'
+                    sx={{
+                      bgcolor: '#fff',
+                      borderBottomRightRadius: '3px',
+                      borderTopRightRadius: '3px',
+                      color: '#629460',
+                      height: '19px',
+                      width: '217px'
+                    }}
+                    value={
+                      currentBlockNumber < candlePhaseStartBlock
+                        ? 0
+                        : 100 * (Number(currentBlockNumber) - candlePhaseStartBlock) / (endingPeriod || 1)
+                    }
+                    variant='determinate'
+                  />
+                  <Typography color='white' fontSize='12px' fontWeight={400} sx={{ WebkitTextStroke: '3px transparent', backgroundClip: 'text', backgroundColor: '#629460', bottom: '2px', cursor: 'default', position: 'absolute', right: '70px', textAlign: 'center', width: '75px' }}>
+                    {t('Ending stage')}
+                  </Typography>
+                </div>
               </Infotip>
             </Grid>
           </>
         }
-      </Grid>
-      <Grid container item justifyContent='center' m='0 auto 20px' width='95%'>
-        <Typography fontSize='12px' fontWeight={300} textAlign='center' width='30%'>
-          {t('Auction Stage')}
-        </Typography>
-        <Typography fontSize='12px' fontWeight={300} textAlign='center' width='70%'>
-          {t('Ending stage')}
-        </Typography>
       </Grid>
     </Grid>
   );
