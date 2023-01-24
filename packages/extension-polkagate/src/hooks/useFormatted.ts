@@ -22,8 +22,7 @@ export default function useFormatted(address?: AccountId | string, formatted?: A
       return;
     }
 
-    // const prefix: number = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
-    const prefix: number = chain.ss58Format;// : (settings.prefix === -1 ? 42 : settings.prefix);
+    const prefix: number = chain.ss58Format;
 
     if (address && prefix !== undefined && accounts?.length) {
       const selectedAddressJson = accounts.find((acc) => acc.address === address);
