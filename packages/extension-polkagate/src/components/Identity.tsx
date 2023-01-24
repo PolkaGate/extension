@@ -59,7 +59,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
               judgement={judgement || _judgement}
               prefix={_chain?.ss58Format ?? 42}
               size={identiconSize}
-              value={_formatted}
+              value={_formatted || address}
             />
           </Grid>}
         <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
