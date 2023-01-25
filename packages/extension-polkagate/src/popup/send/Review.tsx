@@ -21,7 +21,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
-import { useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
+import { useAccountName, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
@@ -63,7 +63,6 @@ type TransferType = 'All' | 'Max' | 'Normal';
 
 interface Props {
   address: string;
-  accountName: string | undefined;
   amount: string;
   api: ApiPromise | undefined;
   chain: Chain | null;
@@ -77,12 +76,13 @@ interface Props {
   estimatedFee: Balance | undefined;
 }
 
-export default function Review({ accountName, address, amount, api, chain, estimatedFee, recipientAddress, recipientName, setShow, show, transfer, transferType }: Props): React.ReactElement<Props> {
+export default function Review({ address, amount, api, chain, estimatedFee, recipientAddress, recipientName, setShow, show, transfer, transferType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const accountName = useAccountName(address)
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
 
