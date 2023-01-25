@@ -260,9 +260,9 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
             <Avatar
               src={getLogo(name)}
               sx={{
-                border: '1px solid',
-                borderColor: 'text.primary',
+                border: 'none',
                 borderRadius: '50%',
+                boxShadow: `0px 0px 5px ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'}`,
                 filter: (name === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '',
                 height: '22px',
                 width: '22px'
