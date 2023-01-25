@@ -100,7 +100,7 @@ export default function Index(): React.ReactElement {
   }, [api]);
 
   useEffect((): void => {
-    api && api.query.staking.currentEra().then((ce) => {
+    api && api.query.staking && api.query.staking.currentEra().then((ce) => {
       setCurrentEraIndex(Number(ce));
     });
   }, [api]);
