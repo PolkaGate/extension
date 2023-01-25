@@ -37,7 +37,7 @@ function From({ address, api, judgement, name }: Props): React.ReactElement<Prop
       </div>
       <Grid alignItems='center' container justifyContent='felx-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>
         <Grid item sx={{ fontSize: '28px', fontWeight: 400, mx: '5px', maxWidth: '67%' }}>
-          <Identity address={address} api={api} chain={chain} judgement={judgement} identiconSize={31} name={name} showSocial={false} />
+          <Identity address={address} api={api} chain={chain} identiconSize={31} judgement={judgement} name={name} showSocial={false} />
         </Grid>
         <Grid item sx={{ width: '29%' }}>
           <ShortAddress address={formatted} style={{ fontSize: '16px', fontWeight: 300, justifyContent: 'flex-start', mt: '5px', pr: '5px' }} />
