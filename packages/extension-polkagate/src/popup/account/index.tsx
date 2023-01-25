@@ -19,7 +19,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, SelectChain, HorizontalMenuItem, Identicon, Motion, Select } from '../../components';
+import { ActionContext, HorizontalMenuItem, Identicon, Motion, Select, SelectChain } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { tieAccount, updateMeta } from '../../messaging';
 import { HeaderBrand } from '../../partials';
@@ -58,6 +58,8 @@ export default function AccountDetails(): React.ReactElement {
   const chainName = useChainName(address);
 
   const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
+
+  const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -188,7 +190,7 @@ export default function AccountDetails(): React.ReactElement {
               <SelectChain
                 address={address}
                 defaultValue={genesisHash}
-                disabledItems={['Allow use on any chain']}
+                disabledItems={disabledItems}
                 icon={getLogo(chain)}
                 label={t<string>('Chain')}
                 onChange={_onChangeGenesis}

@@ -25,7 +25,7 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-export default function SelectChain ({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
+function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
       onChange(newGenesisHash);
@@ -87,3 +87,5 @@ export default function SelectChain ({ address, defaultValue, disabledItems, ico
     </Grid>
   );
 }
+
+export default React.memo(SelectChain);
