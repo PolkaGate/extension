@@ -18,7 +18,11 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   useEffect(() => {
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      return setApi(apisContext?.apis[chain.genesisHash].api);
+      console.log(`♻ using the saved api for ${chain.name}`);
+
+      if (apisContext?.apis[chain.genesisHash].api.isConnected) {
+        return setApi(apisContext?.apis[chain.genesisHash].api);
+      }
     }
 
     if (!endpoint) {
@@ -37,7 +41,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       apisContext.apis[String(api.genesisHash.toHex())] = { api, apiEndpoint: endpoint };
       apisContext.setIt(apisContext.apis);
     }).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apisContext?.apis?.length, endpoint, stateApi, chain]);
 
   return api;
