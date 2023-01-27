@@ -21,22 +21,48 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
-import { useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
+import { useAccountName, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
-import ThroughProxy from '../../partials/ThroughProxy';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
+function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, name, pt1 = 0, pt2 = 5 }:
+  { chain: Chain | null, identiconSize?: number, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, name: string | undefined, addr: string | undefined }): React.ReactElement<Props> {
+  return (
+    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
+      <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
+        {label}
+      </Grid>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: `${identiconSize}px`, pt: `${pt2}px` }}>
+        {chain &&
+          <Grid item mr='5px'>
+            <Identicon
+              iconTheme={chain?.icon || 'polkadot'}
+              prefix={chain?.ss58Format ?? 42}
+              size={identiconSize}
+              value={addr}
+            />
+          </Grid>
+        }
+        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {name}
+        </Grid>
+      </Grid>
+      <ShortAddress address={addr} />
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
+    </Grid>
+  );
+}
+
 type TransferType = 'All' | 'Max' | 'Normal';
 
 interface Props {
   address: string;
-  accountName: string | undefined;
   amount: string;
   api: ApiPromise | undefined;
   chain: Chain | null;
@@ -50,12 +76,13 @@ interface Props {
   estimatedFee: Balance | undefined;
 }
 
-export default function Review({ accountName, address, amount, api, chain, estimatedFee, recipientAddress, recipientName, setShow, show, transfer, transferType }: Props): React.ReactElement<Props> {
+export default function Review({ address, amount, api, chain, estimatedFee, recipientAddress, recipientName, setShow, show, transfer, transferType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const accountName = useAccountName(address)
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
 
@@ -136,32 +163,6 @@ export default function Review({ accountName, address, amount, api, chain, estim
     setShow(false);
   }, [setShow]);
 
-  const Info = ({ data1, data2, fontSize1 = 28, label, mb = 10, pt1 = 0, pt2 = 5 }:
-    { mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, data1: string | Element, data2: string }) => (
-    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
-      <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
-        {label}
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px', pt: `${pt2}px` }}>
-        {chain &&
-          <Grid item pr='10px'>
-            <Identicon
-              iconTheme={chain?.icon || 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={31}
-              value={data2}
-            />
-          </Grid>
-        }
-        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {data1}
-        </Grid>
-      </Grid>
-      <ShortAddress address={data2} />
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
-    </Grid>
-  );
-
   return (
     <Motion>
       <Popup show={show}>
@@ -188,7 +189,14 @@ export default function Review({ accountName, address, amount, api, chain, estim
             showDivider
             title={t('From')}
           />
-          <Info data1={recipientName} data2={recipientAddress} label={t('To')} pt1={0} pt2={0} />
+          <To
+            addr={recipientAddress}
+            chain={chain}
+            label={t('To')}
+            name={recipientName}
+            pt1={0}
+            pt2={0}
+          />
           <AmountFee
             address={address}
             amount={amount}
