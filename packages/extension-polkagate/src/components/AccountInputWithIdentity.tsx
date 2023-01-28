@@ -8,7 +8,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { useAccountName, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
-import { AccountContext, Identity, InputWithLabelAndIdenticon } from '.';
+import { AccountContext, Identity, AddressInput } from '.';
 
 interface Props {
   address: string | null | undefined;
@@ -30,7 +30,7 @@ export default function AccountInputWithIdentity({ address, chain, ignoreAddress
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
-      <InputWithLabelAndIdenticon
+      <AddressInput
         address={address}
         allAddresses={allAddresses}
         chain={chain}
