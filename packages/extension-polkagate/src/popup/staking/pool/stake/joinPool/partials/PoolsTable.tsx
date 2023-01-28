@@ -6,14 +6,14 @@
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
-import { Divider, FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, FormControlLabel, Grid, LinearProgress, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { InputFilter, ShowBalance } from '../../../../../../components';
+import { InputFilter, ShowBalance, ShowValue } from '../../../../../../components';
 import { useChain, useDecimal, useStakingConsts, useToken, useTranslation } from '../../../../../../hooks';
 import { DEFAULT_POOL_FILTERS } from '../../../../../../util/constants';
 import { PoolFilter, PoolInfo } from '../../../../../../util/types';
@@ -25,7 +25,8 @@ interface Props {
   address: string;
   pools: PoolInfo[] | null | undefined;
   style?: SxProps<Theme> | undefined;
-  label: string;
+  totalNumberOfPools: number | undefined;
+  numberOfFetchedPools: number;
   selected?: PoolInfo;
   setSelected: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
   maxHeight?: number;
@@ -35,7 +36,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, setSearchedPools, api, label, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);
@@ -109,7 +110,17 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
   return (
     <Grid sx={{ ...style }}>
       <Grid alignItems='center' container item justifyContent='space-between'>
-        {label}
+        <Grid alignItems='center' container item width='fit-content'>
+          <Grid item>
+            {t<string>('Pick 1 of ')}
+          </Grid>
+          <Grid item px='5px'>
+            <ShowValue value={totalNumberOfPools} width='35px' />
+          </Grid>
+          <Grid item>
+            {t<string>('to join')}
+          </Grid>
+        </Grid>
         <Div height='19px' />
         <Grid alignItems='center' container item onClick={onSearchClick} sx={{ cursor: 'pointer' }} width='fit-content'>
           <Typography fontWeight={400} mr='5px'>
@@ -140,6 +151,9 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
         </Grid>
       }
       <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: maxHeight - (isSearching ? 50 : 0), minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
+        {numberOfFetchedPools !== totalNumberOfPools &&
+          <LinearProgress color='success' value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0} variant='determinate' />
+        }
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => (
@@ -189,7 +203,7 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid alignItems='center' container item justifyContent='center' onClick={() => openPoolMoreInfo(pool.poolId.toNumber())} sx={{ cursor: 'pointer' }} width='8%'>
+                <Grid alignItems='center' container item justifyContent='center' onClick={() => openPoolMoreInfo(pool.poolId)} sx={{ cursor: 'pointer' }} width='8%'>
                   <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
                 </Grid>
               </Grid>
@@ -217,7 +231,7 @@ export default function PoolsTable({ address, setSearchedPools, api, label, pool
             address={address}
             api={api}
             chain={chain}
-            pool={poolId === selected?.poolId?.toNumber() && selected}
+            pool={poolId === selected?.poolId && selected}
             poolId={poolId}
             setShowPoolInfo={setShowPoolMoreInfo}
             showPoolInfo={showPoolMoreInfo}

@@ -49,7 +49,14 @@ export default function JoinPool(): React.ReactElement {
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
   const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
   const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
+  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
+  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
+  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
 
+
+  console.log('totalNumberOfPools::::::',totalNumberOfPools);
+  console.log('numberOfFetchedPools::::::',numberOfFetchedPools);
+  
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
   const backToStake = useCallback(() => {
@@ -88,6 +95,12 @@ export default function JoinPool(): React.ReactElement {
   const toReview = useCallback(() => {
     api && selectedPool && setShowReview(!showReview);
   }, [api, selectedPool, showReview]);
+
+  useEffect(() => {
+    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
+    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
+    // window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
+  }, []);
 
   useEffect(() => {
     if (!pools) {
@@ -181,8 +194,8 @@ export default function JoinPool(): React.ReactElement {
         address={address}
         api={api}
         filteredPools={filteredPools}
-        label={t<string>('Choose a pool to join')}
         maxHeight={window.innerHeight - 345}
+        numberOfFetchedPools={numberOfFetchedPools}
         pools={pools}
         poolsToShow={poolsToShow}
         selected={selectedPool}
@@ -193,6 +206,7 @@ export default function JoinPool(): React.ReactElement {
           m: '15px auto 0',
           width: '92%'
         }}
+        totalNumberOfPools={totalNumberOfPools}
       />
       <PButton
         _onClick={toReview}
