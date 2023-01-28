@@ -152,7 +152,7 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
       }
       <Grid container direction='column' ref={ref} sx={{ '&::-webkit-scrollbar': { display: 'none', width: 0 }, '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: maxHeight - (isSearching ? 50 : 0), minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', scrollbarWidth: 'none', textAlign: 'center' }}>
         {numberOfFetchedPools !== totalNumberOfPools &&
-          <LinearProgress color='success' value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0} variant='determinate' />
+          <LinearProgress color='success' value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0} variant='determinate' sx={{ position: 'sticky', top: 0 }} />
         }
         {poolsToShow
           ? poolsToShow.length
