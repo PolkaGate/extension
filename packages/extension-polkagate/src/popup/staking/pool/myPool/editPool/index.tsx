@@ -7,7 +7,7 @@ import type { MyPoolInfo } from '../../../../../util/types';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountContext, AutoResizeTextarea, InputWithLabelAndIdenticon, PButton, Popup } from '../../../../../components';
+import { AccountContext, AddressInput, AutoResizeTextarea, PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
@@ -108,7 +108,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
         <Typography fontSize='16px' fontWeight={400} m='30px auto 15px' textAlign='center'>
           {t<string>('Roles')}
         </Typography>
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={depositorAddress}
           chain={chain}
           disabled
@@ -120,7 +120,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
             width: '92%'
           }}
         />
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={newRootAddress}
           allAddresses={allAddresses}
           chain={chain}
@@ -132,7 +132,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
             width: '92%'
           }}
         />
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={newNominatorAddress}
           allAddresses={allAddresses}
           chain={chain}
@@ -144,7 +144,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
             width: '92%'
           }}
         />
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={newStateTogglerAddress}
           allAddresses={allAddresses}
           chain={chain}
