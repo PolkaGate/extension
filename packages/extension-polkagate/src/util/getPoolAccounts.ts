@@ -13,7 +13,7 @@ import { bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 const EMPTY_H256 = new Uint8Array(32);
 const MOD_PREFIX = stringToU8a('modl');
 
-export function createAccount (api: ApiPromise, poolId: BN, index: number): string {
+export function createAccount (api: ApiPromise, poolId: number | bigint | BN | ToBn | null | undefined, index: number): string {
   return api.registry.createType(
     'AccountId32',
     u8aConcat(
@@ -26,7 +26,7 @@ export function createAccount (api: ApiPromise, poolId: BN, index: number): stri
   ).toString();
 }
 
-function getPoolAccounts(api: ApiPromise, poolId: BN): PoolAccounts {
+function getPoolAccounts(api: ApiPromise, poolId: number | bigint | BN | ToBn | null | undefined): PoolAccounts {
   return {
     rewardId: createAccount(api, poolId, 1),
     stashId: createAccount(api, poolId, 0)

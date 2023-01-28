@@ -1,57 +1,136 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 import type { PoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { BN } from '@polkadot/util';
+import { ApiPromise } from '@polkadot/api';
 
-import { useEndpoint2 } from '.';
+import getPoolAccounts from '../util/getPoolAccounts';
+import { useApi } from '.';
+
+const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBatchLenght: number) => info.map((i, index) => {
+  if (i[1].isSome) {
+    const bondedPool = i[1].unwrap();
+
+    return {
+      bondedPool,
+      metadata: i[0]?.length
+        ? i[0]?.isUtf8
+          ? i[0]?.toUtf8()
+          : i[0]?.toString()
+        : null,
+      poolId: index + lastBatchLenght + 1, // works because pools id is not reuseable for now
+      rewardPool: i[2]?.isSome ? i[2].unwrap() : null,
+      stashIdAccount: i[3]
+    };
+  } else {
+    return undefined;
+  }
+})?.filter((f) => f !== undefined);
 
 export default function usePools(address: string): PoolInfo[] | null | undefined {
   const [pools, setPools] = useState<PoolInfo[] | undefined | null>();
-  const endpoint = useEndpoint2(address);
+  const api = useApi(address);
 
-  const getPools = useCallback((endpoint: string) => {
-    const getPoolsWorker: Worker = new Worker(new URL('../util/workers/getPools.js', import.meta.url));
+  const getPools = useCallback(async (api: ApiPromise) => {
+    const lastPoolId = (await api.query.nominationPools.lastPoolId())?.toNumber() || 0;
 
-    getPoolsWorker.postMessage({ endpoint });
+    console.log(`getPools: Getting ${lastPoolId} pools information.`);
 
-    getPoolsWorker.onerror = (err) => {
-      console.log(err);
-    };
+    window.dispatchEvent(new CustomEvent('totalNumberOfPools', { detail: lastPoolId }));
 
-    getPoolsWorker.onmessage = (e: MessageEvent<any>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const poolsInfo: string = e.data;
+    if (!lastPoolId) {
+      setPools(null);
+    }
 
-      if (!poolsInfo) {
-        setPools(null);// noo pools found, probably never happens
+    let poolsInfo: PoolInfo[] = [];
+    let upperBond;
+    const page = 50;
+    let totalFetched = 0;
 
-        return;
+    while (lastPoolId > totalFetched) {
+      console.log(`Fetching pools info : ${totalFetched}/${lastPoolId}`);
+      const queries = [];
+
+      upperBond = totalFetched + page < lastPoolId ? totalFetched + page : lastPoolId;
+
+      for (let poolId = totalFetched + 1; poolId <= upperBond; poolId++) {
+        const { stashId } = getPoolAccounts(api, poolId);
+
+        queries.push(Promise.all([
+          api.query.nominationPools.metadata(poolId),
+          api.query.nominationPools.bondedPools(poolId),
+          api.query.nominationPools.rewardPools(poolId),
+          api.derive.staking.account(stashId)
+        ]));
       }
 
-      const parsedPoolsInfo = JSON.parse(poolsInfo);
+      const i = await Promise.all(queries);
 
-      const info = parsedPoolsInfo.info as PoolInfo[];
+      let info = handleInfo(i, totalFetched);
 
-      info?.forEach((p: PoolInfo) => {
-        if (p?.bondedPool?.points) {
-          p.bondedPool.points = new BN(String(p.bondedPool.points));
-        }
+      poolsInfo = poolsInfo.concat(info);
+      totalFetched += page;
+      window.dispatchEvent(new CustomEvent('numberOfFetchedPools', { detail: upperBond }));
+      window.dispatchEvent(new CustomEvent('incrementalPools', { detail: poolsInfo }));
+    }
 
-        p.poolId = new BN(p.poolId);
-      });
+    console.log('getting pools owners identities...');
+    const identities = await Promise.all(poolsInfo.map((pool) => api.derive.accounts.info(pool.bondedPool.roles?.root || pool.bondedPool.roles.depositor)));
 
-      setPools(info);
-      getPoolsWorker.terminate();
-    };
+    poolsInfo = poolsInfo.map((p, index) => {
+      p.identity = identities[index].identity;
+
+      return p;
+    });
+
+    console.log(`${identities?.length} identities of pool owners are fetched`);
+
+    setPools(poolsInfo);
   }, []);
 
+  // const getPools = useCallback((endpoint: string) => {
+  //   const getPoolsWorker: Worker = new Worker(new URL('../util/workers/getPools.js', import.meta.url));
+
+  //   getPoolsWorker.postMessage({ endpoint });
+
+  //   getPoolsWorker.onerror = (err) => {
+  //     console.log(err);
+  //   };
+
+  //   getPoolsWorker.onmessage = (e: MessageEvent<any>) => {
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //     const poolsInfo: string = e.data;
+
+  //     if (!poolsInfo) {
+  //       setPools(null);// noo pools found, probably never happens
+
+  //       return;
+  //     }
+
+  //     const parsedPoolsInfo = JSON.parse(poolsInfo);
+
+  //     const info = parsedPoolsInfo.info as PoolInfo[];
+
+  //     info?.forEach((p: PoolInfo) => {
+  //       if (p?.bondedPool?.points) {
+  //         p.bondedPool.points = new BN(String(p.bondedPool.points));
+  //       }
+
+  //       p.poolId = new BN(p.poolId);
+  //     });
+
+  //     setPools(info);
+  //     getPoolsWorker.terminate();
+  //   };
+  // }, []);
+
   useEffect(() => {
-    endpoint && getPools(endpoint);
-  }, [endpoint, getPools]);
+    api && getPools(api);
+  }, [api, getPools]);
 
   return pools;
 }

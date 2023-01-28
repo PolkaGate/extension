@@ -90,7 +90,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
       setShowWaitScreen(true);
 
       // const params = [surAmount, rootId, nominatorId, stateTogglerId];
-      const nextPoolId = poolToCreate.poolId.toNumber();
+      const nextPoolId = poolToCreate.poolId;
 
       const { block, failureText, fee, success, txHash } = await createPool(api, address, signer, createAmount, nextPoolId, poolToCreate.bondedPool?.roles, poolToCreate.metadata ?? '', selectedProxy);
 

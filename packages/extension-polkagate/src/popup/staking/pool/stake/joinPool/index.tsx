@@ -49,6 +49,9 @@ export default function JoinPool(): React.ReactElement {
   const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
   const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
   const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
+  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
+  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
+  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
@@ -90,20 +93,26 @@ export default function JoinPool(): React.ReactElement {
   }, [api, selectedPool, showReview]);
 
   useEffect(() => {
-    if (!pools) {
+    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
+    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
+    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
+  }, []);
+
+  useEffect(() => {
+    if (!incrementalPools) {
       return;
     }
 
     if (selectedPool === undefined) {
-      const POLKAGATE_POOL = pools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLocaleLowerCase()));
+      const POLKAGATE_POOL = incrementalPools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLocaleLowerCase()));
 
       setSelectedPool(POLKAGATE_POOL);
     } else {
-      const restOf = (searchedPools || filteredPools || pools)?.filter((p) => p.poolId !== selectedPool.poolId && p.bondedPool?.state.toString() === 'Open');
+      const restOf = (searchedPools || filteredPools || incrementalPools)?.filter((p) => p.poolId !== selectedPool.poolId && p.bondedPool?.state.toString() === 'Open');
 
       setPoolsToShow([selectedPool, ...restOf]);
     }
-  }, [filteredPools, pools, searchedPools, selectedPool]);
+  }, [filteredPools, incrementalPools, searchedPools, selectedPool]);
 
   useEffect(() => {
     if (!api || !availableBalance || !formatted) {
@@ -181,9 +190,9 @@ export default function JoinPool(): React.ReactElement {
         address={address}
         api={api}
         filteredPools={filteredPools}
-        label={t<string>('Choose a pool to join')}
         maxHeight={window.innerHeight - 345}
-        pools={pools}
+        numberOfFetchedPools={numberOfFetchedPools}
+        pools={incrementalPools}
         poolsToShow={poolsToShow}
         selected={selectedPool}
         setFilteredPools={setFilteredPools}
@@ -193,6 +202,7 @@ export default function JoinPool(): React.ReactElement {
           m: '15px auto 0',
           width: '92%'
         }}
+        totalNumberOfPools={totalNumberOfPools}
       />
       <PButton
         _onClick={toReview}
