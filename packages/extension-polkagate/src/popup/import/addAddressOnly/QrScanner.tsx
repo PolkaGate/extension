@@ -35,7 +35,7 @@ export default function QrScanner({ openCamera, setAddress, setOpenCamera }: Pro
   }, [setAddress, setOpenCamera]);
 
   const page = (
-    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+    <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }}>
       <Grid container justifyContent='center' mb='20px' mt='40px'>
         <Typography fontSize='20px' fontWeight={400} sx={{ width: '100%', textAlign: 'center' }}>
           {t<string>('Account ID')}
