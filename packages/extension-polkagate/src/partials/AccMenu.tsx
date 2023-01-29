@@ -14,7 +14,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, SelectChain, Identicon, MenuItem, Select, SettingsContext } from '../components';
+import { ActionContext, Identicon, MenuItem, Select, SelectChain, SettingsContext } from '../components';
 import { useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
@@ -121,28 +121,30 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
+        disabled={!canDerive}
         iconComponent={
           <FontAwesomeIcon
             color={theme.palette.text.primary}
-            icon={faFileExport} />
+            icon={faFileExport}
+          />
         }
         onClick={_onExportAccount}
         text={t('Export account')}
       />
-      {canDerive &&
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToDeriveAcc}
-          text={t('Derive new account')}
-        />
-      }
+      <MenuItem
+        disabled={!canDerive}
+        iconComponent={
+          <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+        }
+        onClick={_goToDeriveAcc}
+        text={t('Derive new account')}
+      />
       <MenuItem
         iconComponent={
           <FontAwesomeIcon
             color={theme.palette.text.primary}
-            icon={faEdit} />
+            icon={faEdit}
+          />
         }
         onClick={_onRenameAccount}
         text={t('Rename')}
