@@ -101,6 +101,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           ? <>
             <Password
               isError={isPasswordError}
+              isFocused
               label={t<string>('Password for this account')}
               onChange={_onChangePass}
               onEnter={_onClickForget}

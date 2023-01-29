@@ -83,6 +83,7 @@ export default function Export(): React.ReactElement {
       <Grid sx={{ m: '20px auto', width: '92%' }}>
         <Password
           isError={isPasswordError}
+          isFocused
           label={t<string>('Password for this account')}
           onChange={onPassChange}
           onEnter={_onExportButtonClick}
