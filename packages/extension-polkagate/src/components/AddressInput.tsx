@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { useOutsideClick, useTranslation } from '../hooks';
+import { useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addAddressOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
@@ -36,25 +36,26 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput ({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [inValidAddress, setInValidAddress] = useState<boolean>(false);
   const theme = useTheme();
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
-
-  const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
-  const _toggleDropdown = useCallback(() => allAddresses.length > 0 && setDropdownVisible(!isDropdownVisible), [allAddresses.length, isDropdownVisible]);
-
-  useOutsideClick([ref], _hideDropdown);
+  const [dropdownWidth, setDropdownWidth] = useState<string>('0');
 
   useEffect(() => {
     address && setEnteredAddress(address);
-  }, [address, enteredAddress]);
+  }, [address]);
+
+  useEffect(() => {
+    if (containerRef) {
+      setDropdownWidth(`${containerRef.current?.offsetWidth}px`);
+    }
+  }, [containerRef.current?.offsetWidth]);
 
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     setTogglePopper(false);
@@ -76,7 +77,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
 
   const openQrScanner = useCallback(() => setOpenCamera(true), []);
 
-  const openPopper = useCallback(() => allAddresses?.length > 0 && !enteredAddress && !isPopperOpen && setTogglePopper(true), [allAddresses?.length, enteredAddress]);
+  const openPopper = useCallback(() => allAddresses?.length > 0 && !enteredAddress && !isPopperOpen && setTogglePopper(true), [allAddresses?.length, enteredAddress, isPopperOpen]);
 
   const closePopper = useCallback(() => setTogglePopper(false), []);
 
@@ -107,101 +108,115 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
   }, [address, enteredAddress, setAddress]);
 
   return (
-    <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ position: 'relative', ...style }}>
-      <Grid item onClick={_toggleDropdown} xs={showIdenticon ? 10.5 : 12}>
-        <Label
-          helperText={helperText}
-          label={label}
-          style={{ position: 'relative' }}
-        >
-          <Autocomplete
-            componentsProps={{ paper: { sx: { '> ul': { m: 0, p: 0 }, border: '2px solid', borderColor: 'secondary.light', maxHeight: window.innerHeight / 2, ml: '-1px', my: '5px', p: 0, width: 'calc(357px - 9.8%)' } } }}
-            disableClearable
-            disabled={disabled}
-            freeSolo
-            inputValue={enteredAddress ?? ''}
-            onBlur={() => setFocus(false)}
-            onClose={closePopper}
-            onFocus={() => setFocus(true)}
-            onOpen={openPopper}
-            open={isPopperOpen && !enteredAddress}
-            options={allAddresses.map((address) => ({ address: address[0], name: address[2] }))}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      {!disabled &&
-                        <IconButton
-                          onClick={pasteAddress}
-                          sx={{ p: '3px' }}
-                        >
-                          <FontAwesomeIcon
-                            color={theme.palette.secondary.light}
-                            fontSize='15px'
-                            icon={enteredAddress || address ? faXmarkCircle : faPaste}
-                          />
-                        </IconButton>
-                      }
-                      {addWithQr && !disabled &&
-                        <IconButton
-                          onClick={openQrScanner}
-                          sx={{ p: '3px' }}
-                        >
-                          <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
-                        </IconButton>
-                      }
-                    </InputAdornment>
-                  )
-                }}
-                onChange={handleInputAddress}
-                placeholder={placeHolder}
-                sx={{ '> div.MuiOutlinedInput-root': { '> fieldset': { border: 'none' }, '> input.MuiAutocomplete-input': { border: 'none', lineHeight: '31px', p: 0 }, border: 'none', height: '31px', p: 0, px: '5px' }, bgcolor: 'background.paper', border: `${focus || inValidAddress ? '2px' : '1px'} solid`, borderColor: `${inValidAddress ? 'warning.main' : focus ? 'action.focus' : 'secondary.light'}`, borderRadius: '5px', height: '32px', lineHeight: '31px' }}
-              />
-            )}
-            renderOption={(props, value) => {
-              return (
-                <Grid alignItems='center' container item justifyContent='space-between' key={value.address} onClick={() => onSelectOption(value.address)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>
-                  <Grid container item xs={10.5}>
-                    <Grid item maxWidth='25%'>
-                      <Typography fontSize='12px' fontWeight={400} lineHeight='25px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-                        {value.name}:
-                      </Typography>
+    <>
+      <Grid alignItems='flex-end' container justifyContent='space-between' ref={containerRef} sx={{ position: 'relative', ...style }}>
+        <Grid item xs={showIdenticon ? 10.5 : 12}>
+          <Label
+            helperText={helperText}
+            label={label}
+            style={{ position: 'relative' }}
+          >
+            <Autocomplete
+              componentsProps={{ paper: { sx: { '> ul': { m: 0, p: 0 }, border: '2px solid', borderColor: 'secondary.light', maxHeight: window.innerHeight / 2, ml: '-2px', my: '5px', p: 0, width: dropdownWidth } } }}
+              disableClearable
+              disabled={disabled}
+              freeSolo
+              inputValue={enteredAddress ?? ''}
+              onBlur={() => setFocus(false)}
+              onClose={closePopper}
+              onFocus={() => setFocus(true)}
+              onOpen={openPopper}
+              open={isPopperOpen && !enteredAddress}
+              options={allAddresses.map((address) => ({ address: address[0], name: address[2] }))}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        {!disabled &&
+                          <IconButton
+                            onClick={pasteAddress}
+                            sx={{ p: '3px' }}
+                          >
+                            <FontAwesomeIcon
+                              color={theme.palette.secondary.light}
+                              fontSize='15px'
+                              icon={enteredAddress || address ? faXmarkCircle : faPaste}
+                            />
+                          </IconButton>
+                        }
+                        {addWithQr && !disabled &&
+                          <IconButton
+                            onClick={openQrScanner}
+                            sx={{ p: '3px' }}
+                          >
+                            <vaadin-icon icon='vaadin:qrcode' style={{ height: '16px', width: '16px', color: `${settings.camera === 'on' ? theme.palette.primary.main : theme.palette.text.disabled}` }} />
+                          </IconButton>
+                        }
+                      </InputAdornment>
+                    )
+                  }}
+                  onChange={handleInputAddress}
+                  placeholder={placeHolder}
+                  sx={{ '> div.MuiOutlinedInput-root': { '> fieldset': { border: 'none' }, '> input.MuiAutocomplete-input': { border: 'none', lineHeight: '31px', p: 0 }, border: 'none', height: '31px', p: 0, px: '5px' }, bgcolor: 'background.paper', border: `${focus || inValidAddress ? '2px' : '1px'} solid`, borderColor: `${inValidAddress ? 'warning.main' : focus ? 'action.focus' : 'secondary.light'}`, borderRadius: '5px', height: '32px', lineHeight: '31px' }}
+                />
+              )}
+              renderOption={(props, value) => {
+                return (
+                  <Grid alignItems='center' container item justifyContent='space-between' key={value.address} onClick={() => onSelectOption(value.address)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>
+                    <Grid container item xs={10.5}>
+                      <Grid item maxWidth='25%'>
+                        <Typography fontSize='12px' fontWeight={400} lineHeight='25px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                          {value.name}:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs>
+                        <ShortAddress address={value.address} clipped />
+                      </Grid>
                     </Grid>
-                    <Grid item xs>
-                      <ShortAddress address={value.address} clipped />
+                    <Grid item justifyContent='center' xs={1.2}>
+                      <Identicon
+                        iconTheme={chain?.icon || 'polkadot'}
+                        prefix={chain?.ss58Format ?? 42}
+                        size={31}
+                        value={value.address}
+                      />
                     </Grid>
-                  </Grid>
-                  <Grid item justifyContent='center' xs={1.2}>
-                    <Identicon
-                      iconTheme={chain?.icon || 'polkadot'}
-                      prefix={chain?.ss58Format ?? 42}
-                      size={31}
-                      value={value.address}
-                    />
-                  </Grid>
-                </Grid>);
-            }}
-            sx={{ border: 'none', height: '31px', p: 0 }}
-          />
-        </Label>
-      </Grid>
-      {showIdenticon &&
-        <Grid item xs={1.2}>
-          {isValidAddress(address)
-            ? <Identicon
-              iconTheme={chain?.icon || 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={31}
-              value={address}
+                  </Grid>);
+              }}
+              sx={{ border: 'none', height: '31px', p: 0 }}
             />
-            : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
-            </Grid>
-          }
+          </Label>
         </Grid>
-      }
+        {showIdenticon &&
+          <Grid item xs={1.2}>
+            {isValidAddress(address)
+              ? <Identicon
+                iconTheme={chain?.icon || 'polkadot'}
+                prefix={chain?.ss58Format ?? 42}
+                size={31}
+                value={address}
+              />
+              : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
+              </Grid>
+            }
+          </Grid>
+        }
+        {inValidAddress &&
+          <Grid container sx={{ '> div': { pl: '3px' } }}>
+            <Warning
+              iconDanger
+              isBelowInput
+              marginTop={0}
+              theme={theme}
+            >
+              {t<string>('Invalid address')}
+            </Warning>
+          </Grid>
+        }
+      </Grid>
       {openCamera &&
         <QrScanner
           openCamera={openCamera}
@@ -209,18 +224,6 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
           setOpenCamera={setOpenCamera}
         />
       }
-      {inValidAddress &&
-        <Grid container sx={{ '> div': { pl: '3px' } }}>
-          <Warning
-            iconDanger
-            isBelowInput
-            marginTop={0}
-            theme={theme}
-          >
-            {t<string>('Invalid address')}
-          </Warning>
-        </Grid>
-      }
-    </Grid>
+    </>
   );
 }
