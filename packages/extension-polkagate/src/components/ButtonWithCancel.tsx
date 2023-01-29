@@ -7,7 +7,6 @@ import React from 'react';
 
 import { useTranslation } from '../hooks';
 
-
 interface Props {
   text: string;
   _onClick: React.MouseEventHandler<HTMLButtonElement>;

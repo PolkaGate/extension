@@ -191,11 +191,11 @@ export default function Index(): React.ReactElement {
   }, []);
 
   const Warn = ({ text }: { text: string }) => (
-    <Grid color='red' container justifyContent='center' py='15px'>
+    <Grid container sx={{ '> div': { mr: '0', mt: 0, pl: '5px' } }}>
       <Warning
         fontWeight={400}
+        iconDanger
         isBelowInput
-        isDanger
         theme={theme}
       >
         {text}
@@ -272,7 +272,7 @@ export default function Index(): React.ReactElement {
           estimatedFee={estimatedFee}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
-          selectedValidators={autoSelected}
+          selectedValidators={validatorSelectionMethod === 'auto' ? autoSelected : manualSelectedValidators}
           setShow={setShowReview}
           settings={settings}
           show={showReview}

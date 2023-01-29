@@ -10,7 +10,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { Container, Grid, useTheme } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -18,7 +18,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, Warning } from '../../../components';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../components';
 import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import Confirmation from '../../../partials/Confirmation';
@@ -48,7 +48,6 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
   const token = useToken(address);
   const decimal = useDecimal(address);
   const name = useAccountName(address);
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
@@ -148,16 +147,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           }}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ p: '15px 15px' }}>

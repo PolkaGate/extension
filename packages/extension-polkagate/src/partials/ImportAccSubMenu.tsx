@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Divider, Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
@@ -17,57 +17,66 @@ import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
 interface Props {
-  toggleSettingSubMenu: () => void
+  toggleSettingSubMenu: () => void;
+  show: boolean;
 }
 
-function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
+  const [notFirstTime, setFirstTime] = useState<boolean>(false);
 
-  const _goToRestoreFromJson = useCallback(
-    (): void => {
-      windowOpen('/account/restore-json').catch(console.error);
-    }, []
-  );
+  useEffect(() => {
+    show ? setFirstTime(true) : setTimeout(() => setFirstTime(false), 150);
+  }, [show]);
 
-  const _goToImportAcc = useCallback(
-    () => {
-      onAction('/account/import-seed');
-    }, [onAction]
-  );
+  const _goToRestoreFromJson = useCallback((): void => {
+    windowOpen('/account/restore-json').catch(console.error);
+  }, []);
 
-  const _goToAddAddressOnly = useCallback(
-    () => {
-      onAction('/import/add-address-only');
-    }, [onAction]
-  );
+  const _goToImportAcc = useCallback(() => {
+    onAction('/account/import-seed');
+  }, [onAction]);
 
-  const _goToAttachQR = useCallback(
-    () => {
-      onAction('/import/attach-qr');
-    }, [onAction]
-  );
+  const _goToAddAddressOnly = useCallback(() => {
+    onAction('/import/add-address-only');
+  }, [onAction]);
 
-  const _goToImportLedger = useCallback(
-    (): void => {
-      windowOpen('/account/import-ledger').catch(console.error);
-    }, []
-  );
+  const _goToAttachQR = useCallback(() => {
+    onAction('/import/attach-qr');
+  }, [onAction]);
 
-  const slide = keyframes`
+  const _goToImportLedger = useCallback((): void => {
+    windowOpen('/account/import-ledger').catch(console.error);
+  }, []);
+
+  const slideIn = keyframes`
   0% {
-    transform: translateY(-200px);
+    display: none;
+    height: 0;
   }
   100%{
-    transform: translateY(0);
+    display: block;
+    height: ${settings.camera !== 'on' ? '230px' : '200px'};
+  }
+`;
+
+  const slideOut = keyframes`
+  0% {
+    display: block;
+    height: ${settings.camera !== 'on' ? '230px' : '200px'};
+  }
+  100%{
+    display: none;
+    height: 0;
   }
 `;
 
   return (
-    <Grid container display='block' item overflow='hidden'>
+    <Grid container display={notFirstTime ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: show ? '0.3s' : '0.15s', animationFillMode: 'both', animationName: `${show ? slideIn : slideOut}` }}>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-      <Grid container direction='column' sx={{ animationDuration: '0.3s', animationFillMode: 'forwards', animationName: `${slide}`, p: '18px 0 15px 10px' }}>
+      <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
         <MenuItem
           iconComponent={
             <vaadin-icon icon='vaadin:cloud-upload-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
@@ -106,7 +115,7 @@ function ImportAccSubMenu({ toggleSettingSubMenu }: Props): React.ReactElement<P
           </Grid>
         }
         <MenuItem
-          icon={theme.palette.mode === 'light' ? connectB : connect}
+          icon={theme.palette.mode === 'light' ? connectB as string : connect as string}
           onClick={_goToImportLedger}
           py='4px'
           text='Attach ledger device'

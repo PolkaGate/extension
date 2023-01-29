@@ -34,7 +34,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
   const poolStaked = pool?.stashIdAccount?.stakingLedger?.active || pool?.bondedPool?.points;
-  const poolStatus = pool?.bondedPool?.state;
+  const poolStatus = pool?.bondedPool?.state ? String(pool.bondedPool.state) : undefined;
 
   return (
     <>

@@ -10,12 +10,12 @@ import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ActionContext, Address, ButtonWithCancel, Password, Warning } from '../../components';
+import { ActionContext, Address, ButtonWithCancel, Password, Warning, WrongPasswordAlert } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 
-export default function Export (): React.ReactElement {
+export default function Export(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const theme = useTheme();
@@ -65,16 +65,7 @@ export default function Export (): React.ReactElement {
         text={t<string>('Export Account')}
       />
       {isPasswordError &&
-        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You’ve used an incorrect password. Try again.')}
-          </Warning>
-        </Grid>
+        <WrongPasswordAlert />
       }
       <Address
         address={address}

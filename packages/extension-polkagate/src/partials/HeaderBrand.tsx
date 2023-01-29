@@ -9,12 +9,14 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
 import { ActionContext, Steps } from '../components';
+import { useAccount, useChain, useFormatted } from '../hooks';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { AccountMenuInfo, Step } from '../util/types';
 import AccMenuInside from './AccMenuInside';
 import Menu from './Menu';
 
 interface Props {
+  address?: string;
   showBackArrow?: boolean;
   showBrand?: boolean;
   showMenu?: boolean;
@@ -29,10 +31,9 @@ interface Props {
   noBorder?: boolean;
   shortBorder?: boolean;
   paddingBottom?: number;
-  accountMenuInfo?: AccountMenuInfo;
 }
 
-function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -44,26 +45,20 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
     isMenuOpen && setOpenMenu(!isMenuOpen);
   });
 
-  const _handleMenuClick = useCallback(
-    () => {
-      if (accountMenuInfo) {
-        setShowAccountMenu((open) => !open);
-      } else {
-        setOpenMenu((open) => !open);
-      }
-    },
-    [accountMenuInfo]
-  );
+  const _handleMenuClick = useCallback(() => {
+    if (address) {
+      setShowAccountMenu((open) => !open);
+    } else {
+      setOpenMenu((open) => !open);
+    }
+  }, [address]);
 
   const onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
 
   const LeftIcon = () => (
-    <Grid
-      item
-      xs={1}
-    >
+    <Grid item xs={1.4}>
       {!showBrand &&
         <ArrowBackIosIcon
           onClick={onBackClick}
@@ -87,7 +82,7 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   );
 
   const CenterItem = () => (
-    <Grid display='inline-flex' item    >
+    <Grid display='inline-flex' item>
       <Typography color={showBrand ? '#ffffff' : 'text.primary'} fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '30px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
         {text}
       </Typography>
@@ -101,15 +96,23 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
   );
 
   const RightItem = () => (
-    <Grid item textAlign='right' xs={1}>
+    <Grid item textAlign='right' xs={1.4}>
       {!onRefresh && !showClose &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu && <MenuIcon sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 38 }} />}
-          {showAccountMenu && <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />}
+          {showMenu &&
+            <MenuIcon
+              sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 39 }}
+            />
+          }
+          {showAccountMenu &&
+            <MoreVertIcon
+              sx={{ color: 'secondary.light', fontSize: '33px' }}
+            />
+          }
         </IconButton>
       }
       {!!onRefresh &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }} >
+        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
           <FontAwesomeIcon
             color={theme.palette.secondary.light}
             icon={faRefresh}
@@ -132,38 +135,16 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
 
   return (
     <>
-      {
-        isMenuOpen &&
-        <Menu
-          isMenuOpen={isMenuOpen}
-          reference={setMenuRef}
-          setShowMenu={setOpenMenu}
-          theme={theme}
-        />
-      }
-      {
-        isAccountMenuOpen && accountMenuInfo?.account && accountMenuInfo?.chain &&
-        <AccMenuInside
-          address={accountMenuInfo.account.address}
-          chain={accountMenuInfo.chain}
-          formatted={accountMenuInfo.formatted}
-          isExternal={accountMenuInfo.account.isExternal}
-          isHardware={accountMenuInfo.account.isHardware}
-          isMenuOpen={isAccountMenuOpen}
-          name={accountMenuInfo.account.name}
-          setShowMenu={setShowAccountMenu}
-          type={accountMenuInfo.type}
-        />
-      }
-      <Container sx={{
-        background: showBrand ? 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)' : 'transparent',
-        borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
-        borderColor: 'secondary.light',
-        lineHeight: 0,
-        p: `18px 30px ${paddingBottom}px`
-      }}
+      <Container disableGutters
+        sx={{
+          background: showBrand ? 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)' : 'transparent',
+          borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
+          borderColor: 'secondary.light',
+          lineHeight: 0,
+          p: `18px 30px ${paddingBottom}px`
+        }}
       >
-        <Grid alignItems='center' container justifyContent='space-between'        >
+        <Grid alignItems='center' container justifyContent='space-between'>
           <LeftIcon />
           {_centerItem ?? <CenterItem />}
           <RightItem />
@@ -172,6 +153,21 @@ function HeaderBrand({ _centerItem, accountMenuInfo, isRefreshing, noBorder = fa
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
         }
       </Container>
+      {isMenuOpen &&
+        <Menu
+          isMenuOpen={isMenuOpen}
+          reference={setMenuRef}
+          setShowMenu={setOpenMenu}
+          theme={theme}
+        />
+      }
+      {isAccountMenuOpen && address &&
+        <AccMenuInside
+          address={address}
+          isMenuOpen={isAccountMenuOpen}
+          setShowMenu={setShowAccountMenu}
+        />
+      }
     </>
   );
 }

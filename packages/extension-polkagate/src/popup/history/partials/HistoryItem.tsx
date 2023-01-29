@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -32,7 +34,7 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
 
   const action = useMemo(() => upperCaseFirstChar(info.action), [info]);
 
-  const subAction = useMemo(() => {
+  const subActionToFrom = useMemo(() => {
     if (info?.subAction) {
       return upperCaseFirstChar(info.subAction);
     }
@@ -54,22 +56,32 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
       }
       <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
-          <Grid container direction='column' item pl='10px' textAlign='left' xs={6} sx={{ fontSize: '22px', fontWeight: 300 }}>
-            {action}
-            <Typography fontSize='16px' fontWeight={200}>
-              {subAction}
-            </Typography>
-          </Grid>
-          <Grid container direction='column' item pr='10px' textAlign='right' xs={5}>
-            <Typography fontSize='20px' fontWeight={300}>
-              {info?.amount && decimal && token
-                ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={amountToMachine(info.amount, decimal)} />
-                : 'N/A'
-              }
-            </Typography>
-            <Typography fontSize='16px' fontWeight={400} color={info.success ? 'green' : 'red'}>
-              {info.success ? t<string>('Completed') : t<string>('Failed')}
-            </Typography>
+          <Grid container item sx={{ fontSize: '22px', fontWeight: 300 }} px='10px' xs={11}>
+            <Grid container item justifyContent='space-between'>
+              <Grid item>
+                {action}
+              </Grid>
+              <Grid item>
+                <Typography fontSize='20px' fontWeight={300}>
+                  {info?.amount && decimal && token
+                    ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={amountToMachine(info.amount, decimal)} />
+                    : 'N/A'
+                  }
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid container item justifyContent='space-between'>
+              <Grid item sx={{ whiteSpace: 'nowrap', width: 'fit-content', maxWidth: '65%' }}>
+                <Typography fontSize='16px' fontWeight={200} sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {subActionToFrom}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography fontSize='16px' fontWeight={400} color={info.success ? 'green' : 'red'}>
+                  {info.success ? t<string>('Completed') : t<string>('Failed')}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid alignItems='center' container item sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light' }} xs={1}>
             <IconButton
@@ -83,9 +95,9 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
       </Grid>
       {showDetail && chainName && token && decimal &&
         <Detail
-          formatted={formatted}
           chainName={chainName}
           decimal={decimal}
+          formatted={formatted}
           info={info}
           setShowDetail={setShowDetail}
           showDetail={showDetail}

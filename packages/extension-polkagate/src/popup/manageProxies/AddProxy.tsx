@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Select, ShowIdentity } from '../../components';
+import { AccountContext, AddressInput, InputWithLabel, PButton, Select, ShowIdentity } from '../../components';
 import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
@@ -108,7 +108,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
       <Typography fontSize='14px' fontWeight={300} m='20px auto 15px' textAlign='left' width='90%'>
         {t<string>("You can add an account included in this extension as a proxy of Alice to sign certain types of transactions on Alice's behalf.")}
       </Typography>
-      <InputWithLabelAndIdenticon
+      <AddressInput
         address={realAddress}
         allAddresses={allAddresses}
         chain={chain}

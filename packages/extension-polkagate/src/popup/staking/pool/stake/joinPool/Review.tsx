@@ -8,14 +8,14 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
@@ -36,7 +36,6 @@ interface Props {
 
 export default function Review({ address, api, estimatedFee, joinAmount, poolToJoin, setShowReview, showReview = false }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
@@ -120,22 +119,15 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           shortBorder
           showBackArrow
           text={t<string>('Join Pool')}
+          withSteps={{
+            current: 2,
+            total: 2
+          }}
         />
         {isPasswordError &&
-          <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
-            <Warning
-              fontWeight={400}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You’ve used an incorrect password. Try again.')}
-            </Warning>
-          </Grid>
+          <WrongPasswordAlert />
         }
-        <SubTitle
-          label={t<string>('Review')}
-        />
+        <SubTitle label={t<string>('Review')} />
         <AccountHolderWithProxy
           address={address}
           chain={chain}
@@ -151,7 +143,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
             <ChainLogo genesisHash={chain?.genesisHash} />
           </Grid>
           <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
-            <FormatBalance api={api} decimalPoint={2} value={joinAmount} />
+            <FormatBalance api={api} decimalPoint={4} value={joinAmount} />
           </Grid>
         </Grid>
         <Grid container justifyContent='center'>

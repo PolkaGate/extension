@@ -45,7 +45,7 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
           <Grid item>
             <ChainLogo genesisHash={chain?.genesisHash} size={31} />
           </Grid>
-          <Grid item sx={{ fontSize: '26px', pl: '8px' }}>
+          <Grid item sx={{ fontSize: '26px', ml: '5px' }}>
             {amount} {token}
           </Grid>
         </Grid>

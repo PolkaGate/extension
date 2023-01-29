@@ -18,19 +18,15 @@ export default function Item({ item, mt = 0, noDivider = false, toCopy }: { item
               </Typography>
             </Grid>
             <Grid item>
-              {toCopy && <CopyAddressButton
-                address={toCopy}
-              />}
+              {toCopy &&
+                <CopyAddressButton
+                  address={toCopy}
+                  size={18}
+                />}
             </Grid>
           </Grid>
-          {!noDivider && <Divider
-            sx={{
-              bgcolor: 'secondary.light',
-              height: '2px',
-              m: '3px auto',
-              width: '75%'
-            }}
-          />
+          {!noDivider &&
+            <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '75%' }} />
           }
         </>
       }

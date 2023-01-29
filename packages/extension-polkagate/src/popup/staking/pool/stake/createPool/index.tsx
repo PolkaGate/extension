@@ -13,7 +13,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, InputWithLabel, InputWithLabelAndIdenticon, PButton, ShowBalance } from '../../../../../components';
+import { AmountWithOptions, InputWithLabel, AddressInput, PButton, ShowBalance } from '../../../../../components';
 import { useApi, useChain, useFormatted, usePoolConsts, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
@@ -170,7 +170,7 @@ export default function CreatePool(): React.ReactElement {
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
         </Typography>
-        <Grid item lineHeight='22px' pl='5px'>
+        <Grid item lineHeight='22px' pl='5px' fontSize='14px' fontWeight={400}>
           <ShowBalance api={api} balance={estimatedFee} decimalPoint={4} height={22} />
         </Grid>
       </Grid>
@@ -180,7 +180,7 @@ export default function CreatePool(): React.ReactElement {
       <Typography fontSize='14px' fontWeight={300} sx={{ m: 'auto', width: '90%' }} textAlign='left'>
         {t<string>('All the roles (Depositor, Root, Nominator, and State toggler) are set to the following ID by default although you can update the Nominator and State toggler by clicking on “Update roles”.')}
       </Typography>
-      <InputWithLabelAndIdenticon address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
+      <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
       <Grid ml='4%' onClick={onUpdateRoles} width='fit-content'>
         <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
           {t<string>('Update roles')}

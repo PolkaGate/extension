@@ -9,7 +9,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { ActionContext, DropdownWithIcon, InputWithLabelAndIdenticon, PButton, ProxyTable } from '../../../components'
+import { ActionContext, AddressInput, PButton, ProxyTable, SelectChain } from '../../../components';
 import { useApiWithChain, useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
@@ -81,25 +81,25 @@ export default function AddProxy(): React.ReactElement {
       >
         {t('Enter just your account\'s public information (no private key), this can be used as e.g., watch only, and proxied account.')}
       </Typography>
-      <DropdownWithIcon
-        defaultValue={chain?.genesisHash || genesisOptions[0].text}
-        icon={getLogo(chain ?? undefined)}
-        label={t<string>('Select the chain')}
-        onChange={_onChangeGenesis}
-        options={genesisOptions}
-        style={{ m: '12px auto 20px', width: '92%' }}
-      />
-      <Name
-        onChange={_onNameChange}
-        style={{ marginTop: '-15px', marginBottom: '20px' }}
-      />
-      <InputWithLabelAndIdenticon
+      <AddressInput
         addWithQr
         address={realAddress}
         chain={chain}
         label={t<string>('Account ID')}
         setAddress={setRealAddress}
-        style={{ m: 'auto', width: '92%' }}
+        style={{ m: '15px auto 0', width: '92%' }}
+      />
+      <Name
+        onChange={_onNameChange}
+      />
+      <SelectChain
+        address={realAddress}
+        defaultValue={chain?.genesisHash || genesisOptions[0].text}
+        icon={getLogo(chain ?? undefined)}
+        label={t<string>('Select the chain')}
+        onChange={_onChangeGenesis}
+        options={genesisOptions}
+        style={{ m: '15px auto 0', width: '92%' }}
       />
       <ProxyTable
         chain={realAddress ? chain : undefined}

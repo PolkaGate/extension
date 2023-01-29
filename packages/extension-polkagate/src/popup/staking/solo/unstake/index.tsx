@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
@@ -155,12 +157,13 @@ export default function Index(): React.ReactElement {
     setShowReview(true);
   }, []);
 
-  const Warn = ({ text }: { text: string }) => (
-    <Grid color='red' container justifyContent='center' py='15px'>
+  const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string, isDanger?: boolean, iconDanger?: boolean }) => (
+    <Grid container sx={{ '> div': { mr: '0', mt: isDanger ? '15px' : 0, pl: '5px' }, justifyContent: isDanger ? 'center' : 'unset' }}>
       <Warning
         fontWeight={400}
-        isBelowInput
-        isDanger
+        iconDanger={iconDanger}
+        isBelowInput={belowInput}
+        isDanger={isDanger}
         theme={theme}
       >
         {text}
@@ -182,7 +185,7 @@ export default function Index(): React.ReactElement {
         withSteps={{ current: 1, total: 2 }}
       />
       {staked?.isZero() &&
-        <Warn text={t<string>('Nothing to unstake.')} />
+        <Warn isDanger text={t<string>('Nothing to unstake.')} />
       }
       <Grid item xs={12} sx={{ mx: '15px' }}>
         <Asset
@@ -203,7 +206,7 @@ export default function Index(): React.ReactElement {
             value={amount}
           />
           {alert &&
-            <Warn text={alert} />
+            <Warn belowInput iconDanger text={alert} />
           }
         </div>
 
@@ -237,4 +240,3 @@ export default function Index(): React.ReactElement {
     </Motion>
   );
 }
-

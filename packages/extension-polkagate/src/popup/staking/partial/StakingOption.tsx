@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
@@ -8,7 +10,6 @@ import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
 import { Infotip, PButton, ShowBalance, Warning } from '../../../components';
-import { useTranslation } from '../../../hooks';
 
 interface OptionProps {
   api?: ApiPromise;
@@ -36,7 +37,7 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.main', borderRadius: '5px', letterSpacing: '-1.5%', p: '10px 14px', ...style }}>
       <Grid alignItems='center' container item justifyContent='center'>
         {logo &&
-          <Grid container sx={{ width: 'fit-content' }} item mr='7px' alignItems='center'>
+          <Grid alignItems='center' container item mr='7px' sx={{ width: 'fit-content' }}>
             {logo}
           </Grid>
         }
@@ -49,10 +50,9 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
         </Grid>
       </Grid>
       {warningText &&
-        <Grid color='red' container height='30px' item justifyContent='center' mb='5px' mt='10px'>
+        <Grid container item justifyContent='center' sx={{ '> div': { mt: '5px' } }}>
           <Warning
             fontWeight={400}
-            isBelowInput
             isDanger
             theme={theme}
           >
@@ -69,10 +69,7 @@ export default function StakingOption({ api, balance, balanceText, buttonText, h
       }
       <Grid container item justifyContent='space-between' pt='10px'>
         <Grid item>
-          <Typography
-            fontSize='14px'
-            fontWeight={300}
-          >
+          <Typography fontSize='14px' fontWeight={300}>
             {balanceText}
           </Typography>
         </Grid>

@@ -7,7 +7,7 @@ import type { MyPoolInfo } from '../../../../../util/types';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountContext, InputWithLabel, InputWithLabelAndIdenticon, PButton, Popup } from '../../../../../components';
+import { AccountContext, AddressInput, AutoResizeTextarea, PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
@@ -16,7 +16,7 @@ import Review from './Review';
 interface Props {
   address: string;
   apiToUse: ApiPromise;
-  pool?: MyPoolInfo;
+  pool: MyPoolInfo;
   showEdit: boolean;
   setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,22 +35,21 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const { t } = useTranslation();
 
   const api = useApi(address, apiToUse);
-  const myPool = usePool(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const { hierarchy } = useContext(AccountContext);
 
-  const myPoolName = myPool?.metadata;
-  const myPoolRoles = myPool?.bondedPool?.roles;
+  const myPoolName = pool?.metadata;
+  const myPoolRoles = pool?.bondedPool?.roles;
 
   const [nextBtnDisable, setNextBtnDisable] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
-  const [depositorAddress, setDepositorAddress] = useState<string | undefined>();
-  const [newRootAddress, setNewRootAddress] = useState<string | undefined>();
-  const [newNominatorAddress, setNewNominatorAddress] = useState<string | undefined>();
-  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | undefined>();
+  const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
+  const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
+  const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
+  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | null | undefined>();
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
 
@@ -68,29 +67,29 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
 
   useEffect(() => {
     !newPoolName && myPoolName && setNewPoolName(myPoolName);
-    !depositorAddress && myPool?.bondedPool?.roles && setDepositorAddress(myPool?.bondedPool?.roles.depositor.toString());
-    !newRootAddress && myPool?.bondedPool?.roles && setNewRootAddress(myPool?.bondedPool?.roles.root?.toString());
-    !newNominatorAddress && myPool?.bondedPool?.roles && setNewNominatorAddress(myPool?.bondedPool?.roles.nominator?.toString());
-    !newStateTogglerAddress && myPool?.bondedPool?.roles && setNewStateTogglerAddress(myPool?.bondedPool?.roles.stateToggler?.toString());
+    !depositorAddress && pool?.bondedPool?.roles && setDepositorAddress(pool?.bondedPool?.roles.depositor.toString());
+    !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
+    !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
+    !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myPool?.bondedPool?.roles]);
+  }, [pool?.bondedPool?.roles]);
 
   useEffect(() => {
     setChanges({
       newPoolName: myPoolName !== newPoolName ? newPoolName ?? '' : undefined,
-      newRoles: (newRootAddress !== myPoolRoles?.root?.toString() || newNominatorAddress !== myPoolRoles?.nominator?.toString() || newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
+      newRoles: ((newNominatorAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) || (newRootAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) || (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString()))
         ? {
-          newNominator: newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
-          newRoot: newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
-          newStateToggler: newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
+          newNominator: newNominatorAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
+          newRoot: newRootAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
+          newStateToggler: newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
         }
         : undefined
     });
   }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
 
   useEffect(() => {
-    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles));
-  }, [changes]);
+    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles) || [newNominatorAddress, newRootAddress, newStateTogglerAddress].includes(undefined));
+  }, [changes, newNominatorAddress, newRootAddress, newStateTogglerAddress]);
 
   return (
     <>
@@ -103,13 +102,13 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           text={t<string>('Edit Pool')}
           withSteps={{ current: 1, total: 2 }}
         />
-        <Grid container m='20px auto 10px' width='92%'>
-          <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
+        <Grid container m='10px auto' width='92%'>
+          <AutoResizeTextarea label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
         </Grid>
         <Typography fontSize='16px' fontWeight={400} m='30px auto 15px' textAlign='center'>
           {t<string>('Roles')}
         </Typography>
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={depositorAddress}
           chain={chain}
           disabled
@@ -121,7 +120,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
             width: '92%'
           }}
         />
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={newRootAddress}
           allAddresses={allAddresses}
           chain={chain}
@@ -133,7 +132,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
             width: '92%'
           }}
         />
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={newNominatorAddress}
           allAddresses={allAddresses}
           chain={chain}
@@ -145,7 +144,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
             width: '92%'
           }}
         />
-        <InputWithLabelAndIdenticon
+        <AddressInput
           address={newStateTogglerAddress}
           allAddresses={allAddresses}
           chain={chain}
@@ -163,14 +162,14 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           text={t<string>('Next')}
         />
       </Popup>
-      {showReview && myPool && formatted &&
+      {showReview && pool && formatted &&
         <Review
           address={address}
           api={api}
           chain={chain}
           changes={changes}
           formatted={formatted}
-          pool={myPool}
+          pool={pool}
           setRefresh={setRefresh}
           setShow={setShowReview}
           setShowMyPool={setShowEdit}

@@ -48,7 +48,7 @@ export default function Passwords({ isFocussed, onChange, onEnter, label = undef
         component={Password}
         dataInputRepeatPassword
         // data-input-repeat-password
-        label={t<string>('Repeat password')}
+        label={t<string>('Repeat the password')}
         onEnter={onEnter}
         onValidatedChange={setPass2}
         setShowPassword={setShowConfirmPassword}

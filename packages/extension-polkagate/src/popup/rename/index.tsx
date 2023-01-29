@@ -43,12 +43,7 @@ export default function Rename(): React.ReactElement {
         name={newName}
         style={{ padding: '20px' }}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='auto'
-        width='fit-content'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='auto' width='fit-content'>
         {t<string>('Choose a new name for your account.')}
       </Typography>
       <Name

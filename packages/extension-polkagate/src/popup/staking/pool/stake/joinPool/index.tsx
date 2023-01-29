@@ -40,13 +40,18 @@ export default function JoinPool(): React.ReactElement {
   const token = useToken(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
-  const [sortedPools, setSortedPools] = useState<PoolInfo[] | null | undefined>();
   const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
+  const [filteredPools, setFilteredPools] = useState<PoolInfo[] | null | undefined>();
+  const [searchedPools, setSearchedPools] = useState<PoolInfo[] | null | undefined>();
+  const [poolsToShow, setPoolsToShow] = useState<PoolInfo[] | null | undefined>(); // filtered with selected at first
+  const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
+  const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
+  const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
 
   const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
@@ -88,24 +93,31 @@ export default function JoinPool(): React.ReactElement {
   }, [api, selectedPool, showReview]);
 
   useEffect(() => {
-    if (!pools) {
+    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
+    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
+    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
+  }, []);
+
+  useEffect(() => {
+    if (!incrementalPools) {
       return;
     }
 
     if (selectedPool === undefined) {
-      const POLKAGATE_POOL = pools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLocaleLowerCase()));
+      const POLKAGATE_POOL = incrementalPools?.find((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME?.toLocaleLowerCase()));
 
       setSelectedPool(POLKAGATE_POOL);
     } else {
-      // const bringFront = pools.filter((pool) => pool.poolId === selectedPool.poolId)[0];
-      const restOf = pools.filter((pool) => pool.poolId !== selectedPool.poolId && pool.bondedPool?.state.toString() === 'Open');
+      const restOf = (searchedPools || filteredPools || incrementalPools)?.filter((p) => p.poolId !== selectedPool.poolId && p.bondedPool?.state.toString() === 'Open');
 
-      setSortedPools([selectedPool, ...restOf]);
+      setPoolsToShow([selectedPool, ...restOf]);
     }
-  }, [pools, selectedPool]);
+  }, [filteredPools, incrementalPools, searchedPools, selectedPool]);
 
   useEffect(() => {
-    if (!api || !availableBalance || !formatted) { return; }
+    if (!api || !availableBalance || !formatted) {
+      return;
+    }
 
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
@@ -147,7 +159,7 @@ export default function JoinPool(): React.ReactElement {
         showClose
         text={t<string>('Pool Staking')}
       />
-      <SubTitle label={t<string>('Join Pool')} />
+      <SubTitle label={t<string>('Join Pool')} withSteps={{ current: 1, total: 2 }} />
       <AmountWithOptions
         label={t<string>(`Amount (${token ?? '...'})`)}
         onChangeAmount={stakeAmountChange}
@@ -156,7 +168,7 @@ export default function JoinPool(): React.ReactElement {
         primaryBtnText={t<string>('Min amount')}
         secondaryBtnText={t<string>('Max amount')}
         style={{
-          m: '20px auto 10px',
+          m: '20px auto 7px',
           width: '92%'
         }}
         value={stakeAmount}
@@ -165,7 +177,7 @@ export default function JoinPool(): React.ReactElement {
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
         </Typography>
-        <Grid item lineHeight='22px' pl='5px'>
+        <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShowBalance
             api={api}
             balance={estimatedFee}
@@ -177,15 +189,20 @@ export default function JoinPool(): React.ReactElement {
       <PoolsTable
         address={address}
         api={api}
-        label={t<string>('Choose a pool to join')}
-        maxHeight={window.innerHeight - 350}
-        pools={sortedPools}
+        filteredPools={filteredPools}
+        maxHeight={window.innerHeight - 345}
+        numberOfFetchedPools={numberOfFetchedPools}
+        pools={incrementalPools}
+        poolsToShow={poolsToShow}
         selected={selectedPool}
+        setFilteredPools={setFilteredPools}
+        setSearchedPools={setSearchedPools}
         setSelected={setSelectedPool}
         style={{
           m: '15px auto 0',
           width: '92%'
         }}
+        totalNumberOfPools={totalNumberOfPools}
       />
       <PButton
         _onClick={toReview}

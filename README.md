@@ -74,7 +74,7 @@ Once added, you can create an account (via a generated seed) or import via an ex
 
 * Test on Westend blockchain:
 
-   - It is possible via the provided [add-on](https://addons.mozilla.org/en-US/firefox/addon/polkadot-js-plus-extension/). To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
+   - It is possible via the provided [add-on](https://addons.mozilla.org/en-US/firefox/addon/polkagate/). To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
 
    - Or build the extension on your own, but it needs to append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js') before build:
 
@@ -93,9 +93,9 @@ Once added, you can create an account (via a generated seed) or import via an ex
 	}`
 
 
-## More information 
+<!-- ## More information 
 
-for more information about the extension and how it works, please go to the project [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki) 
+for more information about the extension and how it works, please go to the project [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki)  -->
 
 <!-- ## To support 
 

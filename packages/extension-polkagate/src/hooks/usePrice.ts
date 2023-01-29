@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { Price, Prices } from '../util/types';
-import { useChain } from '.';
+import { useChain, useChainName } from '.';
 
 /**
  *  @description retrieve the price of a token from local storage PRICES
@@ -13,8 +13,7 @@ import { useChain } from '.';
  */
 export default function usePrice(address: string, currency = 'usd'): Price | undefined {
   const [price, setPrice] = useState<Price | undefined>();
-  const chain = useChain(address);
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.toLowerCase();
+  const chainName = useChainName(address)?.toLocaleLowerCase();
   const localSavedPrices = window.localStorage.getItem('prices');
 
   useEffect(() => {

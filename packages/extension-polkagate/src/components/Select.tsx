@@ -1,10 +1,13 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { FormControl, InputBase, MenuItem, Select } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import React, { useCallback } from 'react';
+/* eslint-disable react/jsx-max-props-per-line */
 
+import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import React, { useCallback, useState } from 'react';
+
+import getLogo from '../util/getLogo';
 import Label from './Label';
 
 interface DropdownOption {
@@ -19,16 +22,22 @@ interface Props {
   options: DropdownOption[];
   label: string;
   isDisabled?: boolean;
+  showLogo?: boolean;
   _mt?: string | number;
   helperText?: string;
   disabledItems?: string[] | number[];
 }
 
-export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
+  const theme = useTheme();
+
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const toggleMenu = useCallback(() => !isDisabled && setShowMenu(!showMenu), [isDisabled, showMenu]);
+
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
     '& .MuiInputBase-input': {
       '&:focus': {
-        // borderRadius: 4,
         borderColor: theme.palette.secondary.main,
         boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
       },
@@ -49,10 +58,12 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
   }));
 
   const _onChange = useCallback(
-    ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) =>
-      onChange && onChange(typeof value === 'string' ? value.trim() : value),
-    [onChange]
-  );
+    ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) => {
+      onChange && onChange(typeof value === 'string' ? value.trim() : value);
+      toggleMenu();
+    }, [onChange, toggleMenu]);
+
+  const chainName = useCallback((text: string) => text.replace(' Relay Chain', '')?.replace(' Network', '').toLowerCase(), []);
 
   return (
     <FormControl
@@ -66,12 +77,47 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
         style={{ fontSize: '14px' }}
       >
         <Select
+          MenuProps={{
+            MenuListProps: {
+              sx: {
+                '> li.Mui-selected': {
+                  bgcolor: 'rgba(186, 40, 130, 0.25)'
+                },
+                '> li:hover': {
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                },
+                bgcolor: 'background.paper'
+              }
+            },
+            PaperProps: {
+              style: showLogo
+                ? {
+                  minWidth: 'auto'
+                }
+                : {},
+              sx: {
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                  width: 0
+                },
+                border: '1px solid',
+                borderColor: 'secondary.light',
+                borderRadius: '7px',
+                filter: 'drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.15))',
+                mt: '10px',
+                overflow: 'hidden',
+                overflowY: 'scroll'
+              }
+            }
+          }}
           defaultValue={defaultValue}
           id='selectChain'
           input={<BootstrapInput />}
-          onChange={_onChange}
+          onClick={toggleMenu}
+          open={showMenu}
           sx={{
             '> #selectChain': {
+              border: '1px solid',
               borderColor: 'secondary.light',
               borderRadius: '5px',
               fontSize: '18px',
@@ -89,10 +135,18 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
               color: 'action.disabledBackground',
               fontSize: '30px'
             },
-            width: '100%',
-            bgcolor: isDisabled && 'primary.contrastText'
+            bgcolor: isDisabled ? 'primary.contrastText' : 'transparent',
+            width: '100%'
           }}
           value={value}
+          onChange={_onChange}
+          // eslint-disable-next-line react/jsx-no-bind
+          renderValue={(value) => {
+            const textToShow = options.find((option) => value === option.value)?.text;
+
+            return textToShow ?? options[0].text;
+          }
+          }
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
@@ -101,7 +155,18 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value || text}
             >
-              {text}
+              <Grid container height={showLogo ? '32px' : 'auto'} justifyContent='space-between'>
+                <Grid alignItems='center' container item width='fit-content'>
+                  <Typography fontWeight={300}>
+                    {text}
+                  </Typography>
+                </Grid>
+                {showLogo &&
+                  <Grid alignItems='center' container item pl='15px' width='fit-content'>
+                    {<Avatar src={getLogo(chainName(text))} sx={{ borderRadius: '50%', height: 29, width: 29 }} variant='square' />}
+                  </Grid>
+                }
+              </Grid>
             </MenuItem>
           ))}
         </Select>
@@ -109,3 +174,5 @@ export default function CustomizedSelect({ _mt = 0, defaultValue, disabledItems,
     </FormControl>
   );
 }
+
+export default React.memo(CustomizedSelect);

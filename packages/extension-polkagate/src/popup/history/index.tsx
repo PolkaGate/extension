@@ -7,10 +7,10 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Progress } from '../../components';
-import { useChainName, useDecimal, useFormatted, useToken, useTranslation } from '../../hooks';
+import { useChain, useChainName, useDecimal, useFormatted, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { getTxTransfers } from '../../util/api/getTransfers';
-import { STAKING_ACTIONS } from '../../util/constants';
+import { STAKING_ACTIONS, STAKING_CHAINS } from '../../util/constants';
 import { TransactionDetail, Transfers } from '../../util/types';
 import { getHistoryFromStorage } from '../../util/utils';
 import HistoryItem from './partials/HistoryItem';
@@ -44,6 +44,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
   const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
+  const chain = useChain(address);
   const chainName = useChainName(address);
   const decimal = useDecimal(formatted);
   const token = useToken(formatted);
@@ -229,17 +230,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
         text={t<string>('Transaction History')}
       />
       <Box sx={{ borderBottom: 1, borderColor: 'secondary.light' }}>
-        <Tabs
-          centered
-          onChange={handleTabChange}
-          sx={{
-            'span.MuiTabs-indicator': {
-              bgcolor: 'secondary.light',
-              height: '4px'
-            }
-          }}
-          value={tabIndex}
-        >
+        <Tabs centered onChange={handleTabChange} sx={{ 'span.MuiTabs-indicator': { bgcolor: 'secondary.light', height: '4px' } }} value={tabIndex}>
           <Tab
             label={t<string>('All')}
             sx={{
@@ -255,17 +246,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
             }}
             value={1}
           />
-          <Tab
-            disabled
-            icon={
-              <Divider
-                orientation='vertical'
-                sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }}
-              />}
-            label=''
-            sx={{ minWidth: '1px', p: '0', width: '1px' }}
-            value={4}
-          />
+          <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={4} />
           <Tab
             label={t<string>('Transfers')}
             sx={{
@@ -281,32 +262,26 @@ export default function TransactionHistory(): React.ReactElement<''> {
             }}
             value={2}
           />
-          <Tab
-            disabled
-            icon={
-              <Divider
-                orientation='vertical'
-                sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }}
-              />}
-            label=''
-            sx={{ minWidth: '1px', p: '0', width: '1px' }}
-            value={5}
-          />
-          <Tab
-            label={t<string>('Staking')}
-            sx={{
-              ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
-                color: 'secondary.light',
-                fontWeight: 500
-              },
-              color: 'text.primary',
-              fontSize: '18px',
-              fontWeight: 400,
-              minWidth: '108px',
-              textTransform: 'capitalize'
-            }}
-            value={3}
-          />
+          {STAKING_CHAINS.includes(chain?.genesisHash) &&
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
+          }
+          {STAKING_CHAINS.includes(chain?.genesisHash) &&
+            <Tab
+              label={t<string>('Staking')}
+              sx={{
+                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                  color: 'secondary.light',
+                  fontWeight: 500
+                },
+                color: 'text.primary',
+                fontSize: '18px',
+                fontWeight: 400,
+                minWidth: '108px',
+                textTransform: 'capitalize'
+              }}
+              value={3}
+            />
+          }
         </Tabs>
       </Box>
       <Grid container item sx={{ height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }} xs={12}>

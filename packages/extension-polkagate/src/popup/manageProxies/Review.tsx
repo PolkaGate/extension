@@ -1,10 +1,12 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -12,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, Warning } from '../../components';
+import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
 import { useAccount, useAccountName } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
@@ -32,7 +34,6 @@ interface Props {
 
 export default function Review({ address, api, chain, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const name = useAccountName(address);
   const account = useAccount(address);
   const onAction = useContext(ActionContext);
@@ -137,16 +138,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   return (
     <>
       {isPasswordError &&
-        <Grid color='red' height='30px' m='auto' mb='-15px' pt='5px' width='92%'>
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You’ve used an incorrect password. Try again.')}
-          </Warning>
-        </Grid>
+        <WrongPasswordAlert />
       }
       <Grid container my='20px'>
         <SubTitle label={t<string>('Review')} />
@@ -216,8 +208,12 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
           width: '92%'
         }}
       />
-      {<WaitScreen show={showWaitScreen}
-        title={t('Manage Proxies')} />}
+      {
+        <WaitScreen
+          show={showWaitScreen}
+          title={t('Manage Proxies')}
+        />
+      }
       {txInfo &&
         <Confirmation
           headerTitle={t<string>('Manage Proxies')}

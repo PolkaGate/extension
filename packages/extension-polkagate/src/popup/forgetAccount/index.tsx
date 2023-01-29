@@ -1,18 +1,20 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { ActionContext, Address, ButtonWithCancel, Checkbox2 as Checkbox, Password, Warning } from '../../components';
+import { ActionContext, Address, ButtonWithCancel, Checkbox2 as Checkbox, Password, Warning, WrongPasswordAlert } from '../../components';
 import { useTranslation } from '../../hooks';
 import { forgetAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
-const acceptedFormats = ['application/json', 'text/plain'].join(', ');
+// const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
 interface Props extends RouteComponentProps<{ address: string, isExternal: string }> {
   className?: string;
@@ -80,25 +82,16 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
         text={t<string>('Forget Account')}
       />
       {isPasswordError &&
-        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You’ve used an incorrect password. Try again.')}
-          </Warning>
-        </Grid>
+        <WrongPasswordAlert />
       }
       <Address
         address={address}
       />
-      <Grid m='-20px auto 0' width='100%'>
+      <Grid container>
         <Warning
           iconDanger
+          marginTop={0}
           theme={theme}
-          marginTop={40}
         >
           {t('You are about to remove this account. This means you will not be able to access it via this extension anymore. If you want to recover it after, you need to use the mnemonic seed.')}
         </Warning>

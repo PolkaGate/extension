@@ -4,7 +4,7 @@
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
-import { useFormatted, useTranslation } from '../hooks';
+import { useApi, useFormatted, useTranslation } from '../hooks';
 import { Identity, ShortAddress } from '.';
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
 function AccountHolder({ address, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
+  const api = useApi(address);
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' py='5px' sx={style}>
@@ -24,7 +25,9 @@ function AccountHolder({ address, style, title }: Props): React.ReactElement {
       </Typography>
       <Identity
         address={address}
+        api={api}
         identiconSize={31}
+        showSocial={false}
         style={{
           height: '38px',
           maxWidth: '100%',

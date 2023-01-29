@@ -5,15 +5,11 @@ import '@vaadin/icons';
 
 import { IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import styled from 'styled-components';
 
-import useTranslation from '../hooks/useTranslation';
 import Label from './Label';
 import { Input } from './TextInputs';
-import Warning from './Warning';
 
 interface Props {
-  className?: string;
   defaultValue?: string | null;
   disabled?: boolean;
   isError?: boolean;
@@ -27,24 +23,13 @@ interface Props {
   withoutMargin?: boolean;
 }
 
-function Password({ className, defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, withoutMargin }: Props): React.ReactElement<Props> {
-  const [isCapsLock, setIsCapsLock] = useState(false);
+export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, withoutMargin }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const { t } = useTranslation();
   const theme = useTheme();
-  const _checkKey = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>): void => {
-      onEnter && event.key === 'Enter' && onEnter();
-
-      if (event.getModifierState('CapsLock')) {
-        setIsCapsLock(true);
-      } else {
-        setIsCapsLock(false);
-      }
-    },
-    [onEnter]
-  );
+  const _checkKey = useCallback((event: React.KeyboardEvent<HTMLInputElement>): void => {
+    onEnter && event.key === 'Enter' && onEnter();
+  }, [onEnter]);
 
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
@@ -63,7 +48,6 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
 
   return (
     <Label
-      className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       label={label}
       style={{ letterSpacing: '-0.015em', position: 'relative' }}
     >
@@ -102,24 +86,6 @@ function Password({ className, defaultValue, disabled, isError, isFocused, isRea
       >
         <vaadin-icon icon={showPass ? 'vaadin:eye' : 'vaadin:eye-slash'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
       </IconButton>
-      {isCapsLock && (
-        <Warning
-          isBelowInput
-          theme={theme}
-        >
-          {t<string>('Warning: Caps lock is on')}
-        </Warning>
-      )}
     </Label>
   );
 }
-
-export default styled(Password)`
-  &.withoutMargin {
-    margin: 0;
-
-   + .danger {
-      margin-top: 6px;
-    }
-  }
-`;

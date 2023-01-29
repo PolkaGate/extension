@@ -12,6 +12,7 @@ import { useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../util/types';
 import { HeaderBrand, SubTitle } from '.';
+import { getSubstrateAddress } from '../util/utils';
 
 interface Props {
   showConfirmation: boolean;
@@ -29,7 +30,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
   const onAction = useContext(ActionContext);
 
   const network = txInfo.chain.name.replace(' Relay Chain', '');
-  const historyLink = `/history/${txInfo?.from.address}`;
+  const historyLink = txInfo?.from.address && getSubstrateAddress(txInfo.from.address) ? `/history/${getSubstrateAddress(txInfo.from.address)}` : '/';
   const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
   const fee = txInfo.api.createType('Balance', txInfo.fee);
 

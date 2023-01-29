@@ -8,7 +8,7 @@ import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/mat
 import { Chain } from '@substrate/connect';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { AccountContext, InputWithLabelAndIdenticon, PButton } from '../../../../../components';
+import { AccountContext, AddressInput, PButton } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 import getAllAddresses from '../../../../../util/getAllAddresses';
 
@@ -30,8 +30,8 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
-  const [newNominatorId, setNewNominatorId] = useState<string | undefined>(nominatorId);
-  const [newStateTogglerId, setNewStateTogglerId] = useState<string | undefined>(stateTogglerId);
+  const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
+  const [newStateTogglerId, setNewStateTogglerId] = useState<string | null | undefined>(stateTogglerId);
 
   const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
@@ -61,7 +61,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px', m: '30px auto 5px', width: '80%' }} />
       </Grid>
-      <InputWithLabelAndIdenticon
+      <AddressInput
         address={newNominatorId}
         allAddresses={allAddresses}
         chain={chain}
@@ -73,7 +73,7 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
           width: '92%'
         }}
       />
-      <InputWithLabelAndIdenticon
+      <AddressInput
         address={newStateTogglerId}
         allAddresses={allAddresses}
         chain={chain}

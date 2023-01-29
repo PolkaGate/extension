@@ -31,10 +31,8 @@ import Asset from './partial/Asset';
 import From from './partial/From';
 import Review from './Review';
 
-
 type TransferType = 'All' | 'Max' | 'Normal';
 
-// TODO: can use useMyAccountIdentity
 export default function Send(): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
@@ -44,7 +42,6 @@ export default function Send(): React.ReactElement {
   const endpoint = useEndpoint(address, chain);
   const api = useApi(address);
   const decimal = useDecimal(address);
-  const accountName = useAccountName(address);
   const myIdentity = useMyAccountIdentity(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -96,7 +93,7 @@ export default function Send(): React.ReactElement {
   }, [api, formatted, endpoint]);
 
   useEffect(() => {
-    if (!api || !transfer || !formatted || !amount || !decimal || !transferType) {
+    if (!api || !transfer || !formatted || !decimal) {
       return;
     }
 
@@ -107,7 +104,7 @@ export default function Send(): React.ReactElement {
 
       params = [formatted, keepAlive]; // just for estimatedFee calculation, sender and receiver are the same
     } else {
-      const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+      const amountAsBN = new BN(parseFloat(parseFloat(amount || '0').toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
 
       params = [formatted, amountAsBN];
     }
@@ -162,6 +159,7 @@ export default function Send(): React.ReactElement {
         onBackClick={_onBackClick}
         shortBorder
         showBackArrow
+        showClose
         text={t<string>('Send Fund')}
         withSteps={{
           current: 1,
@@ -200,8 +198,8 @@ export default function Send(): React.ReactElement {
           onSecondary={() => setWholeAmount('All')}
           primaryBtnText={t<string>('Max amount')}
           secondaryBtnText={t<string>('All amount')}
-          value={amount}
           style={{ pt: '15px' }}
+          value={amount}
         />
       </Container>
       <PButton
@@ -211,7 +209,6 @@ export default function Send(): React.ReactElement {
       />
       {showReview && amount &&
         <Review
-          accountName={accountName}
           address={address}
           amount={amount}
           api={api}

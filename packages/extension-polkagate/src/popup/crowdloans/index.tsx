@@ -6,6 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import '@vaadin/icons';
 
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
@@ -299,7 +300,7 @@ export default function CrowdLoans(): React.ReactElement {
                             </Grid>
                           }
                         </Grid>
-                        : <Identity address={crowdloan.fund.depositor} formatted={crowdloan.fund.depositor} api={api} chain={chain} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
+                        : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon style={{ fontSize: '16px' }} />
                       }
                     </Grid>
                   </Grid>
@@ -342,8 +343,11 @@ export default function CrowdLoans(): React.ReactElement {
                   fontWeight={400}
                   theme={theme}
                 >
-                  {t<string>('No contribution found.')}
+                  {t<string>('No contribution yet.')}
                 </Warning>
+                <Typography fontWeight={400} fontSize='14px' p='7px 41px' align='center'>
+                  {t('You can find Crowdloans to contribute by clicking on “Active” button below.')}
+                </Typography>
               </Grid>
             }
           </Grid>
@@ -369,11 +373,9 @@ export default function CrowdLoans(): React.ReactElement {
         {(auction === undefined || !myContributedCrowdloans)
           ? <Progress pt='105px' size={125} title={t('Loading Auction/Crowdloans...')} />
           : auction === null
-            ? <Grid color='red' height='30px' m='auto' pt='50px' width='92%'>
+            ? <Grid container pt='50px'>
               <Warning
                 fontWeight={400}
-                isBelowInput
-                isDanger
                 theme={theme}
               >
                 {t<string>('No Auction/Crowdloan found!')}
@@ -437,23 +439,28 @@ export default function CrowdLoans(): React.ReactElement {
               sx={{ height: '35px' }} />
           }
           onClick={showMyContribution}
+          textSelected={itemShow === TAB_MAP.MY_CONTRIBUTION}
           title={t<string>('Contributed')}
         />
         <HorizontalMenuItem
           divider
           exceptionWidth={33}
           icon={
-            <Box
-              component='img'
-              src={
-                itemShow === TAB_MAP.ACTIVE_CROWDLOANS
-                  ? activeCrowdloanRed as string
+            <vaadin-icon
+              icon='vaadin:piggy-bank-coin'
+              style={{
+                height: '32px',
+                color: `${itemShow === TAB_MAP.ACTIVE_CROWDLOANS
+                  ? theme.palette.primary.main
                   : theme.palette.mode === 'light'
-                    ? activeCrowdloanBlack as string
-                    : activeCrowdloanWhite as string}
-              sx={{ height: '35px' }} />
+                    ? 'black'
+                    : 'white'
+                  }`
+              }}
+            />
           }
           onClick={showActiveCrowdloans}
+          textSelected={itemShow === TAB_MAP.ACTIVE_CROWDLOANS}
           title={t<string>('Active')}
         />
         <HorizontalMenuItem
@@ -470,6 +477,7 @@ export default function CrowdLoans(): React.ReactElement {
                     : auctionWhite as string}
               sx={{ height: '35px' }} />}
           onClick={showAuction}
+          textSelected={itemShow === TAB_MAP.AUCTION}
           title={t<string>('Auction')}
         />
         <HorizontalMenuItem
@@ -486,6 +494,7 @@ export default function CrowdLoans(): React.ReactElement {
               }
               sx={{ height: '35px' }} />}
           onClick={showPastCrowdloans}
+          textSelected={itemShow === TAB_MAP.PAST_CROWDLOANS}
           title={t<string>('Past')}
         />
       </Grid>

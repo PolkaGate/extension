@@ -12,7 +12,7 @@ import { BN, bnMax } from '@polkadot/util';
 
 import { Popup, ShowValue } from '../../../components';
 import { useDecimal, useToken, useTranslation } from '../../../hooks';
-import { HeaderBrand } from '../../../partials';
+import { HeaderBrand, SubTitle } from '../../../partials';
 import { amountToHuman } from '../../../util/utils';
 
 interface Props {
@@ -31,17 +31,6 @@ export default function Info({ address, info, nominatorInfo, setShowInfo, showIn
   const onBackClick = useCallback(() => {
     setShowInfo(false);
   }, [setShowInfo]);
-
-  const SubTitle = ({ title }: { title: string }) => (
-    <Grid container direction='column' item justifyContent='center' sx={{ fontSize: '16px', fontWeight: 500, letterSpacing: '-0.015em', lineHeight: '25px', px: '5px' }}>
-      <Grid item sx={{ m: 'auto' }}>
-        {title}
-      </Grid>
-      <Grid item>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '138px', margin: 'auto' }} />
-      </Grid>
-    </Grid>
-  );
 
   const Row = ({ label, showDivider = true, value }: { label: string, value: BN | string | number | undefined, showDivider?: boolean }) => {
     return (
@@ -75,11 +64,8 @@ export default function Info({ address, info, nominatorInfo, setShowInfo, showIn
         showClose
         text={t<string>('Solo Staking')}
       />
-      <SubTitle title={t('Information')} />
-      <Container
-        disableGutters
-        sx={{ pt: '15px' }}
-      >
+      <SubTitle label={t('Information')} />
+      <Container disableGutters sx={{ pt: '20px' }}>
         <Row label={t('Max validators you can select')} value={info?.maxNominations} />
         <Row label={t('Min {{token}} to be a staker', { replace: { token } })} value={info?.minNominatorBond} />
         <Row label={t('Min {{token}} to receive rewards', { replace: { token } })} value={nominatorInfo?.minToGetRewards && info?.minNominatorBond && bnMax(info.minNominatorBond, new BN(String(nominatorInfo?.minToGetRewards)))} />

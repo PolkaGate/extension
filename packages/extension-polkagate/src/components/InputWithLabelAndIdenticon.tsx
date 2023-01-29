@@ -1,31 +1,34 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { useOutsideClick } from '../hooks';
+import { useOutsideClick, useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addAddressOnly/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';
 import ShortAddress from './ShortAddress';
 import { Input } from './TextInputs';
+import { Warning } from '.';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];
   label: string;
   style?: SxProps<Theme>;
   chain?: Chain;
-  address: string | undefined;
-  setAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+  address: string | null | undefined;
+  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
   helperText?: string;
   placeHolder?: string;
@@ -34,29 +37,36 @@ interface Props {
 }
 
 export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const [offFocus, setOffFocus] = useState(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
+  const [inValidAddress, setInValidAddress] = useState<boolean>(false);
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _toggleDropdown = useCallback(() => allAddresses.length > 0 && setDropdownVisible(!isDropdownVisible), [allAddresses.length, isDropdownVisible]);
 
   useOutsideClick([ref], _hideDropdown);
 
+  useEffect(() => {
+    address && setEnteredAddress(enteredAddress);
+  }, [address, enteredAddress]);
+
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
-      setAddress(undefined);
+      setAddress(null);
+      setEnteredAddress(undefined);
+      setInValidAddress(false);
 
       return;
     }
 
-    if (isValidAddress(value)) {
-      setAddress(value);
-    } else {
-      setAddress(undefined);
-    }
+    setInValidAddress(!(isValidAddress(value)));
+    setEnteredAddress(value);
+    isValidAddress(value) ? setAddress(value) : setAddress(undefined);
   }, [setAddress]);
 
   const _selectAddress = useCallback((newAddr: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
@@ -70,10 +80,18 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
   }, []);
 
   const pasteAddress = useCallback(() => {
-    address
-      ? setAddress(undefined)
-      : navigator.clipboard.readText().then((clipText) => isValidAddress(clipText) && setAddress(clipText)).catch(console.error);
-  }, [address, setAddress]);
+    if (enteredAddress || address) {
+      setAddress(null);
+      setEnteredAddress(undefined);
+      setInValidAddress(false);
+    } else {
+      navigator.clipboard.readText().then((clipText) => {
+        isValidAddress(clipText) ? setAddress(clipText) : setAddress(undefined);
+        setEnteredAddress(clipText);
+        setInValidAddress(!(isValidAddress(clipText)));
+      }).catch(console.error);
+    }
+  }, [address, enteredAddress, setAddress]);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ position: 'relative', ...style }}>
@@ -93,8 +111,8 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             ref={ref}
             style={{
               backgroundColor: disabled ? theme.palette.primary.contrastText : theme.palette.background.paper,
-              borderColor: address !== undefined && !isValidAddress(address) ? theme.palette.warning.main : theme.palette.secondary.light,
-              borderWidth: address !== undefined && !isValidAddress(address) ? '3px' : '1px',
+              borderColor: address !== undefined && inValidAddress ? theme.palette.warning.main : theme.palette.secondary.light,
+              borderWidth: address !== undefined && inValidAddress ? '3px' : '1px',
               fontSize: '14px',
               fontWeight: 300,
               padding: 0,
@@ -103,8 +121,8 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
             }}
             theme={theme}
             type='text'
-            value={address ?? ''}
-            withError={offFocus && address !== undefined && !isValidAddress(address)}
+            value={enteredAddress ?? address ?? ''}
+            withError={offFocus && enteredAddress !== undefined && inValidAddress}
           />
           {!disabled &&
             <>
@@ -121,7 +139,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
                 <FontAwesomeIcon
                   color={theme.palette.secondary.light}
                   fontSize='15px'
-                  icon={address ? faXmarkCircle : faPaste}
+                  icon={enteredAddress || address ? faXmarkCircle : faPaste}
                 />
               </IconButton>
               {addWithQr &&
@@ -144,17 +162,28 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
       </Grid>
       {showIdenticon &&
         <Grid item xs={1.2}>
-          {isValidAddress(address)
+          {!inValidAddress
             ? <Identicon
               iconTheme={chain?.icon || 'polkadot'}
               prefix={chain?.ss58Format ?? 42}
               size={31}
               value={address}
             />
-
             : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
             </Grid>
           }
+        </Grid>
+      }
+      {inValidAddress &&
+        <Grid container sx={{ '> div': { pl: '3px' } }}>
+          <Warning
+            iconDanger
+            isBelowInput
+            marginTop={0}
+            theme={theme}
+          >
+            {t<string>('Invalid address')}
+          </Warning>
         </Grid>
       }
       {allAddresses.length > 0 &&
@@ -197,7 +226,7 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
                   <ShortAddress address={address} clipped />
                 </Grid>
               </Grid>
-              <Grid item xs={1.2} justifyContent='center'>
+              <Grid item justifyContent='center' xs={1.2}>
                 <Identicon
                   iconTheme={chain?.icon || 'polkadot'}
                   prefix={chain?.ss58Format ?? 42}

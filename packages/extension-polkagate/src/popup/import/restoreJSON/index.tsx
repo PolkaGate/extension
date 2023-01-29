@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
@@ -10,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { u8aToString } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Address, InputFileWithLabel, Password, PButton, Warning } from '../../../components';
+import { AccountContext, ActionContext, Address, InputFileWithLabel, Password, PButton, Warning, WrongPasswordAlert } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
@@ -56,6 +58,7 @@ export default function RestoreJson(): React.ReactElement {
         json = JSON.parse(u8aToString(file)) as KeyringPair$Json | KeyringPairs$Json;
         setFile(json);
         setStep(false);
+        setFileError(false);
       } catch (e) {
         console.error(e);
         setFileError(true);
@@ -132,16 +135,7 @@ export default function RestoreJson(): React.ReactElement {
         }}
       />
       {isPasswordError && !stepOne &&
-        <Grid color='red' height='30px' m='auto' pt='5px' width='92%'>
-          <Warning
-            fontWeight={400}
-            isBelowInput
-            isDanger
-            theme={theme}
-          >
-            {t<string>('You’ve used an incorrect password. Try again.')}
-          </Warning>
-        </Grid>
+        <WrongPasswordAlert />
       }
       {!stepOne && accountsInfo.length &&
         <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', m: '20px auto 0', maxHeight: parent.innerHeight * 1 / 3, overflowY: 'scroll', width: '92%' }}>
