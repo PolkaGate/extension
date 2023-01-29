@@ -190,10 +190,6 @@ export default function InputWithLabelAndIdenticon({ addWithQr = false, allAddre
         <Grid
           container
           sx={{
-            '&::-webkit-scrollbar': {
-              display: 'none',
-              width: 0
-            },
             '> .tree:last-child': { border: 'none' },
             bgcolor: 'background.paper',
             border: '2px solid',
