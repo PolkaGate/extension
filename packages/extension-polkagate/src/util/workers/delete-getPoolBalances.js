@@ -9,7 +9,6 @@
  * rewardPool.balance: The pool balance at the time of the last payout
  * rewardPool.totalEarnings: The total earnings ever at the time of the last payout
  */
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
