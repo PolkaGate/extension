@@ -38,18 +38,22 @@ export default function usePool(address: AccountId | string, id?: number, refres
         isFetching.fetching[String(stakerAddress)].getPool = false;
         isFetching.set(isFetching.fetching);
 
-        /** remove saved old pool from local storage if any */
         chrome.storage.local.get('MyPools', (res) => {
           const k = `${stakerAddress}`;
-          const mySavedPools = res?.MyPools;
+          const mySavedPools = res?.MyPools || {};
 
-          if (mySavedPools) {
-            if (mySavedPools[k]) {
-              delete mySavedPools[k];
-              // eslint-disable-next-line no-void
-              void chrome.storage.local.set({ MyPools: mySavedPools });
-            }
-          }
+          mySavedPools[k] = null; // to remove old saved pool, even set empty for not already pool staked account
+
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ MyPools: mySavedPools });
+
+          // if (mySavedPools) {
+          //   if (mySavedPools[k]) {
+          //     delete mySavedPools[k];
+          //     // eslint-disable-next-line no-void
+          //     void chrome.storage.local.set({ MyPools: mySavedPools });
+          //   }
+          // }
         });
 
         getPoolWorker.terminate();
@@ -79,7 +83,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${stakerAddress}`;
-        const last = res?.MyPools ?? {};
+        const last = res?.MyPools || {};
 
         parsedInfo.date = Date.now();
         last[k] = parsedInfo;
@@ -137,7 +141,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
     chrome.storage.local.get('MyPools', (res) => {
       console.log('MyPools in local storage:', res);
 
-      if (res?.MyPools?.[formatted]) {
+      if (res?.MyPools?.[formatted] !== undefined) {
         setMyPool(res.MyPools[formatted]);
 
         return;
