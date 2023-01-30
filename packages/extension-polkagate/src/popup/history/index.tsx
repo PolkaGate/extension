@@ -315,7 +315,7 @@ export default function TransactionHistory(): React.ReactElement<''> {
                 tabIndex !== TAB_MAP.STAKING &&
                 ((transfersTx?.hasMore)
                   ? 'loading...'
-                  : !!tabHistory.length &&
+                  : !!tabHistory?.length &&
                   <Box fontSize={11}>
                     {t('No more transactions to load')}
                   </Box>
