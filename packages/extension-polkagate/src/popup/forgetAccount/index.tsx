@@ -30,10 +30,9 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
   const theme = useTheme();
   const needsPasswordConfirmation = isExternal !== 'true';
 
-  const _goHome = useCallback(
-    () => onAction('/'),
-    [onAction]
-  );
+  const _goHome = useCallback(() => onAction('/'), [onAction]);
+
+  const NULL_FUNCTION = useCallback(() => null, []);
 
   const _onClickForget = useCallback(
     (): void => {
@@ -104,7 +103,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
               isFocused
               label={t<string>('Password for this account')}
               onChange={_onChangePass}
-              onEnter={_onClickForget}
+              onEnter={!checkConfirmed && (!password?.length || password?.length <= 3) ? NULL_FUNCTION : _onClickForget}
             />
             {isPasswordError && (
               <Warning
@@ -131,7 +130,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
         _isBusy={isBusy}
         _onClick={_onClickForget}
         _onClickCancel={_goHome}
-        disabled={!checkConfirmed && !password?.length}
+        disabled={!checkConfirmed && (!password?.length || password?.length <= 3)}
         text={t<string>('Forget')}
       />
     </>

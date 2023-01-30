@@ -28,8 +28,8 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
   const [showPass, setShowPass] = useState(false);
   const theme = useTheme();
   const _checkKey = useCallback((event: React.KeyboardEvent<HTMLInputElement>): void => {
-    onEnter && event.key === 'Enter' && onEnter();
-  }, [onEnter]);
+    onEnter && event.key === 'Enter' && !disabled && onEnter();
+  }, [disabled, onEnter]);
 
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
