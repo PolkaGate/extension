@@ -198,7 +198,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Solo Staking Settings')}
+          text={t<string>('Solo Settings')}
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
@@ -206,13 +206,6 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
-          {/* <AccountHolderWithProxy
-            address={address}
-            chain={chain}
-            selectedProxyAddress={selectedProxyAddress}
-            showDivider
-            title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
-          /> */}
           {newSettings?.controllerId &&
             <Controller />
           }
@@ -251,11 +244,11 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Solo Staking Settings')}
+          title={t('Solo Settings')}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t('Solo Staking Settings')}
+            headerTitle={t('Solo Settings')}
             onPrimaryBtnClick={goToStakingHome}
             onSecondaryBtnClick={goToMyAccounts}
             primaryBtnText={t('Staking Home')}
