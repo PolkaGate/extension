@@ -53,9 +53,9 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
 
   useEffect(() => {
     if (containerRef) {
-      setDropdownWidth(`${containerRef.current?.offsetWidth}px`);
+      setDropdownWidth(`${containerRef.current?.offsetWidth + (showIdenticon ? 5 : 0)}px`);
     }
-  }, [containerRef.current?.offsetWidth]);
+  }, [containerRef?.current?.offsetWidth, showIdenticon]);
 
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     setTogglePopper(false);
@@ -117,7 +117,7 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
             style={{ position: 'relative' }}
           >
             <Autocomplete
-              componentsProps={{ paper: { sx: { '> ul': { m: 0, p: 0 }, border: '2px solid', borderColor: 'secondary.light', maxHeight: window.innerHeight / 2, ml: '-2px', my: '5px', p: 0, width: dropdownWidth } } }}
+              componentsProps={{ paper: { sx: { '> ul': { m: 0, p: 0 }, border: '2px solid', borderColor: 'secondary.light', maxHeight: window.innerHeight / 2, ml: '-1px', my: '5px', p: 0, width: dropdownWidth } } }}
               disableClearable
               disabled={disabled}
               freeSolo
