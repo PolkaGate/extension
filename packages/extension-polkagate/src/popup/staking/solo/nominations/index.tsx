@@ -60,7 +60,7 @@ export default function Index(): React.ReactElement {
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 
@@ -201,7 +201,7 @@ export default function Index(): React.ReactElement {
           text={t<string>('Select Validator')}
         />
       }
-      {showRemoveValidator &&
+      {showRemoveValidator && formatted &&
         <RemoveValidators
           address={address}
           api={api}
@@ -209,7 +209,7 @@ export default function Index(): React.ReactElement {
           formatted={formatted}
           setShow={setShowRemoveValidator}
           show={showRemoveValidator}
-          title={t('Remove Selected Validators')}
+          title={t('Remove Validators')}
         />
       }
       {showSelectValidator && allValidatorsInfo && formatted &&

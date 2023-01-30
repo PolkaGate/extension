@@ -27,7 +27,7 @@ import TxDetail from '../../../partial/TxDetail';
 
 interface Props {
   address: string;
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   chain: Chain | null;
   formatted: string;
   title: string;
@@ -50,7 +50,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const chilled = api.tx.staking.chill;
+  const chilled = api && api.tx.staking.chill;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
@@ -74,12 +74,12 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
   }, [proxies]);
 
   useEffect((): void => {
-    chilled().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    chilled && chilled().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [chilled, formatted]);
 
   const remove = useCallback(async () => {
     try {
-      if (!formatted || !chilled) {
+      if (!formatted || !api || !chilled) {
         return;
       }
 
