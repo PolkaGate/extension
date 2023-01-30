@@ -160,7 +160,13 @@ export default function CreatePool(): React.ReactElement {
 
   return (
     <>
-      <HeaderBrand onBackClick={backToStake} shortBorder showBackArrow showClose text={t<string>('Pool Staking')} />
+      <HeaderBrand
+        onBackClick={backToStake}
+        shortBorder
+        showBackArrow
+        showClose
+        text={t<string>('Pool Staking')}
+      />
       <SubTitle label={t<string>('Create Pool')} withSteps={{ current: 1, total: 2 }} />
       <Grid container m='20px auto 10px' width='92%'>
         <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} placeholder={DEFAULT_POOLNAME} value={poolName} />
