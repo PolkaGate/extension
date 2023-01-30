@@ -290,7 +290,7 @@ export default function Index(): React.ReactElement {
       <Container disableGutters sx={{ px: '15px' }}>
         <AccountBrief address={address} identity={identity} />
         <BouncingSubTitle circleStyle={{ m: '17px 0 0 149px' }} label={t<string>('Pool Staking')} refresh={refresh} style={{ fontSize: '20px', fontWeight: 400 }} />
-        <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }}>
+        <Grid container maxHeight={window.innerHeight - 264} sx={{ overflowY: 'scroll' }}>
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
