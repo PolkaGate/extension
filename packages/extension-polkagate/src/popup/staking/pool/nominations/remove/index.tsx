@@ -32,7 +32,7 @@ interface Props {
   chain: Chain | null;
   formatted: string;
   title: string;
-  poolId: BN | undefined;
+  poolId: number | undefined;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
 }
