@@ -8,9 +8,10 @@ import '@vaadin/icons';
 import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton } from '@mui/material';
+import { Divider, Grid, IconButton, Link, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { saveAs } from 'file-saver';
 
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
@@ -31,6 +32,10 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 
   const [data, setData] = useState<{ version: 'string' }>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
+  const [downloadUrl, setDownloadUrl] = useState<string>();
+  const [isOutdatedVersion, setOutdatedVersion] = useState<string | undefined>();
+
+  const isFirefox = navigator.userAgent.match(/firefox/i);
 
   const fetchJson = () => {
     fetch('./manifest.json')
@@ -42,6 +47,44 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
         console.log(e.message);
       });
   };
+
+  useEffect(() => {
+    fetch('https://raw.githubusercontent.com/Nick-1979/polkagate-chrome-developer-version/main/manifest.json')
+      .then((res) => res.json())
+      .then((out) => {
+        const installedVersion = chrome.runtime.getManifest().version;
+        const latestVersion = out?.version as string;
+
+        if (installedVersion !== latestVersion) {
+          setOutdatedVersion(latestVersion);
+          console.log(`** Installed version:${installedVersion} latest version:${out?.version} **`);
+        }
+      }).catch((err) => console.error(err));
+  }, []);
+
+  const onUpdate = useCallback(() => {
+    if (!isOutdatedVersion || isFirefox) {
+      return;
+    }
+
+    fetch('https://github.com/Nick-1979/polkagate-chrome-developer-version/archive/refs/heads/main.zip', {
+      headers: {
+        'Content-Type': 'application/zip'
+      },
+      method: 'GET'
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create blob link to download
+        const url = window.URL.createObjectURL(
+          new Blob([blob])
+        );
+
+        saveAs(blob, `${isOutdatedVersion}.zip`);
+
+        setDownloadUrl(url);
+      }).catch(console.error);
+  }, [isFirefox, isOutdatedVersion]);
 
   useEffect(() => {
     fetchJson();
@@ -176,6 +219,15 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
         </MenuItem>
         <Grid container justifyContent='center' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '80%' }}>
           {`${t('Version')} ${data?.version || ''}`}
+          {isOutdatedVersion &&
+            <Typography sx={{ fontSize: '11px', fontWeight: '500', color: 'warning.main', ml: '5px' }}>
+              {t('a new version is available')}
+            </Typography>
+          }
+          {!isFirefox &&
+            <Link onClick={onUpdate} sx={{ fontSize: '11px', fontWeight: '400', ml: '5px', cursor: 'pointer' }}>
+              {t('download')}
+            </Link>}
         </Grid>
       </Grid>
       <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
