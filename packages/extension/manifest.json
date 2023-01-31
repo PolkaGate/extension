@@ -4,20 +4,20 @@
   "homepage_url": "https://polkagate.xyz",
   "name": "PolkaGate",
   "short_name": "PG",
-  "manifest_version": 2,
-  "version": "0.1.0.4",
+  "manifest_version": 3,
+  "version": "0.1.1.4",
   "permissions": [
     "storage",
-    "unlimitedStorage",
     "tabs"
   ],
+  "optional_permissions": [
+    "unlimitedStorage"
+  ],
   "background": {
-    "scripts": [
-      "background.js"
-    ],
-    "persistent": true
+    "service_worker": "background.js",
+    "type": "module"
   },
-  "browser_action": {
+  "action": {
     "default_title": "Polkagate",
     "default_popup": "index.html"
   },
@@ -40,8 +40,11 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "web_accessible_resources": [
-    "page.js"
-  ],
-  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
+  "web_accessible_resources": [{
+      "resources":  ["page.js"],
+      "use_dynamic_url": true
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
 }
