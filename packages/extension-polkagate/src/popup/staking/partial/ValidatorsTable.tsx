@@ -26,7 +26,7 @@ interface Props {
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined;
   chain?: Chain;
   decimal?: number;
-  formatted?: AccountId;
+  formatted?: AccountId | string;
   handleCheck: (checked: boolean, validator: ValidatorInfo) => void;
   height?: number;
   isSelected: (v: ValidatorInfo) => boolean;

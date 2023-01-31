@@ -40,7 +40,7 @@ interface Props {
   staked: BN;
 }
 
-export default function Review({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
+export default function Review ({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -82,7 +82,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
   }, [onAction, setShow]);
 
   useEffect((): void => {
-    nominated && nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    nominated && formatted && nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [nominated, formatted, params]);
 
   useEffect((): void => {

@@ -89,7 +89,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
       const { block, failureText, fee, success, txHash } = await broadcast(api, tx, [], signer, formatted, selectedProxy);
 
       const info = {
-        action: 'Unstake',
+        action: 'Solo Staking',
         amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),

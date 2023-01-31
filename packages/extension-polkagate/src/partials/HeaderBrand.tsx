@@ -9,9 +9,8 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoWhite } from '../assets/logos';
 import { ActionContext, Steps } from '../components';
-import { useAccount, useChain, useFormatted } from '../hooks';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { AccountMenuInfo, Step } from '../util/types';
+import { Step } from '../util/types';
 import AccMenuInside from './AccMenuInside';
 import Menu from './Menu';
 

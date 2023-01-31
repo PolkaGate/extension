@@ -44,7 +44,7 @@ export default function Stake(): React.ReactElement {
 
   return (
     <>
-      {pool === undefined && state?.pool === undefined
+      {pool === undefined
         ? <>
           <HeaderBrand
             onBackClick={onBackClick}
