@@ -161,7 +161,7 @@ export default class State {
     // this.#authUrls = previousAuth;
 
     chrome.storage.local.get(AUTH_URLS_KEY, (res) => {
-      const authString = res?.AUTH_URLS_KEY ?? {};
+      const authString = res?.AUTH_URLS_KEY ?? '{}';
       const previousAuth = JSON.parse(authString) as AuthUrls;
 
       this.#authUrls = previousAuth;
