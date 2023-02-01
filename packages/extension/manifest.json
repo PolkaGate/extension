@@ -41,8 +41,11 @@
     "128": "images/icon-128.png"
   },
   "web_accessible_resources": [{
-      "resources":  ["page.js"],
-      "use_dynamic_url": true
+    "resources":  ["page.js"],
+    "matches": [ "https://*/*" ]
+  },{
+    "resources":  ["page.js"],
+    "matches": [ "http://*/*" ]
   }],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
