@@ -9,5 +9,6 @@ export { default as AccMenu } from './AccMenu';
 export { default as AccMenuInside } from './AccMenuInside';
 export { default as WaitScreen } from './WaitScreen';
 export { default as SubTitle } from './SubTitle';
+export { default as ChainSwitch } from './ChainSwitch';
 export { default as ThroughProxy } from './ThroughProxy';
 export { default as Confirmation } from './Confirmation';

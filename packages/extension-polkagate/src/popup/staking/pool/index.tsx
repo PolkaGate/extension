@@ -20,7 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
-import { HeaderBrand } from '../../../partials';
+import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
@@ -280,7 +280,7 @@ export default function Index(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address}>{identicon}</ChainSwitch>}
         noBorder
         onBackClick={onBackClick}
         paddingBottom={0}
