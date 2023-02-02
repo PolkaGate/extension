@@ -7,7 +7,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, SelectChain, Select, Warning } from '../../../components';
+import { AccountContext, ActionContext, Select, SelectChain, Warning } from '../../../components';
 import Address from '../../../components/Address';
 import PButton from '../../../components/PButton';
 import { useLedger, useTranslation } from '../../../hooks';
@@ -160,7 +160,7 @@ function ImportLedger(): React.ReactElement {
         />
       </div>
       <SelectChain
-        address={address}
+        address={address || 'dummy address just to make select enable'}
         defaultValue={newChain?.genesisHash || networkOps.current[0].text}
         icon={getLogo(newChain ?? undefined)}
         label={t<string>('Select the chain')}
