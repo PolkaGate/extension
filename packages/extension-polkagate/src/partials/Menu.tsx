@@ -8,9 +8,11 @@ import '@vaadin/icons';
 import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Link } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
+import { riot } from '../assets/icons';
 
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
@@ -174,14 +176,38 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
         >
           <SettingSubMenu show={showSettingSubMenu} />
         </MenuItem>
-        <Grid container justifyContent='center' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '80%' }}>
-          {`${t('Version')} ${data?.version || ''}`}
+        <Grid container justifyContent='space-between' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '85%', pl: '10px' }}>
+          <Grid item>
+            {`${t('Version')} ${data?.version || ''}`}
+          </Grid>
+          <Grid container width='fit-content'>
+            <Grid item>
+              <Link href={'mailto:polkagate@outlook.com'}>
+                <EmailIcon sx={{ color: '#1E5AEF', fontSize: 15 }} />
+              </Link>
+            </Grid>
+            <Grid item pl='5px'>
+              <Link href='https://polkagate.xyz' rel='noreferrer' target='_blank'>
+                <LanguageIcon sx={{ color: '#007CC4', fontSize: 15 }} />
+              </Link>
+            </Grid>
+            <Grid item pl='5px'>
+              <Link href='https://twitter.com/@polkagate' rel='noreferrer' target='_blank'>
+                <TwitterIcon sx={{ color: '#2AA9E0', fontSize: 15 }} />
+              </Link>
+            </Grid>
+            <Grid item pl='5px'>
+              <Link href='https://matrix.to/#/#polkagate:matrix.org' rel='noreferrer' target='_blank'>
+                <Box component='img' src={riot} sx={{ height: '12px', width: '12px', mt: '2px' }} />
+              </Link>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
       <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
-    </Grid>
+    </Grid >
   );
 }
 
