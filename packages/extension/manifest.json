@@ -5,7 +5,7 @@
   "name": "PolkaGate: The gateway to the Polkadot eco.",
   "short_name": "PolkaGate",
   "manifest_version": 3,
-  "version": "0.1.1.4",
+  "version": "0.1.1.5",
   "permissions": [
     "storage",
     "unlimitedStorage",
