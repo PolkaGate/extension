@@ -146,7 +146,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
                 value={amount} />
             }
             fee={estimatedFee}
-            label={t('Withdrawn amount')}
+            label={t('Withdraw amount')}
             showDivider
             withFee
             style={{ pt: '5px' }}

@@ -151,7 +151,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
               />
             }
             fee={estimatedFee}
-            label={t('Withdrawn amount')}
+            label={t('Withdraw amount')}
             showDivider
             style={{ pt: '5px' }}
             withFee
