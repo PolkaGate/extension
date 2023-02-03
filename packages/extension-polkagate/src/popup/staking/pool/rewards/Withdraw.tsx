@@ -61,9 +61,9 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
-
+    setRefresh(true);
     onAction(`/pool/${address}`);
-  }, [address, onAction, setShow]);
+  }, [address, onAction, setRefresh, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -107,12 +107,11 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
-      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, formatted, selectedProxyAddress, password, setRefresh, tx, params, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
+  }, [api, formatted, selectedProxyAddress, password, tx, params, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
