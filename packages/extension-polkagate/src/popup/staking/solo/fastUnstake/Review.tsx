@@ -126,6 +126,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           showBackArrow
           showClose
           text={t<string>('Fast Unstake')}
+          withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
           <Grid color='red' height='30px' m='auto' mt='-10px' width='92%'>
