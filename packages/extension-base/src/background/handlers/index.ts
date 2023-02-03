@@ -22,16 +22,12 @@ export default function handler<TMessageType extends MessageTypes> ({ id, messag
     : (sender.tab && sender.tab.url) || sender.url || '<unknown>';
   const source = `${from}: ${id}: ${message}`;
 
-  console.log(` [in] ${source}`); // :: ${JSON.stringify(request)}`);
-
   const promise = isExtension
     ? extension.handle(id, message, request, port)
     : tabs.handle(id, message, request, from, port);
 
   promise
     .then((response): void => {
-      console.log(`[out] ${source}`); // :: ${JSON.stringify(response)}`);
-
       // between the start and the end of the promise, the user may have closed
       // the tab, in which case port will be undefined
       assert(port, 'Port has been disconnected');

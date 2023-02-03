@@ -210,7 +210,7 @@ export default function Index(): React.ReactElement {
 
   const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Disabled?: boolean, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
     const _link1Disable = !value || value?.isZero() || formatted !== stakingAccount?.controllerId;
-    const _link2Disable = !value || value?.isZero() || link2Disabled;
+    const _link2Disable = _link1Disable || link2Disabled;
 
     return (
       <>
