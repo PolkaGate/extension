@@ -131,8 +131,10 @@ export default function PoolMoreInfo ({ address, api, chain, pool, poolId, setSh
         <ShowBalance
           api={api}
           balance={poolToShow?.rewardClaimable?.toString()}
+          decimal={poolToShow?.decimal}
           decimalPoint={4}
           height={22}
+          token={poolToShow?.token}
         />
       </Grid>
     </Grid>
