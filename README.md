@@ -70,11 +70,11 @@ Once added, you can create an account (via a generated seed) or import via an ex
 
 ### Testing
 
-* To run unit tests, first install dependencies using `yarn` then use: `yarn test:plus`
+* To run unit tests, first install dependencies using `yarn` then use: `yarn test`
 
 * Test on Westend blockchain:
 
-   - It is possible via the provided [add-on](https://addons.mozilla.org/en-US/firefox/addon/polkagate/). To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
+   - It is possible via the extension. To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
 
    - Or build the extension on your own, but it needs to append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js') before build:
 
