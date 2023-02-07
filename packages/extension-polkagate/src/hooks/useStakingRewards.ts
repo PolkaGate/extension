@@ -13,7 +13,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
 import { AccountStakingInfo } from '../util/types';
-import { useChainName } from '.';
+import { useChainName, useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
@@ -53,27 +53,17 @@ export async function getStakingReward(chainName: string, address: AccountId | s
 export default function useStakingRewards(address: string, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
   const [rewards, setRewards] = useState<BN>();
   const chainName = useChainName(address);
+  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
   useEffect(() => {
-    if (!stakingAccount || !chainName) {
+    if (!stakingAccount || !chainName || !rewardDestinationAddress) {
       return;
     }
 
-    const destinationType = Object.keys(stakingAccount.rewardDestination)[0];
-    let payeeAddress: string | AccountId;
-
-    if (destinationType === 'account') {
-      payeeAddress = stakingAccount.rewardDestination.account;
-    } else if (['staked', 'stash'].includes(destinationType)) {
-      payeeAddress = stakingAccount.stashId;
-    } else {
-      payeeAddress = stakingAccount.controllerId;
-    }
-
-    getStakingReward(chainName, payeeAddress).then((r) => {
+    getStakingReward(chainName, rewardDestinationAddress).then((r) => {
       setRewards(r ? new BN(r) : BN_ZERO);
     }).catch(console.error);
-  }, [chainName, stakingAccount]);
+  }, [chainName, rewardDestinationAddress, stakingAccount]);
 
   return rewards;
 }
