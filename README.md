@@ -39,13 +39,10 @@ The following features will be available in the next milestone:
 
 ### Add-on
 
-FireFox: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/)
+**FireFox**: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/)
 
-Chrome: 
-   1. Download the [zip file](https://github.com/Nick-1979/polkagate-chrome-developer-version/archive/refs/heads/main.zip)
-   2. Go to [`chrome://extensions/`](chrome://extensions/)
-   3. Switch on the "Developer mode" on top right
-   4. Click on "Load unpacked" button and point to the unzipped downloaded folder
+**Chrome** and **Microsoft Edge**: The extension for these browsers can be downloaded from [here]( https://chrome.google.com/webstore/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp)
+
 
 ### Development version
 
@@ -70,11 +67,11 @@ Once added, you can create an account (via a generated seed) or import via an ex
 
 ### Testing
 
-* To run unit tests, first install dependencies using `yarn` then use: `yarn test:plus`
+* To run unit tests, first install dependencies using `yarn` then use: `yarn test`
 
 * Test on Westend blockchain:
 
-   - It is possible via the provided [add-on](https://addons.mozilla.org/en-US/firefox/addon/polkagate/). To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
+   - It is possible via the extension. To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
 
    - Or build the extension on your own, but it needs to append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js') before build:
 

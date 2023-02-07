@@ -19,7 +19,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Progress } from '../../../../components';
-import { useApi, useChain, useChainName, useDecimal, useEndpoint2, useFormatted, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useEndpoint2, useFormatted, useStakingAccount, useStakingRewardDestinationAddress, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
@@ -57,7 +57,9 @@ export default function RewardDetails(): React.ReactElement {
   const api = useApi(address, state?.api);
   const chain = useChain(address, state?.chain);
   const history = useHistory();
-  const formatted = useFormatted(address);
+  const stakingAccount = useStakingAccount(address);
+  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
+  // const formatted = useFormatted(address);
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -241,7 +243,7 @@ export default function RewardDetails(): React.ReactElement {
     //   }
     // });
 
-    formatted && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(formatted)).then((r) => {
+    rewardDestinationAddress && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(rewardDestinationAddress)).then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
       const rewardsFromSubscan: RewardInfo[] | undefined = list?.map((i: SubscanRewardInfo): RewardInfo => {
         return {
@@ -260,7 +262,7 @@ export default function RewardDetails(): React.ReactElement {
         return setRewardsInfo(rewardsFromSubscan);
       }
     });
-  }, [chainName, endpoint, formatted]);
+  }, [chainName, endpoint, rewardDestinationAddress]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);

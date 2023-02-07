@@ -62,6 +62,8 @@ export default function useStakingAccount(address: AccountId | string | undefine
     temp.stakingLedger.set('total', isHexToBn(String(accountInfo.stakingLedger.total)));
     temp.accountId = temp.accountId.toString();
     temp.controllerId = temp.controllerId?.toString() || null;
+    temp.stashId = temp.stashId.toString();
+    temp.rewardDestination = JSON.parse(JSON.stringify(temp.rewardDestination))
 
     setStakingInfo({ ...temp, era: Number(era), date: Date.now(), decimal, token });
     refresh && setRefresh && setRefresh(false);
