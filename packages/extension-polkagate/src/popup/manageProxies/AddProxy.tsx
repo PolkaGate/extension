@@ -11,11 +11,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext, AddressInput, InputWithLabel, PButton, Select, ShowIdentity } from '../../components';
+import { AccountContext, AddressInput, InputWithLabel, PButton, Select } from '../../components';
 import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
+import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
   address: string;
@@ -140,22 +141,14 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
             value={delay}
           />
         </Grid>
-        <Typography
-          fontSize='16px'
-          fontWeight={300}
-          pb='4px'
-          pl='10px'
-        >
+        <Typography fontSize='16px' fontWeight={300} pb='4px' pl='10px'>
           {t<string>('Block(s)')}
         </Typography>
       </Grid>
-      {accountInfo !== undefined &&
+      {realAddress &&
         <ShowIdentity
           accountIdentity={accountInfo}
-          style={{
-            m: 'auto',
-            width: '92%'
-          }}
+          style={{ m: 'auto', width: '92%' }}
         />
       }
       <PButton

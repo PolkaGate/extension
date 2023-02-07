@@ -21,7 +21,6 @@ export { default as AutoResizeTextarea } from './AutoResizeTextarea';
 export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';
 export { default as Infotip } from './Infotip';
-export { default as ShowIdentity } from './ShowIdentity';
 export { default as ShortAddress } from './ShortAddress';
 export { default as Select } from './Select';
 export { default as SlidePopUp } from './SlidePopUp';
