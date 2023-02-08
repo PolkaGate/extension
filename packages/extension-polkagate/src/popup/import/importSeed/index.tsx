@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -17,7 +19,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-function ImportSeed(): React.ReactElement {
+export default function ImportSeed(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -54,19 +56,11 @@ function ImportSeed(): React.ReactElement {
     }
   }, [account, onAction, type]);
 
-  const _onNextStep = useCallback(
-    () => setStep1(false),
-    []
-  );
+  const _onNextStep = useCallback(() => setStep1(false), []);
 
-  const _onCancelClick = useCallback(
-    () => setStep1(true),
-    []
-  );
+  const _onCancelClick = useCallback(() => setStep1(true), []);
 
-  const _onBackClick = useCallback(() => {
-    step1 ? onAction('/') : _onCancelClick();
-  }, [_onCancelClick, onAction, step1]);
+  const _onBackClick = useCallback(() => step1 ? onAction('/') : _onCancelClick(), [_onCancelClick, onAction, step1]);
 
   return (
     <>
@@ -79,23 +73,15 @@ function ImportSeed(): React.ReactElement {
           total: 2
         }}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='20px auto'
-        textAlign='left'
-        width='88%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='20px auto' textAlign='left' width='88%'>
         {t<string>('Enter a mnemonic seed (recovery phrase) of an account to import it.')}
       </Typography>
-      <div>
-        <Address
-          address={account?.address}
-          genesisHash={account?.genesis}
-          name={name}
-          showCopy={!!account?.address}
-        />
-      </div>
+      <Address
+        address={account?.address}
+        genesisHash={account?.genesis}
+        name={name}
+        showCopy={!!account?.address}
+      />
       {step1
         ? (
           <SeedAndPath
@@ -120,5 +106,3 @@ function ImportSeed(): React.ReactElement {
     </>
   );
 }
-
-export default ImportSeed;
