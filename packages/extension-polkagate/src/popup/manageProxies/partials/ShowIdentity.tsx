@@ -57,23 +57,23 @@ export default function ShowIdentity ({ accountIdentity, style }: Props): React.
           {accountIdentity
             ? <Grid container item>
               <Grid display='block' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', p: '10px' }} xs={4}>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Display:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Display')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Legal:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Legal')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Email:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Email')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Element:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Element')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Twitter:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Twitter')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Web:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Web')}:
                 </Typography>
               </Grid>
               <Grid display='block' item p='10px' xs={8}>
