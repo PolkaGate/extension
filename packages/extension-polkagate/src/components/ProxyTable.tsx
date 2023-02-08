@@ -1,10 +1,12 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -17,13 +19,13 @@ import Label from './Label';
 import { AccountContext, Checkbox2 as Checkbox, Identicon } from '.';
 
 interface Props {
-  chain?: Chain | undefined | null;
+  chain: Chain | undefined | null;
   label: string;
   style?: SxProps<Theme>;
-  proxies?: ProxyItem[];
+  proxies: ProxyItem[] | undefined;
   onSelect?: (selected: Proxy) => void;
   mode: 'None' | 'Availability' | 'Delete' | 'Select' | 'Status';
-  maxHeight?: string;
+  maxHeight?: string | number;
   proxyTypeFilter?: string[];
   notFoundText?: string;
   selected?: Proxy;
@@ -56,7 +58,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
     proxies && onSelect && onSelect(proxy);
   }, [onSelect, proxies]);
 
-  const Select = ({ proxy, index }: { proxy: Proxy, index: number }) => (
+  const Select = ({ index, proxy }: { proxy: Proxy, index: number }) => (
     <FormControlLabel
       checked={proxy === selected}
       control={
@@ -120,7 +122,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
 
   return (
     <Grid sx={{ ...style }}>
-      <Label label={label} style={{ position: 'relative', fontWeight: 300 }}>
+      <Label label={label} style={{ fontWeight: 300, position: 'relative' }}>
         <Grid container direction='column' sx={{ '> div:not(:last-child:not(:only-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '68px', overflowY: 'scroll', textAlign: 'center' }}>
           <Grid container item sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, textAlign: 'center' }} xs={12}>
             <Grid item xs={mode === 'None' ? 6.1 : 4.7}>
@@ -180,7 +182,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                           {mode === 'Availability'
                             ? <Available proxy={proxyItem.proxy} />
                             : mode === 'Select'
-                              ? <Select proxy={proxyItem.proxy} index={index} />
+                              ? <Select index={index} proxy={proxyItem.proxy} />
                               : mode === 'Delete'
                                 ? <Delete proxyItem={proxyItem} />
                                 : <Status status={proxyItem.status} />
@@ -197,7 +199,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                   </Typography>
                 </Grid>
               : <Grid alignItems='center' container justifyContent='center'>
-                <Grid item>
+                <Grid item role='progressbar'>
                   <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
                 </Grid>
                 <Typography fontSize='13px' lineHeight='41px' pl='10px'>
