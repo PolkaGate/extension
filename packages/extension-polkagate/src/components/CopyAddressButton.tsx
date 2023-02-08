@@ -15,20 +15,16 @@ interface Props {
   size?: number;
 }
 
-function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
+function CopyAddressButton ({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 
   const shortAddress = `${address?.slice(0, 12) ?? ''}...${address?.slice(-12) ?? ''}`;
   const [copied, setCopy] = useState<boolean>(false);
 
-  const _onCopy = useCallback(() => {
-    setCopy(true);
-  }, []);
+  const _onCopy = useCallback(() => setCopy(true), []);
 
-  const handelCloseToolTip = useCallback(() => {
-    setTimeout(() => setCopy(false), 200);
-  }, []);
+  const handelCloseToolTip = useCallback(() => setTimeout(() => setCopy(false), 200), []);
 
   return (
     <Grid item>
@@ -72,7 +68,6 @@ function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): 
             height: '23px',
             width: '36px'
           }}
-          title={String(address)}
         >
           <CopyToClipboard text={String(address)}>
             <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
