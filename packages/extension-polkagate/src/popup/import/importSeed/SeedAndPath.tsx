@@ -1,36 +1,40 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { AccountInfo } from '.';
+/* eslint-disable react/jsx-max-props-per-line */
 
-import { ArrowBackIos as ArrowBackIosIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import type { KeypairType } from '@polkadot/util-crypto/types';
+
+import { useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { objectSpread } from '@polkadot/util';
 
-import { SelectChain, InputWithLabel, PButton, TextAreaWithLabel, Warning } from '../../../components';
+import { InputWithLabel, PButton, SelectChain, TextAreaWithLabel, Warning } from '../../../components';
 import { useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { getMetadata, validateSeed } from '../../../messaging';
 import getLogo from '../../../util/getLogo';
 
+interface AccountInfo {
+  address: string;
+  genesis?: string;
+  suri: string;
+}
+
 interface Props {
-  className?: string;
   onNextStep: () => void;
   onAccountChange: (account: AccountInfo | null) => void;
   type: KeypairType;
 }
 
-export default function SeedAndPath({ className, onAccountChange, onNextStep, type }: Props): React.ReactElement {
+export default function SeedAndPath ({ onAccountChange, onNextStep, type }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const genesisOptions = useGenesisHashOptions();
   const [address, setAddress] = useState('');
   const [seed, setSeed] = useState<string | null>(null);
   const [path, setPath] = useState<string | null>(null);
-  const [advanced, setAdvances] = useState(false);
   const [error, setError] = useState('');
   const [genesis, setGenesis] = useState('');
   const [newChain, setNewChain] = useState<Chain | null>(null);
@@ -72,14 +76,7 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
     });
   }, [genesis]);
 
-  const _onToggleAdvanced = useCallback(() => {
-    setAdvances(!advanced);
-  }, [advanced]);
-
-  const _onChangeNetwork = useCallback(
-    (newGenesisHash: string) => setGenesis(newGenesisHash),
-    []
-  );
+  const _onChangeNetwork = useCallback((newGenesisHash: string) => setGenesis(newGenesisHash), []);
 
   return (
     <>
@@ -110,51 +107,14 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
           label={t<string>('Select the chain')}
           onChange={_onChangeNetwork}
           options={genesisOptions}
-          style={{ marginTop: '35px', p: 0 }}
+          style={{ marginTop: !!error && !!seed ? '35px' : '15px', p: 0, pb: '15px' }}
         />
-        <Grid
-          container
-          onClick={_onToggleAdvanced}
-          pb='10px'
-          pt='15px'
-          sx={{ cursor: 'pointer' }}
-        >
-          {/* <Grid
-            alignItems='center'
-            container
-            item
-            pr='10px'
-            xs={1}
-          >
-            <ArrowBackIosIcon
-              sx={{
-                color: 'secondary.light',
-                fontSize: 20,
-                stroke: theme.palette.secondary.light,
-                strokeWidth: 1.5,
-                transform: advanced ? 'rotate(-0.25turn) translate(5px, 5px)' : 'rotate(-180deg)'
-              }}
-            />
-          </Grid> */}
-          {/* <Grid
-            item
-          >
-            <Typography
-              fontSize='14px'
-              fontWeight={300}
-            >
-              {t<string>('Advanced')}
-            </Typography>
-          </Grid> */}
-        </Grid>
-        {/* {advanced && ( */}
         <InputWithLabel
           isError={!!path && !!error}
           label={t<string>('Derivation path if it is derived account, otherwise ignore')}
           onChange={setPath}
           value={path || ''}
         />
-        {/* )} */}
       </div>
       <PButton
         _onClick={onNextStep}
