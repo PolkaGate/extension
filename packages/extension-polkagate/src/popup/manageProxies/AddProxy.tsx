@@ -135,7 +135,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
       <Grid alignItems='end' container sx={{ m: '15px auto', width: '92%' }}>
         <Grid item xs={4}>
           <InputWithLabel
-            helperText={t<string>('The announcement period required of the initial proxy.Generally will be zero.')}
+            helperText={t<string>('The announcement period required of the initial proxy. Generally will be zero.')}
             label={t<string>('Delay')}
             onChange={_selectDelay}
             value={delay}
