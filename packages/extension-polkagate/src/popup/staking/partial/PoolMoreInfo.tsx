@@ -36,7 +36,7 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo ({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
