@@ -9,7 +9,7 @@ import '@vaadin/icons';
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
@@ -36,7 +36,7 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput ({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
@@ -46,6 +46,8 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
   const containerRef = useRef<HTMLDivElement>(null);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
   const [dropdownWidth, setDropdownWidth] = useState<string>('0');
+
+  const autocompleteOptions = useMemo(() => allAddresses.map((address) => ({ address: address[0], name: address[2] })), [allAddresses]);
 
   useEffect(() => {
     address && setEnteredAddress(address);
@@ -121,13 +123,14 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
               disableClearable
               disabled={disabled}
               freeSolo
+              getOptionLabel={(option) => option.toString()}
               inputValue={enteredAddress ?? ''}
               onBlur={() => setFocus(false)}
               onClose={closePopper}
               onFocus={() => setFocus(true)}
               onOpen={openPopper}
               open={isPopperOpen && !enteredAddress}
-              options={allAddresses.map((address) => ({ address: address[0], name: address[2] }))}
+              options={autocompleteOptions}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -137,6 +140,7 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
                       <InputAdornment position='end'>
                         {!disabled &&
                           <IconButton
+                            aria-label={`${enteredAddress || address ? 'clear' : 'paste'}`}
                             onClick={pasteAddress}
                             sx={{ p: '3px' }}
                           >
@@ -149,6 +153,7 @@ export default function AddressInput ({ addWithQr = false, allAddresses = [], ch
                         }
                         {addWithQr && !disabled &&
                           <IconButton
+                            aria-label='qrScanner'
                             onClick={openQrScanner}
                             sx={{ p: '3px' }}
                           >
