@@ -19,7 +19,7 @@ function Label({ children, helperText = '', label, style }: Props): React.ReactE
 
   useEffect(() => {
     if (ref) {
-      setTpLocation(`${ref.current?.offsetWidth + 10}px`);
+      setTpLocation(`${ref.current?.offsetWidth + 8}px`);
     }
   }, [ref.current?.offsetWidth, tpLocation]);
 
@@ -55,11 +55,11 @@ function Label({ children, helperText = '', label, style }: Props): React.ReactE
               bgcolor: 'secondary.light',
               borderRadius: '50%',
               color: 'background.default',
-              height: '16px',
+              height: '15px',
               left: tpLocation,
               position: 'absolute',
-              top: '4px',
-              width: '16px'
+              top: '3px',
+              width: '15px'
             }}
           />
         </Tooltip>
