@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
@@ -18,20 +20,9 @@ interface Props {
   chain: Chain | null;
 }
 
-function AccountHolderWithProxy({ address, chain, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
+function AccountHolderWithProxy ({ address, chain, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
   return (
-    <Grid
-      alignItems='center'
-      container
-      direction='column'
-      justifyContent='center'
-      sx={{
-        fontWeight: 300,
-        letterSpacing: '-0.015em',
-        pt: '5px',
-        ...style
-      }}
-    >
+    <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', pt: '5px', ...style }}>
       <AccountHolder
         address={address}
         title={title}
