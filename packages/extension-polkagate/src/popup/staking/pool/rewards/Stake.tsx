@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
@@ -71,8 +71,16 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   }, [proxies]);
 
   useEffect((): void => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted, params]);
+  }, [tx, formatted, params, api]);
 
   const submit = useCallback(async () => {
     try {

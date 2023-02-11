@@ -12,7 +12,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Infotip, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
@@ -39,7 +39,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -69,6 +69,10 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
   useEffect(() => {
     if (!api || !setMetadata) {
       return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
     const calls = [];

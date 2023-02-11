@@ -14,6 +14,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { BN_ONE } from '@polkadot/util';
+
 import { Motion, PButton, Warning } from '../../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
@@ -65,8 +67,16 @@ export default function Index(): React.ReactElement {
   const tx = api && api.tx.fastUnstake.registerFastUnstake;
 
   useEffect((): void => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     tx && formatted && tx().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted]);
+  }, [api, tx, formatted]);
 
   const onBackClick = useCallback(() => {
     history.push({

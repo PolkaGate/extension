@@ -12,7 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, PButton, Popup, ShowBalance } from '../../../components';
 import { useBalances, useDecimal, useToken, useTranslation } from '../../../hooks';
@@ -60,13 +60,17 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
       return;
     }
 
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     const feeDummyParams = ['2000', amountAsBN ?? new BN(minContribution), null];
     const maxFeeDummyParams = ['2000', balances?.availableBalance, null];
 
     tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
 
     tx(...maxFeeDummyParams).paymentInfo(formatted).then((i) => setEstimatedMaxFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, balances?.availableBalance, contributionAmount, formatted, minContribution, tx]);
+  }, [amountAsBN, api, balances?.availableBalance, contributionAmount, formatted, minContribution, tx]);
 
   const nextBtnDisabled = useMemo(() => {
     if (!contributionAmount || !amountAsBN || !minContribution) {
