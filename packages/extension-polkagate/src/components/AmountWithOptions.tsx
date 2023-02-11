@@ -42,12 +42,13 @@ export default function AmountWithOptions({ disabled, label, onChangeAmount, onP
         />
       </Grid>
       <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs={4}>
-        <Grid item onClick={onPrimary} sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Grid aria-label='primaryBtn' item onClick={onPrimary} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>
-        <Grid item onClick={onSecondary} sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
-          {secondaryBtnText}
-        </Grid>
+        {(secondaryBtnText || onSecondary) &&
+          <Grid aria-label='secondaryBtn' item onClick={onSecondary} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+            {secondaryBtnText}
+          </Grid>}
       </Grid>
     </Grid>
   );
