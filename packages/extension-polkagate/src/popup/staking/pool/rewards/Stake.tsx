@@ -14,7 +14,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
@@ -60,9 +60,9 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
-
+    setRefresh(true);
     onAction(`/pool/${address}`);
-  }, [address, onAction, setShow]);
+  }, [address, onAction, setRefresh, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -71,8 +71,16 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   }, [proxies]);
 
   useEffect((): void => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted, params]);
+  }, [tx, formatted, params, api]);
 
   const submit = useCallback(async () => {
     try {
@@ -106,12 +114,11 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
       saveAsHistory(from, info);
       setShowWaitScreen(false);
       setShowConfirmation(true);
-      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, tx, chain, amount, decimal, setRefresh, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, tx, chain, amount, decimal, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

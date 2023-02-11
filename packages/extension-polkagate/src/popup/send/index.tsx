@@ -18,7 +18,7 @@ import { useHistory } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountInputWithIdentity, AmountWithOptions, Motion, PButton } from '../../components';
@@ -92,9 +92,14 @@ export default function Send(): React.ReactElement {
     });
   }, [api, formatted, endpoint]);
 
+
   useEffect(() => {
     if (!api || !transfer || !formatted || !decimal) {
       return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
     let params = [];
@@ -115,7 +120,15 @@ export default function Send(): React.ReactElement {
   }, [api, formatted, transfer, amount, decimal, transferType]);
 
   useEffect(() => {
-    api && transfer && balances && formatted && transfer(formatted, balances.availableBalance).paymentInfo(formatted)
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
+    transfer && balances && formatted && transfer(formatted, balances.availableBalance).paymentInfo(formatted)
       .then((i) => setMaxFee(i?.partialFee)).catch(console.error);
   }, [api, formatted, transfer, balances]);
 

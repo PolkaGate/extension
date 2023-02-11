@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
@@ -93,10 +93,14 @@ export default function Index(): React.ReactElement {
   useEffect(() => {
     if (!rebonded) { return; }
 
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     const amountAsBN = amountToMachine(amount ?? '0', decimal);
 
     rebonded(amountAsBN).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amount, decimal, formatted, rebonded]);
+  }, [amount, api, decimal, formatted, rebonded]);
 
   const onBackClick = useCallback(() => {
     history.push({

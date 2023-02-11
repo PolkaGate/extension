@@ -16,7 +16,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../components';
 import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
@@ -40,7 +40,7 @@ interface Props {
   staked: BN;
 }
 
-export default function Review ({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
+export default function Review({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -82,8 +82,16 @@ export default function Review ({ address, allValidatorsIdentities, api, newSele
   }, [onAction, setShow]);
 
   useEffect((): void => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     nominated && formatted && nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [nominated, formatted, params]);
+  }, [nominated, formatted, params, api]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

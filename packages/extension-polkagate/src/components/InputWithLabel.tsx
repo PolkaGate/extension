@@ -52,9 +52,9 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
   return (
     <Label
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
+      helperText={helperText}
       label={label}
       style={{ position: 'relative', letterSpacing: '-0.015em', width: '100%' }}
-      helperText={helperText}
     >
       <Input
         autoCapitalize='off'

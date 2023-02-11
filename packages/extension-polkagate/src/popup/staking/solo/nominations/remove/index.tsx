@@ -15,6 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
+import { BN_ONE } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
@@ -74,8 +75,16 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
   }, [proxies]);
 
   useEffect((): void => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     chilled && chilled().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [chilled, formatted]);
+  }, [api, chilled, formatted]);
 
   const remove = useCallback(async () => {
     try {

@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
 import { useAccountName, useDecimal, useProxies, useTranslation } from '../../../../hooks';
@@ -72,8 +72,16 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
   }, [proxies]);
 
   useEffect((): void => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     tx().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted]);
+  }, [api, tx, formatted]);
 
   const submit = useCallback(async () => {
     try {

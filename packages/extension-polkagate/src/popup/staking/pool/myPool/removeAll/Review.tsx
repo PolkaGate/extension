@@ -12,7 +12,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
@@ -37,7 +37,7 @@ interface Props {
   mode: 'UnbondAll' | 'RemoveAll';
 }
 
-export default function Review ({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
+export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -100,6 +100,10 @@ export default function Review ({ address, api, chain, formatted, mode, pool, po
 
   useEffect(() => {
     if (!membersToUnboundAll && !membersToRemoveAll) { return; }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
 
     if (mode === 'UnbondAll') {
       const calls = membersToUnboundAll?.map((m) => unbonded(m.accountId, m.points));

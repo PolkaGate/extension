@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
 import { useAccount, useAccountName } from '../../hooks';
@@ -78,11 +78,17 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const tx = useMemo(() => calls.length !== 0 && calls.length > 1 ? batchAll(calls) : calls[0], [batchAll, calls]);
 
   useEffect(() => {
-    if (!tx) { return; }
+    if (!tx) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
 
     // eslint-disable-next-line no-void
     void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [formatted, tx]);
+  }, [api, formatted, tx]);
 
   const onNext = useCallback(async (): Promise<void> => {
     try {
