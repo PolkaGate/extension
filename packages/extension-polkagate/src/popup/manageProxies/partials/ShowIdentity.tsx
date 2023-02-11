@@ -11,8 +11,8 @@ import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useEffect, useState } from 'react';
 
-import { useTranslation } from '../hooks';
-import Label from './Label';
+import Label from '../../../components/Label';
+import { useTranslation } from '../../../hooks';
 
 interface Props {
   accountIdentity?: DeriveAccountRegistration | undefined | null;
@@ -57,23 +57,23 @@ export default function ShowIdentity ({ accountIdentity, style }: Props): React.
           {accountIdentity
             ? <Grid container item>
               <Grid display='block' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', p: '10px' }} xs={4}>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Display:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Display')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Legal:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Legal')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Email:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Email')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Element:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Element')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Twitter:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Twitter')}:
                 </Typography>
-                <Typography fontSize='12px' fontWeight={300}>
-                  {t<string>('Web:')}
+                <Typography fontSize='12px' fontWeight={400}>
+                  {t<string>('Web')}:
                 </Typography>
               </Grid>
               <Grid display='block' item p='10px' xs={8}>
@@ -86,7 +86,7 @@ export default function ShowIdentity ({ accountIdentity, style }: Props): React.
               </Grid>
             </Grid>
             : accountIdentity === null
-              ? <Grid display='inline-flex' p='10px'>
+              ? <Grid alignItems='center' container display='inline-flex' justifyContent='center'>
                 <FontAwesomeIcon
                   className='warningImage'
                   icon={faExclamationTriangle}
@@ -96,7 +96,7 @@ export default function ShowIdentity ({ accountIdentity, style }: Props): React.
                 </Typography>
               </Grid>
               : <Grid alignItems='center' container justifyContent='center'>
-                <Grid item>
+                <Grid item role='progressbar'>
                   <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
                 </Grid>
                 <Typography fontSize='13px' lineHeight='41px' pl='10px'>

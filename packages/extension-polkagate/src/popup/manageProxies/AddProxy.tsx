@@ -11,11 +11,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext, AddressInput, InputWithLabel, PButton, Select, ShowIdentity } from '../../components';
+import { AccountContext, AddressInput, InputWithLabel, PButton, Select } from '../../components';
 import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
+import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
   address: string;
@@ -134,28 +135,20 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
       <Grid alignItems='end' container sx={{ m: '15px auto', width: '92%' }}>
         <Grid item xs={4}>
           <InputWithLabel
-            helperText={t<string>('The announcement period required of the initial proxy.Generally will be zero.')}
+            helperText={t<string>('The announcement period required of the initial proxy. Generally will be zero.')}
             label={t<string>('Delay')}
             onChange={_selectDelay}
             value={delay}
           />
         </Grid>
-        <Typography
-          fontSize='16px'
-          fontWeight={300}
-          pb='4px'
-          pl='10px'
-        >
+        <Typography fontSize='16px' fontWeight={300} pb='4px' pl='10px'>
           {t<string>('Block(s)')}
         </Typography>
       </Grid>
-      {accountInfo !== undefined &&
+      {realAddress &&
         <ShowIdentity
           accountIdentity={accountInfo}
-          style={{
-            m: 'auto',
-            width: '92%'
-          }}
+          style={{ m: 'auto', width: '92%' }}
         />
       }
       <PButton
