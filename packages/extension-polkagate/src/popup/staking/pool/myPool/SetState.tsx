@@ -12,6 +12,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
+import { BN_ONE } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
@@ -36,7 +37,7 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState ({ address, api, chain, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState({ address, api, chain, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -64,9 +65,17 @@ export default function SetState ({ address, api, chain, formatted, headerText, 
   }, [setShow]);
 
   useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
     // eslint-disable-next-line no-void
     void poolSetState?.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [formatted, poolSetState]);
+  }, [api, formatted, poolSetState]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);

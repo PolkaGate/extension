@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom';
 import State from '@polkadot/extension-base/background/handlers/State';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
+import { BN_ONE } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useApi, useChain, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
@@ -71,8 +72,12 @@ export default function TuneUp(): React.ReactElement {
   }, [proxies]);
 
   useEffect((): void => {
-    if (!rebaged || !putInFrontOf || !formatted) {
+    if (!rebaged || !putInFrontOf || !formatted|| !api) {
       return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
     if (rebagInfo?.shouldRebag) {
@@ -84,7 +89,7 @@ export default function TuneUp(): React.ReactElement {
 
       putInFrontOf(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
     }
-  }, [formatted, rebaged, putInFrontOf, rebagInfo?.shouldRebag, putInFrontInfo?.shouldPutInFront, putInFrontInfo?.lighter]);
+  }, [api, formatted, rebaged, putInFrontOf, rebagInfo?.shouldRebag, putInFrontInfo?.shouldPutInFront, putInFrontInfo?.lighter]);
 
   const submit = useCallback(async () => {
     try {

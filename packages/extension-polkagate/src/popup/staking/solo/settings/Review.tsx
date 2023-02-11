@@ -18,7 +18,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
@@ -97,8 +97,12 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
   useEffect(() => {
-    if (!setController || !setPayee || !batchAll || !formatted) {
+    if (!setController || !setPayee || !api|| !batchAll || !formatted) {
       return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
     const txs = [];

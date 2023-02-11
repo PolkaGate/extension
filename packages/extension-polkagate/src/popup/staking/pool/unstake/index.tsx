@@ -128,6 +128,10 @@ export default function Index(): React.ReactElement {
   }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount, isPoolDepositor, poolMemberCounter, poolState, token]);
 
   useEffect(() => {
+    if (!api) {
+      return;
+    }
+
     const params = [formatted, amountToMachine(amount, decimal)];
 
     if (!api?.call?.transactionPaymentApi) {
