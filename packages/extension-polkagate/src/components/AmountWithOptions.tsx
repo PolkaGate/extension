@@ -45,7 +45,7 @@ export default function AmountWithOptions({ disabled, label, onChangeAmount, onP
         <Grid aria-label='primaryBtn' item onClick={onPrimary} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>
-        {(secondaryBtnText || onSecondary) &&
+        {secondaryBtnText && onSecondary &&
           <Grid aria-label='secondaryBtn' item onClick={onSecondary} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
             {secondaryBtnText}
           </Grid>}
