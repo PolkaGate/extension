@@ -24,10 +24,9 @@ export default function Export(): React.ReactElement {
   const [pass, setPass] = useState<string>('');
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
 
-  const _goHome = useCallback(
-    () => onAction('/'),
-    [onAction]
-  );
+  const _goHome = useCallback(() => onAction('/'), [onAction]);
+
+  const NULL_FUNCTION = useCallback(() => null, []);
 
   const onPassChange = useCallback(
     (password: string | null) => {
@@ -83,9 +82,10 @@ export default function Export(): React.ReactElement {
       <Grid sx={{ m: '20px auto', width: '92%' }}>
         <Password
           isError={isPasswordError}
+          isFocused
           label={t<string>('Password for this account')}
           onChange={onPassChange}
-          onEnter={_onExportButtonClick}
+          onEnter={pass.length === 0 || pass.length <= 3 || !!isPasswordError ? NULL_FUNCTION : _onExportButtonClick}
         />
         {isPasswordError && (
           <Warning
@@ -101,7 +101,7 @@ export default function Export(): React.ReactElement {
         _isBusy={isBusy}
         _onClick={_onExportButtonClick}
         _onClickCancel={_goHome}
-        disabled={pass.length === 0 || !!isPasswordError}
+        disabled={pass.length === 0 || pass.length <= 3 || !!isPasswordError}
         text={t<string>('Export')}
       />
     </>

@@ -48,6 +48,8 @@ export default function RestoreJson(): React.ReactElement {
     }, []
   );
 
+  const NULL_FUNCTION = useCallback(() => null, []);
+
   const _onChangeFile = useCallback(
     (file: Uint8Array): void => {
       setAccountsInfo(() => []);
@@ -184,9 +186,10 @@ export default function RestoreJson(): React.ReactElement {
         <Grid m='auto' pt='10px' width='92%'>
           <Password
             isError={isPasswordError}
+            isFocused
             label={t<string>('Password for this file')}
             onChange={_onChangePass}
-            onEnter={_onRestore}
+            onEnter={stepOne || !password || password.length <= 3 ? NULL_FUNCTION : _onRestore}
           />
           {isPasswordError && (
             <Warning
@@ -203,7 +206,7 @@ export default function RestoreJson(): React.ReactElement {
         _isBusy={isBusy}
         _onClick={_onRestore}
         _variant='contained'
-        disabled={stepOne || !password}
+        disabled={stepOne || !password || password.length <= 3}
         text={t<string>('Restore')}
       />
     </>

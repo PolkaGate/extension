@@ -33,9 +33,9 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
   const theme = useTheme();
   const _checkKey = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>): void => {
-      onEnter && event.key === 'Enter' && onEnter();
+      onEnter && event.key === 'Enter' && !disabled && onEnter();
     },
-    [onEnter]
+    [disabled, onEnter]
   );
 
   const _onChange = useCallback(

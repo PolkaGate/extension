@@ -54,12 +54,13 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
   const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
   const mustSelectProxy = useMemo(() => account?.isExternal && !selectedProxy, [account, selectedProxy]);
 
-  const _onChange = useCallback(
-    (pass: string): void => {
-      pass.length > 3 && pass && setPassword(pass);
-      pass.length > 3 && pass && setIsPasswordError && setIsPasswordError(false);
-    }, [setIsPasswordError]
-  );
+  const NULL_FUNCTION = useCallback(() => null, []);
+
+  const _onChange = useCallback((pass: string): void => {
+    pass.length > 3 && pass && setPassword(pass);
+    pass.length > 3 && pass && setIsPasswordError && setIsPasswordError(false);
+    (!pass || pass.length <= 3) && setPassword(undefined);
+  }, [setIsPasswordError]);
 
   const goToSelectProxy = useCallback(
     (): void => {
@@ -109,7 +110,7 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
                     isReadOnly={isReadOnly}
                     label={label}
                     onChange={_onChange}
-                    onEnter={onConfirmClick}
+                    onEnter={(!password || isPasswordError || confirmDisabled) ? NULL_FUNCTION : onConfirmClick}
                     placeholder={placeholder}
                     withoutMargin={withoutMargin}
                   />

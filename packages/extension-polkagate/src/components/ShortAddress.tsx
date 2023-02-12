@@ -1,7 +1,9 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, SxProps, Theme } from '@mui/material';
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -20,6 +22,7 @@ interface Props {
 
 function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(1);
+  const [enoughChar, setEnoughChar] = useState<boolean>(false);
   const pRef = useRef(null);
   const cRef = useRef(null);
 
@@ -30,20 +33,25 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
       return;
     }
 
-    const offset = showCopy ? 55 : 25;
+    const addChar = (cRef?.current?.offsetWidth < pRef?.current?.offsetWidth);
 
-    (cRef?.current?.offsetWidth < pRef?.current?.offsetWidth - offset) && setCharactersCount(charactersCount + 1);
-  }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
+    !addChar && setEnoughChar(true);
+
+    addChar && !enoughChar && setCharactersCount(charactersCount + 1);
+    enoughChar && !addChar && setCharactersCount(charactersCount - 1);
+  }, [charsCount, clipped, showCopy, cRef?.current?.offsetWidth, pRef?.current?.offsetWidth, charactersCount, enoughChar]);
 
   return (
-    <Grid alignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
-      <Grid item ref={cRef} width='fit-content'>
-        {inParentheses ? '(' : ''}
-        {!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
-        {inParentheses ? ')' : ''}
+    <Grid alignItems='center' container justifyContent='center' sx={{ ...style }}>
+      <Grid container item ref={pRef} xs={10.2}>
+        <Typography ref={cRef} sx={style} width='fit-content'>
+          {`${inParentheses ? '(' : ''}${!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}${inParentheses ? ')' : ''}`}
+        </Typography>
       </Grid>
       {showCopy &&
-        <CopyAddressButton address={String(address)} />
+        <Grid container item justifyContent='flex-end' xs={1.8}>
+          <CopyAddressButton address={String(address)} />
+        </Grid>
       }
     </Grid>
   );
