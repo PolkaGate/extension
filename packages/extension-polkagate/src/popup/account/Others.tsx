@@ -42,7 +42,6 @@ export default function Others({ address, api, balances, chain, identity, price,
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
-      // isExternal={isExternal}
       judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}

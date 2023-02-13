@@ -99,7 +99,6 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
         <Identicon
           className='identityIcon'
           iconTheme={identiconTheme}
-          isExternal={isExternal}
           prefix={prefix}
           size={40}
           value={formatted || address}
