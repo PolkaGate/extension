@@ -76,7 +76,9 @@ export default function SeedAndPath ({ onAccountChange, onNextStep, type }: Prop
     });
   }, [genesis]);
 
-  const _onChangeNetwork = useCallback((newGenesisHash: string) => setGenesis(newGenesisHash), []);
+  const _onChangeNetwork = useCallback((newGenesisHash: string) => {
+    setGenesis(newGenesisHash);
+  }, []);
 
   return (
     <>
