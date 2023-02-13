@@ -3,6 +3,7 @@
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+import type { ThemeProps } from '../types';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import React from 'react';
@@ -40,6 +41,7 @@ function Identicon ({ className, iconTheme, judgement, onCopy, prefix, size, val
             bgcolor: 'success.main',
             borderRadius: '50%',
             color: 'white',
+            // stroke: 'white',
             fontSize: 0.4 * size,
             left: `${size * 0.6}px`,
             position: 'absolute',
@@ -51,7 +53,7 @@ function Identicon ({ className, iconTheme, judgement, onCopy, prefix, size, val
   );
 }
 
-export default styled(Identicon)(() => `
+export default styled(Identicon)(({ theme }: ThemeProps) => `
   background: rgba(192, 192, 292, 0.25);
   border-radius: 50%;
   display: flex;
