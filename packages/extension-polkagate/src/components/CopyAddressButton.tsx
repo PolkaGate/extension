@@ -22,9 +22,13 @@ function CopyAddressButton ({ address, showAddress = false, size = 20 }: Props):
   const shortAddress = `${address?.slice(0, 12) ?? ''}...${address?.slice(-12) ?? ''}`;
   const [copied, setCopy] = useState<boolean>(false);
 
-  const _onCopy = useCallback(() => setCopy(true), []);
+  const _onCopy = useCallback(() => {
+    setCopy(true);
+  }, []);
 
-  const handelCloseToolTip = useCallback(() => setTimeout(() => setCopy(false), 200), []);
+  const handelCloseToolTip = useCallback(() => {
+    setTimeout(() => setCopy(false), 200);
+  }, []);
 
   return (
     <Grid item>
