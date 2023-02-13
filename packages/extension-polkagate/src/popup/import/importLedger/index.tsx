@@ -93,18 +93,29 @@ export default function ImportLedger (): React.ReactElement {
   }, [accountIndex, address, addressOffset, genesis, name, onAction]);
 
   // select element is returning a string
-  const _onSetAccountIndex = useCallback((value: number) => setAccountIndex(Number(value)), []);
-  const _onSetAddressOffset = useCallback((value: number) => setAddressOffset(Number(value)), []);
+  const _onSetAccountIndex = useCallback((value: number) => {
+    setAccountIndex(Number(value));
+  }, []);
+
+  const _onSetAddressOffset = useCallback((value: number) => {
+    setAddressOffset(Number(value));
+  }, []);
 
   useEffect((): void => {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const _onNextStep = useCallback(() => setStep1(false), []);
+  const _onNextStep = useCallback(() => {
+    setStep1(false);
+  }, []);
 
-  const _onCancelClick = useCallback(() => setStep1(true), []);
+  const _onCancelClick = useCallback(() => {
+    setStep1(true);
+  }, []);
 
-  const _onBackClick = useCallback(() => step1 ? onAction('/') : _onCancelClick(), [_onCancelClick, onAction, step1]);
+  const _onBackClick = useCallback(() => {
+    step1 ? onAction('/') : _onCancelClick();
+  }, [_onCancelClick, onAction, step1]);
 
   useEffect(() => {
     !!name && _onNextStep();
@@ -130,6 +141,8 @@ export default function ImportLedger (): React.ReactElement {
         <Address
           address={address}
           genesisHash={genesis}
+          isExternal
+          isHardware
           name={name}
         />
       </div>
@@ -183,6 +196,7 @@ export default function ImportLedger (): React.ReactElement {
       {ledgerLocked
         ? <PButton
           _onClick={refresh}
+          // _isBusy={!address || !!error}
           text={t<string>('Refresh')}
         />
         : <PButton
