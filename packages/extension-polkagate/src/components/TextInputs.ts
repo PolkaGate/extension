@@ -19,7 +19,7 @@ interface Props {
 const TextBox = css(({ disabled = false, fontSize, height, margin, max, padding, textAlign, theme, width, withError }: Props) => `
   background: ${theme.palette.background.paper};
   border-radius: 5px;
-  disabled: ${disabled}
+  disabled: ${disabled ? 'true' : 'false'}
   &:disabled {
     background-color: ${theme.palette.text.disabled};
   }
@@ -46,8 +46,9 @@ const TextBox = css(({ disabled = false, fontSize, height, margin, max, padding,
   &:focus{
     ${!withError
     ? `outline: 2px solid ${theme.palette.action.focus};
-    border: none;`
-    : 'outline: none;'}
+         border: none;`
+    : 'outline: none;'
+  }
     filter: drop - shadow(0px 0px 3px rgba(204, 88, 123, 0.83));
   }
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
