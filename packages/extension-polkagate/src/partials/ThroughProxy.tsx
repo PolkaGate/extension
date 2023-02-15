@@ -9,7 +9,7 @@ import React from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { Identicon, ShortAddress } from '../components';
-import { useAccountName, useChain, useTranslation } from '../hooks';
+import { useAccountName, useTranslation } from '../hooks';
 
 interface Props {
   address: string;
@@ -17,7 +17,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement {
+function ThroughProxy ({ address, chain, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountName(address);
 
@@ -68,7 +68,7 @@ function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement
           width: '1px'
         }}
       />
-      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2} >
+      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2}>
         {t('as proxy')}
       </Grid>
     </Grid>

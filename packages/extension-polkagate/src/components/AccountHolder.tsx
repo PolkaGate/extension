@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
@@ -13,7 +15,7 @@ interface Props {
   title?: string;
 }
 
-function AccountHolder({ address, style, title }: Props): React.ReactElement {
+function AccountHolder ({ address, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const api = useApi(address);
