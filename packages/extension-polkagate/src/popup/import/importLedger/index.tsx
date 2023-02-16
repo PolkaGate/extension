@@ -1,19 +1,18 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Container, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import settings from '@polkadot/ui-settings';
 
-import { AccountContext, ActionContext, Select, SelectChain, Warning } from '../../../components';
-import Address from '../../../components/Address';
-import PButton from '../../../components/PButton';
+import { AccountContext, ActionContext, Address, PButton, Select, SelectChain, Warning } from '../../../components';
 import { useLedger, useTranslation } from '../../../hooks';
 import { createAccountHardware, getMetadata } from '../../../messaging';
-import { Name } from '../../../partials';
-import HeaderBrand from '../../../partials/HeaderBrand';
+import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import ledgerChains from '../../../util/legerChains';
 
@@ -29,13 +28,7 @@ interface NetworkOption {
 
 const AVAIL: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
-export interface AccountInfo {
-  address: string;
-  genesis?: string;
-  suri: string;
-}
-
-function ImportLedger(): React.ReactElement {
+export default function ImportLedger (): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -84,41 +77,41 @@ function ImportLedger(): React.ReactElement {
     }))]
   );
 
-  const _onSave = useCallback(
-    () => {
-      if (address && genesis && name) {
-        setIsBusy(true);
+  const _onSave = useCallback(() => {
+    if (address && genesis && name) {
+      setIsBusy(true);
 
-        createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis)
-          .then(() => onAction('/'))
-          .catch((error: Error) => {
-            console.error(error);
+      createAccountHardware(address, 'ledger', accountIndex, addressOffset, name, genesis)
+        .then(() => onAction('/'))
+        .catch((error: Error) => {
+          console.error(error);
 
-            setIsBusy(false);
-            setError(error.message);
-          });
-      }
-    },
-    [accountIndex, address, addressOffset, genesis, name, onAction]
-  );
+          setIsBusy(false);
+          setError(error.message);
+        });
+    }
+  }, [accountIndex, address, addressOffset, genesis, name, onAction]);
 
   // select element is returning a string
-  const _onSetAccountIndex = useCallback((value: number) => setAccountIndex(Number(value)), []);
-  const _onSetAddressOffset = useCallback((value: number) => setAddressOffset(Number(value)), []);
+  const _onSetAccountIndex = useCallback((value: number) => {
+    setAccountIndex(Number(value));
+  }, []);
+
+  const _onSetAddressOffset = useCallback((value: number) => {
+    setAddressOffset(Number(value));
+  }, []);
 
   useEffect((): void => {
     !accounts.length && onAction();
   }, [accounts, onAction]);
 
-  const _onNextStep = useCallback(
-    () => setStep1(false),
-    []
-  );
+  const _onNextStep = useCallback(() => {
+    setStep1(false);
+  }, []);
 
-  const _onCancelClick = useCallback(
-    () => setStep1(true),
-    []
-  );
+  const _onCancelClick = useCallback(() => {
+    setStep1(true);
+  }, []);
 
   const _onBackClick = useCallback(() => {
     step1 ? onAction('/') : _onCancelClick();
@@ -139,13 +132,7 @@ function ImportLedger(): React.ReactElement {
           total: 2
         }}
       />
-      <Typography
-        fontSize='14px'
-        fontWeight={300}
-        m='20px auto'
-        textAlign='left'
-        width='88%'
-      >
+      <Typography fontSize='14px' fontWeight={300} m='20px auto' textAlign='left' width='88%'>
         <b>1</b>. {t<string>('Connect your ledger device to the computer.')}<br />
         <b>2</b>. {t<string>('Open your desired App on the ledger device.')}<br />
         <b>3</b>. {t<string>('Select the relevant chain of your desired App from below.')}<br />
@@ -222,5 +209,3 @@ function ImportLedger(): React.ReactElement {
     </>
   );
 }
-
-export default ImportLedger;
