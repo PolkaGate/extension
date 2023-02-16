@@ -141,7 +141,6 @@ export default function ImportLedger (): React.ReactElement {
         <Address
           address={address}
           genesisHash={genesis}
-          isExternal
           isHardware
           name={name}
         />

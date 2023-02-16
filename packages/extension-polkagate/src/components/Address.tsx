@@ -23,7 +23,6 @@ export interface Props {
   children?: React.ReactNode;
   className?: string;
   genesisHash?: string | null;
-  isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
   name?: string | null;
@@ -84,7 +83,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, className, genesisHash, isExternal, isHardware, margin = '20px auto', name, width = '92%', showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, className, genesisHash, isHardware, margin = '20px auto', name, width = '92%', showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const accountName = useAccountName(address);
@@ -142,7 +141,6 @@ function Address({ address, className, genesisHash, isExternal, isHardware, marg
           <Identicon
             className='identityIcon'
             iconTheme={theme}
-            isExternal={isExternal}
             // onCopy={_onCopy}
             prefix={prefix}
             size={40}
