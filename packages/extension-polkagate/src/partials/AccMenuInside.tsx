@@ -83,7 +83,6 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
         <Identicon
           className='identityIcon'
           iconTheme={chain?.icon ?? 'polkadot'}
-          isExternal={account?.isExternal}
           prefix={prefix}
           size={40}
           value={formatted || address}
