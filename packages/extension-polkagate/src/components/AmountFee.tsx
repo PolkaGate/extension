@@ -8,7 +8,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Divider, Grid, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
-import { useChain, useTranslation } from '../hooks';
+import { useAccount, useTranslation } from '../hooks';
 import { TOTAL_STAKE_HELPER_TEXT } from '../util/constants';
 import { ChainLogo, Infotip, ShowValue } from '.';
 
@@ -26,7 +26,7 @@ interface Props {
 
 function AmountFee({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const chain = useChain(address);
+  const account = useAccount(address);
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', ...style }}>
@@ -43,7 +43,7 @@ function AmountFee({ address, amount, children, fee, label, style = {}, showDivi
       <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ fontSize: '28px', fontWeight: 400 }}>
           <Grid item>
-            <ChainLogo genesisHash={chain?.genesisHash} size={31} />
+            <ChainLogo genesisHash={account?.genesisHash} size={31} />
           </Grid>
           <Grid item sx={{ fontSize: '26px', ml: '5px' }}>
             {amount} {token}
