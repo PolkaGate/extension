@@ -150,14 +150,14 @@ export default function PoolsTable({ address, setSearchedPools, api, numberOfFet
           />
         </Grid>
       }
-      <Grid container direction='column' ref={ref} sx={{ '> div:not(:last-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: maxHeight - (isSearching ? 50 : 0), minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', textAlign: 'center' }}>
+      <Grid container direction='column' ref={ref} sx={{ '> div.pools:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: maxHeight - (isSearching ? 50 : 0), minHeight: '59px', overflowY: 'scroll', scrollBehavior: 'smooth', textAlign: 'center' }}>
         {numberOfFetchedPools !== totalNumberOfPools &&
-          <LinearProgress color='success' value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0} variant='determinate' sx={{ position: 'sticky', top: 0 }} />
+          <LinearProgress color='success' sx={{ position: 'sticky', top: 0 }} value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0} variant='determinate' />
         }
         {poolsToShow
           ? poolsToShow.length
             ? poolsToShow.map((pool, index) => (
-              <Grid container item key={index} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+              <Grid className='pools' container item key={index}>
                 <Grid container direction='column' item p='3px 8px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='92%'>
                   <Grid container item lineHeight='30px'>
                     <Grid item width='22px'>
