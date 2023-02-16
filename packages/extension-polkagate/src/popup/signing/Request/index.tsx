@@ -91,7 +91,6 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
           <Address
             address={json.address}
             genesisHash={json.genesisHash}
-            isExternal={isExternal}
             isHardware={isHardware}
             margin='15px auto'
           />
@@ -140,7 +139,6 @@ export default function Request({ account: { accountIndex, addressOffset, isExte
         <div>
           <Address
             address={address}
-            isExternal={isExternal}
           />
         </div>
         <Bytes

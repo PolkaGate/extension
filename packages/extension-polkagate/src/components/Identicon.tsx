@@ -15,7 +15,6 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 interface Props {
   className?: string;
   iconTheme?: IconTheme | string;
-  isExternal?: boolean | null;
   onCopy?: () => void;
   prefix?: number;
   value?: AccountId | string | null;
@@ -23,7 +22,7 @@ interface Props {
   judgement?: RegistrationJudgement[] | null;
 }
 
-function Identicon({ className, iconTheme, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+function Identicon ({ className, iconTheme, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
   return (
     <div style={{ position: 'relative' }}>
       <div className={className}>
