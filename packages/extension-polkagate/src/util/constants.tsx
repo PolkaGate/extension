@@ -126,7 +126,7 @@ export const DATE_OPTIONS = { month: 'short', day: 'numeric', hour: '2-digit', m
 
 export const DEFAULT_FILTERS = {
   limitOfValidatorsPerOperator: { check: false, value: 2 },
-  maxCommission: { check: false, value: 10 },
+  maxCommission: { check: false, value: 30 },
   noOversubscribed: false,
   noSlashed: false,
   noWaiting: false,
