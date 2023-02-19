@@ -75,51 +75,6 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
     }`
   };
 
-  const twoItemSlide = {
-    down: [
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(-14px, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(14px, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `],
-    up: [keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(-14px, -30px, 0);
-      }
-    `,
-    keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(14px, -30px, 0);
-      }
-    `
-    ]
-  };
-
   const threeItemSlide = {
     down: [
       keyframes`
