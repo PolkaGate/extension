@@ -45,7 +45,7 @@ export default function Index(): React.ReactElement {
   const balances = useBalances(address);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const autoSelected = useValidatorSuggestion(address);
+  const autoSelectedValidators = useValidatorSuggestion(address);
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
@@ -113,8 +113,8 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    if (isFirstTimeStaking && autoSelected?.length) {
-      const ids = autoSelected.map((v) => v.accountId);
+    if (isFirstTimeStaking && autoSelectedValidators?.length) {
+      const ids = autoSelectedValidators.map((v) => v.accountId);
 
       batchAll([tx(...params), nominated(ids)]).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
 
@@ -122,7 +122,7 @@ export default function Index(): React.ReactElement {
     }
 
     tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, api, autoSelected, batchAll, bond, formatted, isFirstTimeStaking, nominated, params, tx]);
+  }, [amountAsBN, api, autoSelectedValidators, batchAll, bond, formatted, isFirstTimeStaking, nominated, params, tx]);
 
   useEffect(() => {
     if (!amountAsBN || !amount) {
@@ -202,7 +202,7 @@ export default function Index(): React.ReactElement {
       </Warning>
     </Grid>
   );
-
+  
   return (
     <Motion>
       <HeaderBrand
@@ -251,19 +251,30 @@ export default function Index(): React.ReactElement {
                 <FormControlLabel control={<Radio size='small' sx={{ color: 'secondary.main', py: '2px' }} value='manual' />} label={<Typography sx={{ fontSize: '18px' }}>{t('Manual')}</Typography>} />
               </RadioGroup>
             </FormControl>
-            <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '30px' }} xs={12}>
+            <Grid item onClick={() => setShowAdvanceSettings(true)} sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline', mt: '20px' }} xs={12}>
               {t('Advanced settings')}
             </Grid>
           </Grid>
         }
       </Grid>
+      {isFirstTimeStaking && showReview && !autoSelectedValidators &&
+        <Grid container item justifyContent='center' sx={{ bottom: '65px', position: 'absolute' }}>
+          <Warning
+            fontSize='16px'
+            fontWeight={300}
+            theme={theme}
+          >
+            {t('We are pulling validator’s information.')}
+          </Warning>
+        </Grid>
+      }
       <PButton
-        _isBusy={isFirstTimeStaking && showReview && !autoSelected}
+        _isBusy={isFirstTimeStaking && showReview && !autoSelectedValidators}
         _onClick={goToNext}
         disabled={!!alert || !amount || amount === '0' || !balances?.availableBalance || balances?.availableBalance?.isZero() || balances?.availableBalance?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
         text={t<string>('Next')}
       />
-      {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking && validatorSelectionMethod === 'auto' ? autoSelected : true) &&
+      {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking && validatorSelectionMethod === 'auto' ? autoSelectedValidators : true) &&
         <Review
           address={address}
           amount={amount}
@@ -272,7 +283,7 @@ export default function Index(): React.ReactElement {
           estimatedFee={estimatedFee}
           isFirstTimeStaking={isFirstTimeStaking}
           params={params}
-          selectedValidators={validatorSelectionMethod === 'auto' ? autoSelected : manualSelectedValidators}
+          selectedValidators={validatorSelectionMethod === 'auto' ? autoSelectedValidators : manualSelectedValidators}
           setShow={setShowReview}
           settings={settings}
           show={showReview}
@@ -306,7 +317,6 @@ export default function Index(): React.ReactElement {
           stakingConsts={stakingConsts}
           stashId={formatted}
           title={t('Select Validators')}
-
         />
       }
     </Motion>
