@@ -265,7 +265,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             <TxDetail settings={settings} txInfo={txInfo} />
           </Confirmation>)
         }
-        {showSelectedValidators && selectedValidators?.length &&
+        {showSelectedValidators && !!selectedValidators?.length &&
           <ShowValidators address={address} api={api} chain={chain} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
         }
       </Popup>
