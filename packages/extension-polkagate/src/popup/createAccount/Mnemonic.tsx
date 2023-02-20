@@ -27,7 +27,7 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
-  const [copied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const _onCopy = useCallback((): void => {
     onCopy();
@@ -37,7 +37,7 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
   return (
     <>
       <MnemonicSeed
-        copied={copied}
+        isCopied={isCopied}
         onCopy={_onCopy}
         seed={seed}
         setIsCopied={setIsCopied}

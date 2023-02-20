@@ -59,6 +59,7 @@ export { default as Loading } from './Loading';
 export { default as MnemonicSeed } from './MnemonicSeed';
 export { default as Motion } from './Motion';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as OnActionToolTip } from './OnActionToolTip';
 
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 
