@@ -9,8 +9,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { BN } from '@polkadot/util';
 
 import { hide, show, stars6Black, stars6White } from '../../assets/icons';
-import { AccountContext } from '../../components';
-import FormatPrice from '../../components/FormatPrice';
+import { AccountContext, FormatPrice } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { Prices, SavedBalances } from '../../util/types';
 

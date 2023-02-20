@@ -66,12 +66,9 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
     [showActionsMenu]
   );
 
-  const _toggleVisibility = useCallback(
-    (): void => {
-      address && showAccount(address, isHidden || false).catch(console.error);
-    },
-    [address, isHidden]
-  );
+  const _toggleVisibility = useCallback((): void => {
+    address && showAccount(address, isHidden || false).catch(console.error);
+  }, [address, isHidden]);
 
   const goToAccount = useCallback(() => {
     genesisHash && address && formatted && history.push({
