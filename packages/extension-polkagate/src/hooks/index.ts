@@ -48,6 +48,5 @@ export { default as useStakingRewards } from './useStakingRewards';
 export { default as useStakingRewardDestinationAddress } from './useStakingRewardDestinationAddress';
 export { default as useStashId } from './useStashId';
 export { default as useTranslation } from './useTranslation';
-export { default as useToast } from './useToast';
 export { default as useValidators } from './useValidators';
 export { default as useValidatorsIdentities } from './useValidatorsIdentities';
