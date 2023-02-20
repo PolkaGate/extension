@@ -14,9 +14,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { stars5Black, stars5White } from '../../assets/icons';
-import CopyAddressButton from '../../components/CopyAddressButton';
-import FormatBalance2 from '../../components/FormatBalance2';
-import FormatPrice from '../../components/FormatPrice';
+import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
 import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
@@ -36,6 +34,24 @@ interface Props {
   name: string | undefined;
   toggleVisibility: () => void;
 }
+
+interface EyeProps {
+  toggleVisibility: () => void;
+  isHidden: boolean | undefined;
+}
+
+const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <Infotip text={isHidden && t('This account is hidden from websites')}    >
+      <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
+        <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+      </IconButton>
+    </Infotip>
+  )
+};
 
 export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -124,9 +140,10 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-            <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-          </IconButton>
+          <EyeButton
+            isHidden={isHidden}
+            toggleVisibility={toggleVisibility}
+          />
         </Grid>
         <Grid item sx={{ m: '10px 0' }}>
           <CopyAddressButton
