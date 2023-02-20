@@ -71,10 +71,6 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       return;
     }
 
-    if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
     const calls = [];
 
     const getRole = (role: string | undefined) => {
@@ -93,6 +89,10 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newStateToggler)));
 
     setTxCalls(calls);
+    
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
 
     calls.length && calls[0].paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
