@@ -139,7 +139,6 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
                           },
                           backgroundColor: '#fff',
                           color: '#000',
-                          // fontSize: copied ? '16px' : '14px',
                           fontWeight: 400
                         }
                       }

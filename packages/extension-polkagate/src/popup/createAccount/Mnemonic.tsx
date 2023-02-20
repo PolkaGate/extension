@@ -5,7 +5,7 @@ import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Checkbox2 as Checkbox, MnemonicSeed, PButton, Warning } from '../../components';
-import { useToast, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 
 interface Props {
   onNextStep: () => void;
@@ -27,20 +27,22 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
-  const { show } = useToast();
+  const [copied, setIsCopied] = useState(false);
 
   const _onCopy = useCallback((): void => {
     onCopy();
-    show(t('Copied'));
-  }, [show, t]);
+    setIsCopied(true);
+  }, []);
 
   return (
     <>
       <MnemonicSeed
+        copied={copied}
         onCopy={_onCopy}
         seed={seed}
+        setIsCopied={setIsCopied}
       />
-      <Warning iconDanger marginTop= {43} theme={theme}>
+      <Warning iconDanger marginTop={43} theme={theme}>
         {t<string>('Please write down your wallet’s mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.')}
       </Warning>
       <Grid item sx={{ mt: '55px', ml: '5px' }}>
