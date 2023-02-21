@@ -23,7 +23,7 @@ interface Props {
 }
 
 export interface ChangesProps {
-  newPoolName?: string | undefined | null;
+  newPoolName: string | undefined | null;
   newRoles: {
     newRoot: string | undefined | null;
     newNominator: string | undefined | null;
