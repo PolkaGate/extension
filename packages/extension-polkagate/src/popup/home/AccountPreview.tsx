@@ -80,6 +80,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
   return (
     <Grid alignItems='center' container position='relative' py='15px'>
       <AccountIcons
+        chain={chain}
         formatted={formatted || address}
         identiconTheme={identiconTheme}
         judgements={identity?.judgements} // TODO: to fix the type issue
@@ -98,7 +99,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
         name={name}
         toggleVisibility={_toggleVisibility}
       />
-      <AccountFeatures goToAccount={goToAccount} menuOnClick={menuOnClick} chain={chain} />
+      <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
         showActionsMenu &&
         <AccMenu

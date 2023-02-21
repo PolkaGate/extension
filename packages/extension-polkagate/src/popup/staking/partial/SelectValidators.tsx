@@ -186,7 +186,14 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
     applySearch(filter);
   }, [applySearch]);
 
-  const isSelected = useCallback((v: ValidatorInfo) => !!newSelectedValidators.find((n) => n.accountId === v.accountId), [newSelectedValidators]);
+  const onClearSelection = useCallback(() => {
+    setNewSelectedValidators([]);
+    setSystemSuggestion(false);
+  }, [setNewSelectedValidators]);
+
+  const isSelected = useCallback((v: ValidatorInfo) =>
+    !!newSelectedValidators.find((n) => n.accountId === v.accountId)
+  , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;
@@ -221,7 +228,7 @@ export default function SelectValidators({ address, api, newSelectedValidators, 
         </Typography>
       </Grid>
       <Grid item>
-        <Typography onClick={() => setNewSelectedValidators([])} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Typography onClick={onClearSelection} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
           {t('Clear selection')}
         </Typography>
       </Grid>
