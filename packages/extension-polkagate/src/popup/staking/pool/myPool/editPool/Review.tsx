@@ -76,7 +76,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     const getRole = (role: string | undefined) => {
       if (role === undefined) {
         return 'Noop';
-      } else if (role === '') {
+      } else if (role === null) {
         return 'Remove';
       } else {
         return { set: role };

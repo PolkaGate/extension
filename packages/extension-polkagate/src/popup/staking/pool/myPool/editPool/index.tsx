@@ -5,7 +5,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountContext, AddressInput, AutoResizeTextarea, PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
@@ -23,12 +23,12 @@ interface Props {
 }
 
 export interface ChangesProps {
-  newPoolName?: string;
-  newRoles?: {
-    newRoot?: string;
-    newNominator?: string;
-    newStateToggler?: string;
-  }
+  newPoolName?: string | undefined | null;
+  newRoles: {
+    newRoot: string | undefined | null;
+    newNominator: string | undefined | null;
+    newStateToggler: string | undefined | null;
+  } | undefined
 }
 
 export default function EditPool({ address, apiToUse, pool, setRefresh, setShowEdit, showEdit }: Props): React.ReactElement {
@@ -42,7 +42,6 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const myPoolName = pool?.metadata;
   const myPoolRoles = pool?.bondedPool?.roles;
 
-  const [nextBtnDisable, setNextBtnDisable] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
@@ -71,28 +70,43 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
     !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
     !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);// needs to be run only once to initialize
+
+  const getChangedValue = (newValue: string | null | undefined, oldValue: string | undefined): undefined | null | string => {
+    if (!newValue && oldValue) {
+      return null;
+    }
+
+    if (newValue && newValue !== oldValue) {
+      return newValue;
+    }
+
+    return undefined;
+  };
 
   useEffect(() => {
     setChanges({
-      newPoolName: myPoolName !== newPoolName ? newPoolName ?? '' : undefined,
+      newPoolName: getChangedValue(newPoolName, myPoolName),
       newRoles: ((newNominatorAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) ||
         (newRootAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) ||
         (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
       )
         ? {
-          newNominator: newNominatorAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
-          newRoot: newRootAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,
-          newStateToggler: newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString() ? newStateTogglerAddress ?? '' : undefined
+          newNominator: getChangedValue(newNominatorAddress, myPoolRoles?.nominator?.toString()),
+          newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString()),
+          newStateToggler: getChangedValue(newStateTogglerAddress, myPoolRoles?.stateToggler?.toString())
         }
         : undefined
     });
   }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
 
-  useEffect(() => {
-    setNextBtnDisable(!(changes?.newPoolName || changes?.newRoles) || [newNominatorAddress, newRootAddress, newStateTogglerAddress].includes(undefined));
-  }, [changes, newNominatorAddress, newRootAddress, newStateTogglerAddress]);
+  const nextBtnDisable = useMemo(() =>
+    changes?.newPoolName === undefined &&
+    changes?.newRoles?.newNominator === undefined &&
+    changes?.newRoles?.newRoot === undefined &&
+    changes?.newRoles?.newStateToggler === undefined
+    , [changes?.newPoolName, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot, changes?.newRoles?.newStateToggler]);
 
   return (
     <>
