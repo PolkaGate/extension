@@ -88,16 +88,11 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   useEffect(() => {
     setChanges({
       newPoolName: getChangedValue(newPoolName, myPoolName),
-      newRoles: ((newRootAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) ||
-        (newNominatorAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) ||
-        (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
-      )
-        ? {
-          newNominator: getChangedValue(newNominatorAddress, myPoolRoles?.nominator?.toString()),
-          newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString()),
-          newStateToggler: getChangedValue(newStateTogglerAddress, myPoolRoles?.stateToggler?.toString())
-        }
-        : undefined
+      newRoles: {
+        newNominator: getChangedValue(newNominatorAddress, myPoolRoles?.nominator?.toString()),
+        newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString()),
+        newStateToggler: getChangedValue(newStateTogglerAddress, myPoolRoles?.stateToggler?.toString())
+      }
     });
   }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
 
