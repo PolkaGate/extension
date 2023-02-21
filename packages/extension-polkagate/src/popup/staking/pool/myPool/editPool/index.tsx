@@ -8,7 +8,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, AddressInput, AutoResizeTextarea, PButton, Popup } from '../../../../../components';
-import { useApi, useChain, useFormatted, usePool, useTranslation } from '../../../../../hooks';
+import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
 import Review from './Review';
@@ -71,13 +71,16 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
     !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
     !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pool?.bondedPool?.roles]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);// needs to be run only once to initialize
 
   useEffect(() => {
     setChanges({
       newPoolName: myPoolName !== newPoolName ? newPoolName ?? '' : undefined,
-      newRoles: ((newNominatorAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) || (newRootAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) || (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString()))
+      newRoles: ((newNominatorAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString()) ||
+        (newRootAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString()) ||
+        (newStateTogglerAddress !== undefined && newStateTogglerAddress !== myPoolRoles?.stateToggler?.toString())
+      )
         ? {
           newNominator: newNominatorAddress !== undefined && newNominatorAddress !== myPoolRoles?.nominator?.toString() ? newNominatorAddress ?? '' : undefined,
           newRoot: newRootAddress !== undefined && newRootAddress !== myPoolRoles?.root?.toString() ? newRootAddress ?? '' : undefined,

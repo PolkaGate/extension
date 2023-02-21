@@ -89,7 +89,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newStateToggler)));
 
     setTxCalls(calls);
-    
+
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
