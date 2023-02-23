@@ -703,3 +703,8 @@ export interface SoloSettings {
   payee: Payee,
   stashId: AccountId | string | undefined,
 }
+
+export interface DropdownOption {
+  text: string;
+  value: string;
+}
