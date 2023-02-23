@@ -3,9 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
+import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import getLogo from '../util/getLogo';
 import Label from './Label';
@@ -28,10 +28,15 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
+function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [selectedValue, setSelectedValue] = useState<string>();
+
+  useEffect(() => {
+    setSelectedValue(value || defaultValue);
+  }, [value, defaultValue]);
 
   const toggleMenu = useCallback(() => !isDisabled && setShowMenu(!showMenu), [isDisabled, showMenu]);
 
@@ -57,11 +62,11 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
     }
   }));
 
-  const _onChange = useCallback(
-    ({ target: { value } }: React.ChangeEvent<HTMLSelectElement>) => {
-      onChange && onChange(typeof value === 'string' ? value.trim() : value);
-      toggleMenu();
-    }, [onChange, toggleMenu]);
+  const _onChange = useCallback((event: SelectChangeEvent<string>) => {
+    onChange && onChange(event.target.value);
+    setSelectedValue(event.target.value);
+    toggleMenu();
+  }, [onChange, toggleMenu]);
 
   const chainName = useCallback((text: string) => text.replace(' Relay Chain', '')?.replace(' Network', '').toLowerCase(), []);
 
@@ -113,8 +118,15 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
           defaultValue={defaultValue}
           id='selectChain'
           input={<BootstrapInput />}
+          onChange={_onChange}
           onClick={toggleMenu}
           open={showMenu}
+          // eslint-disable-next-line react/jsx-no-bind
+          renderValue={(value) => {
+            const textToShow = options.find((option) => value === option.value || value === option.text)?.text;
+
+            return textToShow;
+          }}
           sx={{
             '> #selectChain': {
               border: '1px solid',
@@ -138,15 +150,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
             bgcolor: isDisabled ? 'primary.contrastText' : 'transparent',
             width: '100%'
           }}
-          value={value}
-          onChange={_onChange}
-          // eslint-disable-next-line react/jsx-no-bind
-          renderValue={(value) => {
-            const textToShow = options.find((option) => value === option.value)?.text;
-
-            return textToShow ?? options[0].text;
-          }
-          }
+          value={selectedValue}
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
