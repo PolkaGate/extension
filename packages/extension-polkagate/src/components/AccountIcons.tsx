@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
+import { Chain } from '@polkadot/extension-chains/types';
+
 import { useTranslation } from '../hooks';
 import { Proxy } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
@@ -16,15 +18,16 @@ import Identicon from './Identicon';
 import { Infotip } from '.';
 
 interface Props {
+  chain: Chain | null | undefined;
   formatted: string | undefined;
-  recoverable?: boolean;
   identiconTheme: IconTheme;
+  judgements?: RegExpMatchArray | null | undefined
   prefix?: number;
   proxies: Proxy[] | undefined;
-  judgements?: RegExpMatchArray | null | undefined
+  recoverable?: boolean;
 }
 
-export default function AccountIcons({ formatted, identiconTheme, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons({ chain, formatted, identiconTheme, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -32,8 +35,8 @@ export default function AccountIcons({ formatted, identiconTheme, judgements, pr
   const address = getSubstrateAddress(formatted);
 
   const openManageProxy = useCallback(() => {
-    address && onAction(`/manageProxies/${address}`);
-  }, [address, onAction]);
+    address && chain && onAction(`/manageProxies/${address}`);
+  }, [address, chain, onAction]);
 
   return (
     <Grid container direction='column' sx={{ width: '17%', ml: '8px' }}>

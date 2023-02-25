@@ -2,18 +2,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
-import React, { MouseEventHandler } from 'react';
+import { Tooltip } from '@mui/material';
+import React, { MouseEventHandler, useCallback } from 'react';
 
 import { useTranslation } from '../hooks';
 import ActionText from './ActionText';
 import TextAreaWithLabel from './TextAreaWithLabel';
+import OnActionToolTip from './OnActionToolTip';
 
 interface Props {
+  isCopied: boolean;
+  setIsCopied: React.Dispatch<React.SetStateAction<boolean>>;
   seed: string;
   onCopy: MouseEventHandler<HTMLDivElement>;
 }
 
-export default function MnemonicSeed({ onCopy, seed }: Props): React.ReactElement<Props> {
+export default function MnemonicSeed({ isCopied, onCopy, seed, setIsCopied }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
@@ -25,15 +29,21 @@ export default function MnemonicSeed({ onCopy, seed }: Props): React.ReactElemen
         style={{ margin: 'auto', width: '92%' }}
         value={seed}
       />
-      <div className='buttonsRow'>
-        <ActionText
-          className='copyBtn'
-          data-seed-action='copy'
-          icon={faCopy}
-          onClick={onCopy}
-          text={t<string>('Copy to clipboard')}
-        />
-      </div>
+      <OnActionToolTip
+        actionHappened={isCopied}
+        setIsHappened={setIsCopied}
+        title={t('Copied')}
+      >
+        <div className='buttonsRow'>
+          <ActionText
+            className='copyBtn'
+            data-seed-action='copy'
+            icon={faCopy}
+            onClick={onCopy}
+            text={t<string>('Copy to clipboard')}
+          />
+        </div>
+      </OnActionToolTip>
     </div>
   );
 }

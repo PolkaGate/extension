@@ -7,36 +7,53 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
-import { Avatar, Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
+import { Box, Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { stars5Black, stars5White } from '../../assets/icons';
-import CopyAddressButton from '../../components/CopyAddressButton';
-import FormatBalance2 from '../../components/FormatBalance2';
-import FormatPrice from '../../components/FormatPrice';
+import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
 import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
 import RecentChains from '../../partials/RecentChains';
 import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
-import getLogo from '../../util/getLogo';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from '../account/util';
 
 interface Props {
   address: string;
+  chain: Chain | null;
   formatted: string | undefined | null;
+  hideNumbers: boolean | undefined;
+  identity: DeriveAccountRegistration | null | undefined;
+  isHidden: boolean | undefined;
+  menuOnClick: () => void;
   name: string | undefined;
   toggleVisibility: () => void;
-  chain: Chain | null;
-  isHidden: boolean | undefined;
-  identity: DeriveAccountRegistration | null | undefined;
-  hideNumbers: boolean | undefined;
 }
 
-export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, name, toggleVisibility }: Props): React.ReactElement<Props> {
+interface EyeProps {
+  toggleVisibility: () => void;
+  isHidden: boolean | undefined;
+}
+
+const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <Infotip text={isHidden && t('This account is hidden from websites')}    >
+      <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
+        <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+      </IconButton>
+    </Infotip>
+  )
+};
+
+export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -55,8 +72,9 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   }, [balances, chainName]);
 
   const NoChainAlert = () => (
-    <Grid color='text.primary' fontSize='14px' fontWeight={500} lineHeight='27px'>
+    <Grid color='text.primary' onClick={menuOnClick} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, lineHeight: '27px' }}>
       {t('Select a chain to view balance')}
+      <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-1px', stroke: '#BA2882' }} />
     </Grid>
   );
 
@@ -122,9 +140,10 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-            <vaadin-icon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-          </IconButton>
+          <EyeButton
+            isHidden={isHidden}
+            toggleVisibility={toggleVisibility}
+          />
         </Grid>
         <Grid item sx={{ m: '10px 0' }}>
           <CopyAddressButton
