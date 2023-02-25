@@ -68,7 +68,6 @@ export default function PoolMoreInfo ({ address, api, chain, pool, poolId, setSh
   };
 
   const percent = useCallback((memberPoints: BN) => {
-    // return Number((memberPoints.muln(100)).div(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
     return (Number(memberPoints.muln(100)) / Number(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
   }, [poolPoints]);
 
