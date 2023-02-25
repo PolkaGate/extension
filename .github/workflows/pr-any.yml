@@ -1,0 +1,19 @@
+name: PR
+on: [pull_request]
+
+jobs:
+  pr:
+    strategy:
+      matrix:
+        step: ['lint', 'test', 'build']
+    name: ${{ matrix.step }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+    - name: ${{ matrix.step }}
+      run: |
+        yarn install --immutable | grep -v 'YN0013'
+        yarn ${{ matrix.step }}
