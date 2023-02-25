@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { DirectionsRun as DirectionsRunIcon, WarningRounded as WarningRoundedIcon } from '@mui/icons-material/';
-import { Divider, Grid, useTheme } from '@mui/material';
+import { Divider, Grid } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
