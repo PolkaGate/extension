@@ -66,11 +66,18 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => {
     if (myPool && myPool.member?.points && myPool.stashIdAccount && myPool.bondedPool) {
-      return (new BN(myPool.member.points).mul(new BN(String(myPool.stashIdAccount.stakingLedger.active)))).div(new BN(myPool.bondedPool.points));
+      const myPoints = new BN(myPool.member.points);
+      const poolActive = new BN(String(myPool.stashIdAccount.stakingLedger.active));
+      const poolPoints = new BN(myPool.bondedPool.points);
+
+      return myPoints.isZero() || poolPoints.isZero()
+        ? BN_ZERO
+        : myPoints.mul(poolActive).div(poolPoints);
     } else {
       return BN_ZERO;
     }
   }, [myPool]);
+
   const decimal = useDecimal(address) ?? DEFAULT_TOKEN_DECIMALS;
   const token = useToken(address) ?? '...';
   const totalAfterUnstake = useMemo(() => {
