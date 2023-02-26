@@ -81,7 +81,7 @@ export default function RewardDetails(): React.ReactElement {
   const ascSortedRewards = useMemo(() => {
     const sorted = rewardsInfo && [...rewardsInfo];
 
-    sorted?.sort((a, b) => a.era - b.era);
+    sorted?.sort((a, b) => a.timeStamp - b.timeStamp);
 
     const newSorted = sorted?.map((reward) => {
       reward.date = formateDate(reward.timeStamp);
@@ -391,7 +391,7 @@ export default function RewardDetails(): React.ReactElement {
       <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='48%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
         <Grid container direction='column' item textAlign='right' xs={7}>
           <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Next')}</Typography>
-          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primay'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
+          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
         </Grid>
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
         <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
