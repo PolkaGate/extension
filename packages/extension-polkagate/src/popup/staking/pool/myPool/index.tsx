@@ -138,14 +138,15 @@ export default function Pool(): React.ReactElement {
     }
 
     const allRoles = ['depositor', 'root', 'nominator', 'stateToggler'];
+    const toDisable: string[] = [];
 
     allRoles.forEach((role, index) => {
       const available = allMyPools.find((pool) => pool?.bondedPool?.roles[role] === formatted);
 
-      available && allRoles.splice(index, 1);
+      !available && toDisable.push(allRoles[index]);
     });
 
-    return allRoles;
+    return toDisable;
   }, [allMyPools, formatted]);
 
   const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
