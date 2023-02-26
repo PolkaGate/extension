@@ -91,11 +91,11 @@ export default function Home (): React.ReactElement {
             <Container
               disableGutters
               sx={[{
-                '> .tree:first-child': { border: 'none' },
-                backgroundColor: 'background.paper',
-                border: '0.5px solid',
-                borderColor: 'secondary.light',
-                borderRadius: '5px',
+                // '> .tree:first-child': { border: 'none' },
+                // backgroundColor: 'background.paper',
+                // border: '0.5px solid',
+                // borderColor: 'secondary.light',
+                // borderRadius: '5px',
                 m: 'auto',
                 maxHeight: `${self.innerHeight - 170}px`,
                 mt: '10px',
