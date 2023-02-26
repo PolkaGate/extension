@@ -59,7 +59,6 @@ export default function RewardDetails(): React.ReactElement {
   const history = useHistory();
   const stakingAccount = useStakingAccount(address);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-  // const formatted = useFormatted(address);
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
