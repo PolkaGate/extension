@@ -90,11 +90,15 @@ export default function Pool(): React.ReactElement {
     }
 
     if (pool === null && myOtherPools?.length) {
+      myOtherPools.length > 1 && setShowPoolNavigation(true);
+
       return myOtherPools;
     }
 
     if (pool && myOtherPools?.length) {
       const filtered = myOtherPools.filter((other) => Number(other.poolId) !== Number(pool.poolId));
+
+      myOtherPools.length > 1 && setShowPoolNavigation(true);
 
       return [pool, ...filtered];
     }
@@ -212,7 +216,6 @@ export default function Pool(): React.ReactElement {
   }, [poolIndex]);
 
   const onSelectionMethodChange = useCallback((value: string): void => {
-    console.log('value:', value)
     setRoleToShow(value);
   }, []);
 
