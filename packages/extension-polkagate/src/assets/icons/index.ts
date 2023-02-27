@@ -3,8 +3,6 @@
 
 export { default as checkBox } from './checkBox.svg';
 export { default as checkedBox } from './checkedBox.svg';
-export { default as connect } from './connectW.png';
-export { default as connectB } from './connectB.png';
 export { default as riot } from './riot.png';
 export { default as upload } from './upload.png';
 export { default as subscan } from './subscan.svg';
