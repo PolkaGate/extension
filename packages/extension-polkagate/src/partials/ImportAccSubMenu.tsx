@@ -103,7 +103,16 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         />
         <MenuItem
           disabled={settings.camera !== 'on'}
-          iconComponent={<vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', width: '18px', color: `${settings.camera === 'on' ? theme.palette.mode === 'dark' ? 'white' : 'black' : 'theme.palette.text.disabled'}` }} />}
+          iconComponent={
+            <vaadin-icon
+              icon='vaadin:qrcode'
+              style={{
+                height: '18px',
+                width: '18px',
+                color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}`
+              }}
+            />
+          }
           onClick={_goToAttachQR}
           py='4px'
           text='Attach external QR-signer '

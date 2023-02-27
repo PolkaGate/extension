@@ -107,11 +107,13 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
         balanceText={t<string>('Minimum to join')}
         buttonText={t<string>('Join')}
         isDisabled={joinDisabled}
-        logo={<FontAwesomeIcon
-          color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-          fontSize='18px'
-          icon={faRightToBracket}
-        />}
+        logo={
+          <FontAwesomeIcon
+            color={`${theme.palette.text.primary}`}
+            fontSize='18px'
+            icon={faRightToBracket}
+          />
+        }
         noToolTip
         onClick={joinPool}
         style={{
@@ -127,11 +129,13 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
         balanceText={t<string>('Minimum to create')}
         buttonText={t<string>('Create')}
         isDisabled={createDisabled}
-        logo={<FontAwesomeIcon
-          color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-          fontSize='18px'
-          icon={faSquarePlus}
-        />}
+        logo={
+          <FontAwesomeIcon
+            color={`${theme.palette.text.primary}`}
+            fontSize='18px'
+            icon={faSquarePlus}
+          />
+        }
         noToolTip
         onClick={createPool}
         style={{

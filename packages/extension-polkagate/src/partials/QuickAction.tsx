@@ -79,7 +79,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       bgcolor='background.paper'
       container
       justifyContent='space-between'
-      sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '0 5px 5px 0', boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)', flexFlow: 'nowrap' }}
+      sx={{ border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '0 5px 5px 0', boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.55)', flexFlow: 'nowrap' }}
     >
       <Grid container item justifyContent='center' width='13px'>
         <IconButton
