@@ -242,7 +242,7 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               showStakingOptions ?
-                <Box component='img' width='30px' src={stakingClose} />
+                <Box component='img' src={stakingClose} width='30px' />
                 : <FontAwesomeIcon
                   color={stakingIconColor}
                   icon={faCoins}
@@ -267,7 +267,7 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             icon={
               <FontAwesomeIcon
-                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+                color={`${theme.palette.text.primary}`}
                 icon={faHistory}
                 size='lg'
               />}

@@ -179,9 +179,10 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           dividerHeight={20}
           icon={
             <FontAwesomeIcon
-              color={account?.genesisHash
-                ? theme.palette.mode === 'dark' ? 'white' : 'black'
-                : `${theme.palette.action.disabledBackground}`
+              color={
+                account?.genesisHash
+                  ? `${theme.palette.text.primary}`
+                  : `${theme.palette.action.disabledBackground}`
               }
               icon={faHistory}
               style={{ height: '20px' }}
