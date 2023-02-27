@@ -172,7 +172,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
         </Container>
         <PasswordUseProxyConfirm
           api={api}
-          confirmText={t<string>('Confirm')}
+          // confirmText={t<string>('Confirm')}
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
