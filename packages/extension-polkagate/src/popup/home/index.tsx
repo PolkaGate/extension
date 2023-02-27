@@ -97,7 +97,7 @@ export default function Home (): React.ReactElement {
                 // borderColor: 'secondary.light',
                 // borderRadius: '5px',
                 m: 'auto',
-                maxHeight: `${self.innerHeight - 170}px`,
+                maxHeight: `${self.innerHeight - 165}px`,
                 mt: '10px',
                 overflowY: 'scroll',
                 p: 0,
