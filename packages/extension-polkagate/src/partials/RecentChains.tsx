@@ -200,7 +200,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
       <Backdrop
         onClick={toggleRecentChains}
         open={showRecentChains}
-        sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.3)', position: 'absolute', zIndex: 1 }}
+        sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.3)', borderRadius: '5px', position: 'absolute', zIndex: 1 }}
       >
       </Backdrop>
       <Grid alignItems='center' container height='20px' mr='5px' position='relative' width='20px'>
