@@ -123,7 +123,8 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
         iconComponent={
           <FontAwesomeIcon
             color={theme.palette.text.primary}
-            icon={faFileExport} />
+            icon={faFileExport}
+          />
         }
         onClick={_onExportAccount}
         text={t('Export account')}
