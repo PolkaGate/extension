@@ -7,7 +7,7 @@ import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon, MoreVert as MoreVer
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
-import { logoWhite } from '../assets/logos';
+import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { Step } from '../util/types';
@@ -73,8 +73,8 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
       {!showBackArrow && showBrand &&
         <Box
           component='img'
-          src={logoWhite}
-          sx={{ height: 38, width: 38 }}
+          src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
+          sx={{ height: 52, width: 52 }}
         />
       }
     </Grid>
@@ -82,10 +82,11 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
 
   const CenterItem = () => (
     <Grid display='inline-flex' item>
-      <Typography color={showBrand ? '#ffffff' : 'text.primary'} fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '30px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
+      <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '30px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
         {text}
       </Typography>
-      {withSteps &&
+      {
+        withSteps &&
         <Steps
           current={withSteps.current}
           total={withSteps.total}
@@ -100,7 +101,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
           {showMenu &&
             <MenuIcon
-              sx={{ color: showBrand ? '#fff' : 'secondary.light', fontSize: 39 }}
+              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
             />
           }
           {showAccountMenu &&
@@ -134,13 +135,14 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
 
   return (
     <>
-      <Container disableGutters
+      <Container
+        disableGutters
         sx={{
-          background: showBrand ? 'radial-gradient(88.81% 88.81% at 50% 50.75%, #99004F 0%, rgba(153, 0, 79, 0) 100%)' : 'transparent',
+          bgcolor: showBrand && 'background.paper',
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: `18px 30px ${paddingBottom}px`
+          p: showBrand ? '7px 30px 7px' : `18px 30px ${paddingBottom}px`
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>

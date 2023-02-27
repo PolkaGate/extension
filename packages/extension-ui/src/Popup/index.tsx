@@ -52,13 +52,13 @@ import CreatePool from '../../../extension-polkagate/src/popup/staking/pool/stak
 import JoinPool from '../../../extension-polkagate/src/popup/staking/pool/stake/joinPool';
 import PoolUnstake from '../../../extension-polkagate/src/popup/staking/pool/unstake';
 import Solo from '../../../extension-polkagate/src/popup/staking/solo';
+import FastUnstake from '../../../extension-polkagate/src/popup/staking/solo/fastUnstake';
 import SoloNominations from '../../../extension-polkagate/src/popup/staking/solo/nominations';
 import SoloRestake from '../../../extension-polkagate/src/popup/staking/solo/restake';
 import SoloReward from '../../../extension-polkagate/src/popup/staking/solo/rewards';
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
-import FastUnstake from '../../../extension-polkagate/src/popup/staking/solo/fastUnstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
@@ -168,7 +168,7 @@ export default function Popup(): React.ReactElement {
 
   return (
     <AnimatePresence exitBeforeEnter>
-      <Loading>{accounts && authRequests && metaRequests && signRequests && (
+      <Loading>{accounts && authRequests && metaRequests && signRequests &&
         <ActionContext.Provider value={_onAction}>
           <SettingsContext.Provider value={settingsCtx}>
             <AccountContext.Provider value={accountCtx}>
@@ -237,7 +237,7 @@ export default function Popup(): React.ReactElement {
             </AccountContext.Provider>
           </SettingsContext.Provider>
         </ActionContext.Provider>
-      )}</Loading>
+      }</Loading>
     </AnimatePresence>
   );
 }
