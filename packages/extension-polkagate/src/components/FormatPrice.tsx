@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -39,11 +39,21 @@ function nFormatter(num: number, digits: number) {
 }
 
 function FormatPrice({ amount, decimalPoint = 2, decimals, num, price }: Props): React.ReactElement<Props> {
-  const total = num ?? parseFloat(amountToHuman(amount, decimals)) * price;
+  const total = useMemo(() => {
+    if (num) {
+      return num;
+    }
+
+    if (amount && decimals && price !== undefined) {
+      return parseFloat(amountToHuman(amount, decimals)) * price;
+    }
+
+    return undefined;
+  }, [amount, decimals, num, price]);
 
   return (
     <>
-      {`$${nFormatter(total, decimalPoint)}`}
+      {`$${total ? nFormatter(total, decimalPoint) : '0'}`}
     </>
   );
 }

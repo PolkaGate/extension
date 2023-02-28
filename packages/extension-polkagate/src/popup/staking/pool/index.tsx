@@ -327,10 +327,10 @@ export default function Index(): React.ReactElement {
           divider
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
-              icon={faPlus}
+            color={`${theme.palette.text.primary}`}
+            icon={faPlus}
               shake={shake}
-              style={{ height: '34px', stroke: theme.palette.mode === 'dark' ? 'white' : 'black', strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
+              style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
             />
           }
           onClick={goToStake}
@@ -341,7 +341,7 @@ export default function Index(): React.ReactElement {
           icon={
             <FontAwesomeIcon
               bounce={staked !== undefined && !staked.isZero() && pool?.bondedPool?.state !== 'Destroying' && pool?.stashIdAccount?.nominators?.length === 0} // do when has stake but does not nominations
-              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              color={`${theme.palette.text.primary}`}
               icon={faHand}
               size='lg'
             />

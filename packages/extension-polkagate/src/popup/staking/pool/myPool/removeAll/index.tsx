@@ -65,7 +65,7 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
   const [mode, setMode] = useState<'UnbondAll' | 'RemoveAll' | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
-  const [remainingEraToKick, setRemainingEraToKick] = useState<number>();
+  const [remainingEraToKick, setRemainingEraToKick] = useState<number | null>();
   const [remainingSecondsToKickAll, setRemainingSecondsToKickAll] = useState<number>();// in seconds
   const [remainingTimeCounter, setRemainingTimeCounter] = useState<RemainingTimeCounterProps>();
 
@@ -112,7 +112,7 @@ export default function RemoveAll({ address, api, pool, setRefresh, setShowRemov
       return;
     }
 
-    const unlocking = pool.stashIdAccount.unlocking;
+    const unlocking = pool?.stashIdAccount?.unlocking;
     const remainingEras = unlocking?.length ? unlocking[unlocking.length - 1].remainingEras : null;
 
     setRemainingEraToKick(remainingEras ? Number(remainingEras) : null);

@@ -101,14 +101,18 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   useEffect(() => {
     if (!membersToUnboundAll && !membersToRemoveAll) { return; }
 
-    if (!api?.call?.transactionPaymentApi) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
     if (mode === 'UnbondAll') {
       const calls = membersToUnboundAll?.map((m) => unbonded(m.accountId, m.points));
 
-      if (!calls) { return; }
+      if (!calls) {
+        return;
+      }
+
+      setTxCalls(calls);
+
+      if (!api?.call?.transactionPaymentApi) {
+        return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      }
 
       // eslint-disable-next-line no-void
       void (calls?.length > 1 ? batchAll(calls) : calls[0]).paymentInfo(formatted).then((i) => {
@@ -123,19 +127,23 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
         }
       });
-
-      setTxCalls(calls);
     } else if (mode === 'RemoveAll') {
       const calls = membersToRemoveAll?.map((m) => redeem(m.accountId, m.points));
 
-      if (!calls) { return; }
+      if (!calls) {
+        return;
+      }
+
+      setTxCalls(calls);
+
+      if (!api?.call?.transactionPaymentApi) {
+        return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      }
 
       // eslint-disable-next-line no-void
       void (calls?.length > 1 ? batchAll(calls) : calls[0]).paymentInfo(formatted).then((i) => {
         setEstimatedFee(i?.partialFee);
       });
-
-      setTxCalls(calls);
     }
   }, [api, batchAll, formatted, maxUnlockingChunks, membersToRemoveAll, membersToUnboundAll, mode, poolWithdrawUnbonded, redeem, setTxCalls, unbonded, unlockingLen]);
 

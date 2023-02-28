@@ -5,13 +5,12 @@
 
 import '@vaadin/icons';
 
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
+import { ArrowForwardIos as ArrowForwardIosIcon, QrCode as QrCodeIcon, UploadFileRounded as UploadJSONIcon, Usb as UsbIcon } from '@mui/icons-material';
 import { Divider, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { connect, connectB } from '../assets/icons';
 import { ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
@@ -79,7 +78,9 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
       <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:cloud-upload-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <UploadJSONIcon
+              sx={{ color: `${theme.palette.text.primary}` }}
+            />
           }
           onClick={_goToRestoreFromJson}
           py='4px'
@@ -103,7 +104,13 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         />
         <MenuItem
           disabled={settings.camera !== 'on'}
-          iconComponent={<vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', width: '18px', color: `${settings.camera === 'on' ? theme.palette.mode === 'dark' ? 'white' : 'black' : 'theme.palette.text.disabled'}` }} />}
+          iconComponent={
+            <QrCodeIcon
+              sx={{
+                color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}`
+              }}
+            />
+          }
           onClick={_goToAttachQR}
           py='4px'
           text='Attach external QR-signer '
@@ -115,7 +122,11 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           </Grid>
         }
         <MenuItem
-          icon={theme.palette.mode === 'light' ? connectB as string : connect as string}
+          iconComponent={
+            <UsbIcon
+              sx={{ color: 'text.primary' }}
+            />
+          }
           onClick={_goToImportLedger}
           py='4px'
           text='Attach ledger device'

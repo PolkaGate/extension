@@ -170,7 +170,7 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
           <MenuItem
             iconComponent={
               <FontAwesomeIcon
-                color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+                color={`${theme.palette.text.primary}`}
                 fontSize='18px'
                 icon={faListCheck}
               />

@@ -47,7 +47,19 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
 
   return (
     <>
-      <Container className='tree' disableGutters sx={{ borderColor: 'secondary.light', borderTopStyle: account?.parentAddress ? 'dashed' : 'solid', borderTopWidth: '1px', position: 'relative' }}>
+      <Container
+        className='tree'
+        disableGutters
+        sx={{
+          backgroundColor: 'background.paper',
+          borderColor: 'secondary.main',
+          borderRadius: '5px',
+          borderStyle: account?.parentAddress ? 'dashed' : 'solid',
+          borderWidth: '0.5px',
+          mb: '6px',
+          position: 'relative'
+        }}
+      >
         <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
           {label}
         </Grid>
@@ -62,7 +74,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         <Backdrop
           onClick={handleClose}
           open={quickActionOpen !== undefined}
-          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? '#000000cc' : '#00000040', position: 'absolute', top: '-1px' }}
+          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? '#000000cc' : '#00000040', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
         />
       </Container>
       {account?.children?.map((child, index) => (

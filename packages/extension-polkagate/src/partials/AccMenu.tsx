@@ -14,7 +14,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, SelectChain, Identicon, MenuItem, Select, SettingsContext } from '../components';
+import { ActionContext, Identicon, MenuItem, Select, SelectChain, SettingsContext } from '../components';
 import { useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
@@ -123,7 +123,8 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
         iconComponent={
           <FontAwesomeIcon
             color={theme.palette.text.primary}
-            icon={faFileExport} />
+            icon={faFileExport}
+          />
         }
         onClick={_onExportAccount}
         text={t('Export account')}

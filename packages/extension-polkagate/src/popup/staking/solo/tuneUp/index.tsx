@@ -8,7 +8,7 @@
  * this component opens withdraw rewards review page
  * */
 
-import { Divider, Grid } from '@mui/material';
+import { Divider, Grid, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -19,14 +19,16 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useApi, useChain, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
+import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, ShortAddress, WrongPasswordAlert } from '../../../../components';
+import { useAccountName, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
+import getLogo from '../../../../util/getLogo';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
+
 
 export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
@@ -34,14 +36,14 @@ export default function TuneUp(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+  const chainName = useChainName(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
 
+  const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}?tab=reward`;
+
   const putInFrontInfo = useNeedsPutInFrontOf(address);
   const rebagInfo = useNeedsRebag(address);
-
-  putInFrontInfo && console.log('putInFrontInfo:', putInFrontInfo);
-  rebagInfo && console.log('rebagInfo:', rebagInfo);
 
   const proxies = useProxies(api, formatted);
   const name = useAccountName(address);
@@ -72,7 +74,7 @@ export default function TuneUp(): React.ReactElement {
   }, [proxies]);
 
   useEffect((): void => {
-    if (!rebaged || !putInFrontOf || !formatted|| !api) {
+    if (!rebaged || !putInFrontOf || !formatted || !api) {
       return;
     }
 
@@ -142,7 +144,7 @@ export default function TuneUp(): React.ReactElement {
     onAction('/');
   }, [onAction]);
 
-  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string, mt?: string, noDivider?: boolean }) => (
+  const LabelValue = ({ label, mt = '30px', noDivider, value }: { label: string, value: string | Element, mt?: string, noDivider?: boolean }) => (
     <>
       <Grid item mt={mt} textAlign='center' xs={12}>
         <Typography fontSize='14px' fontWeight={300}>
@@ -188,7 +190,21 @@ export default function TuneUp(): React.ReactElement {
                   {t('Your account doesn\'t need to be Tuned Up!')}
                 </Typography>
               </Grid>
-              : <LabelValue label={t('Account to be overtaken')} mt='5px' value={rebagInfo?.lighter} />
+              : <LabelValue
+                label={t('Account to be overtaken')}
+                mt='5px'
+                noDivider
+                value={
+                  <>
+                    <ShortAddress address={putInFrontInfo?.lighter} />
+                    <Grid item sx={{ mt: '12px' }}>
+                      <Link href={`${subscanLink(putInFrontInfo?.lighter)}`} rel='noreferrer' target='_blank' underline='none'>
+                        <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
+                      </Link>
+                    </Grid>
+                  </>
+                }
+              />
             }
           </Grid>
         }
@@ -216,11 +232,11 @@ export default function TuneUp(): React.ReactElement {
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Staking')}
+          title={t('Tune Up')}
         />
         {txInfo &&
           <Confirmation
-            headerTitle={t('Staking')}
+            headerTitle={t('Tune Up')}
             onPrimaryBtnClick={goToStakingHome}
             onSecondaryBtnClick={goToMyAccounts}
             primaryBtnText={t('Staking Home')}

@@ -13,8 +13,8 @@ export const lightTheme: ThemeOptions = {
     mode: 'light',
     primary: { main: '#99004F', light: '#838383', contrastText: '#F1F1F1' },
     secondary: { main: '#99004F', light: '#BA2882', contrastText: '#747474' },
-    background: { default: '#E8E0E5', paper: '#fff' },
-    text: { primary: '#000', secondary: '#FFFFFF', disabled: '#747474' },
+    background: { default: '#F1F1F1', paper: '#fff' },
+    text: { primary: '#4B2338', secondary: '#FFFFFF', disabled: '#747474' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
     success: { main: '#1F7720' },
     warning: { main: '#FF002B' }

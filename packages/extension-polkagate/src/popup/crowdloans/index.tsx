@@ -452,10 +452,7 @@ export default function CrowdLoans(): React.ReactElement {
                 height: '32px',
                 color: `${itemShow === TAB_MAP.ACTIVE_CROWDLOANS
                   ? theme.palette.primary.main
-                  : theme.palette.mode === 'light'
-                    ? 'black'
-                    : 'white'
-                  }`
+                  : theme.palette.text.primary}`
               }}
             />
           }
