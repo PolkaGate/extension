@@ -15,9 +15,10 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { Identity, Infotip, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
+import getPoolAccounts from '../../../util/getPoolAccounts';
 import { MyPoolInfo, PoolInfo } from '../../../util/types';
-import PoolMoreInfo from './PoolMoreInfo';
 import RewardsDetail from '../solo/rewards/RewardsDetail';
+import PoolMoreInfo from './PoolMoreInfo';
 
 interface Props {
   api?: ApiPromise;
@@ -35,6 +36,10 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const theme = useTheme();
   const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);
   const [showRewardsChart, setShowRewardsChart] = useState<boolean>(false);
+
+  const rewardDestinationAddress = pool?.accounts?.rewardId || getPoolAccounts(api, pool.poolId).rewardId;
+  const token = pool?.token || (api && api.registry.chainTokens[0]);
+  const decimal = pool?.decimal || (api && api.registry.chainDecimals[0]);
 
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
@@ -110,7 +115,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                   {mode === 'Default' ? poolStatus : mode}
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' onClick={onRewardsChart} width='16%' sx={{ cursor: 'pointer' }}>
-                  <vaadin-icon icon='vaadin:bar-chart-h' style={{ height: '16px', width: '16px', color: `${pool?.accounts?.rewardId ? theme.palette.secondary.main : theme.palette.text.disabled}` }} />
+                  <vaadin-icon icon='vaadin:bar-chart-h' style={{ height: '16px', width: '16px', color: `${mode === 'Creating' ? theme.palette.text.disabled : theme.palette.secondary.main}` }} />
                 </Grid>
               </Grid>
             </>
@@ -135,16 +140,16 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
           showPoolInfo={isOpenPoolInfo}
         />
       }
-      {showRewardsChart && chain && pool?.accounts?.rewardId &&
+      {showRewardsChart && chain && rewardDestinationAddress && token && token && mode !== 'Creating' &&
         <RewardsDetail
           api={api}
           chain={chain}
           chainName={chainName}
-          decimal={pool?.decimal}
-          rewardDestinationAddress={pool.accounts.rewardId}
+          decimal={decimal}
+          rewardDestinationAddress={rewardDestinationAddress}
           setShow={setShowRewardsChart}
           show={showRewardsChart}
-          token={pool?.token}
+          token={token}
         />
       }
     </>
