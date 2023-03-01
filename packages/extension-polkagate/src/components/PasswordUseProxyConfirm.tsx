@@ -21,18 +21,11 @@ interface Props {
   estimatedFee?: BN;
   confirmDisabled?: boolean;
   confirmText?: string
-  defaultValue?: string | null;
   disabled?: boolean;
   isPasswordError?: boolean;
-  isFocused?: boolean;
-  isReadOnly?: boolean;
   label: string;
   onChange: React.Dispatch<React.SetStateAction<string | undefined>>
-  onEnter?: () => void;
-  placeholder?: string;
   proxiedAddress: string | AccountId | undefined;
-  value?: string;
-  withoutMargin?: boolean;
   genesisHash: string | undefined;
   prevState?: Record<string, any>;
   proxyTypeFilter: ProxyTypes[];
@@ -44,7 +37,7 @@ interface Props {
   onConfirmClick: () => Promise<void>
 }
 
-export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, defaultValue, disabled, estimatedFee, genesisHash, isFocused, isPasswordError, isReadOnly, label = '', onChange, onConfirmClick, onEnter, placeholder, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style, withoutMargin }: Props): React.ReactElement<Props> {
+export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const canPayFee = useCanPayFee(selectedProxy?.delegate || proxiedAddress, estimatedFee);
@@ -102,16 +95,12 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
               <Grid alignItems='center' container sx={{ ...style }}>
                 <Grid item xs={proxies?.length ? 8 : 12}>
                   <Password
-                    defaultValue={defaultValue}
                     disabled={disabled}
                     isError={isPasswordError}
-                    isFocused={isFocused}
-                    isReadOnly={isReadOnly}
+                    isFocused={true}
                     label={label}
                     onChange={_onChange}
                     onEnter={onConfirmClick}
-                    placeholder={placeholder}
-                    withoutMargin={withoutMargin}
                   />
                 </Grid>
                 {(!!proxies?.length || prevState?.selectedProxyAddress) &&
@@ -158,7 +147,7 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
                       </>
                     }
                   >
-                    <Grid item onClick={goToSelectProxy} pl='10px' pt='10px' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
+                    <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
                       {selectedProxy ? t('Update proxy') : t('Use proxy')}
                     </Grid>
                   </Tooltip>
