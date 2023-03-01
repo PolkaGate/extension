@@ -17,9 +17,7 @@ import uiSettings from '@polkadot/ui-settings';
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
-import SelectProxy from '../../../extension-polkagate/src/partials/SelectProxy';
 import Account from '../../../extension-polkagate/src/popup/account';
-import Others from '../../../extension-polkagate/src/popup/account/Others';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
@@ -29,7 +27,6 @@ import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
 import History from '../../../extension-polkagate/src/popup/history';
-import Detail from '../../../extension-polkagate/src/popup/history/Detail';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
@@ -195,9 +192,7 @@ export default function Popup(): React.ReactElement {
                             <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
-                            <Route path='/selectProxy/:proxiedAddress/:genesisHash'>{wrapWithErrorBoundary(<SelectProxy />, 'select-proxy')}</Route>
                             <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
-                            <Route path='/detail//:address/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                             {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                             {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
@@ -230,7 +225,6 @@ export default function Popup(): React.ReactElement {
                             <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                             <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                             <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
-                            <Route exact path='/others/:address'>{wrapWithErrorBoundary(<Others />, 'others')}</Route>
                             <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
                             <Route
                               exact
