@@ -105,6 +105,20 @@ export default function Popup(): React.ReactElement {
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
 
+  /** To save current page url */
+  if (window.location.hash !== '#/') {
+    window.localStorage.setItem('last_url', window.location.hash);
+  }
+
+  /** To LOAD last saved page url */
+  useEffect(() => {
+    const lastUrl = window.localStorage.getItem('last_url');
+
+    if (lastUrl) {
+      window.location.hash = lastUrl;
+    }
+  }, []);
+
   const set = useCallback((change: Fetching) => {
     setFetching(change);
   }, []);
@@ -187,7 +201,6 @@ export default function Popup(): React.ReactElement {
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                             {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                             {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
-                            {/* <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route> */}
                             <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                             <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
                             <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
