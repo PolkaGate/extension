@@ -18,7 +18,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ChainLogo, Identity, PButton, Progress } from '../../../../components';
+import { ChainLogo, Identity, PButton, Popup, Progress } from '../../../../components';
 import { useApi, useChain, useChainName, useDecimal, useEndpoint2, useFormatted, useStakingAccount, useStakingRewardDestinationAddress, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
@@ -43,25 +43,20 @@ interface ArrowsProps {
   onNext: () => void;
 }
 
-interface State {
-  api?: ApiPromise;
-  chain?: Chain;
+interface Props {
+  api: ApiPromise | undefined;
+  chain: Chain;
+  chainName: string | undefined;
+  decimal: number | undefined;
+  rewardDestinationAddress: string | undefined;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
+  token: string | undefined;
 }
 
-export default function RewardDetails(): React.ReactElement {
+export default function RewardsDetail({ api, chain, chainName, decimal, rewardDestinationAddress, setShow, show, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { address } = useParams<{ address: string }>();
-  const { state } = useLocation<State>();
-  const endpoint = useEndpoint2(address);
-  const api = useApi(address, state?.api);
-  const chain = useChain(address, state?.chain);
-  const history = useHistory();
-  const stakingAccount = useStakingAccount(address);
-  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-  const chainName = useChainName(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
 
   const [rewardsInfo, setRewardsInfo] = useState<RewardInfo[]>();
   const [pageIndex, setPageIndex] = useState<number>(0);
@@ -261,7 +256,7 @@ export default function RewardDetails(): React.ReactElement {
         return setRewardsInfo(rewardsFromSubscan);
       }
     });
-  }, [chainName, endpoint, rewardDestinationAddress]);
+  }, [chainName, rewardDestinationAddress]);
 
   const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
@@ -364,11 +359,8 @@ export default function RewardDetails(): React.ReactElement {
   };
 
   const backToStakingHome = useCallback(() => {
-    history.push({
-      pathname: `/solo/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    setShow(false);
+  }, [setShow]);
 
   const onNext = useCallback(() => {
     pageIndex && setPageIndex(pageIndex - 1);
@@ -400,7 +392,7 @@ export default function RewardDetails(): React.ReactElement {
   );
 
   return (
-    <>
+    <Popup show={show}>
       <HeaderBrand
         onBackClick={backToStakingHome}
         shortBorder
@@ -434,7 +426,7 @@ export default function RewardDetails(): React.ReactElement {
                 {t('Reward')}
               </Typography>
             </Grid>
-            <Grid container sx={{ '> .MuiPaper-root': { boxShadow: 'none', backgroundImage: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
+            <Grid container sx={{ '> .MuiPaper-root': { backgroundImage: 'none', boxShadow: 'none' }, '> .MuiPaper-root::before': { bgcolor: 'transparent' }, maxHeight: parent.innerHeight - 450, overflowX: 'hidden', overflowY: 'scroll' }}>
               {descSortedRewards.length
                 ? descSortedRewards.slice(0, MAX_REWARDS_INFO_TO_SHOW).map((d, index: number) =>
                   <>
@@ -484,6 +476,6 @@ export default function RewardDetails(): React.ReactElement {
           </>)
         : <Progress pt='120px' size={125} title={t<string>('Loading rewards...')} />
       }
-    </>
+    </Popup>
   );
 }
