@@ -105,7 +105,6 @@ export default function Popup(): React.ReactElement {
 
   /** To save current page url */
   if (window.location.hash !== '#/') {
-    console.log(`saving ${window.location.hash} into local storage ...`);
     window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
   }
 
