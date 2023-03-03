@@ -107,6 +107,9 @@ export default function Index(): React.ReactElement {
 
   useEffect(() => {
     if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
+      setUnlockingAmount(state?.unlockingAmount || undefined);
+      setRedeemable(state?.redeemable);
+
       return;
     }
 
@@ -135,7 +138,7 @@ export default function Index(): React.ReactElement {
     setToBeReleased(toBeReleased);
     setRedeemable(redeemValue);
     setUnlockingAmount(unlockingValue);
-  }, [pool, api, currentEraIndex, sessionInfo]);
+  }, [pool, api, currentEraIndex, sessionInfo, state?.unlockingAmount, state?.redeemable]);
 
   const onBackClick = useCallback(() => {
     const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
@@ -327,8 +330,8 @@ export default function Index(): React.ReactElement {
           divider
           icon={
             <FontAwesomeIcon
-            color={`${theme.palette.text.primary}`}
-            icon={faPlus}
+              color={`${theme.palette.text.primary}`}
+              icon={faPlus}
               shake={shake}
               style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
             />
