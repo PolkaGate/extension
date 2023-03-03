@@ -1,4 +1,4 @@
-// Copyright 2017-2022 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -127,7 +127,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                 </Grid>
               }
               {(reset) &&
-                <Grid item mt='11px'>
+                <Grid item mt='20px'>
                   {t('Or')}
                 </Grid>
               }
@@ -141,7 +141,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                 </Grid>
               }
               <input {...getInputProps()} />
-              <Grid item mt={file ? 0 : '20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
+              <Grid item m={file ? 0 : '-7px 0 20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
                 {
                   clearContent || reset
                     ? placeholder || t<string>('drag and drop the file here')
