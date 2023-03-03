@@ -10,6 +10,7 @@ export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
 export const DEFAULT_LIMIT_OF_VALIDATORS_PER_OPERATOR = 2;
 export const MILLISECONDS_TO_UPDATE = 5 * 60 * 1000; // to update price
+// export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance i grey
 export const PLUS_VERSION = '0.44.1.19';
 export const ENVIRONMENT = 'production'; // development or production
