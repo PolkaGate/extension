@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
+import { useChainName, useCurrentEraIndex, useEndpoint2, useToken } from '.';
 
 export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
   const [consts, setConsts] = useState<StakingConsts | undefined | null>();
@@ -15,6 +15,7 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
   const endpoint = useEndpoint2(address);
   const chainName = useChainName(address);
   const eraIndex = useCurrentEraIndex(address);
+  const token = useToken(address);
 
   const getStakingConsts = useCallback((chainName: string, endpoint: string) => {
     const getStakingConstsWorker: Worker = new Worker(new URL('../util/workers/getStakingConsts.js', import.meta.url));
@@ -68,5 +69,9 @@ export default function useStakingConsts(address: string, stateConsts?: StakingC
     endpoint && chainName && eraIndex && eraIndex !== consts?.eraIndex && getStakingConsts(chainName, endpoint);
   }, [endpoint, chainName, getStakingConsts, stateConsts, eraIndex, consts]);
 
-  return newConsts || consts;
+  return (newConsts && newConsts.token === token)
+    ? newConsts
+    : (consts && consts.token === token)
+      ? consts
+      : undefined;
 }
