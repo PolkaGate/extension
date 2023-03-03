@@ -57,6 +57,7 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
+import { MILLISECONDS_TO_UPDATE } from '../../../extension-polkagate/src/util/constants';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
@@ -104,15 +105,20 @@ export default function Popup(): React.ReactElement {
 
   /** To save current page url */
   if (window.location.hash !== '#/') {
-    window.localStorage.setItem('last_url', window.location.hash);
+    console.log(`saving ${window.location.hash} into local storage ...`);
+    window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
   }
 
   /** To LOAD last saved page url */
   useEffect(() => {
-    const lastUrl = window.localStorage.getItem('last_url');
+    const lastUrlInfo = window.localStorage.getItem('last_url');
 
-    if (lastUrl) {
-      window.location.hash = lastUrl;
+    if (lastUrlInfo) {
+      const info = JSON.parse(lastUrlInfo) as { time: number, url: string };
+
+      if (Date.now() - info.time < MILLISECONDS_TO_UPDATE) {
+        window.location.hash = info.url;
+      }
     }
   }, []);
 
