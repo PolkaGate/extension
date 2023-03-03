@@ -117,7 +117,8 @@ export default function Popup(): React.ReactElement {
       const info = JSON.parse(lastUrlInfo) as { time: number, url: string };
 
       if (Date.now() - info.time < MILLISECONDS_TO_UPDATE) {
-        window.location.hash = info.url;
+        /** TODO: this url replacement is disabled until finding a way to handle Authorize and transactions popups/pages */
+        // window.location.hash = info.url;
       }
     }
   }, []);
