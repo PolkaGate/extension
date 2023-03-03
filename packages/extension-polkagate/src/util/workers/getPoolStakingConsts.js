@@ -14,7 +14,7 @@ async function getPoolStackingConsts(endpoint) {
 
     const ED = new BN(api.consts.balances.existentialDeposit);
 
-    const [maxPoolMembers, maxPoolMembersPerPool, maxPools, minCreateBond, minJoinBond, minNominatorBond, lastPoolId, currentEra] =
+    const [maxPoolMembers, maxPoolMembersPerPool, maxPools, minCreateBond, minJoinBond, minNominatorBond, lastPoolId, currentEra, token] =
       await Promise.all([
         apiAt.query.nominationPools.maxPoolMembers(),
         apiAt.query.nominationPools.maxPoolMembersPerPool(),
@@ -23,7 +23,8 @@ async function getPoolStackingConsts(endpoint) {
         apiAt.query.nominationPools.minJoinBond(),
         apiAt.query.staking.minNominatorBond(),
         apiAt.query.nominationPools.lastPoolId(),
-        api.query.staking.currentEra()
+        api.query.staking.currentEra(),
+        api.registry.chainTokens[0]
       ]);
 
     return {
@@ -35,9 +36,9 @@ async function getPoolStackingConsts(endpoint) {
       minCreateBond: minCreateBond.toString(),
       minCreationBond: bnMax(minCreateBond, ED, minNominatorBond).add(ED).toString(), // minimum that is needed in action
       minJoinBond: minJoinBond.toString(),
-      minNominatorBond: minNominatorBond.toString()
+      minNominatorBond: minNominatorBond.toString(),
+      token
     };
-
   } catch (error) {
     console.log('something went wrong while getPoolStackingConsts. err: ' + error);
 
