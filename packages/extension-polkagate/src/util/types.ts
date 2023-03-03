@@ -55,6 +55,7 @@ export interface StakingConsts {
   maxNominations: number;
   maxNominatorRewardedPerValidator: number;
   minNominatorBond: BN;
+  token: string;
   unbondingDuration: number; // days
 }
 
