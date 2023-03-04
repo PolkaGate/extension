@@ -18,8 +18,8 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useChainName, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useTranslation } from '../../../hooks';
-import { HeaderBrand } from '../../../partials';
+import { useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation } from '../../../hooks';
+import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
@@ -62,12 +62,14 @@ export default function Index(): React.ReactElement {
   const mayBeMyStashBalances = useBalances(stakingAccount?.stashId, refresh, setRefresh);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useMyAccountIdentity(address);
+  const token = useToken(address);
+  const decimal = useDecimal(address);
 
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
-  const decimal = stakingAccount?.decimal;
-  const token = stakingAccount?.token;
+  // const decimal = stakingAccount?.decimal;
+  // const token = stakingAccount?.token;
   const isBalanceOutdated = useMemo(() => stakingAccount && (Date.now() - (stakingAccount.date || 0)) > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -110,6 +112,8 @@ export default function Index(): React.ReactElement {
 
   useEffect(() => {
     if (!stakingAccount || !sessionInfo) {
+      setUnlockingAmount(undefined);
+
       return;
     }
 
@@ -285,7 +289,7 @@ export default function Index(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address}>{identicon}</ChainSwitch>}
         noBorder
         onBackClick={onBackClick}
         paddingBottom={0}
