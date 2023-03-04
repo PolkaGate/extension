@@ -127,7 +127,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
           <Grid container item sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, textAlign: 'center' }} xs={12}>
             <Grid item xs={mode === 'None' ? 6.1 : 4.7}>
               <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
-                {t('Identity')}
+                {t('Account')}
               </Typography>
             </Grid>
             <Grid item xs={mode === 'None' ? 4.5 : 3.9}>
