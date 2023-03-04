@@ -24,7 +24,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
   const theme = useTheme();
 
   /** save home page url in to local storage */
-  window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
+  // window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
 
   const allYouHaveAmount = useMemo((): number | undefined => {
     if (!accounts) {

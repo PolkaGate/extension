@@ -104,23 +104,23 @@ export default function Popup(): React.ReactElement {
   const [fetching, setFetching] = useState<Fetching>({});
 
   /** To save current page url */
-  if (window.location.hash !== '#/') {
-    window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
-  }
+  // if (window.location.hash !== '#/') {
+  //   window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
+  // }
 
   /** To LOAD last saved page url */
-  useEffect(() => {
-    const lastUrlInfo = window.localStorage.getItem('last_url');
+  // useEffect(() => {
+  //   const lastUrlInfo = window.localStorage.getItem('last_url');
 
-    if (lastUrlInfo) {
-      const info = JSON.parse(lastUrlInfo) as { time: number, url: string };
+  //   if (lastUrlInfo) {
+  //     const info = JSON.parse(lastUrlInfo) as { time: number, url: string };
 
-      if (Date.now() - info.time < MILLISECONDS_TO_UPDATE) {
-        /** TODO: this url replacement is disabled until finding a way to handle Authorize and transactions popups/pages */
-        // window.location.hash = info.url;
-      }
-    }
-  }, []);
+  //     if (Date.now() - info.time < MILLISECONDS_TO_UPDATE) {
+  //       /** TODO: this url replacement is disabled until finding a way to handle Authorize and transactions popups/pages */
+  //       // window.location.hash = info.url;
+  //     }
+  //   }
+  // }, []);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);
