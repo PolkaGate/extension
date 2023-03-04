@@ -194,7 +194,6 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       </Grid>
       <PasswordUseProxyConfirm
         api={api}
-        confirmText={t<string>('Next')}
         estimatedFee={estimatedFee}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}

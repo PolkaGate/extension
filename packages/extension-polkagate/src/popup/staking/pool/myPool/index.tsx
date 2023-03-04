@@ -90,11 +90,15 @@ export default function Pool(): React.ReactElement {
     }
 
     if (pool === null && myOtherPools?.length) {
+      myOtherPools.length > 1 && setShowPoolNavigation(true);
+
       return myOtherPools;
     }
 
     if (pool && myOtherPools?.length) {
       const filtered = myOtherPools.filter((other) => Number(other.poolId) !== Number(pool.poolId));
+
+      myOtherPools.length > 1 && setShowPoolNavigation(true);
 
       return [pool, ...filtered];
     }
@@ -212,7 +216,6 @@ export default function Pool(): React.ReactElement {
   }, [poolIndex]);
 
   const onSelectionMethodChange = useCallback((value: string): void => {
-    console.log('value:', value)
     setRoleToShow(value);
   }, []);
 
@@ -226,20 +229,30 @@ export default function Pool(): React.ReactElement {
         <KeyboardDoubleArrowLeftIcon sx={{ color: (!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         <Divider orientation='vertical' sx={{ bgcolor: (!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'text.primary', height: '22px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
         <Grid container item xs={7}>
-          <Typography color={(!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t<string>('Previous')}</Typography>
+          <Typography color={(!poolsToShow?.length || poolIndex === 0) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>
+            {t<string>('Previous')}
+          </Typography>
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' width='30%'>
         {poolsToShow?.length &&
           <>
-            <Typography fontSize='16px' fontWeight={400}>{`${poolIndex + 1} of ${poolsToShow.length}`}</Typography>
-            {myOtherPools === undefined && <div style={{ paddingLeft: '5px' }}><Circle color={theme.palette.secondary.light} scaleEnd={0.7} scaleStart={0.4} size={20} /></div>}
+            <Typography fontSize='16px' fontWeight={400}>
+              {`${poolIndex + 1} of ${poolsToShow.length}`}
+            </Typography>
+            {myOtherPools === undefined &&
+              <div style={{ paddingLeft: '5px' }}>
+                <Circle color={theme.palette.secondary.light} scaleEnd={0.7} scaleStart={0.4} size={20} />
+              </div>
+            }
           </>
         }
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='35%' onClick={onNext} sx={{ cursor: (!poolsToShow?.length || poolIndex === poolsToShow?.length - 1) ? 'default' : 'pointer' }} width='fit_content'>
         <Grid container item justifyContent='right' xs={7}>
-          <Typography color={(!poolsToShow?.length || poolIndex === poolsToShow.length - 1) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400} textAlign='left'>{t<string>('Next')}</Typography>
+          <Typography color={(!poolsToShow?.length || poolIndex === poolsToShow.length - 1) ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400} textAlign='left'>
+            {t<string>('Next')}
+          </Typography>
         </Grid>
         <Divider orientation='vertical' sx={{ bgcolor: (!poolsToShow?.length || poolIndex === poolsToShow.length - 1) ? 'secondary.contrastText' : 'text.primary', height: '22px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
         <KeyboardDoubleArrowRightIcon sx={{ color: (!poolsToShow?.length || poolIndex === poolsToShow?.length - 1) ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
@@ -297,13 +310,7 @@ export default function Pool(): React.ReactElement {
           <Grid alignItems='center' container justifyContent='center' mt='100px'>
             <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={125} />
           </Grid>
-          <Typography
-            fontSize='18px'
-            fontWeight={300}
-            m='60px auto 0'
-            textAlign='center'
-            width='80%'
-          >
+          <Typography fontSize='18px' fontWeight={300} m='60px auto 0' textAlign='center' width='80%'>
             {t<string>('Loading pool information...')}
           </Typography>
         </>
@@ -318,7 +325,10 @@ export default function Pool(): React.ReactElement {
               {t<string>('You\'re not in any pools!')}
             </Warning>
           </Grid>
-          <PButton _onClick={goToPoolStake} text={t<string>('Stake')} />
+          <PButton
+            _onClick={goToPoolStake}
+            text={t<string>('Stake')}
+          />
         </>
       }
       {poolsToShow?.length &&

@@ -17,9 +17,7 @@ import uiSettings from '@polkadot/ui-settings';
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
-import SelectProxy from '../../../extension-polkagate/src/partials/SelectProxy';
 import Account from '../../../extension-polkagate/src/popup/account';
-import Others from '../../../extension-polkagate/src/popup/account/Others';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
 import Authorize from '../../../extension-polkagate/src/popup/authorize/index';
 import CreateAccount from '../../../extension-polkagate/src/popup/createAccount';
@@ -29,7 +27,6 @@ import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
 import History from '../../../extension-polkagate/src/popup/history';
-import Detail from '../../../extension-polkagate/src/popup/history/Detail';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
@@ -52,15 +49,15 @@ import CreatePool from '../../../extension-polkagate/src/popup/staking/pool/stak
 import JoinPool from '../../../extension-polkagate/src/popup/staking/pool/stake/joinPool';
 import PoolUnstake from '../../../extension-polkagate/src/popup/staking/pool/unstake';
 import Solo from '../../../extension-polkagate/src/popup/staking/solo';
+import FastUnstake from '../../../extension-polkagate/src/popup/staking/solo/fastUnstake';
 import SoloNominations from '../../../extension-polkagate/src/popup/staking/solo/nominations';
 import SoloRestake from '../../../extension-polkagate/src/popup/staking/solo/restake';
-import SoloReward from '../../../extension-polkagate/src/popup/staking/solo/rewards';
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
-import FastUnstake from '../../../extension-polkagate/src/popup/staking/solo/fastUnstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
+import { MILLISECONDS_TO_UPDATE } from '../../../extension-polkagate/src/util/constants';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
@@ -105,6 +102,25 @@ export default function Popup(): React.ReactElement {
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
+
+  /** To save current page url */
+  // if (window.location.hash !== '#/') {
+  //   window.localStorage.setItem('last_url', JSON.stringify({ time: Date.now(), url: window.location.hash }));
+  // }
+
+  /** To LOAD last saved page url */
+  // useEffect(() => {
+  //   const lastUrlInfo = window.localStorage.getItem('last_url');
+
+  //   if (lastUrlInfo) {
+  //     const info = JSON.parse(lastUrlInfo) as { time: number, url: string };
+
+  //     if (Date.now() - info.time < MILLISECONDS_TO_UPDATE) {
+  //       /** TODO: this url replacement is disabled until finding a way to handle Authorize and transactions popups/pages */
+  //       // window.location.hash = info.url;
+  //     }
+  //   }
+  // }, []);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);
@@ -168,7 +184,7 @@ export default function Popup(): React.ReactElement {
 
   return (
     <AnimatePresence exitBeforeEnter>
-      <Loading>{accounts && authRequests && metaRequests && signRequests && (
+      <Loading>{accounts && authRequests && metaRequests && signRequests &&
         <ActionContext.Provider value={_onAction}>
           <SettingsContext.Provider value={settingsCtx}>
             <AccountContext.Provider value={accountCtx}>
@@ -182,13 +198,10 @@ export default function Popup(): React.ReactElement {
                             <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
-                            <Route path='/selectProxy/:proxiedAddress/:genesisHash'>{wrapWithErrorBoundary(<SelectProxy />, 'select-proxy')}</Route>
                             <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
-                            <Route path='/detail//:address/:hash'>{wrapWithErrorBoundary(<Detail />, 'history-detail')}</Route>
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
                             {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                             {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
-                            {/* <Route path='/staking/:address'>{wrapWithErrorBoundary(<Staking />, 'staking')}</Route> */}
                             <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                             <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
                             <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
@@ -200,7 +213,6 @@ export default function Popup(): React.ReactElement {
                             <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
                             <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
                             <Route path='/solo/nominations/:address'>{wrapWithErrorBoundary(<SoloNominations />, 'solo-nominations')}</Route>
-                            <Route path='/solo/reward/:address'>{wrapWithErrorBoundary(<SoloReward />, 'solo-reward')}</Route>
                             <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                             <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
                             <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
@@ -219,7 +231,6 @@ export default function Popup(): React.ReactElement {
                             <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                             <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                             <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
-                            <Route exact path='/others/:address'>{wrapWithErrorBoundary(<Others />, 'others')}</Route>
                             <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
                             <Route
                               exact
@@ -237,7 +248,7 @@ export default function Popup(): React.ReactElement {
             </AccountContext.Provider>
           </SettingsContext.Provider>
         </ActionContext.Provider>
-      )}</Loading>
+      }</Loading>
     </AnimatePresence>
   );
 }

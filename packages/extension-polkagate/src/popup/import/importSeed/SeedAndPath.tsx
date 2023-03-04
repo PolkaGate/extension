@@ -150,7 +150,7 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
         {/* {advanced && ( */}
         <InputWithLabel
           isError={!!path && !!error}
-          label={t<string>('Derivation path if it is derived account, otherwise ignore')}
+          label={t<string>('Derived path (ignore if the account is not derived)')}
           onChange={setPath}
           value={path || ''}
         />

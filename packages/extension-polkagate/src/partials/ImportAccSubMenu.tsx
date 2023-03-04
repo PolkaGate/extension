@@ -79,7 +79,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         <MenuItem
           iconComponent={
             <UploadJSONIcon
-              sx={{ color: `${theme.palette.text.primary}` }}
+              sx={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }}
             />
           }
           onClick={_goToRestoreFromJson}

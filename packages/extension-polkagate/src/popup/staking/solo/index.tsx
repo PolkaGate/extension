@@ -18,7 +18,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { controllerSettingBlack, controllerSettingWhite, soloSettingBlack, soloSettingWhite, stashSettingBlack, stashSettingWhite } from '../../../assets/icons';
 import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
-import { useApi, useBalances, useChain, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewards, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useChain, useChainName, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useTranslation } from '../../../hooks';
 import { HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
@@ -27,6 +27,7 @@ import { getValue } from '../../account/util';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
 import Settings from './settings';
+import RewardsDetail from './rewards/RewardsDetail';
 
 interface SessionIfo {
   eraLength: number;
@@ -51,7 +52,9 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const [refresh, setRefresh] = useState<boolean>(false);
   const stakingAccount = useStakingAccount(address, state?.stakingAccount, refresh, setRefresh);
+  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const chain = useChain(address);
+  const chainName = useChainName(address);
   const rewards = useStakingRewards(address, stakingAccount);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
@@ -75,6 +78,7 @@ export default function Index(): React.ReactElement {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showRedeemableWithdraw, setShowRedeemableWithdraw] = useState<boolean>(false);
   const [shake, setShake] = useState<boolean>(false); //  to shake to persuade to stake ;)
+  const [showRewardsDetail, setShowRewardsDetail] = useState<boolean>(false);
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
   const role = useCallback((): string =>
@@ -184,11 +188,9 @@ export default function Index(): React.ReactElement {
   }, [redeemable]);
 
   const goToDetail = useCallback(() => {
-    !rewards?.isZero() && history.push({
-      pathname: `/solo/reward/${String(address)}`,
-      state: { api, chain }
-    });
-  }, [rewards, history, address, api, chain]);
+    !rewards?.isZero() &&
+      setShowRewardsDetail(true);
+  }, [rewards]);
 
   const ToBeReleased = () => (
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '2px', width: '95%' }}>
@@ -419,6 +421,18 @@ export default function Index(): React.ReactElement {
           setShow={setShowRedeemableWithdraw}
           show={showRedeemableWithdraw}
         />}
+      {showRewardsDetail && chain &&
+        <RewardsDetail
+          api={api}
+          chain={chain}
+          chainName={chainName}
+          decimal={decimal}
+          rewardDestinationAddress={rewardDestinationAddress}
+          setShow={setShowRewardsDetail}
+          show={showRewardsDetail}
+          token={token}
+        />
+      }
     </>
   );
 }

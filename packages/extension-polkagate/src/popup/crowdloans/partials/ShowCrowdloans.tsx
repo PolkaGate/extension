@@ -9,13 +9,13 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Grid, Link, Typography } from '@mui/material';
 import { Crowdloan } from 'extension-polkagate/src/util/types';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity, PButton, ShowBalance } from '../../../components';
+import { FormatBalance2, Identity, PButton, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 import { getWebsiteFavicon } from '../../../util/utils';
@@ -127,13 +127,13 @@ export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan
           </Typography>
           <Grid container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} width='71%'>
             <Grid item sx={{ '> div': { lineHeight: '34px' } }} width='fit-content'>
-              <ShowBalance balance={crowdloan.fund.raised} decimal={decimal} decimalPoint={2} skeletonWidth={60} token={token} />
+              <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={crowdloan.fund.raised} />
             </Grid>
             <Typography fontSize='18px' fontWeight={300} lineHeight='34px' px='2px' width='fit-content'>
               /
             </Typography>
             <Grid item sx={{ '> div': { lineHeight: '34px' }, pr: '10px' }} width='fit-content'>
-              <ShowBalance balance={crowdloan.fund.cap} decimal={decimal} decimalPoint={2} skeletonWidth={60} token={token} />
+              <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={crowdloan.fund.cap} />
             </Grid>
           </Grid>
         </Grid>

@@ -27,12 +27,15 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const theme = useTheme();
+  const [enteredPassword, setEnteredPassword] = useState<string>('');
+
   const _checkKey = useCallback((event: React.KeyboardEvent<HTMLInputElement>): void => {
     onEnter && event.key === 'Enter' && onEnter();
   }, [onEnter]);
 
   const _onChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
+      setEnteredPassword(value || '');
       onChange && onChange(value);
     },
     [onChange]
@@ -73,6 +76,7 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
         }}
         theme={theme}
         type={showPass ? 'text' : 'password'}
+        value={enteredPassword}
         withError={offFocus && isError}
       />
       <IconButton
