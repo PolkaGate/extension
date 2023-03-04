@@ -108,7 +108,7 @@ export default function Index(): React.ReactElement {
   useEffect(() => {
     if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
       setUnlockingAmount(state?.unlockingAmount || undefined);
-      setRedeemable(state?.redeemable);
+      setRedeemable(state?.redeemable || undefined);
 
       return;
     }
