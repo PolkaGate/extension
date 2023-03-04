@@ -20,7 +20,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Identicon, ShowBalance } from '../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
-import { HeaderBrand } from '../../../partials';
+import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
@@ -107,6 +107,9 @@ export default function Index(): React.ReactElement {
 
   useEffect(() => {
     if (pool === undefined || !api || !currentEraIndex || !sessionInfo) {
+      setUnlockingAmount(state?.unlockingAmount || undefined);
+      setRedeemable(state?.redeemable || undefined);
+
       return;
     }
 
@@ -135,7 +138,7 @@ export default function Index(): React.ReactElement {
     setToBeReleased(toBeReleased);
     setRedeemable(redeemValue);
     setUnlockingAmount(unlockingValue);
-  }, [pool, api, currentEraIndex, sessionInfo]);
+  }, [pool, api, currentEraIndex, sessionInfo, state?.unlockingAmount, state?.redeemable]);
 
   const onBackClick = useCallback(() => {
     const url = chain?.genesisHash ? `/account/${chain.genesisHash}/${address}/` : '/';
@@ -280,7 +283,7 @@ export default function Index(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address}>{identicon}</ChainSwitch>}
         noBorder
         onBackClick={onBackClick}
         paddingBottom={0}
@@ -327,8 +330,8 @@ export default function Index(): React.ReactElement {
           divider
           icon={
             <FontAwesomeIcon
-            color={`${theme.palette.text.primary}`}
-            icon={faPlus}
+              color={`${theme.palette.text.primary}`}
+              icon={faPlus}
               shake={shake}
               style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
             />
