@@ -41,3 +41,5 @@ cryptoWaitReady()
   .catch((error): void => {
     console.error('initialization failed', error);
   });
+
+chrome.runtime.setUninstallURL('https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform');
