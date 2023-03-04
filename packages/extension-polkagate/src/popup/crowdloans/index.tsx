@@ -23,7 +23,7 @@ import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auction
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
-import { HeaderBrand } from '../../partials';
+import { ChainSwitch, HeaderBrand } from '../../partials';
 import BouncingSubTitle from '../../partials/BouncingSubTitle';
 import getContributions from '../../util/api/getContributions';
 import getLogo from '../../util/getLogo';
@@ -359,7 +359,7 @@ export default function CrowdLoans(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address}>{identicon}</ChainSwitch>}
         noBorder
         onBackClick={onBackClick}
         paddingBottom={0}
