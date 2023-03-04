@@ -164,6 +164,7 @@ export interface Auction {
   crowdloans: Crowdloan[];
   currentBlockNumber: number;
   minContribution: string;
+  token: string;
   winning: string[];
 }
 
