@@ -4,6 +4,7 @@
 export { default as HeaderBrand } from './HeaderBrand';
 // export { default as MenuSettings } from './MenuSettings';
 export { default as Name } from './Name';
+export { default as ChainSwitch } from './ChainSwitch';
 export { default as Passwords } from './Passwords';
 export { default as AccMenu } from './AccMenu';
 export { default as AccMenuInside } from './AccMenuInside';
