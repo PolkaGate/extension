@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
 import { AccountStakingInfo } from '../util/types';
-import { useAccount, useApi, useChain, useChainName, useFormatted, useStashId } from '.';
+import { useAccount, useApi, useChain, useChainName, useFormatted, useStashId, useToken } from '.';
 import { isHexToBn } from '../util/utils';
 
 BN.prototype.toJSON = function () {
@@ -35,6 +35,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
   const chainName = useChainName(address);
   const api = useApi(address);
   const stashId = useStashId(address);
+  const addressCurrentToken = useToken(address);
 
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null>();
   const token = api && api.registry.chainTokens[0];
@@ -147,5 +148,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, chainName]);
 
-  return stakingInfo;
+  return stakingInfo && stakingInfo.token === addressCurrentToken
+    ? stakingInfo
+    : undefined;
 }
