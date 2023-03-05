@@ -112,7 +112,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash]);
 
   useEffect(() => {
-    if (!token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return;
     }
 
