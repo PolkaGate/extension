@@ -47,25 +47,22 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
         <Typography sx={{ fontSize: '26px', fontWeight: 400, lineHeight: '50px', maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {identity?.display || account?.name}
         </Typography>
-        <span>
-          <IconButton
-            onClick={_toggleVisibility}
-            sx={{ height: '15px', m: '4px 6px 4px 10px', p: 0, width: '24px' }}
-          >
-            <vaadin-icon icon={account?.isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
-          </IconButton>
-
-        </span>
-        <Link
-          href={`${subscanLink(formatted)}`}
-          rel='noreferrer'
-          target='_blank'
-          underline='none'
-        >
-          <Box component='img' mt='10px' src={subscan} />
-        </Link>
       </Grid>
-      <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+      <Grid alignItems='center' container item>
+        <Grid item xs={11}>
+          <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+        </Grid>
+        <Grid item xs={1}>
+          <Link
+            href={`${subscanLink(formatted)}`}
+            rel='noreferrer'
+            target='_blank'
+            underline='none'
+          >
+            <Box component='img' mt='10px' src={subscan} />
+          </Link>
+        </Grid>
+      </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '10px' }} />
     </>
   );
