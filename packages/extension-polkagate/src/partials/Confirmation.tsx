@@ -11,8 +11,8 @@ import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../compo
 import { useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../util/types';
-import { HeaderBrand, SubTitle } from '.';
 import { getSubstrateAddress } from '../util/utils';
+import { HeaderBrand, SubTitle } from '.';
 
 interface Props {
   showConfirmation: boolean;
