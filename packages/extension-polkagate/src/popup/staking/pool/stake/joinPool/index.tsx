@@ -52,8 +52,9 @@ export default function JoinPool(): React.ReactElement {
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
   const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
   const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
+  const [amountAsBN, setAmountAsBN] = useState<BN>();
 
-  const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
+  // const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -63,18 +64,28 @@ export default function JoinPool(): React.ReactElement {
   }, [address, api, history, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
-    if (decimal && value.length > decimal - 1) {
+    if (!decimal) {
+      return;
+    }
+
+    if (value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setStakeAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+    setAmountAsBN(new BN(parseFloat(value.length ? value.slice(0, MAX_AMOUNT_LENGTH) : '0') * 10 ** decimal));
   }, [decimal]);
 
   const onMinAmount = useCallback(() => {
-    poolStakingConsts?.minJoinBond && decimal && setStakeAmount(amountToHuman(poolStakingConsts.minJoinBond.toString(), decimal));
-  }, [decimal, poolStakingConsts?.minJoinBond]);
+    if (!poolStakingConsts || !decimal) {
+      return;
+    }
+
+    poolStakingConsts.minJoinBond && decimal && setStakeAmount(amountToHuman(poolStakingConsts.minJoinBond.toString(), decimal));
+    setAmountAsBN(poolStakingConsts.minJoinBond);
+  }, [decimal, poolStakingConsts]);
 
   const onMaxAmount = useCallback(() => {
     if (!api || !availableBalance || !estimatedMaxFee || !decimal) {
@@ -86,6 +97,7 @@ export default function JoinPool(): React.ReactElement {
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setStakeAmount(maxToHuman);
+    setAmountAsBN(max);
   }, [api, availableBalance, decimal, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
@@ -142,6 +154,8 @@ export default function JoinPool(): React.ReactElement {
 
   useEffect(() => {
     if (!stakeAmount || !amountAsBN || !poolStakingConsts?.minJoinBond) {
+      setNextBtnDisabled(true);
+
       return;
     }
 
@@ -206,7 +220,7 @@ export default function JoinPool(): React.ReactElement {
       />
       <PButton
         _onClick={toReview}
-        disabled={nextBtnDisabled}
+        disabled={nextBtnDisabled || amountAsBN.isZero()}
         text={t<string>('Next')}
       />
       {showReview && selectedPool && api && amountAsBN &&
