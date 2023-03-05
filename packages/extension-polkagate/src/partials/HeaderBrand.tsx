@@ -1,7 +1,9 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faClose, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import '@vaadin/icons';
+
+import { faHouseChimney, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
@@ -123,11 +125,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
       }
       {showClose &&
         <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose} size='small' sx={{ p: 0 }}>
-          <FontAwesomeIcon
-            color={theme.palette.secondary.light}
-            icon={faClose}
-            size='lg'
-          />
+          <vaadin-icon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
         </IconButton>
       }
     </Grid>
