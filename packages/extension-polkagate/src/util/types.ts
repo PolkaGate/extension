@@ -618,6 +618,7 @@ export interface AccountStakingInfo extends DeriveStakingAccount {
   decimal?: number;
   token?: string;
   date?: number;
+  genesisHash?: string;
 }
 export interface MemberPoints {
   accountId: string;
