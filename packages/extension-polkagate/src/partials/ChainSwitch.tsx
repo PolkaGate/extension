@@ -28,7 +28,9 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   const [showOtherChains, setShowOtherChains] = useState<boolean>(false);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
   const genesisHashes = useGenesisHashOptions();
-  const currentChainName = useChainName(address);
+  const currentChainNameFromAccount = useChainName(address);
+  const [currentChainNameJustSelected, setCurrentChainNameJustSelected] = useState<string>();
+  const currentChainName = currentChainNameJustSelected || currentChainNameFromAccount;
 
   const availableChains = useMemo(() => {
     if (!pathname || !account?.genesisHash) {
@@ -126,6 +128,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   const selectNetwork = useCallback((newChainName: string) => {
     const selectedGenesisHash = genesisHashes.find((option) => option.text.replace(' Relay Chain', '')?.replace(' Network', '') === newChainName)?.value;
 
+    setCurrentChainNameJustSelected(newChainName);
     setFirstTime(false);
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
   }, [address, genesisHashes]);
