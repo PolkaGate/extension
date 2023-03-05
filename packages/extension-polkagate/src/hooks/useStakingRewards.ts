@@ -57,6 +57,8 @@ export default function useStakingRewards(address: string, stakingAccount: Accou
 
   useEffect(() => {
     if (!stakingAccount || !chainName || !rewardDestinationAddress) {
+      setRewards(undefined);
+
       return;
     }
 

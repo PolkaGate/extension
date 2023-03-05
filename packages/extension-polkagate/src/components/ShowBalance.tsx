@@ -34,19 +34,32 @@ export default function ShowBalance({ api, balance, decimalPoint, height = 20, s
           height={height}
           sx={{ display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
         />
-        : api
-          ? <FormatBalance
-            api={api}
-            decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
-            value={balance}
-          />
-          : decimal && token &&
-          <FormatBalance2
+        : decimal && token
+          ? <FormatBalance2
             decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
             decimals={[decimal]}
             tokens={[token]}
             value={balance}
           />
+          : api &&
+          <FormatBalance
+            api={api}
+            decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
+            value={balance}
+          />
+        // : api
+        //   ? <FormatBalance
+        //     api={api}
+        //     decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
+        //     value={balance}
+        //   />
+        //   : decimal && token &&
+        //   <FormatBalance2
+        //     decimalPoint={decimalPoint || FLOATING_POINT_DIGIT}
+        //     decimals={[decimal]}
+        //     tokens={[token]}
+        //     value={balance}
+        //   />
       }
     </Grid>
   );

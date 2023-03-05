@@ -22,6 +22,7 @@ async function getStackingConsts(endpoint) {
       apiAt.query.staking.minNominatorBond(),
       api.query.staking.currentEra()
     ]);
+    const token = api.registry.chainTokens[0];
 
     return {
       bondingDuration,
@@ -30,6 +31,7 @@ async function getStackingConsts(endpoint) {
       maxNominations,
       maxNominatorRewardedPerValidator,
       minNominatorBond: minNominatorBond.toString(),
+      token,
       unbondingDuration: bondingDuration * sessionsPerEra * epochDurationInHours / 24 // unboundingDuration in days
     };
   } catch (error) {
