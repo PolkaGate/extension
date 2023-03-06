@@ -30,14 +30,6 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chainName = useChainName(address);
-  const theme = useTheme();
-
-  const _toggleVisibility = useCallback(
-    (): void => {
-      address && showAccount(address, account?.isHidden || false).catch(console.error);
-    },
-    [address, account?.isHidden]
-  );
 
   const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}`;
 
@@ -48,11 +40,11 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           {identity?.display || account?.name}
         </Typography>
       </Grid>
-      <Grid alignItems='center' container item>
-        <Grid item xs={11}>
-          <ShortAddress address={formatted} charsCount={0} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+      <Grid alignItems='center' justifyContent='center' container item>
+        <Grid item >
+          <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item>
           <Link
             href={`${subscanLink(formatted)}`}
             rel='noreferrer'
