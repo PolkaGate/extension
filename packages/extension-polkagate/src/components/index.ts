@@ -13,6 +13,7 @@ export { default as AddressInput } from './AddressInput';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
 export { default as AmountWithOptions } from './AmountWithOptions';
 export { default as AutoResizeTextarea } from './AutoResizeTextarea';
+export { default as From } from './From';
 export { default as ButtonWithCancel } from './ButtonWithCancel';
 export { default as Button } from './Button';
 export { default as ChainLogo } from './ChainLogo';
