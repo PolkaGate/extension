@@ -129,6 +129,8 @@ export default function CrowdLoans(): React.ReactElement {
 
   useEffect(() => {
     if (!auction || !chain || !settings || !api || !paraIds) {
+      setMyContributedCrowdloans(undefined);
+
       return;
     }
 
