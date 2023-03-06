@@ -31,7 +31,6 @@ BN.prototype.toJSON = function () {
  */
 export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const account = useAccount(address);
-  const chainName = useChainName(address);
   const api = useApi(address);
   const stashId = useStashId(address);
   const addressCurrentToken = useToken(address);
@@ -42,9 +41,11 @@ export default function useStakingAccount(address: AccountId | string | undefine
       return;
     }
 
-    const [accountInfo, era] = await Promise.all([
+    const [accountInfo, era, fetchedToken, fetchedDecimal] = await Promise.all([
       api.derive.staking.account(stashId),
-      api.query.staking.currentEra()
+      api.query.staking.currentEra(),
+      api.registry.chainTokens[0],
+      api.registry.chainDecimals[0]
     ]);
 
     if (!accountInfo) {
@@ -60,14 +61,12 @@ export default function useStakingAccount(address: AccountId | string | undefine
     temp.accountId = temp.accountId.toString();
     temp.controllerId = temp.controllerId?.toString() || null;
     temp.stashId = temp.stashId.toString();
+    temp.token = fetchedToken;
     temp.rewardDestination = JSON.parse(JSON.stringify(temp.rewardDestination));
 
-    const token = api.registry.chainTokens[0];
-    const decimal = api.registry.chainDecimals[0];
-
-    setStakingInfo({ ...temp, date: Date.now(), decimal, era: Number(era), genesisHash: api.genesisHash.toString(), token });
+    fetchedToken === addressCurrentToken && setStakingInfo({ ...temp, date: Date.now(), decimal: fetchedDecimal, era: Number(era), genesisHash: api.genesisHash.toString() });
     refresh && setRefresh && setRefresh(false);
-  }, [api, refresh, setRefresh, stashId]);
+  }, [addressCurrentToken, api, refresh, setRefresh, stashId]);
 
   useEffect(() => {
     if (stateInfo) {
@@ -90,7 +89,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
   }, [api, fetch, refresh, stashId, stateInfo]);
 
   useEffect(() => {
-    if (!account || !stakingInfo || !chainName || stakingInfo?.genesisHash !== account?.genesisHash) {
+    if (!account || !stakingInfo || !stakingInfo.token || addressCurrentToken !== stakingInfo.token || stakingInfo?.genesisHash !== account?.genesisHash) {
       return;
     }
 
@@ -119,22 +118,22 @@ export default function useStakingAccount(address: AccountId | string | undefine
     const savedStakingAccount = JSON.parse(account?.stakingAccount ?? '{}') as AccountStakingInfo;
 
     // add this chain balances
-    savedStakingAccount[chainName] = { ...temp, date: Date.now(), decimal: stakingInfo.decimal, token: stakingInfo.token };
+    savedStakingAccount[stakingInfo.token] = { ...temp, date: Date.now() };
     const metaData = JSON.stringify({ ['stakingAccount']: JSON.stringify(savedStakingAccount) });
 
     updateMeta(String(address), metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, api, chainName, stakingInfo, Object.keys(account ?? {})?.length]);
+  }, [address, api, stakingInfo, Object.keys(account ?? {})?.length]);
 
   useEffect(() => {
-    if (!chainName || !account) {
+    if (!account || !addressCurrentToken) {
       return;
     }
 
     const savedStakingAccount = JSON.parse(account?.stakingAccount ?? '{}');
 
-    if (savedStakingAccount[chainName]) {
-      const sa = savedStakingAccount[chainName] as AccountStakingInfo;
+    if (savedStakingAccount[addressCurrentToken]) {
+      const sa = savedStakingAccount[addressCurrentToken] as AccountStakingInfo;
 
       sa.redeemable = new BN(sa.redeemable);
       sa.stakingLedger.active = new BN(sa.stakingLedger.active);
@@ -145,7 +144,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
       setStakingInfo(sa);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, chainName]);
+  }, [Object.keys(account ?? {})?.length, addressCurrentToken]);
 
   return stakingInfo && stakingInfo.token === addressCurrentToken
     ? stakingInfo
