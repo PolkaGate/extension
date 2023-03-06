@@ -12,13 +12,12 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
-import { Box, Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Box, Divider, Grid, Link, Typography } from '@mui/material';
+import React from 'react';
 
 import { subscan } from '../../assets/icons/';
 import { ShortAddress } from '../../components';
 import { useAccount, useChainName, useFormatted } from '../../hooks';
-import { showAccount } from '../../messaging';
 
 interface Props {
   address: string;
@@ -36,7 +35,7 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
   return (
     < >
       <Grid alignItems='center' container justifyContent='center' xs={12}>
-        <Typography sx={{ fontSize: '26px', fontWeight: 400, lineHeight: '50px', maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '50px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {identity?.display || account?.name}
         </Typography>
       </Grid>
@@ -51,7 +50,7 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
             target='_blank'
             underline='none'
           >
-            <Box component='img' mt='10px' src={subscan} />
+            <Box alt={'subscan'} component='img' height='20px' mt='5px' src={subscan} width='20px' />
           </Link>
         </Grid>
       </Grid>
