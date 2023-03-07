@@ -14,7 +14,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   const apisContext = useContext(APIContext);
   const chain = useChain(address);
 
-  const [api, setApi] = useState<ApiPromise | undefined>();
+  const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
   useEffect(() => {
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
@@ -27,10 +27,6 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     if (!endpoint) {
       return;
-    }
-
-    if (stateApi) {
-      return setApi(stateApi);
     }
 
     const wsProvider = new WsProvider(endpoint);
