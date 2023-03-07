@@ -39,8 +39,8 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           {identity?.display || account?.name}
         </Typography>
       </Grid>
-      <Grid alignItems='center' justifyContent='center' container item>
-        <Grid item >
+      <Grid alignItems='center' container item justifyContent='center'>
+        <Grid item>
           <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
         <Grid item>
