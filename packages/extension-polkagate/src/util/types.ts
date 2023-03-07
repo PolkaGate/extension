@@ -374,6 +374,7 @@ export interface PoolStakingConsts {
   minCreationBond: BN
   minJoinBond: BN;
   minNominatorBond: BN;
+  token: string;
 }
 
 export interface PoolInfo {
