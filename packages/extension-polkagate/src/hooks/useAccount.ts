@@ -10,29 +10,29 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util/utils';
 
-function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | undefined {
-  return accounts.find(({ address }) =>
-    address === _address
-  ) || undefined;
+function findAccountByAddress (accounts: AccountJson[], address: string): AccountJson | undefined {
+  return accounts.find((acc) => acc.address === address);
 }
 
 export default function useAccount(address: string | AccountId | null | undefined): AccountJson | undefined {
-  const [account, setAccount] = useState<AccountJson | undefined>();
+  const [account, setAccount] = useState<AccountJson>();
+
   const { accounts } = useContext(AccountContext);
 
-  useEffect((): void => {
+  useEffect(() => {
     if (!address) {
       setAccount(undefined);
+
+      return;
     }
 
-    /** address can be a formatted address hence needs to find its substrate format first */
-    const sAddr = getSubstrateAddress(address);
+    const substrateAddress = getSubstrateAddress(address);
 
-    if (!sAddr) {
-      return undefined;
+    if (!substrateAddress) {
+      return;
     }
 
-    const acc = findAccountByAddress(accounts, sAddr);
+    const acc = findAccountByAddress(accounts, substrateAddress);
 
     setAccount(acc);
   }, [accounts, address]);
