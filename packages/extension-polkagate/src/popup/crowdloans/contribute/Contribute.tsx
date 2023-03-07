@@ -130,10 +130,10 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
           withSteps={{ current: 1, total: 2 }}
         />
         <From
-          address={String(formatted)}
           api={api}
+          formatted={String(formatted)}
           style={{ m: '15px auto 0', width: '92%' }}
-          title={t<string>('Account Holder')}
+          title={t<string>('Account holder')}
         />
         <ShowParachain
           api={api}
