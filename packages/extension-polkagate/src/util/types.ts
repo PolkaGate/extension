@@ -67,6 +67,7 @@ export interface NominatorInfo {
 export interface MinToReceiveRewardsInSolo {
   minToGetRewards: BN;
   eraIndex: number;
+  token: string;
 }
 
 export interface ValidatorInfo extends DeriveStakingQuery {
