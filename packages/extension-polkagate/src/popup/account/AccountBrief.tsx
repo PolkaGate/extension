@@ -35,7 +35,7 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
   return (
     < >
       <Grid alignItems='center' container justifyContent='center' xs={12}>
-        <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '50px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '33px', mt: '10px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {identity?.display || account?.name}
         </Typography>
       </Grid>
