@@ -23,7 +23,7 @@ import PoolMoreInfo from './PoolMoreInfo';
 interface Props {
   api?: ApiPromise;
   chain?: Chain;
-  pool?: MyPoolInfo | PoolInfo;
+  pool: MyPoolInfo | PoolInfo;
   label?: string;
   labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining' | 'Creating' | 'Default';
