@@ -11,7 +11,7 @@ import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
 import { useDecimal, useEndpoint2, useFormatted, useToken } from '.';
 
-export default function usePool(address: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const formatted = useFormatted(address);
   const endpoint = useEndpoint2(address);
   const isFetching = useContext(FetchingContext);
@@ -169,9 +169,9 @@ export default function usePool(address: AccountId | string, id?: number, refres
     });
   }, [formatted, waiting]);
 
-  return newPool?.token === currentToken && newPool?.decimal === currentDecimal
+  return newPool && newPool.token === currentToken && newPool?.decimal === currentDecimal
     ? newPool
     : (savedPool?.token === currentToken && savedPool?.decimal === currentDecimal) || !savedPool
       ? savedPool
-      : undefined;
+      : pool || undefined;
 }
