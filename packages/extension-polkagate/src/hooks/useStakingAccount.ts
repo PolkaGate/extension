@@ -13,8 +13,8 @@ import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
 import { AccountStakingInfo } from '../util/types';
-import { useAccount, useApi, useChain, useChainName, useFormatted, useStashId } from '.';
 import { isHexToBn } from '../util/utils';
+import { useAccount, useApi, useChainName, useStashId, useToken } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();
@@ -31,23 +31,21 @@ BN.prototype.toJSON = function () {
  */
 export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const account = useAccount(address);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
   const api = useApi(address);
   const stashId = useStashId(address);
-
+  const addressCurrentToken = useToken(address);
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null>();
-  const token = api && api.registry.chainTokens[0];
-  const decimal = api && api.registry.chainDecimals[0];
 
   const fetch = useCallback(async () => {
     if (!api || !stashId) {
       return;
     }
 
-    const [accountInfo, era] = await Promise.all([
+    const [accountInfo, era, fetchedToken, fetchedDecimal] = await Promise.all([
       api.derive.staking.account(stashId),
-      api.query.staking.currentEra()
+      api.query.staking.currentEra(),
+      api.registry.chainTokens[0],
+      api.registry.chainDecimals[0]
     ]);
 
     if (!accountInfo) {
@@ -63,11 +61,12 @@ export default function useStakingAccount(address: AccountId | string | undefine
     temp.accountId = temp.accountId.toString();
     temp.controllerId = temp.controllerId?.toString() || null;
     temp.stashId = temp.stashId.toString();
-    temp.rewardDestination = JSON.parse(JSON.stringify(temp.rewardDestination))
+    temp.token = fetchedToken;
+    temp.rewardDestination = JSON.parse(JSON.stringify(temp.rewardDestination));
 
-    setStakingInfo({ ...temp, era: Number(era), date: Date.now(), decimal, token });
+    fetchedToken === addressCurrentToken && setStakingInfo({ ...temp, date: Date.now(), decimal: fetchedDecimal, era: Number(era), genesisHash: api.genesisHash.toString() });
     refresh && setRefresh && setRefresh(false);
-  }, [api, decimal, refresh, setRefresh, stashId, token]);
+  }, [addressCurrentToken, api, refresh, setRefresh, stashId]);
 
   useEffect(() => {
     if (stateInfo) {
@@ -90,7 +89,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
   }, [api, fetch, refresh, stashId, stateInfo]);
 
   useEffect(() => {
-    if (!account || !stakingInfo || !chainName || !token || !decimal) {
+    if (!account || !stakingInfo || !stakingInfo.token || addressCurrentToken !== stakingInfo.token || stakingInfo?.genesisHash !== account?.genesisHash) {
       return;
     }
 
@@ -119,33 +118,35 @@ export default function useStakingAccount(address: AccountId | string | undefine
     const savedStakingAccount = JSON.parse(account?.stakingAccount ?? '{}') as AccountStakingInfo;
 
     // add this chain balances
-    savedStakingAccount[chainName] = { ...temp, date: Date.now(), decimal, token };
+    savedStakingAccount[stakingInfo.token] = { ...temp, date: Date.now() };
     const metaData = JSON.stringify({ ['stakingAccount']: JSON.stringify(savedStakingAccount) });
 
     updateMeta(String(address), metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, api, chain, chainName, stakingInfo, Object.keys(account ?? {})?.length, token, decimal]);
+  }, [address, api, stakingInfo, Object.keys(account ?? {})?.length]);
 
   useEffect(() => {
-    if (!chainName || !account) {
+    if (!account || !addressCurrentToken) {
       return;
     }
 
     const savedStakingAccount = JSON.parse(account?.stakingAccount ?? '{}');
 
-    if (savedStakingAccount[chainName]) {
-      const sa = savedStakingAccount[chainName] as AccountStakingInfo;
+    if (savedStakingAccount[addressCurrentToken]) {
+      const sa = savedStakingAccount[addressCurrentToken] as AccountStakingInfo;
 
       sa.redeemable = new BN(sa.redeemable);
       sa.stakingLedger.active = new BN(sa.stakingLedger.active);
       sa.stakingLedger.total = new BN(sa.stakingLedger.total);
-      sa.stakingLedger.unlocking = sa.stakingLedger?.unlocking?.map(({ value, era }) => ({ value: new BN(value), era: new BN(era) }));
-      sa.unlocking = sa?.unlocking?.map(({ value, remainingEras }) => ({ value: new BN(value), remainingEras: new BN(remainingEras) }));
+      sa.stakingLedger.unlocking = sa.stakingLedger?.unlocking?.map(({ era, value }) => ({ era: new BN(era), value: new BN(value) }));
+      sa.unlocking = sa?.unlocking?.map(({ value, remainingEras }) => ({ remainingEras: new BN(remainingEras), value: new BN(value) }));
 
       setStakingInfo(sa);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, chainName]);
+  }, [Object.keys(account ?? {})?.length, addressCurrentToken]);
 
-  return stakingInfo;
+  return stakingInfo && stakingInfo.token === addressCurrentToken
+    ? stakingInfo
+    : undefined;
 }

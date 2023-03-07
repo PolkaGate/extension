@@ -21,14 +21,13 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountInputWithIdentity, AmountWithOptions, Motion, PButton } from '../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useEndpoint, useFormatted, useMyAccountIdentity, useTranslation } from '../../hooks';
+import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } from '../../components';
+import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useEndpoint, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
 import { amountToHuman, isValidAddress } from '../../util/utils';
 import Asset from './partial/Asset';
-import From from './partial/From';
 import Review from './Review';
 
 type TransferType = 'All' | 'Max' | 'Normal';
@@ -42,7 +41,6 @@ export default function Send(): React.ReactElement {
   const endpoint = useEndpoint(address, chain);
   const api = useApi(address);
   const decimal = useDecimal(address);
-  const myIdentity = useMyAccountIdentity(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
@@ -91,7 +89,6 @@ export default function Send(): React.ReactElement {
       setBalances(b);
     });
   }, [api, formatted, endpoint]);
-
 
   useEffect(() => {
     if (!api || !transfer || !formatted || !decimal) {
@@ -183,8 +180,7 @@ export default function Send(): React.ReactElement {
         <From
           address={address}
           api={api}
-          judgement={myIdentity?.judgement}
-          name={myIdentity?.display}
+          title={t<string>('From')}
         />
         <AccountInputWithIdentity
           address={recipientAddress}

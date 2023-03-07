@@ -6,7 +6,7 @@
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-polkagate#readme",
   "license": "Apache-2.0",
   "maintainers": [],
-  "name": "@polkadot/polkagate",
+  "name": "@polkadot/extension-polkagate",
   "repository": {
     "directory": "packages/extension-polkagate",
     "type": "git",
@@ -14,5 +14,5 @@
   },
   "sideEffects": true,
   "type": "module",
-  "version": "0.1.0.0"
+  "version": "0.1.2.3"
 }

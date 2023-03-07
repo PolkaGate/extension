@@ -320,18 +320,20 @@ export default function Index(): React.ReactElement {
           }
         </div>
       </Grid>
-      <ShowPool
-        api={api}
-        chain={chain}
-        label={t<string>('Pool')}
-        mode='Default'
-        pool={myPool}
-        showInfo
-        style={{
-          m: '15px auto 0',
-          width: '92%'
-        }}
-      />
+      {myPool &&
+        <ShowPool
+          api={api}
+          chain={chain}
+          label={t<string>('Pool')}
+          mode='Default'
+          pool={myPool}
+          showInfo
+          style={{
+            m: '15px auto 0',
+            width: '92%'
+          }}
+        />
+      }
       {!helperButton &&
         <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
           {t<string>('Your rewards wil be automatically withdrawn.')}

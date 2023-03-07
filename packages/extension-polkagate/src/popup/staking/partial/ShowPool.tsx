@@ -23,7 +23,7 @@ import PoolMoreInfo from './PoolMoreInfo';
 interface Props {
   api?: ApiPromise;
   chain?: Chain;
-  pool?: MyPoolInfo | PoolInfo;
+  pool: MyPoolInfo | PoolInfo;
   label?: string;
   labelPosition?: 'right' | 'left' | 'center';
   mode: 'Joining' | 'Creating' | 'Default';
@@ -37,7 +37,7 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);
   const [showRewardsChart, setShowRewardsChart] = useState<boolean>(false);
 
-  const rewardDestinationAddress = pool?.accounts?.rewardId || getPoolAccounts(api, pool.poolId).rewardId;
+  const rewardDestinationAddress = pool?.accounts?.rewardId as string || (api && getPoolAccounts(api, pool.poolId).rewardId);
   const token = pool?.token || (api && api.registry.chainTokens[0]);
   const decimal = pool?.decimal || (api && api.registry.chainDecimals[0]);
 

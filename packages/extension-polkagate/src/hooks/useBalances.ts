@@ -25,8 +25,10 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const chain = useChain(address);
   const isFetching = useContext(FetchingContext);
   const chainName = useChainName(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const currentToken = useToken(address);
+  const currentDecimal = useDecimal(address);
+  const token = api && api.registry.chainTokens[0];
+  const decimal = api && api.registry.chainDecimals[0];
 
   const getPoolBalances = useCallback(() => {
     if (api && !api.query.nominationPools) {
@@ -87,8 +89,8 @@ export default function useBalances(address: string | undefined, refresh?: boole
     }
 
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      const decimal = api.registry.chainDecimals[0];
-      const token = api.registry.chainTokens[0];
+      // const decimal = api.registry.chainDecimals[0];
+      // const token = api.registry.chainTokens[0];
 
       setNewBalances({ ...b, chainName, genesisHash: api.genesisHash.toString(), date: Date.now(), decimal, token });
       setRefresh && setRefresh(false);
@@ -110,7 +112,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash]);
 
   useEffect(() => {
-    if (!token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
+    if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return;
     }
 
@@ -230,5 +232,10 @@ export default function useBalances(address: string | undefined, refresh?: boole
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName]);
 
-  return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
+  // return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
+  return overall && overall.genesisHash === chain?.genesisHash && overall.token === currentToken && overall.decimal === currentDecimal
+    ? overall
+    : balances && balances.token === currentToken && balances.decimal === currentDecimal
+      ? balances
+      : undefined;
 }

@@ -8,22 +8,24 @@ import { useCallback, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { hexToBn } from '@polkadot/util';
 
-import { useApi } from '.';
+import { useApi, useToken } from '.';
 
 export default function useAuction(address: string): Auction | null | undefined {
   const api = useApi(address);
   const [auction, setAuction] = useState<Auction | null>();
+  const currentToken = useToken(address);
 
   const getCrowdloans = useCallback(async (api: ApiPromise) => {
     console.log('Getting crowdloans ...');
     const allParaIds = (await api.query.paras.paraLifecycles.entries()).map(([key, _]) => key.args[0]);
 
-    const [auctionInfo, auctionCounter, funds, leases, header] = await Promise.all([
+    const [auctionInfo, auctionCounter, funds, leases, header, token] = await Promise.all([
       api.query.auctions.auctionInfo(),
       api.query.auctions.auctionCounter(),
       api.query.crowdloan.funds.multi(allParaIds),
       api.query.slots.leases.multi(allParaIds),
-      api.rpc.chain.getHeader()
+      api.rpc.chain.getHeader(),
+      api.registry.chainTokens[0]
     ]);
 
     const parsedInfo = auctionInfo.isSome ? JSON.parse(auctionInfo.toString()) : null;
@@ -73,6 +75,7 @@ export default function useAuction(address: string): Auction | null | undefined 
       crowdloans: crowdloansWithIdentity,
       currentBlockNumber: Number(String(header.number)),
       minContribution: api.consts.crowdloan.minContribution.toString(),
+      token,
       winning:
         // winning.toString() ? Array.from(winning.toHuman()) :
         []
@@ -85,5 +88,7 @@ export default function useAuction(address: string): Auction | null | undefined 
     });
   }, [api, getCrowdloans]);
 
-  return auction;
+  return auction && auction.token === currentToken
+    ? auction
+    : undefined;
 }

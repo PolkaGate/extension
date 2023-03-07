@@ -55,6 +55,7 @@ export interface StakingConsts {
   maxNominations: number;
   maxNominatorRewardedPerValidator: number;
   minNominatorBond: BN;
+  token: string;
   unbondingDuration: number; // days
 }
 
@@ -164,6 +165,7 @@ export interface Auction {
   crowdloans: Crowdloan[];
   currentBlockNumber: number;
   minContribution: string;
+  token: string;
   winning: string[];
 }
 
@@ -372,6 +374,7 @@ export interface PoolStakingConsts {
   minCreationBond: BN
   minJoinBond: BN;
   minNominatorBond: BN;
+  token: string;
 }
 
 export interface PoolInfo {
@@ -617,6 +620,7 @@ export interface AccountStakingInfo extends DeriveStakingAccount {
   decimal?: number;
   token?: string;
   date?: number;
+  genesisHash?: string;
 }
 export interface MemberPoints {
   accountId: string;

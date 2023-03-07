@@ -9,14 +9,17 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
-import { useEndpoint2, useFormatted } from '.';
+import { useDecimal, useEndpoint2, useFormatted, useToken } from '.';
 
-export default function usePool(address: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const formatted = useFormatted(address);
   const endpoint = useEndpoint2(address);
   const isFetching = useContext(FetchingContext);
-  const [myPool, setMyPool] = useState<MyPoolInfo | undefined | null>();
+  const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>();
+  const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>();
   const [waiting, setWaiting] = useState<boolean>();
+  const currentToken = useToken(address);
+  const currentDecimal = useDecimal(address);
 
   const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
     const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
@@ -32,7 +35,7 @@ export default function usePool(address: AccountId | string, id?: number, refres
       const info: string = e.data;
 
       if (!info) {
-        setMyPool(null);
+        setNewPool(null);
 
         /** reset isFetching */
         isFetching.fetching[String(stakerAddress)].getPool = false;
@@ -72,9 +75,9 @@ export default function usePool(address: AccountId | string, id?: number, refres
       parsedInfo.stashIdAccount.stakingLedger.active = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.active).toString();
       parsedInfo.stashIdAccount.stakingLedger.total = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.total).toString();
 
-      console.log('*** My pool info returned from worker is:', parsedInfo);
+      console.log('*** My pool info from worker is:', parsedInfo);
 
-      setMyPool(parsedInfo);
+      currentToken === parsedInfo.token && setNewPool(parsedInfo);
 
       /** reset isFetching */
       isFetching.fetching[String(stakerAddress)].getPool = false;
@@ -94,11 +97,11 @@ export default function usePool(address: AccountId | string, id?: number, refres
 
       getPoolWorker.terminate();
     };
-  }, [isFetching]);
+  }, [currentToken, isFetching]);
 
   useEffect(() => {
     if (pool !== undefined) {
-      setMyPool(pool);
+      setSavedPool(pool);
     }
 
     if (!endpoint || !formatted) {
@@ -142,12 +145,12 @@ export default function usePool(address: AccountId | string, id?: number, refres
       console.log('MyPools in local storage:', res);
 
       if (res?.MyPools?.[formatted] !== undefined) {
-        setMyPool(res.MyPools[formatted]);
+        setSavedPool(res.MyPools[formatted]);
 
         return;
       }
 
-      setMyPool(undefined);
+      setSavedPool(undefined);
     });
   }, [formatted]);
 
@@ -159,12 +162,16 @@ export default function usePool(address: AccountId | string, id?: number, refres
     chrome.storage.onChanged.addListener((changes, namespace) => {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         if (key === 'MyPools' && namespace === 'local') {
-          setMyPool(newValue[formatted]);
+          setSavedPool(newValue[formatted]);
           setWaiting(false);
         }
       }
     });
   }, [formatted, waiting]);
 
-  return myPool;
+  return newPool && newPool.token === currentToken && newPool?.decimal === currentDecimal
+    ? newPool
+    : (savedPool?.token === currentToken && savedPool?.decimal === currentDecimal) || !savedPool
+      ? savedPool
+      : pool || undefined;
 }

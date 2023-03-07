@@ -1,3 +1,3 @@
 # @polkadot/extension-polkagate
 
-UI for the `@polkadot/polkagate-extension`
+UI for the `@polkadot/extension-polkagate`
