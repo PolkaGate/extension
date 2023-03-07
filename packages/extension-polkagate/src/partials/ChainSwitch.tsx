@@ -130,8 +130,11 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
 
     setCurrentChainNameJustSelected(newChainName);
     setFirstTime(false);
-    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
-  }, [address, genesisHashes]);
+    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((err) => {
+      setCurrentChainNameJustSelected(currentChainNameFromAccount);
+      console.error(err);
+    });
+  }, [address, currentChainNameFromAccount, genesisHashes]);
 
   const toggleChainSwitch = useCallback(() => chainNamesToShow && chainNamesToShow.length > 1 ? setShowOtherChains(!showOtherChains) : selectNetwork(chainNamesToShow[0]), [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
