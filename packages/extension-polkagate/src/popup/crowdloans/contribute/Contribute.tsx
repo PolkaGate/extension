@@ -14,14 +14,13 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, PButton, Popup, ShowBalance } from '../../../components';
+import { AmountWithOptions, From, PButton, Popup, ShowBalance } from '../../../components';
 import { useBalances, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { Crowdloan } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import Asset from '../../send/partial/Asset';
-import From from '../partials/From';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
 import Review from './Review';
@@ -131,9 +130,10 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
           withSteps={{ current: 1, total: 2 }}
         />
         <From
-          address={String(formatted)}
           api={api}
+          formatted={String(formatted)}
           style={{ m: '15px auto 0', width: '92%' }}
+          title={t<string>('Account holder')}
         />
         <ShowParachain
           api={api}

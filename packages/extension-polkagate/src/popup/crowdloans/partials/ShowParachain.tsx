@@ -47,7 +47,7 @@ export default function ShowParachain({ api, chain, crowdloan, crowdloansId, lab
 
   return (
     <Grid container item sx={style}>
-      <Typography textAlign={labelPosition} width='100%'>
+      <Typography textAlign={labelPosition} style={{ fontSize: '16px', fontWeight: 300 }} width='100%'>
         {t<string>('Parachain candidate')}
       </Typography>
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '48px' }}>
