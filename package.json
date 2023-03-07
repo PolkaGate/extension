@@ -32,7 +32,7 @@
     "lint": "polkadot-dev-run-lint",
     "postinstall": "polkadot-dev-yarn-only",
     "start": "yarn watch",
-    "test": "polkadot-dev-run-test --silent --detectOpenHandles --testPathPattern=packages/extension-polkagate/src",
+    "test": "polkadot-dev-run-test --silent --detectOpenHandles --testPathPattern=packages/extension-polkagate/src --maxWorkers=1",
     "test:one": "polkadot-dev-run-test --detectOpenHandles",
     "watch": "cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
   },
