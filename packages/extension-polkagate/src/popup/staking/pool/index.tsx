@@ -283,7 +283,7 @@ export default function Index(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        _centerItem={<ChainSwitch address={address}>{identicon}</ChainSwitch>}
+        _centerItem={identicon}
         noBorder
         onBackClick={onBackClick}
         paddingBottom={0}

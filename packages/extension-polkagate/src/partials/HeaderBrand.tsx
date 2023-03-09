@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faXmark, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faRefresh, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
