@@ -361,7 +361,7 @@ export default function CrowdLoans(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address}>{identicon}</ChainSwitch>}
         noBorder
         onBackClick={onBackClick}
         paddingBottom={0}

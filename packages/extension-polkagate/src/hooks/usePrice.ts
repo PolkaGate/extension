@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { Price, Prices } from '../util/types';
-import { useChain, useChainName } from '.';
+import { useChainName } from '.';
 
 /**
  *  @description retrieve the price of a token from local storage PRICES
