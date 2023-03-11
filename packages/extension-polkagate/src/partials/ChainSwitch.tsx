@@ -182,10 +182,9 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
                 animationDuration: '150ms',
                 animationFillMode: 'forwards',
                 animationName: `${showOtherChains ? backgroundSlide.down : backgroundSlide.up}`,
-                left: '-52.5px',
+                left: theme.palette.mode === 'dark' ? '-61.5px' : '-52px',
                 position: 'absolute',
-                top: '0',
-                transform: 'rotate(180deg)',
+                top: theme.palette.mode === 'dark' ? '-8px' : '1px',
                 zIndex: 2
               }}
             />
