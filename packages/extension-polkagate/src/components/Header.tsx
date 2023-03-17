@@ -9,7 +9,7 @@
  * */
 
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Box, Grid, IconButton, useTheme, Typography } from '@mui/material';
+import { Box, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos/';
@@ -25,7 +25,7 @@ export default function Header({ onClose, text }: Props): React.ReactElement {
   return (
     <Grid alignItems='center' container justifyContent='flex-end' p='15px 30px 0'>
       <Grid alignItems='center' container item xs={2}>
-        <Box component='img' src={theme.palette.mode === 'dark' ? logoWhite : logoBlack} sx={{ height: 38, width: 38 }} />
+        <Box component='img' src={theme.palette.mode === 'dark' ? logoBlack : logoWhite} sx={{ height: 38, width: 38 }} />
       </Grid>
       <Grid item m='auto' textAlign='center' xs={8}>
         <Typography fontSize='20px' fontWeight={400}>
