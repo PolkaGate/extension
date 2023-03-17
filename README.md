@@ -81,7 +81,7 @@ Steps to build the extension and view your changes in a browser:
     - if developing, after making changes - reload the extension
 
 
-Once added, you can create an account or import via multiple options. To view more helpful video view our channel on [Youtune](https://youtube.com/@polkagate);
+Once added, you can create an account or import via multiple options. To view helpful videos follow our channel on [Youtune](https://youtube.com/@polkagate);
 
 
 ### Testing
