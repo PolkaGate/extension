@@ -48,8 +48,27 @@ The following features will be available in the next milestone:
 
 Steps to build the extension and view your changes in a browser:
 
-1. Build via `yarn build` or `yarn watch`
-2. Install the extension
+1. download the files via `git clone https://github.com/polkagate/polkagate-extension.git`
+2. got to downloaded folder via `cd polkagate-extension`
+3. install dependencies via `yarn` (yarn versin: 3.2.0)
+4. append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js'):
+
+     `{
+		"prefix": 42,
+		"network": "westend",
+		"displayName": "Westend",
+		"symbols": [
+			"WND"
+		],
+		"decimals": [
+			12
+		],
+		"standardAccount": "*25519",
+		"website": "https://polkadot.network"
+	}`
+  
+5. Build via `yarn build`
+6. Install the extension
   - Chrome:
     - go to `chrome://extensions/`
     - ensure you have the Development flag set
@@ -62,7 +81,7 @@ Steps to build the extension and view your changes in a browser:
     - if developing, after making changes - reload the extension
 
 
-Once added, you can create an account (via a generated seed) or import via an existing seed.
+Once added, you can create an account or import via multiple options. To view more helpful video view our channel on [Youtune](https://youtube.com/@polkagate);
 
 
 ### Testing
