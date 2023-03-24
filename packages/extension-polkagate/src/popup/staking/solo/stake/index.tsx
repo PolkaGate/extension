@@ -65,14 +65,15 @@ export default function Index(): React.ReactElement {
   const staked = useMemo(() => stakingAccount ? stakingAccount.stakingLedger.active : BN_ZERO, [stakingAccount]);
   const totalAfterStake = useMemo(() => decimal ? staked?.add(amountToMachine(amount, decimal)) : BN_ZERO, [amount, decimal, staked]);
   const isFirstTimeStaking = !!stakingAccount?.stakingLedger?.total?.isZero();
+  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
 
   const thresholds = useMemo(() => {
-    if (!stakingConsts || !decimal || !balances || !stakingAccount) {
+    if (!stakingConsts || !decimal || !balances || !stakingAccount || !availableToSoloStake) {
       return;
     }
 
     const ED = stakingConsts.existentialDeposit;
-    let max = balances.availableBalance.sub(ED.muln(2));
+    let max = availableToSoloStake.sub(ED.muln(2));
     let min = stakingConsts.minNominatorBond;
 
     if (!stakingAccount.stakingLedger.active.isZero()) {
@@ -84,7 +85,7 @@ export default function Index(): React.ReactElement {
     }
 
     return { max, min };
-  }, [balances, decimal, stakingAccount, stakingConsts]);
+  }, [availableToSoloStake, balances, decimal, stakingAccount, stakingConsts]);
 
   const bond = api && api.tx.staking.bond;// (controller: MultiAddress, value: Compact<u128>, payee: PalletStakingRewardDestination)
   const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
@@ -93,7 +94,7 @@ export default function Index(): React.ReactElement {
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [settings.stashId, amountAsBN, settings.payee] : [amountAsBN], [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total]);
+  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [settings.stashId, amountAsBN, settings.payee] : [amountAsBN], [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total]);  
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:
    * Staked - Pay into the stash account, increasing the amount at stake accordingly.
@@ -129,18 +130,18 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    if (amountAsBN.gt(balances?.availableBalance ?? BN_ZERO)) {
+    if (amountAsBN.gt(availableToSoloStake ?? BN_ZERO)) {
       return setAlert(t('It is more than available balance.'));
     }
 
-    if (api && stakingConsts?.minNominatorBond && isFirstTimeStaking && (stakingConsts.minNominatorBond.gt(amountAsBN) || balances?.availableBalance?.lt(stakingConsts.minNominatorBond))) {
+    if (api && stakingConsts?.minNominatorBond && isFirstTimeStaking && (stakingConsts.minNominatorBond.gt(amountAsBN) || availableToSoloStake?.lt(stakingConsts.minNominatorBond))) {
       const minNominatorBond = api.createType('Balance', stakingConsts.minNominatorBond).toHuman();
 
       return setAlert(t('The minimum to be a staker is: {{minNominatorBond}}', { replace: { minNominatorBond } }));
     }
 
     setAlert(undefined);
-  }, [api, balances?.availableBalance, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
+  }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -220,7 +221,7 @@ export default function Index(): React.ReactElement {
         <Asset
           address={address}
           api={api}
-          balance={balances?.availableBalance}
+          balance={availableToSoloStake}
           balanceLabel={t('Available balance')}
           fee={estimatedFee}
           genesisHash={chain?.genesisHash}
@@ -271,7 +272,7 @@ export default function Index(): React.ReactElement {
       <PButton
         _isBusy={isFirstTimeStaking && showReview && !autoSelectedValidators}
         _onClick={goToNext}
-        disabled={!!alert || !amount || amount === '0' || !balances?.availableBalance || balances?.availableBalance?.isZero() || balances?.availableBalance?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
+        disabled={!!alert || !amount || amount === '0' || !availableToSoloStake || availableToSoloStake?.isZero() || availableToSoloStake?.lte(estimatedFee?.addn(Number(amount) || 0) || BN_ZERO)}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && staked && chain && tx && params && (isFirstTimeStaking && validatorSelectionMethod === 'auto' ? autoSelectedValidators : true) &&

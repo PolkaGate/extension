@@ -68,6 +68,7 @@ export default function Index(): React.ReactElement {
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
+  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
   // const decimal = stakingAccount?.decimal;
   // const token = stakingAccount?.token;
   const isBalanceOutdated = useMemo(() => stakingAccount && (Date.now() - (stakingAccount.date || 0)) > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
@@ -330,7 +331,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Available to stake')}
             showDivider={false}
-            value={getValue('available', balances)}
+            value={availableToSoloStake}
           />
         </Grid>
       </Container>
