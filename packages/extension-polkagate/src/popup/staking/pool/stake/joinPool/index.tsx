@@ -35,7 +35,8 @@ export default function JoinPool(): React.ReactElement {
   const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
-  const pools = usePools(address);
+
+  usePools(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
@@ -53,8 +54,6 @@ export default function JoinPool(): React.ReactElement {
   const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
   const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
   const [amountAsBN, setAmountAsBN] = useState<BN>();
-
-  // const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -223,7 +222,7 @@ export default function JoinPool(): React.ReactElement {
       />
       <PButton
         _onClick={toReview}
-        disabled={nextBtnDisabled || amountAsBN.isZero()}
+        disabled={nextBtnDisabled || amountAsBN?.isZero()}
         text={t<string>('Next')}
       />
       {showReview && selectedPool && api && amountAsBN &&
