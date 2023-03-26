@@ -16,7 +16,7 @@ import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, us
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
-import { amountToHuman } from '../../../../../util/utils';
+import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
 import Review from './Review';
 
@@ -75,7 +75,7 @@ export default function JoinPool(): React.ReactElement {
     }
 
     setStakeAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-    setAmountAsBN(new BN(parseFloat(value.length ? value.slice(0, MAX_AMOUNT_LENGTH) : '0') * 10 ** decimal));
+    setAmountAsBN(amountToMachine(value.length ? value.slice(0, MAX_AMOUNT_LENGTH) : '0', decimal));
   }, [decimal]);
 
   const onMinAmount = useCallback(() => {
@@ -173,7 +173,10 @@ export default function JoinPool(): React.ReactElement {
         showClose
         text={t<string>('Pool Staking')}
       />
-      <SubTitle label={t<string>('Join Pool')} withSteps={{ current: 1, total: 2 }} />
+      <SubTitle
+        label={t<string>('Join Pool')}
+        withSteps={{ current: 1, total: 2 }}
+      />
       <AmountWithOptions
         label={t<string>(`Amount (${token ?? '...'})`)}
         onChangeAmount={stakeAmountChange}
