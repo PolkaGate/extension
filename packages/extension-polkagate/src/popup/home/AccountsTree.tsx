@@ -74,7 +74,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         <Backdrop
           onClick={handleClose}
           open={quickActionOpen !== undefined}
-          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? '#000000cc' : '#00000040', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
+          sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
         />
       </Container>
       {account?.children?.map((child, index) => (
