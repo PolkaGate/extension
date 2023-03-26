@@ -24,6 +24,7 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('pooled balance'):
       return balances?.pooledBalance ?? BN_ZERO;
     case ('available'):
+    case ('transferrable'):
     case ('available balance'):
       return balances.availableBalance;
     case ('reserved'):

@@ -210,7 +210,7 @@ export default function AccountDetails(): React.ReactElement {
             </Grid>
             <Grid item pt='50px' xs>
               <LabelBalancePrice api={api} balances={balanceToShow} label={'Total'} price={price} />
-              <LabelBalancePrice api={api} balances={balanceToShow} label={'Available'} price={price} />
+              <LabelBalancePrice api={api} balances={balanceToShow} label={'Transferrable'} price={price} />
               <LabelBalancePrice api={api} balances={balanceToShow} label={'Reserved'} price={price} />
               {OthersRow}
             </Grid>
