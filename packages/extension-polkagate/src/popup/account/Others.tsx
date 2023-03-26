@@ -113,9 +113,9 @@ export default function Others({ address, api, balances, chain, identity, price,
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
           <Balance balances={balances} type={'Pooled Balance'} />
-          <Balance balances={balances} type={'Frozen Misc'} />
-          <Balance balances={balances} type={'Frozen Fee'} />
+          <Balance balances={balances} type={'Free Balance'} />
           <Balance balances={balances} type={'Locked Balance'} />
+          <Balance balances={balances} type={'Frozen Fee'} />
           <Balance balances={balances} type={'Vested Balance'} />
           <Balance balances={balances} type={'Vested Claimable'} />
           {/* <Balance balances={balances} type={'Vesting Locked'} /> */}
