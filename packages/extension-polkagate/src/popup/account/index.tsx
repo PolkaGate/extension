@@ -57,7 +57,7 @@ export default function AccountDetails(): React.ReactElement {
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const chainName = useChainName(address);
 
-  const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
+  // const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
 
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
