@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -26,6 +26,8 @@ export default function AddProxy(): React.ReactElement {
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
   const api = useApiWithChain(chain);
   const genesisOptions = useGenesisHashOptions();
+
+  const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -94,7 +96,8 @@ export default function AddProxy(): React.ReactElement {
       />
       <SelectChain
         address={realAddress}
-        defaultValue={chain?.genesisHash || genesisOptions[0].text}
+        defaultValue={chain?.genesisHash}
+        disabledItems={disabledItems}
         icon={getLogo(chain ?? undefined)}
         label={t<string>('Select the chain')}
         onChange={_onChangeGenesis}
@@ -113,7 +116,7 @@ export default function AddProxy(): React.ReactElement {
       />
       <PButton
         _onClick={handleAdd}
-        disabled={!name || !realAddress}// || !proxies?.length}
+        disabled={!name || !realAddress || !chain}
         text={t('Add')}
       />
     </>
