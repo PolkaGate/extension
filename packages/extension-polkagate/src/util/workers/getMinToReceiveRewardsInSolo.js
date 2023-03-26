@@ -12,6 +12,7 @@ async function getMinToReceiveRewardsInSolo(endpoint) {
   const assignments = new Map();
   const currentEra = (await api.query.staking.currentEra()).unwrap();
   const stakers = await api.query.staking.erasStakers.entries(currentEra);
+  const token = api.registry.chainTokens[0];
 
   stakers.map((x) => x[1].others).flat().forEach((x) => {
     const nominatorAddress = String(x.who);
@@ -26,7 +27,8 @@ async function getMinToReceiveRewardsInSolo(endpoint) {
 
   return {
     eraIndex: Number(currentEra.toString()),
-    minToGetRewards: bnMin(...assignments.values()).toString()
+    minToGetRewards: bnMin(...assignments.values()).toString(),
+    token
   };
 }
 
