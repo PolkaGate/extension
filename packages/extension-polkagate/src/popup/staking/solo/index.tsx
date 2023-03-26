@@ -24,10 +24,10 @@ import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
+import RewardsDetail from './rewards/RewardsDetail';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
 import Settings from './settings';
-import RewardsDetail from './rewards/RewardsDetail';
 
 interface SessionIfo {
   eraLength: number;
