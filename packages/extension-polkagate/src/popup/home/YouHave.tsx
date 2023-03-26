@@ -80,7 +80,7 @@ export default function YouHave({ hideNumbers, setHideNumbers }: Props): React.R
         </Typography>
       </Grid>
       <Grid container item justifyContent='center' xs={12}>
-        {hideNumbers
+        {hideNumbers || hideNumbers === undefined
           ? <Box
             component='img'
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
