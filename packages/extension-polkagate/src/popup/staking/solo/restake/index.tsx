@@ -53,6 +53,7 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountToMachine(amount, decimal)), [amount, decimal, staked, unlockingAmount]);
+  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
   const rebonded = api && api.tx.staking.rebond; // signer: Controller
 
@@ -77,30 +78,28 @@ export default function Index(): React.ReactElement {
   }, [stakingAccount]);
 
   useEffect(() => {
-    if (!amount) {
+    if (!amountAsBN) {
       return;
     }
-
-    const amountAsBN = amountToMachine(amount, decimal);
 
     if (amountAsBN.gt(unlockingAmount ?? BN_ZERO)) {
       return setAlert(t('It is more than total unlocking amount.'));
     }
 
     setAlert(undefined);
-  }, [amount, api, decimal, unlockingAmount, stakingConsts, t, restakeAllAmount]);
+  }, [api, decimal, unlockingAmount, stakingConsts, t, restakeAllAmount, amountAsBN]);
 
   useEffect(() => {
-    if (!rebonded) { return; }
+    if (!rebonded) {
+      return;
+    }
 
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    const amountAsBN = amountToMachine(amount ?? '0', decimal);
-
     rebonded(amountAsBN).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amount, api, decimal, formatted, rebonded]);
+  }, [amountAsBN, api, decimal, formatted, rebonded]);
 
   const onBackClick = useCallback(() => {
     history.push({

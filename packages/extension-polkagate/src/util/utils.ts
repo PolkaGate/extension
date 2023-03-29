@@ -74,8 +74,8 @@ export function balanceToHuman(_balance: AccountsBalanceType | null, _type: stri
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
-export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number, decimalDigits?: number, commify?: boolean): string {
-  if (!_amount) {
+export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
+  if (!_amount || !_decimals) {
     return '';
   }
 
@@ -86,8 +86,10 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(_amount: string | undefined, _decimals: number): BN {
-  if (!_amount || !Number(_amount) || !_decimals) { return BN_ZERO; }
+export function amountToMachine(_amount: string | undefined, _decimals: number | undefined): BN {
+  if (!_amount || !Number(_amount) || !_decimals) {
+    return BN_ZERO;
+  }
 
   const dotIndex = _amount.indexOf('.');
 

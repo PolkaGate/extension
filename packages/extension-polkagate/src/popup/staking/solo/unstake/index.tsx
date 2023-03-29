@@ -53,6 +53,7 @@ export default function Index(): React.ReactElement {
   const totalAfterUnstake = useMemo(() => staked && decimal && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
+  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
   const unbonded = api && api.tx.staking.unbond; // signer: Controller
   const redeem = api && api.tx.staking.withdrawUnbonded; // signer: Controller
@@ -68,11 +69,9 @@ export default function Index(): React.ReactElement {
   }, [stakingConsts]);
 
   useEffect(() => {
-    if (!amount || !decimal) {
+    if (!amountAsBN) {
       return;
     }
-
-    const amountAsBN = amountToMachine(amount, decimal);
 
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
       return setAlert(t('It is more than already staked.'));
@@ -86,10 +85,9 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amount, api, decimal, staked, stakingConsts, t, unstakeAllAmount]);
+  }, [amountAsBN, api, staked, stakingConsts, t, unstakeAllAmount]);
 
   const getFee = useCallback(async () => {
-    const amountAsBN = amountToMachine(amount ?? '0', decimal);
     const txs = [];
 
     if (api && !api?.call?.transactionPaymentApi) {
@@ -115,13 +113,13 @@ export default function Index(): React.ReactElement {
 
       setEstimatedFee(api?.createType('Balance', partialFee));
     }
-  }, [amount, api, chilled, decimal, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
+  }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
 
   useEffect(() => {
-    if (decimal && redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
+    if (amountAsBN && redeem && chilled && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && staked) {
       getFee().catch(console.error);
     }
-  }, [amount, api, chilled, decimal, formatted, getFee, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
+  }, [amountAsBN, api, chilled, formatted, getFee, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
     history.push({

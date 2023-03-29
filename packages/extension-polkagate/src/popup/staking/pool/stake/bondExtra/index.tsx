@@ -18,7 +18,7 @@ import { useAccount, useChain, useDecimal, useToken, useTranslation } from '../.
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { MyPoolInfo } from '../../../../../util/types';
-import { amountToHuman } from '../../../../../util/utils';
+import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Asset from '../../../../send/partial/Asset';
 import ShowPool from '../../../partial/ShowPool';
 import Review from './Review';
@@ -47,7 +47,8 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
 
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const amountAsBN = useMemo(() => new BN(parseFloat(bondAmount ?? '0') * 10 ** decimal), [decimal, bondAmount]);
+
+  const amountAsBN = useMemo(() => amountToMachine(bondAmount, decimal), [bondAmount, decimal]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -73,6 +74,10 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   }, [showReview]);
 
   const bondAmountChange = useCallback((value: string) => {
+    if (!decimal) {
+      return;
+    }
+
     if (value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
 
@@ -107,14 +112,14 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   }, [formatted, api, availableBalance, bondAmount, decimal, amountAsBN]);
 
   useEffect(() => {
-    if (!bondAmount || !amountAsBN || !api) {
+    if (!amountAsBN || !api || !availableBalance) {
       return;
     }
 
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
-    const isAmountInRange = amountAsBN.gt(availableBalance?.sub(ED.muln(2)).sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO);
+    const isAmountInRange = amountAsBN.lt(availableBalance.sub(ED.muln(2)).sub(estimatedMaxFee || BN_ZERO));
 
-    setNextBtnDisabled((!(bondAmount && bondAmount !== '0' && !isAmountInRange) && !pool) || pool?.member?.points === '0');
+    setNextBtnDisabled(!bondAmount || bondAmount === '0' || !isAmountInRange || !pool || pool?.member?.points === '0');
   }, [amountAsBN, availableBalance, decimal, estimatedMaxFee, bondAmount, api, pool]);
 
   const Warn = ({ iconDanger, isDanger, text }: { text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
