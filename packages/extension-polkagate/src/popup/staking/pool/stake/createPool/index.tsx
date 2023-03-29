@@ -52,9 +52,6 @@ export default function CreatePool(): React.ReactElement {
   const [stateTogglerId, setStateTogglerId] = useState<string>();
   const [newPool, setNewPool] = useState<PoolInfo | undefined>();
 
-  console.log('pool create index:');
-
-
   const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
   const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
