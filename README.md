@@ -48,7 +48,7 @@ The following features will be available in the next milestone:
 
 Steps to build the extension and view your changes in a browser:
 
-1. download the files via `git clone https://github.com/polkagate/polkagate-extension.git`
+1. download the files via `git clone -b manifestV2 https://github.com/polkagate/polkagate-extension.git`
 2. got to downloaded folder via `cd polkagate-extension`
 3. install dependencies via `yarn` (yarn versin: 3.2.0)
 4. append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js'):
