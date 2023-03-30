@@ -13,12 +13,12 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, InputWithLabel, AddressInput, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useChain, useFormatted, usePoolConsts, useToken, useTranslation } from '../../../../../hooks';
+import { AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
+import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
-import { amountToHuman } from '../../../../../util/utils';
+import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Review from './Review';
 import UpdateRoles from './UpdateRoles';
 
@@ -36,7 +36,7 @@ export default function CreatePool(): React.ReactElement {
   const api = useApi(address, state?.api);
   const history = useHistory();
   const token = useToken(address);
-  const decimals = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
+  const decimal = useDecimal(address);
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const chain = useChain(address);
 
@@ -55,7 +55,8 @@ export default function CreatePool(): React.ReactElement {
   const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
   const nextPoolId = poolStakingConsts && poolStakingConsts.lastPoolId.toNumber() + 1;
   const DEFAULT_POOLNAME = `Polkagate 💜${nextPoolId ? ` - ${nextPoolId}` : ''}`;
-  const amountAsBN = useMemo(() => ED && (new BN(parseFloat(createAmount ?? '0') * 10 ** decimals)).sub(ED), [ED, createAmount, decimals]);
+  // const amountAsBN = useMemo(() => ED && (new BN(parseFloat(createAmount ?? '0') * 10 ** decimal)).sub(ED), [ED, createAmount, decimal]);
+  const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
 
   const backToStake = useCallback(() => {
     history.push({
@@ -65,14 +66,14 @@ export default function CreatePool(): React.ReactElement {
   }, [address, api, history, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
-    if (value.length > decimals - 1) {
-      console.log(`The amount digits is more than decimal:${decimals}`);
+    if (decimal && value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setCreateAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimals]);
+  }, [decimal]);
 
   const onMaxAmount = useCallback(() => {
     if (!api || !availableBalance || !estimatedMaxFee || !ED) {
@@ -80,14 +81,14 @@ export default function CreatePool(): React.ReactElement {
     }
 
     const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedMaxFee));
-    const maxToHuman = amountToHuman(max.toString(), decimals);
+    const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setCreateAmount(maxToHuman);
-  }, [ED, api, availableBalance, decimals, estimatedMaxFee]);
+  }, [ED, api, availableBalance, decimal, estimatedMaxFee]);
 
   const onMinAmount = useCallback(() => {
-    poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimals));
-  }, [decimals, poolStakingConsts?.minCreationBond]);
+    poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));
+  }, [decimal, poolStakingConsts?.minCreationBond]);
 
   const _onPoolNameChange = useCallback((name: string) => {
     setPoolName(name);
@@ -132,7 +133,7 @@ export default function CreatePool(): React.ReactElement {
     const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
 
     setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolName, poolStakingConsts?.minCreateBond, stateTogglerId]);
+  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, stateTogglerId]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -143,20 +144,22 @@ export default function CreatePool(): React.ReactElement {
   }, [formatted, api, state?.availableBalance]);
 
   useEffect(() => {
-    if (!api || !availableBalance || !formatted) { return; }
+    if (!api || !availableBalance || !formatted) {
+      return;
+    }
 
     if (!api?.call?.transactionPaymentApi) {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    api && amountAsBN && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
+    api && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
     api && api.tx.nominationPools.create(String(availableBalance), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
-  }, [formatted, api, availableBalance, createAmount, decimals, amountAsBN, nominatorId, stateTogglerId]);
+  }, [amountAsBN, api, availableBalance, formatted, nominatorId, stateTogglerId]);
 
   return (
     <>
@@ -171,12 +174,21 @@ export default function CreatePool(): React.ReactElement {
       <Grid container m='20px auto 10px' width='92%'>
         <InputWithLabel label={t<string>('Pool name')} onChange={_onPoolNameChange} placeholder={DEFAULT_POOLNAME} value={poolName} />
       </Grid>
-      <AmountWithOptions label={t<string>(`Amount (${token || '...'})`)} onChangeAmount={stakeAmountChange} onPrimary={onMinAmount} onSecondary={onMaxAmount} primaryBtnText={t<string>('Min amount')} secondaryBtnText={t<string>('Max amount')} style={{ m: '10px auto', width: '92%' }} value={createAmount} />
+      <AmountWithOptions
+        label={t<string>(`Amount (${token || '...'})`)}
+        onChangeAmount={stakeAmountChange}
+        onPrimary={onMinAmount}
+        onSecondary={onMaxAmount}
+        primaryBtnText={t<string>('Min amount')}
+        secondaryBtnText={t<string>('Max amount')}
+        style={{ m: '10px auto', width: '92%' }}
+        value={createAmount}
+      />
       <Grid alignItems='end' container sx={{ m: '0 auto 10px', width: '92%' }}>
         <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
           {t<string>('Fee:')}
         </Typography>
-        <Grid item lineHeight='22px' pl='5px' fontSize='14px' fontWeight={400}>
+        <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShowBalance api={api} balance={estimatedFee} decimalPoint={4} height={22} />
         </Grid>
       </Grid>

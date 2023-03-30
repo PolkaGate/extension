@@ -12,7 +12,7 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Container } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
@@ -24,9 +24,9 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } from '../../components';
 import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useEndpoint, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../util/constants';
+import { MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
-import { amountToHuman, isValidAddress } from '../../util/utils';
+import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Asset from './partial/Asset';
 import Review from './Review';
 
@@ -55,6 +55,7 @@ export default function Send(): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>();
 
   const transfer = api && api.tx?.balances && (['All', 'Max'].includes(transferType) ? (api.tx.balances.transferAll) : (api.tx.balances.transferKeepAlive));
+  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
 
   useEffect(() => {
     setRecipientName(recipientInfo?.identity?.display || recipientNameIfIsInExtension || t('Unknown'));
@@ -77,11 +78,10 @@ export default function Send(): React.ReactElement {
       return;
     }
 
-    const amountAsBN = new BN(parseFloat(parseFloat(amount ?? '0').toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
     const isAmountLessThanAllTransferAble = amountAsBN.gt(balances?.availableBalance?.sub(maxFee ?? BN_ZERO) ?? BN_ZERO);
 
     setButtonDisabled(!isValidAddress(recipientAddress) || !amount || (amount === '0') || isAmountLessThanAllTransferAble);
-  }, [amount, api, balances?.availableBalance, decimal, maxFee, recipientAddress]);
+  }, [amount, amountAsBN, api, balances?.availableBalance, decimal, maxFee, recipientAddress]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -106,15 +106,13 @@ export default function Send(): React.ReactElement {
 
       params = [formatted, keepAlive]; // just for estimatedFee calculation, sender and receiver are the same
     } else {
-      const amountAsBN = new BN(parseFloat(parseFloat(amount || '0').toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
-
       params = [formatted, amountAsBN];
     }
 
     // eslint-disable-next-line no-void
     void transfer(...params).paymentInfo(formatted)
       .then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, transfer, amount, decimal, transferType]);
+  }, [api, formatted, transfer, amount, decimal, transferType, amountAsBN]);
 
   useEffect(() => {
     if (!api) {

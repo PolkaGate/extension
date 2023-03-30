@@ -114,7 +114,7 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+    const amountAsBN = amountToMachine(amount, decimal);
 
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
       return setAlert(t('It is more than already staked.'));

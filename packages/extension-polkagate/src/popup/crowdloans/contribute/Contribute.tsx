@@ -17,9 +17,9 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, From, PButton, Popup, ShowBalance } from '../../../components';
 import { useBalances, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../partials';
-import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
+import { FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { Crowdloan } from '../../../util/types';
-import { amountToHuman } from '../../../util/utils';
+import { amountToHuman, amountToMachine } from '../../../util/utils';
 import Asset from '../../send/partial/Asset';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachain from '../partials/ShowParachain';
@@ -52,7 +52,7 @@ export default function Contribute({ api, chain, crowdloan, crowdloansId, curren
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance>();
   const [contributionAmount, setContributionAmount] = useState<string>();
 
-  const amountAsBN = useMemo(() => decimal && new BN(parseFloat(contributionAmount ?? '0') * 10 ** decimal), [decimal, contributionAmount]);
+  const amountAsBN = useMemo(() => amountToMachine(contributionAmount, decimal), [contributionAmount, decimal]);
 
   useEffect(() => {
     if (!formatted || !tx || !minContribution) {

@@ -89,9 +89,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
     }
 
     api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      // const decimal = api.registry.chainDecimals[0];
-      // const token = api.registry.chainTokens[0];
-
       setNewBalances({ ...b, chainName, genesisHash: api.genesisHash.toString(), date: Date.now(), decimal, token });
       setRefresh && setRefresh(false);
       isFetching.fetching[String(formatted)].balances = false;

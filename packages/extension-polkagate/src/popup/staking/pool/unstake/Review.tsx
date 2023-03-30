@@ -26,7 +26,7 @@ import { signAndSend } from '../../../../util/api';
 import broadcast from '../../../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../../../util/constants';
 import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
+import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -100,7 +100,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       setShowWaitScreen(true);
       const amountAsBN = unstakeAllAmount
         ? new BN(pool.member.points)
-        : new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+        : amountToMachine(amount, decimal);
       const params = [formatted, amountAsBN];
 
       if (unlockingLen < maxUnlockingChunks) {
