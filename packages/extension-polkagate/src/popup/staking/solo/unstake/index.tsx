@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
@@ -50,7 +50,7 @@ export default function Index(): React.ReactElement {
   const [unstakeAllAmount, setUnstakeAllAmount] = useState<boolean>(false);
 
   const staked = useMemo(() => stakingAccount && stakingAccount.stakingLedger.active, [stakingAccount]);
-  const totalAfterUnstake = useMemo(() => staked && decimal && staked.sub(amountToMachine(amount, decimal)), [amount, decimal, staked]);
+  const totalAfterUnstake = useMemo(() => staked && decimal && staked.sub(amountToMachine(amount, decimal)) as BN | undefined, [amount, decimal, staked]);
   const unlockingLen = stakingAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
