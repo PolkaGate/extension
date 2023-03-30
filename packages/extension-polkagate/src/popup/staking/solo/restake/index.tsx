@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useFormatted, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
@@ -35,12 +35,15 @@ export default function Index(): React.ReactElement {
   const { state } = useLocation<State>();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+  const decimal = useDecimal(address);
   const formatted = useFormatted(address);
+  const history = useHistory();
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
+  const token = useToken(address);
+
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
@@ -48,12 +51,9 @@ export default function Index(): React.ReactElement {
   const [restakeAllAmount, setRestakeAllAmount] = useState<boolean>(false);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
 
-  const decimal = api?.registry?.chainDecimals[0] ?? DEFAULT_TOKEN_DECIMALS;
-  const token = api?.registry?.chainTokens[0] ?? '...';
-
-  const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
-  const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountToMachine(amount, decimal)), [amount, decimal, staked, unlockingAmount]);
+  const staked = useMemo(() => stakingAccount?.stakingLedger?.active as BN | undefined, [stakingAccount?.stakingLedger?.active]);
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
+  const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
   const rebonded = api && api.tx.staking.rebond; // signer: Controller
 
@@ -78,11 +78,7 @@ export default function Index(): React.ReactElement {
   }, [stakingAccount]);
 
   useEffect(() => {
-    if (!amountAsBN) {
-      return;
-    }
-
-    if (amountAsBN.gt(unlockingAmount ?? BN_ZERO)) {
+    if (amountAsBN.gt(unlockingAmount || BN_ZERO)) {
       return setAlert(t('It is more than total unlocking amount.'));
     }
 
@@ -187,7 +183,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0'}
+        disabled={!amount || amount === '0' || unlockingAmount?.lt(amountAsBN)}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && unlockingAmount && chain &&

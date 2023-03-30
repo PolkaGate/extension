@@ -94,10 +94,11 @@ export function amountToMachine(_amount: string | undefined, _decimals: number |
   const dotIndex = _amount.indexOf('.');
 
   if (dotIndex >= 0) {
-    const decimalsOfAmount = _amount.length - dotIndex - 1;
+    const wholePart = _amount.slice(0, dotIndex);
+    const fractionalPart = _amount.slice(dotIndex + 1, _amount.length);
 
-    _amount = _amount.slice(0, dotIndex) + _amount.slice(dotIndex + 1, _amount.length);
-    _decimals -= decimalsOfAmount;
+    _amount = wholePart + fractionalPart;
+    _decimals -= fractionalPart.length;
 
     if (_decimals < 0) {
       throw new Error("_decimals should be more than amount's decimals digits");
