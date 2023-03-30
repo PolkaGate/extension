@@ -7,11 +7,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
+import { useCurrentEraIndex, useEndpoint2, useToken } from '.';
 
 export default function useMinToReceiveRewardsInSolo(address: string): MinToReceiveRewardsInSolo | undefined {
   const endpoint = useEndpoint2(address);
-  const chainName = useChainName(address);
+  const token = useToken(address);
   const currentEraIndex = useCurrentEraIndex(address);
 
   const [min, setMin] = useState<MinToReceiveRewardsInSolo | undefined>();
@@ -29,20 +29,20 @@ export default function useMinToReceiveRewardsInSolo(address: string): MinToRece
     getMinToSoloWorker.onmessage = (e: MessageEvent<any>) => {
       const min = e.data as MinToReceiveRewardsInSolo;
 
-      window.localStorage.setItem(`${chainName}_minToGetRewardsInSolo`, JSON.stringify(min));
+      min.token === token && window.localStorage.setItem(`${token}_minToGetRewardsInSolo`, JSON.stringify(min));
       min.minToGetRewards = new BN(min.minToGetRewards);
 
-      setNewMin(min);
+      min.token === token && setNewMin(min);
       getMinToSoloWorker.terminate();
     };
-  }, [chainName]);
+  }, [token]);
 
   useEffect(() => {
-    if (!chainName) {
+    if (!token) {
       return;
     }
 
-    const saved = chainName && window.localStorage.getItem(`${chainName}_minToGetRewardsInSolo`);
+    const saved = token && window.localStorage.getItem(`${token}_minToGetRewardsInSolo`);
 
     if (saved) {
       const parsedSaved = JSON.parse(saved) as MinToReceiveRewardsInSolo;
@@ -50,11 +50,15 @@ export default function useMinToReceiveRewardsInSolo(address: string): MinToRece
       parsedSaved.minToGetRewards = new BN(parsedSaved.minToGetRewards);
       setMin(parsedSaved);
     }
-  }, [chainName]);
+  }, [token]);
 
   useEffect(() => {
-    endpoint && currentEraIndex && currentEraIndex !== min?.eraIndex && getMinToReceiveRewardsInSolo(endpoint);
-  }, [currentEraIndex, endpoint, getMinToReceiveRewardsInSolo, min?.eraIndex]);
+    endpoint && currentEraIndex && currentEraIndex !== min?.eraIndex && token && getMinToReceiveRewardsInSolo(endpoint);
+  }, [currentEraIndex, endpoint, getMinToReceiveRewardsInSolo, min?.eraIndex, token]);
 
-  return newMin || min;
+  return newMin && newMin.token === token
+    ? newMin
+    : min && min.token === token
+      ? min
+      : undefined;
 }

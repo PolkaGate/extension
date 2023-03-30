@@ -10,7 +10,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -18,7 +18,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { createPool } from '../../../../../util/api';
 import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
@@ -44,7 +44,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const formatted = useFormatted(address);
   const name = useAccountName(address);
   const proxies = useProxies(api, address);
-  const decimals = api.registry.chainDecimals[0];
+  const decimal = useDecimal(address);
 
   const create = api.tx.nominationPools.create;
 
@@ -60,8 +60,8 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
   const _onBackClick = useCallback(() => {
-    setShowReview(!showReview);
-  }, [setShowReview, showReview]);
+    setShowReview(false);
+  }, [setShowReview]);
 
   const goToMyAccounts = useCallback(() => {
     onAction(`/pool/nominations/${address}`);
@@ -96,7 +96,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
 
       const info = {
         action: 'Pool Staking',
-        amount: amountToHuman(createAmount?.toString(), decimals),
+        amount: amountToHuman(createAmount?.toString(), decimal),
         block,
         date: Date.now(),
         failureText,
@@ -116,7 +116,7 @@ export default function Review({ address, api, createAmount, estimatedFee, poolT
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, chain, create, createAmount, decimals, estimatedFee, formatted, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [address, api, chain, create, createAmount, decimal, estimatedFee, formatted, name, password, poolToCreate.bondedPool?.roles, poolToCreate.metadata, poolToCreate.poolId, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   return (
     <>

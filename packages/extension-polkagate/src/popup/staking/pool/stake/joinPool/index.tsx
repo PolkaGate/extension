@@ -16,7 +16,7 @@ import { useApi, useDecimal, useFormatted, usePoolConsts, usePools, useToken, us
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
-import { amountToHuman } from '../../../../../util/utils';
+import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import PoolsTable from './partials/PoolsTable';
 import Review from './Review';
 
@@ -35,7 +35,8 @@ export default function JoinPool(): React.ReactElement {
   const api = useApi(address, state?.api);
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const history = useHistory();
-  const pools = usePools(address);
+
+  usePools(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
@@ -52,8 +53,7 @@ export default function JoinPool(): React.ReactElement {
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
   const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
   const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
-
-  const amountAsBN = useMemo(() => decimal && new BN(parseFloat(stakeAmount ?? '0') * 10 ** decimal), [decimal, stakeAmount]);
+  const [amountAsBN, setAmountAsBN] = useState<BN>();
 
   const backToStake = useCallback(() => {
     history.push({
@@ -63,18 +63,28 @@ export default function JoinPool(): React.ReactElement {
   }, [address, api, history, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
-    if (decimal && value.length > decimal - 1) {
+    if (!decimal) {
+      return;
+    }
+
+    if (value.length > decimal - 1) {
       console.log(`The amount digits is more than decimal:${decimal}`);
 
       return;
     }
 
     setStakeAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+    setAmountAsBN(amountToMachine(value.length ? value.slice(0, MAX_AMOUNT_LENGTH) : '0', decimal));
   }, [decimal]);
 
   const onMinAmount = useCallback(() => {
-    poolStakingConsts?.minJoinBond && decimal && setStakeAmount(amountToHuman(poolStakingConsts.minJoinBond.toString(), decimal));
-  }, [decimal, poolStakingConsts?.minJoinBond]);
+    if (!poolStakingConsts || !decimal) {
+      return;
+    }
+
+    poolStakingConsts.minJoinBond && decimal && setStakeAmount(amountToHuman(poolStakingConsts.minJoinBond.toString(), decimal));
+    setAmountAsBN(poolStakingConsts.minJoinBond);
+  }, [decimal, poolStakingConsts]);
 
   const onMaxAmount = useCallback(() => {
     if (!api || !availableBalance || !estimatedMaxFee || !decimal) {
@@ -86,6 +96,7 @@ export default function JoinPool(): React.ReactElement {
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setStakeAmount(maxToHuman);
+    setAmountAsBN(max);
   }, [api, availableBalance, decimal, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
@@ -142,6 +153,8 @@ export default function JoinPool(): React.ReactElement {
 
   useEffect(() => {
     if (!stakeAmount || !amountAsBN || !poolStakingConsts?.minJoinBond) {
+      setNextBtnDisabled(true);
+
       return;
     }
 
@@ -159,7 +172,10 @@ export default function JoinPool(): React.ReactElement {
         showClose
         text={t<string>('Pool Staking')}
       />
-      <SubTitle label={t<string>('Join Pool')} withSteps={{ current: 1, total: 2 }} />
+      <SubTitle
+        label={t<string>('Join Pool')}
+        withSteps={{ current: 1, total: 2 }}
+      />
       <AmountWithOptions
         label={t<string>(`Amount (${token ?? '...'})`)}
         onChangeAmount={stakeAmountChange}
@@ -206,7 +222,7 @@ export default function JoinPool(): React.ReactElement {
       />
       <PButton
         _onClick={toReview}
-        disabled={nextBtnDisabled}
+        disabled={nextBtnDisabled || amountAsBN?.isZero()}
         text={t<string>('Next')}
       />
       {showReview && selectedPool && api && amountAsBN &&

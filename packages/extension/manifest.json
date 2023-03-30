@@ -5,7 +5,7 @@
   "name": "PolkaGate",
   "short_name": "PG",
   "manifest_version": 2,
-  "version": "0.1.1.9",
+  "version": "0.1.2.6",
   "permissions": [
     "storage",
     "unlimitedStorage",

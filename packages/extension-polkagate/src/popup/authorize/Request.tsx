@@ -51,7 +51,7 @@ export default function Request({ authId, isFirst, request: { origin }, url }: P
         {t<string>('Authorize')}
       </Typography>
       <Warning theme={theme}>
-        <span>{t<string>('An application, self-identifying as ')}<strong style={{ fontWeight: 400, textDecoration: 'underline' }}>{origin}</strong>{t<string>(' is requesting access from ')}<strong style={{ fontWeight: 400, textDecoration: 'underline' }}>{url}</strong></span>
+        <span style={{ overflowWrap: 'anywhere' }}>{t<string>('An application, self-identifying as ')}<strong style={{ fontWeight: 400, textDecoration: 'underline' }}>{origin}</strong>{t<string>(' is requesting access from ')}<strong style={{ fontWeight: 400, textDecoration: 'underline' }}>{url}</strong></span>
       </Warning>
       <Typography
         fontSize='14px'

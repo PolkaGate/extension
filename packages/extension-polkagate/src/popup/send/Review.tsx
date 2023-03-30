@@ -28,7 +28,7 @@ import SubTitle from '../../partials/SubTitle';
 import broadcast from '../../util/api/broadcast';
 import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
+import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
 function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, name, pt1 = 0, pt2 = 5 }:
@@ -126,7 +126,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
 
         params = [recipientAddress, keepAlive];
       } else {
-        const amountAsBN = new BN(parseFloat(parseFloat(amount).toFixed(FLOATING_POINT_DIGIT)) * 10 ** FLOATING_POINT_DIGIT).mul(new BN(10 ** (decimal - FLOATING_POINT_DIGIT)));
+        const amountAsBN = amountToMachine(amount, decimal);
 
         params = [recipientAddress, amountAsBN];
       }

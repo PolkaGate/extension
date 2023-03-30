@@ -24,10 +24,10 @@ import BouncingSubTitle from '../../../partials/BouncingSubTitle';
 import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
+import RewardsDetail from './rewards/RewardsDetail';
 import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
 import Settings from './settings';
-import RewardsDetail from './rewards/RewardsDetail';
 
 interface SessionIfo {
   eraLength: number;
@@ -68,6 +68,7 @@ export default function Index(): React.ReactElement {
   const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
+  const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
   // const decimal = stakingAccount?.decimal;
   // const token = stakingAccount?.token;
   const isBalanceOutdated = useMemo(() => stakingAccount && (Date.now() - (stakingAccount.date || 0)) > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
@@ -330,7 +331,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Available to stake')}
             showDivider={false}
-            value={getValue('available', balances)}
+            value={availableToSoloStake}
           />
         </Grid>
       </Container>

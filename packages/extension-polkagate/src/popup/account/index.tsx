@@ -57,7 +57,7 @@ export default function AccountDetails(): React.ReactElement {
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const chainName = useChainName(address);
 
-  const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
+  // const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
 
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
@@ -210,7 +210,7 @@ export default function AccountDetails(): React.ReactElement {
             </Grid>
             <Grid item pt='50px' xs>
               <LabelBalancePrice api={api} balances={balanceToShow} label={'Total'} price={price} />
-              <LabelBalancePrice api={api} balances={balanceToShow} label={'Available'} price={price} />
+              <LabelBalancePrice api={api} balances={balanceToShow} label={'Transferrable'} price={price} />
               <LabelBalancePrice api={api} balances={balanceToShow} label={'Reserved'} price={price} />
               {OthersRow}
             </Grid>
