@@ -456,7 +456,7 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
                               chain={chain}
                               formatted={d.validator}
                               identiconSize={30}
-                              showSocial
+                              showSocial={false}
                               style={{ fontSize: '14px' }}
                               withShortAddress
                             />
