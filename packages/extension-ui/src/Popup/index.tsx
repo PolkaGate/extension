@@ -12,7 +12,7 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
 
-// import Governance from '../../../extension-polkagate/src/Popup/Governance';// added for plus
+import OpenGov from '../../../extension-polkagate/src/Popup/openGov';
 // import SocialRecovery from '../../../extension-polkagate/src/Popup/SocialRecovery';// added for plus
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
@@ -197,6 +197,7 @@ export default function Popup(): React.ReactElement {
                           <Switch>
                             <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
+                            <Route path='/opengov/:address'>{wrapWithErrorBoundary(<OpenGov />, 'openGov')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                             <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
