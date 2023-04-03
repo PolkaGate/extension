@@ -3,24 +3,18 @@
 
 import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Close, Groups as FellowshipIcon, HowToVote as ReferendaIcon, Hub as Root } from '@mui/icons-material/';
 import { Box, Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { logoBlack, logoWhite } from '../../assets/logos';
-import { ActionContext } from '../../components';
 import { useApi, useTranslation } from '../../hooks';
 import { postData } from '../../util/api';
 
 export default function OpenGov(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const onAction = useContext(ActionContext);
   const { address } = useParams<{ address: string }>();
   const api = useApi(address);
-
-  const _onBackClick = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
 
   useEffect(() => {
     console.log('*******************************************************');
