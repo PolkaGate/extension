@@ -10,6 +10,8 @@ function sanitize(value?: string): string {
 }
 
 export default function getLogo(info: string | undefined | Chain): string {
+  // TODO: using the new apps-config to fetch icons
+  // const systemName= await api.rpc.system.name();
   // const specName= api.runtimeVersion.specName.toString();
   // getSystemIcon(systemName, specName)
 
