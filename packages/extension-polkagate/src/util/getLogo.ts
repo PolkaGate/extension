@@ -10,6 +10,9 @@ function sanitize(value?: string): string {
 }
 
 export default function getLogo(info: string | undefined | Chain): string {
+  // const specName= api.runtimeVersion.specName.toString();
+  // getSystemIcon(systemName, specName)
+
   const name = (info as Chain)?.name?.replace(' Relay Chain', '')?.replace(' Network', '').toLowerCase() ?? (info as string)?.toLowerCase();
   const found = name ? (namedLogos[name] || chainLogos[sanitize(name)] || nodeLogos[sanitize(name)] || specLogos[sanitize(name)] || externalLogos[sanitize(name)]) : undefined;
 

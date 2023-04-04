@@ -10,6 +10,8 @@ import { logoBlack, logoWhite } from '../../assets/logos';
 import { useApi, useDecidingCount, useTracks, useTranslation } from '../../hooks';
 import { postData } from '../../util/api';
 
+type TopMenu = 'Referenda' | 'Fellowship';
+
 export default function OpenGov(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -17,7 +19,7 @@ export default function OpenGov(): React.ReactElement {
   const api = useApi(address);
   const tracks = useTracks(address, api);
   const decidingCounts = useDecidingCount(api, tracks);
-  console.log('decidingCounts', decidingCounts);
+  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
 
   useEffect(() => {
     console.log('*******************************************************');
@@ -68,26 +70,35 @@ export default function OpenGov(): React.ReactElement {
     /** to change app width to full screen */
     const root = document.getElementById('root');
 
-    root.style.width = '100%';
+    if (root) {
+      root.style.width = '100%';
+    }
+
+    return () => {
+      if (root) {
+        root.style.width = '';
+      }
+    };
   }, []);
 
-  const [selectedTopMenu, setSelectedTopMenu] = useState('Referenda');
-  const onTopMenuMenuClick = useCallback((item: 'Referenda' | 'Fellowship') => {
-    setSelectedTopMenu(item);
+  const onTopMenuMenuClick = useCallback((item: TopMenu) => {
+    setSelectedTopMenu((prevSelectedTopMenu) =>
+      prevSelectedTopMenu !== item ? item : undefined
+    );
   }, []);
 
   const findItemDecidingCount = useCallback((item: string): number | undefined => {
     if (!decidingCounts) {
-      return;
+      return undefined;
     }
 
-    const filtered = decidingCounts.find((d) => item.toLowerCase().replaceAll(' ', '_') === d[0]);
-    console.log('filtered:', filtered)
+    const itemKey = item.toLowerCase().replaceAll(' ', '_');
+    const filtered = decidingCounts.find(([key]) => key === itemKey);
 
-    return filtered && filtered[1];
+    return filtered?.[1];
   }, [decidingCounts]);
 
-  function TopMenu({ item }: { item: 'Referenda' | 'Fellowship' }): React.ReactElement<{ item: 'Referenda' | 'Fellowship' }> {
+  function TopMenu({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
       <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '51.5px', cursor: 'pointer' }}>
         <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>

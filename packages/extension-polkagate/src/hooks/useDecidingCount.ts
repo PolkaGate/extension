@@ -5,23 +5,33 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-export default function useDecidingCount(api: ApiPromise, tracks: string[] | undefined): undefined | string[] {
-  const [counts, setCounts] = useState();
-  const trackIds = useMemo(() => tracks?.map((t) => [t[0], t[1].name]), [tracks]);
+type DecidingCount = [string, number];
+
+export default function useDecidingCount(api: ApiPromise | undefined, tracks: [string, { name: string }][] | undefined): DecidingCount[] | undefined {
+  const [counts, setCounts] = useState<DecidingCount[] | undefined>(undefined);
+  const trackIds = useMemo(() => tracks?.map(([id, { name }]) => [id, name]), [tracks]);
 
   useEffect(() => {
-    if (!trackIds || !api) {
-      return;
+    async function fetchDecidingCounts() {
+      if (!trackIds || !api) {
+        return;
+      }
+
+      try {
+        const counts = await Promise.all(trackIds.map(([id]) => api.query.referenda.decidingCount(id)));
+        const decidingCounts: DecidingCount[] = counts.map((count, index) => [
+          trackIds[index][1],
+          count.toNumber()
+        ]);
+
+        setCounts(decidingCounts);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
-    call().catch(console.error);
-
-    async function call() {
-      const counts = await Promise.all(trackIds.map((t) => api.query.referenda.decidingCount(t[0])));
-
-      setCounts(counts);
-    }
+    fetchDecidingCounts();
   }, [api, trackIds]);
 
-  return counts && trackIds && counts.map((c, index) => [trackIds[index][1], c.toNumber()]);
+  return counts;
 }
