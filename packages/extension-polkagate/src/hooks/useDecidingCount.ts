@@ -23,10 +23,5 @@ export default function useDecidingCount(api: ApiPromise, tracks: string[] | und
     }
   }, [api, trackIds]);
 
-  return counts && trackIds && counts.map((c, index) => {
-    trackIds[index][0]=c.toNumber();
-
-    return trackIds[index];
-  }
-  );
+  return counts && trackIds && counts.map((c, index) => [trackIds[index][1], c.toNumber()]);
 }

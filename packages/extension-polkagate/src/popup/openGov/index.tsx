@@ -76,15 +76,15 @@ export default function OpenGov(): React.ReactElement {
     setSelectedTopMenu(item);
   }, []);
 
-  const findItemDecidingCount = useCallback((item: string) => {
+  const findItemDecidingCount = useCallback((item: string): number | undefined => {
     if (!decidingCounts) {
       return;
     }
 
-    const filtered = decidingCounts.find((d) => item.toLowerCase().replaceAll(' ', '_') === d[1]);
+    const filtered = decidingCounts.find((d) => item.toLowerCase().replaceAll(' ', '_') === d[0]);
     console.log('filtered:', filtered)
 
-    return filtered && filtered[0];
+    return filtered && filtered[1];
   }, [decidingCounts]);
 
   function TopMenu({ item }: { item: 'Referenda' | 'Fellowship' }): React.ReactElement<{ item: 'Referenda' | 'Fellowship' }> {
@@ -107,7 +107,7 @@ export default function OpenGov(): React.ReactElement {
     return (
       <Grid alignItems='center' container item sx={{ cursor: clickable && 'pointer', fontSize: '18px', width, borderBottom: `${borderWidth} solid`, borderColor: 'primary.main', mr: '37px', py: '5px', '&:hover': clickable && { color: 'primary.main', fontWeight: 700 } }}>
         <Typography sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
-          {item}{decidingCount !== 0 ? ` (${decidingCount})` : ''}
+          {item}{decidingCount ? ` (${decidingCount})` : ''}
         </Typography>
         {icon}
       </Grid>
