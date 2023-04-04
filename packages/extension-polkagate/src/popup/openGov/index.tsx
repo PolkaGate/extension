@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { logoBlack, logoWhite } from '../../assets/logos';
-import { useApi, useTranslation } from '../../hooks';
+import { useApi, useDecidingCount, useTracks, useTranslation } from '../../hooks';
 import { postData } from '../../util/api';
 
 export default function OpenGov(): React.ReactElement {
@@ -15,6 +15,9 @@ export default function OpenGov(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address);
+  const tracks = useTracks(address, api);
+  const decidingCounts = useDecidingCount(api, tracks);
+  console.log('decidingCounts', decidingCounts);
 
   useEffect(() => {
     console.log('*******************************************************');
@@ -37,11 +40,8 @@ export default function OpenGov(): React.ReactElement {
     console.log('Maximum size of the referendum queue for a single track:', api.consts.referenda.maxQueued.toString());
     console.log('minimum amount to be used as a deposit :', api.consts.referenda.submissionDeposit.toString());
     console.log('*******************************************************');
-    console.log('Information concerning the different referendum tracks:', api.consts.referenda.tracks.toString());
-    console.log('*******************************************************');
     console.log('blocks after submission that a referendum must begin decided by.', api.consts.referenda.undecidingTimeout.toString());
 
-    console.log('*******************************************************');
     console.log('*******************************************************');
 
     api.query.referenda.referendumCount().then((count) => {
@@ -54,6 +54,7 @@ export default function OpenGov(): React.ReactElement {
     }).catch(console.error);
 
     const trackId_mediumSpender = 33;
+
     api.query.referenda.decidingCount(trackId_mediumSpender).then((res) => {
       console.log('total referendum being decided in trackId_mediumSpender:', res.toString());
     }).catch(console.error);
@@ -75,6 +76,17 @@ export default function OpenGov(): React.ReactElement {
     setSelectedTopMenu(item);
   }, []);
 
+  const findItemDecidingCount = useCallback((item: string) => {
+    if (!decidingCounts) {
+      return;
+    }
+
+    const filtered = decidingCounts.find((d) => item.toLowerCase().replaceAll(' ', '_') === d[1]);
+    console.log('filtered:', filtered)
+
+    return filtered && filtered[0];
+  }, [decidingCounts]);
+
   function TopMenu({ item }: { item: 'Referenda' | 'Fellowship' }): React.ReactElement<{ item: 'Referenda' | 'Fellowship' }> {
     return (
       <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '51.5px', cursor: 'pointer' }}>
@@ -90,10 +102,12 @@ export default function OpenGov(): React.ReactElement {
   }
 
   function MenuItem({ borderWidth = '2px', icon, item, width = '13.5%', fontWeight, clickable = true }: { item: string, icon?: React.ReactElement, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
+    const decidingCount = findItemDecidingCount(item);
+
     return (
       <Grid alignItems='center' container item sx={{ cursor: clickable && 'pointer', fontSize: '18px', width, borderBottom: `${borderWidth} solid`, borderColor: 'primary.main', mr: '37px', py: '5px', '&:hover': clickable && { color: 'primary.main', fontWeight: 700 } }}>
         <Typography sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
-          {item}
+          {item}{decidingCount !== 0 ? ` (${decidingCount})` : ''}
         </Typography>
         {icon}
       </Grid>
@@ -188,7 +202,7 @@ export default function OpenGov(): React.ReactElement {
               clickable={false}
               fontWeight={500}
               icon={<AdminsIcon sx={{ fontSize: 20, ml: '10px' }} />}
-              item='Admins'
+              item='Admin'
               width='100%'
             />
             <MenuItem

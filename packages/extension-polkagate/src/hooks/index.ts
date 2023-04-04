@@ -9,6 +9,8 @@ export { default as useAuction } from './useAuction';
 export { default as useApiWithChain } from './useApiWithChain';
 export { default as useMyPools } from './useMyPools';
 export { default as useBalances } from './useBalances';
+export { default as useDecidingCount } from './useDecidingCount';
+export { default as useTracks } from './useTracks';
 export { default as useChain } from './useChain';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';
