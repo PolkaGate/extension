@@ -1,16 +1,24 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Close, Groups as FellowshipIcon, HowToVote as ReferendaIcon, Hub as Root } from '@mui/icons-material/';
-import { Box, Button, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Breadcrumbs, Button, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
+import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
+
 import { logoBlack, logoWhite } from '../../assets/logos';
-import { useApi, useDecidingCount, useTracks, useTranslation } from '../../hooks';
+import { FormatPrice, ShowBalance, ShowValue } from '../../components';
+import { useApi, useDecidingCount, useDecimal, usePrice, useTracks, useTranslation } from '../../hooks';
 import { postData } from '../../util/api';
+import { remainingTime } from '../../util/utils';
 
 type TopMenu = 'Referenda' | 'Fellowship';
+const EMPTY_U8A_32 = new Uint8Array(32);
 
 export default function OpenGov(): React.ReactElement {
   const { t } = useTranslation();
@@ -18,8 +26,107 @@ export default function OpenGov(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const api = useApi(address);
   const tracks = useTracks(address, api);
+  const price = usePrice(address);
+  const decimal = useDecimal(address);
+
   const decidingCounts = useDecidingCount(api, tracks);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
+
+  const [proposals, setProposals] = useState<DeriveTreasuryProposals | undefined>();
+  const [activeProposalCount, setActiveProposalCount] = useState<number | undefined>();
+  const [availableTreasuryBalance, setAvailableTreasuryBalance] = useState<BN | undefined>();
+  const [spendPeriod, setSpendPeriod] = useState<BN | undefined>();
+  const [remainingSpendPeriod, setRemainingSpendPeriod] = useState<BN | undefined>();
+  const [remainingTimeToSpend, setRemainingTimeToSpend] = useState<string | undefined>();
+  const [remainingSpendPeriodPrecent, setRemainingSpendPeriodPercent] = useState<number | undefined>();
+  const [pendingBounties, setPendingBounties] = useState<BN | undefined>();
+  const [pendingProposals, setPendingProposals] = useState<BN | undefined>();
+  const [spendable, setSpendable] = useState<BN | undefined>();
+  const [spenablePercent, setSpendablePercent] = useState<number | undefined>();
+  const [nextBurn, setNextBurn] = useState<BN | undefined>();
+  const [approved, setApproved] = useState<BN | undefined>();
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    let cancel = false;
+
+    // clear proposals state
+    setProposals(undefined);
+
+    // fetch proposals
+    api.derive.treasury.proposals()?.then((p) => {
+      if (!cancel) {
+        setProposals(p);
+        setActiveProposalCount(p?.proposals.length + p?.approvals.length);
+        console.log('proposals:', JSON.stringify(p?.proposals));
+      }
+    }).catch(console.error);
+
+    return () => {
+      cancel = true;
+    };
+  }, [api]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (!api) {
+          return;
+        }
+
+        const treasuryAccount = u8aConcat(
+          'modl',
+          api.consts.treasury && api.consts.treasury.palletId
+            ? api.consts.treasury.palletId.toU8a(true)
+            : 'py/trsry',
+          EMPTY_U8A_32
+        ).subarray(0, 32);
+
+        const [bestNumber, bounties, treasuryProposals, account] = await Promise.all([
+          api.derive.chain.bestNumber(),
+          api.derive.bounties?.bounties(),
+          api.derive.treasury?.proposals(),
+          api.derive.balances?.account(treasuryAccount)
+        ]);
+
+        const spendPeriod = new BN(api.consts.treasury?.spendPeriod) ?? BN_ZERO;
+        const remainingSpendPeriod = spendPeriod.sub(bestNumber.mod(spendPeriod));
+        const treasuryBalance = account ? account.freeBalance : BN_ZERO;
+        const pendingBounties = bounties
+          ? bounties.reduce((total, { bounty: { status, value } }) =>
+            total.iadd(status.isApproved ? value : BN_ZERO), new BN(0))
+          : BN_ZERO;
+        const pendingProposals = treasuryProposals
+          ? treasuryProposals.approvals.reduce((total, { proposal: { value } }) => total.iadd(value), new BN(0))
+          : BN_ZERO;
+
+        const approved = pendingBounties.add(pendingProposals);
+        const spendable = treasuryBalance.sub(approved);
+        const rt = remainingTime(remainingSpendPeriod.toNumber());
+        const nextBurn = api.consts.treasury.burn.mul(treasuryBalance).div(BN_MILLION) as BN;
+
+        setRemainingSpendPeriod(remainingSpendPeriod);
+        setSpendPeriod(spendPeriod.divn(24 * 60 * 10));
+        setRemainingTimeToSpend(rt);
+        setRemainingSpendPeriodPercent(spendPeriod.sub(remainingSpendPeriod).muln(100).div(spendPeriod).toNumber());
+        setAvailableTreasuryBalance(treasuryBalance);
+        setNextBurn(nextBurn);
+        setPendingBounties(pendingBounties);
+        setPendingProposals(pendingProposals);
+        setApproved(approved);
+        setSpendable(spendable);
+        setSpendablePercent(spendable.muln(100).div(treasuryBalance).toNumber());
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchData();
+  }, [api]);
 
   useEffect(() => {
     console.log('*******************************************************');
@@ -85,6 +192,8 @@ export default function OpenGov(): React.ReactElement {
     setSelectedTopMenu((prevSelectedTopMenu) =>
       prevSelectedTopMenu !== item ? item : undefined
     );
+
+    setSelectedSubMenu('All');
   }, []);
 
   const findItemDecidingCount = useCallback((item: string): number | undefined => {
@@ -112,12 +221,12 @@ export default function OpenGov(): React.ReactElement {
     );
   }
 
-  function MenuItem({ borderWidth = '2px', icon, item, width = '13.5%', fontWeight, clickable = true }: { item: string, icon?: React.ReactElement, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
+  function MenuItem({ borderWidth = '2px', icon, item, width = '18%', fontWeight, clickable = true }: { item: string, icon?: React.ReactElement, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item);
 
     return (
       <Grid alignItems='center' container item sx={{ cursor: clickable && 'pointer', fontSize: '18px', width, borderBottom: `${borderWidth} solid`, borderColor: 'primary.main', mr: '37px', py: '5px', '&:hover': clickable && { color: 'primary.main', fontWeight: 700 } }}>
-        <Typography sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
+        <Typography onClick={() => setSelectedSubMenu(item)} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
           {item}{decidingCount ? ` (${decidingCount})` : ''}
         </Typography>
         {icon}
@@ -198,17 +307,26 @@ export default function OpenGov(): React.ReactElement {
             icon={<Root sx={{ fontSize: 20, ml: '10px' }} />}
             item='Root'
           />
-          <MenuItem
-            fontWeight={500}
-            icon={<Close sx={{ fontSize: 20, ml: '10px' }} />}
-            item='Referendum Canceler'
-          />
-          <MenuItem
-            fontWeight={500}
-            icon={<Cancel sx={{ fontSize: 20, ml: '10px' }} />}
-            item='Referendum Killer'
-          />
-          <Grid container item sx={{ width: '15%' }}>
+          <Grid container item sx={{ width: '18%' }}>
+            <MenuItem
+              clickable={false}
+              fontWeight={500}
+              icon={<Cancel sx={{ fontSize: 20, ml: '10px' }} />}
+              item='Referendum'
+              width='100%'
+            />
+            <MenuItem
+              borderWidth='1px'
+              item='Referendum Canceler'
+              width='100%'
+            />
+            <MenuItem
+              borderWidth='2px'
+              item='Referendum Killer'
+              width='100%'
+            />
+          </Grid>
+          <Grid container item sx={{ width: '18%' }}>
             <MenuItem
               clickable={false}
               fontWeight={500}
@@ -237,7 +355,7 @@ export default function OpenGov(): React.ReactElement {
               width='100%'
             />
           </Grid>
-          <Grid container item sx={{ width: '15%' }}>
+          <Grid container item sx={{ width: '18%' }}>
             <MenuItem
               clickable={false}
               fontWeight={500}
@@ -278,6 +396,65 @@ export default function OpenGov(): React.ReactElement {
           </Grid>
         </Grid>
       }
+      <Grid container sx={{ px: '50px', py: '10px', fontWeight: 500 }}>
+        <Breadcrumbs color='text.primary' aria-label='breadcrumb'>
+          <Link underline='hover' href='/'>
+            {selectedTopMenu || 'Referenda'}
+          </Link>
+          <Typography color='text.primary'>{selectedSubMenu || 'All'}</Typography>
+        </Breadcrumbs>
+      </Grid>
+      <Grid container sx={{ bgcolor: 'background.paper', mx: '50px', height: '162px', pt: '30px', pb: '20px' }}>
+        <Grid container item sx={{ px: '50px' }} xs={2.5}>
+          <Grid item sx={{ height: '34px' }} md={12}>
+            <Typography fontWeight={400}>
+              {t('Available')}
+            </Typography>
+          </Grid>
+          <Grid item sx={{ borderBottom: '1px solid', fontSize: '28px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
+            <ShowBalance api={api} balance={availableTreasuryBalance} decimalPoint={2} />
+          </Grid>
+          <Grid item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em' }} xs={12}>
+            <FormatPrice
+              amount={availableTreasuryBalance}
+              decimals={decimal}
+              price={price?.amount}
+            />
+          </Grid>
+        </Grid>
+        <Divider orientation='vertical' flexItem />
+        <Grid container item sx={{ px: '50px' }} xs={2.5}>
+          <Grid item sx={{ height: '34px' }} md={12}>
+            <Typography fontWeight={400}>
+              {t('Approved')}
+            </Typography>
+          </Grid>
+          <Grid item sx={{ borderBottom: '1px solid', fontSize: '28px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
+            <ShowBalance api={api} balance={approved} decimalPoint={2} />
+          </Grid>
+          <Grid item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em' }} xs={12}>
+            <FormatPrice
+              amount={approved}
+              decimals={decimal}
+              price={price?.amount}
+            />
+          </Grid>
+        </Grid>
+        <Divider orientation='vertical' flexItem />
+        <Grid container item sx={{ px: '50px' }} xs={4}>
+          <Grid item sx={{ height: '34px' }} md={12}>
+            <Typography fontWeight={400}>
+              {t('Spend Period')}
+            </Typography>
+          </Grid>
+          <Grid item sx={{ borderBottom: '1px solid', fontSize: '28px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
+            <ShowValue value={remainingTimeToSpend} /> / <ShowValue value={spendPeriod?.toString()} />
+          </Grid>
+          <Grid item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em' }} xs={12}>
+            <LinearProgress variant='determinate' value={remainingSpendPeriod?.div(spendPeriod)?.muln(100)} />
+          </Grid>
+        </Grid>
+      </Grid>
     </>
   );
 }
