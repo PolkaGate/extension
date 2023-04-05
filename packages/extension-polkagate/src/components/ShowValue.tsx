@@ -29,7 +29,7 @@ export default function ShowValue({ value, decimalPoint = 2, unit, height = 20, 
         </>
         : <Skeleton
           height={height}
-          sx={{ display: 'flex', transform: 'none', width: { width } }}
+          sx={{ display: 'inline-block', transform: 'none', width: { width } }}
         />
       }
     </>
