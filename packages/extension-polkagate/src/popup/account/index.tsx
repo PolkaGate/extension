@@ -10,7 +10,7 @@
 
 import '@vaadin/icons';
 
-import { faCoins, faHistory, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Box, Container, Grid, IconButton, useTheme } from '@mui/material';
@@ -21,9 +21,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion, Select, SelectChain } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
-import { tieAccount, updateMeta } from '../../messaging';
+import { tieAccount, updateMeta, windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
-import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import { prepareMetaData } from '../../util/utils';
@@ -131,6 +131,11 @@ export default function AccountDetails(): React.ReactElement {
       });
   }, [address, formatted, genesisHash, history]);
 
+  const goToGovernance = useCallback(() => {
+    formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
+      windowOpen(`/opengov/${address}`).catch(console.error);
+  }, [address, formatted, genesisHash]);
+
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
@@ -234,12 +239,6 @@ export default function AccountDetails(): React.ReactElement {
           />
           <HorizontalMenuItem
             divider
-            icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
-            onClick={goToReceive}
-            title={t<string>('Receive')}
-          />
-          <HorizontalMenuItem
-            divider
             icon={
               showStakingOptions ?
                 <Box component='img' src={stakingClose} width='30px' />
@@ -255,14 +254,28 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={
-              <vaadin-icon
-                icon='vaadin:piggy-bank-coin'
-                style={{ color: `${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`, height: '35px' }}
+              <FontAwesomeIcon
+                color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faPiggyBank}
+                size='lg'
+                flip='horizontal'
               />
             }
-            labelMarginTop='-5px'
             onClick={goToCrowdLoans}
             title={t<string>('Crowdloans')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={
+              <FontAwesomeIcon
+                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faVoteYea}
+                size='lg'
+              />
+            }
+            onClick={goToGovernance}
+            // textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
+            title={t<string>('Governance')}
           />
           <HorizontalMenuItem
             icon={
