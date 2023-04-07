@@ -1,0 +1,21 @@
+  1. add the following to @polkadot/networks/default/genesis.js
+  // Added for Polkagate
+  amplitude: ['0xcceae7f3b9947cdb67369c026ef78efa5f34a08fe5808d373c04421ecf4f1aaf'],
+  pendulum: ['0x5d3c298622d5634ed019bf61ea4b71655030015bde9beb0d6a24743714462c86']
+
+  // add endpoints
+  2. add the following to Amplitude endpoint in @polkadot/apps-config/endpoints/productionRelayKusama.js
+      Dwellir: 'wss://amplitude-rpc.dwellir.com'
+ 3. add the following as Pendulum endpoint in @polkadot/apps-config/endpoints/productionRelayPolkadot.js // note it is Alphabetic based
+{
+  info: 'pendulum',
+  homepage: 'https://pendulumchain.org/',
+  paraId: 2094,
+  text: 'Pendulum',
+  providers: {
+    PendulumChain: 'wss://rpc-pendulum.prd.pendulumchain.tech'
+  }
+}
+
+4. add pendulum.svg from ./replacements to @polkadot/apps-config/ui/logos/chains
+5. replace index.js from ./replacements to @polkadot/apps-config/ui/logos
