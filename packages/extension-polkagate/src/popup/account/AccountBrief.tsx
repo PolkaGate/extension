@@ -55,7 +55,7 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
         <Grid item>
-          <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '4px', mr: '4px' }} />
+          <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '9px', mr: '4px' }} />
         </Grid>
         <Grid item>
           <Link
@@ -64,11 +64,11 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
             target='_blank'
             underline='none'
           >
-            <Box alt={'subscan'} component='img' height='20px' mt='5px' src={subscan} width='20px' />
+            <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan} width='20px' />
           </Link>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px' }} />
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
     </>
   );
 }
