@@ -262,7 +262,7 @@ export default function AccountDetails(): React.ReactElement {
               />
             }
             onClick={goToCrowdLoans}
-            title={t<string>('Crowdloans')}
+            title={t<string>('Crowdloan')}
           />
           <HorizontalMenuItem
             divider
