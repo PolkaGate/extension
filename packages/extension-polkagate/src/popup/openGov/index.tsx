@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Close, Groups as FellowshipIcon, HowToVote as ReferendaIcon, Hub as Root } from '@mui/icons-material/';
+import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Close, Groups as FellowshipIcon, HowToVote as ReferendaIcon, Hub as Root, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -12,10 +12,18 @@ import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { logoBlack, logoWhite } from '../../assets/logos';
-import { FormatPrice, ShowBalance, ShowValue } from '../../components';
-import { useApi, useDecidingCount, useDecimal, usePrice, useTracks, useTranslation } from '../../hooks';
+import { FormatPrice, Identity, ShowBalance, ShowValue } from '../../components';
+import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useTracks, useTranslation } from '../../hooks';
 import { postData } from '../../util/api';
 import { remainingTime } from '../../util/utils';
+
+const STATUS_COLOR = {
+  Confirmed: 'green',
+  Deciding: '#9A7DB2',
+  Executed: 'teal',
+  Rejected: '##FF002B',
+  Submitted: 'gray'
+}
 
 type TopMenu = 'Referenda' | 'Fellowship';
 const EMPTY_U8A_32 = new Uint8Array(32);
@@ -25,9 +33,11 @@ export default function OpenGov(): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address);
+  const chain = useChain(address);
   const tracks = useTracks(address, api);
   const price = usePrice(address);
   const decimal = useDecimal(address);
+  const chainName = useChainName(address);
 
   const decidingCounts = useDecidingCount(api, tracks);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
@@ -45,7 +55,9 @@ export default function OpenGov(): React.ReactElement {
   const [spendable, setSpendable] = useState<BN | undefined>();
   const [spenablePercent, setSpendablePercent] = useState<number | undefined>();
   const [nextBurn, setNextBurn] = useState<BN | undefined>();
+  const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [approved, setApproved] = useState<BN | undefined>();
+  const [latestReferenda, setLatestReferenda] = useState<string[]>();
 
   useEffect(() => {
     if (!api) {
@@ -62,7 +74,7 @@ export default function OpenGov(): React.ReactElement {
       if (!cancel) {
         setProposals(p);
         setActiveProposalCount(p?.proposals.length + p?.approvals.length);
-        console.log('proposals:', JSON.stringify(p?.proposals));
+        // console.log('proposals:', JSON.stringify(p?.proposals));
       }
     }).catch(console.error);
 
@@ -106,7 +118,7 @@ export default function OpenGov(): React.ReactElement {
 
         const approved = pendingBounties.add(pendingProposals);
         const spendable = treasuryBalance.sub(approved);
-        const rt = remainingTime(remainingSpendPeriod.toNumber());
+        const rt = remainingTime(remainingSpendPeriod.toNumber(), true);
         const nextBurn = api.consts.treasury.burn.mul(treasuryBalance).div(BN_MILLION) as BN;
 
         setRemainingSpendPeriod(remainingSpendPeriod);
@@ -130,8 +142,8 @@ export default function OpenGov(): React.ReactElement {
 
   useEffect(() => {
     console.log('*******************************************************');
-    getReferendumVotes('kusama', 124);
-  }, []);
+    chainName && getReferendumVotes(chainName, 124);
+  }, [chainName]);
 
   useEffect(() => {
     if (!api) {
@@ -154,7 +166,8 @@ export default function OpenGov(): React.ReactElement {
     console.log('*******************************************************');
 
     api.query.referenda.referendumCount().then((count) => {
-      console.log('total referendum count:', count.toString());
+      console.log('total referendum count:', count.toNumber());
+      setReferendumCount(count?.toNumber());
 
       const latestReferendumNumber = count.toNumber() - 2;
       api.query.referenda.referendumInfoFor(latestReferendumNumber).then((res) => {
@@ -172,6 +185,12 @@ export default function OpenGov(): React.ReactElement {
       console.log('trackQueue for trackId_mediumSpender:', res.toString());
     }).catch(console.error);
   }, [api]);
+
+  useEffect(() => {
+    chainName && getLatestReferendums(chainName).then((res) => {
+      setLatestReferenda(res);
+    });
+  }, [chainName]);
 
   useEffect(() => {
     /** to change app width to full screen */
@@ -400,7 +419,7 @@ export default function OpenGov(): React.ReactElement {
       {selectedTopMenu === 'Referenda' &&
         <ReferendaMenu />
       }
-      <Container disableGutters maxWidth={false} sx={{ px: '50px', top: 132, position: 'fixed' }} >
+      <Container disableGutters maxWidth={false} sx={{ px: '50px', top: 132, position: 'fixed', maxHeight: parent.innerHeight - 100, overflowY: 'scroll' }} >
         <Grid container sx={{ py: '10px', fontWeight: 500 }}>
           <Breadcrumbs color='text.primary' aria-label='breadcrumb'>
             <Link underline='hover' href='/'>
@@ -453,7 +472,7 @@ export default function OpenGov(): React.ReactElement {
               </Typography>
             </Grid>
             <Grid container item alignItems='center' sx={{ borderBottom: '1px solid', fontSize: '28px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
-              <ShowValue value={remainingTimeToSpend} /> / <ShowValue value={spendPeriod?.toString()} width='20px' />
+              <ShowValue value={remainingTimeToSpend} /> / <ShowValue value={spendPeriod?.toString()} width='20px' /> {t('days')}
             </Grid>
             <Grid container item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em', height: '36px' }} xs={12}>
               <Grid item xs={10.5}>
@@ -483,6 +502,56 @@ export default function OpenGov(): React.ReactElement {
             </Grid>
           </Grid>
         </Grid>
+        {
+          latestReferenda?.map((referendum, index) => {
+            if (referendum.post_id < referendumCount) {
+              return (
+                <Grid item key={index} sx={{ borderRadius: '10px', bgcolor: 'background.paper', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px' }}>
+                  <Grid item sx={{ pb: '15px', fontSize: 22, fontWeight: 600 }}>
+                    {`#${referendum.post_id}  ${referendum.title || t('No title is provided by the proposer')}`}
+                  </Grid>
+                  <Grid item container justifyContent='space-between' alignItems='center' >
+                    <Grid item container alignItems='center' xs={11}>
+                      <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '17px' }}>
+                        {t('By')}:
+                      </Grid>
+                      <Grid item>
+                        <Identity
+                          api={api}
+                          chain={chain}
+                          formatted={referendum.proposer}
+                          identiconSize={25}
+                          showSocial={false}
+                          style={{
+                            height: '38px',
+                            maxWidth: '100%',
+                            minWidth: '35%',
+                            width: 'fit-content',
+                            fontSize: '16px',
+                            fontWeight: 400,
+                            lineHeight: '47px'
+                          }}
+                        />
+                      </Grid>
+                      <Divider orientation='vertical' flexItem sx={{ mx: '2%' }} />
+                      <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '11.5px 17.5px' }}>
+                        {referendum.origin}
+                      </Grid>
+                      <Divider orientation='vertical' flexItem sx={{ mx: '2%' }} />
+                      <ClockIcon sx={{ fontSize: 28, ml: '10px' }} />
+                      <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
+                        {new Date(referendum.created_at).toDateString()}
+                      </Grid>
+                    </Grid>
+                    <Grid item xs sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '11.5px 17.5px' }}>
+                      {referendum.status}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              );
+            }
+          })
+        }
       </Container>
     </>
   );
@@ -510,7 +579,6 @@ export async function getReferendumVotes(chainName: string, referendumIndex: num
           if (data.message === 'Success') {
             console.log(data.data)
 
-
             resolve(data.data);
           } else {
             console.log(`Fetching message ${data.message}`);
@@ -522,4 +590,33 @@ export async function getReferendumVotes(chainName: string, referendumIndex: num
       resolve(null);
     }
   });
+}
+
+export async function getLatestReferendums(chainName: string): Promise<string[] | null> {
+  console.log(`Getting referendum on ${chainName}...`);
+
+  const requestOptions = {
+    headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return fetch('https://api.polkassembly.io/api/v1/latest-activity/all-posts?govType=open_gov&listingLimit=20', requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.posts?.length) {
+        console.log(`Latest referendum on ${chainName}:`, data.posts);
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return data.posts;
+      } else {
+        console.log(`Fetching message ${data}`);
+
+        return null;
+      }
+    })
+    .catch((error) => {
+      console.log(`Error getting referendum on ${chainName}:`, error.message);
+
+      return null;
+    });
 }
