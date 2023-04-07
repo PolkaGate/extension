@@ -7,6 +7,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { APIContext } from '../components';
+import LCConnector from '../util/api/lightClient-connect';
 import { useChain, useEndpoint2 } from '.';
 
 export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
@@ -29,14 +30,29 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    const wsProvider = new WsProvider(endpoint);
+    if (endpoint.startsWith('wss')) {
+      const wsProvider = new WsProvider(endpoint);
 
-    ApiPromise.create({ provider: wsProvider }).then((api) => {
-      setApi(api);
+      ApiPromise.create({ provider: wsProvider }).then((api) => {
+        setApi(api);
 
-      apisContext.apis[String(api.genesisHash.toHex())] = { api, apiEndpoint: endpoint };
+        apisContext.apis[String(api.genesisHash.toHex())] = { api, apiEndpoint: endpoint };
+        apisContext.setIt(apisContext.apis);
+      }).catch(console.error);
+
+      return;
+    }
+
+    LCConnector(endpoint).then((LCapi) => {
+      setApi(LCapi);
+      console.log('light client connected', String(LCapi.genesisHash.toHex()));
+      apisContext.apis[String(LCapi.genesisHash.toHex())] = { api: LCapi, apiEndpoint: endpoint };
       apisContext.setIt(apisContext.apis);
-    }).catch(console.error);
+    }).catch((err) => {
+      console.error(err);
+      console.log('light client failed');
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apisContext?.apis?.length, endpoint, stateApi, chain]);
 

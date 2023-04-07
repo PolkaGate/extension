@@ -8,10 +8,16 @@ import memoize from 'memoizee';
 // var memoize = require("memoizee");
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-async function getApi(endpoint: string): Promise<ApiPromise> {
-  const wsProvider = new WsProvider(endpoint);
+import LCConnector from './api/lightClient-connect';
 
-  return await ApiPromise.create({ provider: wsProvider });
+async function getApi(endpoint: string): Promise<ApiPromise> {
+  if (endpoint.startsWith('wss')) {
+    const wsProvider = new WsProvider(endpoint);
+
+    return await ApiPromise.create({ provider: wsProvider });
+  } else {
+    return await LCConnector(endpoint);
+  }
 }
 
 // export default getApi;

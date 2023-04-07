@@ -17,6 +17,8 @@ interface Option {
   value: string;
 }
 
+const supportedLC = ['Polkadot', 'Kusama', 'Westend'];
+
 export function useEndpoints(genesisHash: string | null | undefined): Option[] {
   const { t } = useTranslation();
   const genesisOptions = useGenesisHashOptions();
@@ -30,13 +32,21 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
   }, [t]);
 
   const endpoints: Option[] | undefined = useMemo(() => {
-    if (!genesisHash) return [];
+    if (!genesisHash) {
+      return [];
+    }
+
     const option = genesisOptions?.find((o) => o.value === genesisHash);
     const chainName = option?.text?.replace(' Relay Chain', '')?.replace(' Network', '');
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
-    return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
+    return chainName
+      ? supportedLC.includes(chainName)
+        ? endpoints?.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value as string }))
+        : endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value as string }))
+      : undefined;
+    // return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);
 
   return endpoints ?? [];
