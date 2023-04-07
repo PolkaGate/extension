@@ -68,7 +68,7 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, helperText, i
     toggleMenu();
   }, [onChange, toggleMenu]);
 
-  const chainName = useCallback((text: string) => text.replace(' Relay Chain', '')?.replace(' Network', '').toLowerCase(), []);
+  const chainName = useCallback((text: string) => text.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '').toLowerCase(), []);
 
   return (
     <FormControl

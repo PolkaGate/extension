@@ -32,7 +32,7 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
   const endpoints: Option[] | undefined = useMemo(() => {
     if (!genesisHash) return [];
     const option = genesisOptions?.find((o) => o.value === genesisHash);
-    const chainName = option?.text?.replace(' Relay Chain', '')?.replace(' Network', '');
+    const chainName = option?.text?.replace(' Relay Chain', '')?.replace(' Network', '').replace(' chain', '');
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
