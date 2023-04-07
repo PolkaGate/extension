@@ -12,8 +12,10 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
+import { QrCode2 } from '@mui/icons-material';
 import { Box, Divider, Grid, Link, Typography } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
 import { ShortAddress } from '../../components';
@@ -29,6 +31,15 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chainName = useChainName(address);
+  const history = useHistory();
+  const { pathname } = useLocation();
+
+  const goToReceive = useCallback(() => {
+    history.push({
+      pathname: `/receive/${address}/`,
+      state: { pathname }
+    });
+  }, [history, address, pathname]);
 
   const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}`;
 
@@ -42,6 +53,9 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
       <Grid alignItems='center' container item justifyContent='center'>
         <Grid item>
           <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+        </Grid>
+        <Grid item>
+          <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '4px', mr: '4px' }} />
         </Grid>
         <Grid item>
           <Link
