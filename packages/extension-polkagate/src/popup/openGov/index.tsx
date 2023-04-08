@@ -19,14 +19,14 @@ import { remainingTime } from '../../util/utils';
 import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums } from './helpers';
 
 const STATUS_COLOR = {
-  Canceled: '#FF595E', // Status color for Canceled proposals
-  Confirmed: '#8AC926', // Status color for Confirmed proposals
-  Deciding: '#1982C4', // Status color for Deciding proposals
-  Executed: '#6A4C93', // Status color for Executed proposals
-  Rejected: '#FFA94D', // Status color for Rejected proposals
-  Submitted: '#FFD166', // Status color for Submitted proposals
-  TimedOut: '#A3A3A3', // Status color for TimedOut proposals
-};
+  Canceled: '#ff4f4f', // Status color for Canceled proposals (red)
+  Confirmed: '#2ecc71', // Status color for Confirmed proposals (green)
+  Deciding: '#3498db', // Status color for Deciding proposals (blue)
+  Executed: '#9b59b6', // Status color for Executed proposals (purple)
+  Rejected: '#f39c12', // Status color for Rejected proposals (orange)
+  Submitted: '#bdc3c7', // Status color for Submitted proposals (gray)
+  TimedOut: '#7f8c8d', // Status color for TimedOut proposals (gray)
+  };
 
 type TopMenu = 'Referenda' | 'Fellowship';
 const EMPTY_U8A_32 = new Uint8Array(32);
