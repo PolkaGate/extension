@@ -3,7 +3,21 @@
 
 import { postData } from '../../util/api';
 
-export async function getReferendumStatistics(chainName: string): Promise<string | null> {
+export interface Statistics {
+  'referendum_locked': string,
+  'referendum_participate': string,
+  'voting_total': number,
+  'confirm_total': number,
+  'origins':
+  {
+    'ID': number,
+    'Origins': 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender',
+    'Count': number
+  }[],
+  'OriginsCount': number
+}
+
+export async function getReferendumStatistics(chainName: string): Promise<Statistics | null> {
   console.log('Getting referendum statistics from subscan ... ');
 
   return new Promise((resolve) => {
@@ -15,7 +29,7 @@ export async function getReferendumStatistics(chainName: string): Promise<string
         })
         .then((data: { message: string; data }) => {
           if (data.message === 'Success') {
-            console.log('getReferendumStatistics:', data.data);
+            console.log('Referendum Statistics:', data.data);
 
             resolve(data.data);
           } else {

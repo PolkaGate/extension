@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 import { twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
 import { useAccount, useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -43,6 +43,10 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
 
     if (pathname.includes('crowdloans')) {
       return CROWDLOANS_CHAINS.filter((chain) => chain !== account.genesisHash);
+    }
+
+    if (pathname.includes('governance')) {
+      return GOVERNANCE_CHAINS.filter((chain) => chain !== account.genesisHash);
     }
 
     return undefined;

@@ -133,7 +133,7 @@ export default function AccountDetails(): React.ReactElement {
 
   const goToGovernance = useCallback(() => {
     formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
-      windowOpen(`/opengov/${address}`).catch(console.error);
+      windowOpen(`/governance/${address}`).catch(console.error);
   }, [address, formatted, genesisHash]);
 
   const identicon = (

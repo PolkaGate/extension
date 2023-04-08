@@ -61,15 +61,15 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           </Infotip>
         </Grid>
         <Grid item>
-        <Infotip placement='top' text={t('Subscan')}>
-          <Link
-            href={`${subscanLink(formatted)}`}
-            rel='noreferrer'
-            target='_blank'
-            underline='none'
-          >
-            <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan} width='20px' />
-          </Link>
+          <Infotip placement='top' text={t('Subscan')}>
+            <Link
+              href={`${subscanLink(formatted)}`}
+              rel='noreferrer'
+              target='_blank'
+              underline='none'
+            >
+              <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan} width='20px' />
+            </Link>
           </Infotip>
         </Grid>
       </Grid>

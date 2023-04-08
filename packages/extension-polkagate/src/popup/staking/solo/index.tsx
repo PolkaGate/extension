@@ -69,8 +69,6 @@ export default function Index(): React.ReactElement {
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
-  // const decimal = stakingAccount?.decimal;
-  // const token = stakingAccount?.token;
   const isBalanceOutdated = useMemo(() => stakingAccount && (Date.now() - (stakingAccount.date || 0)) > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
