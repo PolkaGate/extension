@@ -1,0 +1,124 @@
+// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { postData } from '../../util/api';
+
+export async function getReferendumStatistics(chainName: string): Promise<string | null> {
+  console.log('Getting referendum statistics from subscan ... ');
+
+  return new Promise((resolve) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      postData('https://' + chainName + '.api.subscan.io/api/scan/referenda/statistics',
+        {
+          'Content-Type': 'application/json'
+        })
+        .then((data: { message: string; data }) => {
+          if (data.message === 'Success') {
+            console.log('getReferendumStatistics:', data.data);
+
+            resolve(data.data);
+          } else {
+            console.log(`Fetching message ${data.message}`);
+            resolve(null);
+          }
+        });
+    } catch (error) {
+      console.log('something went wrong while getting referendum statistics');
+      resolve(null);
+    }
+  });
+}
+
+export async function getReferendumVotes(chainName: string, referendumIndex: number | undefined): Promise<string | null> {
+  if (!referendumIndex) {
+    console.log('referendumIndex is undefined getting Referendum Votes ');
+
+    return null;
+  }
+
+  console.log(`Getting referendum ${referendumIndex} votes from subscan ... `);
+
+  return new Promise((resolve) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      postData('https://' + chainName + '.api.subscan.io/api/scan/referenda/votes',
+        {
+          page: 2,
+          referendum_index: referendumIndex,
+          row: 99
+        })
+        .then((data: { message: string; data: { count: number, list: string[]; } }) => {
+          if (data.message === 'Success') {
+            console.log(data.data)
+
+            resolve(data.data);
+          } else {
+            console.log(`Fetching message ${data.message}`);
+            resolve(null);
+          }
+        });
+    } catch (error) {
+      console.log('something went wrong while getting referendum votes ');
+      resolve(null);
+    }
+  });
+}
+
+export async function getLatestReferendums(chainName: string): Promise<string[] | null> {
+  console.log(`Getting referendum on ${chainName}...`);
+
+  const requestOptions = {
+    headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return fetch('https://api.polkassembly.io/api/v1/latest-activity/all-posts?govType=open_gov&listingLimit=20', requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.posts?.length) {
+        console.log(`Latest referendum on ${chainName}:`, data.posts);
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return data.posts;
+      } else {
+        console.log(`Fetching message ${data}`);
+
+        return null;
+      }
+    })
+    .catch((error) => {
+      console.log(`Error getting referendum on ${chainName}:`, error.message);
+
+      return null;
+    });
+}
+
+export async function getTrackReferendums(chainName: string, track: number): Promise<string[] | null> {
+  console.log(`Getting referendums on ${chainName} track:${track}`);
+
+  const requestOptions = {
+    headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return fetch(`https://api.polkassembly.io/api/v1/latest-activity/on-chain-posts?proposalType=referendums_v2&listingLimit=20&trackNo=${track}`, requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.posts?.length) {
+        console.log(`Referendums on ${chainName}/ track:${track}:`, data.posts);
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return data.posts;
+      } else {
+        console.log('Fetched message:', data);
+
+        return null;
+      }
+    })
+    .catch((error) => {
+      console.log(`Error getting referendum on ${chainName}:`, error.message);
+
+      return null;
+    });
+}

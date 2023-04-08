@@ -16,14 +16,17 @@ import { FormatPrice, Identity, ShowBalance, ShowValue } from '../../components'
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useTracks, useTranslation } from '../../hooks';
 import { postData } from '../../util/api';
 import { remainingTime } from '../../util/utils';
+import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums } from './helpers';
 
 const STATUS_COLOR = {
-  Confirmed: 'green',
-  Deciding: '#9A7DB2',
-  Executed: 'teal',
-  Rejected: '##FF002B',
-  Submitted: 'gray'
-}
+  Canceled: '#FF595E', // Status color for Canceled proposals
+  Confirmed: '#8AC926', // Status color for Confirmed proposals
+  Deciding: '#1982C4', // Status color for Deciding proposals
+  Executed: '#6A4C93', // Status color for Executed proposals
+  Rejected: '#FFA94D', // Status color for Rejected proposals
+  Submitted: '#FFD166', // Status color for Submitted proposals
+  TimedOut: '#A3A3A3', // Status color for TimedOut proposals
+};
 
 type TopMenu = 'Referenda' | 'Fellowship';
 const EMPTY_U8A_32 = new Uint8Array(32);
@@ -41,7 +44,8 @@ export default function OpenGov(): React.ReactElement {
 
   const decidingCounts = useDecidingCount(api, tracks);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
-  const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string>('All');
 
   const [proposals, setProposals] = useState<DeriveTreasuryProposals | undefined>();
   const [activeProposalCount, setActiveProposalCount] = useState<number | undefined>();
@@ -57,7 +61,7 @@ export default function OpenGov(): React.ReactElement {
   const [nextBurn, setNextBurn] = useState<BN | undefined>();
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [approved, setApproved] = useState<BN | undefined>();
-  const [latestReferenda, setLatestReferenda] = useState<string[]>();
+  const [referendaToList, setReferenda] = useState<string[]>();
 
   useEffect(() => {
     if (!api) {
@@ -84,6 +88,7 @@ export default function OpenGov(): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
+    /** To fetch treasury info */
     async function fetchData() {
       try {
         if (!api) {
@@ -150,7 +155,7 @@ export default function OpenGov(): React.ReactElement {
       return;
     }
 
-    if (!api.consts.referenda) {
+    if (!api.consts.referenda || !api.query.referenda) {
       console.log('OpenGov is not supported on this chain');
 
       return;
@@ -188,9 +193,26 @@ export default function OpenGov(): React.ReactElement {
 
   useEffect(() => {
     chainName && getLatestReferendums(chainName).then((res) => {
-      setLatestReferenda(res);
+      setReferenda(res);
     });
   }, [chainName]);
+
+  useEffect(() => {
+    chainName && getReferendumStatistics(chainName).then((stat) => {
+      setReferendumCount(stat.OriginsCount);
+    });
+  }, [chainName]);
+
+  useEffect(() => {
+    if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks) {
+      const trackId = tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0];
+      console.log('selectedSubMenu:', selectedSubMenu)
+      console.log('trackId:', trackId)
+      trackId !== undefined && getTrackReferendums(chainName, trackId).then((res) => {
+        setReferenda(res);
+      }).catch(console.error);
+    }
+  }, [chainName, selectedSubMenu, tracks]);
 
   useEffect(() => {
     /** to change app width to full screen */
@@ -208,12 +230,9 @@ export default function OpenGov(): React.ReactElement {
   }, []);
 
   const onTopMenuMenuClick = useCallback((item: TopMenu) => {
-    setSelectedTopMenu((prevSelectedTopMenu) =>
-      prevSelectedTopMenu !== item ? item : undefined
-    );
-
-    setSelectedSubMenu('All');
-  }, []);
+    setSelectedTopMenu(item);
+    setMenuOpen(!menuOpen);
+  }, [menuOpen]);
 
   const findItemDecidingCount = useCallback((item: string): number | undefined => {
     if (!decidingCounts) {
@@ -240,12 +259,16 @@ export default function OpenGov(): React.ReactElement {
     );
   }
 
-  function MenuItem({ borderWidth = '2px', icon, item, width = '18%', fontWeight, clickable = true }: { item: string, icon?: React.ReactElement, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
+  function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, width = '18%' }: { item: string, icon?: React.ReactElement, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item);
+    const onSubMenuClick = useCallback(() => {
+      setSelectedSubMenu(item);
+      setMenuOpen((prevStatus) => !prevStatus);
+    }, [item]);
 
     return (
-      <Grid alignItems='center' container item sx={{ cursor: clickable && 'pointer', fontSize: '18px', width, borderBottom: `${borderWidth} solid`, borderColor: 'primary.main', mr: '37px', py: '5px', '&:hover': clickable && { color: 'primary.main', fontWeight: 700 } }}>
-        <Typography onClick={() => setSelectedSubMenu(item)} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
+      <Grid alignItems='center' container item sx={{ borderBottom: `${borderWidth} solid`, color: clickable && 'primary.main', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '37px', py: '5px', '&:hover': clickable && { fontWeight: 700 } }}>
+        <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
           {item}{decidingCount ? ` (${decidingCount})` : ''}
         </Typography>
         {icon}
@@ -275,7 +298,7 @@ export default function OpenGov(): React.ReactElement {
         />
         <MenuItem
           borderWidth='1px'
-          item='Referendum Canceler'
+          item='Referendum Canceller'
           width='100%'
         />
         <MenuItem
@@ -416,13 +439,13 @@ export default function OpenGov(): React.ReactElement {
           </Button>
         </Grid>
       </Grid>
-      {selectedTopMenu === 'Referenda' &&
+      {menuOpen && selectedTopMenu === 'Referenda' &&
         <ReferendaMenu />
       }
-      <Container disableGutters maxWidth={false} sx={{ px: '50px', top: 132, position: 'fixed', maxHeight: parent.innerHeight - 100, overflowY: 'scroll' }} >
+      <Container disableGutters maxWidth={false} sx={{ px: '50px', top: 138, position: 'fixed', maxHeight: parent.innerHeight - 138, overflowY: 'scroll' }}>
         <Grid container sx={{ py: '10px', fontWeight: 500 }}>
           <Breadcrumbs color='text.primary' aria-label='breadcrumb'>
-            <Link underline='hover' href='/'>
+            <Link underline='hover' href='#'>
               {selectedTopMenu || 'Referenda'}
             </Link>
             <Typography color='text.primary'>{selectedSubMenu || 'All'}</Typography>
@@ -471,7 +494,7 @@ export default function OpenGov(): React.ReactElement {
                 {t('Spend Period')}
               </Typography>
             </Grid>
-            <Grid container item alignItems='center' sx={{ borderBottom: '1px solid', fontSize: '28px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
+            <Grid container item alignItems='center' sx={{ borderBottom: '1px solid', fontSize: '26px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
               <ShowValue value={remainingTimeToSpend} /> / <ShowValue value={spendPeriod?.toString()} width='20px' /> {t('days')}
             </Grid>
             <Grid container item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em', height: '36px' }} xs={12}>
@@ -503,15 +526,15 @@ export default function OpenGov(): React.ReactElement {
           </Grid>
         </Grid>
         {
-          latestReferenda?.map((referendum, index) => {
+          referendaToList?.map((referendum, index) => {
             if (referendum.post_id < referendumCount) {
               return (
                 <Grid item key={index} sx={{ borderRadius: '10px', bgcolor: 'background.paper', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px' }}>
-                  <Grid item sx={{ pb: '15px', fontSize: 22, fontWeight: 600 }}>
-                    {`#${referendum.post_id}  ${referendum.title || t('No title is provided by the proposer')}`}
+                  <Grid item sx={{ pb: '15px', fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
                   </Grid>
-                  <Grid item container justifyContent='space-between' alignItems='center' >
-                    <Grid item container alignItems='center' xs={11}>
+                  <Grid item container justifyContent='space-between' alignItems='center'>
+                    <Grid item container alignItems='center' xs={10}>
                       <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '17px' }}>
                         {t('By')}:
                       </Grid>
@@ -534,7 +557,7 @@ export default function OpenGov(): React.ReactElement {
                         />
                       </Grid>
                       <Divider orientation='vertical' flexItem sx={{ mx: '2%' }} />
-                      <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '11.5px 17.5px' }}>
+                      <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '6.5px 14.5px' }}>
                         {referendum.origin}
                       </Grid>
                       <Divider orientation='vertical' flexItem sx={{ mx: '2%' }} />
@@ -543,7 +566,7 @@ export default function OpenGov(): React.ReactElement {
                         {new Date(referendum.created_at).toDateString()}
                       </Grid>
                     </Grid>
-                    <Grid item xs sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '11.5px 17.5px' }}>
+                    <Grid item xs={1} sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '11.5px 17.5px' }}>
                       {referendum.status}
                     </Grid>
                   </Grid>
@@ -555,68 +578,4 @@ export default function OpenGov(): React.ReactElement {
       </Container>
     </>
   );
-}
-
-export async function getReferendumVotes(chainName: string, referendumIndex: number | undefined): Promise<string | null> {
-  if (!referendumIndex) {
-    console.log('referendumIndex is undefined getting Referendum Votes ');
-
-    return null;
-  }
-
-  console.log(`Getting referendum ${referendumIndex} votes from subscan ... `);
-
-  return new Promise((resolve) => {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + '.api.subscan.io/api/scan/referenda/votes',
-        {
-          page: 2,
-          referendum_index: referendumIndex,
-          row: 99
-        })
-        .then((data: { message: string; data: { count: number, list: string[]; } }) => {
-          if (data.message === 'Success') {
-            console.log(data.data)
-
-            resolve(data.data);
-          } else {
-            console.log(`Fetching message ${data.message}`);
-            resolve(null);
-          }
-        });
-    } catch (error) {
-      console.log('something went wrong while getting referendum votes ');
-      resolve(null);
-    }
-  });
-}
-
-export async function getLatestReferendums(chainName: string): Promise<string[] | null> {
-  console.log(`Getting referendum on ${chainName}...`);
-
-  const requestOptions = {
-    headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch('https://api.polkassembly.io/api/v1/latest-activity/all-posts?govType=open_gov&listingLimit=20', requestOptions)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.posts?.length) {
-        console.log(`Latest referendum on ${chainName}:`, data.posts);
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return data.posts;
-      } else {
-        console.log(`Fetching message ${data}`);
-
-        return null;
-      }
-    })
-    .catch((error) => {
-      console.log(`Error getting referendum on ${chainName}:`, error.message);
-
-      return null;
-    });
 }

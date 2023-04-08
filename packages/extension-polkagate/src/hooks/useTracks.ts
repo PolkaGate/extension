@@ -33,5 +33,7 @@ export default function useTracks(address: string, api: ApiPromise | undefined):
     }
   }, [chainName]);
 
+  console.log('tracks || savedTracks:', tracks || savedTracks);
+  
   return tracks || savedTracks;
 }
