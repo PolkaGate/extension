@@ -16,8 +16,7 @@ export type Track = [
     decisionDeposit: BN,
     decisionPeriod: number,
     maxDeciding: number,
-    minApproval:
-    {
+    minApproval: {
       reciprocal: {
         factor: number,
         xOffset: number,
@@ -25,8 +24,7 @@ export type Track = [
       }
     }
     minEnactmentPeriod: number,
-    minSupport:
-    {
+    minSupport: {
       linearDecreasing: {
         ceil: number,
         floor: number,
@@ -41,25 +39,20 @@ export type Track = [
 export default function useTracks(address: string, api: ApiPromise | undefined): Track[] | undefined {
   const _api = useApi(address, api);
   const chainName = useChainName(address);
-  const [savedTracks, setSavedTracks] = useState<string[]>();
+  const [savedTracks, setSavedTracks] = useState<string[]>([]);
 
   const tracks = useMemo(() => _api?.consts?.referenda?.tracks?.toJSON?.() as Track[], [_api]);
 
   useEffect(() => {
     if (tracks && chainName) {
-      chrome.storage.local.get('referendaTracks', (res) => {
-        const saved = res || {};
-
-        saved[chainName] = tracks;
-        chrome.storage.local.set({ referendaTracks: saved });
-      });
+      chrome.storage.local.set({ referendaTracks: { ...savedTracks, [chainName]: tracks } });
     }
   }, [tracks, chainName]);
 
   useEffect(() => {
     if (chainName && !tracks) {
       chrome.storage.local.get('referendaTracks', (res) => {
-        setSavedTracks(res?.referendaTracks?.[chainName]);
+        setSavedTracks(res?.referendaTracks?.[chainName] || []);
       });
     }
   }, [chainName, tracks]);

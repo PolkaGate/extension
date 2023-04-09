@@ -1,0 +1,143 @@
+// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { SettingsStruct } from '@polkadot/ui-settings/types';
+import type { KeypairType } from '@polkadot/util-crypto/types';
+
+import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+
+import { useAccountName, useTranslation } from '../hooks';
+import useMetadata from '../hooks/useMetadata';
+import { DEFAULT_TYPE } from '../util/defaultType';
+import { AccountContext, Identicon, SettingsContext } from './';
+
+export interface Props {
+  actions?: React.ReactNode;
+  address?: string | null;
+  children?: React.ReactNode;
+  genesisHash?: string | null;
+  height?: string;
+  isHardware?: boolean | null;
+  isHidden?: boolean;
+  name?: string | null;
+  parentName?: string | null;
+  suri?: string;
+  toggleActions?: number;
+  type?: KeypairType;
+  style?: SxProps<Theme> | undefined;
+  width?: string;
+  margin?: string;
+}
+
+interface Recoded {
+  account: AccountJson | null;
+  formatted: string | null;
+  genesisHash?: string | null;
+  prefix?: number;
+  type: KeypairType;
+}
+
+// find an account in our list
+function findSubstrateAccount(accounts: AccountJson[], publicKey: Uint8Array): AccountJson | null {
+  const pkStr = publicKey.toString();
+
+  return accounts.find(({ address }): boolean =>
+    decodeAddress(address).toString() === pkStr
+  ) || null;
+}
+
+// find an account in our list
+function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | null {
+  return accounts.find(({ address }): boolean =>
+    address === _address
+  ) || null;
+}
+
+// recodes an supplied address using the prefix/genesisHash, include the actual saved account & chain
+function recodeAddress(address: string, accounts: AccountWithChildren[], chain: Chain | null, settings: SettingsStruct): Recoded {
+  // decode and create a shortcut for the encoded address
+  const publicKey = decodeAddress(address);
+
+  // find our account using the actual publicKey, and then find the associated chain
+  const account = findSubstrateAccount(accounts, publicKey);
+  const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
+
+  // always allow the actual settings to override the display
+  return {
+    account,
+    formatted: account?.type === 'ethereum'
+      ? address
+      : encodeAddress(publicKey, prefix),
+    genesisHash: account?.genesisHash,
+    prefix,
+    type: account?.type || DEFAULT_TYPE
+  };
+}
+
+const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
+
+export default function AccountNames({ address, genesisHash, height = '70px', margin = '20px auto', name, style, type: givenType, width = '92%' }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const { accounts } = useContext(AccountContext);
+  const accountName = useAccountName(address);
+  const settings = useContext(SettingsContext);
+  const [{ formatted, genesisHash: recodedGenesis, prefix, type }, setRecoded] = useState<Recoded>(defaultRecoded);
+  const chain = useMetadata(genesisHash || recodedGenesis, true);
+
+  useEffect((): void => {
+    if (!address) {
+      return setRecoded(defaultRecoded);
+    }
+
+    const account = findAccountByAddress(accounts, address);
+
+    setRecoded(
+      (
+        chain?.definition.chainType === 'ethereum' ||
+        account?.type === 'ethereum' ||
+        (!account && givenType === 'ethereum')
+      )
+        ? { account, formatted: address, type: 'ethereum' }
+        : recodeAddress(address, accounts, chain, settings)
+    );
+  }, [accounts, address, chain, givenType, settings]);
+
+  const theme = (
+    type === 'ethereum'
+      ? 'ethereum'
+      : (chain?.icon || 'polkadot')
+  ) as IconTheme;
+
+  return (
+    <>
+      <Grid container alignItems='center' justifyContent='space-between' sx={{ border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', height, m: { margin }, width: { width }, ...style }}>
+        <Grid item xs={3} px='2px'>
+          <Identicon
+            className='identityIcon'
+            iconTheme={theme}
+            prefix={prefix}
+            size={24}
+            value={formatted || address}
+          />
+        </Grid>
+        <Grid item xs={9}>
+          <Typography
+            fontSize={'16px'}
+            fontWeight={400}
+            maxWidth='95%'
+            overflow='hidden'
+            whiteSpace='nowrap'
+          >
+            {name || accountName || t('<unknown>')}
+          </Typography>
+        </Grid>
+      </Grid>
+    </>
+  );
+}

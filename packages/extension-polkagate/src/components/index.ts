@@ -3,6 +3,7 @@
 /* eslint-disable header/header */
 
 export { default as Address } from './Address';
+export { default as AccountNames } from './AccountNames';
 export { default as Amount } from './Amount';
 export { default as AmountFee } from './AmountFee';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';

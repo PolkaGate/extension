@@ -8,29 +8,30 @@ import '@vaadin/icons';
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { logoBlack, logoWhite } from '../../assets/logos';
-import { FormatPrice, Identity, InputFilter, ShowBalance, ShowValue } from '../../components';
+import { ActionContext, FormatPrice, Identity, InputFilter, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTracks, useTranslation } from '../../hooks';
 import { ChainSwitch } from '../../partials';
-import { remainingTime } from '../../util/utils';
+import { accountName, remainingTime } from '../../util/utils';
+import AddressDropdown from './AddressDropdown';
 import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums, Statistics } from './helpers';
 import ReferendaMenu from './ReferendaMenu';
 
 const STATUS_COLOR = {
-  Canceled: '#ff4f4f', 
-  ConfirmStarted: '#27ae60', 
-  Confirmed: '#2ecc71', 
-  Deciding: '#3498db', 
-  Executed: '#8e44ad', 
-  Rejected: '#f39c12', 
-  Submitted: '#bdc3c7', 
-  TimedOut: '#7f8c8d', 
+  Canceled: '#ff4f4f',
+  ConfirmStarted: '#27ae60',
+  Confirmed: '#2ecc71',
+  Deciding: '#3498db',
+  Executed: '#8e44ad',
+  Rejected: '#f39c12',
+  Submitted: '#bdc3c7',
+  TimedOut: '#7f8c8d',
 };
 
 type TopMenu = 'Referenda' | 'Fellowship';
@@ -38,6 +39,8 @@ const EMPTY_U8A_32 = new Uint8Array(32);
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
+
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address);
@@ -71,7 +74,7 @@ export default function Governance(): React.ReactElement {
   const [referendaToList, setReferenda] = useState<string[]>();
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !api.derive.treasury) {
       return;
     }
 
@@ -95,10 +98,23 @@ export default function Governance(): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
+    // reset all if chainchanged
+    setRemainingSpendPeriod(undefined);
+    setSpendPeriod(undefined);
+    setRemainingTimeToSpend(undefined);
+    setRemainingSpendPeriodPercent(undefined);
+    setAvailableTreasuryBalance(undefined);
+    setNextBurn(undefined);
+    setPendingBounties(undefined);
+    setPendingProposals(undefined);
+    setApproved(undefined);
+    setSpendable(undefined);
+    setSpendablePercent(undefined);
+
     /** To fetch treasury info */
     async function fetchData() {
       try {
-        if (!api) {
+        if (!api || !api.derive.treasury) {
           return;
         }
 
@@ -208,7 +224,7 @@ export default function Governance(): React.ReactElement {
   }, [chainName]);
 
   useEffect(() => {
-    if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks) {
+    if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks?.length) {
       setReferenda(undefined);
 
       const trackId = tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0] as number;
@@ -254,7 +270,7 @@ export default function Governance(): React.ReactElement {
   }
 
   const SearchBar = () => (
-    <Grid alignItems='center' container pt='25px'>
+    <Grid alignItems='center' container pt='15px'>
       <Grid item justifyContent='flex-start' xs>
         <InputFilter
           autoFocus={false}
@@ -401,6 +417,10 @@ export default function Governance(): React.ReactElement {
     setSelectedSubMenu('All');
   }, []);
 
+  const onAccountChange = useCallback((address: string) =>
+    onAction(`/governance/${address}`)
+    , [onAction]);
+
   return (
     <>
       <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400, fontFamily: 'Eras' }}>
@@ -412,8 +432,18 @@ export default function Governance(): React.ReactElement {
           />
           Polkagate
         </Grid>
-        <Grid container item justifyContent='flex-end' xs={6}>
-          <ChainSwitch address={address} />
+        <Grid container item justifyContent='flex-end' xs={3} sx={{ color: 'text.primary' }}>
+          <Grid container item justifyContent='flex-end' xs={3} sx={{ color: 'text.primary' }}>
+            <AddressDropdown
+              chainGenesis={chain?.genesisHash}
+              onSelect={onAccountChange}
+              selectedAddress={address}
+              height='40px'
+            />
+          </Grid>
+          <Grid container item justifyContent='flex-end' xs={2.5}>
+            <ChainSwitch address={address} />
+          </Grid>
         </Grid>
       </Grid>
       <Grid alignItems='center' container id='menu' justifyContent='space-between' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, pl: '2%' }}>
