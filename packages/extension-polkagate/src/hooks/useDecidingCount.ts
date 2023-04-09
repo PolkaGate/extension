@@ -19,11 +19,16 @@ export default function useDecidingCount(api: ApiPromise | undefined, tracks: [s
 
       try {
         const counts = await Promise.all(trackIds.map(([id]) => api.query.referenda.decidingCount(id)));
-        const decidingCounts: DecidingCount[] = counts.map((count, index) => [
-          trackIds[index][1],
-          count.toNumber()
-        ]);
+        let allCount = 0;
+        const decidingCounts: DecidingCount[] = counts.map((count, index): DecidingCount => {
+          if (!['whitelisted_caller', 'fellowship_admin'].includes(trackIds[index][1])) {
+            allCount += count.toNumber();
+          }
 
+          return [trackIds[index][1], count.toNumber()];
+        });
+
+        decidingCounts.push(['all', allCount]);
         setCounts(decidingCounts);
       } catch (error) {
         console.error(error);
