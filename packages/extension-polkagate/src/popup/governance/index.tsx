@@ -477,7 +477,7 @@ export default function Governance(): React.ReactElement {
             {referendaToList.map((referendum, index) => {
               if (referendum.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                 return (
-                  <Grid item key={index} sx={{ borderRadius: '10px', bgcolor: 'background.paper', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px' }}>
+                  <Grid item key={index} sx={{ borderRadius: '10px', bgcolor: 'background.paper', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
                     <Grid item sx={{ pb: '15px', fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
                     </Grid>
