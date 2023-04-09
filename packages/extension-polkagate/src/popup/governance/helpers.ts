@@ -110,7 +110,7 @@ export async function getLatestReferendums(chainName: string): Promise<string[] 
     });
 }
 
-export async function getTrackReferendums(chainName: string, track: number): Promise<string[] | null> {
+export async function getTrackReferendums(chainName: string, page = 1, track: number): Promise<string[] | null> {
   console.log(`Getting referendums on ${chainName} track:${track}`);
 
   const requestOptions = {
@@ -118,7 +118,7 @@ export async function getTrackReferendums(chainName: string, track: number): Pro
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/latest-activity/on-chain-posts?proposalType=referendums_v2&listingLimit=20&trackNo=${track}`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/listing/on-chain-posts?page=${page}&proposalType=referendums_v2&listingLimit=10&trackNo=${track}&trackStatus=All&sortBy=newest`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
