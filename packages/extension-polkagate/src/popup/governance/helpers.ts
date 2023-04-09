@@ -3,6 +3,8 @@
 
 import { postData } from '../../util/api';
 
+export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
+
 export interface Statistics {
   'referendum_locked': string,
   'referendum_participate': string,
@@ -11,7 +13,7 @@ export interface Statistics {
   'origins':
   {
     'ID': number,
-    'Origins': 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender',
+    'Origins': Origins,
     'Count': number
   }[],
   'OriginsCount': number

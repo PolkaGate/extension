@@ -23,13 +23,14 @@ import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getT
 import ReferendaMenu from './ReferendaMenu';
 
 const STATUS_COLOR = {
-  Canceled: '#ff4f4f', // Status color for Canceled proposals (red)
-  Confirmed: '#2ecc71', // Status color for Confirmed proposals (green)
-  Deciding: '#3498db', // Status color for Deciding proposals (blue)
-  Executed: '#9b59b6', // Status color for Executed proposals (purple)
-  Rejected: '#f39c12', // Status color for Rejected proposals (orange)
-  Submitted: '#bdc3c7', // Status color for Submitted proposals (gray)
-  TimedOut: '#7f8c8d', // Status color for TimedOut proposals (gray)
+  Canceled: '#ff4f4f', 
+  ConfirmStarted: '#27ae60', 
+  Confirmed: '#2ecc71', 
+  Deciding: '#3498db', 
+  Executed: '#8e44ad', 
+  Rejected: '#f39c12', 
+  Submitted: '#bdc3c7', 
+  TimedOut: '#7f8c8d', 
 };
 
 type TopMenu = 'Referenda' | 'Fellowship';
@@ -193,10 +194,12 @@ export default function Governance(): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
-    chainName && getLatestReferendums(chainName).then((res) => {
-      setReferenda(res);
-    });
-  }, [chainName]);
+    if (chainName && selectedSubMenu === 'All') {
+      setReferenda(undefined);
+      // eslint-disable-next-line no-void
+      void getLatestReferendums(chainName).then((res) => setReferenda(res));
+    }
+  }, [chainName, selectedSubMenu]);
 
   useEffect(() => {
     chainName && getReferendumStatistics(chainName).then((stat) => {
@@ -208,7 +211,8 @@ export default function Governance(): React.ReactElement {
     if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks) {
       setReferenda(undefined);
 
-      const trackId = tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0];
+      const trackId = tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0] as number;
+
       trackId !== undefined && getTrackReferendums(chainName, trackId).then((res) => {
         setReferenda(res);
       }).catch(console.error);
@@ -392,6 +396,11 @@ export default function Governance(): React.ReactElement {
     </Grid>
   );
 
+  const backToTopMenu = useCallback((event) => {
+    console.log('xxx', event.target.innerText)
+    setSelectedSubMenu('All');
+  }, []);
+
   return (
     <>
       <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400, fontFamily: 'Eras' }}>
@@ -464,7 +473,7 @@ export default function Governance(): React.ReactElement {
       <Container disableGutters maxWidth={false} sx={{ opacity: menuOpen && 0.3, px: '2%', top: 122, position: 'fixed', maxHeight: parent.innerHeight - 140, overflowY: 'scroll' }}>
         <Grid container sx={{ py: '10px', fontWeight: 500 }}>
           <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
-            <Link href='#' underline='hover'>
+            <Link onClick={backToTopMenu} underline='hover' sx={{ cursor: 'pointer' }}>
               {selectedTopMenu || 'Referenda'}
             </Link>
             <Typography color='text.primary'>{selectedSubMenu || 'All'}</Typography>
@@ -482,7 +491,7 @@ export default function Governance(): React.ReactElement {
                       {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
                     </Grid>
                     <Grid alignItems='center' container item justifyContent='space-between'>
-                      <Grid alignItems='center' container item xs={10}>
+                      <Grid alignItems='center' container item xs={9.5}>
                         <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '17px' }}>
                           {t('By')}:
                         </Grid>
@@ -518,8 +527,8 @@ export default function Governance(): React.ReactElement {
                           {new Date(referendum.created_at).toDateString()}
                         </Grid>
                       </Grid>
-                      <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '10px 15px' }} xs={1}>
-                        {referendum.status}
+                      <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '10px 15px' }} xs={1.5}>
+                        {referendum.status.replace(/([A-Z])/g, ' $1').trim()}
                       </Grid>
                     </Grid>
                   </Grid>
@@ -527,7 +536,7 @@ export default function Governance(): React.ReactElement {
               }
             })}
           </>
-          : <Grid container justifyContent='center' pt='13%'>
+          : <Grid container justifyContent='center' pt='10%'>
             <CubeGrid color={theme.palette.background.paper} size={200} col={3} row={3} />
           </Grid>
         }

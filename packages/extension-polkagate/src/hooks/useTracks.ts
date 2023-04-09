@@ -4,15 +4,46 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
+import { Origins } from '../popup/governance/helpers';
 import { useApi, useChainName } from '.';
 
-export default function useTracks(address: string, api: ApiPromise | undefined): string[] | undefined {
+export type Track = [
+  number,
+  {
+    confirmPeriod: number,
+    decisionDeposit: BN,
+    decisionPeriod: number,
+    maxDeciding: number,
+    minApproval:
+    {
+      reciprocal: {
+        factor: number,
+        xOffset: number,
+        yOffset: number
+      }
+    }
+    minEnactmentPeriod: number,
+    minSupport:
+    {
+      linearDecreasing: {
+        ceil: number,
+        floor: number,
+        length: number
+      }
+    }
+    name: Origins,
+    preparePeriod: number
+  }
+]
+
+export default function useTracks(address: string, api: ApiPromise | undefined): Track[] | undefined {
   const _api = useApi(address, api);
   const chainName = useChainName(address);
   const [savedTracks, setSavedTracks] = useState<string[]>();
 
-  const tracks = useMemo(() => _api?.consts?.referenda?.tracks?.toJSON?.(), [_api]);
+  const tracks = useMemo(() => _api?.consts?.referenda?.tracks?.toJSON?.() as Track[], [_api]);
 
   useEffect(() => {
     if (tracks && chainName) {
@@ -26,12 +57,12 @@ export default function useTracks(address: string, api: ApiPromise | undefined):
   }, [tracks, chainName]);
 
   useEffect(() => {
-    if (chainName) {
+    if (chainName && !tracks) {
       chrome.storage.local.get('referendaTracks', (res) => {
         setSavedTracks(res?.referendaTracks?.[chainName]);
       });
     }
-  }, [chainName]);
+  }, [chainName, tracks]);
 
   return tracks || savedTracks;
 }

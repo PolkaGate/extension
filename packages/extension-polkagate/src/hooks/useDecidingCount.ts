@@ -5,9 +5,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
+import { Track } from './useTracks';
+
 type DecidingCount = [string, number];
 
-export default function useDecidingCount(api: ApiPromise | undefined, tracks: [string, { name: string }][] | undefined): DecidingCount[] | undefined {
+export default function useDecidingCount(api: ApiPromise | undefined, tracks: Track[] | undefined): DecidingCount[] | undefined {
   const [counts, setCounts] = useState<DecidingCount[] | undefined>(undefined);
   const trackIds = useMemo(() => tracks?.map(([id, { name }]) => [id, name]), [tracks]);
 
@@ -25,7 +27,7 @@ export default function useDecidingCount(api: ApiPromise | undefined, tracks: [s
             allCount += count.toNumber();
           }
 
-          return [trackIds[index][1], count.toNumber()];
+          return [trackIds[index][1], count.toNumber() as number];
         });
 
         decidingCounts.push(['all', allCount]);
