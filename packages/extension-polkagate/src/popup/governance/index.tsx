@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Close, Groups as FellowshipIcon, HowToVote as ReferendaIcon, Hub as Root, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
+import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -48,7 +48,6 @@ export default function Governance(): React.ReactElement {
   const chainName = useChainName(address);
 
   const decidingCounts = useDecidingCount(api, tracks);
-  console.log('decidingCounts:', decidingCounts)
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>('All');
@@ -207,9 +206,9 @@ export default function Governance(): React.ReactElement {
 
   useEffect(() => {
     if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks) {
+      setReferenda(undefined);
+
       const trackId = tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0];
-      console.log('selectedSubMenu:', selectedSubMenu)
-      console.log('trackId:', trackId)
       trackId !== undefined && getTrackReferendums(chainName, trackId).then((res) => {
         setReferenda(res);
       }).catch(console.error);
