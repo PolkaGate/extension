@@ -10,8 +10,8 @@ import { Origins } from '../popup/governance/helpers';
 import { useApi, useChainName } from '.';
 
 export type Track = [
-  number,
-  {
+  id: number,
+  info: {
     confirmPeriod: number,
     decisionDeposit: BN,
     decisionPeriod: number,
