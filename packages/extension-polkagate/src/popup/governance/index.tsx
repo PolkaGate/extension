@@ -17,6 +17,7 @@ import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice,
 import { ChainSwitch } from '../../partials';
 import { remainingTime } from '../../util/utils';
 import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums, Statistics } from './helpers';
+import ReferendaMenu from './ReferendaMenu';
 
 const STATUS_COLOR = {
   Canceled: '#ff4f4f', // Status color for Canceled proposals (red)
@@ -230,17 +231,6 @@ export default function Governance(): React.ReactElement {
     setMenuOpen(!menuOpen);
   }, [menuOpen]);
 
-  const findItemDecidingCount = useCallback((item: string): number | undefined => {
-    if (!decidingCounts) {
-      return undefined;
-    }
-
-    const itemKey = item.toLowerCase().replaceAll(' ', '_');
-    const filtered = decidingCounts.find(([key]) => key === itemKey);
-
-    return filtered?.[1];
-  }, [decidingCounts]);
-
   function TopMenu({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
       <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
@@ -254,125 +244,6 @@ export default function Governance(): React.ReactElement {
       </Grid>
     );
   }
-
-  function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, width = '18%' }: { item: string, icon?: React.ReactElement, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
-    const decidingCount = findItemDecidingCount(item);
-    const onSubMenuClick = useCallback(() => {
-      setSelectedSubMenu(item);
-      setMenuOpen((prevStatus) => !prevStatus);
-    }, [item]);
-
-    return (
-      <Grid alignItems='center' container item sx={{ borderBottom: `${borderWidth} solid`, color: clickable && 'primary.main', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '37px', py: '5px', '&:hover': clickable && { fontWeight: 700 } }}>
-        <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
-          {item}{decidingCount ? ` (${decidingCount})` : ''}
-        </Typography>
-        {icon}
-      </Grid>
-    );
-  }
-
-  const ReferendaMenu = () => (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', px: '2%', py: '15px', zIndex: 10, position: 'absolute' }}>
-      <MenuItem
-        fontWeight={500}
-        icon={<All sx={{ fontSize: 20, fontWeight: 500, ml: '10px' }} />}
-        item='All'
-      />
-      <MenuItem
-        fontWeight={500}
-        icon={<Root sx={{ fontSize: 20, ml: '10px' }} />}
-        item='Root'
-      />
-      <Grid container item sx={{ width: '18%' }}>
-        <MenuItem
-          clickable={false}
-          fontWeight={500}
-          icon={<Cancel sx={{ fontSize: 20, ml: '10px' }} />}
-          item='Referendum'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Referendum Canceller'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='2px'
-          item='Referendum Killer'
-          width='100%'
-        />
-      </Grid>
-      <Grid container item sx={{ width: '18%' }}>
-        <MenuItem
-          clickable={false}
-          fontWeight={500}
-          icon={<AdminsIcon sx={{ fontSize: 20, ml: '10px' }} />}
-          item='Admin'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Auction Admin'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='General Admin'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Lease Admin'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='2px'
-          item='Staking Admin'
-          width='100%'
-        />
-      </Grid>
-      <Grid container item sx={{ width: '18%' }}>
-        <MenuItem
-          clickable={false}
-          fontWeight={500}
-          icon={<TreasuryIcon sx={{ fontSize: 20, ml: '10px' }} />}
-          item='Treasury'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Treasurer'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='small Tipper'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Big Tipper'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Small Spender'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='1px'
-          item='Medium Spender'
-          width='100%'
-        />
-        <MenuItem
-          borderWidth='2px'
-          item='Big Spender'
-          width='100%'
-        />
-      </Grid>
-    </Grid>
-  );
 
   return (
     <>
@@ -441,7 +312,7 @@ export default function Governance(): React.ReactElement {
         </Grid>
       </Grid>
       {menuOpen && selectedTopMenu === 'Referenda' &&
-        <ReferendaMenu />
+        <ReferendaMenu decidingCounts={decidingCounts} setSelectedSubMenu={setSelectedSubMenu} setMenuOpen={setMenuOpen} />
       }
       <Container disableGutters maxWidth={false} sx={{ px: '2%', top: 122, position: 'fixed', maxHeight: parent.innerHeight - 140, overflowY: 'scroll' }}>
         <Grid container sx={{ py: '10px', fontWeight: 500 }}>
