@@ -25,10 +25,20 @@ export default function useFormatted(address?: AccountId | string, formatted?: A
     const prefix: number = chain.ss58Format;
 
     if (address && prefix !== undefined && accounts?.length) {
-      const selectedAddressJson = accounts.find((acc) => acc.address === address);
+      let selectedAddressJson = accounts.find((acc) => acc.address === address);
 
       if (!selectedAddressJson) {
         console.log(`${address} not found in accounts!`);
+
+        const publicKeyNew = decodeAddress(address);
+        const maybeAddr = encodeAddress(publicKeyNew, 42);
+        const maybeSelectedAddressJson = accounts.find((acc) => acc.address === maybeAddr);
+
+        if (maybeSelectedAddressJson) {
+          selectedAddressJson = maybeSelectedAddressJson;
+
+          return encodeAddress(publicKeyNew, prefix);
+        }
 
         return undefined;
       }
