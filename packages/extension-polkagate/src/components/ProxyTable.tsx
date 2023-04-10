@@ -9,14 +9,15 @@ import BackspaceIcon from '@mui/icons-material/Backspace';
 import { FormControlLabel, Grid, Radio, SxProps, Theme, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { useTranslation } from '../hooks';
+import { useApi, useApiWithChain, useTranslation } from '../hooks';
 import { NameAddress, Proxy, ProxyItem } from '../util/types';
-import { getSubstrateAddress, toShortAddress } from '../util/utils';
+import { getSubstrateAddress } from '../util/utils';
 import Label from './Label';
-import { AccountContext, Checkbox2 as Checkbox, Identicon } from '.';
+import { AccountContext, Checkbox2 as Checkbox, Identity } from '.';
 
 interface Props {
   chain: Chain | undefined | null;
@@ -35,6 +36,9 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const [warningText, setWarningTest] = useState<string>();
+  const params = useParams<{ address: string | undefined }>();
+  const api = useApi(params?.address);
+  const api2 = useApiWithChain(chain);
 
   useEffect(() => {
     const text = notFoundText || (mode === 'Availability'
@@ -47,8 +51,6 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
   const isAvailable = useCallback((proxy: Proxy): NameAddress | undefined =>
     accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate) && (proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true))
     , [accounts, proxyTypeFilter]);
-
-  const getProxyName = useCallback((proxy: Proxy): string | undefined => accounts?.find((a) => a.address === getSubstrateAddress(proxy.delegate))?.name, [accounts]);
 
   const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     proxies && onSelect && onSelect(proxies[Number(event.target.value)].proxy);
@@ -154,18 +156,8 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                 ? proxies.map((proxyItem, index) => {
                   return (
                     <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent', height: '41px', opacity: fade(proxyItem) ? 0.7 : 1, textAlign: 'center' }} xs={12}>
-                      <Grid alignItems='center' container height='100%' item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
-                        <Grid item width='30px'>
-                          <Identicon
-                            prefix={chain?.ss58Format ?? 42}
-                            size={30}
-                            theme={chain?.icon || 'polkadot'}
-                            value={proxyItem.proxy.delegate}
-                          />
-                        </Grid>
-                        <Typography fontSize='12px' fontWeight={400} maxWidth='calc(100% - 35px)' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                          {getProxyName(proxyItem.proxy) || toShortAddress(proxyItem.proxy.delegate)}
-                        </Typography>
+                      <Grid alignItems='center' container item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
+                        <Identity api={api ?? api2} chain={chain} formatted={proxyItem.proxy.delegate} identiconSize={30} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} />
                       </Grid>
                       <Grid alignItems='center' container height='100%' item justifyContent='center' xs={mode === 'None' ? 4.5 : 3.9}>
                         <Typography fontSize='12px' fontWeight={400}>
