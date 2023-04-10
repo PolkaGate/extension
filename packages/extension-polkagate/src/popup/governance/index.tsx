@@ -6,9 +6,9 @@
 import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, SxProps, Typography, useTheme } from '@mui/material';
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState, useMemo } from 'react';
 import { useParams } from 'react-router';
 
 import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
@@ -17,11 +17,13 @@ import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 import { logoBlack, logoWhite } from '../../assets/logos';
 import { ActionContext, FormatPrice, Identity, InputFilter, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTracks, useTranslation } from '../../hooks';
+import { Track } from '../../hooks/useTracks';
 import { ChainSwitch } from '../../partials';
 import { remainingTime } from '../../util/utils';
 import AddressDropdown from './AddressDropdown';
 import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums, Statistics } from './helpers';
 import ReferendaMenu from './ReferendaMenu';
+import { kusama } from './tracks/kusama';
 
 const STATUS_COLOR = {
   Canceled: '#ff4f4f',
@@ -75,6 +77,8 @@ export default function Governance(): React.ReactElement {
   const [referendaToList, setReferenda] = useState<string[]>();
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
+
+  const currentTrack = useMemo(() => tracks && tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
 
   useEffect(() => {
     if (!api || !api.derive.treasury) {
@@ -329,9 +333,32 @@ export default function Governance(): React.ReactElement {
     </Grid>
   );
 
-  const AllReferendaSummary = () => (
+  const TreasuryBalanceStat = ({ balance, noDivider, style, title, tokenPrice }: { title: string, balance: BN | undefined, tokenPrice: number | undefined, noDivider?: boolean, style?: SxProps }) => (
+    <>
+      <Grid container item sx={{ ...style }} xs={2}>
+        <Grid item md={12} sx={{ height: '25px' }}>
+          <Typography fontSize={18} fontWeight={400}>
+            {title}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, letterSpacing: '-0.015em', pt: '10px', height: '36px' }} xs={12}>
+          <ShowBalance api={api} balance={balance} decimalPoint={2} />
+        </Grid>
+        <Grid item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} xs={12}>
+          <FormatPrice
+            amount={balance}
+            decimals={decimal}
+            price={tokenPrice}
+          />
+        </Grid>
+      </Grid>
+      {!noDivider && <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />}
+    </>
+  );
+
+  const AllReferendaStats = () => (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '165px', pt: '15px', pb: '20px' }}>
-      <Grid container item sx={{ mx: '3%' }} xs={2.5}>
+      <Grid container item sx={{ ml: '3%' }} xs={2.5}>
         <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
           <Typography fontSize={20} fontWeight={500}>
             {t('Referenda stats')}
@@ -339,7 +366,7 @@ export default function Governance(): React.ReactElement {
         </Grid>
         <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
           <Grid item sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
+            <Typography fontSize={18} fontWeight={400}>
               {t('Confirming')}
             </Typography>
           </Grid>
@@ -348,7 +375,7 @@ export default function Governance(): React.ReactElement {
         </Grid>
         <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
           <Grid item sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
+            <Typography fontSize={18} fontWeight={400}>
               {t('Deciding')}
             </Typography>
           </Grid>
@@ -358,7 +385,7 @@ export default function Governance(): React.ReactElement {
         </Grid>
         <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
           <Grid item sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
+            <Typography fontSize={18} fontWeight={400}>
               {t('Participation')}
             </Typography>
           </Grid>
@@ -368,95 +395,79 @@ export default function Governance(): React.ReactElement {
         </Grid>
         <Divider orientation='vertical' />
       </Grid>
+      <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />
       <Grid container item sx={{ pr: '3%' }} xs={8.5}>
         <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
           <Typography fontSize={20} fontWeight={500}>
             {t('Treasury stats')}
           </Typography>
         </Grid>
-        <Grid container item pr='3%' xs={2.5}>
-          <Grid item md={12} sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
-              {t('Available')}
-            </Typography>
-          </Grid>
-          <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
-            <ShowBalance api={api} balance={availableTreasuryBalance} decimalPoint={2} />
-          </Grid>
-          <Grid item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em', height: '36px' }} xs={12}>
-            <FormatPrice
-              amount={availableTreasuryBalance}
-              decimals={decimal}
-              price={price?.amount}
-            />
-          </Grid>
-        </Grid>
-        <Divider flexItem orientation='vertical' />
-        <Grid container item sx={{ px: '3%' }} xs={2.5}>
-          <Grid item md={12} sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
-              {t('Approved')}
-            </Typography>
-          </Grid>
-          <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
-            <ShowBalance api={api} balance={approved} decimalPoint={2} />
-          </Grid>
-          <Grid item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em', height: '36px' }} xs={12}>
-            <FormatPrice
-              amount={approved}
-              decimals={decimal}
-              price={price?.amount}
-            />
-          </Grid>
-        </Grid>
-        <Divider flexItem orientation='vertical' />
-        <Grid container item sx={{ px: '3%' }} xs={4}>
+        <TreasuryBalanceStat
+          balance={availableTreasuryBalance}
+          title={t('Available')}
+          tokenPrice={price?.amount}
+        />
+        <TreasuryBalanceStat
+          balance={approved}
+          title={t('Approved')}
+          tokenPrice={price?.amount}
+        />
+        <Grid container item xs={3}>
           <Grid item md={12} sx={{ height: '25px' }}>
             <Typography fontWeight={400}>
               {t('Spend Period')}
             </Typography>
           </Grid>
-          <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
-            <ShowValue value={remainingTimeToSpend} /> / <ShowValue value={spendPeriod?.toString()} width='20px' /> {t('days')}
+          <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, pt: '10px', letterSpacing: '-0.015em', height: '36px' }}>
+            <ShowValue value={remainingTimeToSpend} width='131px' /> / <ShowValue value={spendPeriod?.toString()} width='40px' /> {t('days')}
           </Grid>
-          <Grid alignItems='center' container item sx={{ fontSize: '18px', height: '36px', letterSpacing: '-0.015em', pt: '8px' }} xs={12}>
-            <Grid item xs>
-              <LinearProgress sx={{ bgcolor: 'primary.contrastText', mt: '10px' }} value={remainingSpendPeriodPercent || 0} variant='determinate' />
+          <Grid alignItems='center' container item spacing={1} sx={{ fontSize: '18px', letterSpacing: '-0.015em' }}>
+            <Grid item >
+              <LinearProgress sx={{ bgcolor: 'primary.contrastText', mt: '5px', width: '185px' }} value={remainingSpendPeriodPercent || 0} variant='determinate' />
             </Grid>
-            <Grid item sx={{ textAlign: 'right' }} xs={2}>
+            <Grid fontSize={18} fontWeight={400} item sx={{ textAlign: 'right' }}>
               {remainingSpendPeriodPercent}%
             </Grid>
           </Grid>
         </Grid>
-        <Divider flexItem orientation='vertical' />
-        <Grid container item sx={{ pl: '3%' }} xs={2.5}>
-          <Grid item md={12} sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
-              {t('Next Burn')}
-            </Typography>
-          </Grid>
-          <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em' }} xs={12}>
-            <ShowBalance api={api} balance={nextBurn} decimalPoint={2} />
-          </Grid>
-          <Grid item sx={{ fontSize: '18px', pt: '8px', letterSpacing: '-0.015em', height: '36px' }} xs={12}>
-            <FormatPrice
-              amount={nextBurn}
-              decimals={decimal}
-              price={price?.amount}
-            />
-          </Grid>
-        </Grid>
+        <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />
+        <TreasuryBalanceStat
+          balance={nextBurn}
+          noDivider
+          title={t('Next Burn')}
+          tokenPrice={price?.amount}
+        />
       </Grid>
     </Grid>
   );
 
+  const TrackStats = ({ track }: { track: Track | undefined }) => (
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '165px', pt: '15px', pb: '20px' }}>
+      <Grid container sx={{ mx: '3%' }}>
+        <Grid item container sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
+          <Typography fontSize={20} fontWeight={500}>
+            {t('About {{trackName}} origin', { replace: { trackName: track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
+          </Typography>
+        </Grid>
+        <Divider orientation='vertical' />
+        <Typography fontSize={18} fontWeight={500}>
+          {kusama.referenda.find(({ name }) => name === track?.[1]?.name)?.text}
+        </Typography>
+      </Grid>
+      <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />
+
+    </Grid>
+  );
+
   const Bread = () => (
-    <Grid container sx={{ py: '10px', fontWeight: 500, px: '2%' }}>
+    <Grid container sx={{ py: '10px', px: '2%' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
-        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
+        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
           {selectedTopMenu || 'Referenda'}
         </Link>
-        <Typography color='text.primary'>{selectedSubMenu || 'All'}</Typography>
+        <Typography color='text.primary' sx={{ fontWeight: 500 }}>
+          {selectedSubMenu || 'All'}
+        </Typography>
       </Breadcrumbs>
     </Grid>
   );
@@ -517,11 +528,11 @@ export default function Governance(): React.ReactElement {
 
   const HorizontalWaiting = ({ color }: { color: string }) => (
     <div>
-      <Wordpress timingFunction='linear' color={color} />
-      <Wordpress timingFunction='ease' color={color} />
-      <Wordpress timingFunction='ease-in' color={color} />
-      <Wordpress timingFunction='ease-out' color={color} />
-      <Wordpress timingFunction='ease-in-out' color={color} />
+      <Wordpress color={color} timingFunction='linear' />
+      <Wordpress color={color} timingFunction='ease' />
+      <Wordpress color={color} timingFunction='ease-in' />
+      <Wordpress color={color} timingFunction='ease-out' />
+      <Wordpress color={color} timingFunction='ease-in-out' />
     </div>
   );
 
@@ -537,7 +548,7 @@ export default function Governance(): React.ReactElement {
           Polkagate
         </Grid>
         <Grid alignItems='center' container item justifyContent='flex-end' spacing={1} sx={{ color: 'text.primary' }} xs>
-          <Grid item justifyContent='flex-end' sx={{ color: 'text.primary' }} >
+          <Grid item justifyContent='flex-end' sx={{ color: 'text.primary' }}>
             <AddressDropdown
               api={api}
               chainGenesis={chain?.genesisHash}
@@ -546,7 +557,7 @@ export default function Governance(): React.ReactElement {
               selectedAddress={address}
             />
           </Grid>
-          <Grid item justifyContent='flex-end' >
+          <Grid item justifyContent='flex-end'>
             <ChainSwitch address={address} />
           </Grid>
         </Grid>
@@ -556,15 +567,18 @@ export default function Governance(): React.ReactElement {
         <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
       <Bread />
-      <Container disableGutters maxWidth={false} sx={{ opacity: menuOpen && 0.3, px: '2%', top: 160, position: 'fixed', maxHeight: parent.innerHeight - 170, overflowY: 'scroll' }}>
-        <AllReferendaSummary />
+      <Container disableGutters maxWidth={false} sx={{ maxHeight: parent.innerHeight - 170, opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', px: '2%', top: 160 }}>
+        {selectedSubMenu === 'All'
+          ? <AllReferendaStats />
+          : <TrackStats track={currentTrack} />
+        }
         <SearchBar />
         {referendaToList
           ? <>
             {referendaToList.map((referendum, index) => {
               if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                 return (
-                  <Grid item key={index} sx={{ borderRadius: '10px', bgcolor: 'background.paper', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+                  <Grid item key={index} sx={{ ﬁborderRadius: '10px', cursor: 'pointer', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
                     <Grid item sx={{ pb: '15px', fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
                     </Grid>
