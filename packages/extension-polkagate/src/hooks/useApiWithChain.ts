@@ -1,13 +1,16 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { Chain } from '@polkadot/extension-chains/types';
 
+import { APIContext } from '../components';
+
 export default function useApiWithChain(chain: Chain | undefined): ApiPromise | undefined {
+  const apisContext = useContext(APIContext);
   const [api, setApi] = useState<ApiPromise | undefined>();
 
   const endpoint = useMemo(() => {
@@ -20,6 +23,14 @@ export default function useApiWithChain(chain: Chain | undefined): ApiPromise | 
   }, [chain?.name]);
 
   useEffect(() => {
+    if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
+      if (apisContext?.apis[chain.genesisHash].api.isConnected) {
+        console.log(`♻ using the saved api for ${chain.name}`);
+
+        return setApi(apisContext?.apis[chain.genesisHash].api);
+      }
+    }
+
     if (!endpoint) {
       return;
     }
