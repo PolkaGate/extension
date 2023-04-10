@@ -7,11 +7,13 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { AccountContext, AccountNames } from '../../components';
+import { AccountContext, AccountNames, Identity } from '../../components';
 import { useOutsideClick } from '../../hooks';
 import { tieAccount } from '../../messaging';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
+  api: ApiPromise | undefined;
   onSelect: (address: string) => void;
   selectedAddress: string;
   chainGenesis: string | undefined;
@@ -19,7 +21,7 @@ interface Props {
 
 }
 
-export default function AddressDropdown({ chainGenesis, height, onSelect, selectedAddress }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ api, chainGenesis, height, onSelect, selectedAddress }: Props): React.ReactElement<Props> {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { accounts, hierarchy } = useContext(AccountContext);
@@ -45,13 +47,28 @@ export default function AddressDropdown({ chainGenesis, height, onSelect, select
     <div style={{ position: 'relative' }}>
       <Grid container overflow='hidden' sx={{ color: 'text.secondary', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', position: 'relative' }}>
         <Grid alignItems='center' container item justifyContent='space-around' xs={10}>
-          <AccountNames
+          <Identity
+            address={selectedAddress}
+            api={api}
+            identiconSize={24}
+            showSocial={false}
+            style={{
+              border: 'none',
+              fontSize: '14px',
+              height: '40px',
+              m: 0,
+              minWidth: '150px',
+              px: '5px',
+              width: 'fit-content'
+            }}
+          />
+          {/* <AccountNames
             address={selectedAddress}
             genesisHash={chainGenesis}
             height={height}
             name={selectedName}
             style={{ border: 'none', borderRadius: 0, m: 0, width: '150px' }}
-          />
+          /> */}
         </Grid>
         <Grid alignItems='center' container item onClick={_toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer' }} xs={2}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
@@ -60,13 +77,28 @@ export default function AddressDropdown({ chainGenesis, height, onSelect, select
       <Grid container sx={{ '> .tree:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', transform: isDropdownVisible ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'top', transitionDuration: '0.3s', transitionProperty: 'transform', visibility: isDropdownVisible ? 'visible' : 'hidden', zIndex: 10 }}>
         {allAddresses.map(([address, genesisHash, name]) => (
           <Grid alignItems='center' container item key={address} onClick={_onSelect(address)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}>
-            <AccountNames
+            <Identity
+              address={address}
+              api={api}
+              identiconSize={24}
+              showSocial={false}
+              style={{
+                border: 'none',
+                fontSize: '14px',
+                height: '40px',
+                m: 0,
+                minWidth: '150px',
+                px: '5px',
+                width: 'fit-content'
+              }}
+            />
+            {/* <AccountNames
               address={address}
               genesisHash={genesisHash}
               height={height}
               name={name}
               style={{ border: 'none', m: 0, px: 'auto', width: '150%' }}
-            />
+            /> */}
           </Grid>
         ))}
       </Grid>
