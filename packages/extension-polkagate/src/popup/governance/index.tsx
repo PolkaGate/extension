@@ -7,8 +7,8 @@ import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
-import { CubeGrid } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
+import { CubeGrid, Wordpress } from 'better-react-spinkit';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
@@ -74,6 +74,7 @@ export default function Governance(): React.ReactElement {
   const [approved, setApproved] = useState<BN | undefined>();
   const [referendaToList, setReferenda] = useState<string[]>();
   const [getMore, setGetMore] = useState<number | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>();
 
   useEffect(() => {
     if (!api || !api.derive.treasury) {
@@ -195,6 +196,7 @@ export default function Governance(): React.ReactElement {
       setReferendumCount(count?.toNumber());
 
       const latestReferendumNumber = count.toNumber() - 2;
+
       api.query.referenda.referendumInfoFor(latestReferendumNumber).then((res) => {
         console.log(`referendumInfoFor referendum ${latestReferendumNumber} :, ${res}`);
       });
@@ -234,14 +236,23 @@ export default function Governance(): React.ReactElement {
         setReferenda(undefined);
         list = [];
         pageTrackRef.current.trackId = trackId; // Update the ref with new values
+        pageTrackRef.current.page = 1;
         pageTrackRef.current.listFinished = false;
       }
 
+      if (pageTrackRef.current.page > 1) {
+        setIsLoading(true);
+      }
+
       trackId !== undefined && getTrackReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
-        // setReferenda(res);
+        setIsLoading(false);
+
         if (res === null) {
-          return pageTrackRef.current.listFinished = true;
+          pageTrackRef.current.listFinished = true;
+
+          return;
         }
+
         const concated = (list || []).concat(res);
 
         setReferenda([...concated]);
@@ -280,7 +291,6 @@ export default function Governance(): React.ReactElement {
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
     setGetMore(pageTrackRef.current.page);
-    console.log(pageTrackRef)
   }, [pageTrackRef]);
 
   function TopMenu({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
@@ -327,13 +337,13 @@ export default function Governance(): React.ReactElement {
             {t('Referenda stats')}
           </Typography>
         </Grid>
-        <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px' >
+        <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
           <Grid item sx={{ height: '25px' }}>
             <Typography fontWeight={400}>
               {t('Confirming')}
             </Typography>
           </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }} >
+          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
             <ShowValue value={referendumStats?.confirm_total} />              </Grid>
         </Grid>
         <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
@@ -342,7 +352,7 @@ export default function Governance(): React.ReactElement {
               {t('Deciding')}
             </Typography>
           </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }} >
+          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
             <ShowValue value={referendumStats?.voting_total} />
           </Grid>
         </Grid>
@@ -440,6 +450,81 @@ export default function Governance(): React.ReactElement {
     </Grid>
   );
 
+  const Bread = () => (
+    <Grid container sx={{ py: '10px', fontWeight: 500, px: '2%' }}>
+      <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
+        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
+          {selectedTopMenu || 'Referenda'}
+        </Link>
+        <Typography color='text.primary'>{selectedSubMenu || 'All'}</Typography>
+      </Breadcrumbs>
+    </Grid>
+  );
+
+  const Toolbar = () => (
+    <Grid alignItems='center' container id='menu' justifyContent='space-between' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, pl: '2%' }}>
+      <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
+        <TopMenu item={'Referenda'} />
+        <TopMenu item={'Fellowship'} />
+      </Grid>
+      <Grid container item justifyContent='flex-end' md={5} sx={{ pr: '2%' }}>
+        <Button
+          // disabled={disabled}
+          // onClick={_onClick}
+          sx={{
+            backgroundColor: 'background.paper',
+            borderRadius: '5px',
+            color: 'primary.main',
+            fontSize: '18px',
+            fontWeight: 500,
+            height: '36px',
+            textTransform: 'none',
+            width: '208px',
+            '&:hover': {
+              backgroundColor: '#fff',
+              color: '#3c52b2'
+            }
+          }}
+          variant='contained'
+        >
+          Multirole Delegate
+        </Button>
+        <Button
+          // disabled={disabled}
+          // onClick={_onClick}
+          sx={{
+            backgroundColor: 'background.paper',
+            borderRadius: '5px',
+            color: 'primary.main',
+            fontSize: '18px',
+            fontWeight: 500,
+            height: '36px',
+            textTransform: 'none',
+            ml: '15px',
+            width: '208px',
+            '&:hover': {
+              backgroundColor: '#fff',
+              color: '#3c52b2'
+            }
+          }}
+          variant='contained'
+        >
+          Submit Referendum
+        </Button>
+      </Grid>
+    </Grid>
+  );
+
+  const HorizontalWaiting = ({ color }: { color: string }) => (
+    <div>
+      <Wordpress timingFunction='linear' color={color} />
+      <Wordpress timingFunction='ease' color={color} />
+      <Wordpress timingFunction='ease-in' color={color} />
+      <Wordpress timingFunction='ease-out' color={color} />
+      <Wordpress timingFunction='ease-in-out' color={color} />
+    </div>
+  );
+
   return (
     <>
       <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400, fontFamily: 'Eras' }}>
@@ -465,69 +550,12 @@ export default function Governance(): React.ReactElement {
           </Grid>
         </Grid>
       </Grid>
-      <Grid alignItems='center' container id='menu' justifyContent='space-between' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, pl: '2%' }}>
-        <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-          <TopMenu item={'Referenda'} />
-          <TopMenu item={'Fellowship'} />
-        </Grid>
-        <Grid container item justifyContent='flex-end' md={5} sx={{ pr: '2%' }}>
-          <Button
-            // disabled={disabled}
-            // onClick={_onClick}
-            sx={{
-              backgroundColor: 'background.paper',
-              borderRadius: '5px',
-              color: 'primary.main',
-              fontSize: '18px',
-              fontWeight: 500,
-              height: '36px',
-              textTransform: 'none',
-              width: '208px',
-              '&:hover': {
-                backgroundColor: '#fff',
-                color: '#3c52b2'
-              }
-            }}
-            variant='contained'
-          >
-            Multirole Delegate
-          </Button>
-          <Button
-            // disabled={disabled}
-            // onClick={_onClick}
-            sx={{
-              backgroundColor: 'background.paper',
-              borderRadius: '5px',
-              color: 'primary.main',
-              fontSize: '18px',
-              fontWeight: 500,
-              height: '36px',
-              textTransform: 'none',
-              ml: '15px',
-              width: '208px',
-              '&:hover': {
-                backgroundColor: '#fff',
-                color: '#3c52b2'
-              }
-            }}
-            variant='contained'
-          >
-            Submit Referendum
-          </Button>
-        </Grid>
-      </Grid>
+      <Toolbar />
       {menuOpen && selectedTopMenu === 'Referenda' &&
         <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
-      <Container disableGutters maxWidth={false} sx={{ opacity: menuOpen && 0.3, px: '2%', top: 122, position: 'fixed', maxHeight: parent.innerHeight - 140, overflowY: 'scroll' }}>
-        <Grid container sx={{ py: '10px', fontWeight: 500 }}>
-          <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
-            <Link onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
-              {selectedTopMenu || 'Referenda'}
-            </Link>
-            <Typography color='text.primary'>{selectedSubMenu || 'All'}</Typography>
-          </Breadcrumbs>
-        </Grid>
+      <Bread />
+      <Container disableGutters maxWidth={false} sx={{ opacity: menuOpen && 0.3, px: '2%', top: 160, position: 'fixed', maxHeight: parent.innerHeight - 170, overflowY: 'scroll' }}>
         <AllReferendaSummary />
         <SearchBar />
         {referendaToList
@@ -589,11 +617,19 @@ export default function Governance(): React.ReactElement {
               }
             })}
             {selectedSubMenu !== 'All' && !pageTrackRef.current.listFinished &&
-              <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
-                <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                  {t('Click to view more')}
-                </Typography>
-              </Grid>
+              <>
+                {
+                  !isLoading
+                    ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
+                      <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                        {t('Click to view more')}
+                      </Typography>
+                    </Grid>
+                    : isLoading && <Grid container justifyContent='center'>
+                      <HorizontalWaiting color={theme.palette.primary.main} />
+                    </Grid>
+                }
+              </>
             }
           </>
           : <Grid container justifyContent='center' pt='10%'>
