@@ -25,11 +25,9 @@ interface Props {
   address: string;
   isHardware: boolean | null | undefined
   isExternal: boolean | null | undefined
-  type: KeypairType | undefined;
-  name: string | undefined;
 }
 
-function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMenu }: Props): React.ReactElement<Props> {
+function AccMenu({ address, isExternal, isHardware, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
@@ -72,8 +70,8 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   }, [address, onAction]);
 
   const _onExportAccount = useCallback(() => {
-    address && name && onAction(`/export/${address}`);
-  }, [address, name, onAction]);
+    address && onAction(`/export/${address}`);
+  }, [address, onAction]);
 
   const _onManageProxies = useCallback(() => {
     address && chain && onAction(`/manageProxies/${address}`);
