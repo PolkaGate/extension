@@ -539,11 +539,11 @@ export default function Governance(): React.ReactElement {
   return (
     <>
       <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400 }}>
-        <Grid alignItems='center' container item justifyContent='flex-start' xs={6}>
+        <Grid alignItems='center' container item justifyContent='flex-start' xs={6} sx={{ fontFamily: 'Eras' }}>
           <Box
             component='img'
             src={theme.palette.mode === 'light' ? logoBlack as string : logoWhite as string}
-            sx={{ height: 50, mr: '1%', width: 50, fontFamily: 'Eras' }}
+            sx={{ height: 50, mr: '1%', width: 50 }}
           />
           Polkagate
         </Grid>
