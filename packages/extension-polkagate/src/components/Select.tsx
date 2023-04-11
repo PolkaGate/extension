@@ -5,6 +5,7 @@
 
 import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
+import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import getLogo from '../util/getLogo';
@@ -28,7 +29,7 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -167,7 +168,7 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, helperText, i
                 </Grid>
                 {showLogo &&
                   <Grid alignItems='center' container item pl='15px' width='fit-content'>
-                    {<Avatar src={getLogo(chainName(text))} sx={{ borderRadius: '50%', height: 29, width: 29 }} variant='square' />}
+                    {<Avatar src={getLogo(chainName(text))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 29, width: 29 }} variant='square' />}
                   </Grid>
                 }
               </Grid>

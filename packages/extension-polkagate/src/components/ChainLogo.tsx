@@ -1,10 +1,11 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Grid } from '@mui/material';
+import { Avatar, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import allChains from '../util/chains';
+import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -14,14 +15,16 @@ interface Props {
 }
 
 function ChainLogo({ genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
-  const logo = getLogo(allChains.find((chain) => chain.genesisHash === genesisHash)?.chain.replace(' Relay Chain', ''));
+  const theme = useTheme();
+  const chainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain?.replace(' Network', '').replace(' Relay Chain', '')?.replace(' chain', '');
+  const logo = getLogo(chainName);
 
   return (
     <>
       {logo
         ? <Avatar
           src={logo}
-          sx={{ borderRadius: '50%', height: size, width: size }}
+          sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: size, width: size }}
           variant='square'
         />
         : showDefault && <Grid
