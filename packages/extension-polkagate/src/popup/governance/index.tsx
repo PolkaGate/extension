@@ -503,8 +503,8 @@ export default function Governance(): React.ReactElement {
 
   const TrackStats = ({ track }: { track: Track | undefined }) => (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '165px', pt: '15px', pb: '20px' }}>
-      <Grid container item sx={{ mx: '3%' }}>
-        <Grid alignItems='baseline' container item spacing={1} sx={{ borderBottom: '2px solid gray', mb: '10px' }} md={7}>
+      <Grid container item sx={{ mx: '3%' }} md={7}>
+        <Grid alignItems='baseline' container item spacing={1} sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
           <Grid item>
             <Typography fontSize={20} fontWeight={500}>
               {t('{{trackName}}', { replace: { trackName: track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
@@ -516,8 +516,8 @@ export default function Governance(): React.ReactElement {
             </Typography>
           </Grid>
         </Grid>
-        <Divider orientation='vertical' />
-        <Grid container item justifyContent='space-between' md={6} sx={{ mr: '3%' }}>
+        {/* <Divider orientation='vertical' /> */}
+        <Grid container item justifyContent='space-between' sx={{ mr: '3%' }}>
           <LabelValue
             label={t('Remaining Slots')}
             value={<ShowValue value={decidingCounts && `${findItemDecidingCount(selectedSubMenu, decidingCounts)}/${track?.[1]?.maxDeciding}`} />}
@@ -543,16 +543,21 @@ export default function Governance(): React.ReactElement {
             value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
           />
         </Grid>
-        <Grid container item justifyContent='space-between' md>
-          <Paper>
-            <Typography align='center' variant='h6'>
-              {t('Threshold Curves')}
-            </Typography>
-            {/* <ThresholdCurves  /> */}
-          </Paper>
-        </Grid>
       </Grid>
-      <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />
+      <Grid container item md>
+        <Paper>
+          <Typography align='center' variant='h6'>
+            {t('Threshold Curves')}
+          </Typography>
+          {/* {track &&
+            <ThresholdCurves
+              linearDecreasing={track[1].minApproval.linearDecreasing}
+              reciprocal={track[1].minSupport.reciprocal}
+            />
+          } */}
+        </Paper>
+      </Grid>
+      {/* <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} /> */}
     </Grid>
   );
 

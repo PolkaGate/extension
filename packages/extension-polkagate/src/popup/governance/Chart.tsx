@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js'; // Import registerables from Chart.js
 import React, { useEffect, useRef } from 'react';
 
 import { LinearDecreasing, Reciprocal } from '../../hooks/useTracks';
@@ -9,23 +9,31 @@ import { LinearDecreasing, Reciprocal } from '../../hooks/useTracks';
 const ThresholdCurves = ({ linearDecreasing, reciprocal }: { reciprocal: Reciprocal, linearDecreasing: LinearDecreasing }) => {
   const chartRef = useRef(null);
 
+  console.log('linearDecreasing, reciprocal');
+  console.log(linearDecreasing, reciprocal);
+  // Register the required chart elements
+  Chart.register(...registerables);
+
   useEffect(() => {
     const reciprocalData = {
-      factor: 2, // Example value for the reciprocal factor
-      xOffset: 0, // Example value for the x-offset
-      yOffset: 0 // Example value for the y-offset
+      factor:7,// reciprocal.factor / (10 * 60 * 60*100),
+      xOffset:1493,// reciprocal.xOffset / (10 * 60 * 60),
+      yOffset: -746// reciprocal.yOffset / (10 * 60 * 60)
     };
 
     const linearDecreasingData = {
-      ceil: 5, // Example value for the ceil
-      floor: 1, // Example value for the floor
-      length: 5 // Example value for the length
+      ceil: 2777,//linearDecreasing.ceil / (10 * 60 * 60),
+      floor: 13888,//linearDecreasing.floor / (10 * 60 * 60),
+      length: 277//linearDecreasing.length / (10 * 60 * 60*100)
     };
+
+    console.log("reciprocalData:", reciprocalData)
+    console.log("linearDecreasingData:", linearDecreasingData);
 
     // Generate data for the reciprocal line
     const reciprocalLineData = [];
 
-    for (let i = 0; i < reciprocalData.length; i++) {
+    for (let i = 0; i < reciprocal.factor; i++) {
       const x = i + reciprocalData.xOffset;
       const y = reciprocalData.yOffset + (reciprocalData.factor / x);
 
@@ -67,7 +75,7 @@ const ThresholdCurves = ({ linearDecreasing, reciprocal }: { reciprocal: Recipro
       scales: {
         y: {
           beginAtZero: true,
-          max: Math.max(...reciprocalLineData, ...linearDecreasingLineData)
+          max: 100//findMaxValue([...reciprocalLineData, ...linearDecreasingLineData])
         }
       }
     };
@@ -82,7 +90,18 @@ const ThresholdCurves = ({ linearDecreasing, reciprocal }: { reciprocal: Recipro
     return () => {
       chartInstance.destroy();
     };
-  }, []);
+  }, [linearDecreasing.ceil, linearDecreasing.floor, linearDecreasing.length, reciprocal.factor, reciprocal.xOffset, reciprocal.yOffset]);
+
+  // Custom function to find the maximum value in an array
+  const findMaxValue = (arr) => {
+    let max = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i] > max) {
+        max = arr[i];
+      }
+    }
+    return max;
+  };
 
   return (
     <div>
