@@ -6,9 +6,9 @@
 import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, SxProps, Typography, useTheme } from '@mui/material';
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Paper, SxProps, Typography, useTheme } from '@mui/material';
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
@@ -20,10 +20,11 @@ import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice,
 import { Track } from '../../hooks/useTracks';
 import { ChainSwitch } from '../../partials';
 import { remainingTime } from '../../util/utils';
+import { kusama } from './tracks/kusama';
 import AddressDropdown from './AddressDropdown';
 import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums, Statistics } from './helpers';
-import ReferendaMenu from './ReferendaMenu';
-import { kusama } from './tracks/kusama';
+import ReferendaMenu, { findItemDecidingCount } from './ReferendaMenu';
+import ThresholdCurves from './Chart';
 
 const STATUS_COLOR = {
   Canceled: '#ff4f4f',
@@ -297,6 +298,87 @@ export default function Governance(): React.ReactElement {
     setGetMore(pageTrackRef.current.page);
   }, [pageTrackRef]);
 
+  const Header = () => (
+    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400 }}>
+      <Grid alignItems='center' container item justifyContent='flex-start' xs={6} sx={{ fontFamily: 'Eras' }}>
+        <Box
+          component='img'
+          src={theme.palette.mode === 'light' ? logoBlack as string : logoWhite as string}
+          sx={{ height: 50, mr: '1%', width: 50 }}
+        />
+        Polkagate
+      </Grid>
+      <Grid alignItems='center' container item justifyContent='flex-end' spacing={1} sx={{ color: 'text.primary' }} xs>
+        <Grid item justifyContent='flex-end' sx={{ color: 'text.primary' }}>
+          <AddressDropdown
+            api={api}
+            chainGenesis={chain?.genesisHash}
+            height='40px'
+            onSelect={onAccountChange}
+            selectedAddress={address}
+          />
+        </Grid>
+        <Grid item justifyContent='flex-end'>
+          <ChainSwitch address={address} />
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+
+  const Toolbar = () => (
+    <Grid alignItems='center' container id='menu' justifyContent='space-between' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, pl: '2%' }}>
+      <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
+        <TopMenu item={'Referenda'} />
+        <TopMenu item={'Fellowship'} />
+      </Grid>
+      <Grid container item justifyContent='flex-end' md={5} sx={{ pr: '2%' }}>
+        <Button
+          // disabled={disabled}
+          // onClick={_onClick}
+          sx={{
+            backgroundColor: 'background.paper',
+            borderRadius: '5px',
+            color: 'primary.main',
+            fontSize: '18px',
+            fontWeight: 500,
+            height: '36px',
+            textTransform: 'none',
+            width: '208px',
+            '&:hover': {
+              backgroundColor: '#fff',
+              color: '#3c52b2'
+            }
+          }}
+          variant='contained'
+        >
+          Multirole Delegate
+        </Button>
+        <Button
+          // disabled={disabled}
+          // onClick={_onClick}
+          sx={{
+            backgroundColor: 'background.paper',
+            borderRadius: '5px',
+            color: 'primary.main',
+            fontSize: '18px',
+            fontWeight: 500,
+            height: '36px',
+            textTransform: 'none',
+            ml: '15px',
+            width: '208px',
+            '&:hover': {
+              backgroundColor: '#fff',
+              color: '#3c52b2'
+            }
+          }}
+          variant='contained'
+        >
+          Submit Referendum
+        </Button>
+      </Grid>
+    </Grid>
+  );
+
   function TopMenu({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
       <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
@@ -311,28 +393,6 @@ export default function Governance(): React.ReactElement {
     );
   }
 
-  const SearchBar = () => (
-    <Grid alignItems='center' container pt='15px'>
-      <Grid item justifyContent='flex-start' xs>
-        <InputFilter
-          autoFocus={false}
-          // onChange={onSearch}
-          placeholder={t<string>('🔍 Search ')}
-          theme={theme}
-        // value={searchKeyword ?? ''}
-        />
-      </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item py='10px' sx={{ cursor: 'pointer' }} xs={1} justifyContent='flex-start'
-        // onClick={onFilters}
-        pl='15px'>
-        {t('Filters')}
-        <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
-          <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-
   const TreasuryBalanceStat = ({ balance, noDivider, style, title, tokenPrice }: { title: string, balance: BN | undefined, tokenPrice: number | undefined, noDivider?: boolean, style?: SxProps }) => (
     <>
       <Grid container item sx={{ ...style }} xs={2}>
@@ -342,7 +402,7 @@ export default function Governance(): React.ReactElement {
           </Typography>
         </Grid>
         <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, letterSpacing: '-0.015em', pt: '10px', height: '36px' }} xs={12}>
-          <ShowBalance api={api} balance={balance} decimalPoint={2} />
+          <ShowBalance api={api} balance={balance} decimal={decimal} decimalPoint={2} token={token} />
         </Grid>
         <Grid item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} xs={12}>
           <FormatPrice
@@ -419,7 +479,7 @@ export default function Governance(): React.ReactElement {
             </Typography>
           </Grid>
           <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, pt: '10px', letterSpacing: '-0.015em', height: '36px' }}>
-            <ShowValue value={remainingTimeToSpend} width='131px' /> / <ShowValue value={spendPeriod?.toString()} width='40px' /> {t('days')}
+            <ShowValue value={remainingTimeToSpend} width='131px' /> / <ShowValue value={spendPeriod?.toString()} width='20px' /> {t('days')}
           </Grid>
           <Grid alignItems='center' container item spacing={1} sx={{ fontSize: '18px', letterSpacing: '-0.015em' }}>
             <Grid item >
@@ -443,19 +503,91 @@ export default function Governance(): React.ReactElement {
 
   const TrackStats = ({ track }: { track: Track | undefined }) => (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '165px', pt: '15px', pb: '20px' }}>
-      <Grid container sx={{ mx: '3%' }}>
-        <Grid item container sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
-          <Typography fontSize={20} fontWeight={500}>
-            {t('About {{trackName}} origin', { replace: { trackName: track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
-          </Typography>
+      <Grid container item sx={{ mx: '3%' }}>
+        <Grid alignItems='baseline' container item spacing={1} sx={{ borderBottom: '2px solid gray', mb: '10px' }} md={7}>
+          <Grid item>
+            <Typography fontSize={20} fontWeight={500}>
+              {t('{{trackName}}', { replace: { trackName: track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography fontSize={17} fontWeight={400}>
+              {kusama.referenda.find(({ name }) => name === track?.[1]?.name)?.text}
+            </Typography>
+          </Grid>
         </Grid>
         <Divider orientation='vertical' />
-        <Typography fontSize={18} fontWeight={500}>
-          {kusama.referenda.find(({ name }) => name === track?.[1]?.name)?.text}
-        </Typography>
+        <Grid container item justifyContent='space-between' md={6} sx={{ mr: '3%' }}>
+          <LabelValue
+            label={t('Remaining Slots')}
+            value={<ShowValue value={decidingCounts && `${findItemDecidingCount(selectedSubMenu, decidingCounts)}/${track?.[1]?.maxDeciding}`} />}
+          />
+          <LabelValue
+            label={t('Prepare Period')}
+            value={track?.[1]?.preparePeriod && `${track[1].preparePeriod / (10 * 60)} hours`}
+          />
+          <LabelValue
+            label={t('Decision Period')}
+            value={track?.[1]?.decisionPeriod && `${track[1].decisionPeriod / (10 * 60 * 24)} days`}
+          />
+          <LabelValue
+            label={t('Confirm Period')}
+            value={track?.[1]?.confirmPeriod && `${track[1].confirmPeriod / (10 * 60 * 24)} days`}
+          />
+          <LabelValue
+            label={t('Min Enactment Period')}
+            value={track?.[1]?.minEnactmentPeriod && `${track[1].minEnactmentPeriod / (10 * 60 * 24)} day${track[1].minEnactmentPeriod / (10 * 60 * 24) > 1 ? 's' : ''}`}
+          />
+          <LabelValue
+            label={t('Decision deposit')}
+            value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
+          />
+        </Grid>
+        <Grid container item justifyContent='space-between' md>
+          <Paper>
+            <Typography align='center' variant='h6'>
+              {t('Threshold Curves')}
+            </Typography>
+            {/* <ThresholdCurves  /> */}
+          </Paper>
+        </Grid>
       </Grid>
       <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />
+    </Grid>
+  );
 
+  const LabelValue = ({ label, value }: { label: string, value: any }) => (
+    <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={5} my='2px'>
+      <Grid item sx={{ height: '25px' }}>
+        <Typography fontSize={16} fontWeight={400}>
+          {label}
+        </Typography>
+      </Grid>
+      <Grid item sx={{ fontSize: '18px', fontWeight: 500 }}>
+        <ShowValue value={value} />
+      </Grid>
+    </Grid>
+  );
+
+  const SearchBar = () => (
+    <Grid alignItems='center' container pt='15px'>
+      <Grid item justifyContent='flex-start' xs>
+        <InputFilter
+          autoFocus={false}
+          // onChange={onSearch}
+          placeholder={t<string>('🔍 Search ')}
+          theme={theme}
+        // value={searchKeyword ?? ''}
+        />
+      </Grid>
+      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item py='10px' sx={{ cursor: 'pointer' }} xs={1} justifyContent='flex-start'
+        // onClick={onFilters}
+        pl='15px'>
+        {t('Filters')}
+        <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
+          <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
+        </Grid>
+      </Grid>
     </Grid>
   );
 
@@ -472,60 +604,6 @@ export default function Governance(): React.ReactElement {
     </Grid>
   );
 
-  const Toolbar = () => (
-    <Grid alignItems='center' container id='menu' justifyContent='space-between' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, pl: '2%' }}>
-      <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-        <TopMenu item={'Referenda'} />
-        <TopMenu item={'Fellowship'} />
-      </Grid>
-      <Grid container item justifyContent='flex-end' md={5} sx={{ pr: '2%' }}>
-        <Button
-          // disabled={disabled}
-          // onClick={_onClick}
-          sx={{
-            backgroundColor: 'background.paper',
-            borderRadius: '5px',
-            color: 'primary.main',
-            fontSize: '18px',
-            fontWeight: 500,
-            height: '36px',
-            textTransform: 'none',
-            width: '208px',
-            '&:hover': {
-              backgroundColor: '#fff',
-              color: '#3c52b2'
-            }
-          }}
-          variant='contained'
-        >
-          Multirole Delegate
-        </Button>
-        <Button
-          // disabled={disabled}
-          // onClick={_onClick}
-          sx={{
-            backgroundColor: 'background.paper',
-            borderRadius: '5px',
-            color: 'primary.main',
-            fontSize: '18px',
-            fontWeight: 500,
-            height: '36px',
-            textTransform: 'none',
-            ml: '15px',
-            width: '208px',
-            '&:hover': {
-              backgroundColor: '#fff',
-              color: '#3c52b2'
-            }
-          }}
-          variant='contained'
-        >
-          Submit Referendum
-        </Button>
-      </Grid>
-    </Grid>
-  );
-
   const HorizontalWaiting = ({ color }: { color: string }) => (
     <div>
       <Wordpress color={color} timingFunction='linear' />
@@ -538,30 +616,7 @@ export default function Governance(): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400 }}>
-        <Grid alignItems='center' container item justifyContent='flex-start' xs={6} sx={{ fontFamily: 'Eras' }}>
-          <Box
-            component='img'
-            src={theme.palette.mode === 'light' ? logoBlack as string : logoWhite as string}
-            sx={{ height: 50, mr: '1%', width: 50 }}
-          />
-          Polkagate
-        </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-end' spacing={1} sx={{ color: 'text.primary' }} xs>
-          <Grid item justifyContent='flex-end' sx={{ color: 'text.primary' }}>
-            <AddressDropdown
-              api={api}
-              chainGenesis={chain?.genesisHash}
-              height='40px'
-              onSelect={onAccountChange}
-              selectedAddress={address}
-            />
-          </Grid>
-          <Grid item justifyContent='flex-end'>
-            <ChainSwitch address={address} />
-          </Grid>
-        </Grid>
-      </Grid>
+      <Header />
       <Toolbar />
       {menuOpen && selectedTopMenu === 'Referenda' &&
         <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
@@ -578,7 +633,7 @@ export default function Governance(): React.ReactElement {
             {referendaToList.map((referendum, index) => {
               if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                 return (
-                  <Grid item key={index} sx={{ ﬁborderRadius: '10px', cursor: 'pointer', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+                  <Grid item key={index} sx={{ bgcolor: 'background.paper', borderRadius: '10px', cursor: 'pointer', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
                     <Grid item sx={{ pb: '15px', fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
                     </Grid>

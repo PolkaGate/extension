@@ -9,6 +9,18 @@ import { BN } from '@polkadot/util';
 import { Origins } from '../popup/governance/helpers';
 import { useApi, useChainName } from '.';
 
+export type Reciprocal = {
+  factor: number,
+  xOffset: number,
+  yOffset: number
+}
+
+export type LinearDecreasing = {
+  ceil: number,
+  floor: number,
+  length: number
+}
+
 export type Track = [
   id: number,
   info: {
@@ -17,19 +29,11 @@ export type Track = [
     decisionPeriod: number,
     maxDeciding: number,
     minApproval: {
-      reciprocal: {
-        factor: number,
-        xOffset: number,
-        yOffset: number
-      }
+      reciprocal: Reciprocal
     }
     minEnactmentPeriod: number,
     minSupport: {
-      linearDecreasing: {
-        ceil: number,
-        floor: number,
-        length: number
-      }
+      linearDecreasing: LinearDecreasing
     }
     name: Origins,
     preparePeriod: number

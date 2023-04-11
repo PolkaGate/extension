@@ -16,20 +16,20 @@ interface Props {
 
 }
 
+export const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | undefined): number | undefined => {
+  if (!decidingCounts) {
+    return undefined;
+  }
+
+  const itemKey = item.toLowerCase().replaceAll(' ', '_');
+  const filtered = decidingCounts.find(([key]) => key === itemKey);
+
+  return filtered?.[1];
+};
+
 export default function ReferendaMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
-  const findItemDecidingCount = useCallback((item: string): number | undefined => {
-    if (!decidingCounts) {
-      return undefined;
-    }
-
-    const itemKey = item.toLowerCase().replaceAll(' ', '_');
-    const filtered = decidingCounts.find(([key]) => key === itemKey);
-
-    return filtered?.[1];
-  }, [decidingCounts]);
-
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
-    const decidingCount = findItemDecidingCount(item);
+    const decidingCount = findItemDecidingCount(item, decidingCounts);
     const onSubMenuClick = useCallback(() => {
       setSelectedSubMenu(item);
       setMenuOpen((prevStatus) => !prevStatus);
