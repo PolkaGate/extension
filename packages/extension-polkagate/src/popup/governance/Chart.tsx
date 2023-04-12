@@ -28,7 +28,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: TrackInfo }) => {
 
     const CURVE_LENGTH = trackInfo.decisionPeriod / 600;
     const support = new Array<BN>(CURVE_LENGTH);
-    const last = CURVE_LENGTH - 1;
+    const last = CURVE_LENGTH;
     let current = new BN(0);
     const x = new Array<BN>(CURVE_LENGTH);
     const step = new BN(trackInfo.decisionPeriod).divn(CURVE_LENGTH);
@@ -110,11 +110,12 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: TrackInfo }) => {
       scales: {
         y: {
           beginAtZero: true,
-          max: findMaxValue([...support, ...linearDecreasingLineData])
+          max: 100//findMaxValue([...support, ...linearDecreasingLineData])
         }
       }
     };
 
+    console.log('chartOptions:',chartOptions)
     const chartInstance = new Chart(chartRef.current, {
       data: chartData,
       options: chartOptions,
