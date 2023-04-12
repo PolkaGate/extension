@@ -4,93 +4,128 @@
 import { Chart, registerables } from 'chart.js'; // Import registerables from Chart.js
 import React, { useEffect, useRef } from 'react';
 
-import { LinearDecreasing, Reciprocal } from '../../hooks/useTracks';
+import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
-const ThresholdCurves = ({ linearDecreasing, reciprocal }: { reciprocal: Reciprocal, linearDecreasing: LinearDecreasing }) => {
+import { TrackInfo } from '../../hooks/useTracks';
+
+const ThresholdCurves = ({ trackInfo }: { trackInfo: TrackInfo }) => {
+  const reciprocal = trackInfo.minSupport.reciprocal;
+  const linearDecreasing = trackInfo.minApproval.linearDecreasing;
+
   const chartRef = useRef(null);
 
-  console.log('linearDecreasing, reciprocal');
-  console.log(linearDecreasing, reciprocal);
   // Register the required chart elements
   Chart.register(...registerables);
 
   useEffect(() => {
-    const reciprocalData = {
-      factor:7,// reciprocal.factor / (10 * 60 * 60*100),
-      xOffset:1493,// reciprocal.xOffset / (10 * 60 * 60),
-      yOffset: -746// reciprocal.yOffset / (10 * 60 * 60)
-    };
-
     const linearDecreasingData = {
-      ceil: 2777,//linearDecreasing.ceil / (10 * 60 * 60),
-      floor: 13888,//linearDecreasing.floor / (10 * 60 * 60),
-      length: 277//linearDecreasing.length / (10 * 60 * 60*100)
+      ceil: linearDecreasing.ceil / (10 ** 7),
+      floor: linearDecreasing.floor / (10 ** 7),
+      length: linearDecreasing.length / (10 ** 7)
     };
 
-    console.log("reciprocalData:", reciprocalData)
-    console.log("linearDecreasingData:", linearDecreasingData);
+    const xAxis = trackInfo.decisionPeriod / (10 * 60);
 
-    // Generate data for the reciprocal line
-    const reciprocalLineData = [];
+    const CURVE_LENGTH = trackInfo.decisionPeriod / 600;
+    const support = new Array<BN>(CURVE_LENGTH);
+    const last = CURVE_LENGTH - 1;
+    let current = new BN(0);
+    const x = new Array<BN>(CURVE_LENGTH);
+    const step = new BN(trackInfo.decisionPeriod).divn(CURVE_LENGTH);
+    const magicMax = 50;//%
+    let firstSupport: BN;
 
-    for (let i = 0; i < reciprocal.factor; i++) {
-      const x = i + reciprocalData.xOffset;
-      const y = reciprocalData.yOffset + (reciprocalData.factor / x);
+    for (let i = 0; i < last; i++) {
+      const t = current.mul(BN_BILLION).div(new BN(trackInfo.decisionPeriod));
+      const div = t.add(new BN(reciprocal.xOffset));
 
-      reciprocalLineData.push(y);
+      if (div.isZero()) {
+        support[i] = BN_BILLION;
+      } else {
+        support[i] = bnMin(
+          BN_BILLION,
+          bnMax(
+            BN_ZERO,
+            new BN(reciprocal.factor)
+              .mul(BN_BILLION)
+              .div(div)
+              .sub(new BN(reciprocal.xOffset))
+          )
+        );
+      }
+
+      if (i === 0) {
+        firstSupport = support[i];
+      }
+
+      support[i] = support[i].muln(magicMax).div(firstSupport).toNumber();
+
+      x[i] = current.divn(600).toNumber();
+
+      current = current.add(step);
     }
 
     // Generate data for the linear decreasing line
     const linearDecreasingLineData = [];
-
-    for (let i = 0; i < linearDecreasingData.length; i++) {
+    for (let i = 0; i < xAxis; i++) {
       const x = i + 1;
-      const y = linearDecreasingData.ceil - (x * (linearDecreasingData.ceil - linearDecreasingData.floor)) / (linearDecreasingData.length - 1);
+      const y = linearDecreasingData.ceil - (x * (linearDecreasingData.ceil - linearDecreasingData.floor)) / (xAxis - 1);
 
       linearDecreasingLineData.push(y);
     }
 
     const chartData = {
-      labels: ['A', 'B', 'C', 'D', 'E'],
+      labels: x,//Array.from({ length: trackInfo.decisionPeriod / (10 * 60) }, (_, index) => index + 1),
       datasets: [
         {
-          label: 'Reciprocal Line',
-          data: reciprocalLineData,
-          borderColor: 'red',
-          borderWidth: 1,
-          fill: false
-        },
-        {
-          label: 'Linear Decreasing Line',
-          data: linearDecreasingLineData,
           borderColor: 'blue',
           borderWidth: 1,
-          fill: false
+          data: support,
+          fill: false,
+          label: 'Support',
+          pointRadius: 0,
+        },
+        {
+          borderColor: 'green',
+          borderWidth: 1,
+          data: linearDecreasingLineData,
+          fill: false,
+          label: 'Approval',
+          pointRadius: 0
         }
       ]
     };
 
     const chartOptions = {
+      plugins: {
+        legend: {
+          display: true,
+          align: 'center',
+          maxHeight: 50,
+          maxWidth: '2px',
+          position: 'bottom',
+        }
+      },
       responsive: true,
       scales: {
         y: {
           beginAtZero: true,
-          max: 100//findMaxValue([...reciprocalLineData, ...linearDecreasingLineData])
+          max: findMaxValue([...support, ...linearDecreasingLineData])
         }
       }
     };
 
     const chartInstance = new Chart(chartRef.current, {
-      type: 'line',
       data: chartData,
-      options: chartOptions
+      options: chartOptions,
+      type: 'line'
     });
 
     // Clean up the chart instance on component unmount
     return () => {
       chartInstance.destroy();
     };
-  }, [linearDecreasing.ceil, linearDecreasing.floor, linearDecreasing.length, reciprocal.factor, reciprocal.xOffset, reciprocal.yOffset]);
+  }, [trackInfo]);
 
   // Custom function to find the maximum value in an array
   const findMaxValue = (arr) => {
@@ -104,10 +139,10 @@ const ThresholdCurves = ({ linearDecreasing, reciprocal }: { reciprocal: Recipro
   };
 
   return (
-    <div>
+    <>
       <canvas ref={chartRef} id='chartCanvas' />
-    </div>
+    </>
   );
 };
 
-export default ThresholdCurves;
+export default React.memo(ThresholdCurves);
