@@ -21,23 +21,25 @@ export type LinearDecreasing = {
   length: number
 }
 
+export type TrackInfo = {
+  confirmPeriod: number,
+  decisionDeposit: BN,
+  decisionPeriod: number,
+  maxDeciding: number,
+  minApproval: {
+    linearDecreasing: LinearDecreasing
+  }
+  minEnactmentPeriod: number,
+  minSupport: {
+    reciprocal: Reciprocal
+  }
+  name: Origins,
+  preparePeriod: number
+}
+
 export type Track = [
   id: number,
-  info: {
-    confirmPeriod: number,
-    decisionDeposit: BN,
-    decisionPeriod: number,
-    maxDeciding: number,
-    minApproval: {
-      reciprocal: Reciprocal
-    }
-    minEnactmentPeriod: number,
-    minSupport: {
-      linearDecreasing: LinearDecreasing
-    }
-    name: Origins,
-    preparePeriod: number
-  }
+  info: TrackInfo
 ]
 
 export default function useTracks(address: string, api: ApiPromise | undefined): Track[] | undefined {
@@ -51,7 +53,7 @@ export default function useTracks(address: string, api: ApiPromise | undefined):
     if (tracks && chainName) {
       chrome.storage.local.set({ referendaTracks: { ...savedTracks, [chainName]: tracks } });
     }
-  }, [tracks, chainName]);
+  }, [tracks, chainName, savedTracks]);
 
   useEffect(() => {
     if (chainName && !tracks) {
