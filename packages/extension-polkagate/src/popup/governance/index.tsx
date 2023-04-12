@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Paper, SxProps, Typography, useTheme } from '@mui/material';
+import { Breadcrumbs, Button, Container, Divider, Grid, imageListClasses, LinearProgress, Link, SxProps, Typography, useTheme } from '@mui/material';
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -14,17 +14,13 @@ import { useParams } from 'react-router';
 import { DeriveTreasuryProposals } from '@polkadot/api-derive/types';
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
-import { logoBlack, logoWhite } from '../../assets/logos';
 import { ActionContext, FormatPrice, Identity, InputFilter, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTracks, useTranslation } from '../../hooks';
-import { Track } from '../../hooks/useTracks';
-import { ChainSwitch } from '../../partials';
 import { remainingTime } from '../../util/utils';
-import { kusama } from './tracks/kusama';
-import AddressDropdown from './AddressDropdown';
-import ThresholdCurves from './Chart';
-import { getLatestReferendums, getReferendumStatistics, getReferendumVotes, getTrackReferendums, Statistics } from './helpers';
-import ReferendaMenu, { findItemDecidingCount } from './ReferendaMenu';
+import { Header } from './Header';
+import { getLatestReferendums, getReferendumStatistics, getTrackReferendums, Statistics } from './helpers';
+import ReferendaMenu from './ReferendaMenu';
+import { TrackStats } from './TrackStats';
 
 const STATUS_COLOR = {
   Canceled: '#ff4f4f',
@@ -39,6 +35,8 @@ const STATUS_COLOR = {
 
 type TopMenu = 'Referenda' | 'Fellowship';
 const EMPTY_U8A_32 = new Uint8Array(32);
+
+export const MAX_WIDTH = '1280px';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
@@ -75,11 +73,26 @@ export default function Governance(): React.ReactElement {
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [approved, setApproved] = useState<BN | undefined>();
-  const [referendaToList, setReferenda] = useState<string[]>();
+  const [referendaToList, setReferenda] = useState<string[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
 
   const currentTrack = useMemo(() => tracks && tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
+
+  useEffect(() => {
+    /** to change app width to full screen */
+    const root = document.getElementById('root');
+
+    if (root) {
+      root.style.width = '100%';
+    }
+
+    return () => {
+      if (root) {
+        root.style.width = '';
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!api || !api.derive.treasury) {
@@ -176,10 +189,10 @@ export default function Governance(): React.ReactElement {
     fetchData();
   }, [api]);
 
-  useEffect(() => {
-    console.log('*******************************************************');
-    chainName && getReferendumVotes(chainName, 124);
-  }, [chainName]);
+  // useEffect(() => {
+  //   console.log('*******************************************************');
+  //   chainName && getReferendumVotes(chainName, 124);
+  // }, [chainName]);
 
   useEffect(() => {
     if (!api) {
@@ -207,15 +220,10 @@ export default function Governance(): React.ReactElement {
       });
     }).catch(console.error);
 
-    const trackId_mediumSpender = 33;
-
-    api.query.referenda.decidingCount(trackId_mediumSpender).then((res) => {
-      console.log('total referendum being decided in trackId_mediumSpender:', res.toString());
-    }).catch(console.error);
-
-    api.query.referenda.trackQueue(trackId_mediumSpender).then((res) => {
-      console.log('trackQueue for trackId_mediumSpender:', res.toString());
-    }).catch(console.error);
+    // const trackId_mediumSpender = 33;
+    // api.query.referenda.trackQueue(trackId_mediumSpender).then((res) => {
+    //   console.log('trackQueue for trackId_mediumSpender:', res.toString());
+    // }).catch(console.error);
   }, [api]);
 
   useEffect(() => {
@@ -253,6 +261,11 @@ export default function Governance(): React.ReactElement {
         setIsLoading(false);
 
         if (res === null) {
+          if (pageTrackRef.current.page === 1) { // there is no referendum for this track
+            setReferenda(null);
+
+            return;
+          }
           pageTrackRef.current.listFinished = true;
 
           return;
@@ -263,22 +276,8 @@ export default function Governance(): React.ReactElement {
         setReferenda([...concated]);
       }).catch(console.error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, getMore, selectedSubMenu, tracks]);
-
-  useEffect(() => {
-    /** to change app width to full screen */
-    const root = document.getElementById('root');
-
-    if (root) {
-      root.style.width = '100%';
-    }
-
-    return () => {
-      if (root) {
-        root.style.width = '';
-      }
-    };
-  }, []);
 
   const onTopMenuMenuClick = useCallback((item: TopMenu) => {
     setSelectedTopMenu(item);
@@ -298,114 +297,61 @@ export default function Governance(): React.ReactElement {
     setGetMore(pageTrackRef.current.page);
   }, [pageTrackRef]);
 
-  const blockToX = useCallback((block: number | BN | undefined) => {
-    if (!block) {
-      return undefined;
-    }
-
-    const b = Number(block);
-    const dayAsBlock = 24 * 60 * 10;
-    const hoursAsBlock = 60 * 10;
-    const minsAsBlock = 10;
-    const mayBeDays = b / dayAsBlock;
-
-    if (mayBeDays >= 1) {
-      return `${mayBeDays} day${mayBeDays > 1 ? 's' : ''}`;
-    }
-
-    const mayBeHours = b / hoursAsBlock;
-
-    if (mayBeHours >= 1) {
-      return `${mayBeHours} hour${mayBeHours > 1 ? 's' : ''}`;
-    }
-
-    const mayBeMins = b / minsAsBlock;
-
-    if (mayBeMins >= 1) {
-      return `${mayBeMins} min${mayBeMins > 1 ? 's' : ''}`;
-    }
-
-    console.log('mayBeHours', mayBeMins)
-  }, []);
-
-  const Header = () => (
-    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ px: '2%', bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400 }}>
-      <Grid alignItems='center' container item justifyContent='flex-start' xs={6} sx={{ fontFamily: 'Eras' }}>
-        <Box
-          component='img'
-          src={theme.palette.mode === 'light' ? logoBlack as string : logoWhite as string}
-          sx={{ height: 50, mr: '1%', width: 50 }}
-        />
-        Polkagate
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' spacing={1} sx={{ color: 'text.primary' }} xs>
-        <Grid item justifyContent='flex-end' sx={{ color: 'text.primary' }}>
-          <AddressDropdown
-            api={api}
-            chainGenesis={chain?.genesisHash}
-            height='40px'
-            onSelect={onAccountChange}
-            selectedAddress={address}
-          />
-        </Grid>
-        <Grid item justifyContent='flex-end'>
-          <ChainSwitch address={address} />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-
   const Toolbar = () => (
-    <Grid alignItems='center' container id='menu' justifyContent='space-between' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, pl: '2%' }}>
-      <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-        <TopMenu item={'Referenda'} />
-        <TopMenu item={'Fellowship'} />
-      </Grid>
-      <Grid container item justifyContent='flex-end' md={5} sx={{ pr: '2%' }}>
-        <Button
-          // disabled={disabled}
-          // onClick={_onClick}
-          sx={{
-            backgroundColor: 'background.paper',
-            borderRadius: '5px',
-            color: 'primary.main',
-            fontSize: '18px',
-            fontWeight: 500,
-            height: '36px',
-            textTransform: 'none',
-            width: '208px',
-            '&:hover': {
-              backgroundColor: '#fff',
-              color: '#3c52b2'
-            }
-          }}
-          variant='contained'
-        >
-          Multirole Delegate
-        </Button>
-        <Button
-          // disabled={disabled}
-          // onClick={_onClick}
-          sx={{
-            backgroundColor: 'background.paper',
-            borderRadius: '5px',
-            color: 'primary.main',
-            fontSize: '18px',
-            fontWeight: 500,
-            height: '36px',
-            textTransform: 'none',
-            ml: '15px',
-            width: '208px',
-            '&:hover': {
-              backgroundColor: '#fff',
-              color: '#3c52b2'
-            }
-          }}
-          variant='contained'
-        >
-          Submit Referendum
-        </Button>
-      </Grid>
+    <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
+      <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
+        <Grid container alignItems='center' justifyContent='space-between'>
+          <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
+            <TopMenu item={'Referenda'} />
+            <TopMenu item={'Fellowship'} />
+          </Grid>
+          <Grid container item justifyContent='flex-end' md={5}>
+            <Button
+              // disabled={disabled}
+              // onClick={_onClick}
+              sx={{
+                backgroundColor: 'background.paper',
+                borderRadius: '5px',
+                color: 'primary.main',
+                fontSize: '18px',
+                fontWeight: 500,
+                height: '36px',
+                textTransform: 'none',
+                width: '190px',
+                '&:hover': {
+                  backgroundColor: '#fff',
+                  color: '#3c52b2'
+                }
+              }}
+              variant='contained'
+            >
+              Multirole Delegate
+            </Button>
+            <Button
+              // disabled={disabled}
+              // onClick={_onClick}
+              sx={{
+                backgroundColor: 'background.paper',
+                borderRadius: '5px',
+                color: 'primary.main',
+                fontSize: '18px',
+                fontWeight: 500,
+                height: '36px',
+                textTransform: 'none',
+                ml: '15px',
+                width: '190px',
+                '&:hover': {
+                  backgroundColor: '#fff',
+                  color: '#3c52b2'
+                }
+              }}
+              variant='contained'
+            >
+              Submit Referendum
+            </Button>
+          </Grid>
+        </Grid>
+      </Container>
     </Grid>
   );
 
@@ -502,7 +448,7 @@ export default function Governance(): React.ReactElement {
           title={t('Approved')}
           tokenPrice={price?.amount}
         />
-        <Grid container item xs={3}>
+        <Grid container item xs={3.5}>
           <Grid item md={12} sx={{ height: '25px' }}>
             <Typography fontWeight={400}>
               {t('Spend Period')}
@@ -531,76 +477,6 @@ export default function Governance(): React.ReactElement {
     </Grid>
   );
 
-  const TrackStats = ({ track }: { track: Track | undefined }) => (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '260px', pb: '20px' }}>
-      <Grid container item sx={{ mx: '3%', pt: '15px' }} md={7}>
-        <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
-          <Grid item xs={12}>
-            <Typography fontSize={32} fontWeight={500}>
-              {t('{{trackName}}', { replace: { trackName: track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-              {kusama.referenda.find(({ name }) => name === track?.[1]?.name)?.text}
-            </Typography>
-          </Grid>
-        </Grid>
-        {/* <Divider orientation='vertical' /> */}
-        <Grid container item justifyContent='space-between' sx={{ mr: '3%', mt:'30px' }}>
-          <LabelValue
-            label={t('Remaining Slots')}
-            value={<ShowValue value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding}`} />}
-          />
-          <LabelValue
-            label={t('Prepare Period')}
-            value={blockToX(track?.[1]?.preparePeriod)}
-          />
-          <LabelValue
-            label={t('Decision Period')}
-            value={blockToX(track?.[1]?.decisionPeriod)}
-          />
-          <LabelValue
-            label={t('Confirm Period')}
-            value={blockToX(track?.[1]?.confirmPeriod)}
-          />
-          <LabelValue
-            label={t('Min Enactment Period')}
-            value={blockToX(track?.[1]?.minEnactmentPeriod)}
-          />
-          <LabelValue
-            label={t('Decision deposit')}
-            value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
-          />
-        </Grid>
-      </Grid>
-      <Grid container item md alignItems='center'>
-        <Paper sx={{mt:'30px', p:'10px'}}>
-          <Typography align='center' fontSize={18} fontWeight={500}>
-            {t('Threshold Curves')}
-          </Typography>
-          {track &&
-            <ThresholdCurves trackInfo={track[1]} />
-          }
-        </Paper>
-      </Grid>
-      {/* <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} /> */}
-    </Grid>
-  );
-
-  const LabelValue = ({ label, value }: { label: string, value: any }) => (
-    <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={5} my='2px'>
-      <Grid item sx={{ height: '25px' }}>
-        <Typography fontSize={16} fontWeight={400}>
-          {label}
-        </Typography>
-      </Grid>
-      <Grid item sx={{ fontSize: '18px', fontWeight: 500 }}>
-        <ShowValue value={value} />
-      </Grid>
-    </Grid>
-  );
-
   const SearchBar = () => (
     <Grid alignItems='center' container pt='15px'>
       <Grid item justifyContent='flex-start' xs>
@@ -624,7 +500,7 @@ export default function Governance(): React.ReactElement {
   );
 
   const Bread = () => (
-    <Grid container sx={{ py: '10px', px: '2%' }}>
+    <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
         <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
           {selectedTopMenu || 'Referenda'}
@@ -648,17 +524,17 @@ export default function Governance(): React.ReactElement {
 
   return (
     <>
-      <Header />
+      <Header address={address} onAccountChange={onAccountChange} />
       <Toolbar />
       {menuOpen && selectedTopMenu === 'Referenda' &&
         <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
-      <Container style={{ maxWidth: '1280px' }}>
+      <Container disableGutters sx={{ maxWidth: 'inherit' }}>
         <Bread />
-        <Container disableGutters maxWidth={false} sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', px: '2%', top: 160 }}>
+        <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           {selectedSubMenu === 'All'
             ? <AllReferendaStats />
-            : <TrackStats track={currentTrack} />
+            : <TrackStats address={address} track={currentTrack} decidingCounts={decidingCounts} selectedSubMenu={selectedSubMenu} />
           }
           <SearchBar />
           {referendaToList
@@ -666,8 +542,8 @@ export default function Governance(): React.ReactElement {
               {referendaToList.map((referendum, index) => {
                 if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                   return (
-                    <Grid item key={index} sx={{ bgcolor: 'background.paper', borderRadius: '10px', cursor: 'pointer', height: '137px', pt: '30px', pb: '20px', my: '13px', px: '20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
-                      <Grid item sx={{ pb: '15px', fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Grid item key={index} sx={{ bgcolor: 'background.paper', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+                      <Grid item sx={{ fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
                       </Grid>
                       <Grid alignItems='center' container item justifyContent='space-between'>
@@ -696,7 +572,7 @@ export default function Governance(): React.ReactElement {
                           <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
                           {referendum.origin &&
                             <>
-                              <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '6.5px 14.5px' }}>
+                              <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '0.5px 14.5px' }}>
                                 {referendum.origin.replace(/([A-Z])/g, ' $1').trim()}
                               </Grid>
                               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
@@ -706,7 +582,7 @@ export default function Governance(): React.ReactElement {
                             {referendum.method}
                           </Grid>
                           <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-                          <ClockIcon sx={{ fontSize: 28, ml: '10px' }} />
+                          <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
                           <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
                             {new Date(referendum.created_at).toDateString()}
                           </Grid>
@@ -735,9 +611,15 @@ export default function Governance(): React.ReactElement {
                 </>
               }
             </>
-            : <Grid container justifyContent='center' pt='10%'>
-              <CubeGrid col={3} color={theme.palette.background.paper} row={3} size={200} />
-            </Grid>
+            : referendaToList === null
+              ? <Grid container justifyContent='center' pt='10%'>
+                <Typography fontSize={20} color={'text.disabled'} fontWeight={500}>
+                  {t('No referenda in this track to display')}
+                </Typography>
+              </Grid>
+              : <Grid container justifyContent='center' pt='10%'>
+                <CubeGrid col={3} color={theme.palette.background.paper} row={3} size={200} />
+              </Grid>
           }
 
         </Container>
