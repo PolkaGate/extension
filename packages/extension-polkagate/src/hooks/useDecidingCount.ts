@@ -7,7 +7,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { Track } from './useTracks';
 
-type DecidingCount = [string, number];
+export type DecidingCount = [string, number];
 
 export default function useDecidingCount(api: ApiPromise | undefined, tracks: Track[] | undefined): DecidingCount[] | undefined {
   const [counts, setCounts] = useState<DecidingCount[] | undefined>(undefined);
