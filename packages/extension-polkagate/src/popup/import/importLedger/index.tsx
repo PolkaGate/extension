@@ -146,7 +146,7 @@ export default function ImportLedger (): React.ReactElement {
         />
       </div>
       <SelectChain
-        address={address || 'dummy address just to make select enable'}
+        address={address || 'dummy'} //dummy address just to make select enable
         defaultValue={newChain?.genesisHash || networkOps.current[0].text}
         icon={getLogo(newChain ?? undefined)}
         label={t<string>('Select the chain')}

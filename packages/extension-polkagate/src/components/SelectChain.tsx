@@ -29,7 +29,7 @@ interface Props {
 }
 
 function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
-  const currentChainName = useChainName(address);
+  const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
