@@ -11,6 +11,7 @@ import { createWsEndpoints } from '@polkadot/apps-config';
 import { LinkOption } from '@polkadot/apps-config/settings/types';
 
 import { useGenesisHashOptions, useTranslation } from './';
+import { sanitizeChainName } from '../util/utils';
 
 interface Option {
   text: string;
@@ -30,9 +31,11 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
   }, [t]);
 
   const endpoints: Option[] | undefined = useMemo(() => {
-    if (!genesisHash) return [];
+    if (!genesisHash) {
+      return [];
+    };
     const option = genesisOptions?.find((o) => o.value === genesisHash);
-    const chainName = option?.text?.replace(' Relay Chain', '')?.replace(' Network', '');
+    const chainName = sanitizeChainName(option?.text);
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 

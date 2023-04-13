@@ -22,12 +22,12 @@ export default function usePrice(address: string, currency = 'usd'): Price | und
     }
 
     const parsedPrices = JSON.parse(localSavedPrices) as Prices;
-    const priceInUsd = parsedPrices?.prices[chainName]?.usd;
+    const priceInUsd = parsedPrices?.prices[chainName]?.[currency];
 
     if (priceInUsd !== undefined && parsedPrices?.date) {
       setPrice({ amount: priceInUsd, chainName, date: parsedPrices.date });
     }
-  }, [address, chainName, localSavedPrices]);
+  }, [address, chainName, currency, localSavedPrices]);
 
   return price;
 }

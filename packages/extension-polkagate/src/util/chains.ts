@@ -5,8 +5,10 @@ import type { MetadataDefBase } from '@polkadot/extension-inject/types';
 
 import { selectableNetworks } from '@polkadot/networks';
 
+import { DISABLED_NETWORKS } from './constants';
+
 const hashes: MetadataDefBase[] = selectableNetworks
-  .filter(({ genesisHash }) => !!genesisHash.length)
+  .filter(({ displayName, genesisHash }) => !!genesisHash.length && !DISABLED_NETWORKS.includes(displayName))
   .map((network) => ({
     chain: network.displayName,
     genesisHash: network.genesisHash[0],

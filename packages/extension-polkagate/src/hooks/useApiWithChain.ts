@@ -7,11 +7,13 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { Chain } from '@polkadot/extension-chains/types';
 
+import { sanitizeChainName } from '../util/utils';
+
 export default function useApiWithChain(chain: Chain | undefined): ApiPromise | undefined {
   const [api, setApi] = useState<ApiPromise | undefined>();
 
   const endpoint = useMemo(() => {
-    const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+    const chainName = sanitizeChainName(chain?.name);
     const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
