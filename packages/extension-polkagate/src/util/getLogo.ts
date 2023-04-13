@@ -4,6 +4,7 @@
 import { chainLogos, emptyLogos, externalLogos, namedLogos, nodeLogos, specLogos } from '@polkadot/apps-config';
 
 import { Chain } from '../../../extension-chains/src/types';
+import { sanitizeChainName } from './utils';
 
 function sanitize(value?: string): string {
   return value?.toLowerCase().replace('-', ' ') || '';
@@ -15,7 +16,7 @@ export default function getLogo(info: string | undefined | Chain): string {
   // const specName= api.runtimeVersion.specName.toString();
   // getSystemIcon(systemName, specName)
 
-  const name = (info as Chain)?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '').toLowerCase() ?? (info as string)?.toLowerCase();
+  const name = sanitizeChainName((info as Chain)?.name)?.toLowerCase() ?? (info as string)?.toLowerCase();
   const found = name ? (namedLogos[name] || chainLogos[sanitize(name)] || nodeLogos[sanitize(name)] || specLogos[sanitize(name)] || externalLogos[sanitize(name)]) : undefined;
 
   // return (found || emptyLogos.empty) as string;

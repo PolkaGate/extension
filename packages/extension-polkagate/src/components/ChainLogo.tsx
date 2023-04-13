@@ -7,6 +7,7 @@ import React from 'react';
 import allChains from '../util/chains';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
+import { sanitizeChainName } from '../util/utils';
 
 interface Props {
   genesisHash: string | undefined;
@@ -16,7 +17,8 @@ interface Props {
 
 function ChainLogo({ genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const chainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain?.replace(' Network', '').replace(' Relay Chain', '')?.replace(' chain', '');
+  const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
+  const chainName = sanitizeChainName(foundChainName);
   const logo = getLogo(chainName);
 
   return (

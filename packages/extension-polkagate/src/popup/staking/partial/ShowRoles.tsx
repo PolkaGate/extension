@@ -14,6 +14,7 @@ import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
 import { MyPoolInfo } from '../../../util/types';
+import { sanitizeChainName } from '../../../util/utils';
 
 interface Props {
   api?: ApiPromise
@@ -26,7 +27,7 @@ interface Props {
 
 export default function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+  const chainName = sanitizeChainName(chain?.name);
 
   const accountsToShow = useMemo(() => {
     if (!pool) {

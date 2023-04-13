@@ -9,6 +9,7 @@ import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/c
 import React, { useCallback, useEffect, useState } from 'react';
 
 import getLogo from '../util/getLogo';
+import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
 interface DropdownOption {
@@ -69,7 +70,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
     toggleMenu();
   }, [onChange, toggleMenu]);
 
-  const chainName = useCallback((text: string) => text.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '').toLowerCase(), []);
+  const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
 
   return (
     <FormControl

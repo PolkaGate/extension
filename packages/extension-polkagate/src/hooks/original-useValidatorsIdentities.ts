@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
+import { sanitizeChainName } from '../util/utils';
 import { useChain, useEndpoint2 } from '.';
 
 /**
@@ -17,7 +18,7 @@ import { useChain, useEndpoint2 } from '.';
 export default function useValidatorsIdentities(address: string, allValidatorsIds: AccountId[] | null | undefined): DeriveAccountInfo[] | null | undefined {
   const endpoint = useEndpoint2(address);
   const chain = useChain(address);
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+  const chainName = sanitizeChainName(chain?.name);
   const [validatorsIdentities, setValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
   const [newValidatorsIdentities, setNewValidatorsIdentities] = useState<DeriveAccountInfo[] | undefined>();
 

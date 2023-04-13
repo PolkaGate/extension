@@ -16,6 +16,7 @@ import { useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
+import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
@@ -47,7 +48,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
 
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[chain.name.replace(' Relay Chain', '').replace(' Network', '')] as string[];
+  const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain.name) as string] as string[];
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
     text: type,

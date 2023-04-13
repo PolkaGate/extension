@@ -3,10 +3,11 @@
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
+import { sanitizeChainName } from '../util/utils';
 import { useChain } from './';
 
 export default function useChainName(address: AccountId | string | undefined): string | undefined {
   const chain = useChain(address);
 
-  return chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '');
+  return sanitizeChainName(chain?.name);
 }
