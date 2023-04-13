@@ -13,6 +13,7 @@ import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
+import Explorer from '../popup/history/Explorer';
 
 interface Props {
   showConfirmation: boolean;
@@ -29,9 +30,8 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
-  const network = txInfo.chain.name.replace(' Relay Chain', '');
+  const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const historyLink = txInfo?.from.address && getSubstrateAddress(txInfo.from.address) ? `/history/${getSubstrateAddress(txInfo.from.address)}` : '/';
-  const subscanLink = (txHash: string) => 'https://' + network + '.subscan.io/extrinsic/' + String(txHash);
   const fee = txInfo.api.createType('Balance', txInfo.fee);
 
   const goToHistory = useCallback(() => {
@@ -107,14 +107,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
         }
         {txInfo?.txHash &&
           <Grid container justifyContent='center' pt='5px'>
-            <Link
-              href={`${subscanLink(txInfo?.txHash)}`}
-              rel='noreferrer'
-              target='_blank'
-              underline='none'
-            >
-              <Box alt={'subscan'} component='img' height='30px' mt='5px' src={subscan} width='30px' />
-            </Link>
+            <Explorer chainName={chainName} txHash={txInfo?.txHash} />
           </Grid>
         }
         <TwoButtons
