@@ -8,5 +8,5 @@ import { useChain } from './';
 export default function useChainName(address: AccountId | string | undefined): string | undefined {
   const chain = useChain(address);
 
-  return chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+  return chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '');
 }

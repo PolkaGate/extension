@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
 import { useAccount, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
+import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -218,7 +218,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
               src={getLogo(currentChainName)}
-              sx={{ borderRadius: '50%', filter: (currentChainName === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
+              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }

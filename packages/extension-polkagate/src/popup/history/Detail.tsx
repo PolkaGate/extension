@@ -7,6 +7,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import { AccountContext, PButton, Popup } from '../../components';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
+import { CHAINS_ON_POLKAHOLIC } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { NameAddress, TransactionDetail } from '../../util/types';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../util/utils';
@@ -29,6 +30,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
   const { accounts } = useContext(AccountContext);
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
   const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(info?.txHash);
+  const polkaholicLink = () => 'https://' + chainName + '.polkaholic.io/tx/' + String(info?.txHash);
 
   const _onBack = useCallback(() => {
     setShowDetail(false);
@@ -102,9 +104,14 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         <Item item={`${t('Block')}: #${info?.block}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.txHash, 6)}`} noDivider toCopy={info?.txHash} />
         <Grid item sx={{ mt: '12px' }}>
-          <Link href={`${subscanLink()}`} rel='noreferrer' target='_blank' underline='none'>
-            <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
-          </Link>
+          {CHAINS_ON_POLKAHOLIC.includes(chainName)
+            ? <Link href={`${polkaholicLink()}`} rel='noreferrer' target='_blank' underline='none'>
+              <Grid alt={'polkaholic'} component='img' src={getLogo('polkaholic')} sx={{ height: 40, width: 40 }} />
+            </Link>
+            : <Link href={`${subscanLink()}`} rel='noreferrer' target='_blank' underline='none'>
+              <Grid alt={'subscan'} component='img' src={getLogo('subscan')} sx={{ height: 40, width: 40 }} />
+            </Link>
+          }
         </Grid>
       </Grid>
       <PButton

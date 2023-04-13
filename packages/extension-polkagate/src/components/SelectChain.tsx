@@ -3,8 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Grid, SxProps, Theme } from '@mui/material';
+import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
+
+import { useChainName } from '@polkadot/extension-polkagate/src/hooks';
+import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import Select from './Select';
@@ -26,6 +29,9 @@ interface Props {
 }
 
 function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
+  const currentChainName = useChainName(address);
+  const theme = useTheme();
+
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
       onChange(newGenesisHash);
@@ -79,7 +85,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
       </Grid>
       <Grid item pl={1} xs={1.5}>
         {icon
-          ? <Avatar src={icon} sx={{ borderRadius: '50%', height: 31, width: 31 }} variant='square' />
+          ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
           : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
           </Grid>
         }
