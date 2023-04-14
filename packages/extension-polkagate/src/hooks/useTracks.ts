@@ -1,53 +1,37 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
 
-import { Origins } from '../popup/governance/helpers';
 import { useApi, useChainName } from '.';
 
-export type Reciprocal = {
-  factor: number,
-  xOffset: number,
-  yOffset: number
-}
-
-export type LinearDecreasing = {
-  ceil: number,
-  floor: number,
-  length: number
-}
-
-export type TrackInfo = {
-  confirmPeriod: number,
-  decisionDeposit: BN,
-  decisionPeriod: number,
-  maxDeciding: number,
-  minApproval: {
-    linearDecreasing: LinearDecreasing
-  }
-  minEnactmentPeriod: number,
-  minSupport: {
-    reciprocal: Reciprocal
-  }
-  name: Origins,
-  preparePeriod: number
-}
-
-export type Track = [
+export type Tracks = {
   id: number,
-  info: TrackInfo
-]
+  info: PalletReferendaTrackInfo
+}
 
-export default function useTracks(address: string, api: ApiPromise | undefined): Track[] | undefined {
+export default function useTracks(address: string, api: ApiPromise | undefined): Tracks[] | undefined {
   const _api = useApi(address, api);
   const chainName = useChainName(address);
   const [savedTracks, setSavedTracks] = useState<string[]>([]);
 
-  const tracks = useMemo(() => _api?.consts?.referenda?.tracks?.toJSON?.() as Track[], [_api]);
+  const tracks = useMemo(() => {
+    return _api?.consts?.referenda?.tracks as unknown as Tracks[];
+
+    // if (tracks) {
+    //   const jTracks = tracks.toJSON() as Track[];
+    //   const trackInfo = tracks.map((t, index) => {
+    //     jTracks[index][1].minApproval[isLinearDecreasing] = t.info.minApproval.isLinearDecreasing
+    //     return jTracks[index]
+    //   }
+    //   )
+    // }
+    // return undefined;
+  }, [_api]);
 
   useEffect(() => {
     if (tracks && chainName) {
@@ -63,5 +47,6 @@ export default function useTracks(address: string, api: ApiPromise | undefined):
     }
   }, [chainName, tracks]);
 
-  return tracks || savedTracks;
+  console.log('tracks:', tracks)
+  return tracks ;//|| savedTracks;
 }

@@ -20,7 +20,7 @@ import { remainingTime } from '../../util/utils';
 import { Header } from './Header';
 import { getLatestReferendums, getReferendumStatistics, getTrackReferendums, Statistics } from './helpers';
 import ReferendaMenu from './ReferendaMenu';
-import { TrackStats } from './TrackStats';
+import { LabelValue, TrackStats } from './TrackStats';
 
 const STATUS_COLOR = {
   Canceled: '#ff4f4f',
@@ -77,7 +77,7 @@ export default function Governance(): React.ReactElement {
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
 
-  const currentTrack = useMemo(() => tracks && tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
+  const currentTrack = useMemo(() => tracks && tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
 
   useEffect(() => {
     /** to change app width to full screen */
@@ -242,7 +242,7 @@ export default function Governance(): React.ReactElement {
 
   useEffect(() => {
     if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks?.length) {
-      const trackId = tracks.find((t) => t[1].name === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0] as number;
+      const trackId = tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0] as number;
       let list = referendaToList;
 
       if (pageTrackRef.current.trackId !== trackId) {
@@ -393,42 +393,25 @@ export default function Governance(): React.ReactElement {
   );
 
   const AllReferendaStats = () => (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '165px', pt: '15px', pb: '20px' }}>
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
       <Grid container item sx={{ ml: '3%' }} xs={2.5}>
         <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
           <Typography fontSize={20} fontWeight={500}>
             {t('Referenda stats')}
           </Typography>
         </Grid>
-        <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
-          <Grid item sx={{ height: '25px' }}>
-            <Typography fontSize={18} fontWeight={400}>
-              {t('Confirming')}
-            </Typography>
-          </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-            <ShowValue value={referendumStats?.confirm_total} />              </Grid>
-        </Grid>
-        <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
-          <Grid item sx={{ height: '25px' }}>
-            <Typography fontSize={18} fontWeight={400}>
-              {t('Deciding')}
-            </Typography>
-          </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-            <ShowValue value={referendumStats?.voting_total} />
-          </Grid>
-        </Grid>
-        <Grid alignItems='center' container height='26px' item justifyContent='space-between' md={12} my='2px'>
-          <Grid item sx={{ height: '25px' }}>
-            <Typography fontSize={18} fontWeight={400}>
-              {t('Participation')}
-            </Typography>
-          </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-            <ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />
-          </Grid>
-        </Grid>
+        <LabelValue
+          label={t('Confirming')}
+          value={referendumStats?.confirm_total}
+        />
+        <LabelValue
+          label={t('Deciding')}
+          value={referendumStats?.voting_total}
+        />
+        <LabelValue
+          label={t('Participation')}
+          value={<ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />}
+        />
         <Divider orientation='vertical' />
       </Grid>
       <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />

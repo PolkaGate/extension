@@ -27,7 +27,7 @@ export default function useDecidingCount(api: ApiPromise | undefined, tracks: Tr
             allCount += count.toNumber();
           }
 
-          return [trackIds[index][1], count.toNumber() as number];
+          return [String(trackIds[index][1]), count.toNumber() as number];
         });
 
         decidingCounts.push(['all', allCount]);

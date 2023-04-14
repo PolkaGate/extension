@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Paper, Typography } from '@mui/material';
+import { Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
-import { Track } from '../../hooks/useTracks';
+import { Tracks } from '../../hooks/useTracks';
 import { kusama } from './tracks/kusama';
 import ThresholdCurves from './Chart';
 import { findItemDecidingCount } from './ReferendaMenu';
@@ -17,28 +17,28 @@ import { findItemDecidingCount } from './ReferendaMenu';
 interface Props {
   address: string;
   selectedSubMenu: string;
-  track: Track | undefined;
+  track: Tracks | undefined;
   decidingCounts: DecidingCount[] | undefined;
 }
+
+export const LabelValue = ({ label, value }: { label: string, value: any }) => (
+  <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={12} my='2px' sx={{ borderBottom: '0.05px solid #4B4B4B' }}>
+    <Grid item sx={{ height: '25px' }}>
+      <Typography fontSize={16} fontWeight={400}>
+        {label}
+      </Typography>
+    </Grid>
+    <Grid item sx={{ fontSize: '18px', fontWeight: 500 }}>
+      <ShowValue value={value} />
+    </Grid>
+  </Grid>
+);
 
 export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-
-  const LabelValue = ({ label, value }: { label: string, value: any }) => (
-    <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={12} my='2px'>
-      <Grid item sx={{ height: '25px' }}>
-        <Typography fontSize={16} fontWeight={400}>
-          {label}
-        </Typography>
-      </Grid>
-      <Grid item sx={{ fontSize: '18px', fontWeight: 500 }}>
-        <ShowValue value={value} />
-      </Grid>
-    </Grid>
-  );
 
   const blockToX = useCallback((block: number | BN | undefined) => {
     if (!block) {
@@ -89,7 +89,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: 
           <Grid container item xs={5.5}>
             <LabelValue
               label={t('Remaining Slots')}
-              value={<ShowValue value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding}`} />}
+              value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding}`}
             />
             <LabelValue
               label={t('Prepare Period')}
@@ -117,15 +117,13 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: 
           </Grid>
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item md sx={{ ml: '4%' }}>
-        <Paper sx={{ mt: '40px', p: '10px' }}>
-          <Typography align='center' fontSize={18} fontWeight={500}>
-            {t('Threshold Curves')}
-          </Typography>
-          {track &&
-            <ThresholdCurves trackInfo={track[1]} />
-          }
-        </Paper>
+      <Grid alignItems='center' container item md sx={{ ml: '4%', t: '10px', p: '10px' }}>
+        <Typography align='left' fontSize={18} fontWeight={400}>
+          {t('Threshold Curves')}
+        </Typography>
+        {track &&
+          <ThresholdCurves trackInfo={track?.[1]} />
+        }
       </Grid>
     </Grid>
   );
