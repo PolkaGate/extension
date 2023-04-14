@@ -117,7 +117,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: 
           </Grid>
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item md sx={{ ml: '4%', t: '10px', p: '10px' }}>
+      <Grid alignItems='center' container item md sx={{ ml: '2%', p: '10px' }}>
         <Typography align='left' fontSize={18} fontWeight={400}>
           {t('Threshold Curves')}
         </Typography>
