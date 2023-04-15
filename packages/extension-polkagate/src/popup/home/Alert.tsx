@@ -29,7 +29,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
 
   return (
     <Popup show={show}>
-      <Header onClose={goHome} text={t<string>('Attention!')} />
+      <Header text={t<string>('Attention!')} />
       <Grid container justifyContent='center' alignItems='center' height='120px'>
         <Warning fontWeight={400} isBelowInput isDanger theme={theme}>
           <Grid item xs={12} sx={{ pb: '20px', fontSize: 19 }}>
