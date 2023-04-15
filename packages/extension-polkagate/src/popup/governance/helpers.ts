@@ -153,3 +153,62 @@ export async function getTrackReferendums(chainName: string, page = 1, track: nu
       return null;
     });
 }
+
+export async function getReferendum(chainName: string, postId: number): Promise<string[] | null> {
+  console.log(`Getting referendum #${postId} info ...`);
+
+  const requestOptions = {
+    headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return fetch(`https://api.polkassembly.io/api/v1/posts/on-chain-post?proposalType=referendums_v2&postId=${postId}`, requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        console.log(`Referendum #${postId}:`, data);
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return data;
+      } else {
+        console.log('Fetched message:', data);
+
+        return null;
+      }
+    })
+    .catch((error) => {
+      console.log(`Error getting referendum #${postId}:`, error.message);
+
+      return null;
+    });
+}
+
+export async function getReferendumFromSubscan(chainName: string, postId: number): Promise<Statistics | null> {
+  console.log(`Getting referendum #${postId} from subscan ...`);
+
+  // Convert postId to uint
+  const referendumIndex: number = postId >>> 0; // Use bitwise zero-fill right shift to convert to unsigned integer
+
+  return new Promise((resolve) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      postData('https://' + chainName + '.api.subscan.io/api/scan/referenda/referendum',
+        {
+          referendum_index: referendumIndex
+        })
+        .then((data: { message: string; data }) => {
+          if (data.message === 'Success') {
+            console.log('getReferendumFromSubscan:', data.data);
+
+            resolve(data.data);
+          } else {
+            console.log(`Fetching message ${data.message}`);
+            resolve(null);
+          }
+        });
+    } catch (error) {
+      console.log('something went wrong while getting referendum statistics');
+      resolve(null);
+    }
+  });
+}

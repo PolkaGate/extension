@@ -5,20 +5,21 @@
 
 import '@vaadin/icons';
 
-import { Groups as FellowshipIcon, HowToVote as ReferendaIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
-import { Breadcrumbs, Button, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
+import { Breadcrumbs, Button, Container, Grid, Link, Typography, useTheme } from '@mui/material';
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
+import { useHistory,useLocation } from 'react-router-dom';
 
-import { ActionContext, Identity, InputFilter } from '../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useTracks, useTranslation } from '../../hooks';
+import { ActionContext, InputFilter } from '../../components';
+import { useApi, useChainName, useDecidingCount, useTracks, useTranslation } from '../../hooks';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './helpers';
 import ReferendaMenu from './ReferendaMenu';
+import { ReferendumSummary } from './ReferendumSummary';
 import { TrackStats } from './TrackStats';
-import { Referendum } from './Referendum';
 
 type TopMenu = 'Referenda' | 'Fellowship';
 
@@ -27,18 +28,20 @@ export const MAX_WIDTH = '1280px';
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const { state } = useLocation();
+  const history = useHistory();
 
   const theme = useTheme();
-  const { address } = useParams<{ address: string }>();
+  const { address, postId } = useParams<{ address: string, postId?: number }>();
+
   const api = useApi(address);
-  const chain = useChain(address);
   const tracks = useTracks(address, api);
   const chainName = useChainName(address);
   const pageTrackRef = useRef({ page: 1, trackId: undefined, listFinished: false });
   const decidingCounts = useDecidingCount(api, tracks);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedSubMenu, setSelectedSubMenu] = useState<string>('All');
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [referendaToList, setReferenda] = useState<LatestReferenda[] | null>();
@@ -86,8 +89,6 @@ export default function Governance(): React.ReactElement {
   //   };
   // }, [api]);
 
-
-
   useEffect(() => {
     if (!api) {
       return;
@@ -106,12 +107,6 @@ export default function Governance(): React.ReactElement {
     api.query.referenda.referendumCount().then((count) => {
       console.log('total referendum count:', count.toNumber());
       setReferendumCount(count?.toNumber());
-
-      const latestReferendumNumber = count.toNumber() - 2;
-
-      api.query.referenda.referendumInfoFor(latestReferendumNumber).then((res) => {
-        console.log(`referendumInfoFor referendum ${latestReferendumNumber} :, ${res}`);
-      });
     }).catch(console.error);
 
     // const trackId_mediumSpender = 33;
@@ -127,6 +122,13 @@ export default function Governance(): React.ReactElement {
       void getLatestReferendums(chainName).then((res) => setReferenda(res));
     }
   }, [chainName, selectedSubMenu]);
+
+  const getReferendaById = useCallback((postId: number) => {
+    history.push({
+      pathname: `/governance/${address}/${postId}`,
+      state: { selectedSubMenu }
+    });
+  }, [address, history, selectedSubMenu]);
 
   useEffect(() => {
     if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks?.length) {
@@ -313,8 +315,8 @@ export default function Governance(): React.ReactElement {
         <Bread />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           {selectedSubMenu === 'All'
-            ? <AllReferendaStats address={address} />
-            : <TrackStats address={address} track={currentTrack} decidingCounts={decidingCounts} selectedSubMenu={selectedSubMenu} />
+            ? <AllReferendaStats address={address} referendumStats={referendumStats} setReferendumStats={setReferendumStats} />
+            : <TrackStats address={address} decidingCounts={decidingCounts} selectedSubMenu={selectedSubMenu} track={currentTrack} />
           }
           <SearchBar />
           {referendaToList
@@ -322,7 +324,7 @@ export default function Governance(): React.ReactElement {
               {referendaToList.map((referendum, index) => {
                 if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                   return (
-                    <Referendum address={address} key={index} referendum={referendum} />
+                    <ReferendumSummary address={address} key={index} referendum={referendum} onClick={() => getReferendaById(referendum.post_id)} />
                   );
                 }
               })}

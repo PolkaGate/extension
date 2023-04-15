@@ -47,6 +47,5 @@ export default function useTracks(address: string, api: ApiPromise | undefined):
     }
   }, [chainName, tracks]);
 
-  console.log('tracks:', tracks)
   return tracks ;//|| savedTracks;
 }

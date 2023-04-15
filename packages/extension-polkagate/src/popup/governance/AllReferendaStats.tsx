@@ -16,6 +16,8 @@ import { LabelValue } from './TrackStats';
 
 interface Props {
   address: string;
+  referendumStats: Statistics | undefined;
+  setReferendumStats: React.Dispatch<React.SetStateAction<Statistics | undefined>>;
 }
 
 export interface TreasuryStats {
@@ -65,7 +67,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, style, title, tokenP
   )
 }
 
-export function AllReferendaStats({ address }: Props): React.ReactElement<Props> {
+export function AllReferendaStats({ address, referendumStats, setReferendumStats }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const chainName = useChainName(address);
@@ -73,7 +75,6 @@ export function AllReferendaStats({ address }: Props): React.ReactElement<Props>
   const token = useToken(address);
   const price = usePrice(address);
 
-  const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
 
   useEffect(() => {

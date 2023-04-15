@@ -15,6 +15,7 @@ interface Props {
   address: string;
   key: number;
   referendum: LatestReferenda;
+  onClick: () => void;
 }
 
 const STATUS_COLOR = {
@@ -28,14 +29,14 @@ const STATUS_COLOR = {
   TimedOut: '#7f8c8d',
 };
 
-export function Referendum({ address, key, referendum }: Props): React.ReactElement<Props> {
+export function ReferendumSummary({ address, key, onClick, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
   const theme = useTheme();
 
   return (
-    <Grid item key={key} sx={{ bgcolor: 'background.paper', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+    <Grid item key={key} onClick={onClick} sx={{ bgcolor: 'background.paper', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
       <Grid item sx={{ fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {`#${referendum.post_id}  ${referendum.title || t('No title yet')}`}
       </Grid>
