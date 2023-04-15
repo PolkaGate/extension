@@ -34,8 +34,8 @@ export default function Home(): React.ReactElement {
   const networkMap = useMemo(() => getNetworkMap(), []);
 
   useEffect(() => {
-    setShowAlert(window.localStorage.getItem('export_account_open') !== 'ok');
-  }, []);
+    hierarchy?.length && setShowAlert(window.localStorage.getItem('export_account_open') !== 'ok');
+  }, [hierarchy]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
