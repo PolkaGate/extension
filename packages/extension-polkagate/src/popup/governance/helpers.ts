@@ -81,7 +81,22 @@ export async function getReferendumVotes(chainName: string, referendumIndex: num
   });
 }
 
-export async function getLatestReferendums(chainName: string): Promise<string[] | null> {
+export interface LatestReferenda {
+  created_at: string;
+  description: string;
+  hash: string;
+  method: string;
+  origin: string;
+  parent_bounty_index: any;
+  post_id: number;
+  proposer: string;
+  status: string;
+  title: string;
+  track_number: number;
+  type: string;
+}
+
+export async function getLatestReferendums(chainName: string): Promise<LatestReferenda[] | null> {
   console.log(`Getting referendum on ${chainName}...`);
 
   const requestOptions = {

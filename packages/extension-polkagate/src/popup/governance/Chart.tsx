@@ -140,7 +140,6 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
                 return;
               }
 
-              console.log('TooltipItem:', TooltipItem)
               return `${TooltipItem.dataset.label}: ${TooltipItem.formattedValue} %`;
             },
             title: function (TooltipItem: string | { label: string }[] | undefined) {
