@@ -81,7 +81,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: 
           </Grid>
           <Grid item xs={12}>
             <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-              {kusama.referenda.find(({ name }) => name === track?.[1]?.name)?.text}
+              {kusama.referenda.find(({ name }) => name === String(track?.[1]?.name))?.text}
             </Typography>
           </Grid>
         </Grid>
