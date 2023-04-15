@@ -28,6 +28,7 @@ export interface ChangesProps {
     newRoot: string | undefined | null;
     newNominator: string | undefined | null;
     newStateToggler: string | undefined | null;
+    newBouncer: string | undefined | null;
   } | undefined
 }
 
@@ -42,6 +43,8 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const myPoolName = pool?.metadata;
   const myPoolRoles = pool?.bondedPool?.roles;
 
+  const stateTogglerOrBouncer = pool?.bondedPool?.roles && 'stateToggler' in pool?.bondedPool?.roles;
+
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
@@ -49,6 +52,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
   const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | null | undefined>();
+  const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
 
@@ -69,7 +73,8 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     !depositorAddress && pool?.bondedPool?.roles && setDepositorAddress(pool?.bondedPool?.roles.depositor.toString());
     !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
     !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
-    !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
+    stateTogglerOrBouncer && !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
+    !stateTogglerOrBouncer && !newBouncerAddress && pool?.bondedPool?.roles && setNewBouncerAddress(pool?.bondedPool?.roles.bouncer?.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);// needs to be run only once to initialize
 
@@ -91,17 +96,18 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
       newRoles: {
         newNominator: getChangedValue(newNominatorAddress, myPoolRoles?.nominator?.toString()),
         newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString()),
-        newStateToggler: getChangedValue(newStateTogglerAddress, myPoolRoles?.stateToggler?.toString())
+        newStateToggler: getChangedValue(newStateTogglerAddress, myPoolRoles?.stateToggler?.toString()),
+        newBouncer: getChangedValue(newBouncerAddress, myPoolRoles?.bouncer?.toString())
       }
     });
-  }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler]);
+  }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler, myPoolRoles?.bouncer, newBouncerAddress]);
 
   const nextBtnDisable = useMemo(() =>
     changes?.newPoolName === undefined &&
     changes?.newRoles?.newNominator === undefined &&
     changes?.newRoles?.newRoot === undefined &&
-    changes?.newRoles?.newStateToggler === undefined
-    , [changes?.newPoolName, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot, changes?.newRoles?.newStateToggler]);
+    (stateTogglerOrBouncer ? changes?.newRoles?.newStateToggler === undefined : changes?.newRoles?.newBouncer === undefined)
+    , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot, changes?.newRoles?.newStateToggler, stateTogglerOrBouncer]);
 
   return (
     <>
@@ -157,11 +163,11 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           }}
         />
         <AddressInput
-          address={newStateTogglerAddress}
+          address={stateTogglerOrBouncer ? newStateTogglerAddress : newBouncerAddress}
           allAddresses={allAddresses}
           chain={chain}
-          label={'State toggler'}
-          setAddress={setNewStateTogglerAddress}
+          label={stateTogglerOrBouncer ? t<string>('State toggler') : t<string>('Bouncer')}
+          setAddress={stateTogglerOrBouncer ? setNewStateTogglerAddress : setNewBouncerAddress}
           showIdenticon
           style={{
             m: '15px auto 0',

@@ -54,7 +54,7 @@ async function getMyPools(address, endpoint) {
     }
   })?.filter((f) => f !== undefined);
 
-  const filteredPools = poolsInfo.filter((poolInfo) => String(poolInfo?.bondedPool?.roles.root) === address || String(poolInfo?.bondedPool?.roles.stateToggler) === address || String(poolInfo?.bondedPool?.roles.nominator) === address);
+  const filteredPools = poolsInfo.filter((poolInfo) => String(poolInfo?.bondedPool?.roles.root) === address || String(poolInfo?.bondedPool?.roles.stateToggler) === address || String(poolInfo?.bondedPool?.roles.nominator) === address || String(poolInfo?.bondedPool?.roles.bouncer) === address);
 
   const token = api.registry.chainTokens[0];
   const decimal = api.registry.chainDecimals[0];

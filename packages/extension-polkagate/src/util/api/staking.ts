@@ -265,6 +265,7 @@ export async function editPool(
 ): Promise<TxInfo> {
   try {
     console.log('editPool is called!');
+    const stateTogglerOrBouncer = basePool?.bondedPool?.roles && 'stateToggler' in basePool?.bondedPool?.roles;
 
     if (!depositor) {
       console.log('editPool:  _depositor is empty!');
@@ -289,7 +290,7 @@ export async function editPool(
     basePool.metadata !== pool.metadata &&
       calls.push(api.tx.nominationPools.setMetadata(pool.member.poolId, pool.metadata));
     JSON.stringify(basePool.bondedPool.roles) !== JSON.stringify(pool.bondedPool.roles) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.member.poolId, getRole('root'), getRole('nominator'), getRole('stateToggler')))
+      calls.push(api.tx.nominationPools.updateRoles(pool.member.poolId, getRole('root'), getRole('nominator'), getRole(stateTogglerOrBouncer ? 'stateToggler' : 'bouncer')))
 
     const updated = api.tx.utility.batch(calls);
     const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, updated) : updated;

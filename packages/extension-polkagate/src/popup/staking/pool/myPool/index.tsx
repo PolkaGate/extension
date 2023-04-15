@@ -49,13 +49,6 @@ const noop = () => { };
 export default function Pool(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const POOL_ROLES = useMemo(() => ([
-    { text: t<string>('All'), value: 'all' },
-    { text: t<string>('Depositor'), value: 'depositor' },
-    { text: t<string>('Root'), value: 'root' },
-    { text: t<string>('Nominator'), value: 'nominator' },
-    { text: t<string>('StateToggler'), value: 'stateToggler' }
-  ]), [t]);
 
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
@@ -75,6 +68,16 @@ export default function Pool(): React.ReactElement {
   const [roleToShow, setRoleToShow] = useState<string>('all');
   const [poolsToShow, setPoolsToShow] = useState<(MyPoolInfo | null | undefined)[] | null | undefined>();
   const [showPoolNavigation, setShowPoolNavigation] = useState<boolean>(false);
+
+  const stateTogglerOrBouncer = pool?.bondedPool?.roles && 'stateToggler' in pool?.bondedPool?.roles;
+
+  const POOL_ROLES = useMemo(() => ([
+    { text: t<string>('All'), value: 'all' },
+    { text: t<string>('Depositor'), value: 'depositor' },
+    { text: t<string>('Root'), value: 'root' },
+    { text: t<string>('Nominator'), value: 'nominator' },
+    { text: stateTogglerOrBouncer ? t<string>('StateToggler') : t<string>('Bouncer'), value: stateTogglerOrBouncer ? 'stateToggler' : 'bouncer' }
+  ]), [stateTogglerOrBouncer, t]);
 
   const allMyPools = useMemo(() => {
     if (pool === undefined && myOtherPools === undefined) {
@@ -126,22 +129,22 @@ export default function Pool(): React.ReactElement {
     }
 
     setPoolsToShow([...allMyPools]);
-  }, [POOL_ROLES, allMyPools, formatted, roleToShow]);
+  }, [allMyPools, formatted, roleToShow]);
 
   useEffect(() => {
     setPoolIndex(0);
   }, [roleToShow]);
 
   const poolState = poolsToShow && poolsToShow[poolIndex]?.bondedPool?.state?.toString();
-  const canChangeState = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && [String(poolsToShow[poolIndex]?.bondedPool?.roles?.root), String(poolsToShow[poolIndex]?.bondedPool?.roles?.stateToggler)].includes(String(formatted)), [poolsToShow, formatted, poolIndex]);
+  const canChangeState = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && [String(poolsToShow[poolIndex]?.bondedPool?.roles?.root), String(poolsToShow[poolIndex]?.bondedPool?.roles?.stateToggler), String(poolsToShow[poolIndex]?.bondedPool?.roles?.bouncer)].includes(String(formatted)), [poolsToShow, formatted, poolIndex]);
   const poolRoot = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && String(poolsToShow[poolIndex]?.bondedPool?.roles?.root) === (String(formatted)), [poolsToShow, formatted, poolIndex]);
-  const poolStateToggler = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && String(poolsToShow[poolIndex]?.bondedPool?.roles?.stateToggler) === (String(formatted)), [poolsToShow, formatted, poolIndex]);
+  const poolStateTogglerOrBouncer = useMemo(() => poolsToShow && poolsToShow[poolIndex]?.bondedPool && formatted && (String(poolsToShow[poolIndex]?.bondedPool?.roles?.stateToggler) === (String(formatted)) || String(poolsToShow[poolIndex]?.bondedPool?.roles?.bouncer) === (String(formatted))), [poolsToShow, poolIndex, formatted]);
   const disabledItems = useMemo(() => {
     if (!allMyPools || allMyPools.length === 1) {
       return;
     }
 
-    const allRoles = ['depositor', 'root', 'nominator', 'stateToggler'];
+    const allRoles = ['depositor', 'root', 'nominator', (stateTogglerOrBouncer ? 'stateToggler' : 'bouncer')];
     const toDisable: string[] = [];
 
     allRoles.forEach((role, index) => {
@@ -151,7 +154,7 @@ export default function Pool(): React.ReactElement {
     });
 
     return toDisable;
-  }, [allMyPools, formatted]);
+  }, [allMyPools, formatted, stateTogglerOrBouncer]);
 
   const blockHelperText = t<string>('The pool state will be changed to Blocked, and no member will be able to join and only some admin roles can remove members.');
   const destroyHelperText = t<string>('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.');
@@ -370,19 +373,19 @@ export default function Pool(): React.ReactElement {
           />
           {canChangeState &&
             <Grid alignItems='center' bottom='10px' container justifyContent='space-between' m='auto' position='absolute' width='92%'>
-              <ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateToggler)} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
-                <AutoDeleteIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
+              <ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateTogglerOrBouncer)} onClick={goDestroying} showDivider text={t<string>('Destroy')}>
+                <AutoDeleteIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateTogglerOrBouncer) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
               </ActionBtn>
               {poolState === 'Blocked'
-                ? (<ActionBtn onClick={goUnlock} disabled={(!poolRoot && !poolStateToggler)} showDivider text={t<string>('Unblock')}>
-                  <UnblockIcon sx={{ color: (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '18px' }} />
+                ? (<ActionBtn onClick={goUnlock} disabled={(!poolRoot && !poolStateTogglerOrBouncer)} showDivider text={t<string>('Unblock')}>
+                  <UnblockIcon sx={{ color: (!poolRoot && !poolStateTogglerOrBouncer) ? 'action.disabledBackground' : 'text.primary', fontSize: '18px' }} />
                 </ActionBtn>)
-                : (<ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateToggler)} onClick={goBlock} showDivider text={t<string>('Block')}>
-                  <BlockIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateToggler) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
+                : (<ActionBtn disabled={poolState === 'Destroying' || (!poolRoot && !poolStateTogglerOrBouncer)} onClick={goBlock} showDivider text={t<string>('Block')}>
+                  <BlockIcon sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolStateTogglerOrBouncer) ? 'action.disabledBackground' : 'text.primary', fontSize: '21px' }} />
                 </ActionBtn>)
               }
-              <ActionBtn disabled={isRemoveAllDisabled || (!poolRoot && !poolStateToggler)} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
-                <FontAwesomeIcon color={isRemoveAllDisabled || (!poolRoot && !poolStateToggler) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
+              <ActionBtn disabled={isRemoveAllDisabled || (!poolRoot && !poolStateTogglerOrBouncer)} onClick={goRemoveAll} showDivider text={t<string>('Remove all')}>
+                <FontAwesomeIcon color={isRemoveAllDisabled || (!poolRoot && !poolStateTogglerOrBouncer) ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPersonCircleXmark} />
               </ActionBtn>
               <ActionBtn disabled={poolState === 'Destroying' || !poolRoot} onClick={goEdit} text={t<string>('Edit')}>
                 <FontAwesomeIcon color={poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary} fontSize='18px' icon={faPenToSquare} />

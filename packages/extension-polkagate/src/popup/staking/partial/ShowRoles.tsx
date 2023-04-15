@@ -28,6 +28,7 @@ interface Props {
 export default function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = sanitizeChainName(chain?.name);
+  const stateTogglerOrBouncer = pool?.bondedPool?.roles && 'stateToggler' in pool?.bondedPool?.roles;
 
   const accountsToShow = useMemo(() => {
     if (!pool) {
@@ -39,7 +40,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
         { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
         { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
         { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
-        { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
+        { label: stateTogglerOrBouncer ? t<string>('State toggler') : t<string>('Bouncer'), address: (stateTogglerOrBouncer ? pool.bondedPool?.roles?.stateToggler?.toString() : String(pool.bondedPool?.roles?.bouncer)) ?? '' }
       ]);
     }
 
@@ -47,7 +48,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
       { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
       { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
     ]);
-  }, [mode, pool, t]);
+  }, [mode, pool, stateTogglerOrBouncer, t]);
 
   return (
     <>
