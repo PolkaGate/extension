@@ -18,3 +18,5 @@
 
 4. add pendulum.svg from ./replacements to @polkadot/apps-config/ui/logos/chains
 5. replace index.js from ./replacements to @polkadot/apps-config/ui/logos
+
+6. update composable chain "displayName" from "Composable" to "Composable Finance" in @substrate/ss58-registry/esm/index.js
