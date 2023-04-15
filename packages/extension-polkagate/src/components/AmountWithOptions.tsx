@@ -26,6 +26,8 @@ export default function AmountWithOptions({ disabled, label, onChangeAmount, onP
     onChangeAmount(fixFloatingPoint(value));
   }, [onChangeAmount]);
 
+  const disabledFunction = useCallback(() => null, []);
+
   return (
     <Grid container sx={style}>
       <Grid item xs={8}>
@@ -42,11 +44,11 @@ export default function AmountWithOptions({ disabled, label, onChangeAmount, onP
         />
       </Grid>
       <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs={4}>
-        <Grid aria-label='primaryBtn' item onClick={onPrimary} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Grid aria-label='primaryBtn' item onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>
         {secondaryBtnText && onSecondary &&
-          <Grid aria-label='secondaryBtn' item onClick={onSecondary} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+          <Grid aria-label='secondaryBtn' item onClick={!disabled ? onSecondary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
             {secondaryBtnText}
           </Grid>}
       </Grid>
