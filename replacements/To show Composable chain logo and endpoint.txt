@@ -1,0 +1,3 @@
+
+ 3. update composable chain "displayName" from "Composable" to "Composable Finance" in @substrate/ss58-registry/esm/index.js
+ 

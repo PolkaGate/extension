@@ -34,8 +34,8 @@ export default function ManageProxies(): React.ReactElement {
   const chain = useMetadata(account?.genesisHash, true);
   const api = useApi(account?.address);
 
-  const proxyDepositBase = api ? api.consts?.proxy?.proxyDepositBase : BN_ZERO;
-  const proxyDepositFactor = api ? api.consts?.proxy?.proxyDepositFactor : BN_ZERO;
+  const proxyDepositBase = api?.consts?.proxy?.proxyDepositBase || BN_ZERO;
+  const proxyDepositFactor = api?.consts.proxy?.proxyDepositFactor || BN_ZERO;
 
   const _onBackClick = useCallback(() => {
     showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');

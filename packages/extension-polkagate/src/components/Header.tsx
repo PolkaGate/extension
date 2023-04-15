@@ -15,7 +15,7 @@ import React from 'react';
 import { logoBlack, logoWhite } from '../assets/logos/';
 
 interface Props {
-  onClose: () => void;
+  onClose?: () => void;
   text: string;
 }
 
@@ -33,16 +33,18 @@ export default function Header({ onClose, text }: Props): React.ReactElement {
         </Typography>
       </Grid>
       <Grid item textAlign='right' xs={2}>
-        <IconButton
-          aria-label='menu'
-          color='inherit'
-          edge='start'
-          onClick={onClose}
-          size='small'
-          sx={{ p: '0px' }}
-        >
-          <CloseIcon sx={{ fontSize: 40 }} />
-        </IconButton>
+        {onClose &&
+          <IconButton
+            aria-label='menu'
+            color='inherit'
+            edge='start'
+            onClick={onClose}
+            size='small'
+            sx={{ p: '0px' }}
+          >
+            <CloseIcon sx={{ fontSize: 40 }} />
+          </IconButton>
+        }
       </Grid>
     </Grid>
   );
