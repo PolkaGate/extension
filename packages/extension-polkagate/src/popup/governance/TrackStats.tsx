@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, SxProps, Theme, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ShowBalance, ShowValue } from '../../components';
@@ -21,14 +21,15 @@ interface Props {
   decidingCounts: DecidingCount[] | undefined;
 }
 
-export const LabelValue = ({ label, value }: { label: string, value: any }) => (
-  <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={12} my='2px' sx={{ borderBottom: '0.05px solid #4B4B4B' }}>
+export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
+  : { label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => (
+  <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={12} my='2px' sx={{ borderBottom: !noBorder && '0.05px solid #4B4B4B', ...style }}>
     <Grid item sx={{ height: '25px' }}>
-      <Typography fontSize={16} fontWeight={400}>
+      <Typography sx={{ ...labelStyle }}>
         {label}
       </Typography>
     </Grid>
-    <Grid item sx={{ fontSize: '18px', fontWeight: 500 }}>
+    <Grid item sx={{ ...valueStyle }}>
       <ShowValue value={value} />
     </Grid>
   </Grid>
