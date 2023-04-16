@@ -11,7 +11,7 @@ import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChainName, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
 import { remainingTime } from '../../util/utils';
-import { getReferendumStatistics, Statistics } from './helpers';
+import { getReferendumStatistics, Statistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
 
 interface Props {

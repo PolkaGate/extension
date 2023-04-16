@@ -8,137 +8,24 @@ import '@vaadin/icons';
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Breadcrumbs, Button, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
-import { CubeGrid, Wordpress } from 'better-react-spinkit';
+import { Accordion, AccordionDetails, AccordionSummary, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
-import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
-import { ActionContext, Identity, InputFilter, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
-import { windowOpen } from '../../../messaging';
-import { AllReferendaStats } from '../AllReferendaStats';
+import { BN } from '@polkadot/util';
+
+import { ActionContext, Identity, ShowBalance, ShowValue } from '../../../components';
+import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
-import { getLatestReferendums, getReferendum, getReferendumFromSubscan, getTrackReferendums, LatestReferenda, Statistics } from '../helpers';
 import ReferendaMenu from '../ReferendaMenu';
-import { ReferendumSummary } from '../ReferendumSummary';
-import { LabelValue, TrackStats } from '../TrackStats';
-
-type TopMenu = 'Referenda' | 'Fellowship';
-
-export const MAX_WIDTH = '1280px';
-
-interface Reply {
-  content: string;
-  created_at: Date,
-  id: string,
-  proposer: string,
-  updated_at: Date,
-  user_id: number,
-  username: string
-}
-
-interface Reaction {
-  '👍': {
-    count: number,
-    usernames: string[]
-  },
-  '👎': {
-    count: number,
-    usernames: []
-  }
-}
-
-interface Comment {
-  comment_reactions: Reaction,
-  content: string,
-  created_at: Date,
-  id: string,
-  proposer: string,
-  replies: Reply[],
-  sentiment: number,
-  updated_at: Date,
-  user_id: number,
-  username: string
-}
-
-interface History {
-  timestamp: Date,
-  status: string,
-  block: number
-}
-
-export interface Referendum {
-  bond: any,
-  comments: Comment[],
-  content: string,
-  created_at: Date,
-  curator: any,
-  curator_deposit: any,
-  deciding: {
-    confirming: any,
-    since: number
-  },
-  decision_deposit_amount: string,
-  delay: any,
-  deposit: any,
-  description: any,
-  enactment_after_block: number,
-  enactment_at_block: any,
-  end: any,
-  ended_at: Date,
-  fee: any,
-  hash: string,
-  last_edited_at: Date,
-  method: string,
-  origin: string,
-  payee: null,
-  post_id: number,
-  post_reactions: Reaction,
-  proposal_arguments: any,
-  proposed_call: {
-    method: string,
-    args: Record<string, any>,
-    description: string
-    section: string
-  },
-  proposer: string,
-  requested: string,
-  reward: any,
-  status: string,
-  statusHistory: History[],
-  submission_deposit_amount: string,
-  submitted_amount: string,
-  tally: {
-    ayes: string,
-    bareAyes: string,
-    nays: string,
-    support: string
-  },
-  timeline: [
-    {
-      created_at: Date,
-      hash: string,
-      index: number,
-      statuses: History[],
-      type: string
-    }
-  ],
-  topic: {
-    id: number,
-    name: string,
-  },
-  track_number: number,
-  type: string,
-  user_id: number,
-  title: string,
-  tags: any[],
-  post_link: any,
-  spam_users_count: number
-}
+import { blockToX, LabelValue } from '../TrackStats';
+import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
+import { ReferendumPolkassambly, ReferendumSubScan } from '../utils/types';
+import { toTitleCase } from '../utils/util';
+import { MAX_WIDTH } from '..';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -156,15 +43,29 @@ export default function ReferendumPost(): React.ReactElement {
   Chart.register(...registerables);
 
   const api = useApi(address);
-  const tracks = useTracks(address, api);
-  const decidingCounts = useDecidingCount(api, tracks);
+  const decidingCounts = useDecidingCount(address);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
-  const [referendum, setReferendum] = useState<Referendum>();
-  const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<Referendum>();
+  const [referendumFromPA, setReferendum] = useState<ReferendumPolkassambly>();
+  const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
+  const [decidingProgress, setDecidingProgress] = useState<number>();
+
+  const trackName = useMemo((): string | undefined => {
+    const name = (state?.selectedSubMenu || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
+
+    return name && toTitleCase(name);
+  }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
+
+  const track = useTrack(address, trackName);
+
+  useEffect(() => {
+    if (track?.[1]?.decisionPeriod && referendumInfoFromSubscan?.timeline[1]?.time) {
+      setDecidingProgress((Date.now() / 1000 - referendumInfoFromSubscan.timeline[1].time) * 100 / (track[1].decisionPeriod * 6));
+    }
+  }, [referendumInfoFromSubscan?.timeline, track]);
 
   const ayesPercent = useMemo(() =>
     referendumInfoFromSubscan
@@ -177,6 +78,12 @@ export default function ReferendumPost(): React.ReactElement {
       ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100
       : 0
     , [referendumInfoFromSubscan]);
+
+  const supportPercent = useMemo(() => {
+    if (totalIssuance && inactiveIssuance && referendumInfoFromSubscan) {
+      return (Number(referendumInfoFromSubscan.support_amount) * 100 / Number(totalIssuance.sub(inactiveIssuance))).toFixed(2);
+    }
+  }, [inactiveIssuance, referendumInfoFromSubscan, totalIssuance]);
 
   useEffect(() => {
     selectedSubMenu && history.push({
@@ -422,7 +329,7 @@ export default function ReferendumPost(): React.ReactElement {
                   <Grid container item>
                     <Grid container item xs={12}>
                       <Typography fontSize={24} fontWeight={500}>
-                        <ShowValue value={referendum?.title} width='500px' />
+                        <ShowValue value={trackName ? trackName || 'No Title' : undefined} width='500px' />
                       </Typography>
                     </Grid>
                     <Grid alignItems='center' container item justifyContent='space-between' xs={12}>
@@ -434,7 +341,7 @@ export default function ReferendumPost(): React.ReactElement {
                           <Identity
                             api={api}
                             chain={chain}
-                            formatted={referendum?.proposer}
+                            formatted={referendumFromPA?.proposer}
                             identiconSize={25}
                             showSocial={false}
                             style={{
@@ -450,21 +357,21 @@ export default function ReferendumPost(): React.ReactElement {
                         </Grid>
                         <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
                         <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
-                          {referendum?.method}
+                          {referendumFromPA?.method}
                         </Grid>
                         <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
                         <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
                         <Grid item sx={{ fontSize: '14px', fontWeight: 400, pl: '1%' }}>
-                          <ShowValue value={referendum?.created_at && new Date(referendum?.created_at).toDateString()} />
+                          <ShowValue value={referendumFromPA?.created_at && new Date(referendumFromPA?.created_at).toDateString()} />
                         </Grid>
                         <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
                         <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-                          {referendum?.requested &&
+                          {referendumFromPA?.requested &&
                             <LabelValue
                               label={`${t('Requested')}: `}
                               noBorder
                               value={<ShowBalance
-                                balance={new BN(referendum?.requested)}
+                                balance={new BN(referendumFromPA?.requested)}
                                 decimal={decimal}
                                 decimalPoint={2}
                                 token={token}
@@ -475,17 +382,17 @@ export default function ReferendumPost(): React.ReactElement {
                         </Grid>
                       </Grid>
                       <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: '#737373', p: '5px 10px' }} xs={1.5}>
-                        {referendum?.status.replace(/([A-Z])/g, ' $1').trim()}
+                        {referendumFromPA?.status.replace(/([A-Z])/g, ' $1').trim()}
                       </Grid>
                     </Grid>
                   </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container item xs={12}>
-                    {referendum?.content &&
+                    {referendumFromPA?.content &&
                       <ReactMarkdown
                         components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
-                        children={referendum?.content}
+                        children={referendumFromPA?.content}
                       />
                     }
                   </Grid>
@@ -494,7 +401,7 @@ export default function ReferendumPost(): React.ReactElement {
             </Grid>
             <Grid container item xs={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
               <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
-              <Grid item px='5%' xs>
+              <Grid item px='5%' xs={12}>
                 <LabelValue
                   label={`${t('Ayes')}(${referendumInfoFromSubscan?.ayes_count ? referendumInfoFromSubscan.ayes_count : ''})`}
                   value={<ShowBalance
@@ -512,7 +419,7 @@ export default function ReferendumPost(): React.ReactElement {
                   />}
                 />
                 <LabelValue
-                  label={t('Support')}
+                  label={`${t('Support')} (${supportPercent || ''}%)`}
                   value={<ShowBalance
                     balance={referendumInfoFromSubscan?.support_amount && new BN(referendumInfoFromSubscan.support_amount)}
                     decimal={decimal}
@@ -528,6 +435,18 @@ export default function ReferendumPost(): React.ReactElement {
                     token={token}
                   />}
                 />
+              </Grid>
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ fontSize: '16px', letterSpacing: '-0.015em', my: '20px', px: '2%' }}>
+                <Grid item xs={9}>
+                  <LinearProgress
+                    sx={{ bgcolor: 'primary.contrastText', mt: '15px' }}
+                    value={decidingProgress || 0}
+                    variant='determinate'
+                  />
+                </Grid>
+                <Grid fontWeight={400} item sx={{ textAlign: 'right' }} xs>
+                  {blockToX(track?.[1]?.decisionPeriod)}
+                </Grid>
               </Grid>
             </Grid>
           </Grid>

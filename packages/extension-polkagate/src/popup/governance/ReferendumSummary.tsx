@@ -9,7 +9,7 @@ import React from 'react';
 
 import { Identity } from '../../components';
 import { useApi, useChain, useTranslation } from '../../hooks';
-import { LatestReferenda } from './helpers';
+import { LatestReferenda } from './utils/helpers';
 
 interface Props {
   address: string;

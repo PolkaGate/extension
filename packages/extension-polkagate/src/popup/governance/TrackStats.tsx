@@ -9,7 +9,7 @@ import React, { useCallback } from 'react';
 import { ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
-import { Tracks } from '../../hooks/useTracks';
+import { Track } from '../../hooks/useTracks';
 import { kusama } from './tracks/kusama';
 import ThresholdCurves from './Chart';
 import { findItemDecidingCount } from './ReferendaMenu';
@@ -17,14 +17,14 @@ import { findItemDecidingCount } from './ReferendaMenu';
 interface Props {
   address: string;
   selectedSubMenu: string;
-  track: Tracks | undefined;
+  track: Track | undefined;
   decidingCounts: DecidingCount[] | undefined;
 }
 
 export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
   : { label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => (
   <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={12} my='2px' sx={{ borderBottom: !noBorder && '0.05px solid #4B4B4B', ...style }}>
-    <Grid item sx={{ height: '25px' }}>
+    <Grid item>
       <Typography sx={{ ...labelStyle }}>
         {label}
       </Typography>
@@ -35,41 +35,39 @@ export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontS
   </Grid>
 );
 
+export const blockToX = (block: number | BN | undefined) => {
+  if (!block) {
+    return undefined;
+  }
+
+  const b = Number(block);
+  const dayAsBlock = 24 * 60 * 10;
+  const hoursAsBlock = 60 * 10;
+  const minsAsBlock = 10;
+  const mayBeDays = b / dayAsBlock;
+
+  if (mayBeDays >= 1) {
+    return `${mayBeDays} day${mayBeDays > 1 ? 's' : ''}`;
+  }
+
+  const mayBeHours = b / hoursAsBlock;
+
+  if (mayBeHours >= 1) {
+    return `${mayBeHours} hour${mayBeHours > 1 ? 's' : ''}`;
+  }
+
+  const mayBeMins = b / minsAsBlock;
+
+  if (mayBeMins >= 1) {
+    return `${mayBeMins} min${mayBeMins > 1 ? 's' : ''}`;
+  }
+};
+
 export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-
-  const blockToX = useCallback((block: number | BN | undefined) => {
-    if (!block) {
-      return undefined;
-    }
-
-    const b = Number(block);
-    const dayAsBlock = 24 * 60 * 10;
-    const hoursAsBlock = 60 * 10;
-    const minsAsBlock = 10;
-    const mayBeDays = b / dayAsBlock;
-
-    if (mayBeDays >= 1) {
-      return `${mayBeDays} day${mayBeDays > 1 ? 's' : ''}`;
-    }
-
-    const mayBeHours = b / hoursAsBlock;
-
-    if (mayBeHours >= 1) {
-      return `${mayBeHours} hour${mayBeHours > 1 ? 's' : ''}`;
-    }
-
-    const mayBeMins = b / minsAsBlock;
-
-    if (mayBeMins >= 1) {
-      return `${mayBeMins} min${mayBeMins > 1 ? 's' : ''}`;
-    }
-
-    console.log('mayBeHours', mayBeMins)
-  }, []);
 
   return (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '260px', pb: '20px' }}>

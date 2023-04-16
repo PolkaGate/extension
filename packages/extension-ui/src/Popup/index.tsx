@@ -26,7 +26,7 @@ import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
 import Governance from '../../../extension-polkagate/src/popup/governance';
-import ReferendumPost from '../../../extension-polkagate/src/popup/governance/referendumPost';
+import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';

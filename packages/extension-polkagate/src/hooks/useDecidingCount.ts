@@ -3,13 +3,15 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-
-import { Track } from './useTracks';
+import useApi from './useApi';
+import useTracks from './useTracks';
 
 export type DecidingCount = [string, number];
 
-export default function useDecidingCount(api: ApiPromise | undefined, tracks: Track[] | undefined): DecidingCount[] | undefined {
+export default function useDecidingCount(address: string): DecidingCount[] | undefined {
+  const api = useApi(address);
+  const tracks = useTracks(address);
+
   const [counts, setCounts] = useState<DecidingCount[] | undefined>(undefined);
   const trackIds = useMemo(() => tracks?.map(([id, { name }]) => [id, name]), [tracks]);
 

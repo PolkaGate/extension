@@ -14,9 +14,9 @@ import { useHistory,useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useTracks, useTranslation } from '../../hooks';
+import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
-import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './helpers';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
 import { TrackStats } from './TrackStats';
@@ -35,10 +35,10 @@ export default function Governance(): React.ReactElement {
   const { address, postId } = useParams<{ address: string, postId?: number }>();
 
   const api = useApi(address);
-  const tracks = useTracks(address, api);
+  const tracks = useTracks(address);
   const chainName = useChainName(address);
   const pageTrackRef = useRef({ page: 1, trackId: undefined, listFinished: false });
-  const decidingCounts = useDecidingCount(api, tracks);
+  const decidingCounts = useDecidingCount(address);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
