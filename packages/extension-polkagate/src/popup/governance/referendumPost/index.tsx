@@ -17,15 +17,15 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
-import { ActionContext, Identity, InputFilter } from '../../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useTracks, useTranslation } from '../../../hooks';
+import { ActionContext, Identity, InputFilter, ShowBalance, ShowValue } from '../../../components';
+import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { AllReferendaStats } from '../AllReferendaStats';
 import { Header } from '../Header';
 import { getLatestReferendums, getReferendum, getReferendumFromSubscan, getTrackReferendums, LatestReferenda, Statistics } from '../helpers';
 import ReferendaMenu from '../ReferendaMenu';
 import { ReferendumSummary } from '../ReferendumSummary';
-import { TrackStats } from '../TrackStats';
+import { LabelValue, TrackStats } from '../TrackStats';
 
 type TopMenu = 'Referenda' | 'Fellowship';
 
@@ -149,6 +149,8 @@ export default function ReferendumPost(): React.ReactElement {
   const { state } = useLocation();
   const theme = useTheme();
   const chainName = useChainName(address);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
@@ -161,6 +163,8 @@ export default function ReferendumPost(): React.ReactElement {
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
   const [referendum, setReferendum] = useState<Referendum>();
   const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<Referendum>();
+  const [totalIssuance, setTotalIssuance] = useState<BN>();
+  const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
 
   const ayesPercent = useMemo(() =>
     referendumInfoFromSubscan
@@ -173,7 +177,6 @@ export default function ReferendumPost(): React.ReactElement {
       ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100
       : 0
     , [referendumInfoFromSubscan]);
-
 
   useEffect(() => {
     selectedSubMenu && history.push({
@@ -211,6 +214,10 @@ export default function ReferendumPost(): React.ReactElement {
     if (!api) {
       return;
     }
+
+    api.query.balances.totalIssuance().then(setTotalIssuance);
+
+    api.query.balances.inactiveIssuance().then(setInactiveIssuance);
 
     api.query.referenda.referendumInfoFor(124).then((res) => {
       console.log(`referendumInfoFor referendum ${124} :, ${res}`);
@@ -330,7 +337,7 @@ export default function ReferendumPost(): React.ReactElement {
         // 'Abstain'
       ],
       datasets: [{
-        label: 'My First Dataset',
+        label: 'Percentage',
         data: [ayesPercent, naysPercent],
         backgroundColor: [
           '#008080',
@@ -341,9 +348,54 @@ export default function ReferendumPost(): React.ReactElement {
       }]
     };
 
+    const chartOptions = {
+      plugins: {
+        legend: {
+          align: 'center',
+          display: true,
+          maxHeight: 50,
+          maxWidth: '2px',
+          position: 'bottom'
+        },
+        tooltip: {
+          bodyFont: {
+            displayColors: false,
+            family: 'Roboto',
+            size: 13,
+            weight: 'bold'
+          },
+          callbacks: {
+            label: function (TooltipItem: string | { label: string }[] | undefined) {
+              if (!TooltipItem) {
+                return;
+              }
+
+              return `${TooltipItem.formattedValue} %`;
+            },
+            title: function (TooltipItem: string | { label: string }[] | undefined) {
+              if (!TooltipItem) {
+                return;
+              }
+
+              return `${TooltipItem[0].label}`;
+            }
+          },
+          displayColors: false,
+          // titleColor: theme.palette.mode === 'dark' ? '#000' : '#fff',
+          titleFont: {
+            displayColors: false,
+            family: 'Roboto',
+            size: 14,
+            weight: 'bold'
+          }
+        }
+      },
+      responsive: true
+    };
+
     const chartInstance = new Chart(chartRef.current, {
       data: chartData,
-      // options: chartOptions,
+      options: chartOptions,
       type: 'pie'
     });
 
@@ -351,7 +403,7 @@ export default function ReferendumPost(): React.ReactElement {
     return () => {
       chartInstance.destroy();
     };
-  }, [ayesPercent]);
+  }, [ayesPercent, naysPercent]);
 
   return (
     <>
@@ -364,20 +416,18 @@ export default function ReferendumPost(): React.ReactElement {
         <Bread />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           <Grid container justifyContent='space-between'>
-            <Grid container item xs={8.9}>
-              <Accordion sx={{ width: 'inherit' }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                >
+            <Grid container item xs={8.9} sx={{ height: '100%' }}>
+              <Accordion sx={{ width: 'inherit', px: '2%' }} defaultExpanded >
+                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: `1px solid ${theme.palette.action.disabledBackground}`, px: 0 }}>
                   <Grid container item>
                     <Grid container item xs={12}>
                       <Typography fontSize={24} fontWeight={500}>
-                        {referendum?.title}
+                        <ShowValue value={referendum?.title} width='500px' />
                       </Typography>
                     </Grid>
                     <Grid alignItems='center' container item justifyContent='space-between' xs={12}>
                       <Grid alignItems='center' container item xs={9.5}>
-                        <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '17px' }}>
+                        <Grid item sx={{ fontSize: '14px', fontWeight: 400, mr: '17px' }}>
                           {t('By')}:
                         </Grid>
                         <Grid item sx={{ mb: '10px' }}>
@@ -388,7 +438,7 @@ export default function ReferendumPost(): React.ReactElement {
                             identiconSize={25}
                             showSocial={false}
                             style={{
-                              fontSize: '16px',
+                              fontSize: '14px',
                               fontWeight: 400,
                               height: '38px',
                               lineHeight: '47px',
@@ -399,18 +449,32 @@ export default function ReferendumPost(): React.ReactElement {
                           />
                         </Grid>
                         <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-                        <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6 }}>
+                        <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
                           {referendum?.method}
                         </Grid>
                         <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
                         <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
-                        {referendum?.created_at &&
-                          <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
-                            {new Date(referendum?.created_at).toDateString()}
-                          </Grid>
-                        }
+                        <Grid item sx={{ fontSize: '14px', fontWeight: 400, pl: '1%' }}>
+                          <ShowValue value={referendum?.created_at && new Date(referendum?.created_at).toDateString()} />
+                        </Grid>
+                        <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+                        <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+                          {referendum?.requested &&
+                            <LabelValue
+                              label={`${t('Requested')}: `}
+                              noBorder
+                              value={<ShowBalance
+                                balance={new BN(referendum?.requested)}
+                                decimal={decimal}
+                                decimalPoint={2}
+                                token={token}
+                              />}
+                              valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
+                              labelStyle={{ fontSize: 14 }}
+                            />}
+                        </Grid>
                       </Grid>
-                      <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: '#737373', p: '5px 10px' }} xs={1.5}>
+                      <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: '#737373', p: '5px 10px' }} xs={1.5}>
                         {referendum?.status.replace(/([A-Z])/g, ' $1').trim()}
                       </Grid>
                     </Grid>
@@ -428,8 +492,43 @@ export default function ReferendumPost(): React.ReactElement {
                 </AccordionDetails>
               </Accordion>
             </Grid>
-            <Grid container item xs={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px' }}>
+            <Grid container item xs={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
               <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
+              <Grid item px='5%' xs>
+                <LabelValue
+                  label={`${t('Ayes')}(${referendumInfoFromSubscan?.ayes_count ? referendumInfoFromSubscan.ayes_count : ''})`}
+                  value={<ShowBalance
+                    balance={referendumInfoFromSubscan?.ayes_amount && new BN(referendumInfoFromSubscan.ayes_amount)}
+                    decimal={decimal}
+                    token={token}
+                  />}
+                />
+                <LabelValue
+                  label={`${t('Nays')}(${referendumInfoFromSubscan?.nays_count ? referendumInfoFromSubscan.nays_count : ''})`}
+                  value={<ShowBalance
+                    balance={referendumInfoFromSubscan?.nays_amount && new BN(referendumInfoFromSubscan.nays_amount)}
+                    decimal={decimal}
+                    token={token}
+                  />}
+                />
+                <LabelValue
+                  label={t('Support')}
+                  value={<ShowBalance
+                    balance={referendumInfoFromSubscan?.support_amount && new BN(referendumInfoFromSubscan.support_amount)}
+                    decimal={decimal}
+                    token={token}
+                  />}
+                  style={{ mt: '20px' }}
+                />
+                <LabelValue
+                  label={t('Total issuance')}
+                  value={<ShowBalance
+                    balance={totalIssuance && inactiveIssuance && totalIssuance.sub(inactiveIssuance)}
+                    decimal={decimal}
+                    token={token}
+                  />}
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Container>
