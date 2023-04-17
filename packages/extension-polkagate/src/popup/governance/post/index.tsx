@@ -5,37 +5,34 @@
 
 import '@vaadin/icons';
 
-import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Breadcrumbs, Button, Container, Divider, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
+import { Breadcrumbs, Button, Container, Grid, LinearProgress, Link, Typography } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { ActionContext, Identity, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { ActionContext, ShowBalance } from '../../../components';
+import { useApi, useChainName, useDecidingCount, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { blockToX, LabelValue } from '../TrackStats';
-import { MAX_WIDTH, STATUS_COLOR } from '../utils/consts';
+import { MAX_WIDTH } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { ReferendumPolkassambly, ReferendumSubScan, TopMenu } from '../utils/types';
-import { toPascalCase, toTitleCase } from '../utils/util';
+import { toTitleCase } from '../utils/util';
 import ReferendumTimeline from './ReferendumTimeline';
+import Description from './Description';
+import MetaData from './MetaData';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { address, postId } = useParams<{ address: string, postId: number }>();
   const history = useHistory();
-  const chain = useChain(address);
   const { state } = useLocation();
-  const theme = useTheme();
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -137,11 +134,11 @@ export default function ReferendumPost(): React.ReactElement {
     setMenuOpen(!menuOpen);
   }, [menuOpen]);
 
-  const backToTopMenu = useCallback((event) => {
+  const backToTopMenu = useCallback(() => {
     setSelectedSubMenu('All');
   }, []);
 
-  const backToSubMenu = useCallback((event) => {
+  const backToSubMenu = useCallback(() => {
     setSelectedSubMenu(state?.selectedSubMenu);
   }, [state?.selectedSubMenu]);
 
@@ -325,86 +322,20 @@ export default function ReferendumPost(): React.ReactElement {
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           <Grid container justifyContent='space-between'>
             <Grid container item md={8.9} sx={{ height: '100%' }}>
-              <Accordion defaultExpanded sx={{ width: 'inherit', px: '2%' }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: `1px solid ${theme.palette.action.disabledBackground}`, px: 0 }}>
-                  <Grid container item>
-                    <Grid container item xs={12}>
-                      <Typography fontSize={24} fontWeight={500}>
-                        <ShowValue value={trackName ? trackName || 'No Title' : undefined} width='500px' />
-                      </Typography>
-                    </Grid>
-                    <Grid alignItems='center' container item justifyContent='space-between' xs={12}>
-                      <Grid alignItems='center' container item xs={9.5}>
-                        <Grid item sx={{ fontSize: '14px', fontWeight: 400, mr: '17px' }}>
-                          {t('By')}:
-                        </Grid>
-                        <Grid item sx={{ mb: '10px' }}>
-                          <Identity
-                            api={api}
-                            chain={chain}
-                            formatted={referendumFromPA?.proposer}
-                            identiconSize={25}
-                            showSocial={false}
-                            style={{
-                              fontSize: '14px',
-                              fontWeight: 400,
-                              height: '38px',
-                              lineHeight: '47px',
-                              maxWidth: '100%',
-                              minWidth: '35%',
-                              width: 'fit-content',
-                            }}
-                          />
-                        </Grid>
-                        <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-                        <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
-                          {referendumFromPA?.method}
-                        </Grid>
-                        <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-                        <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
-                        <Grid item sx={{ fontSize: '14px', fontWeight: 400, pl: '1%' }}>
-                          <ShowValue value={referendumFromPA?.created_at && new Date(referendumFromPA?.created_at).toDateString()} />
-                        </Grid>
-                        <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-                        <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-                          {referendumFromPA?.requested &&
-                            <LabelValue
-                              label={`${t('Requested')}: `}
-                              noBorder
-                              value={<ShowBalance
-                                balance={new BN(referendumFromPA?.requested)}
-                                decimal={decimal}
-                                decimalPoint={2}
-                                token={token}
-                              />}
-                              valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
-                              labelStyle={{ fontSize: 14 }}
-                            />}
-                        </Grid>
-                      </Grid>
-                      <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[toPascalCase(referendumFromPA?.status)], p: '5px 10px' }} xs={1.5}>
-                        {toTitleCase(referendumFromPA?.status)}
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container item xs={12}>
-                    {referendumFromPA?.content &&
-                      <ReactMarkdown
-                        components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
-                        children={referendumFromPA?.content}
-                      />
-                    }
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
+              <Description
+                address={address}
+                referendum={referendumFromPA}
+              />
               <ReferendumTimeline
                 address={address}
                 history={referendumFromPA?.statusHistory}
               />
+               <MetaData
+                address={address}
+                referendum={referendumFromPA}
+              />
             </Grid>
-            <Grid container alignItems='flex-start' item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
+            <Grid alignItems='flex-start' container item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
               <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
               <Grid item px='5%' xs={12}>
                 <LabelValue
