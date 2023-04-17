@@ -106,6 +106,10 @@ export default function Governance(): React.ReactElement {
       setReferendumCount(count?.toNumber());
     }).catch(console.error);
 
+    api.query.referenda.referendumInfoFor(124).then((res) => {
+      console.log('referendumInfoFor 124:', res.toString());
+    }).catch(console.error);
+   
     // const trackId_mediumSpender = 33;
     // api.query.referenda.trackQueue(trackId_mediumSpender).then((res) => {
     //   console.log('trackQueue for trackId_mediumSpender:', res.toString());
