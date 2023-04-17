@@ -15,15 +15,12 @@ import { useHistory,useLocation } from 'react-router-dom';
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useTracks, useTranslation } from '../../hooks';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
+import { MAX_WIDTH, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
 import { TrackStats } from './TrackStats';
-
-type TopMenu = 'Referenda' | 'Fellowship';
-
-export const MAX_WIDTH = '1280px';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
@@ -192,8 +189,8 @@ export default function Governance(): React.ReactElement {
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
         <Grid container alignItems='center' justifyContent='space-between'>
           <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-            <TopMenu item={'Referenda'} />
-            <TopMenu item={'Fellowship'} />
+            <TopMenuComponent item={'Referenda'} />
+            <TopMenuComponent item={'Fellowship'} />
           </Grid>
           <Grid container item justifyContent='flex-end' md={5}>
             <Button
@@ -245,7 +242,7 @@ export default function Governance(): React.ReactElement {
     </Grid>
   );
 
-  function TopMenu({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
+  function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
       <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
         <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>

@@ -9,6 +9,7 @@ import React from 'react';
 
 import { Identity } from '../../components';
 import { useApi, useChain, useTranslation } from '../../hooks';
+import { STATUS_COLOR } from './utils/consts';
 import { LatestReferenda } from './utils/helpers';
 
 interface Props {
@@ -17,17 +18,6 @@ interface Props {
   referendum: LatestReferenda;
   onClick: () => void;
 }
-
-const STATUS_COLOR = {
-  Canceled: '#ff4f4f',
-  ConfirmStarted: '#27ae60',
-  Confirmed: '#2ecc71',
-  Deciding: '#3498db',
-  Executed: '#8e44ad',
-  Rejected: '#f39c12',
-  Submitted: '#bdc3c7',
-  TimedOut: '#7f8c8d',
-};
 
 export function ReferendumSummary({ address, key, onClick, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();

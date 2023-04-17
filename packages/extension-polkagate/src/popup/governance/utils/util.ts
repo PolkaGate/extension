@@ -1,7 +1,11 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export function toSnakeCase(input: string): string {
+export function toSnakeCase(input: string): string | undefined {
+  if (!input) {
+    return undefined;
+  }
+
   // Replace spaces with underscores
   let words = input.replace(/\s+/g, '_');
 
@@ -12,7 +16,11 @@ export function toSnakeCase(input: string): string {
   return words.toLowerCase();
 }
 
-export function toPascalCase(input: string): string {
+export function toPascalCase(input: string): string | undefined {
+  if (!input) {
+    return undefined;
+  }
+
   // Replace underscores and hyphens with spaces
   let words = input.replace(/[_-]/g, ' ').split(' ');
 
@@ -25,7 +33,11 @@ export function toPascalCase(input: string): string {
   return words.join('');
 }
 
-export function toTitleCase(input: string): string {
+export function toTitleCase(input: string): string | undefined {
+  if (!input) {
+    return undefined;
+  }
+
   // Replace underscores and hyphens with spaces
   let words = input.replace(/[_-]/g, ' ').split(' ');
 

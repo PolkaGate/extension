@@ -3,8 +3,6 @@
 
 export type TopMenu = 'Referenda' | 'Fellowship';
 
-export const MAX_WIDTH = '1280px';
-
 interface Reply {
   content: string;
   created_at: Date,
@@ -39,7 +37,7 @@ interface Comment {
   username: string
 }
 
-interface History {
+export interface ReferendumHistory {
   timestamp: Date,
   status: string,
   block: number
@@ -83,7 +81,7 @@ export interface ReferendumPolkassambly {
   requested: string,
   reward: any,
   status: string,
-  statusHistory: History[],
+  statusHistory: ReferendumHistory[],
   submission_deposit_amount: string,
   submitted_amount: string,
   tally: {
@@ -97,7 +95,7 @@ export interface ReferendumPolkassambly {
       created_at: Date,
       hash: string,
       index: number,
-      statuses: History[],
+      statuses: ReferendumHistory[],
       type: string
     }
   ],
@@ -114,7 +112,6 @@ export interface ReferendumPolkassambly {
   spam_users_count: number
 }
 
-
 export interface ReferendumSubScan {
   referendum_index: number;
   created_block: number;
@@ -122,39 +119,39 @@ export interface ReferendumSubScan {
   origins_id: number;
   origins: string;
   account: {
-      address: string;
-      display: string;
-      identity: boolean;
+    address: string;
+    display: string;
+    identity: boolean;
   };
   deposit_balance: string;
   decision_deposit_account: {
-      address: string;
-      display: string;
-      identity: boolean;
+    address: string;
+    display: string;
+    identity: boolean;
   };
   decision_deposit_balance: string;
   status: string;
   latest_block_num: number;
   latest_block_timestamp: number;
   pre_image: {
-      hash: string;
-      created_block: number;
-      updated_block: number;
-      status: string;
-      amount: string;
-      call_module: string;
-      call_name: string;
-      params: string;
-      author: {
-          address: string;
-          display: string;
-          identity: boolean;
-      };
-  };
-  beneficiary: {
+    hash: string;
+    created_block: number;
+    updated_block: number;
+    status: string;
+    amount: string;
+    call_module: string;
+    call_name: string;
+    params: string;
+    author: {
       address: string;
       display: string;
       identity: boolean;
+    };
+  };
+  beneficiary: {
+    address: string;
+    display: string;
+    identity: boolean;
   };
   beneficiary_amount: string;
   ayes_amount: string;
@@ -165,12 +162,12 @@ export interface ReferendumSubScan {
   support_amount: string;
   bare_ayes: string;
   timeline: {
-      block: number;
-      status: string;
-      time: number;
-      prophecy: boolean;
-      index: number;
-      extrinsic_index: string;
-      params: null;
+    block: number;
+    status: string;
+    time: number;
+    prophecy: boolean;
+    index: number;
+    extrinsic_index: string;
+    params: null;
   }[];
 }

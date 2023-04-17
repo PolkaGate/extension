@@ -22,10 +22,11 @@ import { useApi, useChain, useChainName, useDecidingCount, useDecimal, useToken,
 import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { blockToX, LabelValue } from '../TrackStats';
+import { MAX_WIDTH, STATUS_COLOR } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
-import { ReferendumPolkassambly, ReferendumSubScan } from '../utils/types';
-import { toTitleCase } from '../utils/util';
-import { MAX_WIDTH } from '..';
+import { ReferendumPolkassambly, ReferendumSubScan, TopMenu } from '../utils/types';
+import { toPascalCase, toTitleCase } from '../utils/util';
+import ReferendumTimeline from './ReferendumTimeline';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -323,8 +324,8 @@ export default function ReferendumPost(): React.ReactElement {
         <Bread />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           <Grid container justifyContent='space-between'>
-            <Grid container item xs={8.9} sx={{ height: '100%' }}>
-              <Accordion sx={{ width: 'inherit', px: '2%' }} defaultExpanded >
+            <Grid container item md={8.9} sx={{ height: '100%' }}>
+              <Accordion defaultExpanded sx={{ width: 'inherit', px: '2%' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: `1px solid ${theme.palette.action.disabledBackground}`, px: 0 }}>
                   <Grid container item>
                     <Grid container item xs={12}>
@@ -381,8 +382,8 @@ export default function ReferendumPost(): React.ReactElement {
                             />}
                         </Grid>
                       </Grid>
-                      <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: '#737373', p: '5px 10px' }} xs={1.5}>
-                        {referendumFromPA?.status.replace(/([A-Z])/g, ' $1').trim()}
+                      <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[toPascalCase(referendumFromPA?.status)], p: '5px 10px' }} xs={1.5}>
+                        {toTitleCase(referendumFromPA?.status)}
                       </Grid>
                     </Grid>
                   </Grid>
@@ -398,8 +399,12 @@ export default function ReferendumPost(): React.ReactElement {
                   </Grid>
                 </AccordionDetails>
               </Accordion>
+              <ReferendumTimeline
+                address={address}
+                history={referendumFromPA?.statusHistory} 
+                />
             </Grid>
-            <Grid container item xs={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
+            <Grid container alignItems='flex-start' item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
               <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
               <Grid item px='5%' xs={12}>
                 <LabelValue
