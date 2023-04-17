@@ -21,12 +21,13 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
 import RemoveAll from '../myPool/removeAll';
 import SetState from '../myPool/SetState';
+import RemoveValidators from '../nominations/remove';
 import Review from './Review';
 
 interface State {
@@ -39,8 +40,9 @@ interface State {
 
 const CONDITION_MAP = {
   DESTROY: 1,
-  REMOVE_ALL: 2
-}
+  REMOVE_ALL: 2,
+  CHILL: 3
+};
 
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
@@ -78,6 +80,8 @@ export default function Index(): React.ReactElement {
     }
   }, [myPool]);
 
+  const hasNominators = !!myPool?.stashIdAccount?.nominators?.length;
+
   const decimal = useDecimal(address) ?? DEFAULT_TOKEN_DECIMALS;
   const token = useToken(address) ?? '...';
   const totalAfterUnstake = useMemo(() => {
@@ -88,6 +92,8 @@ export default function Index(): React.ReactElement {
     if (staked && !unstakeAllAmount) {
       return staked.sub(amountToMachine(amount, decimal));
     }
+
+    return undefined;
   }, [amount, decimal, staked, unstakeAllAmount]);
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
   const maxUnlockingChunks = api && api.consts.staking.maxUnlockingChunks?.toNumber() as unknown as number;
@@ -109,19 +115,15 @@ export default function Index(): React.ReactElement {
     return undefined;
   }, [stakingConsts]);
 
+  const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
+
   useEffect(() => {
     if (!amount) {
       return;
     }
 
-    const amountAsBN = amountToMachine(amount, decimal);
-
     if (amountAsBN.gt(staked ?? BN_ZERO)) {
       return setAlert(t('It is more than already staked.'));
-    }
-
-    if (isPoolDepositor && (poolMemberCounter > 1 || poolState !== 'Destroying') && poolConsts && staked.sub(amountAsBN).lt(poolConsts.minCreateBond)) {
-      return setAlert(t('Remaining stake amount should not be less than {{min}} {{token}}', { replace: { min: amountToHuman(poolConsts.minCreateBond, decimal), token } }));
     }
 
     if (api && staked && poolConsts && !staked.sub(amountAsBN).isZero() && !unstakeAllAmount && staked.sub(amountAsBN).lt(poolConsts.minJoinBond)) {
@@ -132,7 +134,7 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount, isPoolDepositor, poolMemberCounter, poolState, token]);
+  }, [amount, api, poolConsts, decimal, staked, t, unstakeAllAmount, isPoolDepositor, poolMemberCounter, poolState, token, amountAsBN]);
 
   useEffect(() => {
     if (!api) {
@@ -165,25 +167,32 @@ export default function Index(): React.ReactElement {
       return;
     }
 
-    const partial = staked.sub(poolConsts.minCreateBond);
+    const partial = amountAsBN.eq(staked) || (amountAsBN.gt(staked.sub(poolConsts.minCreateBond)) && !amountAsBN.gt(staked)) || staked.eq(poolConsts.minCreateBond);
 
-    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial.isZero()) {
-      setHelperText(t<string>('You need to change the pool state to Destroying first to be able to unstake.'));
+    if (isPoolDepositor && isPoolRoot && poolState !== 'Destroying' && partial) {
+      setHelperText(t<string>('Make sure to change the pool state to Destroying before unstake all your tokens.'));
       setShowHelperButton(CONDITION_MAP.DESTROY);
 
       return;
     }
 
-    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial.isZero()) {
-      setHelperText(t<string>('You need to remove all members first to be able to unstake.'));
+    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter !== 1 && partial) {
+      setHelperText(t<string>('Make sure to remove all pool members before unstaking all your tokens.'));
       setShowHelperButton(CONDITION_MAP.REMOVE_ALL);
+
+      return;
+    }
+
+    if (isPoolDepositor && isPoolRoot && poolState === 'Destroying' && poolMemberCounter === 1 && partial && hasNominators) {
+      setHelperText(t<string>('Make sure to remove all of your validators before unstaking all your tokens.'));
+      setShowHelperButton(CONDITION_MAP.CHILL);
 
       return;
     }
 
     setShowHelperButton(undefined);
     setHelperText(undefined);
-  }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
+  }, [amountAsBN, formatted, hasNominators, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -243,6 +252,10 @@ export default function Index(): React.ReactElement {
     helperButton === 2 && setGoChange(!goChange);
   }, [goChange, helperButton]);
 
+  const goToRemoveValidators = useCallback(() => {
+    helperButton === 3 && setGoChange(!goChange);
+  }, [goChange, helperButton]);
+
   const Warn = ({ belowInput, iconDanger, isDanger, text }: { belowInput?: boolean, text: string; isDanger?: boolean; iconDanger?: boolean; }) => (
     <Grid container sx={{ '> div': { mr: '0', mt: '5px', pl: '5px' }, mt: isDanger ? '15px' : 0 }}>
       <Warning
@@ -274,24 +287,31 @@ export default function Index(): React.ReactElement {
         <Grid container height='78px' justifyContent='center' m='auto' width='92%'>
           <Warn isDanger text={helperText} />
           {helperButton &&
-            <Button onClick={helperButton === 1 ? goToDestroying : goToRemoveAll}
+            <Button onClick={helperButton === 1 ? goToDestroying : helperButton === 2 ? goToRemoveAll : goToRemoveValidators}
               startIcon={
                 helperButton === 1
                   ? (
                     <AutoDeleteIcon
                       sx={{ color: 'text.primary', fontSize: '21px' }}
                     />)
-                  : (
-                    <FontAwesomeIcon
-                      color={theme.palette.text.primary}
-                      fontSize='18px'
-                      icon={faPersonCircleXmark}
-                    />)
+                  : helperButton === 2
+                    ? (
+                      <FontAwesomeIcon
+                        color={theme.palette.text.primary}
+                        fontSize='18px'
+                        icon={faPersonCircleXmark}
+                      />)
+                    : (
+                      <FontAwesomeIcon
+                        color={theme.palette.text.primary}
+                        fontSize='18px'
+                        icon={faPersonCircleXmark}
+                      />)
               }
               sx={{ color: 'text.primary', fontSize: '14px', fontWeight: 400, mt: '10px', textDecorationLine: 'underline', textTransform: 'capitalize' }}
               variant='text'
             >
-              {helperButton === 1 ? t<string>('Destroying') : t<string>('RemoveAll')}
+              {helperButton === 1 ? t<string>('Destroying') : helperButton === 2 ? t<string>('RemoveAll') : t<string>('RemoveValidators')}
             </Button>}
         </Grid>
       }
@@ -308,7 +328,7 @@ export default function Index(): React.ReactElement {
         />
         <div style={{ paddingTop: '15px' }}>
           <AmountWithOptions
-            disabled={!!helperButton}
+            // disabled={!!helperButton}
             label={t<string>('Amount ({{token}})', { replace: { token } })}
             onChangeAmount={onChangeAmount}
             onPrimary={onAllAmount}
@@ -340,7 +360,7 @@ export default function Index(): React.ReactElement {
         </Typography>}
       <PButton
         _onClick={goToReview}
-        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || alert}
+        disabled={!amount || amount === '0' || !staked || staked?.isZero() || !estimatedFee || !!alert || !!helperButton}
         text={t<string>('Next')}
       />
       {showReview && amount && api && formatted && maxUnlockingChunks && myPool &&
@@ -386,6 +406,18 @@ export default function Index(): React.ReactElement {
           setRefresh={setRefresh}
           setShowRemoveAll={setGoChange}
           showRemoveAll={goChange}
+        />
+      }
+      {goChange && helperButton === 3 && myPool && formatted &&
+        <RemoveValidators
+          address={address}
+          api={api}
+          chain={chain}
+          formatted={String(formatted)}
+          poolId={myPool.poolId}
+          setShow={setGoChange}
+          show={goChange}
+          title={t<string>('Remove Validators')}
         />
       }
     </Motion>
