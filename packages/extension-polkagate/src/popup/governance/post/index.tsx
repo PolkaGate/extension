@@ -55,7 +55,7 @@ export default function ReferendumPost(): React.ReactElement {
   const [decidingProgress, setDecidingProgress] = useState<number>();
 
   const trackName = useMemo((): string | undefined => {
-    const name = (state?.selectedSubMenu || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
 
     return name && toTitleCase(name);
   }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
@@ -401,8 +401,8 @@ export default function ReferendumPost(): React.ReactElement {
               </Accordion>
               <ReferendumTimeline
                 address={address}
-                history={referendumFromPA?.statusHistory} 
-                />
+                history={referendumFromPA?.statusHistory}
+              />
             </Grid>
             <Grid container alignItems='flex-start' item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
               <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
