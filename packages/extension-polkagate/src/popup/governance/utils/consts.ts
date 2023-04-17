@@ -4,13 +4,13 @@
 export const MAX_WIDTH = '1280px';
 
 export const STATUS_COLOR = {
-  Canceled: '#737373',
+  Cancelled: '#737373',
   Confirmed: '#008080',
   ConfirmStarted: '#FFB900',
   Deciding: '#6A5ACD',
   Executed: '#00BFFF ',
   Rejected: '#FF5722',
   Submitted: '#6B9090',
-  TimeOut: '#AD9C88',
+  TimedOut: '#AD9C88',
   DecisionDepositPlaced:'#FFA07A'
 };
