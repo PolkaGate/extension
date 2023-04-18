@@ -28,9 +28,15 @@ export default function ReferendumDescription({ address, referendum }: { address
   const decimal = useDecimal(address);
   const token = useToken(address);
 
+  const [expanded, setExpanded] = React.useState(true);
+
+  const handleChange = (event, isExpanded: boolean) => {
+    setExpanded(isExpanded);
+  };
+
   return (
-    <Accordion defaultExpanded sx={{ width: 'inherit', px: '2%' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: `1px solid ${theme.palette.action.disabledBackground}`, px: 0 }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '2%' }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -77,7 +83,7 @@ export default function ReferendumDescription({ address, referendum }: { address
           </Grid>
         </Grid>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails sx={{ px: 0 }}>
         <Grid container item xs={12}>
           {referendum?.content &&
             <ReactMarkdown

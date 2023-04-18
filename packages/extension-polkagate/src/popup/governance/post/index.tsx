@@ -26,6 +26,7 @@ import { toTitleCase } from '../utils/util';
 import ReferendumTimeline from './ReferendumTimeline';
 import Description from './Description';
 import MetaData from './MetaData';
+import Comments from './Comments';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -330,7 +331,11 @@ export default function ReferendumPost(): React.ReactElement {
                 address={address}
                 history={referendumFromPA?.statusHistory}
               />
-               <MetaData
+              <MetaData
+                address={address}
+                referendum={referendumFromPA}
+              />
+              <Comments
                 address={address}
                 referendum={referendumFromPA}
               />
@@ -356,12 +361,12 @@ export default function ReferendumPost(): React.ReactElement {
                 />
                 <LabelValue
                   label={`${t('Support')} (${supportPercent || ''}%)`}
+                  style={{ mt: '20px' }}
                   value={<ShowBalance
                     balance={referendumInfoFromSubscan?.support_amount && new BN(referendumInfoFromSubscan.support_amount)}
                     decimal={decimal}
                     token={token}
                   />}
-                  style={{ mt: '20px' }}
                 />
                 <LabelValue
                   label={t('Total issuance')}

@@ -5,43 +5,50 @@
 
 import '@vaadin/icons';
 
-import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { useLocation } from 'react-router-dom';
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, useTheme } from '@mui/material';
+import React from 'react';
 
+import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
-import { hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { Identity, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { Identity, ShowBalance } from '../../../components';
+import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
-import { STATUS_COLOR } from '../utils/consts';
 import { ReferendumPolkassambly } from '../utils/types';
-import { toPascalCase, toTitleCase } from '../utils/util';
+import { pascalCaseToTitleCase } from '../utils/util';
 
-export function hexToAddress(_address: string | undefined): string | undefined {
-  return _address && encodeAddress(hexToU8a(_address));
+export function hexAddressToFormatted(hexString: string, chain: Chain | undefined): string | undefined {
+  if (!chain || !hexString) {
+    return undefined;
+  }
+
+  const decodedBytes = decodeAddress(hexString);
+
+  return encodeAddress(decodedBytes, chain.ss58Format);
+
 }
 
 export default function Metadata({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address)
+  const api = useApi(address);
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
-  console.log('referendum?.beneficiary:', referendum?.proposed_call?.args?.beneficiary, hexToAddress(referendum?.proposed_call?.args?.beneficiary))
+  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
 
-  const mayBeBeneficiary = hexToAddress(referendum?.proposed_call?.args?.beneficiary)
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleChange = (event, isExpanded: boolean) => {
+    setExpanded(isExpanded);
+  };
 
   return (
-    <Accordion defaultExpanded sx={{ width: 'inherit', px: '2%' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: `1px solid ${theme.palette.action.disabledBackground}`, px: 0 }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '16px', mt: 1 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -50,61 +57,115 @@ export default function Metadata({ address, referendum }: { address: string | un
           </Grid>
         </Grid>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails sx={{ px: 0 }}>
         <Grid container item xs={12}>
-          <Grid alignItems='center' container item justifyContent='flex-start' spacing={2}>
-            <Grid item xs={3}>
-              <Typography fontSize={16} fontWeight={400}>
-                {t('Proposer')}
-              </Typography>
-            </Grid>
-            <Grid item>
-              {/* <Identity
-                api={api}
-                chain={chain}
-                formatted={referendum?.proposer}
-                identiconSize={25}
-                showSocial={false}
-                style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
-              /> */}
-            </Grid>
-            <Grid item sx={{ opacity: 0.6 }}>
-              <ShowBalance
-                balance={new BN(referendum?.submitted_amount)}
-                decimal={decimal}
-                decimalPoint={2}
-                token={token}
-              />
-            </Grid>
-          </Grid>
+          <LabelValue
+            label={t('Origin')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={pascalCaseToTitleCase(referendum?.origin)}
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
+          <LabelValue
+            label={t('Proposer')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '40px', justifyContent: 'flex-start' }}
+            value={
+              <Grid alignItems='center' container item justifyContent='flex-start' spacing={2}>
+                <Grid item>
+                  <Identity
+                    api={api}
+                    chain={chain}
+                    formatted={referendum?.proposer}
+                    identiconSize={25}
+                    showSocial={false}
+                    style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
+                  />
+                </Grid>
+              </Grid>
+            }
+          />
+          <LabelValue
+            label={t('Submission Amount')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={<ShowBalance
+              balance={new BN(referendum?.submitted_amount)}
+              decimal={decimal}
+              decimalPoint={2}
+              token={token}
+            />}
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
+          <LabelValue
+            label={t('Decision Deposit')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={<ShowBalance
+              balance={new BN(referendum?.decision_deposit_amount)}
+              decimal={decimal}
+              decimalPoint={2}
+              token={token}
+            />}
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
           {mayBeBeneficiary &&
-            <Grid alignItems='center' container item>
-              <Grid item xs={3}>
-                <Typography fontSize={16} fontWeight={400}>
-                  {t('Beneficiary')}
-                </Typography>
-              </Grid>
-              <Grid item sx={{ mb: '10px' }}>
-                <Identity
-                  address={mayBeBeneficiary}
-                  api={api}
-                  chain={chain}
-                  identiconSize={25}
-                  showShortAddress
-                  showSocial={false}
-                  style={{ fontSize: '14px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
-                />
-              </Grid>
-              <Grid item sx={{ opacity: 0.6 }} >
-                <ShowBalance
+            <>
+              <LabelValue
+                label={t('Requested For')}
+                labelStyle={{ minWidth: '20%' }}
+                style={{ pb: '35px', justifyContent: 'flex-start' }}
+                value={<ShowBalance
                   balance={new BN(referendum?.proposed_call?.args?.amount)}
                   decimal={decimal}
                   decimalPoint={2}
                   token={token}
-                />
-              </Grid>
-            </Grid>
+                />}
+                valueStyle={{ fontSize: 16, fontWeight: 500 }}
+              />
+              <LabelValue
+                label={t('Beneficiary')}
+                labelStyle={{ minWidth: '20%' }}
+                style={{ pb: '40px', justifyContent: 'flex-start' }}
+                value={
+                  <Grid alignItems='center' container item justifyContent='flex-start' spacing={2}>
+                    <Grid item>
+                      <Identity
+                        api={api}
+                        chain={chain}
+                        formatted={mayBeBeneficiary}
+                        identiconSize={25}
+                        showShortAddress
+                        showSocial={false}
+                        style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
+                      />
+                    </Grid>
+                  </Grid>
+                }
+              />
+            </>
           }
+          <LabelValue
+            label={t('Enact After')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={t('{{ enactment_after_block }} blocks', { replace: { enactment_after_block: referendum?.enactment_after_block } })}
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
+          <LabelValue
+            label={t('Method')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={referendum?.method}
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
+          <LabelValue
+            label={t('Proposal Hash')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={referendum?.hash}
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
         </Grid>
       </AccordionDetails>
     </Accordion>
