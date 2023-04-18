@@ -49,3 +49,23 @@ export function toTitleCase(input: string): string | undefined {
   // Join words with spaces and return the title case string
   return words.join(' ');
 }
+
+export function pascalCaseToTitleCase(str: string): string {
+  if (!str) {
+    
+    return undefined;
+  }
+
+  // Replace all occurrences of capital letters with a space followed by the lowercase letter
+  let result = str.replace(/([A-Z])/g, ' $1');
+
+  // Replace underscores with spaces
+  result = result.replace(/_/g, ' ');
+
+  // Capitalize the first letter of each word
+  result = result.split(' ').map(word => {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }).join(' ');
+
+  return result;
+}
