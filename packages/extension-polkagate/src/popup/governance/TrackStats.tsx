@@ -24,8 +24,8 @@ interface Props {
 export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
   : { label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => (
   <Grid alignItems='center' container height='30px' item justifyContent='space-between' md={12} my='2px' sx={{ borderBottom: !noBorder && '0.05px solid #4B4B4B', ...style }}>
-    <Grid item>
-      <Typography sx={{ ...labelStyle }}>
+    <Grid item sx={{ ...labelStyle }}>
+      <Typography>
         {label}
       </Typography>
     </Grid>
