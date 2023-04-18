@@ -8,25 +8,23 @@ import '@vaadin/icons';
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useRef } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { Identity, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { ReferendumPolkassambly } from '../utils/types';
 import { toPascalCase, toTitleCase } from '../utils/util';
 
-export default function ReferendumDescription({ address, referendum }: { address: string | undefined, referendum:ReferendumPolkassambly | undefined}): React.ReactElement {
+export default function ReferendumDescription({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api=useApi(address)
+  const api = useApi(address)
   const chain = useChain(address);
-  const { state } = useLocation();
   const decimal = useDecimal(address);
   const token = useToken(address);
 
@@ -44,27 +42,12 @@ export default function ReferendumDescription({ address, referendum }: { address
               <Grid item sx={{ fontSize: '14px', fontWeight: 400, mr: '17px' }}>
                 {t('By')}:
               </Grid>
-              <Grid item sx={{ mb: '10px' }}>
-                <Identity
-                  api={api}
-                  chain={chain}
-                  formatted={referendum?.proposer}
-                  identiconSize={25}
-                  showSocial={false}
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 400,
-                    height: '38px',
-                    lineHeight: '47px',
-                    maxWidth: '100%',
-                    minWidth: '35%',
-                    width: 'fit-content',
-                  }}
-                />
+              <Grid item>
+                <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content', }} />
               </Grid>
               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
               <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
-                {referendum?.method}
+                <ShowValue value={referendum?.method} width='50px' />
               </Grid>
               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
               <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />

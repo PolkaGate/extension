@@ -10,7 +10,7 @@ import { logoBlack, logoWhite } from '../../assets/logos';
 import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
 import AddressDropdown from './AddressDropdown';
-import { MAX_WIDTH } from '.';
+import { MAX_WIDTH } from './utils/consts';
 
 interface Props {
   address: string;

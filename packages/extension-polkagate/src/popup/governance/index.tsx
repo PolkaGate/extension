@@ -15,12 +15,13 @@ import { useHistory,useLocation } from 'react-router-dom';
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useTracks, useTranslation } from '../../hooks';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
-import { MAX_WIDTH, TopMenu } from './utils/types';
+import { TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
 import { TrackStats } from './TrackStats';
+import { MAX_WIDTH } from './utils/consts';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
