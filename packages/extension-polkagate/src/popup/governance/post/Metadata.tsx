@@ -71,18 +71,14 @@ export default function Metadata({ address, referendum }: { address: string | un
             labelStyle={{ minWidth: '20%' }}
             style={{ pb: '40px', justifyContent: 'flex-start' }}
             value={
-              <Grid alignItems='center' container item justifyContent='flex-start' spacing={2}>
-                <Grid item>
-                  <Identity
-                    api={api}
-                    chain={chain}
-                    formatted={referendum?.proposer}
-                    identiconSize={25}
-                    showSocial
-                    style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
-                  />
-                </Grid>
-              </Grid>
+              <Identity
+                api={api}
+                chain={chain}
+                formatted={referendum?.proposer}
+                identiconSize={25}
+                showSocial
+                style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
+              />
             }
           />
           <LabelValue
@@ -128,19 +124,15 @@ export default function Metadata({ address, referendum }: { address: string | un
                 labelStyle={{ minWidth: '20%' }}
                 style={{ pb: '40px', justifyContent: 'flex-start' }}
                 value={
-                  <Grid alignItems='center' container item justifyContent='flex-start' spacing={2}>
-                    <Grid item>
-                      <Identity
-                        api={api}
-                        chain={chain}
-                        formatted={mayBeBeneficiary}
-                        identiconSize={25}
-                        showShortAddress
-                        showSocial
-                        style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
-                      />
-                    </Grid>
-                  </Grid>
+                  <Identity
+                    api={api}
+                    chain={chain}
+                    formatted={mayBeBeneficiary}
+                    identiconSize={25}
+                    showShortAddress
+                    showSocial
+                    style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%' }}
+                  />
                 }
               />
             </>
