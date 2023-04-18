@@ -78,7 +78,7 @@ export default function Metadata({ address, referendum }: { address: string | un
                     chain={chain}
                     formatted={referendum?.proposer}
                     identiconSize={25}
-                    showSocial={false}
+                    showSocial
                     style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
                   />
                 </Grid>
@@ -136,7 +136,7 @@ export default function Metadata({ address, referendum }: { address: string | un
                         formatted={mayBeBeneficiary}
                         identiconSize={25}
                         showShortAddress
-                        showSocial={false}
+                        showSocial
                         style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
                       />
                     </Grid>
