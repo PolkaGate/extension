@@ -15,6 +15,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { riot } from '../assets/icons';
 import { useAccountInfo, useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
+import useFormatted2 from '../hooks/useFormatted2';
 import { getSubstrateAddress } from '../util/utils';
 import { ChainLogo, Identicon, ShortAddress } from '.';
 
@@ -40,7 +41,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
-  const _formatted = useFormatted(address, formatted);
+  const _formatted = useFormatted2(address, formatted, _chain);
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
   const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
