@@ -3,7 +3,7 @@
 
 export type TopMenu = 'Referenda' | 'Fellowship';
 
-interface Reply {
+export interface Reply {
   content: string;
   created_at: Date,
   id: string,
@@ -24,7 +24,7 @@ interface Reaction {
   }
 }
 
-interface Comment {
+export interface CommentType {
   comment_reactions: Reaction,
   content: string,
   created_at: Date,
@@ -45,7 +45,7 @@ export interface ReferendumHistory {
 
 export interface ReferendumPolkassambly {
   bond: any,
-  comments: Comment[],
+  comments: CommentType[],
   content: string,
   created_at: Date,
   curator: any,
