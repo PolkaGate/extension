@@ -26,10 +26,14 @@ module.exports = (entry, alias = {}) => ({
   module: {
     rules: [
       {
-        test: /\.m?js/, // added for plus
+        test: /\.m?js/, // added for polkagate
         resolve: {
           fullySpecified: false
         }
+      },
+      {
+        test: /\.css$/, // added for polkagate
+        use: ['style-loader', 'css-loader']
       },
       {
         exclude: /(node_modules)/,

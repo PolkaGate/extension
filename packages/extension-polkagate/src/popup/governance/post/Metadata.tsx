@@ -6,15 +6,17 @@
 import '@vaadin/icons';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Link, Typography, useTheme } from '@mui/material';
+import React, { useEffect } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { JsonToTable } from "react-json-to-table";
 
+import { subscan } from '../../../assets/icons';
 import { Identity, ShowBalance } from '../../../components';
-import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { ReferendumPolkassambly } from '../utils/types';
 import { pascalCaseToTitleCase } from '../utils/util';
@@ -35,16 +37,27 @@ export default function Metadata({ address, referendum }: { address: string | un
   const theme = useTheme();
   const api = useApi(address);
   const chain = useChain(address);
+  const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+
+  const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.post_id);
 
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
 
   const [expanded, setExpanded] = React.useState(false);
+  const [referendumJson, SetReferendumJson] = React.useState(false);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
+
+  useEffect(() => {
+    api && referendum?.post_id && api.query.referenda.referendumInfoFor(referendum.post_id).then((res) => {
+      console.log(`referendumInfoFor referendum ${referendum?.post_id} :, ${res}`);
+      SetReferendumJson(res.toJSON());
+    }).catch(console.error);
+  }, [api, referendum]);
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '16px', mt: 1 }}>
@@ -158,6 +171,28 @@ export default function Metadata({ address, referendum }: { address: string | un
             value={referendum?.hash}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
+          <LabelValue
+            label={t('View in Subscan')}
+            labelStyle={{ minWidth: '20%' }}
+            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            value={
+              <Link
+                href={referendumLinkOnsSubscan()}
+                rel='noreferrer'
+                target='_blank'
+                underline='none'
+              >
+                <Box alt={'subscan'} component='img' height='25px' mt='5px' src={subscan} width='25px' />
+              </Link>
+            }
+            valueStyle={{ fontSize: 16, fontWeight: 500 }}
+          />
+          <Grid item sx={{ py: 2 }}>
+            <Typography>
+              {t('Call in JSON')}
+            </Typography>
+            {referendumJson && !referendumJson.hasOwnProperty('approved') && <JsonToTable json={referendumJson} />}
+          </Grid>
         </Grid>
       </AccordionDetails>
     </Accordion>

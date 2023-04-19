@@ -6,6 +6,7 @@
 import '@vaadin/icons';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Square from '@mui/icons-material/Square';
 import Timeline from '@mui/lab/Timeline';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
@@ -73,9 +74,11 @@ export default function ReferendumTimeline({ address, history }: { address: stri
                 {toFormattedDate(history.timestamp)}
               </TimelineOppositeContent>
               <TimelineSeparator>
-                {index !== sortedHistory?.length - 1 ?
-                  <TimelineDot variant='outlined' color='primary' />
-                  : <TimelineDot variant='filled' color='primary' />
+                {index !== sortedHistory?.length - 1
+                  ? <TimelineDot color='primary' sx={{ width: '20px', height: '20px' }} variant='outlined' />
+                  : <TimelineDot sx={{ bgcolor: 'white', boxShadow: 'none' }}>
+                    <Square sx={{ color: 'primary.main', fontSize: '20px' }} />
+                  </TimelineDot>
                 }
                 {index !== sortedHistory?.length - 1 && <TimelineConnector color='primary' />}
               </TimelineSeparator>

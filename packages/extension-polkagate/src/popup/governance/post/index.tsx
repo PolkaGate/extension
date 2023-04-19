@@ -125,9 +125,9 @@ export default function ReferendumPost(): React.ReactElement {
 
     api.query.balances.inactiveIssuance().then(setInactiveIssuance);
 
-    api.query.referenda.referendumInfoFor(124).then((res) => {
-      console.log(`referendumInfoFor referendum ${124} :, ${res}`);
-    }).catch(console.error);
+    // api.query.referenda.referendumInfoFor(163).then((res) => {
+    //   console.log(`referendumInfoFor referendum ${163} :, ${res}`);
+    // }).catch(console.error);
   }, [api]);
 
   const onTopMenuMenuClick = useCallback((item: TopMenu) => {
