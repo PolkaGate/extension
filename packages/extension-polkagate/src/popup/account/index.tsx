@@ -240,6 +240,19 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={
+              <FontAwesomeIcon
+                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faVoteYea}
+                size='lg'
+              />
+            }
+            onClick={goToGovernance}
+            // textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
+            title={t<string>('Governance')}
+          />
+          <HorizontalMenuItem
+            divider
+            icon={
               showStakingOptions ?
                 <Box component='img' src={stakingClose} width='30px' />
                 : <FontAwesomeIcon
@@ -263,19 +276,6 @@ export default function AccountDetails(): React.ReactElement {
             }
             onClick={goToCrowdLoans}
             title={t<string>('Crowdloan')}
-          />
-          <HorizontalMenuItem
-            divider
-            icon={
-              <FontAwesomeIcon
-                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
-                icon={faVoteYea}
-                size='lg'
-              />
-            }
-            onClick={goToGovernance}
-            // textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
-            title={t<string>('Governance')}
           />
           <HorizontalMenuItem
             icon={
