@@ -10,10 +10,9 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { Identity } from '../../../components';
-import { useApi, useChain, useTranslation } from '../../../hooks';
+import { useApi, useChain } from '../../../hooks';
 import { CommentType } from '../utils/types';
 import { formatRelativeTime } from '../utils/util';
-
 
 export default function Comment({ address, comment, noSource }: { address: string, comment: CommentType, noSource?: boolean }): React.ReactElement {
   const theme = useTheme();
@@ -21,7 +20,7 @@ export default function Comment({ address, comment, noSource }: { address: strin
   const chain = useChain(address);
 
   return (
-    <Grid alignItems='center' container item spacing={2} sx={{mb:'10px'}}>
+    <Grid alignItems='center' container item spacing={2} sx={{ mb: '10px' }}>
       <Grid item>
         <Identity address={comment.proposer} api={api} chain={chain} identiconSize={25} showAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       </Grid>
@@ -31,7 +30,7 @@ export default function Comment({ address, comment, noSource }: { address: strin
       {!noSource &&
         <Grid item>
           <Typography sx={{ textAlign: 'center', fontSize: '14px', fontWeight: 400, border: `0.01px solid ${theme.palette.text.disabled}`, borderRadius: '30px', p: '0 10px' }}>
-            {'Polkassambly'}
+            {'Polkassembly'}
           </Typography>
         </Grid>
       }

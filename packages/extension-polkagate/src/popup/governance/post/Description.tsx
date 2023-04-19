@@ -17,10 +17,10 @@ import { Identity, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
-import { ReferendumPolkassambly } from '../utils/types';
+import { ReferendumPolkassembly } from '../utils/types';
 import { formatRelativeTime, toPascalCase, toTitleCase } from '../utils/util';
 
-export default function ReferendumDescription({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
+export default function ReferendumDescription({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassembly | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address)

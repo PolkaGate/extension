@@ -43,7 +43,7 @@ export interface ReferendumHistory {
   block: number
 }
 
-export interface ReferendumPolkassambly {
+export interface ReferendumPolkassembly {
   bond: any,
   comments: CommentType[],
   content: string,

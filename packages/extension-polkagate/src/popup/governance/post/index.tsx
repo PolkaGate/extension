@@ -21,7 +21,7 @@ import ReferendaMenu from '../ReferendaMenu';
 import { blockToX, LabelValue } from '../TrackStats';
 import { MAX_WIDTH } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
-import { ReferendumPolkassambly, ReferendumSubScan, TopMenu } from '../utils/types';
+import { ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import ReferendumTimeline from './ReferendumTimeline';
 import Description from './Description';
@@ -46,7 +46,7 @@ export default function ReferendumPost(): React.ReactElement {
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
-  const [referendumFromPA, setReferendum] = useState<ReferendumPolkassambly>();
+  const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
   const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();

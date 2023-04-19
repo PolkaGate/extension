@@ -18,7 +18,7 @@ import { subscan } from '../../../assets/icons';
 import { Identity, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
-import { ReferendumPolkassambly } from '../utils/types';
+import { ReferendumPolkassembly } from '../utils/types';
 import { pascalCaseToTitleCase } from '../utils/util';
 
 export function hexAddressToFormatted(hexString: string, chain: Chain | undefined): string | undefined {
@@ -31,7 +31,7 @@ export function hexAddressToFormatted(hexString: string, chain: Chain | undefine
   return encodeAddress(decodedBytes, chain.ss58Format);
 }
 
-export default function Metadata({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
+export default function Metadata({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassembly | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
