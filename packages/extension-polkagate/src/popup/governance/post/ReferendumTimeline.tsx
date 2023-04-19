@@ -57,7 +57,7 @@ export default function ReferendumTimeline({ address, history }: { address: stri
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '2%', mt: 1 }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -67,17 +67,17 @@ export default function ReferendumTimeline({ address, history }: { address: stri
         </Grid>
       </AccordionSummary>
       <AccordionDetails>
-        <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.2 } }}>
+        <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.15 } }}>
           {sortedHistory?.map((history, index) => (
             <TimelineItem key={index}>
               <TimelineOppositeContent color='text.primary' sx={{ fontSize: 16, fontWeight: 500 }}>
                 {toFormattedDate(history.timestamp)}
               </TimelineOppositeContent>
-              <TimelineSeparator>
+              <TimelineSeparator sx={{ color: 'primary.main' }}>
                 {index !== sortedHistory?.length - 1
-                  ? <TimelineDot color='primary' sx={{ width: '20px', height: '20px' }} variant='outlined' />
+                  ? <TimelineDot color='primary' sx={{ width: '20px', height: '20px', borderWidth: '4px' }} variant='outlined' />
                   : <TimelineDot sx={{ bgcolor: 'white', boxShadow: 'none' }}>
-                    <Square sx={{ color: 'primary.main', fontSize: '20px' }} />
+                    <Square sx={{ color: 'primary.main', fontSize: '27px', ml: '-9px' }} />
                   </TimelineDot>
                 }
                 {index !== sortedHistory?.length - 1 && <TimelineConnector color='primary' />}
@@ -91,10 +91,10 @@ export default function ReferendumTimeline({ address, history }: { address: stri
                       target='_blank'
                       underline='none'
                     >
-                      <Box alt={'subscan'} component='img' height='25px' mt='5px' src={subscan} width='25px' />
+                      <Box alt={'subscan'} component='img' height='26px' mt='5px' src={subscan} width='26px' />
                     </Link>
                   </Grid>
-                  <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[history.status], p: '2px 10px', width: 'fit-content' }}>
+                  <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[history.status], p: '2px 10px', width: '190px' }}>
                     {pascalCaseToTitleCase(history.status)}
                   </Grid>
                 </Grid>

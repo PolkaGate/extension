@@ -11,7 +11,7 @@ import { Identity } from '../../components';
 import { useApi, useChain, useTranslation } from '../../hooks';
 import { STATUS_COLOR } from './utils/consts';
 import { LatestReferenda } from './utils/helpers';
-import { pascalCaseToTitleCase } from './utils/util';
+import { formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
 
 interface Props {
   address: string;
@@ -37,22 +37,7 @@ export function ReferendumSummary({ address, key, onClick, referendum }: Props):
             {t('By')}:
           </Grid>
           <Grid item sx={{ mb: '10px' }}>
-            <Identity
-              api={api}
-              chain={chain}
-              formatted={referendum.proposer}
-              identiconSize={25}
-              showSocial={false}
-              style={{
-                fontSize: '16px',
-                fontWeight: 400,
-                height: '38px',
-                lineHeight: '47px',
-                maxWidth: '100%',
-                minWidth: '35%',
-                width: 'fit-content',
-              }}
-            />
+            <Identity api={api} chain={chain} formatted={referendum.proposer} identiconSize={25} showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content', }} />
           </Grid>
           <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
           {referendum.origin &&
@@ -69,10 +54,10 @@ export function ReferendumSummary({ address, key, onClick, referendum }: Props):
           <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
           <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
-            {new Date(referendum.created_at).toDateString()}
+            {formatRelativeTime(referendum.created_at)}
           </Grid>
         </Grid>
-        <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '16px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '10px 15px' }} xs={1.5}>
+        <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '5px 15px' }} xs={1.5}>
           {pascalCaseToTitleCase(referendum.status === 'DecisionDepositPlaced' ? 'Deciding' : referendum.status)}
         </Grid>
       </Grid>

@@ -7,35 +7,30 @@ import '@vaadin/icons';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-
-import { Identity, ShowBalance } from '../../../components';
-import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { LabelValue } from '../TrackStats';
+import { useTranslation } from '../../../hooks';
 import { ReferendumPolkassambly } from '../utils/types';
-import { pascalCaseToTitleCase } from '../utils/util';
+import CommentView from './Comment';
+import Replies from './Replies';
 
 
 export default function Comments({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
   const [expanded, setExpanded] = React.useState(false);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
 
+  const sortedComments = useMemo(() => referendum?.comments?.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)), [referendum]);
+
+  console.log('sortedComments:', sortedComments);
+
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '16px', my: 1 }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -46,8 +41,14 @@ export default function Comments({ address, referendum }: { address: string | un
       </AccordionSummary>
       <AccordionDetails sx={{ px: 0 }}>
         <Grid container item xs={12}>
-
-
+          {sortedComments?.map((comment, index) => (
+            <Grid container key={index} sx={{ borderBottom: `0.01px solid ${theme.palette.text.disabled}` }}>
+              <CommentView address={address} comment={comment} />
+              {!!comment?.replies?.length &&
+                <Replies address={address} replies={comment?.replies} />
+              }
+            </Grid>
+          ))}
         </Grid>
       </AccordionDetails>
     </Accordion>

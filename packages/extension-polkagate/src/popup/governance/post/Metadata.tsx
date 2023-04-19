@@ -8,11 +8,11 @@ import '@vaadin/icons';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Link, Typography, useTheme } from '@mui/material';
 import React, { useEffect } from 'react';
+import { JsonToTable } from "react-json-to-table";
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { JsonToTable } from "react-json-to-table";
 
 import { subscan } from '../../../assets/icons';
 import { Identity, ShowBalance } from '../../../components';
@@ -29,7 +29,6 @@ export function hexAddressToFormatted(hexString: string, chain: Chain | undefine
   const decodedBytes = decodeAddress(hexString);
 
   return encodeAddress(decodedBytes, chain.ss58Format);
-
 }
 
 export default function Metadata({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
@@ -41,12 +40,12 @@ export default function Metadata({ address, referendum }: { address: string | un
   const decimal = useDecimal(address);
   const token = useToken(address);
 
-  const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.post_id);
-
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
-
   const [expanded, setExpanded] = React.useState(false);
   const [referendumJson, SetReferendumJson] = React.useState(false);
+  const [showJson, setShowJson] = React.useState(false);
+
+  const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.post_id);
+  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -61,7 +60,7 @@ export default function Metadata({ address, referendum }: { address: string | un
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '16px', mt: 1 }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -187,12 +186,22 @@ export default function Metadata({ address, referendum }: { address: string | un
             }
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
-          <Grid item sx={{ py: 2 }}>
-            <Typography>
-              {t('Call in JSON')}
-            </Typography>
-            {referendumJson && !referendumJson.hasOwnProperty('approved') && <JsonToTable json={referendumJson} />}
-          </Grid>
+          {referendumJson && !referendumJson.hasOwnProperty('approved') &&
+            <Grid item>
+              <Link
+                onClick={() => setShowJson(!showJson)}
+                sx={{ cursor: 'pointer' }}
+                underline='none'
+              >
+                <Typography sx={{ py: 2 }}>
+                  {t('View Call in JSON')}
+                </Typography>
+              </Link>
+              {showJson &&
+                <JsonToTable json={referendumJson} />
+              }
+            </Grid>
+          }
         </Grid>
       </AccordionDetails>
     </Accordion>

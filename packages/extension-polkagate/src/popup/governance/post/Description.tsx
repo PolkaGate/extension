@@ -18,7 +18,7 @@ import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../..
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { ReferendumPolkassambly } from '../utils/types';
-import { toPascalCase, toTitleCase } from '../utils/util';
+import { formatRelativeTime, toPascalCase, toTitleCase } from '../utils/util';
 
 export default function ReferendumDescription({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassambly | undefined }): React.ReactElement {
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export default function ReferendumDescription({ address, referendum }: { address
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '2%' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}` }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -49,7 +49,7 @@ export default function ReferendumDescription({ address, referendum }: { address
                 {t('By')}:
               </Grid>
               <Grid item>
-                <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content', }} />
+                <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
               </Grid>
               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
               <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
@@ -58,7 +58,7 @@ export default function ReferendumDescription({ address, referendum }: { address
               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
               <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
               <Grid item sx={{ fontSize: '14px', fontWeight: 400, pl: '1%' }}>
-                <ShowValue value={referendum?.created_at && new Date(referendum?.created_at).toDateString()} />
+                <ShowValue value={referendum?.created_at && formatRelativeTime(referendum?.created_at)} />
               </Grid>
               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
               <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>

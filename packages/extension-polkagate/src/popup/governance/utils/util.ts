@@ -50,9 +50,8 @@ export function toTitleCase(input: string): string | undefined {
   return words.join(' ');
 }
 
-export function pascalCaseToTitleCase(str: string): string {
+export function pascalCaseToTitleCase(str: string): string | undefined {
   if (!str) {
-    
     return undefined;
   }
 
@@ -68,4 +67,28 @@ export function pascalCaseToTitleCase(str: string): string {
   }).join(' ');
 
   return result;
+}
+
+export function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const elapsedMs = now.getTime() - date.getTime();
+
+  const seconds = Math.round(elapsedMs / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+  const months = Math.round(days / 30);
+
+  if (seconds < 60) {
+    return `${seconds} seconds ago`;
+  } else if (minutes < 60) {
+    return `${minutes} minutes ago`;
+  } else if (hours < 24) {
+    return `${hours} hours ago`;
+  } else if (days < 30) {
+    return `${days} days ago`;
+  } else {
+    return `${months} months ago`;
+  }
 }
