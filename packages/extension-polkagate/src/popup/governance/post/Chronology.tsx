@@ -80,15 +80,16 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
   const mayBeAwardedDate = useMemo(() => currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod), [currentBlockNumber, mayBeExecutionBlock, spendPeriod])
 
-  const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => item.proposer === referendum.proposer && String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
-  console.log('currentTreasuryApprovalList:', currentTreasuryApprovalList);
+  /** in rare case as ref 160 the proposers are not the same! needs more research */
+  // const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => item.proposer === referendum.proposer && String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
+  const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
   
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '2%', mt: 1 }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1 }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>

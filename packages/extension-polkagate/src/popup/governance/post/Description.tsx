@@ -20,7 +20,6 @@ import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, ReferendumPolkassembly } from '../utils/types';
 import { formatRelativeTime, toPascalCase, toTitleCase } from '../utils/util';
 import { hexAddressToFormatted } from './MetaData';
-import { height } from '@mui/system';
 
 interface Props {
   address: string | undefined;
@@ -51,13 +50,13 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   return (
     <>
       {mayBeTreasuryProposalId &&
-        <Paper elevation={1} sx={{ height: 36, width: 'inherit', mt: '5px' }}>
+        <Paper elevation={1} sx={{ height: 36, width: 'inherit', mt: '5px', mb: '2px', pt: '5px' }}>
           <Typography sx={{ fontSize: '18px', fontWeight: 500, textAlign: 'center' }}>
             {t('This Referendum is now Treasury Proposal #{{proposalId}}', { replace: { proposalId: mayBeTreasuryProposalId } })}
           </Typography>
         </Paper>
       }
-      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '2%' }}>
+      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%' }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
           <Grid container item>
             <Grid container item xs={12}>
@@ -106,7 +105,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           </Grid>
         </AccordionSummary>
         <AccordionDetails sx={{ px: 0 }}>
-          <Grid container item xs={12}>
+          <Grid container item xs={12} sx={{ display: 'inline-block', overflowWrap: 'break-word', wordWrap: 'break-word', wordBreak: 'break-all' }}>
             {referendum?.content &&
               <ReactMarkdown
                 components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}

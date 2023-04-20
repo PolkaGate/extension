@@ -7,8 +7,7 @@ import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
 import { Breadcrumbs, Button, Container, Grid, LinearProgress, Link, Typography } from '@mui/material';
-import { Chart, registerables } from 'chart.js';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -20,13 +19,14 @@ import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { blockToX, LabelValue } from '../TrackStats';
 import { MAX_WIDTH } from '../utils/consts';
-import { getReferendum, getReferendumFromSubscan, getTreasuryProposalNumber } from '../utils/helpers';
+import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
 import MetaData from './MetaData';
+import VoteChart from './VoteChart';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -37,9 +37,6 @@ export default function ReferendumPost(): React.ReactElement {
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const chartRef = useRef(null);
-
-  Chart.register(...registerables);
 
   const api = useApi(address);
   const decidingCounts = useDecidingCount(address);
@@ -66,18 +63,6 @@ export default function ReferendumPost(): React.ReactElement {
       setDecidingProgress((Date.now() / 1000 - referendumInfoFromSubscan.timeline[1].time) * 100 / (track[1].decisionPeriod * 6));
     }
   }, [referendumInfoFromSubscan?.timeline, track]);
-
-  const ayesPercent = useMemo(() =>
-    referendumInfoFromSubscan
-      ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100
-      : 0
-    , [referendumInfoFromSubscan]);
-
-  const naysPercent = useMemo(() =>
-    referendumInfoFromSubscan
-      ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100
-      : 0
-    , [referendumInfoFromSubscan]);
 
   const supportPercent = useMemo(() => {
     if (totalIssuance && inactiveIssuance && referendumInfoFromSubscan) {
@@ -256,82 +241,6 @@ export default function ReferendumPost(): React.ReactElement {
     </Grid>
   );
 
-  useEffect(() => {
-    const chartData = {
-      labels: [
-        'Aye',
-        'Nay',
-        // 'Abstain'
-      ],
-      datasets: [{
-        label: 'Percentage',
-        data: [ayesPercent, naysPercent],
-        backgroundColor: [
-          '#008080',
-          '#FF5722',
-          // '#BBBBBB'
-        ],
-        hoverOffset: 4
-      }]
-    };
-
-    const chartOptions = {
-      plugins: {
-        legend: {
-          align: 'center',
-          display: true,
-          maxHeight: 50,
-          maxWidth: '2px',
-          position: 'bottom'
-        },
-        tooltip: {
-          bodyFont: {
-            displayColors: false,
-            family: 'Roboto',
-            size: 13,
-            weight: 'bold'
-          },
-          callbacks: {
-            label: function (TooltipItem: string | { label: string }[] | undefined) {
-              if (!TooltipItem) {
-                return;
-              }
-
-              return `${TooltipItem.formattedValue} %`;
-            },
-            title: function (TooltipItem: string | { label: string }[] | undefined) {
-              if (!TooltipItem) {
-                return;
-              }
-
-              return `${TooltipItem[0].label}`;
-            }
-          },
-          displayColors: false,
-          // titleColor: theme.palette.mode === 'dark' ? '#000' : '#fff',
-          titleFont: {
-            displayColors: false,
-            family: 'Roboto',
-            size: 14,
-            weight: 'bold'
-          }
-        }
-      },
-      responsive: true
-    };
-
-    const chartInstance = new Chart(chartRef.current, {
-      data: chartData,
-      options: chartOptions,
-      type: 'pie'
-    });
-
-    // Clean up the chart instance on component unmount
-    return () => {
-      chartInstance.destroy();
-    };
-  }, [ayesPercent, naysPercent]);
-
   return (
     <>
       <Header address={address} onAccountChange={onAccountChange} />
@@ -351,8 +260,8 @@ export default function ReferendumPost(): React.ReactElement {
               />
               <Chronology
                 address={address}
-                referendum={referendumFromPA}
                 currentTreasuryApprovalList={currentTreasuryApprovalList}
+                referendum={referendumFromPA}
               />
               <MetaData
                 address={address}
@@ -364,7 +273,8 @@ export default function ReferendumPost(): React.ReactElement {
               />
             </Grid>
             <Grid alignItems='flex-start' container item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%', maxWidth: '450px' }}>
-              <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
+              {/* <canvas height='150' id='chartCanvas' ref={chartRef} width='250' /> */}
+              <VoteChart referendum={referendumInfoFromSubscan} />
               <Grid item px='5%' xs={12}>
                 <LabelValue
                   label={`${t('Ayes')}(${referendumInfoFromSubscan?.ayes_count ? referendumInfoFromSubscan.ayes_count : ''})`}
