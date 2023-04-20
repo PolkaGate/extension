@@ -9,8 +9,8 @@ import React from 'react';
 import { logoBlack, logoWhite } from '../../assets/logos';
 import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
-import AddressDropdown from './AddressDropdown';
 import { MAX_WIDTH } from './utils/consts';
+import AddressDropdown from './AddressDropdown';
 
 interface Props {
   address: string;
