@@ -15,9 +15,10 @@ import HeaderBrand from '../../partials/HeaderBrand';
 import getNetworkMap from '../../util/getNetworkMap';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
+import Alert from './Alert';
 import YouHave from './YouHave';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const { hierarchy } = useContext(AccountContext);
@@ -25,11 +26,22 @@ export default function Home (): React.ReactElement {
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
+  const [show, setShowAlert] = useState<boolean>(false);
 
   usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
   const networkMap = useMemo(() => getNetworkMap(), []);
+
+  useEffect(() => {
+    const dayInMs = 24 * 60 * 60 * 1000;
+    const value = window.localStorage.getItem('export_account_open');
+
+    if (hierarchy?.length &&
+      (!value || (value && value !== 'ok' && Date.now() - Number(value) > dayInMs))) {
+      setShowAlert(true);
+    }
+  }, [hierarchy]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
@@ -73,6 +85,7 @@ export default function Home (): React.ReactElement {
 
   return (
     <>
+      <Alert show={show} setShowAlert={setShowAlert} />
       {(hierarchy.length === 0)
         ? <AddAccount />
         : (

@@ -148,7 +148,7 @@ export const accountName = (accounts: AccountJson[], address: string | undefined
 };
 
 export function prepareMetaData(chain: Chain | null | string, label: string, metaData: any): string {
-  const chainName = (chain as Chain)?.name?.replace(' Relay Chain', '')?.replace(' Network', '') ?? chain;
+  const chainName = sanitizeChainName((chain as Chain)?.name) ?? chain;
 
   if (label === 'balances') {
     const { balances, decimals, tokens } = metaData as { balances: DeriveBalancesAll, tokens: string[], decimals: number[] };
@@ -189,7 +189,7 @@ export function getTransactionHistoryFromLocalStorage(
     return [];
   }
 
-  const chainName = chain ? chain.name.replace(' Relay Chain', '')?.replace(' Network', '') : _chainName;
+  const chainName = chain ? sanitizeChainName(chain.name) : _chainName;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const transactionHistoryFromLocalStorage: SavedMetaData = account?.history ? JSON.parse(String(account.history)) : null;
@@ -340,3 +340,5 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
 }
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
+
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', ''));

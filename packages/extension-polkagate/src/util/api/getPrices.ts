@@ -8,6 +8,14 @@ import { Prices } from '../types';
 export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices> {
   const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${chainNames}&vs_currencies=${currency}`, {});
 
+  if (chainNames.includes('pendulum')) {
+    const pendulumPrice = await getReq(`https://min-api.cryptocompare.com/data/price?fsym=PEN&tsyms=USD`, {});
+
+    if (pendulumPrice?.USD) {
+      prices.pendulum = { usd: pendulumPrice.USD };
+    }
+  }
+
   prices.westend = { usd: 0 };
 
   return { date: Date.now(), prices };

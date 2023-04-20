@@ -15,7 +15,7 @@ import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/mat
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, Identicon, MenuItem, Select, SelectChain, SettingsContext } from '../components';
-import { useChain, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, updateMeta } from '../messaging';
 import getLogo from '../util/getLogo';
 import { prepareMetaData } from '../util/utils';
@@ -36,6 +36,7 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   const settings = useContext(SettingsContext);
   const options = useGenesisHashOptions();
   const chain = useChain(address);
+  const chainName = useChainName(address);
   const formatted = useFormatted(address);
   const [genesisHash, setGenesis] = useState<string | undefined>();
   const endpointOptions = useEndpoints(genesisHash || chain?.genesisHash);
@@ -87,11 +88,9 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   }, [address, chain, onAction]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
-
     // eslint-disable-next-line no-void
     chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chain?.name]);
+  }, [address, chainName]);
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
