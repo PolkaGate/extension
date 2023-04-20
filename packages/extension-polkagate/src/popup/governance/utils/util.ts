@@ -1,19 +1,17 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export function toSnakeCase(input: string): string | undefined {
+export function toSnakeCase(input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
 
-  // Replace spaces with underscores
-  let words = input.replace(/\s+/g, '_');
+  let output = input.replace(/([a-z])([A-Z])/g, '$1_$2'); // Convert camelCase and PascalCase to snake_case
 
-  // Replace camelCase with snake_case
-  words = words.replace(/([a-z])([A-Z])/g, '$1_$2');
+  output = output.replace(/\s+/g, '_'); // Replace whitespace with underscores
+  output = output.toLowerCase(); // Convert all characters to lowercase
 
-  // Convert the string to lowercase and return the snake_case string
-  return words.toLowerCase();
+  return output;
 }
 
 export function toPascalCase(input: string): string | undefined {
@@ -78,17 +76,21 @@ export function formatRelativeTime(dateString: string): string {
   const minutes = Math.round(seconds / 60);
   const hours = Math.round(minutes / 60);
   const days = Math.round(hours / 24);
-  const months = Math.round(days / 30);
+  const months = Math.round(now.getMonth() - date.getMonth() + (12 * (now.getFullYear() - date.getFullYear())));
 
   if (seconds < 60) {
-    return `${seconds} seconds ago`;
+    return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
   } else if (minutes < 60) {
-    return `${minutes} minutes ago`;
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
   } else if (hours < 24) {
-    return `${hours} hours ago`;
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
   } else if (days < 30) {
-    return `${days} days ago`;
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else if (months < 12) {
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
   } else {
-    return `${months} months ago`;
+    const years = Math.floor(months / 12);
+
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
   }
 }

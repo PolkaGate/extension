@@ -1,9 +1,10 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { postData } from '../../../util/api';
+import { ApiPromise } from '@polkadot/api';
 
-export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
+import { postData } from '../../../util/api';
+import { LatestReferenda, Origins } from './types';
 
 export interface Statistics {
   'referendum_locked': string,
@@ -79,21 +80,6 @@ export async function getReferendumVotes(chainName: string, referendumIndex: num
       resolve(null);
     }
   });
-}
-
-export interface LatestReferenda {
-  created_at: string;
-  description: string;
-  hash: string;
-  method: string;
-  origin: string;
-  parent_bounty_index: any;
-  post_id: number;
-  proposer: string;
-  status: string;
-  title: string;
-  track_number: number;
-  type: string;
 }
 
 export async function getLatestReferendums(chainName: string): Promise<LatestReferenda[] | null> {
@@ -211,4 +197,27 @@ export async function getReferendumFromSubscan(chainName: string, postId: number
       resolve(null);
     }
   });
+}
+
+export async function getTreasuryProposalNumber(referendumIndex: number, api: ApiPromise): Promise<number> {
+  // Get the referendum information
+  // const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
+  // Get the referendum information
+  const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
+  console.log('referendumInfo.unwrap():',referendumInfo.unwrap().toString())
+
+  // Get the proposal index from the referendum information
+  const proposalIndex = referendumInfo.unwrap().index.toNumber();
+
+  // console.log('referendumInfo.toHuman():',referendumInfo.toHuman())
+  // Get the proposal index from the referendum
+  // const proposalIndex = referendumInfo.toHuman().index as number;
+
+  // Get the treasury proposal information
+  const proposal = await api.query.treasury.proposals(proposalIndex);
+
+  // Get the proposal number from the proposal information
+  const proposalNumber = proposal.toHuman().proposal.id as number;
+
+  return proposalNumber;
 }

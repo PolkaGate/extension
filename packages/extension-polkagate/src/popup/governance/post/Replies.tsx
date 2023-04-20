@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../../../hooks';
@@ -20,13 +20,19 @@ export default function Replies({ address, replies }: { address: string | undefi
 
   return (
     <Grid container sx={{ borderLeft: `2px solid ${theme.palette.text.disabled}`, pl: '20px', mb: '20px' }}>
-      <Grid alignItems='center' container justifyContent='flex-start' spacing={2}>
+      <Grid alignItems='flex-start' container justifyContent='flex-start' spacing={1} onClick={() => setExpanded(!expanded)}>
         <Grid item>
-          {t('Hide Replies ({{count}})', { replace: { count: replies.length } })}
+          {expanded
+            ? <Typography>
+              {t('Hide Replies ({{count}})', { replace: { count: replies.length } })}
+            </Typography>
+            : <Typography>
+              {t('Show Replies ({{count}})', { replace: { count: replies.length } })}
+            </Typography>
+          }
         </Grid>
         <Grid item>
           <ExpandMoreIcon
-            onClick={() => setExpanded(!expanded)}
             sx={{ color: `${theme.palette.primary.main}`, cursor: 'pointer', fontSize: '37px', transform: expanded && 'rotate(180deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }}
           />
         </Grid>

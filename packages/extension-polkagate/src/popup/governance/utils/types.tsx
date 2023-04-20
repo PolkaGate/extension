@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export type TopMenu = 'Referenda' | 'Fellowship';
+export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
 
 export interface Reply {
   content: string;
@@ -170,4 +171,27 @@ export interface ReferendumSubScan {
     extrinsic_index: string;
     params: null;
   }[];
+}
+
+export interface Proposal {
+  id: number;
+  proposer: string;
+  value: number;
+  beneficiary: string;
+  bond: number;
+}
+
+export interface LatestReferenda {
+  created_at: string;
+  description: string;
+  hash: string;
+  method: string;
+  origin: string;
+  parent_bounty_index: any;
+  post_id: number;
+  proposer: string;
+  status: string;
+  title: string;
+  track_number: number;
+  type: string;
 }

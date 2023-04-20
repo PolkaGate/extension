@@ -20,13 +20,13 @@ import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { blockToX, LabelValue } from '../TrackStats';
 import { MAX_WIDTH } from '../utils/consts';
-import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
-import { ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
+import { getReferendum, getReferendumFromSubscan, getTreasuryProposalNumber } from '../utils/helpers';
+import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { toTitleCase } from '../utils/util';
-import ReferendumTimeline from './ReferendumTimeline';
+import Chronology from './Chronology';
+import Comments from './Comments';
 import Description from './Description';
 import MetaData from './MetaData';
-import Comments from './Comments';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -51,6 +51,7 @@ export default function ReferendumPost(): React.ReactElement {
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
   const [decidingProgress, setDecidingProgress] = useState<number>();
+  const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
@@ -125,9 +126,29 @@ export default function ReferendumPost(): React.ReactElement {
 
     api.query.balances.inactiveIssuance().then(setInactiveIssuance);
 
-    // api.query.referenda.referendumInfoFor(163).then((res) => {
-    //   console.log(`referendumInfoFor referendum ${163} :, ${res}`);
-    // }).catch(console.error);
+    api.query.treasury.approvals().then((approvals) => {
+      console.log(`approvals: ${approvals.toJSON()}`)
+
+      if (approvals.toJSON().length) {
+        const approvalsIds = approvals.toJSON();
+
+        Promise.all(
+          approvals.toJSON().map((index) => api.query.treasury.proposals(index))
+        ).then((res) => {
+          console.log(JSON.parse(JSON.stringify(res)));
+
+          let proposals = JSON.parse(JSON.stringify(res)) as Proposal[];
+
+          proposals = proposals.map((p, index) => {
+            p.id = approvalsIds[index] as number;
+
+            return p;
+          });
+
+          setCurrentTreasuryApprovalList(proposals);
+        }).catch(console.error);
+      }
+    }).catch(console.error);
   }, [api]);
 
   const onTopMenuMenuClick = useCallback((item: TopMenu) => {
@@ -325,11 +346,13 @@ export default function ReferendumPost(): React.ReactElement {
             <Grid container item md={8.9} sx={{ height: '100%' }}>
               <Description
                 address={address}
+                currentTreasuryApprovalList={currentTreasuryApprovalList}
                 referendum={referendumFromPA}
               />
-              <ReferendumTimeline
+              <Chronology
                 address={address}
-                history={referendumFromPA?.statusHistory}
+                referendum={referendumFromPA}
+                currentTreasuryApprovalList={currentTreasuryApprovalList}
               />
               <MetaData
                 address={address}
@@ -340,7 +363,7 @@ export default function ReferendumPost(): React.ReactElement {
                 referendum={referendumFromPA}
               />
             </Grid>
-            <Grid alignItems='flex-start' container item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%' }}>
+            <Grid alignItems='flex-start' container item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%', maxWidth: '450px' }}>
               <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
               <Grid item px='5%' xs={12}>
                 <LabelValue

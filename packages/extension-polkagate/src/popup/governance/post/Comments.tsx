@@ -34,7 +34,7 @@ export default function Comments({ address, referendum }: { address: string | un
     window.open(`https://${ChainName}.subsquare.io/referenda/referendum/${referendum?.post_id}`, '_blank');
   }
 
-  console.log('sortedComments:', sortedComments);
+  // console.log('sortedComments to apply reactions:', sortedComments);
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '16px', my: 1 }}>
