@@ -82,8 +82,8 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
 
   /** in rare case as ref 160 the proposers are not the same! needs more research */
   // const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => item.proposer === referendum.proposer && String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
-  const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
-  
+  const isInTreasuryQueue = isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
+
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
@@ -125,9 +125,11 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                             <Box alt={'subscan'} component='img' height='26px' src={subscan} width='26px' />
                           </Link>
                         </Grid>
-                        <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR['ToBeAwarded'], p: '2px 10px', width: '190px' }}>
-                          {isInTreasuryQueue ? t('To be Awarded') : t('Awarded')}
-                        </Grid>
+                        {currentTreasuryApprovalList &&
+                          <Grid item sx={{ textAlign: 'center', mb: '5px', fontSize: '16px', fontWeight: 400, border: `0.01px solid ${theme.palette.primary.main}`, borderRadius: '30px', p: '2px 10px', width: '190px' }}>
+                            {isInTreasuryQueue ? t('To be Awarded') : t('Awarded')}
+                          </Grid>
+                        }
                       </Grid>
                     </TimelineContent>
                   </TimelineItem>
