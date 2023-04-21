@@ -94,3 +94,89 @@ export function formatRelativeTime(dateString: string): string {
     return `${years} ${years === 1 ? 'year' : 'years'} ago`;
   }
 }
+
+
+type BlockNumber = number | BN | undefined;
+
+const DAY_BLOCK_COUNT = 24 * 60 * 10;
+const HOUR_BLOCK_COUNT = 60 * 10;
+const MINUTE_BLOCK_COUNT = 10;
+
+export const blockToX = (block: BlockNumber, noUnit = false) => {
+  if (!block) {
+    return undefined;
+  }
+
+  const b = Number(block);
+  const mayBeDays = b / DAY_BLOCK_COUNT;
+
+  if (mayBeDays >= 1) {
+    return `${mayBeDays}` + (!noUnit ? ` ${mayBeDays > 1 ? 'days' : 'day'}` : '');
+  }
+
+  const mayBeHours = b / HOUR_BLOCK_COUNT;
+
+  if (mayBeHours >= 1) {
+    return `${mayBeHours}` + (!noUnit ? ` ${mayBeHours > 1 ? 'hours' : 'hour'}` : '');
+  }
+
+  const mayBeMins = b / MINUTE_BLOCK_COUNT;
+
+  if (mayBeMins >= 1) {
+    return `${mayBeMins}` + (!noUnit ? ` ${mayBeMins > 1 ? 'mins' : 'min'}` : '');
+  }
+};
+
+export const blockToUnit = (block: BlockNumber): string | undefined => {
+  const b = block?.toNumber();
+
+  if (!b) {
+    return undefined;
+  }
+
+  const blocksPerDay = 24 * 60 * 10;
+  const blocksPerHour = 60 * 10;
+  const blocksPerMin = 10;
+  const blocksPerUnit = {
+    Day: blocksPerDay,
+    Hour: blocksPerHour,
+    Min: blocksPerMin
+  };
+
+  for (const [unit, blocks] of Object.entries(blocksPerUnit)) {
+    if (Math.floor(b / blocks) > 0) {
+      return unit;
+    }
+  }
+
+  return undefined;
+};
+
+/** return the scale of a periodInBlock, which could be day, hour, or min in blocks */
+export const getPeriodScale = (blockNumber: BlockNumber): number | undefined => {
+  if (!blockNumber) {
+    return undefined;
+  }
+
+  const blockCount = Number(blockNumber);
+
+  const blocksInDays = blockCount / DAY_BLOCK_COUNT;
+
+  if (blocksInDays >= 1) {
+    return DAY_BLOCK_COUNT;
+  }
+
+  const blocksInHours = blockCount / HOUR_BLOCK_COUNT;
+
+  if (blocksInHours >= 1) {
+    return HOUR_BLOCK_COUNT;
+  }
+
+  const blocksInMinutes = blockCount / MINUTE_BLOCK_COUNT;
+  
+  if (blocksInMinutes >= 1) {
+    return MINUTE_BLOCK_COUNT;
+  }
+
+  return undefined;
+};

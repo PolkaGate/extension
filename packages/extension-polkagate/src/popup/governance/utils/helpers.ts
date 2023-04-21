@@ -83,7 +83,7 @@ export async function getReferendumVotes(chainName: string, referendumIndex: num
 }
 
 export async function getLatestReferendums(chainName: string): Promise<LatestReferenda[] | null> {
-  console.log(`Getting referendum on ${chainName}...`);
+  console.log(`Getting referendum on ${chainName} from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -94,7 +94,7 @@ export async function getLatestReferendums(chainName: string): Promise<LatestRef
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
-        console.log(`Latest referendum on ${chainName}:`, data.posts);
+        console.log(`Latest referendum on ${chainName} from PA:`, data.posts);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data.posts;
@@ -105,7 +105,7 @@ export async function getLatestReferendums(chainName: string): Promise<LatestRef
       }
     })
     .catch((error) => {
-      console.log(`Error getting referendum on ${chainName}:`, error.message);
+      console.log(`Error getting latest referendum on ${chainName}:`, error.message);
 
       return null;
     });

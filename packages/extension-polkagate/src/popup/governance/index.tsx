@@ -13,7 +13,8 @@ import { useParams } from 'react-router';
 import { useHistory,useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
-import { useApi, useChainName, useDecidingCount, useTracks, useTranslation } from '../../hooks';
+import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { MAX_WIDTH } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
 import { TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
@@ -21,15 +22,15 @@ import { Header } from './Header';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
 import { TrackStats } from './TrackStats';
-import { MAX_WIDTH } from './utils/consts';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { state } = useLocation();
   const history = useHistory();
-
   const theme = useTheme();
+
+  useFullscreen();
   const { address, postId } = useParams<{ address: string, postId?: number }>();
 
   const api = useApi(address);
@@ -47,21 +48,6 @@ export default function Governance(): React.ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>();
 
   const currentTrack = useMemo(() => tracks && tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
-
-  useEffect(() => {
-    /** to change app width to full screen */
-    const root = document.getElementById('root');
-
-    if (root) {
-      root.style.width = '100%';
-    }
-
-    return () => {
-      if (root) {
-        root.style.width = '';
-      }
-    };
-  }, []);
 
   // useEffect(() => {
   //   if (!api || !api.derive.treasury) {

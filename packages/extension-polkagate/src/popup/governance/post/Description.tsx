@@ -39,8 +39,6 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
 
   const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
 
-  console.log('mayBeTreasuryProposalId:', mayBeTreasuryProposalId);
-
   const [expanded, setExpanded] = React.useState(true);
 
   const handleChange = (event, isExpanded: boolean) => {

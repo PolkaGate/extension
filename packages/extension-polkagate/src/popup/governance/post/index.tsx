@@ -6,22 +6,21 @@
 import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Breadcrumbs, Button, Container, Grid, LinearProgress, Link, Typography } from '@mui/material';
+import { Breadcrumbs, Button, Container, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { ActionContext, ShowBalance } from '../../../components';
-import { useApi, useChainName, useDecidingCount, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { ActionContext, Infotip, PButton, ShowBalance, ShowValue } from '../../../components';
+import { useApi, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecidingCount, useDecimal, useFullscreen, useToken, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
-import { blockToX, LabelValue } from '../TrackStats';
 import { MAX_WIDTH } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
-import { toTitleCase } from '../utils/util';
+import { blockToUnit, blockToX, getPeriodScale, toTitleCase } from '../utils/util';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
@@ -30,24 +29,28 @@ import VoteChart from './VoteChart';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { address, postId } = useParams<{ address: string, postId: number }>();
+  const { address, postId } = useParams<{ address?: string | undefined, postId?: number | undefined }>();
   const history = useHistory();
   const { state } = useLocation();
+  const api = useApi(address);
+  const decidingCounts = useDecidingCount(address);
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const currentBlock = useCurrentBlockNumber(address);
 
-  const api = useApi(address);
-  const decidingCounts = useDecidingCount(address);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
+  useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
   const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
   const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
   const [decidingProgress, setDecidingProgress] = useState<number>();
+  const [passedDecisionUnit, setPassedDecisionUnit] = useState<number | null>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
 
   const trackName = useMemo((): string | undefined => {
@@ -57,12 +60,27 @@ export default function ReferendumPost(): React.ReactElement {
   }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
+  const currentApprovalThreshold = useCurrentApprovalThreshold(track?.[1], referendumInfoFromSubscan?.timeline[1]?.block);
 
-  useEffect(() => {
-    if (track?.[1]?.decisionPeriod && referendumInfoFromSubscan?.timeline[1]?.time) {
-      setDecidingProgress((Date.now() / 1000 - referendumInfoFromSubscan.timeline[1].time) * 100 / (track[1].decisionPeriod * 6));
+  const ayesPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
+  const naysPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
+
+  const decisionUnitPassed = useMemo(() => {
+    if (track?.[1]?.decisionPeriod && referendumInfoFromSubscan?.timeline[1]?.block && currentBlock) {
+      const decisionStartBlock = referendumInfoFromSubscan.timeline[1].block;
+      const decisionPeriodInBlock = Number(track[1].decisionPeriod);
+      const decisionEndBlock = decisionStartBlock + decisionPeriodInBlock;
+
+      if (currentBlock > decisionEndBlock) {
+        return null; // finished
+      }
+
+      const diff = currentBlock - decisionStartBlock;
+      const unitToEndOfDecision = Math.ceil(diff / getPeriodScale(decisionPeriodInBlock));
+
+      return unitToEndOfDecision;
     }
-  }, [referendumInfoFromSubscan?.timeline, track]);
+  }, [referendumInfoFromSubscan, track, currentBlock]);
 
   const supportPercent = useMemo(() => {
     if (totalIssuance && inactiveIssuance && referendumInfoFromSubscan) {
@@ -86,21 +104,6 @@ export default function ReferendumPost(): React.ReactElement {
       setReferendumInfoFromSubscan(res);
     });
   }, [chainName, postId]);
-
-  useEffect(() => {
-    /** to change app width to full screen */
-    const root = document.getElementById('root');
-
-    if (root) {
-      root.style.width = '100%';
-    }
-
-    return () => {
-      if (root) {
-        root.style.width = '';
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (!api) {
@@ -156,7 +159,7 @@ export default function ReferendumPost(): React.ReactElement {
   const Toolbar = () => (
     <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
-        <Grid container alignItems='center' justifyContent='space-between'>
+        <Grid alignItems='center' container justifyContent='space-between'>
           <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
             <TopMenu item={'Referenda'} />
             <TopMenu item={'Fellowship'} />
@@ -241,6 +244,30 @@ export default function ReferendumPost(): React.ReactElement {
     </Grid>
   );
 
+  const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number, amount: string | undefined }) => (
+    <Grid container item justifyContent='center' sx={{ width: '45%' }}>
+      <Typography sx={{ borderBottom: `8px solid ${color}`, textAlign: 'center', fontSize: '20px', fontWeight: 500, width: '100%' }}>
+        {text}
+      </Typography>
+      <Grid container fontSize='22px' item justifyContent='space-between'>
+        <Grid fontWeight={700} item>
+          {percent?.toFixed(1)}%
+        </Grid>
+        <Grid color='text.disabled' fontWeight={400} item>
+          {`(${count || ''})`}
+        </Grid>
+      </Grid>
+      <Grid color='text.disabled' fontSize='16px' fontWeight={500} item>
+        <ShowBalance
+          balance={amount && new BN(amount)}
+          decimal={decimal}
+          decimalPoint={2}
+          token={token}
+        />
+      </Grid>
+    </Grid>
+  );
+
   return (
     <>
       <Header address={address} onAccountChange={onAccountChange} />
@@ -272,54 +299,99 @@ export default function ReferendumPost(): React.ReactElement {
                 referendum={referendumFromPA}
               />
             </Grid>
-            <Grid alignItems='flex-start' container item md={2.9} sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '100%', maxWidth: '450px' }}>
-              {/* <canvas height='150' id='chartCanvas' ref={chartRef} width='250' /> */}
-              <VoteChart referendum={referendumInfoFromSubscan} />
-              <Grid item px='5%' xs={12}>
-                <LabelValue
-                  label={`${t('Ayes')}(${referendumInfoFromSubscan?.ayes_count ? referendumInfoFromSubscan.ayes_count : ''})`}
-                  value={<ShowBalance
-                    balance={referendumInfoFromSubscan?.ayes_amount && new BN(referendumInfoFromSubscan.ayes_amount)}
-                    decimal={decimal}
-                    token={token}
-                  />}
-                />
-                <LabelValue
-                  label={`${t('Nays')}(${referendumInfoFromSubscan?.nays_count ? referendumInfoFromSubscan.nays_count : ''})`}
-                  value={<ShowBalance
-                    balance={referendumInfoFromSubscan?.nays_amount && new BN(referendumInfoFromSubscan.nays_amount)}
-                    decimal={decimal}
-                    token={token}
-                  />}
-                />
-                <LabelValue
-                  label={`${t('Support')} (${supportPercent || ''}%)`}
-                  style={{ mt: '20px' }}
-                  value={<ShowBalance
-                    balance={referendumInfoFromSubscan?.support_amount && new BN(referendumInfoFromSubscan.support_amount)}
-                    decimal={decimal}
-                    token={token}
-                  />}
-                />
-                <LabelValue
-                  label={t('Total issuance')}
-                  value={<ShowBalance
-                    balance={totalIssuance && inactiveIssuance && totalIssuance.sub(inactiveIssuance)}
-                    decimal={decimal}
-                    token={token}
-                  />}
+            <Grid container item md={2.9} sx={{ height: '100%' }}>
+              <Grid item xs={12}>
+                <PButton
+                  // _onClick={this.#goHome}
+                  _ml={0}
+                  _mt='1px'
+                  _width={100}
+                  text={t<string>('Vote')}
                 />
               </Grid>
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ fontSize: '16px', letterSpacing: '-0.015em', my: '20px', px: '2%' }}>
-                <Grid item xs={9}>
-                  <LinearProgress
-                    sx={{ bgcolor: 'primary.contrastText', mt: '15px' }}
-                    value={decidingProgress || 0}
-                    variant='determinate'
-                  />
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mt: '10px' }} xs={12}>
+                <Grid item>
+                  <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
+                    {t('Deciding')}
+                  </Typography>
                 </Grid>
-                <Grid fontWeight={400} item sx={{ textAlign: 'right' }} xs>
-                  {blockToX(track?.[1]?.decisionPeriod)}
+                <Grid item>
+                  <Infotip iconLeft={3} iconTop={5} showQuestionMark text={'remaining time/date ...'}>
+                    <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
+                      <ShowValue value={decisionUnitPassed && track?.[1]?.decisionPeriod ? `${blockToUnit(track?.[1]?.decisionPeriod)} ${decisionUnitPassed} of ${blockToX(track?.[1]?.decisionPeriod, true)}` : undefined} />
+                    </Typography>
+                  </Infotip>
+                </Grid>
+              </Grid>
+              <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', maxWidth: '450px', mt: '10px' }}>
+                <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, my: '15px', mx: '25px' }} xs={12}>
+                  <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
+                    {t('Voting')}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sx={{ px: '25px' }}>
+                  <VoteChart referendum={referendumInfoFromSubscan} />
+                </Grid>
+                <Grid container item justifyContent='space-around' xs={12}>
+                  <Tally
+                    amount={referendumInfoFromSubscan?.ayes_amount}
+                    color={'#008080'}
+                    count={referendumInfoFromSubscan?.ayes_count}
+                    percent={ayesPercent}
+                    text={t('Ayes')}
+                  />
+                  <Tally
+                    amount={referendumInfoFromSubscan?.nays_amount}
+                    color={'#FF5722'}
+                    count={referendumInfoFromSubscan?.nays_count}
+                    percent={naysPercent}
+                    text={t('Nays')}
+                  />
+                  <Grid item sx={{ px: '24px', textAlign: 'center' }} xs={12}>
+                    <Typography fontSize='20px' fontWeight={500} pt='32px'>
+                      {t('Approval threshold')}
+                    </Typography>
+                    <LinearProgress
+                      color='inherit'
+                      sx={{ height: '33px', width: '100%', bgcolor: '#DFCBD7', color: '#BA82A4', mt: '13px' }}
+                      value={currentApprovalThreshold}
+                      variant='determinate'
+                    />
+                    <Grid item fontSize='24px' fontWeight={700} pt='15px'>
+                      <ShowValue value={currentApprovalThreshold && `${currentApprovalThreshold}%`} />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                {/* <Grid item px='5%' xs={12}>
+                  <LabelValue
+                    label={`${t('Support')} (${supportPercent || ''}%)`}
+                    style={{ mt: '20px' }}
+                    value={<ShowBalance
+                      balance={referendumInfoFromSubscan?.support_amount && new BN(referendumInfoFromSubscan.support_amount)}
+                      decimal={decimal}
+                      token={token}
+                    />}
+                  />
+                  <LabelValue
+                    label={t('Total issuance')}
+                    value={<ShowBalance
+                      balance={totalIssuance && inactiveIssuance && totalIssuance.sub(inactiveIssuance)}
+                      decimal={decimal}
+                      token={token}
+                    />}
+                  />
+                </Grid> */}
+                <Grid alignItems='center' container item justifyContent='space-between' sx={{ fontSize: '16px', letterSpacing: '-0.015em', my: '20px', px: '2%' }}>
+                  <Grid item xs={9}>
+                    {/* <LinearProgress
+                      sx={{ bgcolor: 'primary.contrastText', mt: '15px' }}
+                      value={decidingProgress || 0}
+                      variant='determinate'
+                    /> */}
+                  </Grid>
+                  {/* <Grid fontWeight={400} item sx={{ textAlign: 'right' }} xs>
+                    {blockToX(track?.[1]?.decisionPeriod)}
+                  </Grid> */}
                 </Grid>
               </Grid>
             </Grid>

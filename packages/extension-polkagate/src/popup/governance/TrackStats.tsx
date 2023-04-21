@@ -4,13 +4,14 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, SxProps, Theme, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
 import { kusama } from './tracks/kusama';
+import { blockToX } from './utils/util';
 import ThresholdCurves from './Chart';
 import { findItemDecidingCount } from './ReferendaMenu';
 
@@ -34,34 +35,6 @@ export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontS
     </Grid>
   </Grid>
 );
-
-export const blockToX = (block: number | BN | undefined) => {
-  if (!block) {
-    return undefined;
-  }
-
-  const b = Number(block);
-  const dayAsBlock = 24 * 60 * 10;
-  const hoursAsBlock = 60 * 10;
-  const minsAsBlock = 10;
-  const mayBeDays = b / dayAsBlock;
-
-  if (mayBeDays >= 1) {
-    return `${mayBeDays} day${mayBeDays > 1 ? 's' : ''}`;
-  }
-
-  const mayBeHours = b / hoursAsBlock;
-
-  if (mayBeHours >= 1) {
-    return `${mayBeHours} hour${mayBeHours > 1 ? 's' : ''}`;
-  }
-
-  const mayBeMins = b / minsAsBlock;
-
-  if (mayBeMins >= 1) {
-    return `${mayBeMins} min${mayBeMins > 1 ? 's' : ''}`;
-  }
-};
 
 export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();

@@ -144,7 +144,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
     chainName && getReferendumStatistics(chainName).then((stat) => {
       setReferendumStats(stat);
     });
-  }, [chainName]);
+  }, [chainName, setReferendumStats]);
 
   return (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
