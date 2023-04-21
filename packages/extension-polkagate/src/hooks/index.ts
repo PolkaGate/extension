@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
+export { default as useFullscreen } from './useFullscreen';
+export { default as useCurrentApprovalThreshold } from './useCurrentApprovalThreshold';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
 export { default as useApi } from './useApi';
