@@ -6,21 +6,17 @@
  * */
 import type { BN } from '@polkadot/util';
 
-import { GridDirection, Skeleton } from '@mui/material';
-import { ResponsiveStyleValue } from '@mui/system';
+import { Skeleton } from '@mui/material';
 import React from 'react';
 
 export interface Props {
   value: number | string | BN | null | undefined;
-  title?: string;
-  direction?: ResponsiveStyleValue<GridDirection> | undefined;
-  decimalPoint?: number;
   height?: number;
   unit?: string;
   width?: string;
 }
 
-export default function ShowValue({ value, decimalPoint = 2, unit, height = 20, width = '90px' }: Props): React.ReactElement<Props> {
+export default function ShowValue({ value, unit, height = 20, width = '90px' }: Props): React.ReactElement<Props> {
   return (
     <>
       {value !== undefined
