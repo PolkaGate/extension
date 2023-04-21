@@ -60,7 +60,7 @@ export default function ReferendumPost(): React.ReactElement {
   }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const currentApprovalThreshold = useCurrentApprovalThreshold(track?.[1], referendumInfoFromSubscan?.timeline[1]?.block);
+  const currentApprovalThreshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
 
   const ayesPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
   const naysPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
@@ -316,7 +316,7 @@ export default function ReferendumPost(): React.ReactElement {
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Infotip iconLeft={3} iconTop={5} showQuestionMark text={'remaining time/date ...'}>
+                  <Infotip iconLeft={1} iconTop={5} showQuestionMark text={'remaining time/date ...'}>
                     <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
                       <ShowValue value={decisionUnitPassed && track?.[1]?.decisionPeriod ? `${blockToUnit(track?.[1]?.decisionPeriod)} ${decisionUnitPassed} of ${blockToX(track?.[1]?.decisionPeriod, true)}` : undefined} />
                     </Typography>
