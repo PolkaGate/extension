@@ -48,7 +48,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
       <Typography sx={{ borderBottom: `8px solid ${color}`, textAlign: 'center', fontSize: '20px', fontWeight: 500, width: '100%' }}>
         {text}
       </Typography>
-      <Grid container fontSize='22px' item justifyContent='space-between'>
+      <Grid container fontSize='22px' item justifyContent='space-around'>
         <Grid fontWeight={700} item>
           {percent?.toFixed(1)}%
         </Grid>
@@ -98,11 +98,11 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
           </Typography>
           <LinearProgress
             color='inherit'
-            sx={{ height: '33px', width: '100%', bgcolor: '#DFCBD7', color: '#BA82A4', mt: '10px' }}
-            value={currentApprovalThreshold}
+            sx={{ height: '33px', width: '100%', bgcolor: 'approval.contrastText', color: 'approval.main', mt: '10px' }}
+            value={currentApprovalThreshold || 0}
             variant='determinate'
           />
-          <Grid fontSize='24px' fontWeight={700} item pt='15px'>
+          <Grid fontSize='24px' fontWeight={700} item pt='15px' pb='30px'>
             <ShowValue value={currentApprovalThreshold && `${currentApprovalThreshold}%`} />
           </Grid>
         </Grid>

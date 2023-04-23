@@ -6,15 +6,13 @@
 import '@vaadin/icons';
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Breadcrumbs, Button, Container, Grid, LinearProgress, Link, Typography, useTheme } from '@mui/material';
+import { Breadcrumbs, Button, Container, Grid, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN } from '@polkadot/util';
-
-import { ActionContext, Infotip, PButton, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecidingCount, useDecimal, useFullscreen, useToken, useTrack, useTranslation } from '../../../hooks';
+import { ActionContext, Infotip, PButton, ShowValue } from '../../../components';
+import { useApi, useChainName, useCurrentBlockNumber, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { MAX_WIDTH } from '../utils/consts';
@@ -25,13 +23,11 @@ import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
 import MetaData from './MetaData';
-import VoteChart from './VoteChart';
-import Voting from './Voting';
 import Support from './Support';
+import Voting from './Voting';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { address, postId } = useParams<{ address?: string | undefined, postId?: number | undefined }>();
   const history = useHistory();
@@ -43,7 +39,7 @@ export default function ReferendumPost(): React.ReactElement {
 
   useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
+  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>(state?.selectedTopMenu);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
   const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
   const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();

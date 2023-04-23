@@ -74,15 +74,34 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   const subscanLink = (blockNum: number) => 'https://' + chainName + '.subscan.io/block/' + String(blockNum);
   /** not a totally correct way to find but will work in most times */
   const [expanded, setExpanded] = React.useState(false);
+  const [treasuryAwardedBlock, setTreasuryAwardedBlock] = React.useState<number>();
   const isTreasury = TREASURY_TRACKS.includes(toSnakeCase(referendum?.origin));
   const isExecuted = referendum?.status === 'Executed';
   const mayBeExecutionBlock = sortedHistory?.find((h) => h.status === 'Executed')?.block;
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
-  const mayBeAwardedDate = useMemo(() => currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod), [currentBlockNumber, mayBeExecutionBlock, spendPeriod])
+  const mayBeAwardedDate = useMemo(() =>
+    currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod) ||
+    referendum?.timeline?.[1]?.statuses?.[1]?.timestamp
+    , [currentBlockNumber, mayBeExecutionBlock, spendPeriod, referendum]);
 
   /** in rare case as ref 160 the proposers are not the same! needs more research */
   // const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => item.proposer === referendum.proposer && String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
-  const isInTreasuryQueue = isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
+  const isInTreasuryQueue = useMemo(() => isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary), [currentTreasuryApprovalList, isExecuted, mayBeBeneficiary, referendum]);
+  const isAwardedBasedOnPA = useMemo(() => referendum?.timeline?.[1]?.type === 'TreasuryProposal' && referendum?.timeline?.[1]?.statuses?.[1]?.status === 'Awarded', [referendum]);
+  const isApprovedBasedOnPA = useMemo(() => referendum?.timeline?.[1]?.type === 'TreasuryProposal' && referendum?.timeline?.[1]?.statuses?.[0]?.status === 'Approved', [referendum]);
+  const isTreasuryProposalBasedOnPA = useMemo(() => referendum?.timeline?.[1]?.type === 'TreasuryProposal', [referendum]);
+
+  const treasuryLabel = useMemo(() => {
+    if (isTreasuryProposalBasedOnPA) {
+      setTreasuryAwardedBlock(referendum?.timeline?.[1]?.statuses?.[1]?.block);
+
+      return isAwardedBasedOnPA ? 'Awarded' : 'To be Awarded';
+    }
+
+    if (currentTreasuryApprovalList) {
+      return isInTreasuryQueue ? 'Awarded' : 'To be Awarded';
+    }
+  }, [currentTreasuryApprovalList, isAwardedBasedOnPA, isInTreasuryQueue, isTreasuryProposalBasedOnPA, referendum]);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -117,7 +136,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                       <Grid container justifyContent='flex-start' pt='5px'>
                         <Grid item xs={2}>
                           <Link
-                            href={`${subscanLink(history.block)}`}
+                            href={`${subscanLink(treasuryAwardedBlock)}`}
                             rel='noreferrer'
                             target='_blank'
                             underline='none'
@@ -125,9 +144,9 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                             <Box alt={'subscan'} component='img' height='26px' src={subscan} width='26px' />
                           </Link>
                         </Grid>
-                        {currentTreasuryApprovalList &&
+                        {treasuryLabel &&
                           <Grid item sx={{ textAlign: 'center', mb: '5px', fontSize: '16px', fontWeight: 400, border: `0.01px solid ${theme.palette.primary.main}`, borderRadius: '30px', p: '2px 10px', width: '190px' }}>
-                            {isInTreasuryQueue ? t('To be Awarded') : t('Awarded')}
+                            {treasuryLabel}
                           </Grid>
                         }
                       </Grid>

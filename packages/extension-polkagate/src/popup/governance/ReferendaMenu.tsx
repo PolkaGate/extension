@@ -6,6 +6,7 @@
 import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Hub as Root } from '@mui/icons-material/';
 import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
+
 import { MAX_WIDTH } from './utils/consts';
 
 type DecidingCount = [string, number];

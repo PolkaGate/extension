@@ -48,7 +48,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: 
         <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
           <Grid item xs={12}>
             <Typography fontSize={32} fontWeight={500}>
-              {t('{{trackName}}', { replace: { trackName: track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
+              {t('{{trackName}}', { replace: { trackName: selectedSubMenu || track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -89,7 +89,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, track }: 
           </Grid>
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item md sx={{ ml: '2%', p: '10px' }}>
+      <Grid alignItems='center' container item md sx={{ ml: '2%', p: '25px' }}>
         <Typography align='left' fontSize={18} fontWeight={400}>
           {t('Threshold Curves')}
         </Typography>

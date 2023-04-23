@@ -61,16 +61,16 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
         {text}
       </Typography>
       <Grid container fontSize='22px' item>
-        <Grid fontWeight={700} item sx={{ textAlign: 'center' }} xs={12} mt='15px'>
-          <ShowValue value={percent && `${percent?.toFixed(2)}%`} />
+        <Grid fontWeight={700} item sx={{ textAlign: 'center', height: '27px' }} xs={12} mt='15px'>
+          <ShowValue value={percent !== undefined ? `${percent?.toFixed(2)}%` : undefined} />
         </Grid>
         <Grid color='text.disabled' fontSize='14px' fontWeight={400} item sx={{ textAlign: 'center' }} xs={12}>
           {t('of all tokens')}
         </Grid>
       </Grid>
-      <Grid color='text.disabled' fontSize='16px' fontWeight={500} item pt='15px'>
+      <Grid color='text.disabled' fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
         <ShowBalance
-          balance={amount && new BN(amount)}
+          balance={amount !== undefined ? new BN(amount) : undefined}
           decimal={decimal}
           decimalPoint={2}
           token={token}
@@ -92,8 +92,8 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
     </Grid>
   );
 
-  const currentSupportColor = '#008080';
-  const supportThresholdColor = '#BCE2DB';
+  const currentSupportColor = 'support.contrastText';
+  const supportThresholdColor = 'support.main';
 
   const progressBgColor = supportPercent < currentSupportThreshold ? supportThresholdColor : currentSupportColor;
   const progressColor = supportPercent < currentSupportThreshold ? currentSupportColor : supportThresholdColor;
@@ -123,7 +123,7 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
           total={totalIssuance}
         />
         <Tally
-          amount={currentSupportThreshold && totalIssuance?.muln(currentSupportThreshold)?.toString()}
+          amount={currentSupportThreshold && totalIssuance?.divn(100).muln(currentSupportThreshold)?.toString()}
           color={'#BCE2DB'}
           percent={currentSupportThreshold}
           text={t('Threshold')}

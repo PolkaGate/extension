@@ -3,9 +3,10 @@
 
 import type { PalletReferendaCurve, PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
+import { useTheme } from '@emotion/react';
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useRef } from 'react';
-
+import { Line } from "react-chartjs-2"
 import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
 export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN): BN {
@@ -61,6 +62,7 @@ export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN):
 
 const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo }) => {
   const chartRef = useRef(null);
+  const theme = useTheme();
 
   // Register the required chart elements
   Chart.register(...registerables);
@@ -98,16 +100,16 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
       labels: Array.from({ length: CURVE_LENGTH }, (_, index) => index + 1),
       datasets: [
         {
-          borderColor: 'blue',
-          borderWidth: 1,
+          borderColor: `${theme.palette.support.contrastText}`,
+          borderWidth: 2,
           data: supportY,
           fill: false,
           label: 'Support',
           pointRadius: 0,
         },
         {
-          borderColor: 'green',
-          borderWidth: 1,
+          borderColor: `${theme.palette.approval.main}`,
+          borderWidth: 2,
           data: approvalY,
           fill: false,
           label: 'Approval',
@@ -121,9 +123,21 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
         legend: {
           align: 'center',
           display: true,
+          labels: {
+            borderRadius: 0,
+            borderWidth: 3,
+            color: 'black',
+            font: {
+              size: 15,
+              weight: 400
+            },
+            padding: 10,
+            pointStyle: 'line',
+            usePointStyle: true
+          },
           maxHeight: 50,
           maxWidth: '2px',
-          position: 'bottom'
+          position: 'bottom',
         },
         tooltip: {
           // backgroundColor: theme.palette.mode === 'dark' ? '#fff' : '#000',
@@ -188,13 +202,9 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
     return () => {
       chartInstance.destroy();
     };
-  }, [trackInfo]);
+  }, [theme, trackInfo]);
 
-  return (
-    <>
-      <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
-    </>
-  );
+  return <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />;
 };
 
 export default React.memo(ThresholdCurves);

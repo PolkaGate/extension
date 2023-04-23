@@ -152,7 +152,7 @@ export async function getReferendum(chainName: string, postId: number): Promise<
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        console.log(`Referendum #${postId}:`, data);
+        console.log(`Referendum  #${postId} from PA:`, data);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data;

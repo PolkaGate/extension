@@ -49,30 +49,6 @@ export default function Governance(): React.ReactElement {
 
   const currentTrack = useMemo(() => tracks && tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
 
-  // useEffect(() => {
-  //   if (!api || !api.derive.treasury) {
-  //     return;
-  //   }
-
-  //   let cancel = false;
-
-  // clear proposals state
-  // setProposals(undefined);
-
-  // fetch proposals
-  // api.derive.treasury.proposals()?.then((p) => {
-  //   if (!cancel) {
-  //     setProposals(p);
-  //     setActiveProposalCount(p?.proposals.length + p?.approvals.length);
-  //     // console.log('proposals:', JSON.stringify(p?.proposals));
-  //   }
-  // }).catch(console.error);
-
-  //   return () => {
-  //     cancel = true;
-  //   };
-  // }, [api]);
-
   useEffect(() => {
     if (!api) {
       return;
@@ -93,10 +69,6 @@ export default function Governance(): React.ReactElement {
       setReferendumCount(count?.toNumber());
     }).catch(console.error);
 
-    api.query.referenda.referendumInfoFor(124).then((res) => {
-      console.log('referendumInfoFor 124:', res.toString());
-    }).catch(console.error);
-
     // const trackId_mediumSpender = 33;
     // api.query.referenda.trackQueue(trackId_mediumSpender).then((res) => {
     //   console.log('trackQueue for trackId_mediumSpender:', res.toString());
@@ -114,9 +86,9 @@ export default function Governance(): React.ReactElement {
   const getReferendaById = useCallback((postId: number) => {
     history.push({
       pathname: `/governance/${address}/${postId}`,
-      state: { selectedSubMenu }
+      state: { selectedSubMenu, selectedTopMenu }
     });
-  }, [address, history, selectedSubMenu]);
+  }, [address, history, selectedSubMenu, selectedTopMenu]);
 
   useEffect(() => {
     if (chainName && selectedSubMenu && tracks?.length) {
