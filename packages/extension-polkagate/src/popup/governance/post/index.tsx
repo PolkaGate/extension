@@ -26,6 +26,8 @@ import Comments from './Comments';
 import Description from './Description';
 import MetaData from './MetaData';
 import VoteChart from './VoteChart';
+import Voting from './Voting';
+import Support from './Support';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -37,8 +39,6 @@ export default function ReferendumPost(): React.ReactElement {
   const api = useApi(address);
   const decidingCounts = useDecidingCount(address);
   const chainName = useChainName(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
   const currentBlock = useCurrentBlockNumber(address);
 
   useFullscreen();
@@ -47,10 +47,6 @@ export default function ReferendumPost(): React.ReactElement {
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
   const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
   const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();
-  const [totalIssuance, setTotalIssuance] = useState<BN>();
-  const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
-  const [decidingProgress, setDecidingProgress] = useState<number>();
-  const [passedDecisionUnit, setPassedDecisionUnit] = useState<number | null>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
 
   const trackName = useMemo((): string | undefined => {
@@ -60,10 +56,6 @@ export default function ReferendumPost(): React.ReactElement {
   }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const currentApprovalThreshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
-
-  const ayesPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
-  const naysPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
 
   const decisionUnitPassed = useMemo(() => {
     if (track?.[1]?.decisionPeriod && referendumInfoFromSubscan?.timeline[1]?.block && currentBlock) {
@@ -82,37 +74,10 @@ export default function ReferendumPost(): React.ReactElement {
     }
   }, [referendumInfoFromSubscan, track, currentBlock]);
 
-  const supportPercent = useMemo(() => {
-    if (totalIssuance && inactiveIssuance && referendumInfoFromSubscan) {
-      return (Number(referendumInfoFromSubscan.support_amount) * 100 / Number(totalIssuance.sub(inactiveIssuance))).toFixed(2);
-    }
-  }, [inactiveIssuance, referendumInfoFromSubscan, totalIssuance]);
-
-  useEffect(() => {
-    selectedSubMenu && history.push({
-      pathname: `/governance/${address}`,
-      state: { selectedSubMenu }
-    });
-  }, [address, history, selectedSubMenu]);
-
-  useEffect(() => {
-    chainName && postId && getReferendum(chainName, postId).then((res) => {
-      setReferendum(res);
-    });
-
-    chainName && postId && getReferendumFromSubscan(chainName, postId).then((res) => {
-      setReferendumInfoFromSubscan(res);
-    });
-  }, [chainName, postId]);
-
   useEffect(() => {
     if (!api) {
       return;
     }
-
-    api.query.balances.totalIssuance().then(setTotalIssuance);
-
-    api.query.balances.inactiveIssuance().then(setInactiveIssuance);
 
     api.query.treasury.approvals().then((approvals) => {
       console.log(`approvals: ${approvals.toJSON()}`)
@@ -138,6 +103,23 @@ export default function ReferendumPost(): React.ReactElement {
       }
     }).catch(console.error);
   }, [api]);
+
+  useEffect(() => {
+    selectedSubMenu && history.push({
+      pathname: `/governance/${address}`,
+      state: { selectedSubMenu }
+    });
+  }, [address, history, selectedSubMenu]);
+
+  useEffect(() => {
+    chainName && postId && getReferendum(chainName, postId).then((res) => {
+      setReferendum(res);
+    });
+
+    chainName && postId && getReferendumFromSubscan(chainName, postId).then((res) => {
+      setReferendumInfoFromSubscan(res);
+    });
+  }, [chainName, postId]);
 
   const onTopMenuMenuClick = useCallback((item: TopMenu) => {
     setSelectedTopMenu(item);
@@ -244,30 +226,6 @@ export default function ReferendumPost(): React.ReactElement {
     </Grid>
   );
 
-  const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number, amount: string | undefined }) => (
-    <Grid container item justifyContent='center' sx={{ width: '45%' }}>
-      <Typography sx={{ borderBottom: `8px solid ${color}`, textAlign: 'center', fontSize: '20px', fontWeight: 500, width: '100%' }}>
-        {text}
-      </Typography>
-      <Grid container fontSize='22px' item justifyContent='space-between'>
-        <Grid fontWeight={700} item>
-          {percent?.toFixed(1)}%
-        </Grid>
-        <Grid color='text.disabled' fontWeight={400} item>
-          {`(${count || ''})`}
-        </Grid>
-      </Grid>
-      <Grid color='text.disabled' fontSize='16px' fontWeight={500} item>
-        <ShowBalance
-          balance={amount && new BN(amount)}
-          decimal={decimal}
-          decimalPoint={2}
-          token={token}
-        />
-      </Grid>
-    </Grid>
-  );
-
   return (
     <>
       <Header address={address} onAccountChange={onAccountChange} />
@@ -315,7 +273,7 @@ export default function ReferendumPost(): React.ReactElement {
                     {t('Deciding')}
                   </Typography>
                 </Grid>
-                <Grid item>
+                <Grid item sx={{ pr: '5px' }}>
                   <Infotip iconLeft={1} iconTop={5} showQuestionMark text={'remaining time/date ...'}>
                     <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
                       <ShowValue value={decisionUnitPassed && track?.[1]?.decisionPeriod ? `${blockToUnit(track?.[1]?.decisionPeriod)} ${decisionUnitPassed} of ${blockToX(track?.[1]?.decisionPeriod, true)}` : undefined} />
@@ -323,77 +281,16 @@ export default function ReferendumPost(): React.ReactElement {
                   </Infotip>
                 </Grid>
               </Grid>
-              <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', maxWidth: '450px', mt: '10px' }}>
-                <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, my: '15px', mx: '25px' }} xs={12}>
-                  <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
-                    {t('Voting')}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sx={{ px: '25px' }}>
-                  <VoteChart referendum={referendumInfoFromSubscan} />
-                </Grid>
-                <Grid container item justifyContent='space-around' xs={12}>
-                  <Tally
-                    amount={referendumInfoFromSubscan?.ayes_amount}
-                    color={'#008080'}
-                    count={referendumInfoFromSubscan?.ayes_count}
-                    percent={ayesPercent}
-                    text={t('Ayes')}
-                  />
-                  <Tally
-                    amount={referendumInfoFromSubscan?.nays_amount}
-                    color={'#FF5722'}
-                    count={referendumInfoFromSubscan?.nays_count}
-                    percent={naysPercent}
-                    text={t('Nays')}
-                  />
-                  <Grid item sx={{ px: '24px', textAlign: 'center' }} xs={12}>
-                    <Typography fontSize='20px' fontWeight={500} pt='32px'>
-                      {t('Approval threshold')}
-                    </Typography>
-                    <LinearProgress
-                      color='inherit'
-                      sx={{ height: '33px', width: '100%', bgcolor: '#DFCBD7', color: '#BA82A4', mt: '13px' }}
-                      value={currentApprovalThreshold}
-                      variant='determinate'
-                    />
-                    <Grid item fontSize='24px' fontWeight={700} pt='15px'>
-                      <ShowValue value={currentApprovalThreshold && `${currentApprovalThreshold}%`} />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                {/* <Grid item px='5%' xs={12}>
-                  <LabelValue
-                    label={`${t('Support')} (${supportPercent || ''}%)`}
-                    style={{ mt: '20px' }}
-                    value={<ShowBalance
-                      balance={referendumInfoFromSubscan?.support_amount && new BN(referendumInfoFromSubscan.support_amount)}
-                      decimal={decimal}
-                      token={token}
-                    />}
-                  />
-                  <LabelValue
-                    label={t('Total issuance')}
-                    value={<ShowBalance
-                      balance={totalIssuance && inactiveIssuance && totalIssuance.sub(inactiveIssuance)}
-                      decimal={decimal}
-                      token={token}
-                    />}
-                  />
-                </Grid> */}
-                <Grid alignItems='center' container item justifyContent='space-between' sx={{ fontSize: '16px', letterSpacing: '-0.015em', my: '20px', px: '2%' }}>
-                  <Grid item xs={9}>
-                    {/* <LinearProgress
-                      sx={{ bgcolor: 'primary.contrastText', mt: '15px' }}
-                      value={decidingProgress || 0}
-                      variant='determinate'
-                    /> */}
-                  </Grid>
-                  {/* <Grid fontWeight={400} item sx={{ textAlign: 'right' }} xs>
-                    {blockToX(track?.[1]?.decisionPeriod)}
-                  </Grid> */}
-                </Grid>
-              </Grid>
+              <Voting
+                address={address}
+                referendumFromPA={referendumFromPA}
+                referendumInfoFromSubscan={referendumInfoFromSubscan}
+              />
+              <Support
+                address={address}
+                referendumFromPA={referendumFromPA}
+                referendumInfoFromSubscan={referendumInfoFromSubscan}
+              />
             </Grid>
           </Grid>
         </Container>

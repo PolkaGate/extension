@@ -10,7 +10,7 @@ import { Breadcrumbs, Button, Container, Grid, Link, Typography, useTheme } from
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory,useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
@@ -96,7 +96,7 @@ export default function Governance(): React.ReactElement {
     api.query.referenda.referendumInfoFor(124).then((res) => {
       console.log('referendumInfoFor 124:', res.toString());
     }).catch(console.error);
-   
+
     // const trackId_mediumSpender = 33;
     // api.query.referenda.trackQueue(trackId_mediumSpender).then((res) => {
     //   console.log('trackQueue for trackId_mediumSpender:', res.toString());
@@ -119,7 +119,7 @@ export default function Governance(): React.ReactElement {
   }, [address, history, selectedSubMenu]);
 
   useEffect(() => {
-    if (chainName && selectedSubMenu && selectedSubMenu !== 'All' && tracks?.length) {
+    if (chainName && selectedSubMenu && tracks?.length) {
       const trackId = tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0] as number;
       let list = referendaToList;
 
@@ -135,24 +135,45 @@ export default function Governance(): React.ReactElement {
         setIsLoading(true);
       }
 
-      trackId !== undefined && getTrackReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
-        setIsLoading(false);
+      if (selectedSubMenu !== 'All') {
+        trackId !== undefined && getTrackReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
+          setIsLoading(false);
 
-        if (res === null) {
-          if (pageTrackRef.current.page === 1) { // there is no referendum for this track
-            setReferenda(null);
+          if (res === null) {
+            if (pageTrackRef.current.page === 1) { // there is no referendum for this track
+              setReferenda(null);
+
+              return;
+            }
+
+            pageTrackRef.current.listFinished = true;
 
             return;
           }
-          pageTrackRef.current.listFinished = true;
 
-          return;
-        }
+          const concatenated = (list || []).concat(res);
 
-        const concated = (list || []).concat(res);
+          setReferenda([...concatenated]);
+        }).catch(console.error);
+      } else {
+        getLatestReferendums(chainName, pageTrackRef.current.page * 30).then((res) => {
+          setIsLoading(false);
 
-        setReferenda([...concated]);
-      }).catch(console.error);
+          if (res === null) {
+            if (pageTrackRef.current.page === 1) { // there is no referendum !!
+              setReferenda(null);
+
+              return;
+            }
+
+            pageTrackRef.current.listFinished = true;
+
+            return;
+          }
+
+          setReferenda(res);
+        }).catch(console.error);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, getMore, selectedSubMenu, tracks]);
@@ -316,7 +337,7 @@ export default function Governance(): React.ReactElement {
                   );
                 }
               })}
-              {selectedSubMenu !== 'All' && !pageTrackRef.current.listFinished &&
+              {!pageTrackRef.current.listFinished &&
                 <>
                   {
                     !isLoading

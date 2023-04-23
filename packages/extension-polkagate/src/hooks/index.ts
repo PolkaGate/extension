@@ -4,6 +4,7 @@
 export { default as useAccount } from './useAccount';
 export { default as useFullscreen } from './useFullscreen';
 export { default as useCurrentApprovalThreshold } from './useCurrentApprovalThreshold';
+export { default as useCurrentSupportThreshold } from './useCurrentSupportThreshold';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
 export { default as useApi } from './useApi';

@@ -82,15 +82,15 @@ export async function getReferendumVotes(chainName: string, referendumIndex: num
   });
 }
 
-export async function getLatestReferendums(chainName: string): Promise<LatestReferenda[] | null> {
-  console.log(`Getting referendum on ${chainName} from PA ...`);
+export async function getLatestReferendums(chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
+  console.log(`Getting Latest referendum on ${chainName} from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch('https://api.polkassembly.io/api/v1/latest-activity/all-posts?govType=open_gov&listingLimit=20', requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/latest-activity/all-posts?govType=open_gov&listingLimit=${listingLimit}`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
@@ -141,7 +141,7 @@ export async function getTrackReferendums(chainName: string, page = 1, track: nu
 }
 
 export async function getReferendum(chainName: string, postId: number): Promise<string[] | null> {
-  console.log(`Getting referendum #${postId} info ...`);
+  console.log(`Getting referendum #${postId} info from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -204,7 +204,7 @@ export async function getTreasuryProposalNumber(referendumIndex: number, api: Ap
   // const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
   // Get the referendum information
   const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
-  console.log('referendumInfo.unwrap():',referendumInfo.unwrap().toString())
+  console.log('referendumInfo.unwrap():', referendumInfo.unwrap().toString())
 
   // Get the proposal index from the referendum information
   const proposalIndex = referendumInfo.unwrap().index.toNumber();
