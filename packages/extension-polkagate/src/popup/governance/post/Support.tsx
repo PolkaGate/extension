@@ -106,7 +106,7 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
           {t('Support')}
         </Typography>
       </Grid>
-      <Grid item sx={{ mb: '27px', px: '24px', textAlign: 'center' }} xs={12} >
+      <Grid item sx={{ mb: '27px', px: '24px', textAlign: 'center' }} xs={12}>
         <LinearProgress
           color='inherit'
           sx={{ height: '33px', width: '100%', bgcolor: progressBgColor, color: progressColor, mt: '13px' }}
@@ -123,13 +123,13 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
           total={totalIssuance}
         />
         <Tally
-          amount={referendumInfoFromSubscan?.nays_amount}
+          amount={currentSupportThreshold && totalIssuance?.muln(currentSupportThreshold)?.toString()}
           color={'#BCE2DB'}
           percent={currentSupportThreshold}
           text={t('Threshold')}
           total={totalIssuance}
         />
       </Grid>
-    </Grid >
+    </Grid>
   );
 }
