@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
@@ -18,7 +16,7 @@ import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../..
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, ReferendumPolkassembly } from '../utils/types';
-import { formatRelativeTime, toPascalCase, pascalCaseToTitleCase, formalizedStatus } from '../utils/util';
+import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
 import { hexAddressToFormatted } from './MetaData';
 
 interface Props {
@@ -63,7 +61,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
               </Typography>
             </Grid>
             <Grid alignItems='center' container item justifyContent='space-between' xs={12}>
-              <Grid alignItems='center' container item xs={9.5}>
+              <Grid alignItems='center' container item md={9.5}>
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, mr: '17px' }}>
                   {t('By')}:
                 </Grid>
@@ -98,7 +96,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                     />}
                 </Grid>
               </Grid>
-              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], p: '5px 10px' }} xs={1.5}>
+              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], p: '5px 10px' }} md={1.5}>
                 {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>
