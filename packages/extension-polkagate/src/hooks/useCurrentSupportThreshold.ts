@@ -17,7 +17,7 @@ export default function useCurrentSupportThreshold(track: PalletReferendaTrackIn
 
     const { decisionPeriod, minSupport } = track;
 
-    return curveThreshold(minSupport, new BN(block), decisionPeriod).divn(10000000).toNumber();
+    return curveThreshold(minSupport, new BN(block), decisionPeriod).toNumber() / 10000000;
   }, [block, track]);
 
   return support;
