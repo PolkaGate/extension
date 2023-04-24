@@ -12,7 +12,7 @@ export type Track = {
   info: PalletReferendaTrackInfo
 }
 
-export default function useTracks(address: string): Track[] | undefined {
+export default function useTracks(address: string | undefined): Track[] | undefined {
   const api = useApi(address);
   const chainName = useChainName(address);
   const [savedTracks, setSavedTracks] = useState<string[]>([]);
@@ -35,5 +35,5 @@ export default function useTracks(address: string): Track[] | undefined {
     }
   }, [chainName, tracks]);
 
-  return tracks ;//|| savedTracks;
+  return tracks;//|| savedTracks;
 }

@@ -13,7 +13,7 @@ export type Track = {
   info: PalletReferendaTrackInfo
 }
 
-export default function useTrack(address: string, trackName: string | undefined): Track | undefined {
+export default function useTrack(address: string | undefined, trackName: string | undefined): Track | undefined {
   const tracks = useTracks(address);
   const snakeCaseTrackName = trackName && toSnakeCase(trackName);
 
