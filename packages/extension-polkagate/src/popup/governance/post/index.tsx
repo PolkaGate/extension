@@ -3,26 +3,25 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Breadcrumbs, Button, Container, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Breadcrumbs, Button, Container, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ActionContext, Infotip, PButton, ShowValue } from '../../../components';
+import { ActionContext, PButton } from '../../../components';
 import { useApi, useChainName, useCurrentBlockNumber, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { MAX_WIDTH } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
-import { blockToUnit, blockToX, getPeriodScale, toTitleCase } from '../utils/util';
+import { getPeriodScale, toTitleCase } from '../utils/util';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
 import MetaData from './MetaData';
+import StatusInfo from './StatusInfo';
 import Support from './Support';
 import Voting from './Voting';
 
@@ -253,7 +252,7 @@ export default function ReferendumPost(): React.ReactElement {
                 referendum={referendumFromPA}
               />
             </Grid>
-            <Grid container item md={2.9} sx={{ height: '100%' }}>
+            <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '450px' }}>
               <Grid item xs={12}>
                 <PButton
                   // _onClick={this.#goHome}
@@ -263,20 +262,11 @@ export default function ReferendumPost(): React.ReactElement {
                   text={t<string>('Vote')}
                 />
               </Grid>
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mt: '10px' }} xs={12}>
-                <Grid item>
-                  <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
-                    {t('Deciding')}
-                  </Typography>
-                </Grid>
-                <Grid item sx={{ pr: '5px' }}>
-                  <Infotip iconLeft={1} iconTop={5} showQuestionMark text={'remaining time/date ...'}>
-                    <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
-                      <ShowValue value={decisionUnitPassed && track?.[1]?.decisionPeriod ? `${blockToUnit(track?.[1]?.decisionPeriod)} ${decisionUnitPassed} of ${blockToX(track?.[1]?.decisionPeriod, true)}` : undefined} />
-                    </Typography>
-                  </Infotip>
-                </Grid>
-              </Grid>
+              <StatusInfo
+                address={address}
+                referendumInfoFromSubscan={referendumInfoFromSubscan}
+                track={track}
+              />
               <Voting
                 address={address}
                 referendumFromPA={referendumFromPA}
