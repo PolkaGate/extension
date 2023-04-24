@@ -52,7 +52,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
         <Grid fontWeight={700} item>
           {percent?.toFixed(1)}%
         </Grid>
-        <Grid color='text.disabled' fontWeight={400} item>
+        <Grid color='text.disabled' fontWeight={400} fontSize='20px' item>
           {`(${count || ''})`}
         </Grid>
       </Grid>
@@ -80,14 +80,14 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
       <Grid container item justifyContent='space-around' xs={12}>
         <Tally
           amount={referendumInfoFromSubscan?.ayes_amount}
-          color={'#008080'}
+          color={`${theme.palette.aye.main}`}
           count={referendumInfoFromSubscan?.ayes_count}
           percent={ayesPercent}
           text={t('Ayes')}
         />
         <Tally
           amount={referendumInfoFromSubscan?.nays_amount}
-          color={'#FF5722'}
+          color={`${theme.palette.nay.main}`}
           count={referendumInfoFromSubscan?.nays_count}
           percent={naysPercent}
           text={t('Nays')}
@@ -98,11 +98,11 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
           </Typography>
           <LinearProgress
             color='inherit'
-            sx={{ height: '33px', width: '100%', bgcolor: 'approval.contrastText', color: 'approval.main', mt: '10px' }}
+            sx={{ bgcolor: 'approval.contrastText', color: 'approval.main', height: '33px', mt: '5px', width: '100%' }}
             value={currentApprovalThreshold || 0}
             variant='determinate'
           />
-          <Grid fontSize='24px' fontWeight={700} item pt='15px' pb='30px'>
+          <Grid fontSize='24px' fontWeight={700} item pb='30px' pt='15px'>
             <ShowValue value={currentApprovalThreshold && `${currentApprovalThreshold}%`} />
           </Grid>
         </Grid>

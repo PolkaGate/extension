@@ -55,13 +55,14 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
     api.query.balances.inactiveIssuance().then(setInactiveIssuance).catch(console.error);
   }, [api]);
 
-  const Tally = ({ amount, color, percent, text, total }: { text: string, percent: number | undefined, color: string, count: number, amount: string | undefined }) => (
+  const Tally = ({ amount, color, percent, text, total }:
+    { text: string, percent: number | undefined, color: string, amount: string | undefined, total: BN | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
-      <Typography sx={{ borderBottom: `8px solid ${color}`, textAlign: 'center', fontSize: '20px', fontWeight: 500, width: '100%' }}>
+      <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '100%' }}>
         {text}
       </Typography>
       <Grid container fontSize='22px' item>
-        <Grid fontWeight={700} item sx={{ textAlign: 'center', height: '27px' }} xs={12} mt='15px'>
+        <Grid fontWeight={700} item sx={{ height: '27px', textAlign: 'center' }} xs={12} mt='15px'>
           <ShowValue value={percent !== undefined ? `${percent?.toFixed(2)}%` : undefined} />
         </Grid>
         <Grid color='text.disabled' fontSize='14px' fontWeight={400} item sx={{ textAlign: 'center' }} xs={12}>
@@ -109,22 +110,22 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
       <Grid item sx={{ mb: '27px', px: '24px', textAlign: 'center' }} xs={12}>
         <LinearProgress
           color='inherit'
-          sx={{ height: '33px', width: '100%', bgcolor: progressBgColor, color: progressColor, mt: '13px' }}
+          sx={{ bgcolor: progressBgColor, color: progressColor, height: '33px', mt: '13px', width: '100%' }}
           value={progressValue}
           variant='determinate'
         />
       </Grid>
       <Grid container item justifyContent='space-around' xs={12}>
         <Tally
-          amount={referendumInfoFromSubscan?.ayes_amount}
-          color={'#008080'}
+          amount={referendumInfoFromSubscan?.support_amount}
+          color={`${theme.palette.support.contrastText}`}
           percent={supportPercent}
           text={t('Current')}
           total={totalIssuance}
         />
         <Tally
           amount={currentSupportThreshold && totalIssuance?.divn(100).muln(currentSupportThreshold)?.toString()}
-          color={'#BCE2DB'}
+          color={`${theme.palette.support.main}`}
           percent={currentSupportThreshold}
           text={t('Threshold')}
           total={totalIssuance}
