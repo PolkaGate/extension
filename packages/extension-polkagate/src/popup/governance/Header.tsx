@@ -13,7 +13,7 @@ import { MAX_WIDTH } from './utils/consts';
 import AddressDropdown from './AddressDropdown';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   onAccountChange: (address: string) => void
 }
 

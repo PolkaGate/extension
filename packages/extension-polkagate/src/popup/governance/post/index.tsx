@@ -34,7 +34,6 @@ export default function ReferendumPost(): React.ReactElement {
   const api = useApi(address);
   const decidingCounts = useDecidingCount(address);
   const chainName = useChainName(address);
-  const currentBlock = useCurrentBlockNumber(address);
 
   useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -52,30 +51,13 @@ export default function ReferendumPost(): React.ReactElement {
 
   const track = useTrack(address, trackName);
 
-  const decisionUnitPassed = useMemo(() => {
-    if (track?.[1]?.decisionPeriod && referendumInfoFromSubscan?.timeline[1]?.block && currentBlock) {
-      const decisionStartBlock = referendumInfoFromSubscan.timeline[1].block;
-      const decisionPeriodInBlock = Number(track[1].decisionPeriod);
-      const decisionEndBlock = decisionStartBlock + decisionPeriodInBlock;
-
-      if (currentBlock > decisionEndBlock) {
-        return null; // finished
-      }
-
-      const diff = currentBlock - decisionStartBlock;
-      const unitToEndOfDecision = Math.ceil(diff / getPeriodScale(decisionPeriodInBlock));
-
-      return unitToEndOfDecision;
-    }
-  }, [referendumInfoFromSubscan, track, currentBlock]);
-
   useEffect(() => {
     if (!api) {
       return;
     }
 
     api.query.treasury.approvals().then((approvals) => {
-      console.log(`approvals: ${approvals.toJSON()}`)
+      console.log(`Current Treasury approvals: ${approvals.toJSON()}`)
 
       if (approvals.toJSON().length) {
         const approvalsIds = approvals.toJSON();
@@ -161,7 +143,7 @@ export default function ReferendumPost(): React.ReactElement {
               }}
               variant='contained'
             >
-              Multirole Delegate
+              {t('Multirole Delegate')}
             </Button>
             <Button
               // disabled={disabled}
@@ -183,7 +165,7 @@ export default function ReferendumPost(): React.ReactElement {
               }}
               variant='contained'
             >
-              Submit Referendum
+              {t('Submit Referendum')}
             </Button>
           </Grid>
         </Grid>
@@ -255,7 +237,7 @@ export default function ReferendumPost(): React.ReactElement {
             <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '450px' }}>
               <Grid item xs={12}>
                 <PButton
-                  // _onClick={this.#goHome}
+                  // _onClick={}
                   _ml={0}
                   _mt='1px'
                   _width={100}

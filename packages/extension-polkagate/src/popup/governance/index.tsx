@@ -171,7 +171,7 @@ export default function Governance(): React.ReactElement {
   const Toolbar = () => (
     <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
-        <Grid container alignItems='center' justifyContent='space-between'>
+        <Grid alignItems='center' container justifyContent='space-between'>
           <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
             <TopMenuComponent item={'Referenda'} />
             <TopMenuComponent item={'Fellowship'} />
@@ -305,7 +305,7 @@ export default function Governance(): React.ReactElement {
               {referendaToList.map((referendum, index) => {
                 if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                   return (
-                    <ReferendumSummary address={address} key={index} referendum={referendum} onClick={() => getReferendaById(referendum.post_id)} />
+                    <ReferendumSummary address={address} key={index} onClick={() => getReferendaById(referendum.post_id)} referendum={referendum} />
                   );
                 }
               })}
@@ -327,7 +327,7 @@ export default function Governance(): React.ReactElement {
             </>
             : referendaToList === null
               ? <Grid container justifyContent='center' pt='10%'>
-                <Typography fontSize={20} color={'text.disabled'} fontWeight={500}>
+                <Typography color={'text.disabled'} fontSize={20} fontWeight={500}>
                   {t('No referenda in this track to display')}
                 </Typography>
               </Grid>

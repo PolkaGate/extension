@@ -38,7 +38,21 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
   }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const currentSupportThreshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+
+  const threshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+
+  const currentSupportThreshold = useMemo(() => {
+    if (track?.[1]?.preparePeriod && currentBlock && referendumInfoFromSubscan) {
+      const blockSubmitted = referendumInfoFromSubscan.timeline[0].block;
+
+      if (currentBlock - blockSubmitted < track[1].preparePeriod) {
+        // in prepare period
+        return 50;
+      } else {
+        return threshold;
+      }
+    }
+  }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
 
   const supportPercent = useMemo(() =>
     totalIssuance && inactiveIssuance && referendumInfoFromSubscan && (Number(referendumInfoFromSubscan.support_amount) * 100 / Number(totalIssuance.sub(inactiveIssuance)))

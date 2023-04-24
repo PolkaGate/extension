@@ -187,7 +187,7 @@ export const formalizedStatus = (status: string): string => {
 
   switch (status) {
     case 'DecisionDepositPlaced':
-      output = 'Deciding';
+      output = 'Preparing';
       break;
 
     case 'ConfirmStarted':

@@ -36,7 +36,19 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const currentApprovalThreshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+  const currentApprovalThreshold = useMemo(() => {
+    if (track?.[1]?.preparePeriod && currentBlock && referendumInfoFromSubscan) {
+      const blockSubmitted = referendumInfoFromSubscan.timeline[0].block;
+
+      if (currentBlock - blockSubmitted < track[1].preparePeriod) {
+        // in prepare period
+        return 100;
+      } else {
+        return threshold;
+      }
+    }
+  }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
 
   const ayesPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
   const naysPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
