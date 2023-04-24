@@ -18,7 +18,7 @@ import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../..
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, ReferendumPolkassembly } from '../utils/types';
-import { formatRelativeTime, toPascalCase, toTitleCase } from '../utils/util';
+import { formatRelativeTime, toPascalCase, pascalCaseToTitleCase, formalizedStatus } from '../utils/util';
 import { hexAddressToFormatted } from './MetaData';
 
 interface Props {
@@ -84,20 +84,22 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                   {referendum?.requested &&
                     <LabelValue
                       label={`${t('Requested')}: `}
-                      noBorder
-                      value={<ShowBalance
-                        balance={new BN(referendum?.requested)}
-                        decimal={decimal}
-                        decimalPoint={2}
-                        token={token}
-                      />}
-                      valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
                       labelStyle={{ fontSize: 14 }}
+                      noBorder
+                      value={
+                        <ShowBalance
+                          balance={new BN(referendum?.requested)}
+                          decimal={decimal}
+                          decimalPoint={2}
+                          token={token}
+                        />
+                      }
+                      valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
                     />}
                 </Grid>
               </Grid>
-              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[toPascalCase(referendum?.status)], p: '5px 10px' }} xs={1.5}>
-                {toTitleCase(referendum?.status)}
+              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], p: '5px 10px' }} xs={1.5}>
+                {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>
           </Grid>

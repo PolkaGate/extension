@@ -11,7 +11,7 @@ import { Identity } from '../../components';
 import { useApi, useChain, useTranslation } from '../../hooks';
 import { STATUS_COLOR } from './utils/consts';
 import { LatestReferenda } from './utils/helpers';
-import { formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
+import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
 
 interface Props {
   address: string;
@@ -58,7 +58,7 @@ export function ReferendumSummary({ address, key, onClick, referendum }: Props):
           </Grid>
         </Grid>
         <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum.status], p: '5px 15px' }} xs={1.5}>
-          {pascalCaseToTitleCase(referendum.status === 'DecisionDepositPlaced' ? 'Deciding' : referendum.status)}
+          {pascalCaseToTitleCase(formalizedStatus(referendum.status))}
         </Grid>
       </Grid>
     </Grid>

@@ -95,7 +95,6 @@ export function formatRelativeTime(dateString: string): string {
   }
 }
 
-
 type BlockNumber = number | BN | undefined;
 
 const DAY_BLOCK_COUNT = 24 * 60 * 10;
@@ -173,10 +172,26 @@ export const getPeriodScale = (blockNumber: BlockNumber): number | undefined => 
   }
 
   const blocksInMinutes = blockCount / MINUTE_BLOCK_COUNT;
-  
+
   if (blocksInMinutes >= 1) {
     return MINUTE_BLOCK_COUNT;
   }
 
   return undefined;
 };
+
+export const formalizedStatus = (status: string): string => {
+  let output = status;
+
+  switch (status) {
+    case 'DecisionDepositPlaced':
+      output = 'Deciding';
+      break;
+
+    case 'ConfirmStarted':
+      output = 'Confirming';
+      break;
+  }
+
+  return output;
+}
