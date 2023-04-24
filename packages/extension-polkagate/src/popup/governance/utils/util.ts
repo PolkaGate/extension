@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { BN } from '@polkadot/util';
+
 export function toSnakeCase(input: string | undefined): string | undefined {
   if (!input) {
     return undefined;

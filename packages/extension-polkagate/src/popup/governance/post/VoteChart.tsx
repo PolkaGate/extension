@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useMemo, useRef } from 'react';
 

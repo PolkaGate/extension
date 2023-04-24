@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';

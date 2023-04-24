@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Square from '@mui/icons-material/Square';
 import Timeline from '@mui/lab/Timeline';

@@ -3,13 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { useChain, useChainName, useTranslation } from '../../../hooks';
+import { useChainName, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly } from '../utils/types';
 import CommentView from './Comment';
 import Replies from './Replies';
