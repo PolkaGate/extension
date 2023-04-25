@@ -42,7 +42,7 @@ export function toTitleCase(input: string): string | undefined {
   let words = input.replace(/[_-]/g, ' ').split(' ');
 
   // Convert each word to title case
-  words = words.map(word => {
+  words = words.map((word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });
 
@@ -69,7 +69,7 @@ export function pascalCaseToTitleCase(str: string): string | undefined {
   return result;
 }
 
-export function formatRelativeTime(dateString: string): string {
+export function formatRelativeTime(dateString: string | Date): string {
   const date = new Date(dateString);
   const now = new Date();
   const elapsedMs = now.getTime() - date.getTime();
