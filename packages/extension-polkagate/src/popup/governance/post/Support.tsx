@@ -48,9 +48,9 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
       if (currentBlock - blockSubmitted < track[1].preparePeriod) {
         // in prepare period
         return 50;
-      } else {
-        return threshold;
       }
+
+      return threshold;
     }
   }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
 

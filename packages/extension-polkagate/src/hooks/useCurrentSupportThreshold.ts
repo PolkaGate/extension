@@ -9,6 +9,8 @@ import { BN } from '@polkadot/util';
 
 import { curveThreshold } from '../popup/governance/Chart';
 
+const MIN_SUPPORT = 0;
+
 export default function useCurrentSupportThreshold(track: PalletReferendaTrackInfo | undefined, block: number | undefined): number | undefined {
   const support = useMemo(() => {
     if (!track || !block) {
@@ -17,7 +19,9 @@ export default function useCurrentSupportThreshold(track: PalletReferendaTrackIn
 
     const { decisionPeriod, minSupport } = track;
 
-    return curveThreshold(minSupport, new BN(block), decisionPeriod).toNumber() / 10000000;
+    const threshold = curveThreshold(minSupport, new BN(block), decisionPeriod).toNumber() / 10000000;
+
+    return threshold < MIN_SUPPORT ? MIN_SUPPORT : threshold;
   }, [block, track]);
 
   return support;
