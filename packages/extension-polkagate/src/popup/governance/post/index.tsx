@@ -10,13 +10,13 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, PButton } from '../../../components';
-import { useApi, useChainName, useCurrentBlockNumber, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
+import { useApi, useChainName, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import ReferendaMenu from '../ReferendaMenu';
 import { MAX_WIDTH } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
-import { getPeriodScale, toTitleCase } from '../utils/util';
+import { pascalCaseToTitleCase, toTitleCase } from '../utils/util';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
@@ -108,12 +108,12 @@ export default function ReferendumPost(): React.ReactElement {
   }, []);
 
   const backToSubMenu = useCallback(() => {
-    setSelectedSubMenu(state?.selectedSubMenu);
-  }, [state?.selectedSubMenu]);
+    setSelectedSubMenu(state?.selectedSubMenu|| pascalCaseToTitleCase(referendumFromPA?.origin)?.trim());
+  }, [referendumFromPA?.origin, state?.selectedSubMenu]);
 
   const onAccountChange = useCallback((address: string) =>
     onAction(`/governance/${address}`)
-    , [onAction]);
+  , [onAction]);
 
   const Toolbar = () => (
     <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
@@ -194,7 +194,7 @@ export default function ReferendumPost(): React.ReactElement {
           {selectedTopMenu || 'Referenda'}
         </Link>
         <Link onClick={backToSubMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {state?.selectedSubMenu}
+          {state?.selectedSubMenu || pascalCaseToTitleCase(referendumFromPA?.origin)}
         </Link>
         <Typography color='text.primary' sx={{ fontWeight: 500 }}>
           {`Referendum #${postId}`}
