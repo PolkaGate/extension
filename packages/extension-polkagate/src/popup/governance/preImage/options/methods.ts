@@ -3,9 +3,9 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { DropdownOption, DropdownOptions } from './section.js';
+import { DropdownOption } from './sections.js';
 
-export default function methodOptions (api: ApiPromise, sectionName: string, filter?: (section: string, method?: string) => boolean): DropdownOptions {
+export default function methodOptions(api: ApiPromise, sectionName: string, filter?: (section: string, method?: string) => boolean): DropdownOption[] {
   const section = api.tx[sectionName];
   const isAllowed = !filter || filter(sectionName);
 
@@ -27,10 +27,8 @@ export default function methodOptions (api: ApiPromise, sectionName: string, fil
         .join(', ');
 
       return {
-        className: 'ui--DropdownLinked-Item',
         key: `${sectionName}_${value}`,
-        text: [`${value}(${inputs}) ${(method.meta.docs[0] || value).toString()}`
-        ],
+        text: [`${value}(${inputs}):    ${(method.meta.docs[0] || value).toString()}`],
         value
       };
     });

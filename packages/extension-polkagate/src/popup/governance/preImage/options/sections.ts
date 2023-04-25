@@ -4,15 +4,12 @@
 import type { ApiPromise } from '@polkadot/api';
 
 export interface DropdownOption {
-  className?: string;
   key?: string;
-  text: React.ReactNode;
+  text: React.ReactNode | string;
   value: string;
 }
 
-export type DropdownOptions = DropdownOption[];
-
-export default function sectionOptions (api: ApiPromise, filter?: (section: string, method?: string) => boolean): DropdownOptions {
+export default function sectionOptions (api: ApiPromise, filter?: (section: string, method?: string) => boolean): DropdownOption[] {
   return Object
     .keys(api.tx)
     .filter((s) =>

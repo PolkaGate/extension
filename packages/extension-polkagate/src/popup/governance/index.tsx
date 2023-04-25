@@ -14,6 +14,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import methodOptions from './preImage/options/methods';
+import sectionOptions from './preImage/options/sections';
 import { MAX_WIDTH } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
 import { TopMenu } from './utils/types';
@@ -21,9 +23,8 @@ import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
+import { SubmitReferendum } from './SubmitReferendum';
 import { TrackStats } from './TrackStats';
-import methodOptions from './preImage/options/methods';
-import sectionOptions from './preImage/options/section';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
@@ -31,6 +32,11 @@ export default function Governance(): React.ReactElement {
   const { state } = useLocation();
   const history = useHistory();
   const theme = useTheme();
+  const [openSubmitReferendum, setOpenSubmitReferendum] = React.useState(false);
+
+  const handleOpenSubmitReferendum = () => {
+    setOpenSubmitReferendum(true);
+  };
 
   useFullscreen();
   const { address, postId } = useParams<{ address: string, postId?: number }>();
@@ -201,8 +207,8 @@ export default function Governance(): React.ReactElement {
               Multirole Delegate
             </Button>
             <Button
-              // disabled={disabled}
-              // onClick={_onClick}
+              disabled={!api}
+              onClick={handleOpenSubmitReferendum}
               sx={{
                 backgroundColor: 'background.paper',
                 borderRadius: '5px',
@@ -227,7 +233,7 @@ export default function Governance(): React.ReactElement {
       </Container>
     </Grid>
   );
-  
+
   // api && console.log('createOptions:', sectionOptions(api))
   // api && console.log('"methods":', methodOptions(api,'referenda'))
 
@@ -343,6 +349,14 @@ export default function Governance(): React.ReactElement {
 
         </Container>
       </Container>
+      {openSubmitReferendum &&
+        <SubmitReferendum
+          api={api}
+          address={address}
+          open={openSubmitReferendum}
+          setOpen={setOpenSubmitReferendum}
+        />
+      }
     </>
   );
 }
