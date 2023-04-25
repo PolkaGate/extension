@@ -21,8 +21,29 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
 
   Chart.register(...registerables);
 
-  const ayesPercent = useMemo(() => referendum ? Number(referendum.ayes_amount) / (Number(referendum.ayes_amount) + Number(new BN(referendum.nays_amount))) * 100 : 0, [referendum]);
-  const naysPercent = useMemo(() => referendum ? Number(referendum.nays_amount) / (Number(referendum.ayes_amount) + Number(new BN(referendum.nays_amount))) * 100 : 0, [referendum]);
+  const ayesPercent = useMemo(() => {
+    if (referendum) {
+      const totalAmount = (Number(referendum.ayes_amount) + Number(new BN(referendum.nays_amount)));
+
+      if (totalAmount === 0) {
+        return 0;
+      }
+
+      return Number(referendum.ayes_amount) / totalAmount * 100;
+    }
+  }, [referendum]);
+
+  const naysPercent = useMemo(() => {
+    if (referendum) {
+      const totalAmount = (Number(referendum.ayes_amount) + Number(new BN(referendum.nays_amount)));
+
+      if (totalAmount === 0) {
+        return 0;
+      }
+
+      return Number(referendum.nays_amount) / totalAmount * 100;
+    }
+  }, [referendum]);
 
   useEffect(() => {
     const chartData = {
