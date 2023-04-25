@@ -72,14 +72,14 @@ export default function Metadata({ address, referendum }: { address: string | un
           <LabelValue
             label={t('Origin')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={pascalCaseToTitleCase(referendum?.origin)}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
             label={t('Proposer')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '40px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={
               <Identity
                 api={api}
@@ -87,14 +87,14 @@ export default function Metadata({ address, referendum }: { address: string | un
                 formatted={referendum?.proposer}
                 identiconSize={25}
                 showSocial
-                style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
+                style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
               />
             }
           />
           <LabelValue
             label={t('Submission Amount')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={<ShowBalance
               balance={new BN(referendum?.submitted_amount)}
               decimal={decimal}
@@ -106,7 +106,7 @@ export default function Metadata({ address, referendum }: { address: string | un
           <LabelValue
             label={t('Decision Deposit')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={<ShowBalance
               balance={new BN(referendum?.decision_deposit_amount)}
               decimal={decimal}
@@ -120,7 +120,7 @@ export default function Metadata({ address, referendum }: { address: string | un
               <LabelValue
                 label={t('Requested For')}
                 labelStyle={{ minWidth: '20%' }}
-                style={{ pb: '35px', justifyContent: 'flex-start' }}
+                style={{ justifyContent: 'flex-start' }}
                 value={<ShowBalance
                   balance={new BN(referendum?.proposed_call?.args?.amount)}
                   decimal={decimal}
@@ -132,7 +132,7 @@ export default function Metadata({ address, referendum }: { address: string | un
               <LabelValue
                 label={t('Beneficiary')}
                 labelStyle={{ minWidth: '20%' }}
-                style={{ pb: '40px', justifyContent: 'flex-start' }}
+                style={{ justifyContent: 'flex-start' }}
                 value={
                   <Identity
                     api={api}
@@ -141,7 +141,7 @@ export default function Metadata({ address, referendum }: { address: string | un
                     identiconSize={25}
                     showShortAddress
                     showSocial
-                    style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px', maxWidth: '100%', minWidth: '35%' }}
+                    style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%' }}
                   />
                 }
               />
@@ -150,36 +150,41 @@ export default function Metadata({ address, referendum }: { address: string | un
           <LabelValue
             label={t('Enact After')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
-            value={t('{{ enactment_after_block }} blocks', { replace: { enactment_after_block: referendum?.enactment_after_block } })}
+            style={{ justifyContent: 'flex-start' }}
+            value={t<string>('{{ enactment_after_block }} blocks', { replace: { enactment_after_block: referendum?.enactment_after_block } })}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
             label={t('Method')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={referendum?.method}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
             label={t('Proposal Hash')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={referendum?.hash}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
             label={t('View in Subscan')}
             labelStyle={{ minWidth: '20%' }}
-            style={{ pb: '35px', justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start' }}
             value={
               <Link
                 href={referendumLinkOnsSubscan()}
                 rel='noreferrer'
                 target='_blank'
                 underline='none'
+                display='block'
+                height='35px'
+                width='25px'
+                my='auto'
+                lineHeight='35px'
               >
-                <Box alt={'subscan'} component='img' height='25px' mt='5px' src={subscan} width='25px' />
+                <Box alt={'subscan'} component='img' height='25px' width='25px' mt='5px' src={subscan as string} />
               </Link>
             }
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
