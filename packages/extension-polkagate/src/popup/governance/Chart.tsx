@@ -6,7 +6,7 @@ import type { PalletReferendaCurve, PalletReferendaTrackInfo } from '@polkadot/t
 import { useTheme } from '@emotion/react';
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useRef } from 'react';
-import { Line } from "react-chartjs-2"
+
 import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
 export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN): BN {

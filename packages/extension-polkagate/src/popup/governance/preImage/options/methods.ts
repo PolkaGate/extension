@@ -3,7 +3,6 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import React from 'react';
 import { DropdownOption, DropdownOptions } from './section.js';
 
 export default function methodOptions (api: ApiPromise, sectionName: string, filter?: (section: string, method?: string) => boolean): DropdownOptions {

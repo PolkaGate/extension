@@ -22,6 +22,8 @@ import { Header } from './Header';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
 import { TrackStats } from './TrackStats';
+import methodOptions from './preImage/options/methods';
+import sectionOptions from './preImage/options/section';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
@@ -225,6 +227,9 @@ export default function Governance(): React.ReactElement {
       </Container>
     </Grid>
   );
+  
+  // api && console.log('createOptions:', sectionOptions(api))
+  // api && console.log('"methods":', methodOptions(api,'referenda'))
 
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
