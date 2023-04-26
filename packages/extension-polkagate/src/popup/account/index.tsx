@@ -45,7 +45,6 @@ export default function AccountDetails(): React.ReactElement {
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chain = useChain(address);
-  const endpointOptions = useEndpoints(chain?.genesisHash);
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
