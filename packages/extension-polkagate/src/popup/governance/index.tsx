@@ -14,8 +14,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
-import methodOptions from './preImage/options/methods';
-import sectionOptions from './preImage/options/sections';
+import methodOptions from './submitReferendum/addPreimage/options/methods';
+import sectionOptions from './submitReferendum/addPreimage/options/sections';
 import { MAX_WIDTH } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
 import { TopMenu } from './utils/types';
@@ -23,7 +23,7 @@ import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
-import { SubmitReferendum } from './SubmitReferendum';
+import { SubmitReferendum } from './submitReferendum';
 import { TrackStats } from './TrackStats';
 
 export default function Governance(): React.ReactElement {
@@ -351,8 +351,8 @@ export default function Governance(): React.ReactElement {
       </Container>
       {openSubmitReferendum &&
         <SubmitReferendum
-          api={api}
           address={address}
+          api={api}
           open={openSubmitReferendum}
           setOpen={setOpenSubmitReferendum}
         />

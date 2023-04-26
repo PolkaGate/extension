@@ -8,14 +8,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { logoBlack, logoWhite } from '../../assets/logos';
-import { Select } from '../../components';
-import { useApi, useChain, useTranslation } from '../../hooks';
-import { ChainSwitch } from '../../partials';
-import methodOptions from './preImage/options/methods';
-import sectionOptions, { DropdownOption } from './preImage/options/sections';
-import { MAX_WIDTH } from './utils/consts';
-import AddressDropdown from './AddressDropdown';
+import { logoBlack, logoWhite } from '../../../assets/logos';
+import { Select } from '../../../components';
+import { useApi, useChain, useTranslation } from '../../../hooks';
+import { ChainSwitch } from '../../../partials';
+import AddressDropdown from '../AddressDropdown';
+import { MAX_WIDTH } from '../utils/consts';
+import methodOptions from './addPreimage/options/methods';
+import sectionOptions, { DropdownOption } from './addPreimage/options/sections';
 
 interface Props {
   api: ApiPromise;
@@ -24,7 +24,7 @@ interface Props {
   setOpen: (value: React.SetStateAction<boolean>) => void
 }
 
-export function SubmitReferendum({ api, address, open, setOpen }: Props): React.ReactElement<Props> {
+export function SubmitReferendum({ address, api, open, setOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);

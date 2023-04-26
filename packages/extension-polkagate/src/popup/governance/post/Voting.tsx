@@ -3,17 +3,19 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, LinearProgress, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
+import React, { useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { ShowBalance, ShowValue } from '../../../components';
-import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { PButton, ShowBalance, ShowValue } from '../../../components';
+import { useApi, useChain, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import VoteChart from './VoteChart';
+import AllVotes from './AllVotes';
+import { getReferendumVotes, getReferendumVotesFromSubscan } from '../utils/helpers';
 
 interface Props {
   address: string | undefined;
@@ -25,9 +27,13 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   const { t } = useTranslation();
   const theme = useTheme();
   const { state } = useLocation();
+  const api = useApi(address);
   const decimal = useDecimal(address);
+  const chainName = useChainName(address);
   const token = useToken(address);
   const currentBlock = useCurrentBlockNumber(address);
+  const [allVotes, setAllVotes] = React.useState();
+  const [openAllVotes, setOpenAllVotes] = React.useState(false);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
@@ -52,6 +58,24 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
 
   const ayesPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
   const naysPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
+
+  const handleOpenAllVotes = () => {
+    setOpenAllVotes(true);
+  };
+
+  useEffect(() => {
+    chainName && referendumInfoFromSubscan?.referendum_index &&
+      getReferendumVotesFromSubscan(chainName, referendumInfoFromSubscan.referendum_index).then((votes) => {
+        setAllVotes(votes);
+        console.log('All votes from subscan:', referendumInfoFromSubscan.referendum_index, votes)
+      });
+
+    api && chainName && referendumInfoFromSubscan &&
+      getReferendumVotes(api, referendumInfoFromSubscan.origins_id, referendumInfoFromSubscan.referendum_index).then((votes) => {
+        setAllVotes(votes);
+        console.log('All votes from chain:', referendumInfoFromSubscan.referendum_index, votes)
+      });
+  }, [api, chainName, referendumInfoFromSubscan]);
 
   const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number, amount: string | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
@@ -78,7 +102,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   );
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px' }}>
+    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '20px' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, my: '15px', mx: '25px' }} xs={12}>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {t('Voting')}
@@ -112,11 +136,27 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
             value={currentApprovalThreshold || 0}
             variant='determinate'
           />
-          <Grid fontSize='24px' fontWeight={700} item pb='30px' pt='15px'>
+          <Grid fontSize='24px' fontWeight={700} item pt='15px'>
             <ShowValue value={currentApprovalThreshold && `${currentApprovalThreshold}%`} />
           </Grid>
         </Grid>
       </Grid>
+      <Grid color='primary.main' container justifyContent='center'>
+        <Button
+          onClick={handleOpenAllVotes}
+          // disabled={change}
+          sx={{ fontSize: '18px', fontWeight: 500, mt: '10px', textTransform: 'none', textDecoration: 'underline', width: '70%' }}
+          variant='text'
+        >
+          {t('All votes')}
+        </Button>
+      </Grid>
+      <AllVotes
+        address={address}
+        open={openAllVotes}
+        setOpen={setOpenAllVotes}
+        allVotes={allVotes}
+      />
     </Grid>
   );
 }
