@@ -107,7 +107,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1 }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -119,19 +119,19 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
       <AccordionDetails>
         {isTreasury && isExecuted &&
           <>
-            <Grid container item justifyContent='space-between' sx={{ mb: '-28px' }} xs={12}>
+            <Grid container item justifyContent='space-between' xs={12} pt='10px'>
               <Grid item xs={8}>
-                <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.3 }, p: 0 }}>
+                <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.3 }, m: 0, p: 0 }}>
                   <TimelineItem>
-                    <TimelineOppositeContent color='text.primary' sx={{ fontSize: 16, fontWeight: 500 }}>
+                    <TimelineOppositeContent color='text.primary' sx={{ fontSize: 16, fontWeight: 500, mt: '-7px' }}>
                       {toFormattedDate(mayBeAwardedDate)}
                     </TimelineOppositeContent>
-                    <TimelineSeparator sx={{ color: 'primary.main' }}>
-                      <TimelineDot color='primary' sx={{ width: '20px', height: '20px', borderWidth: '4px' }} variant='outlined' />
-                      <TimelineConnector color='primary' />
+                    <TimelineSeparator>
+                      <TimelineDot sx={{ borderColor: isAwardedBasedOnPA ? 'primary.main' : 'action.focus', borderWidth: '4px', height: '20px', width: '20px' }} variant='outlined' />
+                      <TimelineConnector sx={{ bgcolor: isAwardedBasedOnPA ? 'primary.main' : 'action.focus', height: '36px', width: '4px' }} />
                     </TimelineSeparator>
                     <TimelineContent>
-                      <Grid container justifyContent='flex-start' pt='5px'>
+                      <Grid container justifyContent='flex-start' pt='3px'>
                         <Grid item xs={2}>
                           <Link
                             href={`${subscanLink(treasuryAwardedBlock)}`}
@@ -139,11 +139,11 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                             target='_blank'
                             underline='none'
                           >
-                            <Box alt={'subscan'} component='img' height='26px' src={subscan} width='26px' />
+                            <Box alt={'subscan'} component='img' height='26px' src={subscan as string} width='26px' />
                           </Link>
                         </Grid>
                         {treasuryLabel &&
-                          <Grid item sx={{ textAlign: 'center', mb: '5px', fontSize: '16px', fontWeight: 400, border: `0.01px solid ${theme.palette.primary.main}`, borderRadius: '30px', p: '2px 10px', width: '190px' }}>
+                          <Grid item sx={{ border: `0.01px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, mb: '5px', p: '2px 10px', textAlign: 'center', width: '190px' }}>
                             {treasuryLabel}
                           </Grid>
                         }
@@ -152,33 +152,35 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                   </TimelineItem>
                 </Timeline>
               </Grid>
-              <Grid item sx={{ color: 'text.disabled', mt: 3, mb: 5, borderLeft: `4px solid ${theme.palette.text.disabled}`, textAlign: 'center', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }} xs>
-                {t('Treasury')}
+              <Grid item xs>
+                <Typography sx={{ borderLeft: '4px solid #E8E0E5', color: 'text.disabled', height: '55%', lineHeight: '45px', textAlign: 'center' }}>
+                  {t('Treasury')}
+                </Typography>
               </Grid>
             </Grid>
-            <Divider sx={{ bgcolor: 'text.disabled', height: '1px', borderStyle: 'dotted dotted dotted', borderWidth: '0.2px', borderColor: `${theme.palette.text.disabled}`, mt: '-30px', width: '100%' }} variant='middle' />
+            <Divider sx={{ border: 'none', borderTopColor: '#000', borderTopStyle: 'dashed', borderTopWidth: '2px', height: '1px', mt: '-18px', opacity: '0.2', width: '100%' }} variant='middle' />
           </>
         }
         {/* ---------------------------------------------------------------------- */}
-        <Grid container item justifyContent='space-between' xs={12}>
+        <Grid container item justifyContent='space-between' pt='15px' xs={12}>
           <Grid item xs={8}>
-            <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.3 }, p: 0 }}>
+            <Timeline sx={{ [`& .${timelineOppositeContentClasses.root}`]: { flex: 0.3 }, m: 0, p: 0 }}>
               {sortedHistory?.map((history, index) => (
                 <TimelineItem key={index}>
-                  <TimelineOppositeContent color='text.primary' sx={{ fontSize: 16, fontWeight: 500 }}>
+                  <TimelineOppositeContent color='text.primary' sx={{ fontSize: 16, fontWeight: 500, mt: '-7px' }}>
                     {toFormattedDate(history.timestamp)}
                   </TimelineOppositeContent>
                   <TimelineSeparator sx={{ color: 'primary.main' }}>
                     {index !== sortedHistory?.length - 1
-                      ? <TimelineDot color='primary' sx={{ width: '20px', height: '20px', borderWidth: '4px' }} variant='outlined' />
+                      ? <TimelineDot color='primary' sx={{ borderWidth: '4px', height: '20px', width: '20px' }} variant='outlined' />
                       : <TimelineDot sx={{ bgcolor: 'white', boxShadow: 'none' }}>
-                        <Square sx={{ color: 'primary.main', fontSize: '27px', ml: '-9px' }} />
+                        <Square sx={{ border: 'none', color: 'primary.main', fontSize: '27px', mt: '-8px', mx: '-10px' }} />
                       </TimelineDot>
                     }
-                    {index !== sortedHistory?.length - 1 && <TimelineConnector color='primary' />}
+                    {index !== sortedHistory?.length - 1 && <TimelineConnector sx={{ bgcolor: 'primary.main', height: '36px', width: '4px' }} />}
                   </TimelineSeparator>
                   <TimelineContent>
-                    <Grid container justifyContent='flex-start' pt='5px'>
+                    <Grid container justifyContent='flex-start' pt='3px'>
                       <Grid item xs={2}>
                         <Link
                           href={`${subscanLink(history.block)}`}
@@ -186,10 +188,10 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                           target='_blank'
                           underline='none'
                         >
-                          <Box alt={'subscan'} component='img' height='26px' src={subscan} width='26px' />
+                          <Box alt={'subscan'} component='img' height='26px' src={subscan as string} width='26px' />
                         </Link>
                       </Grid>
-                      <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[history.status], p: '2px 10px', width: '190px' }}>
+                      <Grid item sx={{ bgcolor: STATUS_COLOR[history.status] as string, borderRadius: '30px', color: 'white', fontSize: '16px', fontWeight: 400, mb: '5px', p: '2px 10px', textAlign: 'center', width: '190px' }}>
                         {pascalCaseToTitleCase(history.status)}
                       </Grid>
                     </Grid>
@@ -200,12 +202,14 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
             </Timeline>
           </Grid>
           {isTreasury && isExecuted &&
-            <Grid item sx={{ color: 'text.disabled', my: 3, borderLeft: `4px solid ${theme.palette.text.disabled}`, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }} xs>
-              {t('Referendum')}
+            <Grid item xs>
+              <Typography sx={{ alignItems: 'center', borderLeft: '4px solid #E8E0E5', color: 'text.disabled', display: 'flex', height: '90%', justifyContent: 'center' }}>
+                {t('Referendum')}
+              </Typography>
             </Grid>
           }
         </Grid>
       </AccordionDetails>
-    </Accordion>
+    </Accordion >
   );
 }
