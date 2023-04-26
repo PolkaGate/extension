@@ -24,13 +24,13 @@ interface Props {
 
 export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
   : { label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => (
-  <Grid alignItems='center' container lineHeight='35px' item justifyContent='space-between' md={12} sx={{ borderBottom: !noBorder ? '0.5px solid' : 'none', borderBottomColor: 'rgba(0,0,0,0.2)', ...style }}>
+  <Grid alignItems='center' container lineHeight='35px' height='35px' item justifyContent='space-between' md={12} sx={{ borderBottom: !noBorder ? '0.5px solid' : 'none', borderBottomColor: 'rgba(0,0,0,0.2)', ...style }}>
     <Grid item sx={{ ...labelStyle }}>
       <Typography>
         {label}
       </Typography>
     </Grid>
-    <Grid item sx={{ ...valueStyle }}>
+    <Grid item sx={{ '> .MuiSkeleton-root': { display: 'block' }, ...valueStyle }}>
       <ShowValue value={value} />
     </Grid>
   </Grid>
