@@ -39,16 +39,17 @@ export default function AccountDetails(): React.ReactElement {
   const theme = useTheme();
   const { pathname, state } = useLocation();
   const { address, genesisHash } = useParams<FormattedAddressState>();
+  const api = useApi(address, state?.api);
   const identity = useMyAccountIdentity(address);
   const price = usePrice(address);
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chain = useChain(address);
+  const endpointOptions = useEndpoints(chain?.genesisHash);
+
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
-
-  const api = useApi(address, state?.api);
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);

@@ -15,6 +15,7 @@ import { useAccount, useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
+import { sanitizeChainName } from '../util/utils';
 
 interface Props {
   address: string | undefined;
@@ -54,7 +55,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
     }
 
     const filteredChains = availableChains.map((r) => genesisHashes.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash);
-    const chainNames = filteredChains.map((chain) => chain && chain.text?.replace(' Relay Chain', '')?.replace(' Network', ''));
+    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
 
     return chainNames;
   }, [account?.genesisHash, availableChains, genesisHashes]);
@@ -126,7 +127,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   };
 
   const selectNetwork = useCallback((newChainName: string) => {
-    const selectedGenesisHash = genesisHashes.find((option) => option.text.replace(' Relay Chain', '')?.replace(' Network', '') === newChainName)?.value;
+    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
     setCurrentChainNameJustSelected(newChainName);
     setFirstTime(false);

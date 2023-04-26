@@ -12,8 +12,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { threeItemCurveBackgroundBlack, threeItemCurveBackgroundWhite } from '../assets/icons';
 import { useAccount, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
+import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
+import { sanitizeChainName } from '../util/utils';
 
 interface Props {
   address: string | undefined;
@@ -49,7 +50,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
     }
 
     const filteredChains = recentChains.map((r) => genesisHashes.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash);
-    const chainNames = filteredChains.map((chain) => chain && chain.text?.replace(' Relay Chain', '')?.replace(' Network', ''));
+    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
 
     return chainNames;
   }, [account, genesisHashes, recentChains]);
@@ -189,7 +190,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const closeRecentChains = useCallback(() => setShowRecentChains(false), [setShowRecentChains]);
 
   const selectNetwork = useCallback((newChainName: string) => {
-    const selectedGenesisHash = genesisHashes.find((option) => option.text.replace(' Relay Chain', '')?.replace(' Network', '') === newChainName)?.value;
+    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
     setFirstTime(false);
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
@@ -218,7 +219,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
               src={getLogo(currentChainName)}
-              sx={{ borderRadius: '50%', filter: (currentChainName === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
+              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }
@@ -263,7 +264,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
                 border: 'none',
                 borderRadius: '50%',
                 boxShadow: `0px 0px 5px ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'}`,
-                filter: (name === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+                filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') ? 'invert(1)' : '',
                 height: '22px',
                 width: '22px'
               }}

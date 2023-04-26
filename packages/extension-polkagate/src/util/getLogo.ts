@@ -4,13 +4,19 @@
 import { chainLogos, emptyLogos, externalLogos, namedLogos, nodeLogos, specLogos } from '@polkadot/apps-config';
 
 import { Chain } from '../../../extension-chains/src/types';
+import { sanitizeChainName } from './utils';
 
 function sanitize(value?: string): string {
   return value?.toLowerCase().replace('-', ' ') || '';
 }
 
 export default function getLogo(info: string | undefined | Chain): string {
-  const name = (info as Chain)?.name?.replace(' Relay Chain', '')?.replace(' Network', '').toLowerCase() ?? (info as string)?.toLowerCase();
+  // TODO: using the new apps-config to fetch icons
+  // const systemName= await api.rpc.system.name();
+  // const specName= api.runtimeVersion.specName.toString();
+  // getSystemIcon(systemName, specName)
+
+  const name = sanitizeChainName((info as Chain)?.name)?.toLowerCase() ?? (info as string)?.toLowerCase();
   const found = name ? (namedLogos[name] || chainLogos[sanitize(name)] || nodeLogos[sanitize(name)] || specLogos[sanitize(name)] || externalLogos[sanitize(name)]) : undefined;
 
   // return (found || emptyLogos.empty) as string;
