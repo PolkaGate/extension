@@ -190,7 +190,7 @@ export default function AccountDetails(): React.ReactElement {
                 style={{ width: '100%' }}
               />
             </Grid>
-            <Grid height='20px' item mt='10px' xs>
+            <Grid height='20px' item mt='5px' xs>
               <RemoteNodeSelector
                 address={address}
                 genesisHash={genesisHash}
