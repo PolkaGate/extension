@@ -17,30 +17,25 @@ export default function Replies({ address, replies }: { address: string | undefi
   const [expanded, setExpanded] = React.useState(false);
 
   return (
-    <Grid container sx={{ borderLeft: `2px solid ${theme.palette.text.disabled}`, pl: '20px', mb: '20px' }}>
-      <Grid alignItems='flex-start' container justifyContent='flex-start' spacing={1} onClick={() => setExpanded(!expanded)}>
-        <Grid item>
-          {expanded
-            ? <Typography>
-              {t('Hide Replies ({{count}})', { replace: { count: replies.length } })}
-            </Typography>
-            : <Typography>
-              {t('Show Replies ({{count}})', { replace: { count: replies.length } })}
-            </Typography>
-          }
+    <Grid container sx={{ borderLeft: `2px solid ${theme.palette.text.disabled}`, mb: '20px', ml: '25px' }}>
+      <Grid alignItems='center' container height='35px' justifyContent='flex-start' onClick={() => setExpanded(!expanded)}>
+        <Grid item sx={{ px: '8px', width: 'fit-content' }}>
+          <Typography>
+            {t('({{count}}) Replies', { replace: { count: replies.length } })}
+          </Typography>
         </Grid>
         <Grid item>
           <ExpandMoreIcon
-            sx={{ color: `${theme.palette.primary.main}`, cursor: 'pointer', fontSize: '37px', transform: expanded && 'rotate(180deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }}
+            sx={{ color: `${theme.palette.primary.main}`, cursor: 'pointer', fontSize: '35px', transform: expanded ? 'rotate(180deg)' : 'none', transitionDuration: '0.3s', transitionProperty: 'transform' }}
           />
         </Grid>
       </Grid>
       {expanded && replies?.map((reply, index) => (
-        <Grid container key={index}>
+        <Grid container key={index} pl='5px' pt='5px'>
           <CommentView address={address} comment={reply} noSource />
         </Grid>
       ))
       }
     </Grid>
-  )
+  );
 }

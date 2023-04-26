@@ -35,8 +35,8 @@ export default function Comments({ address, referendum }: { address: string | un
   // console.log('sortedComments to apply reactions:', sortedComments);
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', my: 1 }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ my: 1, px: '3%', width: 'inherit' }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
