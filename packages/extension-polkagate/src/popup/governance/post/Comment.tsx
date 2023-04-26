@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { ThumbDown as ThumbDownIcon, ThumbUp as ThumbUpIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { Identity } from '../../../components';
+import { Identity, Infotip } from '../../../components';
 import { useApi, useChain } from '../../../hooks';
 import { CommentType } from '../utils/types';
 import { formatRelativeTime } from '../utils/util';
@@ -17,29 +18,67 @@ export default function Comment({ address, comment, noSource }: { address: strin
   const api = useApi(address);
   const chain = useChain(address);
 
+  const displayUsernames = useCallback((usernames: string[]) => {
+    const maxItems = 4;
+
+    let displayArray = usernames.slice(0, maxItems).join(', ');
+
+    if (usernames.length > maxItems) {
+      displayArray += ', ...';
+    }
+
+    return displayArray;
+  }, []);
+
+  const Likes = () => {
+    return (
+      <Grid container item sx={{ pl: '25px' }}>
+        <Grid item mr='15px'>
+          <Infotip fontSize='12px' text={comment.comment_reactions['👍'].count ? displayUsernames(comment.comment_reactions['👍'].usernames) : ''}>
+            <Grid alignItems='center' container item width='fit-content'>
+              <ThumbUpIcon sx={{ color: 'secondary.contrastText', fontSize: '24px', pr: '5px' }} />
+              <span style={{ color: theme.palette.secondary.contrastText, fontSize: '14px', fontWeight: 400 }}>{`(${comment.comment_reactions['👍'].count})`}</span>
+            </Grid>
+          </Infotip>
+        </Grid>
+        <Grid item>
+          <Infotip fontSize='12px' text={comment.comment_reactions['👎'].count ? displayUsernames(comment.comment_reactions['👎'].usernames) : ''}>
+            <Grid alignItems='center' container item width='fit-content'>
+              <ThumbDownIcon sx={{ color: 'secondary.contrastText', fontSize: '24px', pr: '5px' }} />
+              <span style={{ color: theme.palette.secondary.contrastText, fontSize: '14px', fontWeight: 400 }}>{`(${comment.comment_reactions['👎'].count})`}</span>
+            </Grid>
+          </Infotip>
+        </Grid>
+      </Grid>
+    );
+  };
+
   return (
-    <Grid alignItems='center' container item spacing={2} sx={{ mb: '10px' }}>
+    <Grid alignItems='center' container item sx={{ mb: '10px' }}>
       <Grid item>
         <Identity address={comment.proposer} api={api} chain={chain} identiconSize={25} showAddress showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       </Grid>
-      <Grid item sx={{ fontSize: '16px', color: 'text.disabled' }}>
+      <Grid item sx={{ color: 'text.disabled', fontSize: '16px', px: '15px' }}>
         {formatRelativeTime(comment.created_at)}
       </Grid>
       {!noSource &&
         <Grid item>
-          <Typography sx={{ textAlign: 'center', fontSize: '14px', fontWeight: 400, border: `0.01px solid ${theme.palette.text.disabled}`, borderRadius: '30px', p: '0 10px' }}>
+          <Typography sx={{ border: `0.01px solid ${theme.palette.text.disabled}`, borderRadius: '30px', fontSize: '14px', fontWeight: 400, p: '0 10px', textAlign: 'center' }}>
             {'Polkassembly'}
           </Typography>
         </Grid>
       }
-      <Grid item xs={12} sx={{ pl: '25px' }}>
+      <Grid item sx={{ pl: '25px' }} xs={12}>
         {comment?.content &&
           <ReactMarkdown
-            components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
-            children={comment?.content}
-          />
+            components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }} {...props} /> }}
+
+          >{comment?.content}</ReactMarkdown>
         }
       </Grid>
+      {comment?.comment_reactions &&
+        <Likes />
+      }
     </Grid>
   );
 }
