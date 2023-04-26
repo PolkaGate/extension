@@ -17,6 +17,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import { ActionContext, Identicon, MenuItem, RemoteNodeSelector, SelectChain, SettingsContext } from '../components';
 import { useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
+
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -35,6 +36,7 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   const settings = useContext(SettingsContext);
   const options = useGenesisHashOptions();
   const chain = useChain(address);
+  const chainName = useChainName(address);
   const formatted = useFormatted(address);
   const [genesisHash, setGenesis] = useState<string | undefined>();
 

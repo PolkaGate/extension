@@ -27,7 +27,7 @@ interface Props {
 
 export default function LabelBalancePrice({ api, balances, label, price, showLabel = true }: Props): React.ReactElement<Props> {
   const value = getValue(label, balances);
-  const decimal = useMemo(() => (balances?.chainName === price?.chainName && balances?.decimal) || (api && api.registry.chainDecimals[0]), [api, balances?.chainName, balances?.decimal, price?.chainName]);
+  const decimal = useMemo(() => (balances?.chainName?.toLowerCase() === price?.chainName && balances?.decimal) || (api && api.registry.chainDecimals[0]), [api, balances?.chainName, balances?.decimal, price?.chainName]);
 
   const [balanceInUSD, setBalanceInUSD] = useState<number>();
 
