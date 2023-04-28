@@ -20,9 +20,10 @@ import { sanitizeChainName } from '../util/utils';
 interface Props {
   address: string | undefined;
   children?: React.ReactNode;
+  invert?: boolean;
 }
 
-function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
+function ChainSwitch({ address, children, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const account = useAccount(address);
@@ -156,7 +157,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
         <Grid container item mr='12px' width='fit-content'>
           {children}
         </Grid>
-        <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', p: '5px', width: 'fit-content' }}>
+        <Grid container item sx={{ bgcolor: invert ? 'black' : 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', p: '5px', width: 'fit-content' }}>
           <Grid container height='28px' item position='relative' width='28px'>
             {showOtherChains
               ? <ClickAwayListener onClickAway={closeChainSwitch}>
@@ -217,7 +218,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
                     border: 'none',
                     borderRadius: '50%',
                     boxShadow: `0px 0px 5px ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'}`,
-                    filter: (name === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+                    filter: (name === 'Kusama' && theme.palette.mode === 'dark') || invert ? 'invert(1)' : '',
                     height: '30px',
                     width: '30px'
                   }}
