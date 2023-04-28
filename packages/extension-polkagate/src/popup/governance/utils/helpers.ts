@@ -51,10 +51,11 @@ export async function getReferendumStatistics(chainName: string): Promise<Statis
 }
 
 export interface VoterData {
-  voterAddress: string;
-  voteType: string;
+  account: string;
+  balance: string;
   conviction: number;
-  voteAmount: number;
+  isDelegating?: boolean;
+  isStandard?: boolean;
 }
 
 export function objectSpread(dest, ...sources) {
@@ -77,7 +78,7 @@ export function sortVotesWithConviction(votes = []) {
     const tb = new BN(b.balance)
       .muln(LOCKS[b.conviction])
       .divn(10);
-      
+
     return new BN(ta).gt(tb) ? -1 : 1;
   });
 }
@@ -127,8 +128,8 @@ function extractVotes(mapped, targetReferendumIndex) {
         result.push(...extractStandardVote(account, vote));
       } else if (vote.isSplit) {
         result.push(...extractSplitVote(account, vote));
-      } else if (vote.isSplitAbstain) {
-        result.push(...extractSplitAbstainVote(account, vote));
+        } else if (vote.isSplitAbstain) {
+          result.push(...extractSplitAbstainVote(account, vote));
       }
 
       return result;
@@ -176,7 +177,6 @@ function extractSplitAbstainVote(account, vote) {
     isDelegating: false,
     isSplitAbstain: true,
   };
-
   const result = [
     objectSpread(
       { ...common }, {
@@ -186,7 +186,6 @@ function extractSplitAbstainVote(account, vote) {
       },
     ),
   ];
-
   if (splitAbstain.aye.toBigInt() > 0) {
     result.push(objectSpread(
       { ...common }, {
@@ -196,6 +195,16 @@ function extractSplitAbstainVote(account, vote) {
       }),
     );
   }
+  if (splitAbstain.nay.toBigInt() > 0) {
+    result.push(objectSpread(
+      { ...common }, {
+        balance: nayBalance,
+        aye: false,
+        conviction: 0,
+      }));
+  }
+  
+  return result;
 }
 
 function extractStandardVote(account, vote) {
@@ -229,26 +238,26 @@ function extractDelegations(mapped, track, directVotes = []) {
     });
 
   return delegations.reduce((result, { account, delegating: { balance, conviction, target } }) => {
-      const to = directVotes.find(({ account, isStandard }) => account === target.toString() && isStandard);
-      if (!to) {
-        return result;
-      }
+    const to = directVotes.find(({ account, isStandard }) => account === target.toString() && isStandard);
+    if (!to) {
+      return result;
+    }
 
-      return [
-        ...result,
-        {
-          account,
-          balance: balance.toBigInt().toString(),
-          isDelegating: true,
-          aye: to.aye,
-          conviction: conviction.toNumber(),
-        },
-      ];
-    }, []);
+    return [
+      ...result,
+      {
+        account,
+        balance: balance.toBigInt().toString(),
+        isDelegating: true,
+        aye: to.aye,
+        conviction: conviction.toNumber(),
+      },
+    ];
+  }, []);
 }
 
-export async function getReferendumVotes(api: ApiPromise, trackId: string, referendumIndex: number): Promise<VoterData[] | null> {
-  console.log(`Getting referendum ${referendumIndex} votes ... `);
+export async function getReferendumVotes(api: ApiPromise, trackId: string, referendumIndex: number): Promise<{ ayes: VoterData[], nays: VoterData[], abstains: VoterData[] } | null> {
+  console.log(`Getting on-chain referendum ${referendumIndex} on ${trackId} votes ... `);
 
   if (!referendumIndex || !api) {
     console.log('referendumIndex is undefined getting Referendum Votes ');
@@ -260,13 +269,15 @@ export async function getReferendumVotes(api: ApiPromise, trackId: string, refer
   const mapped = voting.map((item) => normalizeVotingOfEntry(item, api));
 
   const directVotes = extractVotes(mapped, referendumIndex, api);
+  console.log('VOTE COUNT:', directVotes?.length)
   const delegationVotes = extractDelegations(mapped, trackId, directVotes);
   const sorted = sortVotesWithConviction([...directVotes, ...delegationVotes]);
 
-  const allAye = sorted.filter((v) => !v.isAbstain && v.aye);
-  const allNay = sorted.filter((v) => !v.isAbstain && !v.aye);
-  const allAbstain = sorted.filter((v) => v.isAbstain);
-  return { allAye, allNay, allAbstain };
+  const ayes = sorted.filter((v) => !v.isAbstain && v.aye);
+  const nays = sorted.filter((v) => !v.isAbstain && !v.aye);
+  const abstains = sorted.filter((v) => v.isAbstain);
+
+  return { ayes, nays, abstains };
 }
 
 export async function getReferendumVotesFromSubscan(chainName: string, referendumIndex: number | undefined): Promise<string | null> {

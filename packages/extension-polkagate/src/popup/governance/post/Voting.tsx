@@ -4,18 +4,19 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { PButton, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { ShowBalance, ShowValue } from '../../../components';
+import { useApi, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTrack, useTranslation } from '../../../hooks';
+import { getReferendumVotes } from '../utils/getAllVotes';
+import { getReferendumVotesFromSubscan } from '../utils/helpers';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
-import VoteChart from './VoteChart';
 import AllVotes from './AllVotes';
-import { getReferendumVotes, getReferendumVotesFromSubscan } from '../utils/helpers';
+import VoteChart from './VoteChart';
 
 interface Props {
   address: string | undefined;
@@ -30,10 +31,12 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   const api = useApi(address);
   const decimal = useDecimal(address);
   const chainName = useChainName(address);
+  const formatted = useFormatted(address);
   const token = useToken(address);
   const currentBlock = useCurrentBlockNumber(address);
-  const [allVotes, setAllVotes] = React.useState();
   const [openAllVotes, setOpenAllVotes] = React.useState(false);
+
+  const trackId = referendumInfoFromSubscan?.origins_id;
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
@@ -43,7 +46,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
 
   const track = useTrack(address, trackName);
   const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
-  const currentApprovalThreshold = useMemo(() => {
+  const currentApprovalThreshold = useMemo((): number | undefined => {
     if (track?.[1]?.preparePeriod && currentBlock && referendumInfoFromSubscan) {
       const blockSubmitted = referendumInfoFromSubscan.timeline[0].block;
 
@@ -62,20 +65,6 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   const handleOpenAllVotes = () => {
     setOpenAllVotes(true);
   };
-
-  useEffect(() => {
-    chainName && referendumInfoFromSubscan?.referendum_index &&
-      getReferendumVotesFromSubscan(chainName, referendumInfoFromSubscan.referendum_index).then((votes) => {
-        setAllVotes(votes);
-        console.log('All votes from subscan:', referendumInfoFromSubscan.referendum_index, votes)
-      });
-
-    api && chainName && referendumInfoFromSubscan &&
-      getReferendumVotes(api, referendumInfoFromSubscan.origins_id, referendumInfoFromSubscan.referendum_index).then((votes) => {
-        setAllVotes(votes);
-        console.log('All votes from chain:', referendumInfoFromSubscan.referendum_index, votes)
-      });
-  }, [api, chainName, referendumInfoFromSubscan]);
 
   const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number, amount: string | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
@@ -154,8 +143,9 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
       <AllVotes
         address={address}
         open={openAllVotes}
+        referendumIndex={referendumInfoFromSubscan?.referendum_index}
         setOpen={setOpenAllVotes}
-        allVotes={allVotes}
+        trackId={trackId}
       />
     </Grid>
   );
