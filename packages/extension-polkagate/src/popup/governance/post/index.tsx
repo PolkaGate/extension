@@ -21,6 +21,7 @@ import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
 import MetaData from './MetaData';
+import MyVote from './myVote';
 import StatusInfo from './StatusInfo';
 import Support from './Support';
 import Voting from './Voting';
@@ -57,8 +58,6 @@ export default function ReferendumPost(): React.ReactElement {
     }
 
     api.query.treasury.approvals().then((approvals) => {
-      console.log(`Current Treasury approvals: ${approvals.toJSON()}`)
-
       if (approvals.toJSON().length) {
         const approvalsIds = approvals.toJSON();
 
@@ -108,12 +107,12 @@ export default function ReferendumPost(): React.ReactElement {
   }, []);
 
   const backToSubMenu = useCallback(() => {
-    setSelectedSubMenu(state?.selectedSubMenu|| pascalCaseToTitleCase(referendumFromPA?.origin)?.trim());
+    setSelectedSubMenu(state?.selectedSubMenu || pascalCaseToTitleCase(referendumFromPA?.origin)?.trim());
   }, [referendumFromPA?.origin, state?.selectedSubMenu]);
 
   const onAccountChange = useCallback((address: string) =>
     onAction(`/governance/${address}`)
-  , [onAction]);
+    , [onAction]);
 
   const Toolbar = () => (
     <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
@@ -235,15 +234,6 @@ export default function ReferendumPost(): React.ReactElement {
               />
             </Grid>
             <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '450px' }}>
-              <Grid item xs={12}>
-                <PButton
-                  // _onClick={}
-                  _ml={0}
-                  _mt='1px'
-                  _width={100}
-                  text={t<string>('Vote')}
-                />
-              </Grid>
               <StatusInfo
                 address={address}
                 referendumInfoFromSubscan={referendumInfoFromSubscan}
@@ -257,6 +247,19 @@ export default function ReferendumPost(): React.ReactElement {
               <Support
                 address={address}
                 referendumFromPA={referendumFromPA}
+                referendumInfoFromSubscan={referendumInfoFromSubscan}
+              />
+              <Grid item xs={12} sx={{ my: '15px' }}>
+                <PButton
+                  // _onClick={}
+                  _ml={0}
+                  _mt='1px'
+                  _width={100}
+                  text={t<string>('Cast Vote')}
+                />
+              </Grid>
+              <MyVote
+                address={address}
                 referendumInfoFromSubscan={referendumInfoFromSubscan}
               />
             </Grid>
