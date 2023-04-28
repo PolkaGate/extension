@@ -45,7 +45,7 @@ export function Header({ address, onAccountChange }: Props): React.ReactElement<
               />
             </Grid>
             <Grid item justifyContent='flex-end'>
-              <ChainSwitch address={address} />
+              <ChainSwitch address={address} invert />
             </Grid>
           </Grid>
         </Grid>
