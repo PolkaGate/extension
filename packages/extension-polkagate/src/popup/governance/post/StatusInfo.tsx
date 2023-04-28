@@ -29,6 +29,7 @@ export default function StatusInfo({ address, referendumInfoFromSubscan, track }
       case 'Decision':
         return t('Deciding');
       case 'ConfirmStarted':
+      case 'Confirm':
         return t('Confirming');
       case 'Submitted':
         return t('Preparing');
@@ -77,7 +78,7 @@ export default function StatusInfo({ address, referendumInfoFromSubscan, track }
 
   const confirmUnitPassed = useMemo(() => {
     if (track?.[1]?.confirmPeriod && referendumInfoFromSubscan?.timeline[2]?.block && currentBlock) {
-      const confirmStartBlock = referendumInfoFromSubscan.timeline[1].block;
+      const confirmStartBlock = referendumInfoFromSubscan.timeline[2].block;
       const confirmPeriodInBlock = Number(track[1].confirmPeriod);
       const confirmEndBlock = confirmStartBlock + confirmPeriodInBlock;
 
@@ -99,9 +100,9 @@ export default function StatusInfo({ address, referendumInfoFromSubscan, track }
   return (
     <>
       {isOngoing &&
-        <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mt: '10px' }} xs={12}>
+        <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px' }} xs={12}>
           <Grid item>
-            <Infotip iconLeft={2} iconTop={10} showQuestionMark text={remainingTime(remainingBlocks)}>
+            <Infotip iconLeft={2} iconTop={10} showQuestionMark text={remainingTime(remainingBlocks) || t('Calculating ...')}>
               <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
                 {status || t('Status')}
               </Typography>
