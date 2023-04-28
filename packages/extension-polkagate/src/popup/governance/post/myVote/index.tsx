@@ -37,7 +37,7 @@ export default function MyVote({ address, referendumInfoFromSubscan }: Props): R
   }, [formatted, api, referendumInfoFromSubscan]);
 
   const voteBalance = useMemo((): number =>
-    vote?.standard?.balance || vote?.splitAbstain?.abstain
+    vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance
     , [vote]);
 
   const voteType = useMemo((): string | undefined => {
@@ -47,7 +47,19 @@ export default function MyVote({ address, referendumInfoFromSubscan }: Props): R
       }
 
       if (vote?.splitAbstain?.abstain) {
-        return 'abstain';
+        return 'Abstain';
+      }
+
+      if (vote?.delegating?.balance) {
+        if (vote?.delegating?.aye) {
+          return 'Aye';
+        }
+
+        if (vote?.delegating?.nay) {
+          return 'Nay';
+        }
+
+        return 'Abstain';
       }
     }
   }, [vote]);
@@ -64,27 +76,28 @@ export default function MyVote({ address, referendumInfoFromSubscan }: Props): R
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
             <Grid container item xs={8}>
               <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                <ShowBalance api={api} balance={voteBalance} decimalPoint={2} />
+                <ShowBalance api={api} balance={voteBalance} decimalPoint={1} />
               </Grid>
               <Grid item sx={{ fontSize: '18px', fontWeight: 500, pl: '5px' }}>
                 {vote?.standard?.vote && `(${getConviction(vote.standard.vote)}x)`}
+                {vote?.delegating?.conviction && `(${vote.delegating.conviction}x)`}
               </Grid>
             </Grid>
-            <Grid alignItems='center' justifyContent='flex-end' container item sx={{ fontSize: '20px', fontWeight: 400 }} xs>
+            <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} xs>
               {voteType &&
                 <>
                   {voteType === 'Aye' && <>
-                    <CheckIcon sx={{ color: 'aye.main' }} />
+                    <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
                     {t('Aye')}
                   </>
                   }
                   {voteType === 'Nay' && <>
-                    <CloseIcon sx={{ color: 'nay.main' }} />
+                    <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
                     {t('Nay')}
                   </>
                   }
                   {voteType === 'Abstain' && <>
-                    <AbstainIcon sx={{ color: 'primary.light' }} />
+                    <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
                     {t('Abstain')}
                   </>
                   }
