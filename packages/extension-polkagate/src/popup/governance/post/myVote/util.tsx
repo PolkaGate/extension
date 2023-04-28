@@ -46,6 +46,12 @@ export interface Vote {
     abstain: number;
     aye: number;
     nay: number;
+  };
+  delegating: {
+    balance: number;
+    aye?: boolean;
+    nay?: boolean;
+    conviction: number;
   }
 }
 
