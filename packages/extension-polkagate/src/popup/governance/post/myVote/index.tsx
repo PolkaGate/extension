@@ -67,8 +67,8 @@ export default function MyVote({ address, referendumInfoFromSubscan }: Props): R
   return (
     <>
       {isOngoing &&
-        <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '30px' }} xs={12}>
-          <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mt: '15px', mx: '25px' }} xs={12}>
+        <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px' }} xs={12}>
+          <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
             <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
               {t('My Vote')}
             </Typography>
