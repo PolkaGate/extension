@@ -114,20 +114,20 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
 
   return (
     <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '45px' }}>
-      <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, my: '15px', mx: '25px' }} xs={12}>
+      <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mt: '15px', mx: '25px' }} xs={12}>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {t('Support')}
         </Typography>
       </Grid>
-      <Grid item sx={{ mb: '27px', px: '24px', textAlign: 'center' }} xs={12}>
+      {/* <Grid item sx={{ mb: '27px', px: '24px', textAlign: 'center' }} xs={12}>
         <LinearProgress
           color='inherit'
           sx={{ bgcolor: progressBgColor, color: progressColor, height: '33px', mt: '13px', width: '100%' }}
           value={progressValue}
           variant='determinate'
         />
-      </Grid>
-      <Grid container item justifyContent='space-around' xs={12}>
+      </Grid> */}
+      <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
         <Tally
           amount={referendumInfoFromSubscan?.support_amount}
           color={`${theme.palette.support.contrastText}`}
