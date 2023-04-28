@@ -28,7 +28,7 @@ interface Props {
   style?: SxProps<Theme>;
   showChainLogo?: boolean;
   identiconSize?: number;
-  chain?: Chain;
+  chain?: Chain | null;
   showShortAddress?: boolean;
   withShortAddress?: boolean;
   showSocial?: boolean;
@@ -83,7 +83,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
             {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
               <Grid item sx={{ textAlign: 'left' }}>
                 {showShortAddress
-                  ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
+                  ? <ShortAddress address={formatted} style={{ fontSize: style?.fontSize || '11px' }} />
                   : t('Unknown')
                 }
               </Grid>
