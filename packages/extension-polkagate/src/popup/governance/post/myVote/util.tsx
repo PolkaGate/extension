@@ -3,7 +3,7 @@
 
 import { ApiPromise } from '@polkadot/api';
 
-export const Conviction = {
+export const CONVICTION = {
   Locked1x: 1,
   Locked2x: 2,
   Locked3x: 3,
@@ -85,8 +85,8 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
         delegating: {
           ...jsonVoting.delegating,
           conviction: CONVICTION[conviction],
-          voted: false,
-        },
+          voted: false
+        }
       };
     }
 
