@@ -11,8 +11,6 @@ import { BN } from '@polkadot/util';
 
 import { ShowBalance, ShowValue } from '../../../components';
 import { useApi, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTrack, useTranslation } from '../../../hooks';
-import { getReferendumVotes } from '../utils/getAllVotes';
-import { getReferendumVotesFromSubscan } from '../utils/helpers';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import AllVotes from './AllVotes';

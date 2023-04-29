@@ -1,0 +1,126 @@
+// Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
+import { Button, Container, Grid, Typography } from '@mui/material';
+import React, { useCallback } from 'react';
+
+import { DecidingCount, useApi, useTranslation } from '../../hooks';
+import { MAX_WIDTH } from './utils/consts';
+import { TopMenu } from './utils/types';
+import ReferendaMenu from './ReferendaMenu';
+import { SubmitReferendum } from './submitReferendum';
+
+interface Props {
+  address: string | undefined;
+  setSelectedTopMenu: React.Dispatch<React.SetStateAction<TopMenu | undefined>>
+  selectedTopMenu: TopMenu | undefined;
+  setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  menuOpen: boolean;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
+  decidingCounts: DecidingCount[] | undefined;
+}
+
+export default function Toolbar({ address, decidingCounts, menuOpen, selectedTopMenu, setMenuOpen, setSelectedSubMenu, setSelectedTopMenu }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const [openSubmitReferendum, setOpenSubmitReferendum] = React.useState(false);
+
+  const handleOpenSubmitReferendum = () => {
+    setOpenSubmitReferendum(true);
+  };
+
+  const api = useApi(address);
+
+  const onTopMenuMenuClick = useCallback((item: TopMenu) => {
+    setSelectedTopMenu(item);
+    setMenuOpen(!menuOpen);
+  }, [menuOpen, setMenuOpen, setSelectedTopMenu]);
+
+
+  function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
+    return (
+      <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
+        <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
+          {item}
+        </Typography>
+        {item === 'Fellowship'
+          ? <FellowshipIcon sx={{ fontSize: 29, ml: '10px' }} />
+          : <ReferendaIcon sx={{ fontSize: 29, ml: '10px', transform: 'scaleX(-1)' }} />
+        }
+      </Grid>
+    );
+  }
+
+  return (
+    <>
+      <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
+        <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
+          <Grid alignItems='center' container justifyContent='space-between'>
+            <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
+              <TopMenuComponent item={'Referenda'} />
+              <TopMenuComponent item={'Fellowship'} />
+            </Grid>
+            <Grid container item justifyContent='flex-end' md={5}>
+              <Button
+                // disabled={disabled}
+                // onClick={_onClick}
+                sx={{
+                  backgroundColor: 'background.paper',
+                  borderRadius: '5px',
+                  color: 'primary.main',
+                  fontSize: '18px',
+                  fontWeight: 500,
+                  height: '36px',
+                  textTransform: 'none',
+                  width: '190px',
+                  '&:hover': {
+                    backgroundColor: '#fff',
+                    color: '#3c52b2'
+                  }
+                }}
+                variant='contained'
+              >
+                {t('Multirole Delegate')}
+              </Button>
+              <Button
+                disabled={!api}
+                onClick={handleOpenSubmitReferendum}
+                sx={{
+                  backgroundColor: 'background.paper',
+                  borderRadius: '5px',
+                  color: 'primary.main',
+                  fontSize: '18px',
+                  fontWeight: 500,
+                  height: '36px',
+                  textTransform: 'none',
+                  ml: '15px',
+                  width: '190px',
+                  '&:hover': {
+                    backgroundColor: '#fff',
+                    color: '#3c52b2'
+                  }
+                }}
+                variant='contained'
+              >
+                {t('Submit Referendum')}
+              </Button>
+            </Grid>
+          </Grid>
+        </Container>
+      </Grid>
+      {menuOpen && selectedTopMenu === 'Referenda' &&
+        <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
+      }
+       {openSubmitReferendum &&
+        <SubmitReferendum
+          address={address}
+          api={api}
+          open={openSubmitReferendum}
+          setOpen={setOpenSubmitReferendum}
+        />
+      }
+    </>
+  );
+}

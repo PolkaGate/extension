@@ -3,8 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Breadcrumbs, Button, Container, Grid, Link, Typography } from '@mui/material';
+import { Breadcrumbs, Container, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -12,8 +11,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { ActionContext, PButton } from '../../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
-import ReferendaMenu from '../ReferendaMenu';
-import { MAX_WIDTH } from '../utils/consts';
+import Toolbar from '../Toolbar';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { pascalCaseToTitleCase, toTitleCase } from '../utils/util';
@@ -97,11 +95,6 @@ export default function ReferendumPost(): React.ReactElement {
     });
   }, [chainName, postId]);
 
-  const onTopMenuMenuClick = useCallback((item: TopMenu) => {
-    setSelectedTopMenu(item);
-    setMenuOpen(!menuOpen);
-  }, [menuOpen]);
-
   const backToTopMenu = useCallback(() => {
     setSelectedSubMenu('All');
   }, []);
@@ -113,78 +106,6 @@ export default function ReferendumPost(): React.ReactElement {
   const onAccountChange = useCallback((address: string) =>
     onAction(`/governance/${address}`)
     , [onAction]);
-
-  const Toolbar = () => (
-    <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
-      <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
-        <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-            <TopMenu item={'Referenda'} />
-            <TopMenu item={'Fellowship'} />
-          </Grid>
-          <Grid container item justifyContent='flex-end' md={5}>
-            <Button
-              // disabled={disabled}
-              // onClick={_onClick}
-              sx={{
-                backgroundColor: 'background.paper',
-                borderRadius: '5px',
-                color: 'primary.main',
-                fontSize: '18px',
-                fontWeight: 500,
-                height: '36px',
-                textTransform: 'none',
-                width: '190px',
-                '&:hover': {
-                  backgroundColor: '#fff',
-                  color: '#3c52b2'
-                }
-              }}
-              variant='contained'
-            >
-              {t('Multirole Delegate')}
-            </Button>
-            <Button
-              // disabled={disabled}
-              // onClick={_onClick}
-              sx={{
-                backgroundColor: 'background.paper',
-                borderRadius: '5px',
-                color: 'primary.main',
-                fontSize: '18px',
-                fontWeight: 500,
-                height: '36px',
-                textTransform: 'none',
-                ml: '15px',
-                width: '190px',
-                '&:hover': {
-                  backgroundColor: '#fff',
-                  color: '#3c52b2'
-                }
-              }}
-              variant='contained'
-            >
-              {t('Submit Referendum')}
-            </Button>
-          </Grid>
-        </Grid>
-      </Container>
-    </Grid>
-  );
-
-  function TopMenu({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
-    return (
-      <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
-        <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
-          {item}
-        </Typography>
-        {item === 'Fellowship'
-          ? <FellowshipIcon sx={{ fontSize: 29, ml: '10px' }} />
-          : <ReferendaIcon sx={{ fontSize: 29, ml: '10px', transform: 'scaleX(-1)' }} />
-        }
-      </Grid>
-    );
-  }
 
   const Bread = () => (
     <Grid container sx={{ py: '10px' }}>
@@ -205,10 +126,15 @@ export default function ReferendumPost(): React.ReactElement {
   return (
     <>
       <Header address={address} onAccountChange={onAccountChange} />
-      <Toolbar />
-      {menuOpen && selectedTopMenu === 'Referenda' &&
-        <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
-      }
+      <Toolbar
+        address={address}
+        decidingCounts={decidingCounts}
+        menuOpen={menuOpen}
+        selectedTopMenu={selectedTopMenu}
+        setMenuOpen={setMenuOpen}
+        setSelectedSubMenu={setSelectedSubMenu}
+        setSelectedTopMenu={setSelectedTopMenu}
+      />
       <Container disableGutters sx={{ maxWidth: 'inherit' }}>
         <Bread />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>

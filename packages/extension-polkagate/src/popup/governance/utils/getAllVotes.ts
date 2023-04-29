@@ -10,11 +10,19 @@ import { LatestReferenda, Origins } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 
+// export interface VoterData {
+//   voterAddress: string;
+//   voteType: string;
+//   conviction: number;
+//   voteAmount: number;
+// }
+
 export interface VoterData {
-  voterAddress: string;
-  voteType: string;
+  account: string;
+  balance: string;
   conviction: number;
-  voteAmount: number;
+  isDelegating?: boolean;
+  isStandard?: boolean;
 }
 
 export function objectSpread(dest, ...sources) {
@@ -143,30 +151,30 @@ function extractSplitAbstainVote(account: string, vote: any) {
   const result = [
     objectSpread(
       { ...common }, {
-      balance: abstainBalance,
-      conviction: 0,
-      isAbstain: true
-    }
+        balance: abstainBalance,
+        conviction: 0,
+        isAbstain: true
+      }
     )
   ];
 
   if (splitAbstain.aye.toBigInt() > 0) {
     result.push(objectSpread(
       { ...common }, {
-      aye: true,
-      balance: ayeBalance,
-      conviction: 0
-    })
+        aye: true,
+        balance: ayeBalance,
+        conviction: 0
+      })
     );
   }
 
   if (splitAbstain.nay.toBigInt() > 0) {
     result.push(objectSpread(
       { ...common }, {
-      aye: false,
-      balance: nayBalance,
-      conviction: 0
-    }));
+        aye: false,
+        balance: nayBalance,
+        conviction: 0
+      }));
   }
 
   return result;
@@ -187,7 +195,7 @@ function extractStandardVote(account, vote) {
         balance,
         aye: standard.vote.isAye,
         conviction: standard.vote.conviction.toNumber()
-      },
+      }
     )
   ];
 }
@@ -202,8 +210,12 @@ function extractDelegations(mapped, track, directVotes = []) {
       };
     });
 
+    console.log('delegattttttttt22222', delegations);
+    console.log('directVotesdirectVotes', directVotes);
+
   return delegations.reduce((result, { account, delegating: { balance, conviction, target } }) => {
     const to = directVotes.find(({ account, isStandard }) => account === target.toString() && isStandard);
+    console.log('tototo', to);
 
     if (!to) {
       return result;
@@ -222,7 +234,7 @@ function extractDelegations(mapped, track, directVotes = []) {
   }, []);
 }
 
-export async function getReferendumVotes(api: ApiPromise, trackId: number, referendumIndex: number): Promise<VoterData[] | null> {
+export async function getReferendumVotes(api: ApiPromise, trackId: number, referendumIndex: number): Promise<{ ayes: VoterData[], nays: VoterData[], abstains: VoterData[] } | null> {
   console.log(`Getting referendum ${referendumIndex} votes ... `);
 
   if (!referendumIndex || !api) {
@@ -234,11 +246,9 @@ export async function getReferendumVotes(api: ApiPromise, trackId: number, refer
   const voting = await api.query.convictionVoting.votingFor.entries();
   const mapped = voting.map((item) => normalizeVotingOfEntry(item, api));
 
-  console.log('voting[0]::::', JSON.parse(JSON.stringify(voting[0])));
-  console.log('mapped[0]::::', JSON.parse(JSON.stringify(mapped[0])));
-
   const directVotes = extractVotes(mapped, referendumIndex, api);
   const delegationVotes = extractDelegations(mapped, trackId, directVotes);
+  console.log('delegationVotes:', delegationVotes)
   const sorted = sortVotesWithConviction([...directVotes, ...delegationVotes]);
 
   const ayes = sorted.filter((v) => !v.isAbstain && v.aye);

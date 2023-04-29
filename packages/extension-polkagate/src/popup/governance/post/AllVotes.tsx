@@ -14,7 +14,8 @@ import { BN } from '@polkadot/util';
 
 import { Identity, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { getReferendumVotes, getReferendumVotesFromSubscan, VoterData } from '../utils/helpers';
+import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
+import { getReferendumVotesFromSubscan } from '../utils/helpers';
 
 interface Props {
   address: string | undefined;
@@ -58,10 +59,10 @@ export default function AllVotes({ address, open, referendumIndex, setOpen, trac
 
   useEffect(() => {
     api && referendumIndex && trackId !== undefined &&
-      getReferendumVotes(api, String(trackId), referendumIndex).then((votes) => {
+      getReferendumVotes(api, trackId, referendumIndex).then((votes) => {
         setAllVotes(votes);
         setFilteredVotes(votes);
-        console.log('All votes from chain:', referendumIndex, votes);
+        console.log('All votes from chain:', votes);
       });
   }, [api, referendumIndex, trackId]);
 
@@ -131,9 +132,7 @@ export default function AllVotes({ address, open, referendumIndex, setOpen, trac
     <Tab
       disabled
       icon={
-        <Divider orientation='vertical'
-          sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }}
-        />
+        <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
       }
       label=''
       sx={{ minWidth: '1px', p: '0', width: '1px' }} value={4}

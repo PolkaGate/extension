@@ -5,8 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Breadcrumbs, Button, Container, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Breadcrumbs, Container, Grid, Link, Typography, useTheme } from '@mui/material';
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -14,16 +13,12 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
-import methodOptions from './submitReferendum/addPreimage/options/methods';
-import sectionOptions from './submitReferendum/addPreimage/options/sections';
-import { MAX_WIDTH } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
 import { TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
-import ReferendaMenu from './ReferendaMenu';
 import { ReferendumSummary } from './ReferendumSummary';
-import { SubmitReferendum } from './submitReferendum';
+import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
 
 export default function Governance(): React.ReactElement {
@@ -32,15 +27,9 @@ export default function Governance(): React.ReactElement {
   const { state } = useLocation();
   const history = useHistory();
   const theme = useTheme();
-  const [openSubmitReferendum, setOpenSubmitReferendum] = React.useState(false);
-
-  const handleOpenSubmitReferendum = () => {
-    setOpenSubmitReferendum(true);
-  };
-
-  useFullscreen();
   const { address, postId } = useParams<{ address: string, postId?: number }>();
 
+  useFullscreen();
   const api = useApi(address);
   const tracks = useTracks(address);
   const chainName = useChainName(address);
@@ -158,11 +147,6 @@ export default function Governance(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, getMore, selectedSubMenu, tracks]);
 
-  const onTopMenuMenuClick = useCallback((item: TopMenu) => {
-    setSelectedTopMenu(item);
-    setMenuOpen(!menuOpen);
-  }, [menuOpen]);
-
   const backToTopMenu = useCallback((event) => {
     setSelectedSubMenu('All');
   }, []);
@@ -175,81 +159,6 @@ export default function Governance(): React.ReactElement {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
     setGetMore(pageTrackRef.current.page);
   }, [pageTrackRef]);
-
-  const Toolbar = () => (
-    <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
-      <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
-        <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-            <TopMenuComponent item={'Referenda'} />
-            <TopMenuComponent item={'Fellowship'} />
-          </Grid>
-          <Grid container item justifyContent='flex-end' md={5}>
-            <Button
-              // disabled={disabled}
-              // onClick={_onClick}
-              sx={{
-                backgroundColor: 'background.paper',
-                borderRadius: '5px',
-                color: 'primary.main',
-                fontSize: '18px',
-                fontWeight: 500,
-                height: '36px',
-                textTransform: 'none',
-                width: '190px',
-                '&:hover': {
-                  backgroundColor: '#fff',
-                  color: '#3c52b2'
-                }
-              }}
-              variant='contained'
-            >
-              Multirole Delegate
-            </Button>
-            <Button
-              disabled={!api}
-              onClick={handleOpenSubmitReferendum}
-              sx={{
-                backgroundColor: 'background.paper',
-                borderRadius: '5px',
-                color: 'primary.main',
-                fontSize: '18px',
-                fontWeight: 500,
-                height: '36px',
-                textTransform: 'none',
-                ml: '15px',
-                width: '190px',
-                '&:hover': {
-                  backgroundColor: '#fff',
-                  color: '#3c52b2'
-                }
-              }}
-              variant='contained'
-            >
-              Submit Referendum
-            </Button>
-          </Grid>
-        </Grid>
-      </Container>
-    </Grid>
-  );
-
-  // api && console.log('createOptions:', sectionOptions(api))
-  // api && console.log('"methods":', methodOptions(api,'referenda'))
-
-  function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
-    return (
-      <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
-        <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
-          {item}
-        </Typography>
-        {item === 'Fellowship'
-          ? <FellowshipIcon sx={{ fontSize: 29, ml: '10px' }} />
-          : <ReferendaIcon sx={{ fontSize: 29, ml: '10px', transform: 'scaleX(-1)' }} />
-        }
-      </Grid>
-    );
-  }
 
   const SearchBar = () => (
     <Grid alignItems='center' container pt='15px'>
@@ -299,10 +208,15 @@ export default function Governance(): React.ReactElement {
   return (
     <>
       <Header address={address} onAccountChange={onAccountChange} />
-      <Toolbar />
-      {menuOpen && selectedTopMenu === 'Referenda' &&
-        <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
-      }
+      <Toolbar
+        address={address}
+        decidingCounts={decidingCounts}
+        menuOpen={menuOpen}
+        selectedTopMenu={selectedTopMenu}
+        setMenuOpen={setMenuOpen}
+        setSelectedSubMenu={setSelectedSubMenu}
+        setSelectedTopMenu={setSelectedTopMenu}
+      />
       <Container disableGutters sx={{ maxWidth: 'inherit' }}>
         <Bread />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
@@ -346,17 +260,8 @@ export default function Governance(): React.ReactElement {
                 <CubeGrid col={3} color={theme.palette.background.paper} row={3} size={200} />
               </Grid>
           }
-
         </Container>
       </Container>
-      {openSubmitReferendum &&
-        <SubmitReferendum
-          address={address}
-          api={api}
-          open={openSubmitReferendum}
-          setOpen={setOpenSubmitReferendum}
-        />
-      }
     </>
   );
 }
