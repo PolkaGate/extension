@@ -248,7 +248,6 @@ export async function getReferendumVotes(api: ApiPromise, trackId: number, refer
 
   const directVotes = extractVotes(mapped, referendumIndex, api);
   const delegationVotes = extractDelegations(mapped, trackId, directVotes);
-  console.log('delegationVotes:', delegationVotes)
   const sorted = sortVotesWithConviction([...directVotes, ...delegationVotes]);
 
   const ayes = sorted.filter((v) => !v.isAbstain && v.aye);
