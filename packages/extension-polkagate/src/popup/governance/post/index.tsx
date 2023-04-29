@@ -15,6 +15,7 @@ import Toolbar from '../Toolbar';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { pascalCaseToTitleCase, toTitleCase } from '../utils/util';
+import CastVote from './CastVote';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
@@ -41,6 +42,7 @@ export default function ReferendumPost(): React.ReactElement {
   const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
   const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
+  const [showCastVote, setShowCastVote] = useState<boolean>(false);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
@@ -106,6 +108,10 @@ export default function ReferendumPost(): React.ReactElement {
   const onAccountChange = useCallback((address: string) =>
     onAction(`/governance/${address}`)
     , [onAction]);
+
+  const onCastVote = useCallback(() =>
+    setShowCastVote(true)
+    , []);
 
   const Bread = () => (
     <Grid container sx={{ py: '10px' }}>
@@ -177,11 +183,17 @@ export default function ReferendumPost(): React.ReactElement {
               />
               <Grid item xs={12} sx={{ my: '15px' }}>
                 <PButton
-                  // _onClick={}
                   _ml={0}
                   _mt='1px'
+                  _onClick={onCastVote}
                   _width={100}
                   text={t<string>('Cast Vote')}
+                />
+                <CastVote
+                  address={address}
+                  open={showCastVote}
+                  referendumIndex={referendumInfoFromSubscan?.referendum_index}
+                  setOpen={setShowCastVote}
                 />
               </Grid>
               <MyVote

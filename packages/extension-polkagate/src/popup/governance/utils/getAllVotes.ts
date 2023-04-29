@@ -210,12 +210,8 @@ function extractDelegations(mapped, track, directVotes = []) {
       };
     });
 
-    console.log('delegattttttttt22222', delegations);
-    console.log('directVotesdirectVotes', directVotes);
-
   return delegations.reduce((result, { account, delegating: { balance, conviction, target } }) => {
     const to = directVotes.find(({ account, isStandard }) => account === target.toString() && isStandard);
-    console.log('tototo', to);
 
     if (!to) {
       return result;

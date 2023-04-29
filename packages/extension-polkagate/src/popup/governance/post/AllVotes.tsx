@@ -23,6 +23,10 @@ interface Props {
   setOpen: (value: React.SetStateAction<boolean>) => void
   referendumIndex: number | undefined;
   trackId: number | undefined;
+  setOnChainVoteCounts: React.Dispatch<React.SetStateAction<{
+    ayes: number | undefined;
+    nays: number | undefined;
+  } | undefined>>
 }
 
 const VOTE_PER_PAGE = 10;
@@ -32,7 +36,7 @@ const TAB_MAP = {
   ABSTAIN: 3
 };
 
-export default function AllVotes({ address, open, referendumIndex, setOpen, trackId }: Props): React.ReactElement {
+export default function AllVotes({ address, open, referendumIndex, setOnChainVoteCounts, setOpen, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -61,10 +65,12 @@ export default function AllVotes({ address, open, referendumIndex, setOpen, trac
     api && referendumIndex && trackId !== undefined &&
       getReferendumVotes(api, trackId, referendumIndex).then((votes) => {
         setAllVotes(votes);
+        setAllVotes(votes);
+        setOnChainVoteCounts({ ayes: votes?.ayes?.length, nays: votes?.nays?.length });
         setFilteredVotes(votes);
         console.log('All votes from chain:', votes);
       });
-  }, [api, referendumIndex, trackId]);
+  }, [api, referendumIndex, setOnChainVoteCounts, trackId]);
 
   useEffect(() => {
     if (filteredVotes) {

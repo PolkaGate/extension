@@ -4,13 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChainName, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTrack, useTranslation } from '../../../hooks';
+import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import AllVotes from './AllVotes';
@@ -26,13 +26,11 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   const { t } = useTranslation();
   const theme = useTheme();
   const { state } = useLocation();
-  const api = useApi(address);
   const decimal = useDecimal(address);
-  const chainName = useChainName(address);
-  const formatted = useFormatted(address);
   const token = useToken(address);
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = React.useState(false);
+  const [onChainVoteCounts, setOnChainVoteCounts] = React.useState<{ ayes: number | undefined, nays: number | undefined }>();
 
   const trackId = referendumInfoFromSubscan?.origins_id;
 
@@ -64,7 +62,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
     setOpenAllVotes(true);
   };
 
-  const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number, amount: string | undefined }) => (
+  const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number | undefined, amount: string | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
       <Typography sx={{ borderBottom: `8px solid ${color}`, textAlign: 'center', fontSize: '20px', fontWeight: 500, width: '100%' }}>
         {text}
@@ -102,14 +100,14 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
         <Tally
           amount={referendumInfoFromSubscan?.ayes_amount}
           color={`${theme.palette.aye.main}`}
-          count={referendumInfoFromSubscan?.ayes_count}
+          count={onChainVoteCounts?.ayes || referendumInfoFromSubscan?.ayes_count}
           percent={ayesPercent}
           text={t('Ayes')}
         />
         <Tally
           amount={referendumInfoFromSubscan?.nays_amount}
           color={`${theme.palette.nay.main}`}
-          count={referendumInfoFromSubscan?.nays_count}
+          count={onChainVoteCounts?.nays || referendumInfoFromSubscan?.nays_count}
           percent={naysPercent}
           text={t('Nays')}
         />
@@ -142,6 +140,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
         address={address}
         open={openAllVotes}
         referendumIndex={referendumInfoFromSubscan?.referendum_index}
+        setOnChainVoteCounts={setOnChainVoteCounts}
         setOpen={setOpenAllVotes}
         trackId={trackId}
       />

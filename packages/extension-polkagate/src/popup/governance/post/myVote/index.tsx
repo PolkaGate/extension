@@ -31,14 +31,13 @@ export default function MyVote({ address, referendumInfoFromSubscan }: Props): R
     const trackId = referendumInfoFromSubscan?.origins_id;
 
     formatted && api && refIndex && trackId && getAddressVote(formatted, api, refIndex, trackId).then((vote) => {
-      console.log('vote:::', vote);
       setVote(vote);
     }).catch(console.error);
   }, [formatted, api, referendumInfoFromSubscan]);
 
-  const voteBalance = useMemo((): number =>
+  const voteBalance = useMemo((): number | undefined =>
     vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance
-    , [vote]);
+  , [vote]);
 
   const voteType = useMemo((): string | undefined => {
     if (vote) {
