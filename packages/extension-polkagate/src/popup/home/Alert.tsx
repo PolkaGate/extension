@@ -1,8 +1,10 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useContext } from 'react';
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid, useTheme } from '@mui/material';
+import React, { useCallback, useContext } from 'react';
 
 import { ActionContext, Header, PButton, Popup, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
@@ -18,6 +20,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
   const theme = useTheme();
 
   const goHome = useCallback(() => {
+    window.localStorage.setItem('export_account_open', Date.now());
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
@@ -29,21 +32,21 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
 
   return (
     <Popup show={show}>
-      <Header text={t<string>('Attention!')} />
-      <Grid container justifyContent='center' alignItems='center' height='120px'>
+      <Header onClose={goHome} text={t<string>('Attention!')} />
+      <Grid alignItems='center' container height='120px' justifyContent='center'>
         <Warning fontWeight={400} isBelowInput isDanger theme={theme}>
-          <Grid item xs={12} sx={{ pb: '20px', fontSize: 19 }}>
+          <Grid item sx={{ fontSize: 19, pb: '20px' }} xs={12}>
             Export Your Account Data Now!
           </Grid>
         </Warning>
       </Grid>
-      <Grid container justifyContent='center' sx={{ px: '15px', mt: '20px' }}>
-        <Grid item xs={12} sx={{ textAlign: 'left' }}>
+      <Grid container justifyContent='center' sx={{ mt: '20px', px: '15px' }}>
+        <Grid item sx={{ textAlign: 'left' }} xs={12}>
           Protect Your Accounts - Export all your data and securely store it in a safe place. Safeguard against potential loss due to browser crashes, hardware failures, or inconsistent updates.
         </Grid>
       </Grid>
-      <Grid container justifyContent='center' sx={{ px: '15px', mt: '20px' }}>
-        <Grid item xs={12} sx={{ textAlign: 'left', pt: '15px' }}>
+      <Grid container justifyContent='center' sx={{ mt: '20px', px: '15px' }}>
+        <Grid item sx={{ pt: '15px', textAlign: 'left' }} xs={12}>
           Take Action Now to Ensure the Safety of Your Accounts!
         </Grid>
       </Grid>

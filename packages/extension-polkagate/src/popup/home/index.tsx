@@ -34,7 +34,13 @@ export default function Home(): React.ReactElement {
   const networkMap = useMemo(() => getNetworkMap(), []);
 
   useEffect(() => {
-    hierarchy?.length && setShowAlert(window.localStorage.getItem('export_account_open') !== 'ok');
+    const dayInMs = 24 * 60 * 60 * 1000;
+    const value = window.localStorage.getItem('export_account_open');
+
+    if (hierarchy?.length &&
+      (!value || (value && value !== 'ok' && Date.now() - Number(value) > dayInMs))) {
+      setShowAlert(true);
+    }
   }, [hierarchy]);
 
   useEffect(() => {
