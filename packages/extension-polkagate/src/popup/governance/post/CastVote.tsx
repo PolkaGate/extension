@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { TFunction } from 'i18next';
+import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography } from '@mui/material';
@@ -85,7 +86,9 @@ function createOptions(blockTime: BN | undefined, voteLockingPeriod: BN | undefi
   ];
 }
 
-function getValues (selectedId: string | null | undefined, noDefault: boolean | undefined, allBalances: DeriveBalancesAll, existential: BN): ValueState {
+const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
+
+function getAlreadyLockedValue (accountId: string | null | undefined, allBalances: DeriveBalancesAll, existential: BN): BN {
   const sortedLocks = allBalances.lockedBreakdown
     // first sort by amount, so greatest value first
     .sort((a, b) =>
@@ -109,31 +112,7 @@ function getValues (selectedId: string | null | undefined, noDefault: boolean | 
     })
     .map(({ amount }) => amount);
 
-  const maxValue = allBalances.votingBalance;
-  let defaultValue: BN = sortedLocks[0] || allBalances.lockedBalance;
-
-  if (noDefault) {
-    defaultValue = BN_ZERO;
-  } else if (defaultValue.isZero()) {
-    // NOTE As of now (7 Jan 2023) taking the max and subtracting existential is still too high
-    // (on Kusama) where the tx fees for a conviction vote is more than the existential. So try to
-    // adapt to get some sane default starting value
-    let withoutExist = maxValue.sub(existential);
-
-    for (let i = 0; i < 3; i++) {
-      if (withoutExist.gt(existential)) {
-        defaultValue = withoutExist;
-        withoutExist = withoutExist.sub(existential);
-      }
-    }
-  }
-
-  return {
-    defaultValue,
-    maxValue,
-    selectedId,
-    value: defaultValue
-  };
+  return sortedLocks[0] || allBalances.lockedBalance;
 }
 
 export default function CastVote({ address, open, setOpen, trackId }: Props): React.ReactElement {

@@ -30,6 +30,9 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
 
+  console.log('newBalances:', newBalances)
+  newBalances&& console.log('JSON newBalances:', JSON.parse(JSON.stringify(newBalances)));
+
   const getPoolBalances = useCallback(() => {
     if (api && !api.query.nominationPools) {
       return setPooledBalance({ balance: BN_ZERO, genesisHash: api.genesisHash.toString() });
