@@ -181,7 +181,7 @@ export default function ReferendumPost(): React.ReactElement {
                 referendumFromPA={referendumFromPA}
                 referendumInfoFromSubscan={referendumInfoFromSubscan}
               />
-              <Grid item xs={12} sx={{ my: '15px' }}>
+              <Grid item sx={{ my: '15px' }} xs={12}>
                 <PButton
                   _ml={0}
                   _mt='1px'
@@ -194,6 +194,7 @@ export default function ReferendumPost(): React.ReactElement {
                   open={showCastVote}
                   referendumIndex={referendumInfoFromSubscan?.referendum_index}
                   setOpen={setShowCastVote}
+                  trackId={referendumInfoFromSubscan?.origins_id}
                 />
               </Grid>
               <MyVote

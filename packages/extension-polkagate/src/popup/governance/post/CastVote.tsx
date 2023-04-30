@@ -3,17 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
+import type { TFunction } from 'i18next';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
 
-import { AmountWithOptions, From } from '../../../components';
-import { useApi, useBalances, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
+import { AmountWithOptions, From, ShowBalance } from '../../../components';
+import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
+import { amountToHuman, amountToMachine } from '../../../util/utils';
 
 interface Props {
   address: string | undefined;
@@ -23,38 +24,167 @@ interface Props {
   trackId: number | undefined;
 }
 
-export default function CastVote({ address, open, setOpen }: Props): React.ReactElement {
+const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);
+
+type Result = [blockInterval: number, timeStr: string, time: Time];
+
+export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
+  // in the case of excessively large locks, limit to the max JS integer value
+  const value = bnMin(BN_MAX_INTEGER, blockTime.mul(blocks)).toNumber();
+
+  // time calculations are using the absolute value (< 0 detection only on strings)
+  const time = extractTime(Math.abs(value));
+  const { days, hours, minutes, seconds } = time;
+
+  return [
+    blockTime.toNumber(),
+    `${value < 0 ? '+' : ''}${[
+      days
+        ? (days > 1)
+          ? t<string>('{{days}} days', { replace: { days } })
+          : t<string>('1 day')
+        : null,
+      hours
+        ? (hours > 1)
+          ? t<string>('{{hours}} hrs', { replace: { hours } })
+          : t<string>('1 hr')
+        : null,
+      minutes
+        ? (minutes > 1)
+          ? t<string>('{{minutes}} mins', { replace: { minutes } })
+          : t<string>('1 min')
+        : null,
+      seconds
+        ? (seconds > 1)
+          ? t<string>('{{seconds}} s', { replace: { seconds } })
+          : t<string>('1 s')
+        : null
+    ]
+      .filter((s): s is string => !!s)
+      .slice(0, 2)
+      .join(' ')}`,
+    time
+  ];
+}
+
+function createOptions(blockTime: BN | undefined, voteLockingPeriod: BN | undefined, t: TFunction): { text: string; value: number }[] | undefined {
+  return blockTime && voteLockingPeriod && [
+    { text: t<string>('0.1x voting balance, no lockup period'), value: 0 },
+    ...CONVICTIONS.map(([value, duration, durationBn]): { text: string; value: number } => ({
+      text: t<string>('{{value}}x voting balance, locked for {{duration}}x duration{{period}}', {
+        replace: {
+          duration,
+          period: voteLockingPeriod && voteLockingPeriod.gt(BN_ZERO)
+            ? ` (${calcBlockTime(blockTime, durationBn.mul(voteLockingPeriod), t)[1]})`
+            : '',
+          value
+        }
+      }),
+      value
+    }))
+  ];
+}
+
+function getValues (selectedId: string | null | undefined, noDefault: boolean | undefined, allBalances: DeriveBalancesAll, existential: BN): ValueState {
+  const sortedLocks = allBalances.lockedBreakdown
+    // first sort by amount, so greatest value first
+    .sort((a, b) =>
+      b.amount.cmp(a.amount)
+    )
+    // then sort by the type of lock (we try to find relevant)
+    .sort((a, b): number => {
+      if (!a.id.eq(b.id)) {
+        for (let i = 0; i < LOCKS_ORDERED.length; i++) {
+          const lockName = LOCKS_ORDERED[i];
+
+          if (a.id.eq(lockName)) {
+            return -1;
+          } else if (b.id.eq(lockName)) {
+            return 1;
+          }
+        }
+      }
+
+      return 0;
+    })
+    .map(({ amount }) => amount);
+
+  const maxValue = allBalances.votingBalance;
+  let defaultValue: BN = sortedLocks[0] || allBalances.lockedBalance;
+
+  if (noDefault) {
+    defaultValue = BN_ZERO;
+  } else if (defaultValue.isZero()) {
+    // NOTE As of now (7 Jan 2023) taking the max and subtracting existential is still too high
+    // (on Kusama) where the tx fees for a conviction vote is more than the existential. So try to
+    // adapt to get some sane default starting value
+    let withoutExist = maxValue.sub(existential);
+
+    for (let i = 0; i < 3; i++) {
+      if (withoutExist.gt(existential)) {
+        defaultValue = withoutExist;
+        withoutExist = withoutExist.sub(existential);
+      }
+    }
+  }
+
+  return {
+    defaultValue,
+    maxValue,
+    selectedId,
+    value: defaultValue
+  };
+}
+
+export default function CastVote({ address, open, setOpen, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
   const balances = useBalances(address);
+  const blockTime = useBlockInterval(address);
+  const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
+
+  const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), []);
+
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [params, setParams] = useState<unknown | undefined>();
+  const [voteType, setVoteType] = useState<string | undefined>();
 
   const [voteAmount, setVoteAmount] = React.useState<string>();
   // api.query.balances.reserves
   const vote = api && api.tx.convictionVoting.vote;
   const [conviction, setConviction] = useState(1);
 
-  // useEffect((): void => {
-  //   onChange([id, {
-  //     Standard: {
-  //       balance,
-  //       vote: {
-  //         aye: isAye,
-  //         conviction
-  //       }
-  //     }
-  //   }]);
-  // }, [balance, conviction, id, isAye, onChange]);
+  useEffect((): void => {
+    if (['aye', 'nay'].includes(voteType)) {
+      setParams([trackId, {
+        Standard: {
+          balance: amountToMachine(voteAmount, decimal),
+          vote: {
+            aye: voteType === 'aye',
+            conviction
+          }
+        }
+      }]);
+    } else if (voteType === 'abstain') {
+      setParams([trackId, {
+        SplitAbstain: {
+          abstain: amountToMachine(voteAmount, decimal),
+          aye: BN_ZERO,
+          nay: BN_ZERO
+        }
+      }]);
+    }
+  }, [conviction, decimal, trackId, voteAmount, voteType]);
 
-//   <ConvictionDropdown
-//   label={t<string>('conviction')}
-//   onChange={setConviction}
-//   value={conviction}
-//   voteLockingPeriod={voteLockingPeriod}
-// />
+  //   <ConvictionDropdown
+  //   label={t<string>('conviction')}
+  //   onChange={setConviction}
+  //   value={conviction}
+  //   voteLockingPeriod={voteLockingPeriod}
+  // />
 
   useEffect(() => {
     if (!formatted || !vote) {
@@ -76,7 +206,8 @@ export default function CastVote({ address, open, setOpen }: Props): React.React
     setOpen(false);
   };
 
-  const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
+  const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'aye' | 'nay' | 'abstain'): void => {
+    setVoteType(value);
   }, []);
 
   const onVoteAmountChange = useCallback((value: string) => {
@@ -145,9 +276,9 @@ export default function CastVote({ address, open, setOpen }: Props): React.React
                 {t('Vote')}
               </FormLabel>
               <RadioGroup onChange={onSelectVote} row>
-                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='Aye' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Aye')}</Typography>} />
-                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='Nay' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Nay')}</Typography>} />
-                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='Abstain' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Abstain')}</Typography>} />
+                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='aye' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Aye')}</Typography>} />
+                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='nay' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Nay')}</Typography>} />
+                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='abstain' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Abstain')}</Typography>} />
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -162,8 +293,23 @@ export default function CastVote({ address, open, setOpen }: Props): React.React
             }}
             value={voteAmount}
           />
-          {/* <Balance balances={balances} type={'Voting Balance'} /> */}
-
+          <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
+            <Grid item sx={{ fontSize: '16px' }}>
+              {t('Available Voting Balance')}
+            </Grid>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              <ShowBalance balance={balances?.votingBalance} decimal={decimal} token={token} />
+            </Grid>
+          </Grid>
+          <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
+            <Grid item sx={{ fontSize: '16px' }}>
+              {t('Already Locked Balance')}
+            </Grid>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              {/* <ShowBalance balance={balances?.votingBalance} decimal={decimal} token={token} /> */}
+           
+            </Grid>
+          </Grid>
         </Grid>
 
       </Box>
