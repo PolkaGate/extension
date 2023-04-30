@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
-
+import SearchIcon from '@mui/icons-material/Search';
 import { Identity, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
@@ -52,6 +52,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
   const [page, setPage] = React.useState<number>(1);
   const [paginationCount, setPaginationCount] = React.useState<number>(10);
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>('ASC');
+  const [isSearchBarOpen, setSearchBarOpen] = React.useState<boolean>(false);
 
   useEffect(() => {
     chainName && referendumIndex &&
@@ -119,8 +120,12 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
     );
   }, [allVotes]);
 
+  const openSearchBar = useCallback(() => {
+    !isSearchBarOpen && setSearchBarOpen(true);
+  }, [isSearchBarOpen]);
+
   const style = {
-    bgcolor: 'background.paper',
+    bgcolor: 'background.default',
     border: '2px solid #000',
     borderRadius: '10px',
     boxShadow: 24,
@@ -133,17 +138,6 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
     transform: 'translate(-50%, -50%)',
     width: '762px'
   };
-
-  const TabDivider = () => (
-    <Tab
-      disabled
-      icon={
-        <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
-      }
-      label=''
-      sx={{ minWidth: '1px', p: '0', width: '1px' }} value={4}
-    />
-  );
 
   return (
     <Modal
@@ -160,30 +154,40 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
           <Grid item>
             <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '5px', width: '2px' }} />
           </Grid>
-          <Grid item xs sx={{ px: '10px' }}>
-            <InputFilter
-              autoFocus={false}
-              onChange={onSearch}
-              placeholder={t<string>('🔍 Search voter')}
-              theme={theme}
-            // value={searchKeyword ?? ''}
-            />
+          <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', px: '10px', textAlign: 'start' }} xs>
+            {isSearchBarOpen
+              ? <InputFilter
+                autoFocus={false}
+                onChange={onSearch}
+                placeholder={t<string>('🔍 Search voter')}
+                theme={theme}
+              // value={searchKeyword ?? ''}
+              />
+              : <SearchIcon sx={{ color: 'rgba(0,0,0,0.2)', fontSize: '30px', width: 'fit-content' }} />
+            }
           </Grid>
           <Grid item>
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer' }} />
           </Grid>
         </Grid>
-        <Box sx={{ borderBottom: 5, borderColor: 'primary.light' }}>
-          <Tabs centered onChange={handleTabChange} sx={{ 'span.MuiTabs-indicator': { bgcolor: 'secondary.light', height: '5px', width: '100%' } }} value={tabIndex}>
+        <Box>
+          <Tabs centered onChange={handleTabChange} sx={{ pt: '15px', 'span.MuiTabs-indicator': { bgcolor: 'secondary.light', height: '5px', width: '100%' } }} value={tabIndex}>
             <Tab
               icon={<CheckIcon sx={{ color: 'success.main' }} />}
               iconPosition='start'
               label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.ayes?.length || 0 } })}
               sx={{
+                ':is(button.MuiButtonBase-root.MuiTab-root)': {
+                  height: '49px',
+                  minHeight: '49px'
+                },
                 ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                  bgcolor: '#fff',
                   color: 'secondary.light',
                   fontWeight: 500
                 },
+                borderBlock: '5px solid',
+                borderBlockColor: 'rgba(0,0,0,0.2)',
                 color: 'text.primary',
                 fontSize: '18px',
                 fontWeight: 400,
@@ -193,16 +197,23 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
               }}
               value={1}
             />
-            <TabDivider />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '1px', p: '0', width: '1px' }} value={4} />
             <Tab
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
               label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.nays?.length || 0 } })}
               sx={{
+                ':is(button.MuiButtonBase-root.MuiTab-root)': {
+                  height: '49px',
+                  minHeight: '49px'
+                },
                 ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                  bgcolor: '#fff',
                   color: 'secondary.light',
                   fontWeight: 500
                 },
+                borderBlock: '5px solid',
+                borderBlockColor: 'rgba(0,0,0,0.2)',
                 color: 'text.primary',
                 fontSize: '18px',
                 fontWeight: 400,
@@ -212,16 +223,23 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
               }}
               value={2}
             />
-            <TabDivider />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '1px', p: '0', width: '1px' }} value={4} />
             <Tab
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
               label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstains?.length || 0 } })}
               sx={{
+                ':is(button.MuiButtonBase-root.MuiTab-root)': {
+                  height: '49px',
+                  minHeight: '49px'
+                },
                 ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                  bgcolor: '#fff',
                   color: 'secondary.light',
                   fontWeight: 500
                 },
+                borderBlock: '5px solid',
+                borderBlockColor: 'rgba(0,0,0,0.2)',
                 color: 'text.primary',
                 fontSize: '18px',
                 fontWeight: 400,
@@ -233,7 +251,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: window.innerHeight - 240 }}>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '460px' }}>
           <Grid id='table header' container justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', fontSize: '20px', fontWeight: 400 }}>
             <Grid item width='29%'>
               {t('Voter')}
@@ -250,7 +268,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
             </Grid>
           </Grid>
           {votesToShow?.map((vote, index) => (
-            <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, height: '50px' }}>
+            <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '5px' }}>
               <Grid container item justifyContent='flex-start' width='29%'>
                 <Identity
                   api={api}
@@ -271,10 +289,10 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                 <ShowBalance api={api} balance={vote.balance} decimal={decimal} decimalPoint={2} token={token} />
               </Grid>
               <Grid item width='15%'>
-                {vote.conviction}X
+                {vote.conviction || '0.1'}X
               </Grid>
               <Grid item width='22%'>
-                {vote?.isDelegating ? t('delegated') : t('standard')}
+                {vote?.isDelegating ? t('Delegated') : t('Standard')}
               </Grid>
             </Grid>
           ))
