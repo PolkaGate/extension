@@ -34,8 +34,8 @@ export function Header({ address, onAccountChange }: Props): React.ReactElement<
             />
             Polkagate
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' spacing={1} sx={{ color: 'text.primary' }} xs>
-            <Grid item justifyContent='flex-end' sx={{ color: 'text.primary' }}>
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ color: 'text.primary' }} xs={6}>
+            <Grid container item justifyContent='flex-end' sx={{ color: 'text.primary', maxWidth: 'calc(100% - 50px)', pr: '8px', width: 'fit-content' }}>
               <AddressDropdown
                 api={api}
                 chainGenesis={chain?.genesisHash}
@@ -44,7 +44,7 @@ export function Header({ address, onAccountChange }: Props): React.ReactElement<
                 selectedAddress={address}
               />
             </Grid>
-            <Grid item justifyContent='flex-end'>
+            <Grid container item justifyContent='flex-end' width='50px'>
               <ChainSwitch address={address} invert />
             </Grid>
           </Grid>
