@@ -56,7 +56,7 @@ function ShowValidator({ accountInfo, api, chain, check, decimal, handleCheck, i
             />
           </Grid>
         }
-        <Grid container fontSize='12px' item overflow='hidden' textAlign='left' textOverflow='ellipsis' whiteSpace='nowrap' width={showCheckbox ? '90%' : '100%'} >
+        <Grid container fontSize='12px' item maxWidth={showCheckbox ? '90%' : '100%'} textAlign='left' width='fit-content'>
           <Identity
             accountInfo={accountInfo}
             api={api}

@@ -87,9 +87,10 @@ export default function Metadata({ address, referendum }: { address: string | un
                 formatted={referendum?.proposer}
                 identiconSize={25}
                 showSocial
-                style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }}
+                style={{ fontSize: '16px', fontWeight: 500 }}
               />
             }
+            valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
           />
           <LabelValue
             label={t('Submission Amount')}
@@ -144,6 +145,7 @@ export default function Metadata({ address, referendum }: { address: string | un
                     style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%' }}
                   />
                 }
+                valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
               />
             </>
           }

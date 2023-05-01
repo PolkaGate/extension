@@ -36,8 +36,8 @@ export function ReferendumSummary({ address, key, onClick, referendum }: Props):
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '17px' }}>
             {t('By')}:
           </Grid>
-          <Grid item sx={{ mb: '10px' }}>
-            <Identity api={api} chain={chain} formatted={referendum.proposer} identiconSize={25} showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content', }} />
+          <Grid item sx={{ maxWidth: '22%', mb: '10px' }}>
+            <Identity api={api} chain={chain} formatted={referendum.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
           </Grid>
           <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
           {referendum.origin &&
