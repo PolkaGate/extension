@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
 
-import { AmountWithOptions, From, Infotip, Select, ShowBalance } from '../../../components';
+import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance } from '../../../components';
 import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
@@ -70,7 +70,7 @@ export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
 
 function createOptions(blockTime: BN | undefined, voteLockingPeriod: BN | undefined, t: TFunction): { text: string; value: number }[] | undefined {
   return blockTime && voteLockingPeriod && [
-    { text: t<string>('0.1x voting balance, no lockup period'), value: 0 },
+    { text: t<string>('0.1x voting balance, no lockup period'), value: 0.1 },
     ...CONVICTIONS.map(([value, duration, durationBn]): { text: string; value: number } => ({
       text: t<string>('{{value}}x voting balance, locked for {{duration}}x duration{{period}}', {
         replace: {
@@ -132,10 +132,10 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
   const [params, setParams] = useState<unknown | undefined>();
   const [voteType, setVoteType] = useState<string | undefined>();
 
-  const [voteAmount, setVoteAmount] = React.useState<string>();
+  const [voteAmount, setVoteAmount] = React.useState<string>('0');
   // api.query.balances.reserves
   const vote = api && api.tx.convictionVoting.vote;
-  const [conviction, setConviction] = useState(1);
+  const [conviction, setConviction] = useState<number>(1);
 
   useEffect((): void => {
     if (['aye', 'nay'].includes(voteType)) {
@@ -239,10 +239,16 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
     width: '500px'
   };
 
+  const onChangeConviction = useCallback((conviction: number): void => {
+    setConviction(conviction);
+  }, []);
+
+  console.log('convictionOptions:', convictionOptions);
+
   return (
     <Modal onClose={handleClose} open={open}>
       <Box sx={{ ...style }}>
-        <Grid container justifyContent='space-between' alignItems='center'>
+        <Grid alignItems='center' container justifyContent='space-between'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
               {t('Cast Your Votes')}
@@ -263,7 +269,7 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
               <FormLabel sx={{ color: 'text.primary', fontSize: '16px', '&.Mui-focused': { color: 'text.primary' }, textAlign: 'left' }}>
                 {t('Vote')}
               </FormLabel>
-              <RadioGroup onChange={onSelectVote} row>
+              <RadioGroup onChange={onSelectVote} row >
                 <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='aye' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Aye')}</Typography>} />
                 <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='nay' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Nay')}</Typography>} />
                 <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='abstain' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Abstain')}</Typography>} />
@@ -294,7 +300,7 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
             <Grid item sx={{ fontSize: '16px' }}>
-              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={t('The maximum balance which is already locked in the ecosystem')}>
+              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                 {t('Already Locked Balance')}
               </Infotip>
             </Grid>
@@ -307,16 +313,29 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
               _mt='25px'
               defaultValue={convictionOptions?.[0]?.value}
               label={t<string>('Vote Multiplier')}
-              // onChange={_onChangeEndpoint}
+              onChange={onChangeConviction}
               options={convictionOptions}
+              value={conviction || convictionOptions?.[0]?.value}
             />
-              <Grid container>
-                <Typography>
-                  {t('')}
-                </Typography>
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
+                <Grid item>
+                  <Typography sx={{ fontSize: '16px' }}>
+                    {t('Your final vote power after multiplying')}
+                  </Typography>
+                </Grid>
+                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                  <ShowBalance balance={amountToMachine(voteAmount, decimal).muln(conviction)} decimal={decimal} token={token} />
+                </Grid>
               </Grid>
             </>
           }
+          <PButton
+            _ml={0}
+            // _mt='1px'
+            // _onClick={onCastVote}
+            _width={100}
+            text={t<string>('Next to review')}
+          />
         </Grid>
       </Box>
     </Modal>
