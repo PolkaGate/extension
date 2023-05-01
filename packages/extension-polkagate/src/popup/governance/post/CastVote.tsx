@@ -236,7 +236,7 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
     px: 4,
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '428px'
+    width: '500px'
   };
 
   return (
@@ -302,15 +302,22 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
               <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
             </Grid>
           </Grid>
+          {convictionOptions &&
+            <><Select
+              _mt='25px'
+              defaultValue={convictionOptions?.[0]?.value}
+              label={t<string>('Vote Multiplier')}
+              // onChange={_onChangeEndpoint}
+              options={convictionOptions}
+            />
+              <Grid container>
+                <Typography>
+                  {t('')}
+                </Typography>
+              </Grid>
+            </>
+          }
         </Grid>
-        {convictionOptions && <Select
-          _mt='10px'
-          label={t<string>('Vote Multiplier')}
-          // onChange={_onChangeEndpoint}
-          options={convictionOptions}
-          value={convictionOptions?.[0]?.value}
-        />
-        }
       </Box>
     </Modal>
   );
