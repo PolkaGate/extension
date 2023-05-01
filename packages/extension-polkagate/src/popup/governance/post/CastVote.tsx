@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
 
-import { AmountWithOptions, From, ShowBalance } from '../../../components';
+import { AmountWithOptions, From, Infotip, Select, ShowBalance } from '../../../components';
 import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
@@ -88,8 +88,8 @@ function createOptions(blockTime: BN | undefined, voteLockingPeriod: BN | undefi
 
 const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
 
-function getAlreadyLockedValue (accountId: string | null | undefined, allBalances: DeriveBalancesAll, existential: BN): BN {
-  const sortedLocks = allBalances.lockedBreakdown
+function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN | undefined {
+  const sortedLocks = allBalances?.lockedBreakdown
     // first sort by amount, so greatest value first
     .sort((a, b) =>
       b.amount.cmp(a.amount)
@@ -112,7 +112,7 @@ function getAlreadyLockedValue (accountId: string | null | undefined, allBalance
     })
     .map(({ amount }) => amount);
 
-  return sortedLocks[0] || allBalances.lockedBalance;
+  return sortedLocks?.[0] || allBalances?.lockedBalance;
 }
 
 export default function CastVote({ address, open, setOpen, trackId }: Props): React.ReactElement {
@@ -121,11 +121,12 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
   const formatted = useFormatted(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
-  const balances = useBalances(address);
+  const balances = useBalances(address, undefined, undefined, true);
   const blockTime = useBlockInterval(address);
   const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
 
-  const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), []);
+  const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), [blockTime, t, voteLockingPeriod]);
+  const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [params, setParams] = useState<unknown | undefined>();
@@ -215,6 +216,14 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
     maxToHuman && setVoteAmount(maxToHuman);
   }, [api, balances, decimal, estimatedFee]);
 
+  const onLockedAmount = useCallback(() => {
+    if (!lockedAmount) {
+      return;
+    }
+
+    setVoteAmount(amountToHuman(lockedAmount, decimal));
+  }, [decimal, lockedAmount]);
+
   const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
@@ -265,14 +274,17 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
             label={t<string>(`Vote Value (${token})`)}
             onChangeAmount={onVoteAmountChange}
             onPrimary={onMaxAmount}
+            onSecondary={onLockedAmount}
             primaryBtnText={t<string>('Max amount')}
+            secondaryBtnText={t<string>('Locked amount')}
             style={{
               mt: '30px',
-              width: '100%'
+              width: '100%',
+              fontSize: '16px'
             }}
             value={voteAmount}
           />
-          <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
+          <Grid container item justifyContent='space-between' sx={{ mt: '15px' }}>
             <Grid item sx={{ fontSize: '16px' }}>
               {t('Available Voting Balance')}
             </Grid>
@@ -280,17 +292,25 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
               <ShowBalance balance={balances?.votingBalance} decimal={decimal} token={token} />
             </Grid>
           </Grid>
-          <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
             <Grid item sx={{ fontSize: '16px' }}>
-              {t('Already Locked Balance')}
+              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={t('The maximum balance which is already locked in the ecosystem')}>
+                {t('Already Locked Balance')}
+              </Infotip>
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              {/* <ShowBalance balance={balances?.votingBalance} decimal={decimal} token={token} /> */}
-           
+              <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
             </Grid>
           </Grid>
         </Grid>
-
+        {convictionOptions && <Select
+          _mt='10px'
+          label={t<string>('Vote Multiplier')}
+          // onChange={_onChangeEndpoint}
+          options={convictionOptions}
+          value={convictionOptions?.[0]?.value}
+        />
+        }
       </Box>
     </Modal>
   );
