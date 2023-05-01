@@ -308,7 +308,7 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
               <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
             </Grid>
           </Grid>
-          {convictionOptions &&
+          {convictionOptions && voteType !== 'abstain' &&
             <><Select
               _mt='25px'
               defaultValue={convictionOptions?.[0]?.value}
@@ -317,24 +317,24 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
               options={convictionOptions}
               value={conviction || convictionOptions?.[0]?.value}
             />
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
-                <Grid item>
-                  <Typography sx={{ fontSize: '16px' }}>
-                    {t('Your final vote power after multiplying')}
-                  </Typography>
-                </Grid>
-                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                  <ShowBalance balance={amountToMachine(voteAmount, decimal).muln(conviction)} decimal={decimal} token={token} />
-                </Grid>
+            <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
+              <Grid item>
+                <Typography sx={{ fontSize: '16px' }}>
+                  {t('Your final vote power after multiplying')}
+                </Typography>
               </Grid>
+              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <ShowBalance balance={amountToMachine(voteAmount, decimal).muln(conviction)} decimal={decimal} token={token} />
+              </Grid>
+            </Grid>
             </>
           }
           <PButton
-            _ml={0}
-            // _mt='1px'
-            // _onClick={onCastVote}
             _width={100}
             text={t<string>('Next to review')}
+            _ml={0}
+            // _onClick={onCastVote}
+            disabled={!conviction || !voteAmount || voteAmount === '0' || amountToMachine(voteAmount || 0, decimal)?.gt(balances?.votingBalance || 0) || !voteType}
           />
         </Grid>
       </Box>
