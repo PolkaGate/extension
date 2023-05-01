@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import SearchIcon from '@mui/icons-material/Search';
-import { Identity, InputFilter, Progress, ShowBalance } from '../../../components';
+import { Identity, Infotip, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
 import { getReferendumVotesFromSubscan } from '../utils/helpers';
@@ -88,9 +88,9 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
     }
   }, [filteredVotes, page, tabIndex]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, [setOpen]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
@@ -145,7 +145,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
       open={open}
     >
       <Box sx={{ ...style }}>
-        <Grid container>
+        <Grid alignItems='center' container>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
               {t('All Votes')}
@@ -167,7 +167,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
             }
           </Grid>
           <Grid item>
-            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer' }} />
+            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
         <Box>
@@ -193,11 +193,11 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                 fontWeight: 400,
                 minWidth: '108px',
                 textTransform: 'capitalize',
-                width: '30%'
+                width: '33%'
               }}
               value={1}
             />
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '1px', p: '0', width: '1px' }} value={4} />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
             <Tab
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
@@ -219,11 +219,11 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                 fontWeight: 400,
                 minWidth: '108px',
                 textTransform: 'capitalize',
-                width: '30%'
+                width: '33%'
               }}
               value={2}
             />
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '1px', p: '0', width: '1px' }} value={4} />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
             <Tab
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
@@ -245,7 +245,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                 fontWeight: 400,
                 minWidth: '108px',
                 textTransform: 'capitalize',
-                width: '30%'
+                width: '33%'
               }}
               value={3}
             />
@@ -263,8 +263,12 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
             <Grid item width='15%'>
               {t('Conviction')}
             </Grid>
-            <Grid item width='22%'>
-              {t('Type')}
+            <Grid alignItems='center' container item justifyContent='center' width='22%'>
+              <Infotip iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
+                <Typography fontSize='20px' width='fit-content'>
+                  {t('Type')}
+                </Typography>
+              </Infotip>
             </Grid>
           </Grid>
           {votesToShow?.map((vote, index) => (
@@ -278,7 +282,8 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                   showShortAddress
                   showSocial={false}
                   style={{
-                    fontSize: '16px', fontWeight: 400,
+                    fontSize: '16px',
+                    fontWeight: 400,
                     maxWidth: '100%',
                     minWidth: '35%',
                     width: 'fit-content'
