@@ -29,7 +29,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
 
   const allAddresses = useMemo(() =>
     hierarchy.map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [hierarchy]);
+    , [hierarchy]);
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _toggleDropdown = useCallback(() => setDropdownVisible(!isDropdownVisible), [isDropdownVisible]);
@@ -40,9 +40,9 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
   useOutsideClick([ref], _hideDropdown);
 
   return (
-    <div style={{ position: 'relative' }}>
-      <Grid container overflow='hidden' sx={{ color: 'text.secondary', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', position: 'relative' }}>
-        <Grid alignItems='center' container item justifyContent='space-around' xs={10}>
+    <Grid container style={{ position: 'relative' }}>
+      <Grid container sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', color: 'text.secondary' }}>
+        <Grid alignItems='center' container item justifyContent='space-around' maxWidth='calc(100% - 40px)' width='fit-content'>
           <Identity
             address={selectedAddress}
             api={api}
@@ -59,11 +59,11 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
             }}
           />
         </Grid>
-        <Grid alignItems='center' container item onClick={_toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer' }} xs={2}>
+        <Grid alignItems='center' container item onClick={_toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
-      <Grid container sx={{ '> .tree:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', transform: isDropdownVisible ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'top', transitionDuration: '0.3s', transitionProperty: 'transform', visibility: isDropdownVisible ? 'visible' : 'hidden', zIndex: 10 }}>
+      <Grid container sx={{ '> .tree:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '40px', transform: isDropdownVisible ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'top', transitionDuration: '0.3s', transitionProperty: 'transform', visibility: isDropdownVisible ? 'visible' : 'hidden', zIndex: 10 }}>
         {allAddresses.map(([address,]) => (
           <Grid alignItems='center' container item key={address} onClick={_onSelect(address)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}>
             <Identity
@@ -84,6 +84,6 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
           </Grid>
         ))}
       </Grid>
-    </div>
+    </Grid>
   );
 }
