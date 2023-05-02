@@ -34,7 +34,7 @@ function From({ address, api, formatted, style, title }: Props): React.ReactElem
 
   return (
     <Grid container item sx={style}>
-      <Typography style={{ fontSize: '16px', fontWeight: 300 }}>
+      <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
         {title}
       </Typography>
       <Grid alignItems='center' container justifyContent='flex-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>

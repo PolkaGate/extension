@@ -5,9 +5,10 @@
 
 import type { TFunction } from 'i18next';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { Balance } from '@polkadot/types/interfaces';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography } from '@mui/material';
+import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
+import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
@@ -16,6 +17,7 @@ import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance } from '
 import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
+import { STATUS_COLOR } from '../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -124,6 +126,7 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
   const balances = useBalances(address, undefined, undefined, true);
   const blockTime = useBlockInterval(address);
   const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
+  const theme = useTheme();
 
   const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), [blockTime, t, voteLockingPeriod]);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
@@ -136,6 +139,8 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
   // api.query.balances.reserves
   const vote = api && api.tx.convictionVoting.vote;
   const [conviction, setConviction] = useState<number>(1);
+
+  const voteOptions = useMemo(() => (['aye', 'nay', 'abstain']), []);
 
   useEffect((): void => {
     if (['aye', 'nay'].includes(voteType)) {
@@ -182,9 +187,9 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
     vote(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [api, formatted, vote]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, [setOpen]);
 
   const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'aye' | 'nay' | 'abstain'): void => {
     setVoteType(value);
@@ -225,11 +230,12 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
   }, [decimal, lockedAmount]);
 
   const style = {
-    bgcolor: 'background.paper',
+    bgcolor: 'background.default',
     border: '2px solid #000',
     borderRadius: '10px',
     boxShadow: 24,
     left: '50%',
+    maxHeight: '700px',
     pb: 3,
     position: 'absolute',
     pt: 2,
@@ -245,34 +251,76 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
 
   console.log('convictionOptions:', convictionOptions);
 
+  const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
+    return (
+      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', justifyContent: 'center', pr: '5px', width: 'fit-content' }}>
+        <FormControlLabel
+          control={
+            <Radio
+              sx={{
+                '& .MuiSvgIcon-root': { fontSize: 28 },
+                color: 'secondary.main'
+              }}
+              value={voteOption}
+            />}
+          label={
+            <Grid alignItems='center' container justifyContent='center' width='fit-content'>
+              <Typography
+                sx={{
+                  fontSize: '24px',
+                  fontWeight: 500,
+                  pr: '3px',
+                  textTransform: 'capitalize'
+                }}
+              >
+                {t(voteOption)}
+              </Typography>
+              {children}
+            </Grid>
+          }
+          sx={{ m: 'auto' }}
+        />
+      </Grid>
+    );
+  };
+
   return (
     <Modal onClose={handleClose} open={open}>
       <Box sx={{ ...style }}>
-        <Grid alignItems='center' container justifyContent='space-between'>
+        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {t('Cast Your Votes')}
+              {t('Cast Your Vote')}
             </Typography>
           </Grid>
           <Grid item>
-            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer' }} />
+            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: window.innerHeight - 240 }}>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
           <From
             address={address}
             api={api}
+            style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
             title={t<string>('Account')}
           />
-          <Grid container justifyContent='flex-start' item mt='15px'>
-            <FormControl>
+          <Grid container item justifyContent='flex-start' mt='15px'>
+            <FormControl fullWidth>
               <FormLabel sx={{ color: 'text.primary', fontSize: '16px', '&.Mui-focused': { color: 'text.primary' }, textAlign: 'left' }}>
                 {t('Vote')}
               </FormLabel>
-              <RadioGroup onChange={onSelectVote} row >
-                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='aye' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Aye')}</Typography>} />
-                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='nay' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Nay')}</Typography>} />
-                <FormControlLabel control={<Radio sx={{ color: 'secondary.main', '& .MuiSvgIcon-root': { fontSize: 28 } }} value='abstain' />} label={<Typography sx={{ fontSize: '28px', fontWeight: 500 }}>{t('Abstain')}</Typography>} />
+              <RadioGroup onChange={onSelectVote} row>
+                <Grid alignItems='center' container justifyContent='space-between'>
+                  <VoteButton voteOption={voteOptions[0]}>
+                    <CheckIcon sx={{ color: STATUS_COLOR.Confirmed, fontSize: '28px', stroke: STATUS_COLOR.Confirmed, strokeWidth: 1.5 }} />
+                  </VoteButton>
+                  <VoteButton voteOption={voteOptions[1]}>
+                    <CloseIcon sx={{ color: 'warning.main', fontSize: '28px', stroke: theme.palette.warning.main, strokeWidth: 1.5 }} />
+                  </VoteButton>
+                  <VoteButton voteOption={voteOptions[2]}>
+                    <AbstainIcon sx={{ color: 'primary.light', fontSize: '28px' }} />
+                  </VoteButton>
+                </Grid>
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -284,9 +332,9 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
             primaryBtnText={t<string>('Max amount')}
             secondaryBtnText={t<string>('Locked amount')}
             style={{
-              mt: '30px',
-              width: '100%',
-              fontSize: '16px'
+              fontSize: '16px',
+              mt: '15px',
+              width: '100%'
             }}
             value={voteAmount}
           />
@@ -309,29 +357,31 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
             </Grid>
           </Grid>
           {convictionOptions && voteType !== 'abstain' &&
-            <><Select
-              _mt='25px'
-              defaultValue={convictionOptions?.[0]?.value}
-              label={t<string>('Vote Multiplier')}
-              onChange={onChangeConviction}
-              options={convictionOptions}
-              value={conviction || convictionOptions?.[0]?.value}
-            />
-            <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
-              <Grid item>
-                <Typography sx={{ fontSize: '16px' }}>
-                  {t('Your final vote power after multiplying')}
-                </Typography>
+            <>
+              <Select
+                _mt='15px'
+                defaultValue={convictionOptions?.[0]?.value}
+                label={t<string>('Vote Multiplier')}
+                onChange={onChangeConviction}
+                options={convictionOptions}
+                value={conviction || convictionOptions?.[0]?.value}
+              />
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px', pt: '8px' }}>
+                <Grid item>
+                  <Typography sx={{ fontSize: '16px' }}>
+                    {t('Your final vote power after multiplying')}
+                  </Typography>
+                </Grid>
+                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                  <ShowBalance balance={amountToMachine(voteAmount, decimal).muln(conviction)} decimal={decimal} token={token} />
+                </Grid>
               </Grid>
-              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                <ShowBalance balance={amountToMachine(voteAmount, decimal).muln(conviction)} decimal={decimal} token={token} />
-              </Grid>
-            </Grid>
             </>
           }
           <PButton
             _width={100}
             text={t<string>('Next to review')}
+            _mt='15px'
             _ml={0}
             // _onClick={onCastVote}
             disabled={!conviction || !voteAmount || voteAmount === '0' || amountToMachine(voteAmount || 0, decimal)?.gt(balances?.votingBalance || 0) || !voteType}
