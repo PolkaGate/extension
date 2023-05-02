@@ -55,7 +55,7 @@ export default function Comments({ address, referendum }: { address: string | un
               }
             </Grid>
           ))}
-          <Grid container item justifyContent='flex-end' spacing={5} sx={{ pt: '30px' }}>
+          <Grid container item justifyContent='flex-end' spacing={5} sx={{ mt: '30px' }}>
             <Grid item>
               <Button onClick={openPolkassembly} sx={{
                 textTransform: 'none', borderColor: `${theme.palette.text.primary}`
