@@ -10,6 +10,7 @@ export { default as useCurrentSupportThreshold } from './useCurrentSupportThresh
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
 export { default as useApi } from './useApi';
+export { default as useAccountLocks } from './useAccountLocks';
 export { default as useAuction } from './useAuction';
 export { default as useApiWithChain } from './useApiWithChain';
 export { default as useMyPools } from './useMyPools';

@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
 
 import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance, Warning } from '../../../components';
-import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../hooks';
+import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useMyVote, useToken, useTranslation, useAccountLocks } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { STATUS_COLOR } from '../utils/consts';
@@ -130,6 +130,9 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
   const theme = useTheme();
   const myVote = useMyVote(address, referendumInfo);
+
+  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
+  console.log('accountLocks:', accountLocks);
 
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), [blockTime, t, voteLockingPeriod]);
