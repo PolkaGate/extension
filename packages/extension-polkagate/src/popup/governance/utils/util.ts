@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN } from '@polkadot/util';
+import { isAye, Vote } from '../post/myVote/util';
 
 export function toSnakeCase(input: string | undefined): string | undefined {
   if (!input) {
@@ -196,4 +197,30 @@ export const formalizedStatus = (status: string): string => {
   }
 
   return output;
+}
+
+export const getVoteType = (vote: Vote | null | undefined) => {
+  if (vote) {
+    if (vote?.standard?.vote) {
+      return isAye(vote.standard.vote) ? 'Aye' : 'Nay';
+    }
+
+    if (vote?.splitAbstain?.abstain) {
+      return 'Abstain';
+    }
+
+    if (vote?.delegating?.balance) {
+      if (vote?.delegating?.aye) {
+        return 'Aye';
+      }
+
+      if (vote?.delegating?.nay) {
+        return 'Nay';
+      }
+
+      return 'Abstain';
+    }
+  }
+
+  return undefined;
 }

@@ -13,18 +13,20 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
 
-import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance } from '../../../components';
-import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useToken, useTranslation } from '../../../hooks';
+import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance, Warning } from '../../../components';
+import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { STATUS_COLOR } from '../utils/consts';
+import { ReferendumSubScan } from '../utils/types';
+import { getVoteType } from '../utils/util';
+import { getConviction, isAye } from './myVote/util';
 
 interface Props {
   address: string | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void
-  referendumIndex: number | undefined;
-  trackId: number | undefined;
+  referendumInfo: ReferendumSubScan | undefined;
 }
 
 const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);
@@ -117,7 +119,7 @@ function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN |
   return sortedLocks?.[0] || allBalances?.lockedBalance;
 }
 
-export default function CastVote({ address, open, setOpen, trackId }: Props): React.ReactElement {
+export default function CastVote({ address, open, referendumInfo, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -127,9 +129,14 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
   const blockTime = useBlockInterval(address);
   const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
   const theme = useTheme();
+  const myVote = useMyVote(address, referendumInfo);
 
+  const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), [blockTime, t, voteLockingPeriod]);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
+  const myVoteBalance = useMemo((): number | undefined => (myVote?.standard?.balance || myVote?.splitAbstain?.abstain || myVote?.delegating?.balance), [myVote]);
+  const myVoteConviction = useMemo(() => (myVote?.standard?.vote ? `(${getConviction(myVote.standard.vote)}x)` : myVote?.delegating?.conviction ? `(${myVote.delegating.conviction}x)` : ''), [myVote?.delegating?.conviction, myVote?.standard?.vote]);
+  const myVoteType = getVoteType(myVote);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [params, setParams] = useState<unknown | undefined>();
@@ -249,7 +256,55 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
     setConviction(conviction);
   }, []);
 
-  console.log('convictionOptions:', convictionOptions);
+  const CurrentVote = () => {
+    return (
+      <Grid alignItems='center' container direction='column' item pt='8px'>
+        <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
+          {t<string>('Current Voting')}
+        </Typography>
+        <Grid alignItems='center' container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', justifyContent: 'space-between', p: '5px 10px' }}>
+          <Grid alignItems='center' container item width='fit-content'>
+            <Grid item sx={{ fontSize: '28px', fontWeight: 400 }}>
+              <ShowBalance api={api} balance={myVoteBalance} decimalPoint={1} />
+            </Grid>
+            <Grid item sx={{ fontSize: '28px', fontWeight: 400, pl: '5px' }}>
+              {myVoteConviction}
+            </Grid>
+          </Grid>
+          <Grid alignItems='center' container fontSize='28px' fontWeight={500} item width='fit-content'>
+            {myVoteType &&
+              <>
+                {myVoteType === 'Aye' && <>
+                  <CheckIcon sx={{ color: 'aye.main', fontSize: '25px', stroke: theme.palette.aye.main, strokeWidth: 1.5 }} />
+                  {t('Aye')}
+                </>
+                }
+                {myVoteType === 'Nay' && <>
+                  <CloseIcon sx={{ color: 'nay.main', fontSize: '25px', stroke: theme.palette.nay.main, strokeWidth: 1.5 }} />
+                  {t('Nay')}
+                </>
+                }
+                {myVoteType === 'Abstain' && <>
+                  <AbstainIcon sx={{ color: 'primary.light', fontSize: '25px' }} />
+                  {t('Abstain')}
+                </>
+                }
+              </>
+            }
+          </Grid>
+        </Grid>
+        <Grid container height='35px' item>
+          <Warning
+            fontWeight={400}
+            marginTop={0}
+            theme={theme}
+          >
+            {t<string>('Resubmitting the vote will override the current voting record.')}
+          </Warning>
+        </Grid>
+      </Grid>
+    );
+  };
 
   const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
     return (
@@ -377,6 +432,9 @@ export default function CastVote({ address, open, setOpen, trackId }: Props): Re
                 </Grid>
               </Grid>
             </>
+          }
+          {myVote &&
+            <CurrentVote />
           }
           <PButton
             _width={100}

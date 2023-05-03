@@ -192,9 +192,8 @@ export default function ReferendumPost(): React.ReactElement {
                 <CastVote
                   address={address}
                   open={showCastVote}
-                  referendumIndex={referendumInfoFromSubscan?.referendum_index}
+                  referendumInfo={referendumInfoFromSubscan}
                   setOpen={setShowCastVote}
-                  trackId={referendumInfoFromSubscan?.origins_id}
                 />
               </Grid>
               <MyVote
