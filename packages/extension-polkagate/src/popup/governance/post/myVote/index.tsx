@@ -8,8 +8,9 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { ShowBalance } from '../../../../components';
-import { useApi, useFormatted, useTranslation } from '../../../../hooks';
+import { useApi, useFormatted, useMyVote, useTranslation } from '../../../../hooks';
 import { ReferendumSubScan } from '../../utils/types';
+import { getVoteType } from '../../utils/util';
 import { getAddressVote, getConviction, isAye, Vote } from './util';
 
 interface Props {
@@ -21,51 +22,16 @@ export default function MyVote({ address, referendumInfoFromSubscan }: Props): R
   const { t } = useTranslation();
   const api = useApi(address);
   const theme = useTheme();
-  const formatted = useFormatted(address);
-  const [vote, setVote] = useState<Vote | null>();
-
+  const vote = useMyVote(address, referendumInfoFromSubscan);
   const isOngoing = useMemo(() => !['Executed', 'Rejected'].includes(referendumInfoFromSubscan?.status), [referendumInfoFromSubscan]);
 
-  useEffect(() => {
-    const refIndex = referendumInfoFromSubscan?.referendum_index;
-    const trackId = referendumInfoFromSubscan?.origins_id;
+  const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
 
-    formatted && api && refIndex && trackId && getAddressVote(formatted, api, refIndex, trackId).then((vote) => {
-      setVote(vote);
-    }).catch(console.error);
-  }, [formatted, api, referendumInfoFromSubscan]);
-
-  const voteBalance = useMemo((): number | undefined =>
-    vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance
-  , [vote]);
-
-  const voteType = useMemo((): string | undefined => {
-    if (vote) {
-      if (vote?.standard?.vote) {
-        return isAye(vote.standard.vote) ? 'Aye' : 'Nay';
-      }
-
-      if (vote?.splitAbstain?.abstain) {
-        return 'Abstain';
-      }
-
-      if (vote?.delegating?.balance) {
-        if (vote?.delegating?.aye) {
-          return 'Aye';
-        }
-
-        if (vote?.delegating?.nay) {
-          return 'Nay';
-        }
-
-        return 'Abstain';
-      }
-    }
-  }, [vote]);
+  const voteType = getVoteType(vote);
 
   return (
     <>
-      {isOngoing &&
+      {1 &&
         <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px' }} xs={12}>
           <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
             <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
