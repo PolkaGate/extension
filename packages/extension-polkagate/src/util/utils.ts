@@ -117,15 +117,15 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
-  return {
-    available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
-    feeFrozen: BigInt(String(balance.feeFrozen)),
-    miscFrozen: BigInt(String(balance.miscFrozen)),
-    reserved: BigInt(String(balance.reserved)),
-    total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
-  };
-}
+// export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
+//   return {
+//     available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
+//     feeFrozen: BigInt(String(balance.feeFrozen)),
+//     miscFrozen: BigInt(String(balance.miscFrozen)),
+//     reserved: BigInt(String(balance.reserved)),
+//     total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
+//   };
+// }
 
 export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
   if (!address) {
@@ -157,8 +157,8 @@ export function prepareMetaData(chain: Chain | null | string, label: string, met
       availableBalance: balances.availableBalance.toString(),
       decimals,
       freeBalance: balances.freeBalance.toString(),
-      frozenFee: balances.frozenFee.toString(),
-      frozenMisc: balances.frozenMisc.toString(),
+      // frozenFee: balances.frozenFee.toString(),
+      // frozenMisc: balances.frozenMisc.toString(),
       lockedBalance: balances.lockedBalance.toString(),
       reservedBalance: balances.reservedBalance.toString(),
       tokens,
