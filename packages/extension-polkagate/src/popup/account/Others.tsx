@@ -115,7 +115,7 @@ export default function Others({ address, api, balances, chain, identity, price,
           <Balance balances={balances} type={'Pooled Balance'} />
           <Balance balances={balances} type={'Free Balance'} />
           <Balance balances={balances} type={'Locked Balance'} />
-          <Balance balances={balances} type={'Frozen Fee'} />
+          {/* <Balance balances={balances} type={'Frozen Fee'} /> */}
           <Balance balances={balances} type={'Vested Balance'} />
           <Balance balances={balances} type={'Vested Claimable'} />
           {/* <Balance balances={balances} type={'Vesting Locked'} /> */}
