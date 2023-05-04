@@ -11,6 +11,7 @@ export { default as ActionText } from './ActionText';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AddressInput } from './AddressInput';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
+export { default as RemoteNodeSelector } from './RemoteNodeSelector';
 export { default as AmountWithOptions } from './AmountWithOptions';
 export { default as AutoResizeTextarea } from './AutoResizeTextarea';
 export { default as From } from './From';

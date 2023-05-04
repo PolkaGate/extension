@@ -14,11 +14,10 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identicon, MenuItem, Select, SelectChain, SettingsContext } from '../components';
-import { useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
-import { tieAccount, updateMeta } from '../messaging';
+import { ActionContext, Identicon, MenuItem, RemoteNodeSelector, SelectChain, SettingsContext } from '../components';
+import { useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { tieAccount } from '../messaging';
 import getLogo from '../util/getLogo';
-import { prepareMetaData } from '../util/utils';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,12 +35,8 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   const settings = useContext(SettingsContext);
   const options = useGenesisHashOptions();
   const chain = useChain(address);
-  const chainName = useChainName(address);
   const formatted = useFormatted(address);
   const [genesisHash, setGenesis] = useState<string | undefined>();
-  const endpointOptions = useEndpoints(genesisHash || chain?.genesisHash);
-
-  const endpoint = useEndpoint2(address);
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
@@ -86,11 +81,6 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   const _onManageProxies = useCallback(() => {
     address && chain && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
-
-  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chainName]);
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -164,15 +154,10 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
         options={options}
         style={{ width: '100%' }}
       />
-      {endpoint &&
-        <Select
-          _mt='10px'
-          label={t<string>('Remote node')}
-          onChange={_onChangeEndpoint}
-          options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
-          value={endpoint ?? 'No chain selected'}
-        />
-      }
+      <RemoteNodeSelector
+        address={address}
+        genesisHash={genesisHash}
+      />
       <IconButton
         onClick={_closeMenu}
         sx={{
