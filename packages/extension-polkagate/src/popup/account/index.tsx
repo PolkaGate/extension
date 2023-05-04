@@ -19,7 +19,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector,SelectChain } from '../../components';
+import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector, SelectChain } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import { HeaderBrand } from '../../partials';
