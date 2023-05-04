@@ -253,7 +253,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
         </Box>
         <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '460px' }}>
           <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', fontSize: '20px', fontWeight: 400 }}>
-            <Grid item width='29%'>
+            <Grid item width='38%'>
               {t('Voter')}
             </Grid>
             <Grid item width='22%'>
@@ -263,7 +263,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
             <Grid item width='15%'>
               {t('Conviction')}
             </Grid>
-            <Grid alignItems='center' container item justifyContent='center' width='22%'>
+            <Grid alignItems='center' container item justifyContent='center' width='12%'>
               <Infotip iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
                 <Typography fontSize='20px' width='fit-content'>
                   {t('Type')}
@@ -273,7 +273,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
           </Grid>
           {votesToShow?.map((vote, index) => (
             <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '5px' }}>
-              <Grid container item justifyContent='flex-start' width='29%'>
+              <Grid container item justifyContent='flex-start' width='38%'>
                 <Identity
                   api={api}
                   chain={chain}
@@ -296,7 +296,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
               <Grid item width='15%'>
                 {vote.conviction || '0.1'}X
               </Grid>
-              <Grid item sx={{ textAlign: 'right' }} width='22%'>
+              <Grid item sx={{ textAlign: 'right' }} width='12%'>
                 {vote?.isDelegating ? t('Delegated') : t('Standard')}
               </Grid>
             </Grid>
