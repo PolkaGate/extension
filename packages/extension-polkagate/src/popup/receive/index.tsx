@@ -8,7 +8,7 @@ import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import { ActionContext, Identity } from '../../components';
-import { useFormatted, useTranslation } from '../../hooks';
+import { useApi, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 
 export default function Receive(): React.ReactElement {
@@ -17,6 +17,7 @@ export default function Receive(): React.ReactElement {
   const location = useLocation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
+  const api = useApi(address);
 
   const _onBackClick = useCallback(() => {
     onAction(location?.state?.pathname ?? '/');
@@ -34,6 +35,7 @@ export default function Receive(): React.ReactElement {
       </Typography>
       <Identity
         address={address}
+        api={api}
         showChainLogo
         style={{
           m: '20px auto 10px',
