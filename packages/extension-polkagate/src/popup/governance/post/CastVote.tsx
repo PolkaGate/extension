@@ -134,17 +134,48 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
 
   const getLockedUntil = (endBlock: BN, currentBlock: number) => {
     if (endBlock.eq(BN_MAX_INTEGER)) {
-      return 'is ongoing';
+      return 'underway';
     }
 
     return remainingTime(endBlock.toNumber() - currentBlock);
   };
 
-  const alreadyLockedTooltipText = useMemo((): string | undefined => accountLocks && currentBlock
-    ? `${accountLocks.map((l) => `Referendum: ${l.refId.toNumber()} amount: ${amountToHuman(l.total, decimal)} ${token} locked until: ${getLockedUntil(l.endBlock, currentBlock)}`)
-    } `
-    : undefined
-    , [accountLocks, currentBlock, decimal, token]);
+  const alreadyLockedTooltipText = useMemo(() => accountLocks && currentBlock &&
+    <>
+      <Typography variant='body2'>
+        <Grid container spacing={2}>
+          <Grid item xs={2.5}>
+            {t('Ref.')}
+          </Grid>
+          <Grid item xs={3.6}>
+            {t('Amount')}
+          </Grid>
+          <Grid item xs={2.9}>
+            {t('Multiplier')}
+          </Grid>
+          <Grid item xs={3}>
+            {t('Expires')}
+          </Grid>
+          {accountLocks.map((l, index) =>
+            <React.Fragment key={index}>
+              <Grid item xs={2.5}>
+                {l.refId.toNumber()}
+              </Grid>
+              <Grid item xs={3.6}>
+                {amountToHuman(l.total, decimal)} {token}
+              </Grid>
+              <Grid item xs={2.9}>
+                {l.locked === 'None' ? 'N/A' : l.locked.replace('Locked', '')}
+              </Grid>
+              <Grid item xs={3}>
+                {getLockedUntil(l.endBlock, currentBlock)}
+              </Grid>
+            </React.Fragment>
+          )}
+        </Grid>
+      </Typography>
+    </>
+    , [accountLocks, currentBlock, decimal, t, token]);
 
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), [blockTime, t, voteLockingPeriod]);
@@ -350,7 +381,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   };
 
   return (
-    <Modal onClose={handleClose} open={open}>
+    <Modal disableScrollLock={true} onClose={handleClose} open={open}>
       <Box sx={{ ...style }}>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
@@ -418,7 +449,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               </Infotip>
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={alreadyLockedTooltipText || 'calculating'}>
+              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={alreadyLockedTooltipText || 'Fetching ...'}>
                 <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
               </Infotip>
             </Grid>
