@@ -152,7 +152,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
             </Typography>
           </Grid>
           <Grid item>
-            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '5px', width: '2px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', opacity: 0.3, height: '30px', mx: '5px', width: '2px' }} />
           </Grid>
           <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', px: '10px', textAlign: 'start' }} xs>
             {isSearchBarOpen
@@ -252,12 +252,12 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
           </Tabs>
         </Box>
         <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '460px' }}>
-          <Grid id='table header' container justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', fontSize: '20px', fontWeight: 400 }}>
+          <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', fontSize: '20px', fontWeight: 400 }}>
             <Grid item width='29%'>
               {t('Voter')}
             </Grid>
             <Grid item width='22%'>
-              <vaadin-icon icon='vaadin:sort' style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} onClick={onSortAmount} />
+              <vaadin-icon icon='vaadin:sort' onClick={onSortAmount} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
               {t('Amount')}
             </Grid>
             <Grid item width='15%'>
@@ -296,14 +296,14 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
               <Grid item width='15%'>
                 {vote.conviction || '0.1'}X
               </Grid>
-              <Grid item width='22%'>
+              <Grid item sx={{ textAlign: 'right' }} width='22%'>
                 {vote?.isDelegating ? t('Delegated') : t('Standard')}
               </Grid>
             </Grid>
           ))
           }
           {votesToShow &&
-            <Pagination count={paginationCount} sx={{ bottom: '-18px', position: 'absolute' }} onChange={onPageChange} />
+            <Pagination count={paginationCount} onChange={onPageChange} sx={{ bottom: '-18px', position: 'absolute' }} />
           }
           {!allVotes &&
             <Progress
