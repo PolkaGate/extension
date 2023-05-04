@@ -5,20 +5,16 @@
 
 import '@vaadin/icons';
 
-import type { IconTheme } from '@polkadot/react-identicon/types';
-import type { KeypairType } from '@polkadot/util-crypto/types';
-
 import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identicon, MenuItem, Select, SelectChain, SettingsContext } from '../components';
-import { useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
-import { tieAccount, updateMeta } from '../messaging';
+import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
+import { useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { tieAccount } from '../messaging';
 import getLogo from '../util/getLogo';
-import { prepareMetaData } from '../util/utils';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,27 +22,21 @@ interface Props {
   address: string;
   isHardware: boolean | null | undefined
   isExternal: boolean | null | undefined
-  type: KeypairType | undefined;
-  name: string | undefined;
 }
 
-function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMenu, type }: Props): React.ReactElement<Props> {
+function AccMenu({ address, isExternal, isHardware, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const settings = useContext(SettingsContext);
   const options = useGenesisHashOptions();
   const chain = useChain(address);
-  const chainName = useChainName(address);
   const formatted = useFormatted(address);
+  const api = useApi(address);
+  
   const [genesisHash, setGenesis] = useState<string | undefined>();
-  const endpointOptions = useEndpoints(genesisHash || chain?.genesisHash);
-
-  const endpoint = useEndpoint2(address);
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
   const canDerive = !(isExternal || isHardware);
-  const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
   const _onForgetAccount = useCallback(() => {
     onAction(`/forget/${address}/${isExternal}`);
@@ -63,11 +53,6 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
     [setShowMenu]
   );
 
-  const identiconTheme = ((chain?.definition.chainType === 'ethereum' || type === 'ethereum')
-    ? 'ethereum'
-    : (chain?.icon || 'polkadot')
-  ) as IconTheme;
-
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGensisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
@@ -80,33 +65,17 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
   }, [address, onAction]);
 
   const _onExportAccount = useCallback(() => {
-    address && name && onAction(`/export/${address}`);
-  }, [address, name, onAction]);
+    address && onAction(`/export/${address}`);
+  }, [address, onAction]);
 
   const _onManageProxies = useCallback(() => {
     address && chain && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
-  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chainName]);
-
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-      <Grid container justifyContent='center' my='20px'>
-        <Identicon
-          className='identityIcon'
-          iconTheme={identiconTheme}
-          prefix={prefix}
-          size={40}
-          value={formatted || address}
-        />
-        <Grid item pl='10px' sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          <Typography fontSize='28px' fontWeight={400} lineHeight={1.4}>
-            {name}
-          </Typography>
-        </Grid>
+      <Grid container justifyContent='center' my='20px' pl='25px'>
+        <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} />
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
@@ -164,15 +133,10 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, name, setShowMen
         options={options}
         style={{ width: '100%' }}
       />
-      {endpoint &&
-        <Select
-          _mt='10px'
-          label={t<string>('Remote node')}
-          onChange={_onChangeEndpoint}
-          options={endpointOptions.length > 0 ? endpointOptions : [{ text: 'No chain selected', value: '' }]}
-          value={endpoint ?? 'No chain selected'}
-        />
-      }
+      <RemoteNodeSelector
+        address={address}
+        genesisHash={genesisHash}
+      />
       <IconButton
         onClick={_closeMenu}
         sx={{

@@ -110,7 +110,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length ? chilled(pool.poolId) : undefined;
+      const mayNeedChill = state === 'Destroying' && pool.stashIdAccount?.nominators?.length && (String(pool.bondedPool?.roles.root) === String(formatted) || String(pool.bondedPool?.roles.nominator) === String(formatted)) ? chilled(pool.poolId) : undefined;
       const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
 
       const tx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
@@ -141,7 +141,7 @@ export default function SetState({ address, api, chain, formatted, headerText, h
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batchAll, chain, chilled, estimatedFee, formatted, name, password, pool.poolId, pool.stashIdAccount?.nominators?.length, poolSetState, selectedProxy, selectedProxyAddress, selectedProxyName, state, setRefresh]);
+  }, [setRefresh, formatted, api, batchAll, poolSetState, chilled, selectedProxyAddress, password, state, pool.stashIdAccount?.nominators?.length, pool.bondedPool?.roles.root, pool.bondedPool?.roles.nominator, pool.poolId, selectedProxy, estimatedFee, selectedProxyName, name, chain]);
 
   return (
     <Motion>

@@ -109,9 +109,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
           isExternal={isExternal}
           isHardware={isHardware}
           isMenuOpen={showActionsMenu}
-          name={name}
           setShowMenu={setShowActionsMenu}
-          type={type}
         />
       }
       <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>
