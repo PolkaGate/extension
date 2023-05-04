@@ -14,10 +14,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
 
 import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance, Warning } from '../../../components';
-import { useApi, useBalances, useBlockInterval, useDecimal, useFormatted, useMyVote, useToken, useTranslation, useAccountLocks } from '../../../hooks';
+import { useAccountLocks, useApi, useBalances, useBlockInterval, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
-import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { STATUS_COLOR } from '../utils/consts';
+import { amountToHuman, amountToMachine, remainingTime } from '../../../util/utils';
+import { CONVICTIONS, STATUS_COLOR } from '../utils/consts';
 import { ReferendumSubScan } from '../utils/types';
 import { getVoteType } from '../utils/util';
 import { getConviction, isAye } from './myVote/util';
@@ -28,8 +28,6 @@ interface Props {
   setOpen: (value: React.SetStateAction<boolean>) => void
   referendumInfo: ReferendumSubScan | undefined;
 }
-
-const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);
 
 type Result = [blockInterval: number, timeStr: string, time: Time];
 
@@ -130,9 +128,23 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
   const theme = useTheme();
   const myVote = useMyVote(address, referendumInfo);
+  const currentBlock = useCurrentBlockNumber(address);
 
-  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
-  console.log('accountLocks:', accountLocks);
+  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
+
+  const getLockedUntil = (endBlock: BN, currentBlock: number) => {
+    if (endBlock.eq(BN_MAX_INTEGER)) {
+      return 'is ongoing';
+    }
+
+    return remainingTime(endBlock.toNumber() - currentBlock);
+  };
+
+  const alreadyLockedTooltipText = useMemo((): string | undefined => accountLocks && currentBlock
+    ? `${accountLocks.map((l) => `Referendum: ${l.refId.toNumber()} amount: ${amountToHuman(l.total, decimal)} ${token} locked until: ${getLockedUntil(l.endBlock, currentBlock)}`)
+    } `
+    : undefined
+    , [accountLocks, currentBlock, decimal, token]);
 
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const convictionOptions = useMemo(() => blockTime && voteLockingPeriod && createOptions(blockTime, voteLockingPeriod, t), [blockTime, t, voteLockingPeriod]);
@@ -174,17 +186,12 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     }
   }, [conviction, decimal, trackId, voteAmount, voteType]);
 
-  //   <ConvictionDropdown
-  //   label={t<string>('conviction')}
-  //   onChange={setConviction}
-  //   value={conviction}
-  //   voteLockingPeriod={voteLockingPeriod}
-  // />
-
   useEffect(() => {
     if (!formatted || !vote) {
       return;
     }
+
+    api && api.query.preimage.preimageFor.entries().then((x) => console.log('preimages', x));
 
     if (!api?.call?.transactionPaymentApi) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -211,7 +218,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     }
 
     if (value.length > decimal - 1) {
-      console.log(`The amount digits is more than decimal:${decimal}`);
+      console.log(`The amount digits is more than decimal:${decimal} `);
 
       return;
     }
@@ -261,7 +268,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
 
   const CurrentVote = () => {
     return (
-      <Grid alignItems='center' container direction='column' item pt='8px'>
+      <Grid alignItems='center' container direction='column' item pt='15px'>
         <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
           {t<string>('Current Voting')}
         </Typography>
@@ -383,7 +390,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
             </FormControl>
           </Grid>
           <AmountWithOptions
-            label={t<string>(`Vote Value (${token})`)}
+            label={t<string>(`Vote Value(${token})`)}
             onChangeAmount={onVoteAmountChange}
             onPrimary={onMaxAmount}
             onSecondary={onLockedAmount}
@@ -396,7 +403,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
             }}
             value={voteAmount}
           />
-          <Grid container item justifyContent='space-between' sx={{ mt: '15px' }}>
+          <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
             <Grid item sx={{ fontSize: '16px' }}>
               {t('Available Voting Balance')}
             </Grid>
@@ -404,14 +411,16 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               <ShowBalance balance={balances?.votingBalance} decimal={decimal} token={token} />
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }} >
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px' }}>
             <Grid item sx={{ fontSize: '16px' }}>
               <Infotip iconLeft={5} iconTop={4} showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                 {t('Already Locked Balance')}
               </Infotip>
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
+              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={alreadyLockedTooltipText || 'calculating'}>
+                <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
+              </Infotip>
             </Grid>
           </Grid>
           {convictionOptions && voteType !== 'abstain' &&
@@ -424,7 +433,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
                 options={convictionOptions}
                 value={conviction || convictionOptions?.[0]?.value}
               />
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px', pt: '8px' }}>
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
                 <Grid item>
                   <Typography sx={{ fontSize: '16px' }}>
                     {t('Your final vote power after multiplying')}
@@ -440,9 +449,9 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
             <CurrentVote />
           }
           <PButton
+            _mt='15px'
             _width={100}
             text={t<string>('Next to review')}
-            _mt='15px'
             _ml={0}
             // _onClick={onCastVote}
             disabled={!conviction || !voteAmount || voteAmount === '0' || amountToMachine(voteAmount || 0, decimal)?.gt(balances?.votingBalance || 0) || !voteType}

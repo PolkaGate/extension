@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { BN } from '@polkadot/util';
+
 export const MAX_WIDTH = '1280px';
 
 export const STATUS_COLOR = {
@@ -18,3 +20,4 @@ export const STATUS_COLOR = {
 };
 
 export const TREASURY_TRACKS = ['treasurer', 'small_tipper', 'big_tipper', 'small_spender', 'medium_spender', 'big_spender'];
+export const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);

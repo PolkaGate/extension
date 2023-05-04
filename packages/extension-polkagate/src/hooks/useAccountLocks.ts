@@ -9,7 +9,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { BN_MAX_INTEGER } from '@polkadot/util';
 
+import { CONVICTIONS } from '../popup/governance/utils/consts';
 import useApi from './useApi';
+import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
 
 export interface Lock {
@@ -38,7 +40,7 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
         const [, tally] = refInfo;
         let total: BN | undefined;
         let endBlock: BN | undefined;
-        let conviction = 0;
+        let convictionIndex = 0;
         let locked = 'None';
 
         if (accountVote.isStandard) {
@@ -47,7 +49,7 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
           total = balance;
 
           if ((tally.isApproved && vote.isAye) || (tally.isRejected && vote.isNay)) {
-            conviction = vote.conviction.index;
+            convictionIndex = vote.conviction.index;
             locked = vote.conviction.type;
           }
         } else if (accountVote.isSplit) {
@@ -72,7 +74,7 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
             : tally.asTimedOut[0];
         } else if (tally.isApproved || tally.isRejected) {
           endBlock = lockPeriod
-            .muln(conviction)
+            .muln(convictionIndex ? CONVICTIONS[convictionIndex - 1][1] : 0)
             .add(
               tally.isApproved
                 ? tally.asApproved[0]
@@ -92,10 +94,12 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   return locks;
 }
 
-export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote): Lock[] | undefined {
+export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined {
   const api = useApi(address);
   const formatted = useFormatted(address);
-  const [referenda, setReferenda] = useState< [BN, PalletReferendaReferendumInfoConvictionVotingTally][] | undefined>();
+  const currentBlock = useCurrentBlockNumber(address);
+
+  const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | undefined>();
   const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
 
   useEffect(() => {
@@ -139,8 +143,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         }
       }
 
-      console.log('refIds ', refIds);
-
       const optTally = refIds && await api.query[palletReferenda]?.referendumInfoFor.multi(refIds);
       const referenda = optTally?.map((v, index): null | [BN, PalletReferendaReferendumInfoConvictionVotingTally] =>
         v.isSome
@@ -152,8 +154,17 @@ export default function useAccountLocks(address: string | undefined, palletRefer
     }
   }, [api, formatted, palletReferenda, palletVote]);
 
-  return useMemo(
-    () => api && votes && referenda && getLocks(api, palletVote, votes, referenda),
-    [api, palletVote, referenda, votes]
-  );
+  return useMemo(() => {
+    if (api && votes && referenda && currentBlock) {
+      const accountLocks = getLocks(api, palletVote, votes, referenda);
+
+      if (notExpired) {
+        return accountLocks.filter((l) => l.endBlock.gtn(currentBlock));
+      }
+
+      return accountLocks;
+    }
+
+    return undefined;
+  }, [api, currentBlock, notExpired, palletVote, referenda, votes]);
 }
