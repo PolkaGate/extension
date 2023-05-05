@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { QuestionMarkRounded as QuestionMarkRoundedIcon } from '@mui/icons-material';
+import { Info as InfoIcon, QuestionMark as QuestionIcon } from '@mui/icons-material';
 import { Grid, Tooltip } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -12,12 +12,13 @@ interface Props {
   children: React.ReactElement<any, any>;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
   showQuestionMark?: boolean;
+  showInfoMark?: boolean;
   iconTop?: number;
   iconLeft?: number;
   fontSize?: string;
 }
 
-function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, placement = 'top', showQuestionMark = false, text }: Props): React.ReactElement<Props> {
+function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, placement = 'top', showInfoMark = false, showQuestionMark = false, text }: Props): React.ReactElement<Props> {
   const ref = useRef(null);
   const [tpLocation, setTpLocation] = useState<number | undefined>();
 
@@ -29,7 +30,7 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
 
   return (
     <Grid item ref={ref} style={{ position: 'relative' }}>
-      {showQuestionMark
+      {showQuestionMark || showInfoMark
         ? <>
           <div>
             {children}
@@ -68,18 +69,32 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
             placement={placement}
             title={text || ''}
           >
-            <QuestionMarkRoundedIcon
-              sx={{
-                bgcolor: 'secondary.light',
-                borderRadius: '50%',
-                color: 'background.default',
-                height: '15px',
-                left: `${tpLocation}px`,
-                position: 'absolute',
-                top: `${iconTop}px`,
-                width: '15px'
-              }}
-            />
+            {showQuestionMark
+              ? <QuestionIcon
+                sx={{
+                  bgcolor: 'secondary.light',
+                  borderRadius: '50%',
+                  color: 'background.default',
+                  height: '15px',
+                  left: `${tpLocation}px`,
+                  position: 'absolute',
+                  top: `${iconTop}px`,
+                  width: '15px'
+                }}
+              />
+              : <InfoIcon
+                sx={{
+                  bgcolor: 'secondary.light',
+                  borderRadius: '50%',
+                  color: 'background.default',
+                  height: '15px',
+                  left: `${tpLocation}px`,
+                  position: 'absolute',
+                  top: `${iconTop}px`,
+                  width: '15px'
+                }}
+              />
+            }
           </Tooltip>
         </>
         : <Tooltip
