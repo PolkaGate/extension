@@ -106,9 +106,10 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           <Grid container item xs={12} sx={{ display: 'inline-block', overflowWrap: 'break-word', wordWrap: 'break-word', wordBreak: 'break-all' }}>
             {referendum?.content &&
               <ReactMarkdown
-                children={referendum?.content?.replace(/<br\s*\/?>/gi, ' ')}
                 components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
-              />
+              >
+                {referendum?.content?.replace(/<br\s*\/?>/gi, ' ')}
+              </ReactMarkdown>
             }
           </Grid>
         </AccordionDetails>
