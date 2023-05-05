@@ -64,8 +64,6 @@ export default function ReferendumPost(): React.ReactElement {
         Promise.all(
           approvals.toJSON().map((index) => api.query.treasury.proposals(index))
         ).then((res) => {
-          console.log(JSON.parse(JSON.stringify(res)));
-
           let proposals = JSON.parse(JSON.stringify(res)) as Proposal[];
 
           proposals = proposals.map((p, index) => {

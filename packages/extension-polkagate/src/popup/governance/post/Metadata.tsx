@@ -51,7 +51,7 @@ export default function Metadata({ address, referendum }: { address: string | un
 
   useEffect(() => {
     api && referendum?.post_id && api.query.referenda?.referendumInfoFor(referendum.post_id).then((res) => {
-      console.log(`referendumInfoFor referendum ${referendum?.post_id} :, ${res}`);
+      console.log(`referendumInfoFor ref ${referendum?.post_id} :, ${res}`);
       SetReferendumJson(res.toJSON());
     }).catch(console.error);
   }, [api, referendum]);

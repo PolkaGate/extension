@@ -24,7 +24,7 @@ export interface Statistics {
 }
 
 export async function getReferendumStatistics(chainName: string): Promise<Statistics | null> {
-  console.log('Getting referendum statistics from subscan ... ');
+  console.log('Getting ref stat from sb ... ');
 
   return new Promise((resolve) => {
     try {
@@ -57,7 +57,7 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
     return null;
   }
 
-  console.log(`Getting referendum ${referendumIndex} votes from subscan ... `);
+  console.log(`Getting ref ${referendumIndex} votes from sb ... `);
 
   return new Promise((resolve) => {
     try {
@@ -70,8 +70,6 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
         })
         .then((data: { message: string; data: { count: number, list: string[]; } }) => {
           if (data.message === 'Success') {
-            console.log(data.data)
-
             resolve(data.data);
           } else {
             console.log(`Fetching message ${data.message}`);
@@ -115,7 +113,7 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
 }
 
 export async function getTrackReferendums(chainName: string, page = 1, track: number): Promise<string[] | null> {
-  console.log(`Getting referendums on ${chainName} track:${track}`);
+  console.log(`Getting refs on ${chainName} track:${track}`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -144,7 +142,7 @@ export async function getTrackReferendums(chainName: string, page = 1, track: nu
 }
 
 export async function getReferendum(chainName: string, postId: number): Promise<string[] | null> {
-  console.log(`Getting referendum #${postId} info from PA ...`);
+  console.log(`Getting ref #${postId} info from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -155,7 +153,7 @@ export async function getReferendum(chainName: string, postId: number): Promise<
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        console.log(`Referendum  #${postId} from PA:`, data);
+        console.log(`Ref #${postId} info from PA:`, data);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data;
@@ -173,7 +171,7 @@ export async function getReferendum(chainName: string, postId: number): Promise<
 }
 
 export async function getReferendumFromSubscan(chainName: string, postId: number): Promise<Statistics | null> {
-  console.log(`Getting referendum #${postId} from subscan ...`);
+  console.log(`Getting ref #${postId} from sb ...`);
 
   // Convert postId to uint
   const referendumIndex: number = postId >>> 0; // Use bitwise zero-fill right shift to convert to unsigned integer
@@ -187,7 +185,7 @@ export async function getReferendumFromSubscan(chainName: string, postId: number
         })
         .then((data: { message: string; data }) => {
           if (data.message === 'Success') {
-            console.log('getReferendumFromSubscan:', data.data);
+            console.log(`Ref ${postId} info from PA:`, data.data);
 
             resolve(data.data);
           } else {

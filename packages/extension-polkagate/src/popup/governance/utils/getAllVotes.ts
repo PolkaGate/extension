@@ -231,7 +231,7 @@ function extractDelegations(mapped, track, directVotes = []) {
 }
 
 export async function getReferendumVotes(api: ApiPromise, trackId: number, referendumIndex: number): Promise<{ ayes: VoterData[], nays: VoterData[], abstains: VoterData[] } | null> {
-  console.log(`Getting referendum ${referendumIndex} votes ... `);
+  console.log(`Getting ref ${referendumIndex} votes ... `);
 
   if (!referendumIndex || !api) {
     console.log('referendumIndex is undefined getting Referendum Votes ');

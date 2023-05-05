@@ -58,7 +58,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
     chainName && referendumIndex &&
       getReferendumVotesFromSubscan(chainName, referendumIndex).then((votes) => {
         // setAllVotes(votes);
-        console.log('All votes from subscan:', referendumIndex, votes);
+        console.log('All votes from sb:', votes);
       });
   }, [chainName, referendumIndex]);
 
