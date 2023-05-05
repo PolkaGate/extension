@@ -44,6 +44,8 @@ export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
 export { default as useNeedsRebag } from './useNeedsRebag';
 export { default as useMinToReceiveRewardsInSolo } from './useMinToReceiveRewardsInSolo';
 export { default as useOutsideClick } from './useOutsideClick';
+export { default as usePreImage } from './usePreImage';
+export { default as usePreImageHashes } from './usePreImageHashes';
 export { default as usePrice } from './usePrice';
 export { default as usePrices } from './usePrices';
 export { default as useProxies } from './useProxies';

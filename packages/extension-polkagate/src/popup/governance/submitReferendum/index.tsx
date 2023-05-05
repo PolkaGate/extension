@@ -3,17 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Button, Container, Grid, Modal, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Button, Modal, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { logoBlack, logoWhite } from '../../../assets/logos';
 import { Select } from '../../../components';
-import { useApi, useChain, useTranslation } from '../../../hooks';
-import { ChainSwitch } from '../../../partials';
-import AddressDropdown from '../AddressDropdown';
-import { MAX_WIDTH } from '../utils/consts';
+import { useChain, usePreImage, usePreImageHashes, useTranslation } from '../../../hooks';
 import methodOptions from './addPreimage/options/methods';
 import sectionOptions, { DropdownOption } from './addPreimage/options/sections';
 
@@ -28,8 +24,12 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
+  const preImageHashes = usePreImageHashes(address);
+  const preImage = usePreImage(address, preImageHashes?.[1]);
   const [section, setSection] = useState<string>();
   const [method, setMethod] = useState<string>();
+
+  console.log('preImageHashes==', preImageHashes);
 
   const defaultSection = Object.keys(api.tx)[0];
   const defaultMethod = Object.keys(api.tx[defaultSection])[0];
