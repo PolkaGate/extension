@@ -11,7 +11,7 @@ import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } f
 import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, bnToBn, extractTime } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, extractTime, isString, isU8a, objectSpread, u8aToHex } from '@polkadot/util';
 
 import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance, Warning } from '../../../components';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../hooks';
@@ -221,8 +221,6 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     if (!formatted || !vote) {
       return;
     }
-
-    api && api.query.preimage.preimageFor.entries().then((x) => console.log('preimages', x));
 
     if (!api?.call?.transactionPaymentApi) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -439,7 +437,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               {t('Available Voting Balance')}
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <ShowBalance balance={balances?.votingBalance} decimal={decimal} token={token} />
+              <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px' }}>
@@ -449,8 +447,8 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               </Infotip>
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={alreadyLockedTooltipText || 'Fetching ...'}>
-                <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} token={token} />
+              <Infotip iconLeft={5} iconTop={2} showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+                <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
               </Infotip>
             </Grid>
           </Grid>
