@@ -176,37 +176,35 @@ export default function Metadata({ address, referendum }: { address: string | un
             style={{ justifyContent: 'flex-start' }}
             value={
               <Link
+                display='block'
+                height='35px'
                 href={referendumLinkOnsSubscan()}
+                lineHeight='35px'
+                my='auto'
                 rel='noreferrer'
                 target='_blank'
                 underline='none'
-                display='block'
-                height='35px'
                 width='25px'
-                my='auto'
-                lineHeight='35px'
               >
                 <Box alt={'subscan'} component='img' height='25px' width='25px' mt='5px' src={subscan as string} />
               </Link>
             }
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
-          {referendumJson && !referendumJson.hasOwnProperty('approved') &&
-            <Grid item>
-              <Link
-                onClick={() => setShowJson(!showJson)}
-                sx={{ cursor: 'pointer' }}
-                underline='none'
-              >
-                <Typography sx={{ py: 2 }}>
-                  {t('View Call in JSON')}
-                </Typography>
-              </Link>
-              {showJson &&
-                <JsonToTable json={referendumJson} />
-              }
-            </Grid>
-          }
+          <Grid item>
+            <Link
+              onClick={() => setShowJson(!showJson)}
+              sx={{ cursor: 'pointer' }}
+              underline='none'
+            >
+              <Typography sx={{ py: 2 }}>
+                {t('View Call in JSON')}
+              </Typography>
+            </Link>
+            {showJson &&
+              <JsonToTable json={referendum?.proposed_call} />
+            }
+          </Grid>
         </Grid>
       </AccordionDetails>
     </Accordion>
