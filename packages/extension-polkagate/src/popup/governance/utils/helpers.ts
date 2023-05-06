@@ -185,7 +185,7 @@ export async function getReferendumFromSubscan(chainName: string, postId: number
         })
         .then((data: { message: string; data }) => {
           if (data.message === 'Success') {
-            console.log(`Ref ${postId} info from PA:`, data.data);
+            console.log(`Ref ${postId} info from Sb:`, data.data);
 
             resolve(data.data);
           } else {
