@@ -13,7 +13,7 @@ export default function usePreImageHashes(address: string | undefined): string[]
     api && api.query.preimage.preimageFor.keys().then((keys) => {
       const hashes = keys.map(({ args: [hash] }) => hash);
 
-      setHashes(hashes.map((h) => h.toHex()));
+      setHashes(hashes.map((h) => h.toHex().substring(0, 66)));
     });
   }, [api]);
 
