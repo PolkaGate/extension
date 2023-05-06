@@ -40,7 +40,7 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
     px: 4,
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 800
+    width: 850
   };
 
   // const noPreimagesToSelect = useMemo(() =>preImageHashes, []);
@@ -93,7 +93,7 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
                   key={index}
                 />
               ))
-              : <Progress pt='95px' size={125} title={t('Loading preimages ...')} />
+              : <Progress pt='25px' size={125} title={t('Loading preimages ...')} />
             }
           </Grid>
         </Grid>

@@ -198,7 +198,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
           </Grid>
           <Grid alignItems='center' container item spacing={1} sx={{ fontSize: '18px', letterSpacing: '-0.015em' }}>
             <Grid item>
-              <LinearProgress sx={{ bgcolor: 'primary.contrastText', mt: '5px', width: '185px', height: '6px' }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
+              <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: '185px' }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
             </Grid>
             <Grid fontSize={18} fontWeight={400} item sx={{ textAlign: 'right' }}>
               {treasuryStats?.remainingSpendPeriodPercent}%

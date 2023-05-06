@@ -7,6 +7,8 @@ import { NavigateNext as NavigateNextIcon } from '@mui/icons-material';
 import { Button, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
+import { formatNumber } from '@polkadot/util';
+
 import { CopyAddressButton, Identity, ShowBalance, Warning } from '../../../components';
 import { useApi, useChain, useDecimal, useFormatted, usePreImage, useToken, useTranslation } from '../../../hooks';
 
@@ -58,7 +60,7 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
             }
           </Grid>
           <Grid item xs={1}>
-            {preImage.proposalLength?.toNumber()}
+            {formatNumber(preImage.proposalLength)}
           </Grid>
           <Grid item xs={1.5}>
             <ShowBalance balance={preImage.deposit.amount} decimal={decimal} decimalPoint={2} token={token} />
