@@ -3,16 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Button, Grid, Modal, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Box, Grid, Modal, Typography, useTheme } from '@mui/material';
+import React, { useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { PButton, Progress, Select } from '../../../components';
+import { PButton, Progress } from '../../../components';
 import { useChain, usePreImage, usePreImageHashes, useTranslation } from '../../../hooks';
-import methodOptions from './addPreimage/options/methods';
-import sectionOptions, { DropdownOption } from './addPreimage/options/sections';
 import { PreImage } from './PreImage';
 
 interface Props {
@@ -25,17 +23,7 @@ interface Props {
 export function SubmitReferendum({ address, api, open, setOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chain = useChain(address);
   const preImageHashes = usePreImageHashes(address);
-  const preImage = usePreImage(address, preImageHashes?.[3]);
-  const [section, setSection] = useState<string>();
-  const [method, setMethod] = useState<string>();
-
-  console.log('preImagepreImage==', preImage?.proposal?.toJSON());
-
-  const defaultSection = Object.keys(api.tx)[0];
-  const defaultMethod = Object.keys(api.tx[defaultSection])[0];
-  const apiDefaultTx = api.tx[defaultSection][defaultMethod];
 
   const handleClose = () => {
     setOpen(false);
@@ -54,6 +42,8 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
     transform: 'translate(-50%, -50%)',
     width: 800
   };
+
+  // const noPreimagesToSelect = useMemo(() =>preImageHashes, []);
 
   return (
     <Modal
@@ -94,7 +84,7 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
               {t('Choose from existing preimages')}
             </Typography>
           </Grid>
-          <Grid container  sx={{ height: '300px', overflowY: 'scroll', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
+          <Grid container sx={{ height: '300px', overflowY: 'scroll', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
             {preImageHashes
               ? preImageHashes.map((hash, index) => (
                 <PreImage
@@ -103,7 +93,7 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
                   key={index}
                 />
               ))
-              : <Progress pt='95px' size={125} title={t('Loading preimages...')} />
+              : <Progress pt='95px' size={125} title={t('Loading preimages ...')} />
             }
           </Grid>
         </Grid>

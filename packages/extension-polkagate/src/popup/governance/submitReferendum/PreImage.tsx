@@ -18,11 +18,9 @@ interface Props {
 
 export function PreImage({ address, hash, key }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
   const formatted = useFormatted(address);
-  const chain = useChain(address);
   const theme = useTheme();
   const preImage = usePreImage(address, hash);
 
@@ -36,7 +34,7 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
     <Grid container>
       {preImage
         ? preImage?.deposit?.who === formatted &&
-        <Grid container alignItems='center' item justifyContent='space-between'>
+        <Grid alignItems='center' container item justifyContent='space-between'>
           <Grid container item sx={{ width: '134px' }} xs={2.2}>
             <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
               {hash.substring(0, 8) + '...'}
@@ -65,7 +63,7 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
           <Grid item xs={1.5}>
             <ShowBalance balance={preImage.deposit.amount} decimal={decimal} decimalPoint={2} token={token} />
           </Grid>
-          <Grid container justifyContent='flex-end' item xs={1.5}>
+          <Grid container item justifyContent='flex-end' xs={1.5}>
             {/* <Identity
               address={address}
               api={api}
@@ -79,7 +77,7 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
                 fontSize: '16px'
               }}
             /> */}
-            <Button variant='text' sx={{ textTransform: 'none', color: 'primary.main', fontSize: '16px' }} endIcon={<NavigateNextIcon sx={{ fontSize: '30px' }} />}>
+            <Button endIcon={<NavigateNextIcon sx={{ fontSize: '30px' }} />} sx={{ textTransform: 'none', color: 'primary.main', fontSize: '16px' }} variant='text'>
               {t('Select')}
             </Button>
           </Grid>
