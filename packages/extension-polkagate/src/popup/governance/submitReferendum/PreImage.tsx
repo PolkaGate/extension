@@ -11,20 +11,131 @@ import { formatNumber } from '@polkadot/util';
 
 import { CopyAddressButton, Identity, ShowBalance, Warning } from '../../../components';
 import { useApi, useChain, useDecimal, useFormatted, usePreImage, useToken, useTranslation } from '../../../hooks';
+import type { Codec, IExtrinsic, IMethod, TypeDef, Registry } from '@polkadot/types/types';
+import { Enum, getTypeDef } from '@polkadot/types';
+import type { FrameSupportPreimagesBounded, PalletPreimageRequestStatus } from '@polkadot/types/lookup';
+import { stringify, isUndefined } from '@polkadot/util';
+import getInitValue from './initValues';
 
 interface Props {
   address: string | undefined;
-  hash: string;
+  hash: Hash | `0x${string}` | FrameSupportPreimagesBounded | null | undefined;
   key: number;
+}
+
+interface Param {
+  name: string;
+  type: TypeDef;
+}
+
+interface Value {
+  isValid: boolean;
+  value: Codec;
+}
+
+export interface ParamDef {
+  length?: number;
+  name?: string;
+  type: TypeDef;
+}
+
+export type RawParamValue = unknown | undefined;
+export type RawParamValueArray = (RawParamValue | RawParamValue[])[];
+
+export type RawParamValues = RawParamValue | RawParamValueArray;
+
+export interface RawParam {
+  isValid: boolean;
+  value: RawParamValues;
+}
+
+export type RawParams = RawParam[];
+
+export function createValue(registry: Registry, param: { type: TypeDef }): RawParam {
+  const value = getInitValue(registry, param.type);
+
+  return {
+    isValid: !isUndefined(value),
+    value
+  };
+}
+
+export default function createValues(registry: Registry, params: { type: TypeDef }[]): RawParam[] {
+  return params.map((param) => createValue(registry, param));
+}
+
+function splitSingle(value: string[], sep: string): string[] {
+  return value.reduce((result: string[], value: string): string[] => {
+    return value.split(sep).reduce((result: string[], value: string) => result.concat(value), result);
+  }, []);
+}
+
+function splitParts(value: string): string[] {
+  return ['[', ']'].reduce((result: string[], sep) => splitSingle(result, sep), [value]);
+}
+
+interface Meta {
+  docs: Text[];
+}
+
+function formatMeta(meta?: Meta): [React.ReactNode, React.ReactNode] | null {
+  if (!meta || !meta.docs.length) {
+    return null;
+  }
+
+  const strings = meta.docs.map((d) => d.toString().trim());
+  const firstEmpty = strings.findIndex((d) => !d.length);
+  const combined = (
+    firstEmpty === -1
+      ? strings
+      : strings.slice(0, firstEmpty)
+  ).join(' ').replace(/#(<weight>| <weight>).*<\/weight>/, '');
+  const parts = splitParts(combined.replace(/\\/g, '').replace(/`/g, ''));
+
+  return [
+    parts[0].split(/[.(]/)[0],
+    <>{parts.map((part, index) => index % 2 ? <em key={index}>[{part}]</em> : <span key={index}>{part}</span>)}&nbsp;</>
+  ];
 }
 
 export function PreImage({ address, hash, key }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
+  const api = useApi(address);
   const token = useToken(address);
   const formatted = useFormatted(address);
   const theme = useTheme();
   const preImage = usePreImage(address, hash);
+
+  const params = preImage?.proposal?.meta?.args?.map(({ name, type }): Param => ({
+    name: name.toString(),
+    type: getTypeDef(type.toString())
+  }));
+
+  const values = preImage?.proposal?.args?.map((value): Value => ({
+    isValid: true,
+    value
+  }));
+
+  const derivedValues = values && api && params?.reduce((result: RawParams, param, index): RawParams => {
+    result.push(
+      values && values[index]
+        ? values[index]
+        : createValue(preImage.proposal.args.registry, param)
+    );
+
+    return result;
+  }
+    , []);
+
+  console.log('preimage:', preImage);
+  console.log('params:', params);
+  console.log('params.map:',
+    derivedValues && params?.map
+      (
+        ({ name, type }: ParamDef, index: number) => `${name || ''}:${type.type.toString()}:${index}:${stringify(derivedValues[index])}`
+      ));
+  console.log('values:', values);
 
   const call = useMemo(() =>
     preImage?.proposal && preImage.proposal.callIndex
@@ -33,7 +144,7 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
     , [preImage]);
 
   return (
-    <Grid container>
+    <Grid container item>
       {preImage
         ? preImage?.deposit?.who === formatted &&
         <Grid alignItems='center' container item justifyContent='space-between'>
@@ -54,9 +165,29 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
               >
                 {preImage.proposalError}
               </Warning>
-              : call && <Typography>
-                {`${call.section}.${call.method}`}
-              </Typography>
+              : call &&
+              <Grid container item>
+                <Grid item>
+                  <Typography>
+                    {`${call.section}.${call.method}`}
+                  </Typography>
+                  <Typography fontSize='12px'>
+                    {formatMeta(call.meta)?.[0] || ''}
+                  </Typography>
+                </Grid>
+                <Grid container item pt='5px' pb='10px'>
+                  {values && params?.map(({ name, type }: ParamDef, index: number) => (
+                    <Grid item xs={12} key={index}>
+                      <Typography fontSize='13px'>
+                        {`${name || ''}:${type.type.toString()}`}
+                      </Typography>
+                      <Typography fontSize='13px' fontWeight={400}>
+                        {`${values[index].value.toString()}`}
+                      </Typography>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
             }
           </Grid>
           <Grid item xs={1}>

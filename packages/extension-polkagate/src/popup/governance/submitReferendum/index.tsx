@@ -84,7 +84,7 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
               {t('Choose from existing preimages')}
             </Typography>
           </Grid>
-          <Grid container sx={{ height: '300px', overflowY: 'scroll', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
+          <Grid container item sx={{ border: 1, borderColor: 'secondary.light', borderRadius: '5px', display: 'block', height: '300px', overflowY: 'scroll', p: '10px' }}>
             {preImageHashes
               ? preImageHashes.map((hash, index) => (
                 <PreImage
@@ -93,7 +93,7 @@ export function SubmitReferendum({ address, api, open, setOpen }: Props): React.
                   key={index}
                 />
               ))
-              : <Progress pt='25px' size={125} title={t('Loading preimages ...')} />
+              : <Progress pt='40px' size={125} title={t('Loading preimages ...')} />
             }
           </Grid>
         </Grid>
