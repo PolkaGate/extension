@@ -3,18 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { FrameSupportPreimagesBounded } from '@polkadot/types/lookup';
+import type { Codec, Registry, TypeDef } from '@polkadot/types/types';
+
 import { NavigateNext as NavigateNextIcon } from '@mui/icons-material';
 import { Button, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { formatNumber } from '@polkadot/util';
+import { getTypeDef } from '@polkadot/types';
+import { formatNumber, isUndefined, stringify } from '@polkadot/util';
 
-import { CopyAddressButton, Identity, ShowBalance, Warning } from '../../../components';
-import { useApi, useChain, useDecimal, useFormatted, usePreImage, useToken, useTranslation } from '../../../hooks';
-import type { Codec, IExtrinsic, IMethod, TypeDef, Registry } from '@polkadot/types/types';
-import { Enum, getTypeDef } from '@polkadot/types';
-import type { FrameSupportPreimagesBounded, PalletPreimageRequestStatus } from '@polkadot/types/lookup';
-import { stringify, isUndefined } from '@polkadot/util';
+import { CopyAddressButton, ShowBalance, Warning } from '../../../components';
+import { useApi, useDecimal, useFormatted, usePreImage, useToken, useTranslation } from '../../../hooks';
 import getInitValue from './initValues';
 
 interface Props {
@@ -125,17 +125,10 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
     );
 
     return result;
-  }
-    , []);
+  }, []);
 
   console.log('preimage:', preImage);
   console.log('params:', params);
-  console.log('params.map:',
-    derivedValues && params?.map
-      (
-        ({ name, type }: ParamDef, index: number) => `${name || ''}:${type.type.toString()}:${index}:${stringify(derivedValues[index])}`
-      ));
-  console.log('values:', values);
 
   const call = useMemo(() =>
     preImage?.proposal && preImage.proposal.callIndex
