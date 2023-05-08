@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
 import { useTranslation } from '.';
+import { TEST_NETS } from '../util/constants';
 
 interface Option {
   text: string;
@@ -17,6 +18,11 @@ const RELAY_CHAIN = 'Relay Chain';
 export default function (): Option[] {
   const { t } = useTranslation();
   const [metadataChains, setMetadatachains] = useState<Option[]>([]);
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+
+  useEffect(() =>
+    chrome.storage.local.get('testnet_enabled', (res) => setIsTestnetEnabled(res?.testnet_enabled))
+    , []);
 
   useEffect(() => {
     getAllMetadata().then((metadataDefs) => {
@@ -51,8 +57,10 @@ export default function (): Option[] {
               ({ genesisHash }) => genesisHash === value);
           }
         ))
+      // filter testnets if it is not enabled by user
+      .filter(({ text }) => !isTestnetEnabled ? !TEST_NETS.includes(text) : true)
       .sort((a, b) => a.text.localeCompare(b.text))
-  ], [metadataChains, t]);
+  ], [isTestnetEnabled, metadataChains, t]);
 
   return hashes;
 }

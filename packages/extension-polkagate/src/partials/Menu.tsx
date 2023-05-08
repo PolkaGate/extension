@@ -13,9 +13,10 @@ import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { riot } from '../assets/icons';
-import { AccountContext, ActionContext, MenuItem } from '../components';
+import { ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
+import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 
 interface Props {
@@ -23,12 +24,17 @@ interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const COLLAPSIBLE_MENUS = {
+  NONE: 0,
+  NEW_ACCOUNT: 1,
+  IMPORT_ACCOUNT: 2,
+  SETTING: 3
+};
+
 function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
-  const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
+  const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const onAction = useContext(ActionContext);
-  const { master } = useContext(AccountContext);
 
   const [data, setData] = useState<{ version: 'string' }>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
@@ -49,31 +55,27 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   }, []);
 
   const toggleImportSubMenu = useCallback(() => {
-    setShowImportSubMenu(!showImportSubMenu);
-    showSettingSubMenu && setShowSettingSubMenu(!showSettingSubMenu);
-  }, [showImportSubMenu, showSettingSubMenu]);
+    collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT
+      ? setCollapsedMenu(COLLAPSIBLE_MENUS.NONE)
+      : setCollapsedMenu(COLLAPSIBLE_MENUS.IMPORT_ACCOUNT);
+  }, [collapsedMenu]);
+
+  const toggleNewAccountSubMenu = useCallback(() => {
+    collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT
+      ? setCollapsedMenu(COLLAPSIBLE_MENUS.NONE)
+      : setCollapsedMenu(COLLAPSIBLE_MENUS.NEW_ACCOUNT);
+  }, [collapsedMenu]);
 
   const toggleSettingSubMenu = useCallback(() => {
-    setShowSettingSubMenu(!showSettingSubMenu);
-    showImportSubMenu && setShowImportSubMenu(!showImportSubMenu);
-  }, [showImportSubMenu, showSettingSubMenu]);
-
-  const _goToCreateAcc = useCallback(
-    () => {
-      onAction('/account/create');
-    }, [onAction]
-  );
+    collapsedMenu === COLLAPSIBLE_MENUS.SETTING
+      ? setCollapsedMenu(COLLAPSIBLE_MENUS.NONE)
+      : setCollapsedMenu(COLLAPSIBLE_MENUS.SETTING);
+  }, [collapsedMenu]);
 
   const _toggleSettings = useCallback(() => {
     setCloseMenu(true);
     setTimeout(() => setShowMenu(false), 300);
   }, [setShowMenu]);
-
-  const _goToDeriveAcc = useCallback(
-    () => {
-      master && onAction(`/derive/${master.address}`);
-    }, [master, onAction]
-  );
 
   const _goToExportAll = useCallback(
     () => {
@@ -126,11 +128,13 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
-          onClick={_goToCreateAcc}
-          text={t('Create new account')}
-        />
+          onClick={toggleNewAccountSubMenu}
+          text={t('New account')}
+        >
+          <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
+        </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           iconComponent={
@@ -140,10 +144,10 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             />
           }
           onClick={toggleImportSubMenu}
-          showSubMenu={showImportSubMenu}
+          showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
           text={t('Import account')}
         >
-          <ImportAccSubMenu toggleSettingSubMenu={toggleSettingSubMenu} show={showImportSubMenu} />
+          <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
         </MenuItem>
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
@@ -159,21 +163,13 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
         <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToDeriveAcc}
-          text={t('Derive from accounts')}
-        />
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-        <MenuItem
-          iconComponent={
             <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={toggleSettingSubMenu}
-          showSubMenu={showSettingSubMenu}
+          showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
           text={t('Setting')}
         >
-          <SettingSubMenu show={showSettingSubMenu} />
+          <SettingSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING} />
         </MenuItem>
         <Grid container justifyContent='space-between' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '85%', pl: '10px' }}>
           <Grid item>
@@ -206,7 +202,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
-    </Grid >
+    </Grid>
   );
 }
 

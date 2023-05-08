@@ -27,6 +27,11 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+
+  useEffect(() =>
+    chrome.storage.local.get('testnet_enabled', (res) => setIsTestnetEnabled(res?.testnet_enabled))
+    , []);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
@@ -82,6 +87,11 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
     setCamera(!camera);
   }, [camera]);
 
+  const toggleTestnetEnable = useCallback(() => {
+    setIsTestnetEnabled(!isTestnetEnabled);
+    chrome.storage.local.set({ testnet_enabled: !isTestnetEnabled });
+  }, [isTestnetEnabled]);
+
   const slideIn = keyframes`
   0% {
     display: none;
@@ -89,14 +99,14 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
   }
   100%{
     display: block;
-    height: 350px;
+    height: 370px;
   }
 `;
 
   const slideOut = keyframes`
   0% {
     display: block;
-    height: 350px;
+    height: 370px;
   }
   100%{
     display: none;
@@ -185,6 +195,15 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
             onChange={_onChangePrefix}
             options={prefixOptions}
             value={prefix ?? prefixOptions[2].value}
+          />
+        </Grid>
+        <Grid item pt='15px' textAlign='left'>
+          <Checkbox2
+            checked={isTestnetEnabled}
+            iconStyle={{ transform: 'scale(1.13)' }}
+            label={t<string>('Enable Testnet')}
+            labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
+            onChange={toggleTestnetEnable}
           />
         </Grid>
       </Grid>
