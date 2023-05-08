@@ -7,7 +7,7 @@ import { createWsEndpoints } from '@polkadot/apps-config';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { SavedMetaData } from '../util/types';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress, sanitizeChainName } from '../util/utils';
 import { useAccount } from '.';
 
 export function useEndpoint(addressOrFormatted: string | null | undefined, chain: Chain | null | undefined): string | undefined {
@@ -15,7 +15,7 @@ export function useEndpoint(addressOrFormatted: string | null | undefined, chain
   const account = useAccount(address);
 
   const endpoint = useMemo(() => {
-    const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+    const chainName = sanitizeChainName(chain?.name);
 
     // const account = Array.isArray(accounts) ? accounts.find((account) => account.address === address) : accounts;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { LinkOption } from '@polkadot/apps-config/settings/types';
 
+import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
 
 interface Option {
@@ -35,11 +36,14 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
     if (!genesisHash) {
       return [];
     }
-
+    
     const option = genesisOptions?.find((o) => o.value === genesisHash);
-    const chainName = option?.text?.replace(' Relay Chain', '')?.replace(' Network', '');
+    const chainName = sanitizeChainName(option?.text);
 
-    const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
+    const endpoints = allEndpoints?.filter((e) => e.value &&
+      (String(e.text)?.toLowerCase() === chainName?.toLowerCase() ||
+        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
+    );
 
     return chainName
       ? supportedLC.includes(chainName)

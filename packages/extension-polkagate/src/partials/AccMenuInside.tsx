@@ -8,13 +8,13 @@ import '@vaadin/icons';
 import { faCoins, faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
-import { ActionContext, Identicon, MenuItem, SettingsContext } from '../components';
-import { useAccount, useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
+import { ActionContext, Identity, MenuItem } from '../components';
+import { useAccount, useApi, useChain, useFormatted, useTranslation } from '../hooks';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,17 +26,15 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
   const { t } = useTranslation();
   const theme = useTheme();
   const history = useHistory();
-  const settings = useContext(SettingsContext);
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
 
   const account = useAccount(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
-  const name = useAccountName(address);
+  const api = useApi(address);
 
   const canDerive = !(account?.isExternal || account?.isHardware);
-  const prefix = chain ? chain.ss58Format : (settings.prefix === -1 ? 42 : settings.prefix);
 
   const _onForgetAccount = useCallback(() => {
     account && onAction(`/forget/${address}/${account?.isExternal}`);
@@ -79,19 +77,8 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-      <Grid container justifyContent='center' my='20px'>
-        <Identicon
-          className='identityIcon'
-          iconTheme={chain?.icon ?? 'polkadot'}
-          prefix={prefix}
-          size={40}
-          value={formatted || address}
-        />
-        <Grid item pl='10px' sx={{ flexWrap: 'nowrap', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          <Typography fontSize='28px' fontWeight={400} lineHeight={1.4}>
-            {name}
-          </Typography>
-        </Grid>
+      <Grid container justifyContent='center' my='20px' pl='25px'>
+        <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} />
       </Grid>
       <MenuItem
         iconComponent={

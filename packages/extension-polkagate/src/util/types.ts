@@ -30,8 +30,8 @@ export interface LastBalances {
   tokens: string[];
   freeBalance: BN;
   reservedBalance: BN;
-  frozenMisc: BN;
-  frozenFee: BN;
+  // frozenMisc: BN;
+  // frozenFee: BN;
   lockedBalance: BN;
   vestedBalance: BN;
   vestedClaimable: BN;

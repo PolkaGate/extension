@@ -22,7 +22,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } from '../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useEndpoint, useFormatted, useTranslation } from '../../hooks';
+import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
 import { FormattedAddressState } from '../../util/types';
@@ -38,7 +38,6 @@ export default function Send(): React.ReactElement {
   const { address } = useParams<FormattedAddressState>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
-  const endpoint = useEndpoint(address, chain);
   const api = useApi(address);
   const decimal = useDecimal(address);
 
@@ -85,10 +84,10 @@ export default function Send(): React.ReactElement {
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    endpoint && api && void api.derive.balances?.all(formatted).then((b) => {
+    api && void api.derive.balances?.all(formatted).then((b) => {
       setBalances(b);
     });
-  }, [api, formatted, endpoint]);
+  }, [api, formatted]);
 
   useEffect(() => {
     if (!api || !transfer || !formatted || !decimal) {

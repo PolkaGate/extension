@@ -15,7 +15,7 @@ import { BN } from '@polkadot/util';
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
-import { isHexToBn } from '../../../util/utils';
+import { isHexToBn, sanitizeChainName } from '../../../util/utils';
 
 interface Props {
   api: ApiPromise;
@@ -28,11 +28,11 @@ interface Props {
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfo ({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
-  const chainName = chain?.name?.replace(' Relay Chain', '')?.replace(' Network', '');
+  const chainName = sanitizeChainName(chain?.name);
 
   const sortedNominators = validatorInfo?.exposure?.others?.sort((a, b) => b.value - a.value);
   const own = api.createType('Balance', validatorInfo?.exposure.own || validatorInfo?.stakingLedger.active);
