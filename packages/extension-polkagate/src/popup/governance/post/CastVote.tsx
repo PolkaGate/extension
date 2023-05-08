@@ -6,12 +6,13 @@
 import type { TFunction } from 'i18next';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Time } from '@polkadot/util/types';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, extractTime, isString, isU8a, objectSpread, u8aToHex } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, extractTime } from '@polkadot/util';
 
 import { AmountWithOptions, From, Infotip, PButton, Select, ShowBalance, Warning } from '../../../components';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../hooks';
@@ -20,7 +21,7 @@ import { amountToHuman, amountToMachine, remainingTime } from '../../../util/uti
 import { CONVICTIONS, STATUS_COLOR } from '../utils/consts';
 import { ReferendumSubScan } from '../utils/types';
 import { getVoteType } from '../utils/util';
-import { getConviction, isAye } from './myVote/util';
+import { getConviction } from './myVote/util';
 
 interface Props {
   address: string | undefined;
@@ -419,7 +420,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
             </FormControl>
           </Grid>
           <AmountWithOptions
-            label={t<string>(`Vote Value(${token})`)}
+            label={t<string>(`Vote Value (${token})`)}
             onChangeAmount={onVoteAmountChange}
             onPrimary={onMaxAmount}
             onSecondary={onLockedAmount}

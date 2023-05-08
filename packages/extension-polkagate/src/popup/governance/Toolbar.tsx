@@ -12,6 +12,7 @@ import { MAX_WIDTH } from './utils/consts';
 import { TopMenu } from './utils/types';
 import ReferendaMenu from './ReferendaMenu';
 import { SubmitReferendum } from './submitReferendum';
+import { Delegate } from './delegate';
 
 interface Props {
   address: string | undefined;
@@ -26,9 +27,14 @@ interface Props {
 export default function Toolbar({ address, decidingCounts, menuOpen, selectedTopMenu, setMenuOpen, setSelectedSubMenu, setSelectedTopMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [openSubmitReferendum, setOpenSubmitReferendum] = React.useState(false);
+  const [openDelegate, setOpenDelegate] = React.useState(false);
 
   const handleOpenSubmitReferendum = () => {
     setOpenSubmitReferendum(true);
+  };
+
+  const handleOpenDelegate = () => {
+    setOpenDelegate(true);
   };
 
   const api = useApi(address);
@@ -65,7 +71,7 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
             <Grid container item justifyContent='flex-end' md={5}>
               <Button
                 // disabled={disabled}
-                // onClick={_onClick}
+                onClick={handleOpenDelegate}
                 sx={{
                   backgroundColor: 'background.paper',
                   borderRadius: '5px',
@@ -113,12 +119,20 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
       {menuOpen && selectedTopMenu === 'Referenda' &&
         <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
-       {openSubmitReferendum &&
+      {openSubmitReferendum &&
         <SubmitReferendum
           address={address}
           api={api}
           open={openSubmitReferendum}
           setOpen={setOpenSubmitReferendum}
+        />
+      }
+      {openDelegate &&
+        <Delegate
+          address={address}
+          api={api}
+          open={openDelegate}
+          setOpen={setOpenDelegate}
         />
       }
     </>

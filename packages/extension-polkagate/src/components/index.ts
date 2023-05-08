@@ -17,6 +17,7 @@ export { default as AutoResizeTextarea } from './AutoResizeTextarea';
 export { default as From } from './From';
 export { default as ButtonWithCancel } from './ButtonWithCancel';
 export { default as Button } from './Button';
+export { default as Convictions } from './Convictions';
 export { default as ChainLogo } from './ChainLogo';
 export { chooseTheme } from './chooseTheme';
 export { default as Checkbox2 } from './Checkbox2';
