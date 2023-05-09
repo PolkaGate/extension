@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { ShowBalance, ShowValue } from '../../../components';
+import { Infotip, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
@@ -77,9 +77,6 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
         <Grid fontWeight={700} item sx={{ height: '27px', textAlign: 'center' }} xs={12} mt='15px'>
           <ShowValue value={percent !== undefined ? `${percent?.toFixed(2)}%` : undefined} />
         </Grid>
-        <Grid color='text.disabled' fontSize='14px' fontWeight={400} item sx={{ textAlign: 'center' }} xs={12}>
-          {t('of all tokens')}
-        </Grid>
       </Grid>
       <Grid color='text.disabled' fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
         <ShowBalance
@@ -105,28 +102,15 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
     </Grid>
   );
 
-  const currentSupportColor = 'support.contrastText';
-  const supportThresholdColor = 'support.main';
-
-  const progressBgColor = supportPercent < currentSupportThreshold ? supportThresholdColor : currentSupportColor;
-  const progressColor = supportPercent < currentSupportThreshold ? currentSupportColor : supportThresholdColor;
-  const progressValue = Math.min(supportPercent, currentSupportThreshold) * 100 / Math.max(supportPercent, currentSupportThreshold);
-
   return (
     <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '45px' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mt: '15px', mx: '25px' }} xs={12}>
-        <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
-          {t('Support')}
-        </Typography>
+        <Infotip iconLeft={-150} iconTop={10} showQuestionMark text={t('Support is the ratio of votes in favor of a referendum to the total possible votes.')}>
+          <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
+            {t('Support')}
+          </Typography>
+        </Infotip>
       </Grid>
-      {/* <Grid item sx={{ mb: '27px', px: '24px', textAlign: 'center' }} xs={12}>
-        <LinearProgress
-          color='inherit'
-          sx={{ bgcolor: progressBgColor, color: progressColor, height: '33px', mt: '13px', width: '100%' }}
-          value={progressValue}
-          variant='determinate'
-        />
-      </Grid> */}
       <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
         <Tally
           amount={referendumInfoFromSubscan?.support_amount}
