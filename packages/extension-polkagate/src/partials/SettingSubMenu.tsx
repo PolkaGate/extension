@@ -36,20 +36,9 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
-
-  useEffect(() =>
-    chrome.storage.local.get('testnet_enabled', (res) => setIsTestnetEnabled(res?.testnet_enabled))
-    , [setIsTestnetEnabled]);
-
-  useEffect(() =>{
-    // eslint-disable-next-line no-void
-    void chrome.storage.local.set({ testnet_enabled: isTestnetEnabled });
-  }, [isTestnetEnabled]);
-
+  const [firstTime, setFirstTime] = useState<boolean>(true);
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
-
-  const [firstTime, setFirstTime] = useState<boolean>(true);
 
   useEffect(() => {
     show === false && setFirstTime(false);
@@ -58,6 +47,18 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
+
+  useEffect(() => {
+    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
+
+    isTestnetDisabled && (
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      })
+    );
+  }, [accounts]);
 
   interface Option {
     text: string;
@@ -101,15 +102,8 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
   }, [camera]);
 
   useEffect(() => {
-    !isTestnetEnabled && (
-      accounts?.forEach(({ address, genesisHash }) => {
-        if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          console.log(`${address} 's genesishash is setting to null`)
-          tieAccount(address, null).catch(console.error);
-        }
-      })
-    );
-  }, [accounts, isTestnetEnabled]);
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
+  }, [setIsTestnetEnabled]);
 
   const slideIn = keyframes`
   0% {
@@ -220,7 +214,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
           <Checkbox2
             checked={isTestnetEnabled}
             iconStyle={{ transform: 'scale(1.13)' }}
-            label={t<string>('Enable Testnet')}
+            label={t<string>('Enable testnet chain')}
             labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
             onChange={onChange}
           />

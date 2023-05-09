@@ -87,8 +87,9 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const onEnableTestnetConfirm = useCallback(() => {
     setShowWarning(false);
     setIsTestnetEnabled(true);
+    window.localStorage.setItem('testnet_enabled', 'true');
   }, []);
- 
+
   const onEnableTestnetReject = useCallback(() => {
     setShowWarning(false);
     setIsTestnetEnabled(false);
@@ -96,7 +97,11 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 
   const onEnableTestNetClick = useCallback(() => {
     !isTestnetEnabled && setShowWarning(true);
-    isTestnetEnabled && setIsTestnetEnabled(false);
+
+    if (isTestnetEnabled) {
+      window.localStorage.setItem('testnet_enabled', 'false');
+      setIsTestnetEnabled(false);
+    }
   }, [isTestnetEnabled]);
 
   const slideLeft = keyframes`
@@ -167,9 +172,9 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             >
               <SettingSubMenu
                 isTestnetEnabled={isTestnetEnabled}
+                onChange={onEnableTestNetClick}
                 setIsTestnetEnabled={setIsTestnetEnabled}
                 show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
-                onChange={onEnableTestNetClick}
               />
             </MenuItem>
           </>
@@ -191,6 +196,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             </Grid>
             <Grid container>
               <TwoButtons
+                mt='55px'
                 onPrimaryClick={onEnableTestnetConfirm}
                 onSecondaryClick={onEnableTestnetReject}
                 primaryBtnText={t<string>('Confirm')}

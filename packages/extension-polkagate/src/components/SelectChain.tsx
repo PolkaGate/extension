@@ -33,7 +33,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
   const theme = useTheme();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const _disabledItems = useMemo((): (string | number)[] | undefined => {
-    if (disabledItems && isTestnetEnabled) {
+    if (disabledItems && !isTestnetEnabled) {
       return disabledItems.concat(TEST_NETS) as (string | number)[];
     }
 
@@ -45,7 +45,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
   }, [disabledItems, isTestnetEnabled]);
 
   useEffect(() =>
-    chrome.storage.local.get('testnet_enabled', (res) => setIsTestnetEnabled(res?.testnet_enabled))
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
     , []);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {

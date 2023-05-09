@@ -11,7 +11,9 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../../components';
 import { useChainNames, usePrices, useTranslation } from '../../hooks';
+import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { TEST_NETS } from '../../util/constants';
 import getNetworkMap from '../../util/getNetworkMap';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
@@ -21,7 +23,7 @@ import YouHave from './YouHave';
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts, hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
@@ -32,6 +34,18 @@ export default function Home(): React.ReactElement {
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
   const networkMap = useMemo(() => getNetworkMap(), []);
+
+  useEffect(() => {
+    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
+
+    isTestnetDisabled && (
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      })
+    );
+  }, [accounts]);
 
   useEffect(() => {
     const dayInMs = 24 * 60 * 60 * 1000;
