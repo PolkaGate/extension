@@ -383,6 +383,7 @@ export const prodRelayPolkadot = {
     Dwellir: 'wss://polkadot-rpc.dwellir.com',
     Pinknode: 'wss://public-rpc.pinknode.io/polkadot',
     RadiumBlock: 'wss://polkadot.public.curie.radiumblock.io/ws',
+    LuckyFriday:'wss://rpc-polkadot.luckyfriday.io',
     // 'Geometry Labs': 'wss://polkadot.geometry.io/websockets', // https://github.com/polkadot-js/apps/pull/6746
     'Automata 1RPC': 'wss://1rpc.io/dot',
     // NOTE: Keep this as the last entry, nothing after it
