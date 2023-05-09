@@ -32,11 +32,17 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
-  const _disabledItems = useMemo((): string[] | number[] | undefined =>
-    (disabledItems && isTestnetEnabled)
-      ? disabledItems.concat(TEST_NETS) as string[] | number[]
-      : (disabledItems || TEST_NETS)
-    , [disabledItems, isTestnetEnabled]);
+  const _disabledItems = useMemo((): (string | number)[] | undefined => {
+    if (disabledItems && isTestnetEnabled) {
+      return disabledItems.concat(TEST_NETS) as (string | number)[];
+    }
+
+    if (!isTestnetEnabled) {
+      return TEST_NETS;
+    }
+
+    return disabledItems;
+  }, [disabledItems, isTestnetEnabled]);
 
   useEffect(() =>
     chrome.storage.local.get('testnet_enabled', (res) => setIsTestnetEnabled(res?.testnet_enabled))
