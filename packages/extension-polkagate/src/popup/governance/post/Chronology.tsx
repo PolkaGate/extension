@@ -13,7 +13,7 @@ import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineOppositeContent, { timelineOppositeContentClasses } from '@mui/lab/TimelineOppositeContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -100,6 +100,10 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
       return isInTreasuryQueue ? 'Awarded' : 'To be Awarded';
     }
   }, [currentTreasuryApprovalList, isAwardedBasedOnPA, isInTreasuryQueue, isTreasuryProposalBasedOnPA, referendum]);
+
+  useEffect(() =>
+    setExpanded(!!referendum?.statusHistory?.length)
+    , [referendum]);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);

@@ -6,7 +6,7 @@
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { BN } from '@polkadot/util';
@@ -25,19 +25,27 @@ interface Props {
   currentTreasuryApprovalList: Proposal[] | undefined;
 }
 
+const DEFAULT_CONTENT = 'This referendum does not have a description provided by the creator. Please research and learn about the proposal before casting your vote.'
+
 export default function ReferendumDescription({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address)
+  const api = useApi(address);
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  
+  const [expanded, setExpanded] = useState<boolean>(false);
 
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
-
   const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
+  const content = useMemo(() =>
+    referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content
+    , [referendum?.content, t]);
 
-  const [expanded, setExpanded] = React.useState(true);
+  useEffect(() =>
+    setExpanded(!!referendum)
+    , [referendum]);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -53,7 +61,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
         </Paper>
       }
       <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%' }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
           <Grid container item>
             <Grid container item xs={12}>
               <Typography fontSize={24} fontWeight={500}>
@@ -103,14 +111,12 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           </Grid>
         </AccordionSummary>
         <AccordionDetails sx={{ px: 0 }}>
-          <Grid container item xs={12} sx={{ display: 'inline-block', overflowWrap: 'break-word', wordWrap: 'break-word', wordBreak: 'break-all' }}>
-            {referendum?.content &&
-              <ReactMarkdown
-                components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
-              >
-                {referendum?.content?.replace(/<br\s*\/?>/gi, ' ')}
-              </ReactMarkdown>
-            }
+          <Grid container item sx={{ display: 'inline-block', overflowWrap: 'break-word', wordWrap: 'break-word', wordBreak: 'break-all' }} xs={12}>
+            <ReactMarkdown
+              components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
+            >
+              {content?.replace(/<br\s*\/?>/gi, ' ') || ''}
+            </ReactMarkdown>
           </Grid>
         </AccordionDetails>
       </Accordion>

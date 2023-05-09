@@ -5,7 +5,7 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { useChainName, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly } from '../utils/types';
@@ -17,6 +17,10 @@ export default function Comments({ address, referendum }: { address: string | un
   const theme = useTheme();
   const ChainName = useChainName(address);
   const [expanded, setExpanded] = React.useState(false);
+
+  useEffect(() =>
+    setExpanded(!!referendum?.comments?.length)
+    , [referendum]);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
