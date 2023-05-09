@@ -18,7 +18,14 @@ import { setNotification, tieAccount, windowOpen } from '../messaging';
 import { TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 
-export default function SettingSubMenu({ show }: { show: boolean }): React.ReactElement {
+interface Props {
+  isTestnetEnabled: boolean | undefined;
+  setIsTestnetEnabled: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  show: boolean;
+  onChange: () => void;
+}
+
+export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestnetEnabled, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
@@ -29,11 +36,15 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
-  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
   useEffect(() =>
     chrome.storage.local.get('testnet_enabled', (res) => setIsTestnetEnabled(res?.testnet_enabled))
-    , []);
+    , [setIsTestnetEnabled]);
+
+  useEffect(() =>{
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.set({ testnet_enabled: isTestnetEnabled });
+  }, [isTestnetEnabled]);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
@@ -88,11 +99,6 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
   const toggleCamera = useCallback(() => {
     setCamera(!camera);
   }, [camera]);
-
-  const toggleTestnetEnable = useCallback(() => {
-    setIsTestnetEnabled(!isTestnetEnabled);
-    chrome.storage.local.set({ testnet_enabled: !isTestnetEnabled }).catch(console.error);
-  }, [isTestnetEnabled]);
 
   useEffect(() => {
     !isTestnetEnabled && (
@@ -216,7 +222,7 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
             iconStyle={{ transform: 'scale(1.13)' }}
             label={t<string>('Enable Testnet')}
             labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
-            onChange={toggleTestnetEnable}
+            onChange={onChange}
           />
         </Grid>
       </Grid>
