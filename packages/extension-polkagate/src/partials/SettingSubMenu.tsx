@@ -12,9 +12,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
+import { AccountContext, ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
-import { setNotification, windowOpen } from '../messaging';
+import { setNotification, tieAccount, windowOpen } from '../messaging';
+import { TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
 
 export default function SettingSubMenu({ show }: { show: boolean }): React.ReactElement {
@@ -23,6 +24,7 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
   const isPopup = useIsPopup();
   const onAction = useContext(ActionContext);
   const colorMode = useContext(ColorContext);
+  const { accounts } = useContext(AccountContext);
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
@@ -89,8 +91,19 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
 
   const toggleTestnetEnable = useCallback(() => {
     setIsTestnetEnabled(!isTestnetEnabled);
-    chrome.storage.local.set({ testnet_enabled: !isTestnetEnabled });
+    chrome.storage.local.set({ testnet_enabled: !isTestnetEnabled }).catch(console.error);
   }, [isTestnetEnabled]);
+
+  useEffect(() => {
+    !isTestnetEnabled && (
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          console.log(`${address} 's genesishash is setting to null`)
+          tieAccount(address, null).catch(console.error);
+        }
+      })
+    );
+  }, [accounts, isTestnetEnabled]);
 
   const slideIn = keyframes`
   0% {

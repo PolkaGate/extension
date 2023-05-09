@@ -54,10 +54,10 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, setShowMenu }: P
   );
 
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
-    const availableGensisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
+    const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
-    address && tieAccount(address, availableGensisHash).catch(console.error);
-    setGenesis(availableGensisHash ?? undefined);
+    address && tieAccount(address, availableGenesisHash).catch(console.error);
+    setGenesis(availableGenesisHash ?? undefined);
   }, [address]);
 
   const _onRenameAccount = useCallback(() => {
