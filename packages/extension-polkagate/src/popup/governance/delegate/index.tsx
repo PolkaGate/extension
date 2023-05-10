@@ -17,7 +17,7 @@ import { useApi, useBalances, useDecimal, useFormatted, useToken, useTracks, use
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { toTitleCase } from '../utils/util';
-import AlreadyLockedTooltipText, { getAlreadyLockedValue } from './xAlreadyLockedTooltipText ';
+import AlreadyLockedTooltipText, { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 
 interface Props {
   api: ApiPromise;
