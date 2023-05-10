@@ -28,6 +28,11 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
   const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , [showRecentChains]);
 
   useEffect(() => {
     if (!address || !account) {
@@ -190,11 +195,15 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const closeRecentChains = useCallback(() => setShowRecentChains(false), [setShowRecentChains]);
 
   const selectNetwork = useCallback((newChainName: string) => {
+    if (newChainName.toLowerCase() === 'westend' && !isTestnetEnabled) {
+      return;
+    }
+
     const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
     setFirstTime(false);
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
-  }, [address, genesisHashes]);
+  }, [address, genesisHashes, isTestnetEnabled]);
 
   return (
     <>
@@ -253,8 +262,9 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
               animationName: `${showRecentChains
                 ? threeItemSlide.up[index]
                 : threeItemSlide.down[index]}`,
-              cursor: 'pointer',
+              cursor: !isTestnetEnabled && name?.toLowerCase() === 'westend' ? 'default' : 'pointer',
               left: 0,
+              opacity: !isTestnetEnabled && name?.toLowerCase() === 'westend' ? '0.6' : 1,
               top: '-5px'
             }}
           >
