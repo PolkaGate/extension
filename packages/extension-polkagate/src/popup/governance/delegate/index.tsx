@@ -5,17 +5,19 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Box, Grid, Modal, Typography, useTheme, List, ListItem, ListItemButton, ListItemIcon, Checkbox, ListItemText } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Close as CloseIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { Box, Checkbox, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AmountWithOptions, Convictions, From, ShowBalance } from '../../../components';
+import { AmountWithOptions, Convictions, From, Infotip, ShowBalance } from '../../../components';
 import { useApi, useBalances, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
+import { toTitleCase } from '../utils/util';
+import AlreadyLockedTooltipText, { getAlreadyLockedValue } from './xAlreadyLockedTooltipText ';
 
 interface Props {
   api: ApiPromise;
@@ -32,10 +34,11 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
   const tracks = useTracks(address);
+  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
 
   const balances = useBalances(address, undefined, undefined, true);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [amount, setAmount] = useState<string>('0');
+  const [delegateAmount, setDelegateAmount] = useState<string>('0');
   const [conviction, setConviction] = useState<number>(1);
   const [checked, setChecked] = useState([0]);
 
@@ -44,6 +47,16 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
   const handleClose = () => {
     setOpen(false);
   };
+
+  const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
+
+  const onLockedAmount = useCallback(() => {
+    if (!lockedAmount) {
+      return;
+    }
+
+    setDelegateAmount(amountToHuman(lockedAmount, decimal));
+  }, [decimal, lockedAmount]);
 
   const style = {
     bgcolor: 'background.paper',
@@ -56,7 +69,7 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
     px: 4,
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 850
+    width: 600
   };
 
   useEffect(() => {
@@ -84,7 +97,7 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
     const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
-    maxToHuman && setAmount(maxToHuman);
+    maxToHuman && setDelegateAmount(maxToHuman);
   }, [api, balances, decimal, estimatedFee]);
 
   const onValueChange = useCallback((value: string) => {
@@ -98,7 +111,7 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
       return;
     }
 
-    setAmount(value.slice(0, MAX_AMOUNT_LENGTH));
+    setDelegateAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
   const handleToggle = (value: number) => () => {
@@ -112,18 +125,15 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
     }
 
     setChecked(newChecked);
-  }
+  };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-    >
+    <Modal onClose={handleClose} open={open}>
       <Box sx={{ ...style }}>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {t('Delegate')}
+              {t('Delegate Vote (1/3)')}
             </Typography>
           </Grid>
           <Grid item>
@@ -131,27 +141,38 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
           </Grid>
         </Grid>
         <Typography fontSize='16px' fontWeight={400} sx={{ py: '20px', textAlign: 'left' }}>
-          {t('Give your voting power to another account. Your funds will be locked for the delegation period. Once you delegate, you won\'t be able to access your funds until the delegation period ends.')}
+          {t('Give your voting power to another account.')}
         </Typography>
-        <Grid container sx={{ pt: '15px' }} item xs={6}>
-          <From
-            address={address}
-            api={api}
-            style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
-            title={t<string>('From account')}
-          />
-          <AmountWithOptions
-            label={t<string>(`Value (${token})`)}
-            onChangeAmount={onValueChange}
-            onPrimary={onMaxAmount}
-            primaryBtnText={t<string>('Max amount')}
-            style={{
-              fontSize: '16px',
-              mt: '15px',
-              width: '100%'
-            }}
-            value={amount}
-          />
+        <Grid alignItems='center' container justifyContent='space-between'>
+          <Grid item xs={8}>
+            <From
+              address={address}
+              api={api}
+              style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
+              title={t<string>('From account')}
+            />
+          </Grid>
+          <Grid alignItems='center' container item sx={{ cursor: 'pointer', mt: '25px' }} xs={3}>
+            {t('Existing votes')}
+            <ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />
+          </Grid>
+        </Grid>
+        <AmountWithOptions
+          inputWidth={9}
+          label={t<string>(`Value (${token})`)}
+          onChangeAmount={onValueChange}
+          onPrimary={onMaxAmount}
+          onSecondary={onLockedAmount}
+          primaryBtnText={t<string>('Max amount')}
+          secondaryBtnText={t<string>('Locked amount')}
+          style={{
+            fontSize: '16px',
+            mt: '15px',
+            width: '100%'
+          }}
+          value={delegateAmount}
+        />
+        <Grid container item xs={9}>
           <Grid container item justifyContent='space-between' sx={{ mt: '10px' }}>
             <Grid item sx={{ fontSize: '16px' }}>
               {t('Available Voting Balance')}
@@ -160,58 +181,59 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
               <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
           </Grid>
-          <Convictions
-            address={address}
-            conviction={conviction}
-            setConviction={setConviction}
-          >
-            <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
-              <Grid item>
-                <Typography sx={{ fontSize: '16px' }}>
-                  {t('Your final delegated vote power after multiplying')}
-                </Typography>
-              </Grid>
-              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                <ShowBalance balance={amountToMachine(amount, decimal).muln(conviction)} decimal={decimal} token={token} />
-              </Grid>
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px' }}>
+            <Grid item sx={{ fontSize: '16px' }}>
+              <Infotip iconLeft={5} iconTop={4} showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+                {t('Already Locked Balance')}
+              </Infotip>
             </Grid>
-          </Convictions>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              <Infotip iconLeft={5} iconTop={2} showInfoMark text={<AlreadyLockedTooltipText address={address} /> || 'Fetching ...'}>
+                <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
+              </Infotip>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs>
+        <Convictions
+          address={address}
+          conviction={conviction}
+          setConviction={setConviction}
+        >
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
+            <Grid item>
+              <Typography sx={{ fontSize: '16px' }}>
+                {t('Your final delegated vote power after multiplying')}
+              </Typography>
+            </Grid>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              <ShowBalance balance={amountToMachine(delegateAmount, decimal).muln(conviction)} decimal={decimal} token={token} />
+            </Grid>
+          </Grid>
+        </Convictions>
         <Typography fontSize='16px' fontWeight={400} sx={{ pt: '20px', textAlign: 'left' }}>
-          {t('Choose tracks to delegate to')}
+          {t('Select tracks to delegate to')}
         </Typography>
-          <List sx={{ width: '100%', maxWidth: 360, border: 1, height: '300px', overflowY: 'scroll' }}>
-            {tracks?.map((value) => {
-              const labelId = `checkbox-list-label-${value}`;
-
-              return (
-                <ListItem
-                  key={value[0]}
-                  // secondaryAction={
-                  //   <IconButton edge="end" aria-label="comments">
-                  //     <CommentIcon />
-                  //   </IconButton>
-                  // }
-                  disablePadding
-                >
-                  <ListItemButton role={undefined} onClick={handleToggle(value[0])} dense>
-                    <ListItemIcon>
-                      <Checkbox
-                        edge="start"
-                        checked={checked.indexOf(value[0]) !== -1}
-                        tabIndex={-1}
-                        disableRipple
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </ListItemIcon>
-                    <ListItemText id={labelId} primary={`${value[1].name}`} />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Grid>
+        <List sx={{ width: '100%', maxWidth: '100%', border: 1, borderColor: 'primary.main', borderRadius: '10px', height: '300px', overflowY: 'scroll' }}>
+          {tracks?.map((value) => (
+            <ListItem
+              disablePadding
+              key={value[0]}
+              sx={{ height: '20px' }}
+            >
+              <ListItemButton dense onClick={handleToggle(value[0])} role={undefined}>
+                <ListItemText primary={`${toTitleCase(value[1].name)}`} />
+                <ListItemIcon>
+                  <Checkbox
+                    checked={checked.indexOf(value[0]) !== -1}
+                    // disableRipple
+                    edge='end'
+                    tabIndex={-1}
+                  />
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
       </Box>
     </Modal>
   );

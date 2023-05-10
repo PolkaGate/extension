@@ -19,9 +19,10 @@ interface Props {
   onPrimary: () => void;
   label: string;
   style?: SxProps<Theme> | undefined;
+  inputWidth?: number;
 }
 
-export default function AmountWithOptions({ disabled, label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
+export default function AmountWithOptions({ disabled, inputWidth = 8, label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
   }, [onChangeAmount]);
@@ -30,7 +31,7 @@ export default function AmountWithOptions({ disabled, label, onChangeAmount, onP
 
   return (
     <Grid container sx={style}>
-      <Grid item xs={8}>
+      <Grid item xs={inputWidth}>
         <InputWithLabel
           disabled={disabled}
           fontSize={28}
@@ -43,7 +44,7 @@ export default function AmountWithOptions({ disabled, label, onChangeAmount, onP
           value={value}
         />
       </Grid>
-      <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs={4}>
+      <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs>
         <Grid aria-label='primaryBtn' item onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>

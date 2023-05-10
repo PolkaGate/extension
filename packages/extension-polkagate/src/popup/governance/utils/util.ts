@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN } from '@polkadot/util';
+
 import { isAye, Vote } from '../post/myVote/util';
 
 export function toSnakeCase(input: string | undefined): string | undefined {

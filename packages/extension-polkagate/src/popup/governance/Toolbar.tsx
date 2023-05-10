@@ -88,7 +88,7 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
                 }}
                 variant='contained'
               >
-                {t('Multirole Delegate')}
+                {t('Delegate Vote')}
               </Button>
               <Button
                 disabled={!api}

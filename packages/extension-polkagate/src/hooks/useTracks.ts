@@ -1,16 +1,10 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
-
 import { useEffect, useMemo, useState } from 'react';
 
+import { Track } from './useTrack';
 import { useApi, useChainName } from '.';
-
-export type Track = {
-  id: number,
-  info: PalletReferendaTrackInfo
-}
 
 export default function useTracks(address: string | undefined): Track[] | undefined {
   const api = useApi(address);
