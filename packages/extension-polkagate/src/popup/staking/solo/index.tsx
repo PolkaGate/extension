@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { BalancesInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -59,13 +59,14 @@ export default function Index(): React.ReactElement {
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const myBalances = useBalances(address, refresh, setRefresh);
-  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId, refresh, setRefresh);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useMyAccountIdentity(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
 
-  const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
+  const [mayBeMyStashBalances, setMayBeMyStashBalances] = useState<BalancesInfo | undefined>();
+
+  const balances = useMemo(() => stakingAccount?.stashId === formatted ? myBalances : mayBeMyStashBalances, [formatted, mayBeMyStashBalances, myBalances, stakingAccount?.stashId]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
@@ -91,6 +92,12 @@ export default function Index(): React.ReactElement {
           ? 'Controller'
           : 'undefined' // default
     , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
+
+  useEffect(() => {
+    api && stakingAccount?.stashId && chainName && decimal && token && api.derive.balances?.all(stakingAccount?.stashId).then((b) => {
+      setMayBeMyStashBalances({ ...b, chainName, genesisHash: api.genesisHash.toString(), date: Date.now(), decimal, token });
+    }).catch(console.error);
+  }, [api, chainName, decimal, stakingAccount?.stashId, token]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {

@@ -4,10 +4,10 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useChainName } from '@polkadot/extension-polkagate/src/hooks';
-import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
+import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import Select from './Select';
@@ -31,6 +31,22 @@ interface Props {
 function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const _disabledItems = useMemo((): (string | number)[] | undefined => {
+    if (disabledItems && !isTestnetEnabled) {
+      return disabledItems.concat(TEST_NETS) as (string | number)[];
+    }
+
+    if (!isTestnetEnabled) {
+      return TEST_NETS;
+    }
+
+    return disabledItems;
+  }, [disabledItems, isTestnetEnabled]);
+
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , []);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -75,7 +91,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
       <Grid item xs={10.5}>
         <Select
           defaultValue={defaultValue}
-          disabledItems={disabledItems}
+          disabledItems={_disabledItems}
           isDisabled={!address}
           label={label}
           onChange={onChangeNetwork}

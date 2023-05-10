@@ -508,6 +508,7 @@ export const prodRelayKusama = {
     Dwellir: 'wss://kusama-rpc.dwellir.com',
     RadiumBlock: 'wss://kusama.public.curie.radiumblock.xyz/ws',
     Pinknode: 'wss://public-rpc.pinknode.io/kusama',
+    LuckyFriday:'wss://rpc-kusama.luckyfriday.io',
     // 'Geometry Labs': 'wss://kusama.geometry.io/websockets', // https://github.com/polkadot-js/apps/pull/6746
     'Automata 1RPC': 'wss://1rpc.io/ksm',
     // NOTE: Keep this as the last entry, nothing after it
