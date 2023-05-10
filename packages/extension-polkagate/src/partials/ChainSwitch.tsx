@@ -34,6 +34,8 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   const currentChainName = currentChainNameJustSelected || currentChainNameFromAccount;
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
+  const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
   useEffect(() =>
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
     , [showOtherChains]);
@@ -132,7 +134,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   };
 
   const selectNetwork = useCallback((newChainName: string) => {
-    if (newChainName.toLowerCase() === 'westend' && !isTestnetEnabled) {
+    if (isTestnetDisabled(newChainName)) {
       return;
     }
 
@@ -144,7 +146,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
       setCurrentChainNameJustSelected(currentChainNameFromAccount);
       console.error(err);
     });
-  }, [address, currentChainNameFromAccount, genesisHashes, isTestnetEnabled]);
+  }, [address, currentChainNameFromAccount, genesisHashes, isTestnetDisabled]);
 
   const toggleChainSwitch = useCallback(() => chainNamesToShow && chainNamesToShow.length > 1 ? setShowOtherChains(!showOtherChains) : selectNetwork(chainNamesToShow[0]), [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
@@ -211,9 +213,9 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
                   animationName: `${showOtherChains
                     ? twoItemSlide.down[index]
                     : twoItemSlide.up[index]}`,
-                  cursor: !isTestnetEnabled && name?.toLowerCase() === 'westend' ? 'default' : 'pointer',
+                  cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
                   left: 0,
-                  opacity: !isTestnetEnabled && name?.toLowerCase() === 'westend' ? '0.6' : 1,
+                  opacity: isTestnetDisabled(name) ? '0.6' : 1,
                   top: '-5px'
                 }}
               >

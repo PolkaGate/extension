@@ -30,6 +30,8 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
+  const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
   useEffect(() =>
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
     , [showRecentChains]);
@@ -79,51 +81,6 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
     to{
       transform: scale(1) translateY(-25px);
     }`
-  };
-
-  const twoItemSlide = {
-    down: [
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(-14px, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(14px, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `],
-    up: [keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(-14px, -30px, 0);
-      }
-    `,
-    keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(14px, -30px, 0);
-      }
-    `
-    ]
   };
 
   const threeItemSlide = {
@@ -195,7 +152,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const closeRecentChains = useCallback(() => setShowRecentChains(false), [setShowRecentChains]);
 
   const selectNetwork = useCallback((newChainName: string) => {
-    if (newChainName.toLowerCase() === 'westend' && !isTestnetEnabled) {
+    if (isTestnetDisabled(newChainName)) {
       return;
     }
 
@@ -262,9 +219,9 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
               animationName: `${showRecentChains
                 ? threeItemSlide.up[index]
                 : threeItemSlide.down[index]}`,
-              cursor: !isTestnetEnabled && name?.toLowerCase() === 'westend' ? 'default' : 'pointer',
+              cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
               left: 0,
-              opacity: !isTestnetEnabled && name?.toLowerCase() === 'westend' ? '0.6' : 1,
+              opacity: isTestnetDisabled(name) ? '0.6' : 1,
               top: '-5px'
             }}
           >
