@@ -51,6 +51,7 @@ export default function (): Option[] {
               ({ genesisHash }) => genesisHash === value);
           }
         ))
+      // filter testnets if it is not enabled by user
       .sort((a, b) => a.text.localeCompare(b.text))
   ], [metadataChains, t]);
 

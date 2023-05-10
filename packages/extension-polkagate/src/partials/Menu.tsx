@@ -8,14 +8,15 @@ import '@vaadin/icons';
 import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon, Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, Link } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Link, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { riot } from '../assets/icons';
-import { AccountContext, ActionContext, MenuItem } from '../components';
+import { ActionContext, MenuItem, TwoButtons, Warning } from '../components';
 import { useTranslation } from '../hooks';
 import ImportAccSubMenu from './ImportAccSubMenu';
+import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 
 interface Props {
@@ -23,12 +24,20 @@ interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const COLLAPSIBLE_MENUS = {
+  NONE: 0,
+  NEW_ACCOUNT: 1,
+  IMPORT_ACCOUNT: 2,
+  SETTING: 3
+};
+
 function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const [showImportSubMenu, setShowImportSubMenu] = useState<boolean>(false);
-  const [showSettingSubMenu, setShowSettingSubMenu] = useState<boolean>(true);
+  const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [showWarning, setShowWarning] = useState<boolean>();
+
   const onAction = useContext(ActionContext);
-  const { master } = useContext(AccountContext);
 
   const [data, setData] = useState<{ version: 'string' }>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
@@ -49,37 +58,51 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   }, []);
 
   const toggleImportSubMenu = useCallback(() => {
-    setShowImportSubMenu(!showImportSubMenu);
-    showSettingSubMenu && setShowSettingSubMenu(!showSettingSubMenu);
-  }, [showImportSubMenu, showSettingSubMenu]);
+    collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT
+      ? setCollapsedMenu(COLLAPSIBLE_MENUS.NONE)
+      : setCollapsedMenu(COLLAPSIBLE_MENUS.IMPORT_ACCOUNT);
+  }, [collapsedMenu]);
+
+  const toggleNewAccountSubMenu = useCallback(() => {
+    collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT
+      ? setCollapsedMenu(COLLAPSIBLE_MENUS.NONE)
+      : setCollapsedMenu(COLLAPSIBLE_MENUS.NEW_ACCOUNT);
+  }, [collapsedMenu]);
 
   const toggleSettingSubMenu = useCallback(() => {
-    setShowSettingSubMenu(!showSettingSubMenu);
-    showImportSubMenu && setShowImportSubMenu(!showImportSubMenu);
-  }, [showImportSubMenu, showSettingSubMenu]);
-
-  const _goToCreateAcc = useCallback(
-    () => {
-      onAction('/account/create');
-    }, [onAction]
-  );
+    collapsedMenu === COLLAPSIBLE_MENUS.SETTING
+      ? setCollapsedMenu(COLLAPSIBLE_MENUS.NONE)
+      : setCollapsedMenu(COLLAPSIBLE_MENUS.SETTING);
+  }, [collapsedMenu]);
 
   const _toggleSettings = useCallback(() => {
     setCloseMenu(true);
     setTimeout(() => setShowMenu(false), 300);
   }, [setShowMenu]);
 
-  const _goToDeriveAcc = useCallback(
-    () => {
-      master && onAction(`/derive/${master.address}`);
-    }, [master, onAction]
-  );
+  const _goToExportAll = useCallback(() => {
+    onAction('/account/export-all');
+  }, [onAction]);
 
-  const _goToExportAll = useCallback(
-    () => {
-      onAction('/account/export-all');
-    }, [onAction]
-  );
+  const onEnableTestnetConfirm = useCallback(() => {
+    setShowWarning(false);
+    setIsTestnetEnabled(true);
+    window.localStorage.setItem('testnet_enabled', 'true');
+  }, []);
+
+  const onEnableTestnetReject = useCallback(() => {
+    setShowWarning(false);
+    setIsTestnetEnabled(false);
+  }, []);
+
+  const onEnableTestNetClick = useCallback(() => {
+    !isTestnetEnabled && setShowWarning(true);
+
+    if (isTestnetEnabled) {
+      window.localStorage.setItem('testnet_enabled', 'false');
+      setIsTestnetEnabled(false);
+    }
+  }, [isTestnetEnabled]);
 
   const slideLeft = keyframes`
   0% {
@@ -100,82 +123,89 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 `;
 
   return (
-    <Grid
-      bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'}
-      container
-      height='100%'
-      justifyContent='end'
-      sx={[{
-        animationDuration: '0.2s',
-        animationFillMode: 'forwards',
-        animationName: `${!closeMenu ? slideLeft : slideRight}`,
-        position: 'absolute',
-        right: 0,
-        position: 'absolute',
-        top: 0,
-        mixBlendMode: 'normal',
-        overflowY: 'scroll',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none',
-          width: 0
-        }
-      }]}
-      zIndex={10}
-    >
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, position: 'absolute', top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10}    >
       <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToCreateAcc}
-          text={t('Create new account')}
-        />
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-        <MenuItem
-          iconComponent={
-            <FontAwesomeIcon
-              color={theme.palette.text.primary}
-              icon={faFileImport}
+        {!showWarning
+          ? <>
+            <MenuItem
+              iconComponent={
+                <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              }
+              onClick={toggleNewAccountSubMenu}
+              text={t('New account')}
+            >
+              <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
+            </MenuItem>
+            <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+            <MenuItem
+              iconComponent={
+                <FontAwesomeIcon
+                  color={theme.palette.text.primary}
+                  icon={faFileImport}
+                />
+              }
+              onClick={toggleImportSubMenu}
+              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
+              text={t('Import account')}
+            >
+              <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
+            </MenuItem>
+            <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+            <MenuItem
+              iconComponent={
+                <FontAwesomeIcon
+                  color={theme.palette.text.primary}
+                  icon={faFileExport}
+                />
+              }
+              onClick={_goToExportAll}
+              text={t('Export all accounts')}
             />
-          }
-          onClick={toggleImportSubMenu}
-          showSubMenu={showImportSubMenu}
-          text={t('Import account')}
-        >
-          <ImportAccSubMenu toggleSettingSubMenu={toggleSettingSubMenu} show={showImportSubMenu} />
-        </MenuItem>
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-        <MenuItem
-          iconComponent={
-            <FontAwesomeIcon
-              color={theme.palette.text.primary}
-              icon={faFileExport}
-            />
-          }
-          onClick={_goToExportAll}
-          text={t('Export all accounts')}
-        />
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={_goToDeriveAcc}
-          text={t('Derive from accounts')}
-        />
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
-        <MenuItem
-          iconComponent={
-            <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-          }
-          onClick={toggleSettingSubMenu}
-          showSubMenu={showSettingSubMenu}
-          text={t('Setting')}
-        >
-          <SettingSubMenu show={showSettingSubMenu} />
-        </MenuItem>
-        <Grid container justifyContent='space-between' fontSize='11px' sx={{ position: 'absolute', bottom: '10px', width: '85%', pl: '10px' }}>
+            <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+            <MenuItem
+              iconComponent={
+                <vaadin-icon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+              }
+              onClick={toggleSettingSubMenu}
+              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
+              text={t('Setting')}
+            >
+              <SettingSubMenu
+                isTestnetEnabled={isTestnetEnabled}
+                onChange={onEnableTestNetClick}
+                setIsTestnetEnabled={setIsTestnetEnabled}
+                show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
+              />
+            </MenuItem>
+          </>
+          : <Grid container justifyContent='space-between' sx={{ pt: '30px' }}>
+            <Grid item xs={12} sx={{ textAlign: 'center', pb: '35px' }}>
+              <Typography fontSize='20px'>
+                {t('Warning')}
+              </Typography>
+            </Grid>
+            <Grid container sx={{ textAlign: 'justify', '> div': { pl: 0 } }}>
+              <Warning
+                iconDanger
+                isBelowInput
+                marginTop={0}
+                theme={theme}
+              >
+                {t<string>('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
+              </Warning>
+            </Grid>
+            <Grid container>
+              <TwoButtons
+                mt='55px'
+                onPrimaryClick={onEnableTestnetConfirm}
+                onSecondaryClick={onEnableTestnetReject}
+                primaryBtnText={t<string>('Confirm')}
+                secondaryBtnText={t<string>('Reject')}
+              />
+            </Grid>
+          </Grid>
+        }
+        <Grid container fontSize='11px' justifyContent='space-between' sx={{ bottom: '10px', position: 'absolute', pl: '10px', width: '85%' }}>
           <Grid item>
             {`${t('Version')} ${data?.version || ''}`}
           </Grid>
@@ -206,7 +236,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
       <IconButton onClick={_toggleSettings} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
         <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
       </IconButton>
-    </Grid >
+    </Grid>
   );
 }
 

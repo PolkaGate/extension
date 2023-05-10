@@ -32,6 +32,13 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   const currentChainNameFromAccount = useChainName(address);
   const [currentChainNameJustSelected, setCurrentChainNameJustSelected] = useState<string>();
   const currentChainName = currentChainNameJustSelected || currentChainNameFromAccount;
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+
+  const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , [showOtherChains]);
 
   const availableChains = useMemo(() => {
     if (!pathname || !account?.genesisHash) {
@@ -127,6 +134,10 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   };
 
   const selectNetwork = useCallback((newChainName: string) => {
+    if (isTestnetDisabled(newChainName)) {
+      return;
+    }
+
     const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
     setCurrentChainNameJustSelected(newChainName);
@@ -135,7 +146,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
       setCurrentChainNameJustSelected(currentChainNameFromAccount);
       console.error(err);
     });
-  }, [address, currentChainNameFromAccount, genesisHashes]);
+  }, [address, currentChainNameFromAccount, genesisHashes, isTestnetDisabled]);
 
   const toggleChainSwitch = useCallback(() => chainNamesToShow && chainNamesToShow.length > 1 ? setShowOtherChains(!showOtherChains) : selectNetwork(chainNamesToShow[0]), [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
@@ -202,8 +213,9 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
                   animationName: `${showOtherChains
                     ? twoItemSlide.down[index]
                     : twoItemSlide.up[index]}`,
-                  cursor: 'pointer',
+                  cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
                   left: 0,
+                  opacity: isTestnetDisabled(name) ? '0.6' : 1,
                   top: '-5px'
                 }}
               >
