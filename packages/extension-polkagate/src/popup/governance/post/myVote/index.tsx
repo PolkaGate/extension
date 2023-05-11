@@ -5,25 +5,24 @@
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { ShowBalance } from '../../../../components';
-import { useApi, useFormatted, useMyVote, useTranslation } from '../../../../hooks';
+import { useApi, useMyVote, useTranslation } from '../../../../hooks';
 import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
-import { getAddressVote, getConviction, isAye, Vote } from './util';
+import { getConviction } from './util';
 
 interface Props {
   address: string | undefined;
-  referendumInfoFromSubscan: ReferendumSubScan | undefined;
+  referendumFromSb: ReferendumSubScan | undefined;
 }
 
-export default function MyVote({ address, referendumInfoFromSubscan }: Props): React.ReactElement {
+export default function MyVote({ address, referendumFromSb }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const theme = useTheme();
-  const vote = useMyVote(address, referendumInfoFromSubscan);
-  const isOngoing = useMemo(() => !['Executed', 'Rejected'].includes(referendumInfoFromSubscan?.status), [referendumInfoFromSubscan]);
+  const vote = useMyVote(address, referendumFromSb);
 
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
 

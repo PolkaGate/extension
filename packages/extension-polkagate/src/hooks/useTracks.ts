@@ -15,19 +15,19 @@ export default function useTracks(address: string | undefined): Track[] | undefi
     return api?.consts?.referenda?.tracks as unknown as Track[];
   }, [api]);
 
-  useEffect(() => {
-    if (tracks && chainName) {
-      chrome.storage.local.set({ referendaTracks: { ...savedTracks, [chainName]: tracks } });
-    }
-  }, [tracks, chainName, savedTracks]);
+  // useEffect(() => {
+  //   if (tracks && chainName) {
+  //     chrome.storage.local.set({ referendaTracks: { ...savedTracks, [chainName]: tracks } });
+  //   }
+  // }, [tracks, chainName, savedTracks]);
 
-  useEffect(() => {
-    if (chainName && !tracks) {
-      chrome.storage.local.get('referendaTracks', (res) => {
-        setSavedTracks(res?.referendaTracks?.[chainName] || []);
-      });
-    }
-  }, [chainName, tracks]);
+  // useEffect(() => {
+  //   if (chainName && !tracks) {
+  //     chrome.storage.local.get('referendaTracks', (res) => {
+  //       setSavedTracks(res?.referendaTracks?.[chainName] || []);
+  //     });
+  //   }
+  // }, [chainName, tracks]);
 
   return tracks;//|| savedTracks;
 }

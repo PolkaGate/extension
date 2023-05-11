@@ -4,11 +4,11 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Breadcrumbs, Container, Grid, Link, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ActionContext, PButton } from '../../../components';
+import { PButton } from '../../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
@@ -27,7 +27,6 @@ import Voting from './Voting';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const { address, postId } = useParams<{ address?: string | undefined, postId?: string | undefined }>();
   const history = useHistory();
   const { state } = useLocation();
@@ -40,15 +39,15 @@ export default function ReferendumPost(): React.ReactElement {
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>(state?.selectedTopMenu);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
   const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
-  const [referendumInfoFromSubscan, setReferendumInfoFromSubscan] = useState<ReferendumSubScan>();
+  const [referendumFromSb, setReferendumFromSb] = useState<ReferendumSubScan>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
 
   const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
 
     return name && toTitleCase(name);
-  }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
+  }, [referendumFromPA?.origin, referendumFromSb?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
 
@@ -91,7 +90,7 @@ export default function ReferendumPost(): React.ReactElement {
     });
 
     chainName && postId && getReferendumFromSubscan(chainName, postId).then((res) => {
-      setReferendumInfoFromSubscan(res);
+      setReferendumFromSb(res);
     });
   }, [chainName, postId]);
 
@@ -102,10 +101,6 @@ export default function ReferendumPost(): React.ReactElement {
   const backToSubMenu = useCallback(() => {
     setSelectedSubMenu(state?.selectedSubMenu || pascalCaseToTitleCase(referendumFromPA?.origin)?.trim());
   }, [referendumFromPA?.origin, state?.selectedSubMenu]);
-
-  const onAccountChange = useCallback((address: string) =>
-    onAction(`/governance/${address}`)
-    , [onAction]);
 
   const onCastVote = useCallback(() =>
     setShowCastVote(true)
@@ -127,9 +122,14 @@ export default function ReferendumPost(): React.ReactElement {
     </Grid>
   );
 
+  const isOngoing = useMemo(() =>
+    !['Executed', 'Rejected'].includes(referendumFromSb?.status) ||
+    !['Executed', 'Rejected'].includes(referendumFromPA?.status)
+    , [referendumFromSb, referendumFromPA]);
+
   return (
     <>
-      <Header address={address} onAccountChange={onAccountChange} />
+      <Header />
       <Toolbar
         address={address}
         decidingCounts={decidingCounts}
@@ -166,44 +166,47 @@ export default function ReferendumPost(): React.ReactElement {
             <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '450px' }}>
               <StatusInfo
                 address={address}
-                referendumInfoFromSubscan={referendumInfoFromSubscan}
+                isOngoing={isOngoing}
+                referendumFromSb={referendumFromSb}
                 track={track}
               />
               <Voting
                 address={address}
                 referendumFromPA={referendumFromPA}
-                referendumInfoFromSubscan={referendumInfoFromSubscan}
+                referendumInfoFromSubscan={referendumFromSb}
               />
               <Support
                 address={address}
                 referendumFromPA={referendumFromPA}
-                referendumInfoFromSubscan={referendumInfoFromSubscan}
+                referendumFromSb={referendumFromSb}
               />
-              <Grid item sx={{ my: '15px' }} xs={12}>
-                <PButton
-                  _ml={0}
-                  _mt='1px'
-                  _onClick={onCastVote}
-                  _width={100}
-                  text={t<string>('Cast Vote')}
-                />
-                {showCastVote &&
-                  <CastVote
-                    address={address}
-                    open={showCastVote}
-                    referendumInfo={referendumInfoFromSubscan}
-                    setOpen={setShowCastVote}
+              {isOngoing &&
+                <Grid item sx={{ my: '15px' }} xs={12}>
+                  <PButton
+                    _ml={0}
+                    _mt='1px'
+                    _onClick={onCastVote}
+                    _width={100}
+                    text={t<string>('Cast Vote')}
                   />
-                }
-              </Grid>
+                </Grid>
+              }
               <MyVote
                 address={address}
-                referendumInfoFromSubscan={referendumInfoFromSubscan}
+                referendumFromSb={referendumFromSb}
               />
             </Grid>
           </Grid>
         </Container>
       </Container>
+      {showCastVote &&
+        <CastVote
+          address={address}
+          open={showCastVote}
+          referendumInfo={referendumFromSb}
+          setOpen={setShowCastVote}
+        />
+      }
     </>
   );
 }

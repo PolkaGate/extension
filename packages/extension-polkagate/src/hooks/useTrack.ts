@@ -5,13 +5,15 @@ import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
 import { useMemo } from 'react';
 
+import { BN } from '@polkadot/util';
+
 import { toSnakeCase } from '../popup/governance/utils/util';
 import { useTracks } from '.';
 
-export type Track = {
-  id: number,
+export type Track = [
+  id: BN,
   info: PalletReferendaTrackInfo
-}
+]
 
 export default function useTrack(address: string | undefined, trackName: string | undefined): Track | undefined {
   const tracks = useTracks(address);

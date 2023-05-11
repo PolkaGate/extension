@@ -16,11 +16,11 @@ import { toTitleCase } from '../utils/util';
 
 interface Props {
   address: string | undefined;
-  referendumInfoFromSubscan: ReferendumSubScan | undefined;
+  referendumFromSb: ReferendumSubScan | undefined;
   referendumFromPA: ReferendumPolkassembly | undefined;
 }
 
-export default function Support({ address, referendumFromPA, referendumInfoFromSubscan }: Props): React.ReactElement<Props> {
+export default function Support({ address, referendumFromPA, referendumFromSb }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { state } = useLocation();
@@ -32,18 +32,18 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
   const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
 
     return name && toTitleCase(name);
-  }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
+  }, [referendumFromPA?.origin, referendumFromSb?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
 
-  const threshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+  const threshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendumFromSb && currentBlock - referendumFromSb?.timeline[1]?.block);
 
   const currentSupportThreshold = useMemo(() => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendumInfoFromSubscan) {
-      const blockSubmitted = referendumInfoFromSubscan.timeline[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && referendumFromSb) {
+      const blockSubmitted = referendumFromSb.timeline[0].block;
 
       if (currentBlock - blockSubmitted < track[1].preparePeriod) {
         // in prepare period
@@ -52,11 +52,11 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
 
       return threshold;
     }
-  }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
+  }, [currentBlock, referendumFromSb, threshold, track]);
 
   const supportPercent = useMemo(() =>
-    totalIssuance && inactiveIssuance && referendumInfoFromSubscan && (Number(referendumInfoFromSubscan.support_amount) * 100 / Number(totalIssuance.sub(inactiveIssuance)))
-    , [inactiveIssuance, referendumInfoFromSubscan, totalIssuance]);
+    totalIssuance && inactiveIssuance && referendumFromSb && (Number(referendumFromSb.support_amount) * 100 / Number(totalIssuance.sub(inactiveIssuance)))
+    , [inactiveIssuance, referendumFromSb, totalIssuance]);
 
   useEffect(() => {
     if (!api) {
@@ -113,7 +113,7 @@ export default function Support({ address, referendumFromPA, referendumInfoFromS
       </Grid>
       <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
         <Tally
-          amount={referendumInfoFromSubscan?.support_amount}
+          amount={referendumFromSb?.support_amount}
           color={`${theme.palette.support.contrastText}`}
           percent={supportPercent}
           text={t('Current')}

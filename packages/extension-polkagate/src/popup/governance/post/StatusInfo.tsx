@@ -15,17 +15,18 @@ import { blockToUnit, blockToX, getPeriodScale } from '../utils/util';
 
 interface Props {
   address: string | undefined;
-  referendumInfoFromSubscan: ReferendumSubScan | undefined;
+  referendumFromSb: ReferendumSubScan | undefined;
   track: Track | undefined;
+  isOngoing: boolean
 }
 
-export default function StatusInfo({ address, referendumInfoFromSubscan, track }: Props): React.ReactElement | null {
+export default function StatusInfo({ address, isOngoing, referendumFromSb, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();
   const currentBlock = useCurrentBlockNumber(address);
 
   const status = useMemo(() => {
-    switch (referendumInfoFromSubscan?.status) {
+    switch (referendumFromSb?.status) {
       case 'Decision':
         return t('Deciding');
       case 'ConfirmStarted':
@@ -38,11 +39,11 @@ export default function StatusInfo({ address, referendumInfoFromSubscan, track }
       default:
         return null;
     }
-  }, [referendumInfoFromSubscan, t]);
+  }, [referendumFromSb, t]);
 
   const getUnitPassed = useCallback((timelineIndex: number, periodKey: string) => {
-    if (track?.[1]?.[periodKey] && referendumInfoFromSubscan?.timeline[timelineIndex]?.block && currentBlock) {
-      const startBlock = referendumInfoFromSubscan.timeline[timelineIndex].block;
+    if (track?.[1]?.[periodKey] && referendumFromSb?.timeline[timelineIndex]?.block && currentBlock) {
+      const startBlock = referendumFromSb.timeline[timelineIndex].block;
       const periodInBlock = Number(track[1][periodKey]);
       const endBlock = startBlock + periodInBlock;
 
@@ -57,13 +58,11 @@ export default function StatusInfo({ address, referendumInfoFromSubscan, track }
 
       return unitToEndOfPeriod;
     }
-  }, [currentBlock, referendumInfoFromSubscan, track]);
+  }, [currentBlock, referendumFromSb, track]);
 
   const prepareUnitPassed = useMemo(() => getUnitPassed(0, 'preparePeriod'), [getUnitPassed]);
   const decisionUnitPassed = useMemo(() => getUnitPassed(1, 'decisionPeriod'), [getUnitPassed]);
   const confirmUnitPassed = useMemo(() => getUnitPassed(2, 'confirmPeriod'), [getUnitPassed]);
-
-  const isOngoing = useMemo(() => !['Executed', 'Rejected'].includes(referendumInfoFromSubscan?.status), [referendumInfoFromSubscan]);
 
   if (!isOngoing) {
     return null;
