@@ -36,9 +36,6 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
   const tracks = useTracks(address);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
 
-  console.log('tracks:', tracks);
-  console.log('accountLocks:', accountLocks);
-
   const balances = useBalances(address, undefined, undefined, true);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [delegateAmount, setDelegateAmount] = useState<string>('0');
@@ -52,6 +49,7 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
   };
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
+  const unvotedTracks = useMemo(() => accountLocks && tracks && tracks.filter((value) => !accountLocks.find((lock) => lock.classId.eq(value[0]))), [accountLocks, tracks]);
 
   const onLockedAmount = useCallback(() => {
     if (!lockedAmount) {
@@ -217,14 +215,16 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
           {t('Select tracks to delegate to')}
         </Typography>
         <List sx={{ width: '100%', maxWidth: '100%', border: 1, borderColor: 'primary.main', borderRadius: '10px', height: '200px', overflowY: 'scroll' }}>
-          {tracks?.map((value) => (
+          {unvotedTracks?.map((value, index) => (
             <ListItem
               disablePadding
-              key={value[0]}
+              key={index}
               sx={{ height: '25px' }}
             >
               <ListItemButton dense onClick={handleToggle(value[0])} role={undefined}>
-                <ListItemText primary={`${toTitleCase(value[1].name)}`} />
+                <ListItemText
+                  primary={`${toTitleCase(value[1].name)}`}
+                />
                 <ListItemIcon>
                   <Checkbox2
                     checked={checked.indexOf(value[0]) !== -1}
@@ -239,10 +239,10 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
         </List>
         <Grid container justifyContent='flex-end'>
           <PButton
-            text={t<string>('Next')}
-            disabled={true}
             _mt='10px'
             _width={50}
+            disabled={true}
+            text={t<string>('Next')}
           />
         </Grid>
       </Box>
