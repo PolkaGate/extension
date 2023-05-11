@@ -77,7 +77,7 @@ export default function StatusInfo({ address, referendumInfoFromSubscan, track }
         </Typography>
       </Grid>
       <Grid item>
-        <Infotip iconLeft={2} iconTop={3} showQuestionMark text={remainingTime(remainingBlocks) || t('Calculating ...')}>
+        <Infotip iconLeft={2} iconTop={3} showQuestionMark text={remainingTime(remainingBlocks) || t('Fetching ...')}>
           <Grid item sx={{ pr: '5px' }}>
             <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
               {status === t('Preparing') &&
