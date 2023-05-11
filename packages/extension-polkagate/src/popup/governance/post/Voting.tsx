@@ -61,8 +61,6 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
     }
   }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
 
-  console.log('onChainTally?.ayes?.toString():', onChainTally?.ayes?.toString());
-
   const ayes = useMemo(() =>
     onChainTally?.ayes?.toString() || referendumInfoFromSubscan?.ayes_amount || referendumFromPA?.tally?.ayes
     , [referendumFromPA, referendumInfoFromSubscan, onChainTally]);
