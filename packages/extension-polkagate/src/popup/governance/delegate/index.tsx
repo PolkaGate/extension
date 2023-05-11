@@ -5,8 +5,8 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Close as CloseIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { Box, Checkbox, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Typography, useTheme } from '@mui/material';
+import { ArrowForwardIos as ArrowForwardIosIcon,Close as CloseIcon } from '@mui/icons-material';
+import { Box, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -40,7 +40,8 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [delegateAmount, setDelegateAmount] = useState<string>('0');
   const [conviction, setConviction] = useState<number>(1);
-  const [checked, setChecked] = useState([0]);
+  const [checked, setChecked] = useState([]);
+  const [showExistingVoted, setShowExistingVoted] = useState(false);
 
   const delegate = api && api.tx.convictionVoting.delegate;
 
@@ -50,6 +51,28 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const unvotedTracks = useMemo(() => accountLocks && tracks && tracks.filter((value) => !accountLocks.find((lock) => lock.classId.eq(value[0]))), [accountLocks, tracks]);
+  const existingVotes: Record<string, number> | undefined = useMemo(() => {
+    if (tracks && accountLocks) {
+      let result = {};
+
+      accountLocks.forEach((lock) => {
+        if (!result[lock.classId]) {
+          result[lock.classId] = 1;
+        } else {
+          result[lock.classId]++;
+        }
+      });
+
+      const replacedKey = Object.keys(result).reduce((acc, key) => {
+        const newKey = tracks.find((value) => String(value[0]) === key)?.[1].name; // Convert numeric key to custom key
+        acc[newKey] = result[key];
+
+        return acc;
+      }, {});
+
+      return replacedKey;
+    }
+  }, [accountLocks, tracks]);
 
   const onLockedAmount = useCallback(() => {
     if (!lockedAmount) {
@@ -128,6 +151,12 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
     setChecked(newChecked);
   };
 
+  const onSelectAll = useCallback(() => {
+    const checked = unvotedTracks?.map((value) => value[0]) || [];
+
+    setChecked(checked);
+  }, [unvotedTracks]);
+
   return (
     <Modal onClose={handleClose} open={open}>
       <Box sx={{ ...style }}>
@@ -144,23 +173,46 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
         <Typography fontSize='16px' fontWeight={400} sx={{ pb: '20px', textAlign: 'left' }}>
           {t('Give your voting power to another account.')}
         </Typography>
-        <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid item xs={8}>
+        <Grid alignItems='center' container justifyContent='space-between' position='relative'>
+          <Grid item xs={8.5}>
             <From
               address={address}
               api={api}
               style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
-              title={t<string>('From account')}
+              title={t<string>('Delegate from account')}
             />
           </Grid>
-          <Grid alignItems='center' container item sx={{ cursor: 'pointer', mt: '25px' }} xs={3}>
+          <Grid alignItems='center' container item onClick={() => setShowExistingVoted(!showExistingVoted)} sx={{ cursor: 'pointer', mt: '25px' }} xs={3}>
             {t('Existing votes')}
-            <ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showExistingVoted ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
+          {showExistingVoted &&
+            <Grid container alignItems='flex-start' sx={{ boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)', bgcolor: 'background.default', border: 1, height: '250px', overflowY: 'scroll', borderRadius: '5px', borderColor: 'primary.main', position: 'absolute', top: '81px', zIndex: 100 }} >
+              <Grid container item justifyContent='space-between' sx={{ lineHeight: '40px', fontSize: '18px', fontWeight: 500, borderBottom: 1, borderColor: 'primary.main' }}>
+                <Grid item px='25px'>
+                  {t('Category')}
+                </Grid>
+                <Grid item px='25px'>
+                  {t('votes')}
+                </Grid>
+              </Grid>
+              {existingVotes && Object.keys(existingVotes).map((key, index) => (
+                <Grid container item justifyContent='space-between' key={index} sx={{ lineHeight: '40px', borderBottom: 1, borderColor: 'primary.main' }}>
+                  <Grid item px='25px'>
+                    {toTitleCase(key)}
+                  </Grid>
+                  <Grid item px='25px'>
+                    {existingVotes[key]}
+                  </Grid>
+                </Grid>
+              ))
+              }
+            </Grid>
+          }
         </Grid>
         <AmountWithOptions
           inputWidth={9}
-          label={t<string>(`Value (${token})`)}
+          label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
           onChangeAmount={onValueChange}
           onPrimary={onMaxAmount}
           onSecondary={onLockedAmount}
@@ -211,37 +263,51 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
             </Grid>
           </Grid>
         </Convictions>
-        <Typography fontSize='16px' fontWeight={400} sx={{ pt: '20px', textAlign: 'left' }}>
-          {t('Select tracks to delegate to')}
-        </Typography>
-        <List sx={{ width: '100%', maxWidth: '100%', border: 1, borderColor: 'primary.main', borderRadius: '10px', height: '200px', overflowY: 'scroll' }}>
-          {unvotedTracks?.map((value, index) => (
-            <ListItem
-              disablePadding
-              key={index}
-              sx={{ height: '25px' }}
-            >
-              <ListItemButton dense onClick={handleToggle(value[0])} role={undefined}>
-                <ListItemText
-                  primary={`${toTitleCase(value[1].name)}`}
-                />
-                <ListItemIcon>
-                  <Checkbox2
-                    checked={checked.indexOf(value[0]) !== -1}
-                    iconStyle={{ transform: 'scale(1.13)' }}
-                    label={''}
-                  // onChange={}
+        <Grid container justifyContent='space-between'>
+          <Grid item>
+            <Infotip iconTop={26} showQuestionMark text={'Please select all the categories in which you would like to delegate your votes.'}>
+              <Typography fontSize='16px' fontWeight={400} sx={{ pt: '20px', textAlign: 'left' }}>
+                {t('Referenda Category')}
+              </Typography>
+            </Infotip>
+          </Grid>
+          <Grid item onClick={onSelectAll}>
+            <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', pt: '20px', textAlign: 'left', cursor: 'pointer', textDecorationLine: 'underline' }}>
+              {t('Select All')}
+            </Typography>
+          </Grid>
+        </Grid>
+        <List sx={{ width: '100%', maxWidth: '100%', border: 1, borderColor: 'primary.main', borderRadius: '5px', height: '200px', overflowY: 'scroll' }}>
+          {unvotedTracks
+            ? unvotedTracks.map((value, index) => (
+              <ListItem
+                disablePadding
+                key={index}
+                sx={{ height: '25px' }}
+              >
+                <ListItemButton dense onClick={handleToggle(value[0])} role={undefined}>
+                  <ListItemText
+                    primary={`${toTitleCase(value[1].name)}`}
                   />
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
-          ))}
+                  <ListItemIcon sx={{ minWidth: '20px' }}>
+                    <Checkbox2
+                      checked={checked.indexOf(value[0]) !== -1}
+                      iconStyle={{ transform: 'scale(1.13)' }}
+                      label={''}
+                    // onChange={}
+                    />
+                  </ListItemIcon>
+                </ListItemButton>
+              </ListItem>
+            ))
+            : <Skeleton height={20} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '95%', my: '5px' }} />
+          }
         </List>
         <Grid container justifyContent='flex-end'>
           <PButton
             _mt='10px'
             _width={50}
-            disabled={true}
+            disabled={delegateAmount === '0' || !checked?.length}
             text={t<string>('Next')}
           />
         </Grid>
