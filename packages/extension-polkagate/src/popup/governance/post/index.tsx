@@ -15,7 +15,7 @@ import Toolbar from '../Toolbar';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { pascalCaseToTitleCase, toTitleCase } from '../utils/util';
-import CastVote from './CastVote';
+import CastVote from './castVote/CastVote';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
@@ -187,12 +187,14 @@ export default function ReferendumPost(): React.ReactElement {
                   _width={100}
                   text={t<string>('Cast Vote')}
                 />
-                <CastVote
-                  address={address}
-                  open={showCastVote}
-                  referendumInfo={referendumInfoFromSubscan}
-                  setOpen={setShowCastVote}
-                />
+                {showCastVote &&
+                  <CastVote
+                    address={address}
+                    open={showCastVote}
+                    referendumInfo={referendumInfoFromSubscan}
+                    setOpen={setShowCastVote}
+                  />
+                }
               </Grid>
               <MyVote
                 address={address}
