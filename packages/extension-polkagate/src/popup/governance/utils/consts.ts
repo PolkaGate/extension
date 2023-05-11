@@ -8,6 +8,7 @@ export const MAX_WIDTH = '1280px';
 export const STATUS_COLOR = {
   Awarded: '#32CD32',
   Cancelled: '#737373',
+  ConfirmAborted: '#D3D3D3',
   ConfirmStarted: '#FFB900',
   Confirmed: '#008080',
   Deciding: '#6A5ACD',
