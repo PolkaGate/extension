@@ -13,8 +13,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
-import { getLatestReferendums, getTrackReferendums, LatestReferenda, Statistics } from './utils/helpers';
-import { TopMenu } from './utils/types';
+import { getLatestReferendums, getTrackReferendums, Statistics } from './utils/helpers';
+import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import { ReferendumSummary } from './ReferendumSummary';
@@ -23,11 +23,10 @@ import { TrackStats } from './TrackStats';
 
 export default function Governance(): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
   const { state } = useLocation();
   const history = useHistory();
   const theme = useTheme();
-  const { address, postId } = useParams<{ address: string, postId?: number }>();
+  const { address, postId } = useParams<{ address: string, postId?: string }>();
 
   useFullscreen();
   const api = useApi(address);
@@ -151,10 +150,6 @@ export default function Governance(): React.ReactElement {
     setSelectedSubMenu('All');
   }, []);
 
-  const onAccountChange = useCallback((address: string) =>
-    onAction(`/governance/${address}`)
-    , [onAction]);
-
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
     setGetMore(pageTrackRef.current.page);
@@ -207,7 +202,7 @@ export default function Governance(): React.ReactElement {
 
   return (
     <>
-      <Header address={address} onAccountChange={onAccountChange} />
+      <Header />
       <Toolbar
         address={address}
         decidingCounts={decidingCounts}

@@ -5,7 +5,7 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Link, Typography, useTheme } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { JsonToTable } from "react-json-to-table";
 
 import { Chain } from '@polkadot/extension-chains/types';
@@ -39,7 +39,6 @@ export default function Metadata({ address, referendum }: { address: string | un
   const token = useToken(address);
 
   const [expanded, setExpanded] = React.useState(false);
-  const [referendumJson, SetReferendumJson] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
 
   const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.post_id);
@@ -48,13 +47,6 @@ export default function Metadata({ address, referendum }: { address: string | un
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
-
-  useEffect(() => {
-    api && referendum?.post_id && api.query.referenda?.referendumInfoFor(referendum.post_id).then((res) => {
-      console.log(`referendumInfoFor ref ${referendum?.post_id} :, ${res}`);
-      SetReferendumJson(res.toJSON());
-    }).catch(console.error);
-  }, [api, referendum]);
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1 }}>

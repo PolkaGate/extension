@@ -4,24 +4,27 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, useTheme } from '@mui/material';
-import React from 'react';
+import React, { useCallback,useContext } from 'react';
+import { useParams } from 'react-router';
 
 import { logoBlack, logoWhite } from '../../assets/logos';
+import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
 import { MAX_WIDTH } from './utils/consts';
 import AddressDropdown from './AddressDropdown';
 
-interface Props {
-  address: string | undefined;
-  onAccountChange: (address: string) => void
-}
-
-export function Header({ address, onAccountChange }: Props): React.ReactElement<Props> {
+export function Header(): React.ReactElement {
   const theme = useTheme();
+  const { address, postId } = useParams<{ address: string, postId?: string }>();
   const api = useApi(address);
   const chain = useChain(address);
+  const onAction = useContext(ActionContext);
+
+  const onAccountChange = useCallback((address: string) =>
+    onAction(`/governance/${address}/${postId || ''}`)
+    , [onAction, postId]);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#180710', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
