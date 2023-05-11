@@ -10,11 +10,12 @@ import React from 'react';
 
 import { BN, BN_MAX_INTEGER } from '@polkadot/util';
 
-import { useAccountLocks, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { amountToHuman, remainingTime } from '../../../util/utils';
 
 interface Props {
   address: string | undefined;
+  accountLocks: Lock[] | undefined
 }
 
 export function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN | undefined {
@@ -45,9 +46,8 @@ export function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined
   return sortedLocks?.[0] || allBalances?.lockedBalance;
 }
 
-export default function AlreadyLockedTooltipText({ address }: Props): React.ReactElement {
+function AlreadyLockedTooltipText({ accountLocks, address }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
   const currentBlock = useCurrentBlockNumber(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -96,3 +96,5 @@ export default function AlreadyLockedTooltipText({ address }: Props): React.Reac
     </Typography>
   );
 }
+
+export default React.memo(AlreadyLockedTooltipText);
