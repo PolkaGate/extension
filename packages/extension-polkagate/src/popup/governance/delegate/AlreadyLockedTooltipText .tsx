@@ -5,7 +5,7 @@
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { Grid, Typography, Skeleton } from '@mui/material';
+import { Grid, Skeleton, Typography } from '@mui/material';
 import React from 'react';
 
 import { BN, BN_MAX_INTEGER } from '@polkadot/util';

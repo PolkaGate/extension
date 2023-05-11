@@ -129,7 +129,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
         }
       }]);
     }
-  }, [voteInformation.trackId, voteInformation.voteAmountBN, voteInformation.voteConvictionValue, voteInformation.voteType]);
+  }, [voteInformation]);
 
   const confirmVote = useCallback(async () => {
     try {

@@ -41,7 +41,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
 
   return (
     <Grid container style={{ position: 'relative' }}>
-      <Grid container sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', color: 'text.secondary' }}>
+      <Grid container sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', color: 'white' }}>
         <Grid alignItems='center' container item justifyContent='space-around' maxWidth='calc(100% - 40px)' width='fit-content'>
           <Identity
             address={selectedAddress}

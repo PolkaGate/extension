@@ -171,7 +171,7 @@ export async function getReferendum(chainName: string, postId: number): Promise<
 }
 
 export async function getReferendumFromSubscan(chainName: string, postId: number): Promise<Statistics | null> {
-  console.log(`Getting ref #${postId} from sb ...`);
+  console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint
   const referendumIndex: number = postId >>> 0; // Use bitwise zero-fill right shift to convert to unsigned integer

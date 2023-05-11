@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { AmountWithOptions, Convictions, From, Infotip, ShowBalance } from '../../../components';
-import { useApi, useBalances, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
+import { useAccountLocks, useApi, useBalances, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { toTitleCase } from '../utils/util';

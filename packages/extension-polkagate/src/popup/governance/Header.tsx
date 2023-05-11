@@ -9,6 +9,7 @@ import React from 'react';
 import { logoBlack, logoWhite } from '../../assets/logos';
 import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
+import { EXTENSION_NAME } from '../../util/constants';
 import { MAX_WIDTH } from './utils/consts';
 import AddressDropdown from './AddressDropdown';
 
@@ -23,16 +24,16 @@ export function Header({ address, onAccountChange }: Props): React.ReactElement<
   const chain = useChain(address);
 
   return (
-    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#180710', height: '70px', color: 'text.secondary', fontSize: '42px', fontWeight: 400 }}>
+    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#180710', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
         <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid alignItems='center' container item justifyContent='flex-start' sx={{ fontFamily: 'Eras' }} xs={6}>
+          <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: 'white', fontFamily: 'Eras' }} xs={6}>
             <Box
               component='img'
               src={theme.palette.mode === 'light' ? logoBlack as string : logoWhite as string}
               sx={{ height: 50, mr: '1%', width: 50 }}
             />
-            Polkagate
+            {EXTENSION_NAME}
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ color: 'text.primary' }} xs={6}>
             <Grid container item justifyContent='flex-end' sx={{ color: 'text.primary', maxWidth: 'calc(100% - 50px)', pr: '8px', width: 'fit-content' }}>

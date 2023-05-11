@@ -47,7 +47,7 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
 
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
-      <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'text.secondary', width: '150px', height: '48px', cursor: 'pointer' }}>
+      <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'white', width: '150px', height: '48px', cursor: 'pointer' }}>
         <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
           {item}
         </Typography>
