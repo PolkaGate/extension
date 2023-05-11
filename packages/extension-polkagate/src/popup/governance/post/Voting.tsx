@@ -3,14 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { PalletRankedCollectiveTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
+
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { ShowBalance, ShowValue } from '../../../components';
-import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { useApi, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import AllVotes from './AllVotes';
@@ -26,13 +28,17 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   const { t } = useTranslation();
   const theme = useTheme();
   const { state } = useLocation();
+  const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+
   const currentBlock = useCurrentBlockNumber(address);
-  const [openAllVotes, setOpenAllVotes] = React.useState(false);
-  const [onChainVoteCounts, setOnChainVoteCounts] = React.useState<{ ayes: number | undefined, nays: number | undefined }>();
+  const [openAllVotes, setOpenAllVotes] = useState(false);
+  const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
+  const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
 
   const trackId = referendumInfoFromSubscan?.origins_id;
+  const refId = useMemo(() => referendumFromPA?.post_id || referendumInfoFromSubscan?.referendum_index, [referendumFromPA, referendumInfoFromSubscan]);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
@@ -55,8 +61,32 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
     }
   }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
 
-  const ayesPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.ayes_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
-  const naysPercent = useMemo(() => referendumInfoFromSubscan ? Number(referendumInfoFromSubscan.nays_amount) / (Number(referendumInfoFromSubscan.ayes_amount) + Number(new BN(referendumInfoFromSubscan.nays_amount))) * 100 : 0, [referendumInfoFromSubscan]);
+  console.log('onChainTally?.ayes?.toString():', onChainTally?.ayes?.toString());
+
+  const ayes = useMemo(() =>
+    onChainTally?.ayes?.toString() || referendumInfoFromSubscan?.ayes_amount || referendumFromPA?.tally?.ayes
+    , [referendumFromPA, referendumInfoFromSubscan, onChainTally]);
+
+  const nays = useMemo(() =>
+    onChainTally?.nays?.toString() || referendumInfoFromSubscan?.nays_amount || referendumFromPA?.tally?.nays
+    , [referendumFromPA, referendumInfoFromSubscan, onChainTally]);
+
+  const ayesCount = useMemo(() => onChainVoteCounts?.ayes || referendumInfoFromSubscan?.ayes_count, [onChainVoteCounts?.ayes, referendumInfoFromSubscan?.ayes_count]);
+  const naysCount = useMemo(() => onChainVoteCounts?.nays || referendumInfoFromSubscan?.nays_count, [onChainVoteCounts?.nays, referendumInfoFromSubscan?.nays_count]);
+
+  const ayesPercent = useMemo(() => ayes && nays ? Number(ayes) / (Number(ayes) + Number(new BN(nays))) * 100 : 0, [nays, ayes]);
+  const naysPercent = useMemo(() => ayes && nays ? Number(nays) / (Number(ayes) + Number(new BN(nays))) * 100 : 0, [nays, ayes]);
+
+  useEffect(() => {
+    api && refId && api.query.referenda?.referendumInfoFor(refId).then((res) => {
+      const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
+      const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing && mayBeUnwrappedResult.asOngoing;
+      const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
+
+      setOnChainTally(mayBeTally);
+      console.log('referendumInfoFor:', res.unwrap());
+    }).catch(console.error);
+  }, [api, refId]);
 
   const handleOpenAllVotes = () => {
     setOpenAllVotes(true);
@@ -98,16 +128,16 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
       </Grid>
       <Grid container item justifyContent='space-around' xs={12}>
         <Tally
-          amount={referendumInfoFromSubscan?.ayes_amount}
+          amount={ayes}
           color={`${theme.palette.aye.main}`}
-          count={onChainVoteCounts?.ayes || referendumInfoFromSubscan?.ayes_count}
+          count={ayesCount}
           percent={ayesPercent}
           text={t('Ayes')}
         />
         <Tally
-          amount={referendumInfoFromSubscan?.nays_amount}
+          amount={nays}
           color={`${theme.palette.nay.main}`}
-          count={onChainVoteCounts?.nays || referendumInfoFromSubscan?.nays_count}
+          count={naysCount}
           percent={naysPercent}
           text={t('Nays')}
         />
