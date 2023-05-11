@@ -155,7 +155,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
         // to: voteInformation.,
         txHash: txHash || ''
       };
-console.log('txHash:', txHash)
+
       setTxInfo({ ...info, api, chain });
       saveAsHistory(from, info);
 

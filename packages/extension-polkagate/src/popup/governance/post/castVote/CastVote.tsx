@@ -482,7 +482,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               text={t<string>('Next to review')}
             />
           </Grid>
-          : voteInformation && <Review address={address} estimatedFee={estimatedFee} formatted={String(formatted)} voteInformation={voteInformation} setOpen={setOpen} />
+          : voteInformation && <Review address={address} estimatedFee={estimatedFee} formatted={String(formatted)} handleClose={handleClose} voteInformation={voteInformation} />
         }
       </Box>
     </Modal>
