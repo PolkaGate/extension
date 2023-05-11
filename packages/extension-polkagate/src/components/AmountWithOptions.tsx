@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme } from '@mui/material';
+import { Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { fixFloatingPoint } from '../util/utils';
@@ -23,6 +23,7 @@ interface Props {
 }
 
 export default function AmountWithOptions({ disabled, inputWidth = 8, label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
+  const theme = useTheme();
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
   }, [onChangeAmount]);
@@ -45,11 +46,11 @@ export default function AmountWithOptions({ disabled, inputWidth = 8, label, onC
         />
       </Grid>
       <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs>
-        <Grid aria-label='primaryBtn' item onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+        <Grid aria-label='primaryBtn' item onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>
         {secondaryBtnText && onSecondary &&
-          <Grid aria-label='secondaryBtn' item onClick={!disabled ? onSecondary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : 'text.primary', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
+          <Grid aria-label='secondaryBtn' item onClick={!disabled ? onSecondary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
             {secondaryBtnText}
           </Grid>}
       </Grid>
