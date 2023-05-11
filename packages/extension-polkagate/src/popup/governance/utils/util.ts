@@ -1,9 +1,12 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BN } from '@polkadot/util';
+import { TFunction } from '@polkadot/apps-config/types';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, extractTime } from '@polkadot/util';
 
 import { isAye, Vote } from '../post/myVote/util';
+
+type Result = [blockInterval: number, timeStr: string, time: Time];
 
 export function toSnakeCase(input: string | undefined): string | undefined {
   if (!input) {
@@ -224,4 +227,43 @@ export const getVoteType = (vote: Vote | null | undefined) => {
   }
 
   return undefined;
+}
+
+export function calcBlockTime (blockTime: BN, blocks: BN, t: TFunction): Result {
+  // in the case of excessively large locks, limit to the max JS integer value
+  const value = bnMin(BN_MAX_INTEGER, blockTime.mul(blocks)).toNumber();
+
+  // time calculations are using the absolute value (< 0 detection only on strings)
+  const time = extractTime(Math.abs(value));
+  const { days, hours, minutes, seconds } = time;
+
+  return [
+    blockTime.toNumber(),
+    `${value < 0 ? '+' : ''}${[
+      days
+        ? (days > 1)
+          ? t('{{days}} days', { replace: { days } })
+          : t('1 day')
+        : null,
+      hours
+        ? (hours > 1)
+          ? t('{{hours}} hrs', { replace: { hours } })
+          : t('1 hr')
+        : null,
+      minutes
+        ? (minutes > 1)
+          ? t('{{minutes}} mins', { replace: { minutes } })
+          : t('1 min')
+        : null,
+      seconds
+        ? (seconds > 1)
+          ? t('{{seconds}} s', { replace: { seconds } })
+          : t('1 s')
+        : null
+    ]
+      .filter((s): s is string => !!s)
+      .slice(0, 2)
+      .join(' ')}`,
+    time
+  ];
 }

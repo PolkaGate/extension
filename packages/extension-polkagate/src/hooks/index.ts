@@ -5,6 +5,7 @@ export { default as useAccount } from './useAccount';
 export { default as useBlockInterval } from './useBlockInterval';
 export { default as useFullscreen } from './useFullscreen';
 export { default as useMyVote } from './useMyVote';
+export { default as useConvictionOptions } from './useConvictionOptions';
 export { default as useCurrentApprovalThreshold } from './useCurrentApprovalThreshold';
 export { default as useCurrentSupportThreshold } from './useCurrentSupportThreshold';
 export { default as useAccountName } from './useAccountName';

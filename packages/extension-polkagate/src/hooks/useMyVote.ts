@@ -25,7 +25,7 @@ export default function useMyVote (address: string | undefined, referendumInfo: 
   }, []);
 
   useEffect(() => {
-    formatted && api && refIndexAndId?.refIndex && refIndexAndId?.trackId && getVote(String(formatted), api, refIndexAndId);
+    formatted && api && refIndexAndId?.refIndex !== undefined && refIndexAndId?.trackId !== undefined && getVote(String(formatted), api, refIndexAndId);
   }, [api, formatted, getVote, refIndexAndId, refIndexAndId?.refIndex, refIndexAndId?.trackId]);
 
   useEffect(() => {
