@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/util-crypto';
 
 import { postData } from '../../../util/api';
 import { LatestReferenda, Origins } from './types';

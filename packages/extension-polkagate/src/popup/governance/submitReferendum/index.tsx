@@ -14,7 +14,7 @@ import { useChain, usePreImage, usePreImageHashes, useTranslation } from '../../
 import { PreImage } from './PreImage';
 
 interface Props {
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   address: string | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void

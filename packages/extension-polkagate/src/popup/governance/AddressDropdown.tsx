@@ -16,7 +16,7 @@ import { tieAccount } from '../../messaging';
 interface Props {
   api: ApiPromise | undefined;
   onSelect: (address: string) => void;
-  selectedAddress: string;
+  selectedAddress: string | undefined;
   chainGenesis: string | undefined;
   height: string;
 

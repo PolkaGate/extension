@@ -20,7 +20,7 @@ import { toTitleCase } from '../utils/util';
 import AlreadyLockedTooltipText, { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 
 interface Props {
-  api: ApiPromise;
+  api: ApiPromise | undefined;
   address: string | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void

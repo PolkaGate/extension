@@ -8,7 +8,7 @@ import useTracks from './useTracks';
 
 export type DecidingCount = [string, number];
 
-export default function useDecidingCount(address: string): DecidingCount[] | undefined {
+export default function useDecidingCount(address: string | undefined): DecidingCount[] | undefined {
   const api = useApi(address);
   const tracks = useTracks(address);
 

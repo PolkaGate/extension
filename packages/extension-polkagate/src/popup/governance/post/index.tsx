@@ -28,7 +28,7 @@ import Voting from './Voting';
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const { address, postId } = useParams<{ address?: string | undefined, postId?: number | undefined }>();
+  const { address, postId } = useParams<{ address?: string | undefined, postId?: string | undefined }>();
   const history = useHistory();
   const { state } = useLocation();
   const api = useApi(address);

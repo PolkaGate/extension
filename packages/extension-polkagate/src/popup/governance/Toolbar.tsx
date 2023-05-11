@@ -7,12 +7,13 @@ import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons
 import { Button, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { DecidingCount, useApi, useTranslation } from '../../hooks';
+import { useApi, useTranslation } from '../../hooks';
+import { DecidingCount } from '../../hooks/useDecidingCount';
 import { MAX_WIDTH } from './utils/consts';
 import { TopMenu } from './utils/types';
+import { Delegate } from './delegate';
 import ReferendaMenu from './ReferendaMenu';
 import { SubmitReferendum } from './submitReferendum';
-import { Delegate } from './delegate';
 
 interface Props {
   address: string | undefined;
@@ -43,7 +44,6 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
     setSelectedTopMenu(item);
     setMenuOpen(!menuOpen);
   }, [menuOpen, setMenuOpen, setSelectedTopMenu]);
-
 
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
