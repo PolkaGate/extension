@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AmountWithOptions, Convictions, From, Infotip, ShowBalance } from '../../../components';
+import { AmountWithOptions, Checkbox2, Convictions, From, Infotip, PButton, ShowBalance } from '../../../components';
 import { useAccountLocks, useApi, useBalances, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
@@ -35,6 +35,9 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
   const formatted = useFormatted(address);
   const tracks = useTracks(address);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
+
+  console.log('tracks:', tracks);
+  console.log('accountLocks:', accountLocks);
 
   const balances = useBalances(address, undefined, undefined, true);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -140,7 +143,7 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
-        <Typography fontSize='16px' fontWeight={400} sx={{ py: '20px', textAlign: 'left' }}>
+        <Typography fontSize='16px' fontWeight={400} sx={{ pb: '20px', textAlign: 'left' }}>
           {t('Give your voting power to another account.')}
         </Typography>
         <Grid alignItems='center' container justifyContent='space-between'>
@@ -188,7 +191,7 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
               </Infotip>
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <Infotip iconLeft={5} iconTop={2} showInfoMark text={<AlreadyLockedTooltipText address={address} /> || 'Fetching ...'}>
+              <Infotip iconLeft={5} iconTop={2} showInfoMark text={<AlreadyLockedTooltipText accountLocks={accountLocks} address={address} /> || 'Fetching ...'}>
                 <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
               </Infotip>
             </Grid>
@@ -213,27 +216,35 @@ export function Delegate({ address, open, setOpen }: Props): React.ReactElement<
         <Typography fontSize='16px' fontWeight={400} sx={{ pt: '20px', textAlign: 'left' }}>
           {t('Select tracks to delegate to')}
         </Typography>
-        <List sx={{ width: '100%', maxWidth: '100%', border: 1, borderColor: 'primary.main', borderRadius: '10px', height: '300px', overflowY: 'scroll' }}>
+        <List sx={{ width: '100%', maxWidth: '100%', border: 1, borderColor: 'primary.main', borderRadius: '10px', height: '200px', overflowY: 'scroll' }}>
           {tracks?.map((value) => (
             <ListItem
               disablePadding
               key={value[0]}
-              sx={{ height: '20px' }}
+              sx={{ height: '25px' }}
             >
               <ListItemButton dense onClick={handleToggle(value[0])} role={undefined}>
                 <ListItemText primary={`${toTitleCase(value[1].name)}`} />
                 <ListItemIcon>
-                  <Checkbox
+                  <Checkbox2
                     checked={checked.indexOf(value[0]) !== -1}
-                    // disableRipple
-                    edge='end'
-                    tabIndex={-1}
+                    iconStyle={{ transform: 'scale(1.13)' }}
+                    label={''}
+                  // onChange={}
                   />
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>
           ))}
         </List>
+        <Grid container justifyContent='flex-end'>
+          <PButton
+            text={t<string>('Next')}
+            disabled={true}
+            _mt='10px'
+            _width={50}
+          />
+        </Grid>
       </Box>
     </Modal>
   );
