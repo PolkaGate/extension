@@ -11,7 +11,10 @@ import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, Radi
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { AccountsStore } from '@polkadot/extension-base/stores';
+import keyring from '@polkadot/ui-keyring';
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, From, Infotip, PButton, ShowBalance, Warning } from '../../../../components';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
@@ -139,11 +142,11 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>();
-  const [goVote, setGoVote] = useState<boolean>(false);
   const [voteInformation, setVoteInformation] = useState<VoteInformation | undefined>();
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const vote = api && api.tx.convictionVoting.vote;
   const [conviction, setConviction] = useState<number>();
+  const [step, setStep] = useState<number>(0);
 
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
@@ -260,7 +263,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   };
 
   const onCastVote = useCallback(() => {
-    setGoVote(true);
+    setStep(1);
   }, []);
 
   const CurrentVote = ({ api, voteBalance, voteConviction, voteType }: { api: ApiPromise | undefined, voteBalance: number, voteConviction: string, voteType: 'Aye' | 'Nay' | 'Abstain' | undefined }) => {
@@ -351,7 +354,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     setVoteType(undefined);
     setVoteInformation(undefined);
     setConviction(undefined);
-    setGoVote(false);
+    setStep(0);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -375,20 +378,33 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     return false;
   }, [balances?.votingBalance, conviction, voteAmount, voteAmountAsBN, voteType]);
 
+  useEffect(() => {
+    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
+  }, []);
+
   return (
     <Modal disableScrollLock={true} onClose={handleClose} open={open}>
       <Box sx={{ ...style }}>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {t(voteInformation && goVote ? 'Review Your Vote' : 'Cast Your Vote')}
+              {step === 0
+                ? t<string>('Cast Your Vote')
+                : step === 1
+                  ? t<string>('Review Your Vote')
+                  : step === 2
+                    ? t<string>('Voting')
+                    : step === 3
+                      ? t<string>('Voting Completed')
+                      : t<string>('Select Proxy')
+              }
             </Typography>
           </Grid>
           <Grid item>
-            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+            {step !== 2 && <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />}
           </Grid>
         </Grid>
-        {!goVote
+        {step === 0
           ? <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
             <From
               address={address}
@@ -452,23 +468,21 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
                 </Grid>
               </Grid>
             </Grid>
-            {convictionOptions && voteType !== 'Abstain' &&
-              <>
-                <Convictions address={address} conviction={conviction} setConviction={setConviction}>
-                  <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
-                    <Grid item>
-                      <Typography sx={{ fontSize: '16px' }}>
-                        {t('Your final vote power after multiplying')}
-                      </Typography>
-                    </Grid>
-                    <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                      <Typography fontSize='28px' fontWeight={500}>
-                        {votePower}
-                      </Typography>
-                    </Grid>
+            {voteType !== 'Abstain' &&
+              <Convictions address={address} conviction={conviction} setConviction={setConviction}>
+                <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
+                  <Grid item>
+                    <Typography sx={{ fontSize: '16px' }}>
+                      {t('Your final vote power after multiplying')}
+                    </Typography>
                   </Grid>
-                </Convictions>
-              </>
+                  <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                    <Typography fontSize='28px' fontWeight={500}>
+                      {votePower}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Convictions>
             }
             {myVoteBalance !== undefined &&
               <CurrentVote api={api} voteBalance={myVoteBalance} voteConviction={myVoteConviction} voteType={myVoteType} />
@@ -482,7 +496,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               text={t<string>('Next to review')}
             />
           </Grid>
-          : voteInformation && <Review address={address} estimatedFee={estimatedFee} formatted={String(formatted)} handleClose={handleClose} voteInformation={voteInformation} />
+          : voteInformation && <Review address={address} estimatedFee={estimatedFee} formatted={String(formatted)} handleClose={handleClose} setStep={setStep} step={step} voteInformation={voteInformation} />
         }
       </Box>
     </Modal>
