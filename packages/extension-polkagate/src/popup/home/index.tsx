@@ -13,7 +13,7 @@ import { AccountContext } from '../../components';
 import { useChainNames, usePrices, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import { TEST_NETS } from '../../util/constants';
+import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import getNetworkMap from '../../util/getNetworkMap';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
@@ -48,14 +48,12 @@ export default function Home(): React.ReactElement {
   }, [accounts]);
 
   useEffect(() => {
-    const dayInMs = 24 * 60 * 60 * 1000;
-    const value = window.localStorage.getItem('export_account_open');
+    const value = window.localStorage.getItem(NEW_VERSION_ALERT);
 
-    if (hierarchy?.length &&
-      (!value || (value && value !== 'ok' && Date.now() - Number(value) > dayInMs))) {
+    if (!value || (value && value !== 'ok')) {
       setShowAlert(true);
     }
-  }, [hierarchy]);
+  }, []);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
