@@ -12,16 +12,19 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, Motion, PasswordUseProxyConfirm, ShowValue, WrongPasswordAlert } from '../../../../../components';
+import { AccountContext, AccountHolderWithProxy, Motion, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTranslation } from '../../../../../hooks';
+import { ThroughProxy } from '../../../../../partials';
 import broadcast from '../../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
+import PasswordWithTwoButtonsAndUseProxy from '../../../components/PasswordWithTwoButtonsAndUseProxy';
+import SelectProxyModal from '../../../components/SelectProxyModal';
 import { STATUS_COLOR } from '../../../utils/consts';
 import { VoteInformation } from '../CastVote';
 import Confirmation from './Confirmation';
@@ -33,9 +36,11 @@ interface Props {
   voteInformation: VoteInformation;
   handleClose: () => void;
   estimatedFee: Balance | undefined;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  step: number;
 }
 
-export default function Review({ address, estimatedFee, formatted, voteInformation, handleClose }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, formatted, voteInformation, handleClose, setStep, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -45,15 +50,15 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
   const api = useApi(address);
   const chain = useChain(address);
   const proxies = useProxies(api, formatted);
+  const ref = useRef(null);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
-  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [params, setParams] = useState<unknown[] | undefined>();
+  const [modalHeight, setModalHeight] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
@@ -91,7 +96,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
             {title}
           </Typography>
         </Grid>
-        <Grid item fontSize='28px' fontWeight={500}>
+        <Grid fontSize='28px' fontWeight={400} item>
           {children}
         </Grid>
       </Grid>
@@ -126,6 +131,13 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
     }
   }, [voteInformation.refIndex, voteInformation.trackId, voteInformation.voteAmountBN, voteInformation.voteConvictionValue, voteInformation.voteType]);
 
+  useEffect(() => {
+    if (ref) {
+      setModalHeight(ref.current?.offsetHeight as number);
+      console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)
+    }
+  }, []);
+
   const confirmVote = useCallback(async () => {
     try {
       if (!formatted || !vote || !api || !decimal || !params) {
@@ -133,11 +145,12 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
       }
 
       const from = selectedProxyAddress ?? formatted;
+
       const signer = keyring.getPair(from);
 
       signer.unlock(password);
 
-      setShowWaitScreen(true);
+      setStep(2);
 
       const { block, failureText, fee, success, txHash } = await broadcast(api, vote, params, signer, formatted, selectedProxy);
 
@@ -159,80 +172,100 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
       setTxInfo({ ...info, api, chain });
       saveAsHistory(from, info);
 
-      setShowWaitScreen(false);
-      setShowConfirmation(true);
+      setStep(3);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, api, chain, decimal, estimatedFee, formatted, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, vote, voteInformation.voteBalance]);
+  }, [accountName, api, chain, decimal, estimatedFee, formatted, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, vote, voteInformation.voteBalance]);
+
+  const backToCastVote = useCallback(() => setStep(0), [setStep]);
 
   return (
     <Motion style={{ height: '100%' }}>
-      {!showWaitScreen && !showConfirmation
-        ? <>
+      {step === 1
+        ? <Grid container ref={ref}>
           {isPasswordError &&
             <WrongPasswordAlert />
           }
-          <AccountHolderWithProxy
+          {/* <AccountHolderWithProxy
             address={address}
             chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             title={t('Account')}
-          />
+          /> */}
+          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>('Account holder')}:
+            </Typography>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+              {accountName}
+            </Typography>
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+              <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
+            </Grid>
+          </Grid>
+          {selectedProxyAddress &&
+            <Grid container m='auto' maxWidth='92%'>
+              <ThroughProxy address={selectedProxyAddress} chain={chain} />
+            </Grid>
+          }
           <DisplayValue title={t<string>('Vote')}>
             <VoteStatus vote={voteInformation.voteType} />
           </DisplayValue>
           <DisplayValue title={t<string>('Vote Value({{token}})', { replace: { token } })}>
-            <Typography fontSize='28px' fontWeight={500}>
+            <Typography fontSize='28px' fontWeight={400}>
               {voteInformation.voteBalance}
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Lock up Period')}>
-            <Typography fontSize='28px' fontWeight={500}>
+            <Typography fontSize='28px' fontWeight={400}>
               {voteInformation.voteLockUpUpPeriod}
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Final vote power')}>
-            <Typography fontSize='28px' fontWeight={500}>
+            <Typography fontSize='28px' fontWeight={400}>
               {voteInformation.votePower}
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Fee')}>
             <ShowValue height={20} value={estimatedFee?.toHuman()} />
           </DisplayValue>
-          <Grid container item sx={{ height: '130px', position: 'relative', pt: '10px' }}>
-            <PasswordUseProxyConfirm
-              api={api}
-              confirmText={t<string>('Confirm')}
-              genesisHash={chain?.genesisHash}
-              isPasswordError={isPasswordError}
-              label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
-              onChange={setPassword}
-              onConfirmClick={confirmVote}
-              proxiedAddress={formatted}
-              proxies={proxyItems}
-              proxyTypeFilter={['Any']}
-              selectedProxy={selectedProxy}
-              setIsPasswordError={setIsPasswordError}
-              setSelectedProxy={setSelectedProxy}
-              style={{
-                bottom: '80px',
-                left: '6%',
-                position: 'absolute',
-                width: '88%'
-              }}
-            />
-          </Grid>
-        </>
-        : showWaitScreen
+          <PasswordWithTwoButtonsAndUseProxy
+            chain={chain}
+            isPasswordError={isPasswordError}
+            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+            onChange={setPassword}
+            onPrimaryClick={confirmVote}
+            onSecondaryClick={backToCastVote}
+            primaryBtnText={t<string>('Confirm')}
+            proxiedAddress={formatted}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any']}
+            selectedProxy={selectedProxy}
+            setIsPasswordError={setIsPasswordError}
+            setSelectedProxy={setSelectedProxy}
+            setStep={setStep}
+          />
+        </Grid>
+        : step === 2
           ? <WaitScreen />
-          : <Confirmation
-            address={address}
-            handleClose={handleClose}
-            txInfo={txInfo}
-            voteInformation={voteInformation}
-          />}
+          : step === 3
+            ? <Confirmation
+              address={address}
+              handleClose={handleClose}
+              txInfo={txInfo}
+              voteInformation={voteInformation}
+            />
+            : <SelectProxyModal
+              address={address}
+              height={modalHeight}
+              proxies={proxyItems}
+              proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+              selectedProxy={selectedProxy}
+              setSelectedProxy={setSelectedProxy}
+              setStep={setStep}
+            />}
     </Motion>
   );
 }
