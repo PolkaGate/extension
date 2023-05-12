@@ -6,8 +6,9 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress } from '../../../../../components';
+import { AccountHolderWithProxy, Motion, PButton, ShortAddress } from '../../../../../components';
 import { useToken, useTranslation } from '../../../../../hooks';
+import { ThroughProxy } from '../../../../../partials';
 import Explorer from '../../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../../../../../util/types';
@@ -31,11 +32,11 @@ export default function Confirmation({ address, handleClose, txInfo, voteInforma
     return (
       <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
         <Grid container item width='fit-content'>
-          <Typography pr='5px' lineHeight='40px'>{caption}</Typography>
+          <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
           <Typography lineHeight='40px'>{value}</Typography>
         </Grid>
         {showDivider &&
-          <Grid container item width='fit-content'>
+          <Grid alignItems='center' container item justifyContent='center'>
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
           </Grid>}
       </Grid>
@@ -68,14 +69,34 @@ export default function Confirmation({ address, handleClose, txInfo, voteInforma
           {txInfo.failureText}
         </Typography>
       }
+      {/* <AccountHolderWithProxy address={address} chain={txInfo.chain} showDivider selectedProxyAddress={txInfo.throughProxy?.address} /> */}
+      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+          {t<string>('Account holder')}:
+        </Typography>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+          {txInfo.from.name}
+        </Typography>
+        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+          <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
+        </Grid>
+      </Grid>
+      {txInfo.throughProxy &&
+        <Grid container m='auto' maxWidth='92%'>
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
+        </Grid>
+      }
+      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+      </Grid>
       <DisplayInfo caption={t<string>('Vote:')} value={t<string>(voteInformation.voteType)} />
       <DisplayInfo caption={t<string>('Vote value:')} value={t<string>(`${voteInformation.voteBalance} {{token}}`, { replace: { token } })} />
       <DisplayInfo caption={t<string>('Lock up period:')} value={t<string>(voteInformation.voteLockUpUpPeriod)} />
       <DisplayInfo caption={t<string>('Your vote power:')} value={t<string>(`${voteInformation.votePower} {{token}}`, { replace: { token } })} />
       <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
-        <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center'>
-          <Grid container item lineHeight='40px' width='fit-content'>
+        <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
+          <Grid container item width='fit-content'>
             <Typography pr='5px'>{t<string>('Hash')}:</Typography>
           </Grid>
           <Grid container item width='fit-content'>
@@ -83,7 +104,7 @@ export default function Confirmation({ address, handleClose, txInfo, voteInforma
               address={txInfo.txHash}
               charsCount={6}
               showCopy
-              style={{ fontSize: '16px', width: '120px' }}
+              style={{ fontSize: '16px' }}
             />
           </Grid>
         </Grid>
