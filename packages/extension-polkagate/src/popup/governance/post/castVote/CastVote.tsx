@@ -180,6 +180,10 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   }, [convictionOptions]);
 
   useEffect(() => {
+    voteType === 'Abstain' && setConviction(0);
+  }, [voteType]);
+
+  useEffect(() => {
     if (!formatted || !vote) {
       return;
     }
