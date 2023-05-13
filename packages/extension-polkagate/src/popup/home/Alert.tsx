@@ -40,23 +40,23 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
 
   return (
     <Popup show={show}>
-      <Header onClose={goHome} text={t<string>('Attention!')} />
+      <Header onClose={goHome} text={t<string>('Polkagate Updated!')} />
       <Grid alignItems='center' container height='120px' justifyContent='center'>
         <Warning fontWeight={400} isBelowInput theme={theme}>
           <Grid item sx={{ fontSize: 19, pb: '20px' }} xs={12}>
-            Important updates have been made in this release:
+            The latest in this release:
           </Grid>
         </Warning>
       </Grid>
       <Grid container justifyContent='center' sx={{ mt: '20px', px: '20px' }}>
         <Item
-          text={'The testnet feature is now disabled by default. However, you can enable it through the main menu/settings by selecting "Enable testnet chain".'}
+          text={'The testnet is disabled by default. However, It can enabled through the main menu/settings by selecting "Enable testnet chain".'}
         />
         <Item
-          text={'A new endpoint named "Lucky Friday" has been added to both the Kusama and Polkadot networks.'}
+          text={'"Lucky Friday" has been added to both the Kusama and Polkadot networks as an endpoint.'}
         />
         <Item
-          text={'Various known issues have been addressed and fixed.'}
+          text={'Known issues have been fixed.'}
         />
       </Grid>
       <PButton _onClick={goHome} text={t<string>('Ok')} />
