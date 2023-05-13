@@ -49,16 +49,16 @@ export function DraggableModal({ children, onClose, open, width = 500, maxHeight
     border: '2px solid #000',
     borderRadius: '10px',
     boxShadow: 24,
+    cursor: isDragging ? 'grabbing' : 'grab',
+    left: modalPosition.x,
     maxHeight: `${maxHeight}x`,
     pb: 3,
     position: 'absolute',
     pt: 2,
     px: 4,
-    // transform: 'translate(-50%, -50%)',
-    width: `${width}px`,
     top: modalPosition.y,
-    left: modalPosition.x,
-    cursor: isDragging ? 'grabbing' : 'grab'
+    // transform: 'translate(-50%, -50%)',
+    width: `${width}px`
   };
 
   return (
