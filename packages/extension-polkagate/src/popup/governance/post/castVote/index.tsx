@@ -26,6 +26,7 @@ import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
 import { getConviction } from '../myVote/util';
 import Review from './partial/Review';
+import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
   address: string | undefined;
@@ -248,22 +249,6 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     setVoteAmount(amountToHuman(lockedAmount, decimal));
   }, [decimal, lockedAmount]);
 
-  const style = {
-    bgcolor: 'background.default',
-    border: '2px solid #000',
-    borderRadius: '10px',
-    boxShadow: 24,
-    left: '50%',
-    maxHeight: '700px',
-    pb: 3,
-    position: 'absolute',
-    pt: 2,
-    px: 4,
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '500px'
-  };
-
   const onCastVote = useCallback(() => {
     setStep(1);
   }, []);
@@ -385,8 +370,8 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   }, []);
 
   return (
-    <Modal disableScrollLock={true} onClose={handleClose} open={open}>
-      <Box sx={{ ...style }}>
+    <DraggableModal onClose={handleClose} open={open}>
+      <>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
@@ -510,7 +495,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
             voteInformation={voteInformation}
           />
         }
-      </Box>
-    </Modal>
+      </>
+    </DraggableModal>
   );
 }
