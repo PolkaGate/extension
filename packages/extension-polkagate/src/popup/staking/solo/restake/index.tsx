@@ -86,7 +86,7 @@ export default function Index(): React.ReactElement {
   }, [api, decimal, unlockingAmount, stakingConsts, t, restakeAllAmount, amountAsBN]);
 
   useEffect(() => {
-    if (!rebonded) {
+    if (!rebonded || !formatted) {
       return;
     }
 
