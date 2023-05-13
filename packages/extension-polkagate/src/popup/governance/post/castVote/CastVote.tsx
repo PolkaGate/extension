@@ -17,6 +17,7 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, From, Infotip, PButton, ShowBalance, Warning } from '../../../../components';
+import { nFormatter } from '../../../../components/FormatPrice';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
@@ -163,17 +164,14 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
 
     return lockUp;
   }, [conviction, convictionOptions]);
+
   const votePower = useMemo(() => {
     if (conviction === undefined || voteAmountAsBN.isZero()) {
       return undefined;
     }
 
-    const votingPower = voteAmountAsBN.muln(conviction);
-
-    const votingPowerInHuman = amountToHuman(votingPower, decimal);
-
-    return votingPowerInHuman;
-  }, [conviction, decimal, voteAmountAsBN]);
+    return Number(voteAmount) * (conviction);
+  }, [conviction, voteAmount, voteAmountAsBN]);
 
   useEffect(() => {
     convictionOptions === undefined && setConviction(1);
@@ -482,7 +480,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
                   </Grid>
                   <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
                     <Typography fontSize='28px' fontWeight={500}>
-                      {votePower}
+                      {nFormatter(votePower, 2)}
                     </Typography>
                   </Grid>
                 </Grid>

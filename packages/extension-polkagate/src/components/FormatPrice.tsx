@@ -15,7 +15,7 @@ interface Props {
   decimals?: number;
 }
 
-function nFormatter(num: number, digits: number) {
+export function nFormatter(num: number, digits: number) {
   const lookup = [
     { value: 1, symbol: '' },
     { value: 1e3, symbol: 'k' },
