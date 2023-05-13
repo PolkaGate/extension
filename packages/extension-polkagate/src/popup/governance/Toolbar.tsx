@@ -29,6 +29,13 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
   const { t } = useTranslation();
   const [openSubmitReferendum, setOpenSubmitReferendum] = React.useState(false);
   const [openDelegate, setOpenDelegate] = React.useState(false);
+  const [showDelegationNote, setShowDelegationNote] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    const delegationNoteDisable = window.localStorage.getItem('DelegateNoteDisable');
+
+    delegationNoteDisable !== null && delegationNoteDisable === 'true' && setShowDelegationNote(false);
+  }, [openDelegate, openSubmitReferendum]);
 
   const handleOpenSubmitReferendum = () => {
     setOpenSubmitReferendum(true);
@@ -133,6 +140,7 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
           api={api}
           open={openDelegate}
           setOpen={setOpenDelegate}
+          showDelegationNote={showDelegationNote}
         />
       }
     </>
