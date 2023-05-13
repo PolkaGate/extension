@@ -3,11 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import CircleIcon from '@mui/icons-material/Circle';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext, Header, PButton, Popup, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
+import { NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
   show: boolean;
@@ -20,37 +22,44 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
   const theme = useTheme();
 
   const goHome = useCallback(() => {
-    window.localStorage.setItem('export_account_open', Date.now());
+    window.localStorage.setItem(NEW_VERSION_ALERT, 'ok');
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
 
-  const goToExportAll = useCallback(() => {
-    window.localStorage.setItem('export_account_open', 'ok');
-    onAction('/account/export-all');
-  }, [onAction]);
+  const Item = ({ text }: { text: string }) => (
+    <Grid container justifyContent='center' sx={{ mt: '10px' }}>
+      <Grid item sx={{ textAlign: 'left' }} xs={1}>
+        <CircleIcon sx={{ fontSize: '16px', mr: '10px', mt: '5px' }} />
+      </Grid>
+      <Grid item sx={{ textAlign: 'left' }} xs={11}>
+        {text}
+      </Grid>
+    </Grid>
+  );
 
   return (
     <Popup show={show}>
       <Header onClose={goHome} text={t<string>('Attention!')} />
       <Grid alignItems='center' container height='120px' justifyContent='center'>
-        <Warning fontWeight={400} isBelowInput isDanger theme={theme}>
+        <Warning fontWeight={400} isBelowInput theme={theme}>
           <Grid item sx={{ fontSize: 19, pb: '20px' }} xs={12}>
-            Export Your Account Data Now!
+            Important updates have been made in this release:
           </Grid>
         </Warning>
       </Grid>
-      <Grid container justifyContent='center' sx={{ mt: '20px', px: '15px' }}>
-        <Grid item sx={{ textAlign: 'left' }} xs={12}>
-          Protect Your Accounts - Export all your data and securely store it in a safe place. Safeguard against potential loss due to browser crashes, hardware failures, or inconsistent updates.
-        </Grid>
+      <Grid container justifyContent='center' sx={{ mt: '20px', px: '20px' }}>
+        <Item
+          text={'The testnet feature is now disabled by default. However, you can enable it through the main menu/settings by selecting "Enable testnet chain".'}
+        />
+        <Item
+          text={'A new endpoint named "Lucky Friday" has been added to both the Kusama and Polkadot networks.'}
+        />
+        <Item
+          text={'Various known issues have been addressed and fixed.'}
+        />
       </Grid>
-      <Grid container justifyContent='center' sx={{ mt: '20px', px: '15px' }}>
-        <Grid item sx={{ pt: '15px', textAlign: 'left' }} xs={12}>
-          Take Action Now to Ensure the Safety of Your Accounts!
-        </Grid>
-      </Grid>
-      <PButton _onClick={goToExportAll} text={t<string>('Export All Accounts')} />
-    </Popup>
+      <PButton _onClick={goHome} text={t<string>('Ok')} />
+    </Popup >
   );
 }
