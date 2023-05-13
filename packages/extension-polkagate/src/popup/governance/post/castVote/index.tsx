@@ -151,15 +151,15 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
 
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
-  const convictionLockUp = useMemo(() => {
-    if (conviction === undefined || !convictionOptions || !convictionOptions.length) {
+  const convictionLockUp = useMemo((): string | undefined => {
+    if (conviction === undefined || !convictionOptions || !convictionOptions?.length) {
       return undefined;
     }
 
-    const convText = convictionOptions?.find((conv) => conv.value === conviction)?.text;
-    const perantesisIndex = convText?.indexOf('(') ? convText?.indexOf('(') + 1 : 0;
-    const lockUp = perantesisIndex
-      ? convText?.slice(perantesisIndex, -1)
+    const convText = convictionOptions?.find((conv) => conv.value === conviction)?.text as string;
+    const parenthesisIndex = convText?.indexOf('(') ? convText?.indexOf('(') + 1 : 0;
+    const lockUp = parenthesisIndex
+      ? convText?.slice(parenthesisIndex, -1)
       : '0 day';
 
     return lockUp;
@@ -207,7 +207,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
       trackId,
       voteAmountBN: voteAmountAsBN,
       voteBalance: voteAmount,
-      voteConvictionValue: conviction,
+      voteConvictionValue: conviction === 0.1 ? 0 : conviction,
       voteLockUpUpPeriod: convictionLockUp,
       votePower,
       voteType
@@ -435,6 +435,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               </FormControl>
             </Grid>
             <AmountWithOptions
+              inputWidth={8.4}
               label={t<string>(`Vote Value(${token})`)}
               onChangeAmount={onVoteAmountChange}
               onPrimary={onMaxAmount}
@@ -498,7 +499,16 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               text={t<string>('Next to review')}
             />
           </Grid>
-          : voteInformation && <Review address={address} estimatedFee={estimatedFee} formatted={String(formatted)} handleClose={handleClose} setStep={setStep} step={step} voteInformation={voteInformation} />
+          : voteInformation &&
+          <Review
+            address={address}
+            estimatedFee={estimatedFee}
+            formatted={String(formatted)}
+            handleClose={handleClose}
+            setStep={setStep}
+            step={step}
+            voteInformation={voteInformation}
+          />
         }
       </Box>
     </Modal>

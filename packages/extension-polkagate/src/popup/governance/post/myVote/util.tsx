@@ -17,7 +17,7 @@ const AYE_BITS = 0b10000000;
 const CON_MASK = 0b01111111;
 
 export const isAye = (vote: string) => (vote & AYE_BITS) === AYE_BITS;
-export const getConviction = (vote: string) => vote & CON_MASK;
+export const getConviction = (vote: string) => (vote & CON_MASK) === 0 ? 0.1 : (vote & CON_MASK);
 
 interface Votes {
   votes: [number, {

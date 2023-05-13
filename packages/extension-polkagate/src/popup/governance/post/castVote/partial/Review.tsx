@@ -26,7 +26,7 @@ import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../../../components/SelectProxyModal';
 import { STATUS_COLOR } from '../../../utils/consts';
-import { VoteInformation } from '../CastVote';
+import { VoteInformation } from '..';
 import Confirmation from './Confirmation';
 import WaitScreen from './WaitScreen';
 
@@ -57,7 +57,6 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [params, setParams] = useState<unknown[] | undefined>();
   const [modalHeight, setModalHeight] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -109,9 +108,9 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  useEffect((): void => {
+  const params = useMemo(() => {
     if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
-      setParams([voteInformation.refIndex, {
+      return ([voteInformation.refIndex, {
         Standard: {
           balance: voteInformation.voteAmountBN,
           vote: {
@@ -121,7 +120,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
         }
       }]);
     } else if (voteInformation.voteType === 'Abstain') {
-      setParams([voteInformation.refIndex, {
+      return ([voteInformation.refIndex, {
         SplitAbstain: {
           abstain: voteInformation.voteAmountBN,
           aye: BN_ZERO,
@@ -129,9 +128,10 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
         }
       }]);
     }
-  }, [voteInformation.refIndex, voteInformation.trackId, voteInformation.voteAmountBN, voteInformation.voteConvictionValue, voteInformation.voteType]);
+  }, [voteInformation]);
+ console.log('paramssssssssssssssssss:', params)
 
-  useEffect(() => {
+ useEffect(() => {
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
       console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)

@@ -15,7 +15,7 @@ import Toolbar from '../Toolbar';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { pascalCaseToTitleCase, toTitleCase } from '../utils/util';
-import CastVote from './castVote/CastVote';
+import CastVote from './castVote';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
