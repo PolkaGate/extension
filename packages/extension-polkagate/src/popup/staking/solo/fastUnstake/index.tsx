@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { Motion, PButton, Warning } from '../../../../components';
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
@@ -54,7 +54,9 @@ export default function Index(): React.ReactElement {
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
-  const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && balances && estimatedFee && getValue('available', balances) && fastUnstakeDeposit.add(estimatedFee).lt(getValue('available', balances));
+  const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && getValue('available', myBalances)
+    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(getValue('available', myBalances))
+    : undefined;
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
     ? !!(!redeemable.isZero() || stakingAccount.unlocking?.length)
     : undefined;
