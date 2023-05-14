@@ -8,11 +8,7 @@ import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import Request from './Request';
 
-interface Props {
-  className?: string;
-}
-
-export default function Authorize({ className = '' }: Props): React.ReactElement {
+export default function Authorize(): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(AuthorizeReqContext);
 

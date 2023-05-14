@@ -5,6 +5,7 @@
 import { BN } from '@polkadot/util';
 
 export const EXTENSION_NAME = 'Polkagate';
+export const NEW_VERSION_ALERT = 'alert_v0.1.3.2';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
@@ -52,6 +53,10 @@ export const RELAY_CHAINS = [
     name: 'Westend',
     symbol: 'WND'
   }
+];
+
+export const TEST_NETS = [
+  '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e' // Westend
 ];
 
 export const CROWDLOANS_CHAINS = [

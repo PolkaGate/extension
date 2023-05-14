@@ -3,54 +3,72 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, Header, PButton, Popup, Warning } from '../../components';
+import { ActionContext, Header, PButton, Popup } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
+import { NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
   show: boolean;
-  setShowAlert: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const theme = useTheme();
 
   const goHome = useCallback(() => {
-    window.localStorage.setItem('export_account_open', Date.now());
+    window.localStorage.setItem(NEW_VERSION_ALERT, 'ok');
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
 
-  const goToExportAll = useCallback(() => {
-    window.localStorage.setItem('export_account_open', 'ok');
-    onAction('/account/export-all');
-  }, [onAction]);
+  const UL = ({ notes, title }: { title: string, notes: string[] }) => {
+    return (
+      <Grid container direction='column' pt='15px'>
+        <Grid container item>
+          <Typography fontSize='16px' fontWeight={500}>
+            {title}
+          </Typography>
+        </Grid>
+        <Grid container item>
+            <ul style={{ margin: 0, paddingLeft: '25px' }}>
+              {notes.map((note, index) => (
+                <li key={index} style={{ paddingTop: '10px' }}>
+                  <Typography fontSize='14px' fontWeight={400} textAlign='left'>
+                    {note}
+                  </Typography>
+                </li>
+              ))}
+            </ul>
+        </Grid>
+      </Grid>
+    );
+  };
 
   return (
     <Popup show={show}>
-      <Header onClose={goHome} text={t<string>('Attention!')} />
-      <Grid alignItems='center' container height='120px' justifyContent='center'>
-        <Warning fontWeight={400} isBelowInput isDanger theme={theme}>
-          <Grid item sx={{ fontSize: 19, pb: '20px' }} xs={12}>
-            Export Your Account Data Now!
-          </Grid>
-        </Warning>
-      </Grid>
-      <Grid container justifyContent='center' sx={{ mt: '20px', px: '15px' }}>
-        <Grid item sx={{ textAlign: 'left' }} xs={12}>
-          Protect Your Accounts - Export all your data and securely store it in a safe place. Safeguard against potential loss due to browser crashes, hardware failures, or inconsistent updates.
+      <Header onClose={goHome} text={t<string>('Polkagate')} />
+      <Grid container direction='column' px='15px'>
+        <Grid container item justifyContent='center' py='50px'>
+          <Typography fontSize='22px' fontWeight={700} pt='45px'>
+            {t<string>('PolkaGate Updated!')}
+          </Typography>
+        </Grid>
+        <Grid container item>
+          <UL
+            notes={[
+              t<string>('Testnet is now disabled by default but can be enabled through the main menu/settings by selecting "Enable testnet chain."'),
+              t<string>('"Lucky Friday" has been added as an endpoint to both the Kusama and Polkadot networks.'),
+              t<string>('Various known issues have been fixed.')
+            ]}
+            title={t<string>('Here are the latest changes:')}
+          />
         </Grid>
       </Grid>
-      <Grid container justifyContent='center' sx={{ mt: '20px', px: '15px' }}>
-        <Grid item sx={{ pt: '15px', textAlign: 'left' }} xs={12}>
-          Take Action Now to Ensure the Safety of Your Accounts!
-        </Grid>
-      </Grid>
-      <PButton _onClick={goToExportAll} text={t<string>('Export All Accounts')} />
+      <PButton _onClick={goHome} text={t<string>('Ok')} />
     </Popup>
   );
 }

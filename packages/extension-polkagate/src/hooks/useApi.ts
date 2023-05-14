@@ -18,10 +18,12 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   useEffect(() => {
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      if (apisContext?.apis[chain.genesisHash].api.isConnected) {
+      const api = apisContext?.apis[chain.genesisHash].api;
+
+      if (api?.isConnected) {
         console.log(`♻ using the saved api for ${chain.name}`);
 
-        return setApi(apisContext?.apis[chain.genesisHash].api);
+        return setApi(api);
       }
     }
 

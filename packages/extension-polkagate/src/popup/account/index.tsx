@@ -19,14 +19,13 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, HorizontalMenuItem, Identicon, Motion, Select, SelectChain } from '../../components';
-import { useAccount, useApi, useBalances, useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
-import { tieAccount, updateMeta } from '../../messaging';
+import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector, SelectChain } from '../../components';
+import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
+import { tieAccount } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
-import { prepareMetaData } from '../../util/utils';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
@@ -43,11 +42,9 @@ export default function AccountDetails(): React.ReactElement {
   const api = useApi(address, state?.api);
   const identity = useMyAccountIdentity(address);
   const price = usePrice(address);
-  const endpoint = useEndpoint2(address);
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chain = useChain(address);
-  const endpointOptions = useEndpoints(chain?.genesisHash);
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
@@ -88,11 +85,6 @@ export default function AccountDetails(): React.ReactElement {
   const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     tieAccount(address, genesisHash || null).catch(console.error);
   }, [address]);
-
-  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chainName]);
 
   const goToSend = useCallback(() => {
     if (!availableProxiesForTransfer?.length && account?.isExternal) {
@@ -198,15 +190,11 @@ export default function AccountDetails(): React.ReactElement {
                 style={{ width: '100%' }}
               />
             </Grid>
-            <Grid height='20px' item mt='10px' xs>
-              {endpoint &&
-                <Select
-                  label={'Remote node'}
-                  onChange={_onChangeEndpoint}
-                  options={endpointOptions}
-                  value={endpoint}
-                />
-              }
+            <Grid height='20px' item mt='5px' xs>
+              <RemoteNodeSelector
+                address={address}
+                genesisHash={genesisHash}
+              />
             </Grid>
             <Grid item pt='50px' xs>
               <LabelBalancePrice api={api} balances={balanceToShow} label={'Total'} price={price} />
