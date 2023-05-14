@@ -18,7 +18,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
 import { useAccountName, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
@@ -26,13 +25,12 @@ import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import SubTitle from '../../partials/SubTitle';
 import broadcast from '../../util/api/broadcast';
-import { FLOATING_POINT_DIGIT } from '../../util/constants';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
 function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, name, pt1 = 0, pt2 = 5 }:
-  { chain: Chain | null, identiconSize?: number, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, name: string | undefined, addr: string | undefined }): React.ReactElement<Props> {
+{ chain: Chain | null, identiconSize?: number, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, name: string | undefined, addr: string | undefined }): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
@@ -40,14 +38,14 @@ function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, n
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: `${identiconSize}px`, pt: `${pt2}px` }}>
         {chain &&
-          <Grid item mr='5px'>
-            <Identicon
-              iconTheme={chain?.icon || 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={identiconSize}
-              value={addr}
-            />
-          </Grid>
+           <Grid item mr='5px'>
+             <Identicon
+               iconTheme={chain?.icon || 'polkadot'}
+               prefix={chain?.ss58Format ?? 42}
+               size={identiconSize}
+               value={addr}
+             />
+           </Grid>
         }
         <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {name}
@@ -59,7 +57,7 @@ function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, n
   );
 }
 
-type TransferType = 'All' | 'Max' | 'Normal';
+ type TransferType = 'All' | 'Max' | 'Normal';
 
 interface Props {
   address: string;
@@ -82,7 +80,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
   const proxies = useProxies(api, formatted);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const accountName = useAccountName(address)
+  const name = useAccountName(address);
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
 
@@ -140,7 +138,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         date: Date.now(),
         failureText,
         fee: estimatedFee || fee,
-        from: { address: from, name: selectedProxyName || accountName },
+        from: { address: formatted, name },
         subAction: 'Send',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -157,7 +155,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, amount, api, chain, decimal, estimatedFee, formatted, password, recipientAddress, recipientName, selectedProxy, selectedProxyAddress, selectedProxyName, transfer, transferType]);
+  }, [name, amount, api, chain, decimal, estimatedFee, formatted, password, recipientAddress, recipientName, selectedProxy, selectedProxyAddress, selectedProxyName, transfer, transferType]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -178,7 +176,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           }}
         />
         {isPasswordError &&
-          <WrongPasswordAlert />
+           <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
@@ -211,7 +209,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           confirmText={t<string>('Send')}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
           onConfirmClick={send}
           proxiedAddress={formatted}
