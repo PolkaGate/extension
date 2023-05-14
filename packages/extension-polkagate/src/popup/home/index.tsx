@@ -97,7 +97,10 @@ export default function Home(): React.ReactElement {
 
   return (
     <>
-      <Alert show={show} setShowAlert={setShowAlert} />
+      <Alert
+        setShowAlert={setShowAlert}
+        show={show}
+      />
       {(hierarchy.length === 0)
         ? <AddAccount />
         : (

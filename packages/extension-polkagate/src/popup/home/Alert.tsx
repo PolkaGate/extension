@@ -3,17 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import CircleIcon from '@mui/icons-material/Circle';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, Header, PButton, Popup, Warning } from '../../components';
+import { ActionContext, Header, PButton, Popup } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
   show: boolean;
-  setShowAlert: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
@@ -35,15 +34,15 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
           </Typography>
         </Grid>
         <Grid container item>
-          <ul style={{ margin: 0, paddingLeft: '25px' }}>
-            {notes.map((note, index) => (
-              <li key={index} style={{ paddingTop: '10px' }}>
-                <Typography fontSize='14px' fontWeight={400} textAlign='left'>
-                  {note}
-                </Typography>
-              </li>
-            ))}
-          </ul>
+            <ul style={{ margin: 0, paddingLeft: '25px' }}>
+              {notes.map((note, index) => (
+                <li key={index} style={{ paddingTop: '10px' }}>
+                  <Typography fontSize='14px' fontWeight={400} textAlign='left'>
+                    {note}
+                  </Typography>
+                </li>
+              ))}
+            </ul>
         </Grid>
       </Grid>
     );
