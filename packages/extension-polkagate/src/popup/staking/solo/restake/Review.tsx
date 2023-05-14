@@ -24,12 +24,12 @@ import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
+import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
   address: string;
-  amount: string;
+  amount: BN;
   api: ApiPromise;
   chain: Chain;
   estimatedFee: Balance | undefined;
@@ -57,6 +57,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const amountInHuman = amountToHuman(amount, decimal);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
@@ -90,13 +91,12 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const amountAsBN = amountToMachine(amount, decimal);
-      const params = [amountAsBN];
+      const params = [amount];
       const { block, failureText, fee, success, txHash } = await broadcast(api, rebonded, params, signer, formatted, selectedProxy);
 
       const info = {
         action: 'Solo Staking',
-        amount,
+        amount: amountInHuman,
         block,
         date: Date.now(),
         failureText,
@@ -117,7 +117,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [amount, api, chain, decimal, estimatedFee, formatted, name, password, rebonded, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [amount, amountInHuman, api, chain, estimatedFee, formatted, name, password, rebonded, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -150,7 +150,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           />
           <AmountFee
             address={address}
-            amount={amount}
+            amount={amountInHuman}
             fee={estimatedFee}
             label={t('Amount')}
             showDivider
