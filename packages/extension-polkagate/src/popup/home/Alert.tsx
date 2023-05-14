@@ -12,7 +12,7 @@ import { NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
   show: boolean;
-  setShowAlert: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
@@ -50,7 +50,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
 
   return (
     <Popup show={show}>
-      <Header onClose={goHome} text={t<string>('Polkagate')} />
+      <Header onClose={goHome} text={t<string>('Updates')} />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' py='50px'>
           <Typography fontSize='22px' fontWeight={700} pt='45px'>
@@ -60,7 +60,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item>
           <UL
             notes={[
-              t<string>('Testnet is now disabled by default but can be enabled through the main menu/settings by selecting "Enable testnet chain."'),
+              t<string>('Testnet is now disabled by default but can be enabled through the main menu/setting by selecting "Enable testnet chain."'),
               t<string>('"Lucky Friday" has been added as an endpoint to both the Kusama and Polkadot networks.'),
               t<string>('Various known issues have been fixed.')
             ]}

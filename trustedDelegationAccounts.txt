@@ -1,4 +1,0 @@
-{
-polkagate: 5CBCVHGxPGFTFuKjKYDZiW5T8nNkM51rG6gPkPHdjgyUeQDn,
-amirkhan: 5ECro2Szgee3YLDpDQYRAti3zJ6CnxmdvLAgmfDNoeBuaHMc,
-}

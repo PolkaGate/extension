@@ -107,7 +107,7 @@ export default function RemoveValidators({ address, api, chain, formatted, setSh
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: 'Remove Validators',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,

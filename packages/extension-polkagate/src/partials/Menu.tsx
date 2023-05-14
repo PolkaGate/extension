@@ -129,7 +129,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
           ? <>
             <MenuItem
               iconComponent={
-                <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <vaadin-icon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleNewAccountSubMenu}
               text={t('New account')}
