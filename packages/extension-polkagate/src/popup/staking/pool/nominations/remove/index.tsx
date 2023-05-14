@@ -95,7 +95,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
       }
 
       const from = selectedProxyAddress ?? formatted;
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -109,7 +109,7 @@ export default function RemoveValidators({ address, api, chain, formatted, poolI
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: 'Remove Validators',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
