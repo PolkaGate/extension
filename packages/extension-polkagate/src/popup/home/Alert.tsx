@@ -34,15 +34,15 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
           </Typography>
         </Grid>
         <Grid container item>
-            <ul style={{ margin: 0, paddingLeft: '25px' }}>
-              {notes.map((note, index) => (
-                <li key={index} style={{ paddingTop: '10px' }}>
-                  <Typography fontSize='14px' fontWeight={400} textAlign='left'>
-                    {note}
-                  </Typography>
-                </li>
-              ))}
-            </ul>
+          <ul style={{ margin: 0, paddingLeft: '25px' }}>
+            {notes.map((note, index) => (
+              <li key={index} style={{ paddingTop: '10px' }}>
+                <Typography fontSize='14px' fontWeight={400} textAlign='left'>
+                  {note}
+                </Typography>
+              </li>
+            ))}
+          </ul>
         </Grid>
       </Grid>
     );
@@ -50,7 +50,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
 
   return (
     <Popup show={show}>
-      <Header onClose={goHome} text={t<string>('Polkagate')} />
+      <Header onClose={goHome} text={t<string>('Updates')} />
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' py='50px'>
           <Typography fontSize='22px' fontWeight={700} pt='45px'>
