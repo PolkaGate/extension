@@ -5,11 +5,8 @@
 
 import '@vaadin/icons';
 
-import { UploadFileRounded as UploadJSONIcon } from '@mui/icons-material';
 import { Divider, Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-
-import settings from '@polkadot/ui-settings';
 
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
@@ -70,15 +67,13 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
       <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
         <MenuItem
           iconComponent={
-            <UploadJSONIcon
-              sx={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }}
-            />
+            <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={_goToCreateAcc}
           py='4px'
           text={t('Create new account')}
         />
-         <MenuItem
+        <MenuItem
           iconComponent={
             <vaadin-icon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
