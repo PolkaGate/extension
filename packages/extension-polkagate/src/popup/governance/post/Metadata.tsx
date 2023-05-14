@@ -183,7 +183,7 @@ export default function Metadata({ address, referendum }: { address: string | un
             }
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
-          <Grid item>
+          <Grid container item>
             <Link
               onClick={() => setShowJson(!showJson)}
               sx={{ cursor: 'pointer' }}
@@ -194,7 +194,9 @@ export default function Metadata({ address, referendum }: { address: string | un
               </Typography>
             </Link>
             {showJson &&
-              <JsonToTable json={referendum?.proposed_call} />
+              <Grid item sx={{ maxWidth: 'inherit', overflowX: 'auto' }}>
+                <JsonToTable json={referendum?.proposed_call} />
+              </Grid>
             }
           </Grid>
         </Grid>
