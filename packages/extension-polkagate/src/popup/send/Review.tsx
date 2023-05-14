@@ -82,7 +82,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
   const proxies = useProxies(api, formatted);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const accountName = useAccountName(address)
+  const name = useAccountName(address);
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
 
@@ -140,7 +140,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         date: Date.now(),
         failureText,
         fee: estimatedFee || fee,
-        from: { address: from, name: selectedProxyName || accountName },
+        from: { address: formatted, name },
         subAction: 'Send',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -157,7 +157,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, amount, api, chain, decimal, estimatedFee, formatted, password, recipientAddress, recipientName, selectedProxy, selectedProxyAddress, selectedProxyName, transfer, transferType]);
+  }, [name, amount, api, chain, decimal, estimatedFee, formatted, password, recipientAddress, recipientName, selectedProxy, selectedProxyAddress, selectedProxyName, transfer, transferType]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -211,7 +211,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           confirmText={t<string>('Send')}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
           onConfirmClick={send}
           proxiedAddress={formatted}
