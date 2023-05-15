@@ -698,8 +698,8 @@ export interface APIs {
   [genesisHash: string]: ApiProps;
 }
 export interface APIsContext {
-  apis: APIs;
-  setIt: (apis: APIs) => void;
+  apis: { [key: string]: { api: ApiPromise; endpoint: string; } };
+  setIt: (apis: { [key: string]: { api: ApiPromise; endpoint: string; } }) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
