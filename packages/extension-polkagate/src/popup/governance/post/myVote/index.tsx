@@ -9,26 +9,27 @@ import React, { useMemo } from 'react';
 
 import { ShowBalance } from '../../../../components';
 import { useApi, useDecimal, useMyVote, useToken, useTranslation } from '../../../../hooks';
-import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
 import { getConviction } from './util';
 
 interface Props {
   address: string | undefined;
-  referendumFromSb: ReferendumSubScan | undefined;
+  refIndex: number | undefined;
+  trackId: number | undefined;
 }
 
-export default function MyVote({ address, referendumFromSb }: Props): React.ReactElement {
+export default function MyVote({ address, refIndex, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const vote = useMyVote(address, referendumFromSb);
+  const vote = useMyVote(address, refIndex, trackId);
 
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
 
   const voteType = getVoteType(vote);
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote)), [vote]);
 
   return (
     <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>
@@ -37,38 +38,45 @@ export default function MyVote({ address, referendumFromSb }: Props): React.Reac
           {t('My Vote')}
         </Typography>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
-        <Grid container item xs={8}>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-            <ShowBalance api={api} balance={voteBalance} decimal={decimal} decimalPoint={1} token={token} />
+      {notVoted
+        ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
+          <Typography sx={{ fontSize: '24px', fontWeight: 700 }}>
+            {t('No votes cast yet.')}
+          </Typography>
+        </Grid>
+        : <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
+          <Grid container item xs={8}>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              <ShowBalance api={api} balance={voteBalance} decimal={decimal} decimalPoint={1} token={token} />
+            </Grid>
+            <Grid item sx={{ fontSize: '18px', fontWeight: 500, pl: '5px' }}>
+              {vote?.standard?.vote && `(${getConviction(vote.standard.vote)}x)`}
+              {vote?.delegating?.conviction && `(${vote.delegating.conviction}x)`}
+            </Grid>
           </Grid>
-          <Grid item sx={{ fontSize: '18px', fontWeight: 500, pl: '5px' }}>
-            {vote?.standard?.vote && `(${getConviction(vote.standard.vote)}x)`}
-            {vote?.delegating?.conviction && `(${vote.delegating.conviction}x)`}
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} xs>
+            {voteType &&
+              <>
+                {voteType === 'Aye' && <>
+                  <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
+                  {t('Aye')}
+                </>
+                }
+                {voteType === 'Nay' && <>
+                  <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
+                  {t('Nay')}
+                </>
+                }
+                {voteType === 'Abstain' && <>
+                  <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
+                  {t('Abstain')}
+                </>
+                }
+              </>
+            }
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} xs>
-          {voteType &&
-            <>
-              {voteType === 'Aye' && <>
-                <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
-                {t('Aye')}
-              </>
-              }
-              {voteType === 'Nay' && <>
-                <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
-                {t('Nay')}
-              </>
-              }
-              {voteType === 'Abstain' && <>
-                <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
-                {t('Abstain')}
-              </>
-              }
-            </>
-          }
-        </Grid>
-      </Grid>
+      }
     </Grid>
 
   );

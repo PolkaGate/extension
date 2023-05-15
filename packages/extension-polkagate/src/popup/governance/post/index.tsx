@@ -43,6 +43,9 @@ export default function ReferendumPost(): React.ReactElement {
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
 
+  const refIndex = useMemo(() => (postId && Number(postId)) || referendumFromSb?.referendum_index || referendumFromPA?.post_id, [postId, referendumFromPA, referendumFromSb]);
+  const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
+
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
 
@@ -193,7 +196,8 @@ export default function ReferendumPost(): React.ReactElement {
               }
               <MyVote
                 address={address}
-                referendumFromSb={referendumFromSb}
+                refIndex={refIndex}
+                trackId={trackId}
               />
             </Grid>
           </Grid>
