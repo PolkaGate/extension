@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Checkbox2 as Checkbox, PButton } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -29,7 +29,7 @@ export default function DelegateNote({ setStep }: Props): React.ReactElement {
           <ul style={{ margin: 0, paddingLeft: '25px' }}>
             {notes.map((note, index) => (
               <li key={index}>
-                <Typography fontSize='14px' fontWeight={400} lineHeight='32px' textAlign='left'>
+                <Typography fontSize='14px' fontWeight={400} lineHeight='20px' textAlign='left'>
                   {note}
                 </Typography>
               </li>
@@ -49,45 +49,47 @@ export default function DelegateNote({ setStep }: Props): React.ReactElement {
 
   return (
     <Grid container direction='column'>
-      <Grid container item justifyContent='center' py='45px'>
+      <Grid container item justifyContent='center' pt='45px' pb='20px'>
         <Typography fontSize='22px' fontWeight={700}>
           {t<string>('Some important information')}
         </Typography>
       </Grid>
-      <Grid container item>
-        <UL
-          notes={[t<string>('Delegation empowers trusted individuals  to vote on your behalf.')]}
-          title={t<string>('What is Vote Delegation?')}
-        />
+      <Grid container item sx={{ border: 1, px: '15px', pb: '15px', borderRadius: '5px', bgcolor: 'background.paper', borderColor: 'secondary.light' }}>
+        <Grid container item>
+          <UL
+            notes={[t<string>('Delegation empowers trusted individuals  to vote on your behalf.')]}
+            title={t<string>('What is Vote Delegation?')}
+          />
+        </Grid>
+        <Grid container item>
+          <UL
+            notes={[
+              t<string>('Delegate to experienced voters for better decisions.'),
+              t<string>('Stay involved even if you\'re unable to actively vote.')
+            ]}
+            title={t<string>('Why Consider Vote Delegation?')}
+          />
+        </Grid>
+        <Grid container item>
+          <UL
+            notes={[
+              t<string>('You can give your tokens to another account with a vote multiplier.'),
+              t<string>('The duration of your lock period depends on the selected multiplier.'),
+              t<string>('You can choose to delegate votes in all tracks or specific ones.'),
+              t<string>('If you have already voted in a category, it cannot be selected for delegation.')
+            ]}
+            title={t<string>('Important Information:')}
+          />
+        </Grid>
       </Grid>
-      <Grid container item>
-        <UL
-          notes={[
-            t<string>('Delegate to experienced voters for better decisions.'),
-            t<string>('Stay involved even if you\'re unable to actively vote.')
-          ]}
-          title={t<string>('Why Consider Vote Delegation?')}
-        />
-      </Grid>
-      <Grid container item>
-        <UL
-          notes={[
-            t<string>('You can give your tokens to another account with a vote multiplier.'),
-            t<string>('The duration of your lock period depends on the selected multiplier.'),
-            t<string>('You can choose to delegate votes in all tracks or specific ones.'),
-            t<string>('If you have already voted in a category, it cannot be selected for delegation.')
-          ]}
-          title={t<string>('Important Information:')}
-        />
-      </Grid>
-      <Grid container item pt='50px'>
+      <Grid container item pt='25px'>
         <Checkbox
           checked={dontDisplay}
           iconStyle={{ transform: 'scale(1.2)' }}
-          label={t<string>('Do not show this page again')}
-          labelStyle={{ fontSize: '16px', marginLeft: '7px' }}
+          label={t<string>('Don\'t show this again.')}
+          labelStyle={{ fontSize: '14px', marginLeft: '7px' }}
           onChange={toggleShow}
-          style={{ ml: '15px', width: '92%' }}
+          style={{ width: '92%' }}
         />
       </Grid>
       <Grid container item>
