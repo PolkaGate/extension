@@ -171,8 +171,10 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
       return undefined;
     }
 
-    return Number(voteAmount) * (conviction);
-  }, [conviction, voteAmount, voteAmountAsBN]);
+    const bn = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
+
+    return amountToHuman(bn, decimal);
+  }, [conviction, decimal, voteAmountAsBN]);
 
   useEffect(() => {
     convictionOptions === undefined && setConviction(1);
@@ -435,7 +437,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               value={voteAmount}
             />
             <Grid container item>
-              <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70%' }}>
+              <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70.25%' }}>
                 <Grid item sx={{ fontSize: '16px' }}>
                   {t('Available Voting Balance')}
                 </Grid>
@@ -443,14 +445,14 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
                   <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
                 </Grid>
               </Grid>
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '70%' }}>
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
                 <Grid item sx={{ fontSize: '16px' }}>
-                  <Infotip iconLeft={5} iconTop={4} showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+                  <Infotip showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                     {t('Already Locked Balance')}
                   </Infotip>
                 </Grid>
                 <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                  <Infotip iconLeft={5} iconTop={2} showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+                  <Infotip showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
                     <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
                   </Infotip>
                 </Grid>
@@ -466,7 +468,8 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
                   </Grid>
                   <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
                     <Typography fontSize='28px' fontWeight={500}>
-                      {nFormatter(votePower, 2)}
+                      {/* {nFormatter(votePower, 2)} */}
+                      {votePower}
                     </Typography>
                   </Grid>
                 </Grid>
