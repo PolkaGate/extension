@@ -34,6 +34,7 @@ export { default as InputWithLabel } from './InputWithLabel';
 export { default as InputFileWithLabel } from './InputFileWithLabel';
 export { default as IButton } from './IButton';
 export { default as Infotip } from './Infotip';
+export { default as Infotip2 } from './Infotip2';
 export { default as Identity } from './Identity';
 export { Input } from './TextInputs';
 export { default as Identicon } from './Identicon';

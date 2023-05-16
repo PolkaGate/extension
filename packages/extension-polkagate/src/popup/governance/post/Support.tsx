@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
-import { Infotip, ShowBalance, ShowValue } from '../../../components';
+import { Infotip2, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { toTitleCase } from '../utils/util';
@@ -105,11 +105,11 @@ export default function Support({ address, referendumFromPA, referendumFromSb }:
   return (
     <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '45px' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mt: '15px', mx: '25px' }} xs={12}>
-        <Infotip iconLeft={-150} iconTop={10} showQuestionMark text={t('Support is the ratio of votes in favor of a referendum to the total possible votes.')}>
+        <Infotip2 iconLeft={-150} iconTop={10} showQuestionMark text={t('Support is the ratio of votes in favor of a referendum to the total possible votes.')}>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
             {t('Support')}
           </Typography>
-        </Infotip>
+        </Infotip2>
       </Grid>
       <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
         <Tally

@@ -16,17 +16,17 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, Convictions, From, Infotip, PButton, ShowBalance, Warning } from '../../../../components';
+import { AmountWithOptions, Convictions, From, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
 import { nFormatter } from '../../../../components/FormatPrice';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
+import { DraggableModal } from '../../components/DraggableModal';
 import { STATUS_COLOR } from '../../utils/consts';
 import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
 import { getConviction } from '../myVote/util';
 import Review from './partial/Review';
-import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
   address: string | undefined;
@@ -447,14 +447,14 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               </Grid>
               <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
                 <Grid item sx={{ fontSize: '16px' }}>
-                  <Infotip showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+                  <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                     {t('Already Locked Balance')}
-                  </Infotip>
+                  </Infotip2>
                 </Grid>
                 <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                  <Infotip showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+                  <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
                     <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
-                  </Infotip>
+                  </Infotip2>
                 </Grid>
               </Grid>
             </Grid>

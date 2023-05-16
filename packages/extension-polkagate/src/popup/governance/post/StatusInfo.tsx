@@ -6,7 +6,7 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Infotip, ShowValue } from '../../../components';
+import { Infotip2, ShowValue } from '../../../components';
 import { useCurrentBlockNumber, useTranslation } from '../../../hooks';
 import { Track } from '../../../hooks/useTracks';
 import { remainingTime } from '../../../util/utils';
@@ -76,7 +76,7 @@ export default function StatusInfo({ address, isOngoing, referendumFromSb, track
         </Typography>
       </Grid>
       <Grid item>
-        <Infotip iconLeft={2} iconTop={3} showQuestionMark text={remainingTime(remainingBlocks) || t('Fetching ...')}>
+        <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={remainingTime(remainingBlocks) || t('Fetching ...')}>
           <Grid item sx={{ pr: '5px' }}>
             <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
               {status === t('Preparing') &&
@@ -93,7 +93,7 @@ export default function StatusInfo({ address, isOngoing, referendumFromSb, track
               }
             </Typography>
           </Grid>
-        </Infotip>
+        </Infotip2>
       </Grid>
     </Grid>
   );

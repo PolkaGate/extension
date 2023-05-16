@@ -7,7 +7,7 @@ import { FormControl, Grid, RadioGroup, Typography, useTheme } from '@mui/materi
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountInputWithIdentity, Infotip, Progress, TwoButtons } from '../../../components';
+import { AccountInputWithIdentity, Infotip2, Progress, TwoButtons } from '../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
 import TAccountsDisplay from './TAccountDisplay';
 import { DelegateInformation } from '.';
@@ -106,11 +106,11 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
       <Grid container item>
         <Grid container justifyContent='space-between' pb='5px'>
           <Grid item>
-            <Infotip iconTop={26} showQuestionMark text={'TODO'}>
+            <Infotip2 iconTop={26} showQuestionMark text={'TODO'}>
               <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: 'left' }}>
                 {t('Choose from Trusted Accounts')}
               </Typography>
-            </Infotip>
+            </Infotip2>
           </Grid>
           <Grid item onClick={onClearTrustedAddress}>
             <Typography fontSize='16px' fontWeight={400} sx={{ color: selectedTrustedAddress ? theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main' : theme.palette.text.disabled, cursor: selectedTrustedAddress ? 'pointer' : 'default', textAlign: 'left', textDecorationLine: 'underline' }}>
