@@ -31,9 +31,10 @@ interface Props {
   selectedProxy: Proxy | undefined;
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   setStep?: React.Dispatch<React.SetStateAction<number>>;
+  showBackButtonWithUseProxy?: boolean;
 }
 
-export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isPasswordError, label = '', onChange, onPrimaryClick, onSecondaryClick, prevState, primaryBtn, primaryBtnText, proxiedAddress, proxies, secondaryBtnText, selectedProxy, setIsPasswordError, setStep }: Props): React.ReactElement<Props> {
+export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isPasswordError, label = '', onChange, onPrimaryClick, onSecondaryClick, prevState, primaryBtn, primaryBtnText, proxiedAddress, proxies, secondaryBtnText, selectedProxy, setIsPasswordError, setStep, showBackButtonWithUseProxy = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(proxiedAddress);
@@ -48,7 +49,7 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
   );
 
   const goToSelectProxy = useCallback(() => {
-    setStep && setStep(4);
+    setStep && setStep(100);
   }, [setStep]);
 
   const onBack = useCallback(() => {
@@ -72,13 +73,22 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
                 {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
               </Warning>
             </Grid>
-            <TwoButtons
-              mt='5px'
-              onPrimaryClick={goToSelectProxy}
-              onSecondaryClick={onBack}
-              primaryBtnText={t<string>('Use Proxy')}
-              secondaryBtnText={t<string>('Back')}
-            />
+            {showBackButtonWithUseProxy
+              ? <TwoButtons
+                mt='5px'
+                onPrimaryClick={goToSelectProxy}
+                onSecondaryClick={onBack}
+                primaryBtnText={t<string>('Use Proxy')}
+                secondaryBtnText={t<string>('Back')}
+              />
+              : <PButton
+                _ml={0}
+                _mt='5px'
+                _onClick={goToSelectProxy}
+                _width={100}
+                text={t<string>('Use Proxy')}
+              />
+            }
           </>
           : <>
             <Grid alignItems='center' container item>
