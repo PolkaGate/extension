@@ -15,7 +15,7 @@ import { BN, BN_ONE, BN_ZERO, BN_MAX_INTEGER } from '@polkadot/util';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, Checkbox2, Convictions, From, Infotip, PButton, Progress, ShowBalance } from '../../../components';
+import { AmountWithOptions, Checkbox2, Convictions, From, Infotip2, PButton, Progress, ShowBalance } from '../../../components';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../util/utils';
@@ -238,11 +238,11 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
       <>
         <Grid container justifyContent='space-between' pt='15px'>
           <Grid item>
-            <Infotip iconTop={26} showQuestionMark text={'Please select all the categories in which you would like to delegate your votes.'}>
+            <Infotip2 iconTop={26} showQuestionMark text={'Please select all the categories in which you would like to delegate your votes.'}>
               <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: 'left' }}>
                 {t('Referenda Category')}
               </Typography>
-            </Infotip>
+            </Infotip2>
           </Grid>
           <Grid item onClick={onSelectAll}>
             <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline' }}>
@@ -413,14 +413,14 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
                 </Grid>
                 <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
                   <Grid item sx={{ fontSize: '16px' }}>
-                    <Infotip showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+                    <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                       {t('Already Locked Balance')}
-                    </Infotip>
+                    </Infotip2>
                   </Grid>
                   <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                    <Infotip showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+                    <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
                       <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
-                    </Infotip>
+                    </Infotip2>
                   </Grid>
                 </Grid>
               </Grid>

@@ -8,7 +8,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { Identity, Infotip } from '../../../components';
+import { Identity, Infotip2 } from '../../../components';
 import { useApi, useChain } from '../../../hooks';
 import { CommentType } from '../utils/types';
 import { formatRelativeTime } from '../utils/util';
@@ -34,20 +34,20 @@ export default function Comment({ address, comment, noSource }: { address: strin
     return (
       <Grid container item sx={{ pl: '25px' }}>
         <Grid item mr='15px'>
-          <Infotip fontSize='12px' text={comment.comment_reactions['👍'].count ? displayUsernames(comment.comment_reactions['👍'].usernames) : ''}>
+          <Infotip2 fontSize='12px' text={comment.comment_reactions['👍'].count ? displayUsernames(comment.comment_reactions['👍'].usernames) : ''}>
             <Grid alignItems='center' container item width='fit-content'>
               <ThumbUpIcon sx={{ color: 'secondary.contrastText', fontSize: '24px', pr: '5px' }} />
               <span style={{ color: theme.palette.secondary.contrastText, fontSize: '14px', fontWeight: 400 }}>{`(${comment.comment_reactions['👍'].count})`}</span>
             </Grid>
-          </Infotip>
+          </Infotip2>
         </Grid>
         <Grid item>
-          <Infotip fontSize='12px' text={comment.comment_reactions['👎'].count ? displayUsernames(comment.comment_reactions['👎'].usernames) : ''}>
+          <Infotip2 fontSize='12px' text={comment.comment_reactions['👎'].count ? displayUsernames(comment.comment_reactions['👎'].usernames) : ''}>
             <Grid alignItems='center' container item width='fit-content'>
               <ThumbDownIcon sx={{ color: 'secondary.contrastText', fontSize: '24px', pr: '5px' }} />
               <span style={{ color: theme.palette.secondary.contrastText, fontSize: '14px', fontWeight: 400 }}>{`(${comment.comment_reactions['👎'].count})`}</span>
             </Grid>
-          </Infotip>
+          </Infotip2>
         </Grid>
       </Grid>
     );

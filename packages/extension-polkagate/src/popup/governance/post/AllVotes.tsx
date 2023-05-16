@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import SearchIcon from '@mui/icons-material/Search';
-import { Identity, Infotip, InputFilter, Progress, ShowBalance } from '../../../components';
+import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
 import { getReferendumVotesFromSubscan } from '../utils/helpers';
@@ -264,11 +264,11 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
               {t('Conviction')}
             </Grid>
             <Grid alignItems='center' container item justifyContent='center' width='12%'>
-              <Infotip iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
+              <Infotip2 iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
                 <Typography fontSize='20px' width='fit-content'>
                   {t('Type')}
                 </Typography>
-              </Infotip>
+              </Infotip2>
             </Grid>
           </Grid>
           {votesToShow?.map((vote, index) => (
