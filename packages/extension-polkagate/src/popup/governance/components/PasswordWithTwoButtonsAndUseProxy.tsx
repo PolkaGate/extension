@@ -11,24 +11,25 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Identity, Password, PButton, TwoButtons, Warning } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
-import { Proxy, ProxyItem } from '../../../util/types';
+import { Proxy, ProxyItem, ProxyTypes } from '../../../util/types';
 
 interface Props {
-  primaryBtn?: boolean;
-  primaryBtnText?: string
-  secondaryBtnText?: string
+  chain: Chain | null | undefined;
   disabled?: boolean;
   isPasswordError?: boolean;
   label: string;
   onChange: React.Dispatch<React.SetStateAction<string | undefined>>
-  proxiedAddress: string | AccountId | undefined;
-  chain: Chain | null | undefined;
-  prevState?: Record<string, any>;
-  proxies: ProxyItem[] | undefined
-  selectedProxy: Proxy | undefined;
-  setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   onPrimaryClick: () => Promise<void>
   onSecondaryClick: () => void;
+  primaryBtn?: boolean;
+  primaryBtnText?: string
+  prevState?: Record<string, any>;
+  proxiedAddress: string | AccountId | undefined;
+  proxies: ProxyItem[] | undefined
+  proxyTypeFilter: ProxyTypes[];
+  secondaryBtnText?: string
+  selectedProxy: Proxy | undefined;
+  setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   setStep?: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -50,6 +51,10 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
     setStep && setStep(4);
   }, [setStep]);
 
+  const onBack = useCallback(() => {
+    setStep && setStep((step) => step - 1);
+  }, [setStep]);
+
   useEffect(() => {
     onChange(password);
   }, [password, onChange]);
@@ -67,12 +72,12 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
                 {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
               </Warning>
             </Grid>
-            <PButton
-              _ml={0}
-              _mt='5px'
-              _onClick={goToSelectProxy}
-              _width={100}
-              text={t<string>('Use Proxy')}
+            <TwoButtons
+              mt='5px'
+              onPrimaryClick={goToSelectProxy}
+              onSecondaryClick={onBack}
+              primaryBtnText={t<string>('Use Proxy')}
+              secondaryBtnText={t<string>('Back')}
             />
           </>
           : <>
