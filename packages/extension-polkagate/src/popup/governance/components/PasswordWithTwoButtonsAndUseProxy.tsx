@@ -29,7 +29,7 @@ interface Props {
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   onPrimaryClick: () => Promise<void>
   onSecondaryClick: () => void;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isPasswordError, label = '', onChange, onPrimaryClick, onSecondaryClick, prevState, primaryBtn, primaryBtnText, proxiedAddress, proxies, secondaryBtnText, selectedProxy, setIsPasswordError, setStep }: Props): React.ReactElement<Props> {
@@ -47,7 +47,7 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
   );
 
   const goToSelectProxy = useCallback(() => {
-    setStep(4);
+    setStep && setStep(4);
   }, [setStep]);
 
   useEffect(() => {

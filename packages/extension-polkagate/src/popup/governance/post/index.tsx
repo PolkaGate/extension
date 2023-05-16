@@ -125,10 +125,11 @@ export default function ReferendumPost(): React.ReactElement {
     </Grid>
   );
 
+  const status = useMemo(() => referendumFromSb?.status || referendumFromPA?.status, [referendumFromPA, referendumFromSb]);
+
   const isOngoing = useMemo(() =>
-    !['Executed', 'Rejected'].includes(referendumFromSb?.status) ||
-    !['Executed', 'Rejected'].includes(referendumFromPA?.status)
-    , [referendumFromSb, referendumFromPA]);
+    !['Executed', 'Rejected'].includes(status || '')
+    , [status]);
 
   return (
     <>
@@ -170,7 +171,9 @@ export default function ReferendumPost(): React.ReactElement {
               <StatusInfo
                 address={address}
                 isOngoing={isOngoing}
-                referendumFromSb={referendumFromSb}
+                refIndex={refIndex}
+                status={status}
+                timeline={referendumFromSb?.timeline}
                 track={track}
               />
               <Voting

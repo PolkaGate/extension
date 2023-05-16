@@ -35,9 +35,10 @@ interface Props {
   noIdenticon?: boolean;
   judgement?: any;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
+  direction?: 'row' | 'column';
 }
 
-function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -78,9 +79,9 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
               : t('Unknown')
             : ''
           }
-          {withShortAddress &&
+          {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
@@ -116,6 +117,11 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
             }
           </Grid>
         }
+        {withShortAddress && direction === 'row' &&
+          <Grid container item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
+            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+          </Grid>
+        }
       </Grid>
       {
         showChainLogo &&
@@ -123,7 +129,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }
-    </Grid>
+    </Grid >
   );
 }
 

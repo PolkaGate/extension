@@ -113,6 +113,15 @@ export interface ReferendumPolkassembly {
   spam_users_count: number
 }
 
+export interface Timeline {
+  block: number;
+  status: string;
+  time: number;
+  prophecy: boolean;
+  index: number;
+  extrinsic_index: string;
+  params: null;
+}
 export interface ReferendumSubScan {
   referendum_index: number;
   created_block: number;
@@ -162,15 +171,7 @@ export interface ReferendumSubScan {
   abstains_count: number;
   support_amount: string;
   bare_ayes: string;
-  timeline: {
-    block: number;
-    status: string;
-    time: number;
-    prophecy: boolean;
-    index: number;
-    extrinsic_index: string;
-    params: null;
-  }[];
+  timeline: Timeline[];
 }
 
 export interface Proposal {

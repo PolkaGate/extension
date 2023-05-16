@@ -8,26 +8,31 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { Infotip2, ShowValue } from '../../../components';
 import { useCurrentBlockNumber, useTranslation } from '../../../hooks';
-import { Track } from '../../../hooks/useTracks';
+import { Track } from '../../../hooks/useTrack';
 import { remainingTime } from '../../../util/utils';
-import { ReferendumSubScan } from '../utils/types';
+import { Timeline } from '../utils/types';
 import { blockToUnit, blockToX, getPeriodScale } from '../utils/util';
+import DecisionDeposit from './decisionDeposit';
 
 interface Props {
   address: string | undefined;
-  referendumFromSb: ReferendumSubScan | undefined;
+  timeline: Timeline[] | undefined;
+  status: string | undefined;
   track: Track | undefined;
-  isOngoing: boolean
+  isOngoing: boolean;
+  refIndex: number | undefined;
 }
 
-export default function StatusInfo({ address, isOngoing, referendumFromSb, track }: Props): React.ReactElement | null {
+export default function StatusInfo({ address, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();
+  const [openDecisionDeposit, setOpenDecisionDeposit] = useState<boolean>();
   const currentBlock = useCurrentBlockNumber(address);
 
-  const status = useMemo(() => {
-    switch (referendumFromSb?.status) {
+  const _status = useMemo(() => {
+    switch (status) {
       case 'Decision':
+      case 'Deciding':
         return t('Deciding');
       case 'ConfirmStarted':
       case 'Confirm':
@@ -39,11 +44,11 @@ export default function StatusInfo({ address, isOngoing, referendumFromSb, track
       default:
         return null;
     }
-  }, [referendumFromSb, t]);
+  }, [status, t]);
 
   const getUnitPassed = useCallback((timelineIndex: number, periodKey: string) => {
-    if (track?.[1]?.[periodKey] && referendumFromSb?.timeline[timelineIndex]?.block && currentBlock) {
-      const startBlock = referendumFromSb.timeline[timelineIndex].block;
+    if (track?.[1]?.[periodKey] && timeline?.[timelineIndex]?.block && currentBlock) {
+      const startBlock = timeline[timelineIndex].block;
       const periodInBlock = Number(track[1][periodKey]);
       const endBlock = startBlock + periodInBlock;
 
@@ -58,7 +63,7 @@ export default function StatusInfo({ address, isOngoing, referendumFromSb, track
 
       return unitToEndOfPeriod;
     }
-  }, [currentBlock, referendumFromSb, track]);
+  }, [currentBlock, timeline, track]);
 
   const prepareUnitPassed = useMemo(() => getUnitPassed(0, 'preparePeriod'), [getUnitPassed]);
   const decisionUnitPassed = useMemo(() => getUnitPassed(1, 'decisionPeriod'), [getUnitPassed]);
@@ -68,33 +73,55 @@ export default function StatusInfo({ address, isOngoing, referendumFromSb, track
     return null;
   }
 
+  const onDecisionDeposit = useCallback(() => {
+    setOpenDecisionDeposit(true);
+  }, []);
+
   return (
     <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mb: '10px' }} xs={12}>
       <Grid item>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
-          {status || t('Status')}
+          {_status || t('Status')}
         </Typography>
       </Grid>
       <Grid item>
         <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={remainingTime(remainingBlocks) || t('Fetching ...')}>
           <Grid item sx={{ pr: '5px' }}>
             <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
-              {status === t('Preparing') &&
+              {_status === t('Preparing') &&
                 <ShowValue value={prepareUnitPassed && track?.[1]?.preparePeriod ? `${blockToUnit(track?.[1]?.preparePeriod)} ${prepareUnitPassed} of ${blockToX(track?.[1]?.preparePeriod, true)}` : undefined} />
               }
-              {status === t('Deciding') &&
+              {_status === t('Deciding') &&
                 <ShowValue value={decisionUnitPassed && track?.[1]?.decisionPeriod ? `${blockToUnit(track?.[1]?.decisionPeriod)} ${decisionUnitPassed} of ${blockToX(track?.[1]?.decisionPeriod, true)}` : undefined} />
               }
-              {status === t('Confirming') &&
+              {_status === t('Confirming') &&
                 <ShowValue value={confirmUnitPassed && track?.[1]?.confirmPeriod ? `${blockToUnit(track?.[1]?.confirmPeriod)} ${confirmUnitPassed} of ${blockToX(track?.[1]?.confirmPeriod, true)}` : undefined} />
               }
-              {!status &&
+              {!_status &&
                 <ShowValue value={undefined} />
               }
             </Typography>
           </Grid>
         </Infotip2>
       </Grid>
+      {_status === t('Preparing') &&
+        <Grid container item sx={{ pt: '20px', pb: '10px' }}>
+          <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={t('Fetching ...')}>
+            <Typography onClick={onDecisionDeposit} sx={{ color: 'primary.main', cursor: 'pointer', textDecorationLine: 'underline' }}>
+              {t('Pay Decision Deposit')}
+            </Typography>
+          </Infotip2>
+        </Grid>
+      }
+      {openDecisionDeposit &&
+        <DecisionDeposit
+          address={address}
+          open={openDecisionDeposit}
+          refIndex={refIndex}
+          setOpen={setOpenDecisionDeposit}
+          track={track}
+        />
+      }
     </Grid>
   );
 }

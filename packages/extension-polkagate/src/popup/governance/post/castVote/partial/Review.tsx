@@ -11,13 +11,13 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useRef,useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, Motion, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../../components';
+import { AccountContext, Motion, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
 import broadcast from '../../../../../util/api/broadcast';
@@ -25,10 +25,11 @@ import { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../../../components/SelectProxyModal';
+import WaitScreen from '../../../partials/WaitScreen';
 import { STATUS_COLOR } from '../../../utils/consts';
 import { VoteInformation } from '..';
 import Confirmation from './Confirmation';
-import WaitScreen from '../../../partials/WaitScreen';
+import DisplayValue from './DisplayValue';
 
 interface Props {
   address: string | undefined;
@@ -44,7 +45,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const accountName = useAccountName(address)
+  const name = useAccountName(address)
   const { accounts } = useContext(AccountContext);
   const theme = useTheme();
   const api = useApi(address);
@@ -84,24 +85,6 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
     );
   };
 
-  const DisplayValue = ({ children, title, topDivider = true }: { children: React.ReactNode, topDivider?: boolean, title: string }) => {
-    return (
-      <Grid alignItems='center' container direction='column' justifyContent='center'>
-        <Grid item>
-          {topDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '5px', width: '170px' }} />}
-        </Grid>
-        <Grid item>
-          <Typography>
-            {title}
-          </Typography>
-        </Grid>
-        <Grid fontSize='28px' fontWeight={400} item>
-          {children}
-        </Grid>
-      </Grid>
-    );
-  };
-
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -129,7 +112,6 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
       }]);
     }
   }, [voteInformation]);
- console.log('paramssssssssssssssssss:', params)
 
  useEffect(() => {
     if (ref) {
@@ -161,7 +143,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
         date: Date.now(),
         failureText,
         fee: estimatedFee || fee,
-        from: { address: from, name: selectedProxyName || accountName },
+        from: { address: formatted, name },
         subAction: 'Vote',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -177,7 +159,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, api, chain, decimal, estimatedFee, formatted, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, vote, voteInformation.voteBalance]);
+  }, [name, api, chain, decimal, estimatedFee, formatted, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, vote, voteInformation.voteBalance]);
 
   const backToCastVote = useCallback(() => setStep(0), [setStep]);
 
@@ -199,7 +181,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
               {t<string>('Account holder')}:
             </Typography>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-              {accountName}
+              {name}
             </Typography>
             <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
@@ -234,7 +216,7 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
           <PasswordWithTwoButtonsAndUseProxy
             chain={chain}
             isPasswordError={isPasswordError}
-            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+            label={`${t<string>('Password')} for ${selectedProxyName || name}`}
             onChange={setPassword}
             onPrimaryClick={confirmVote}
             onSecondaryClick={backToCastVote}

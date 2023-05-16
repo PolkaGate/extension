@@ -7,7 +7,7 @@ import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
-import { Box, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -17,7 +17,6 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, From, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
-import { nFormatter } from '../../../../components/FormatPrice';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
