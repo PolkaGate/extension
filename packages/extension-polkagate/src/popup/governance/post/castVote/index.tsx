@@ -83,7 +83,6 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   const balances = useBalances(address, undefined, undefined, true);
   const blockTime = useBlockInterval(address);
   const theme = useTheme();
-  const myVote = useMyVote(address, referendumInfo);
   const currentBlock = useCurrentBlockNumber(address);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
   const convictionOptions = useConvictionOptions(address, blockTime, t);
@@ -135,6 +134,8 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
 
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const refIndex = useMemo(() => referendumInfo?.referendum_index, [referendumInfo?.referendum_index]);
+  const myVote = useMyVote(address, refIndex, trackId);
+
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myVoteBalance = useMemo((): number | undefined => (myVote?.standard?.balance || myVote?.splitAbstain?.abstain || myVote?.delegating?.balance), [myVote]);
   const myVoteConviction = useMemo(() => (myVote?.standard?.vote ? `(${getConviction(myVote.standard.vote)}x)` : myVote?.delegating?.conviction ? `(${myVote.delegating.conviction}x)` : ''), [myVote?.delegating?.conviction, myVote?.standard?.vote]);
