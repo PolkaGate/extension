@@ -7,7 +7,7 @@ import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useTranslation } from '../../../../../hooks';
+import { useTranslation } from '../../../hooks';
 
 function WaitScreen(): React.ReactElement {
   const { t } = useTranslation();

@@ -10,47 +10,45 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
-import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, Motion, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTranslation } from '../../../../../hooks';
-import { ThroughProxy } from '../../../../../partials';
-import broadcast from '../../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
-import PasswordWithTwoButtonsAndUseProxy from '../../../components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../../../components/SelectProxyModal';
-import { STATUS_COLOR } from '../../../utils/consts';
-import { VoteInformation } from '..';
+import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
+import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTracks, useTranslation } from '../../../hooks';
+import { ThroughProxy } from '../../../partials';
+import { signAndSend } from '../../../util/api';
+import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
+import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
+import SelectProxyModal from '../components/SelectProxyModal';
+import WaitScreen from '../partials/WaitScreen';
 import Confirmation from './Confirmation';
-import WaitScreen from '../../../partials/WaitScreen';
+import { DelegateInformation } from '.';
 
 interface Props {
   address: string | undefined;
   formatted: string | undefined;
-  voteInformation: VoteInformation;
+  delegateInformation: DelegateInformation;
   handleClose: () => void;
   estimatedFee: Balance | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
 }
 
-export default function Review({ address, estimatedFee, formatted, voteInformation, handleClose, setStep, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, formatted, handleClose, setStep, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const accountName = useAccountName(address)
+  const name = useAccountName(address)
   const { accounts } = useContext(AccountContext);
-  const theme = useTheme();
   const api = useApi(address);
   const chain = useChain(address);
   const proxies = useProxies(api, formatted);
   const ref = useRef(null);
+  const tracks = useTracks(address);
+  const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -62,27 +60,8 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
-  const vote = api && api.tx.convictionVoting.vote;
-
-  const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {
-    return (
-      <Grid alignItems='center' container>
-        <Grid item>
-          <Typography fontSize='28px' fontWeight={500}>
-            {t<string>(vote)}
-          </Typography>
-        </Grid>
-        <Grid alignItems='center' container item width='fit-content'>
-          {vote === 'Aye'
-            ? <CheckIcon sx={{ color: STATUS_COLOR.Confirmed, fontSize: '28px', stroke: STATUS_COLOR.Confirmed, strokeWidth: 1.8 }} />
-            : vote === 'Nay'
-              ? <CloseIcon sx={{ color: 'warning.main', fontSize: '28px', stroke: theme.palette.warning.main, strokeWidth: 1.5 }} />
-              : <AbstainIcon sx={{ color: 'primary.light', fontSize: '28px' }} />
-          }
-        </Grid>
-      </Grid>
-    );
-  };
+  const delegate = api && api.tx.convictionVoting.delegate;
+  const batch = api && api.tx.utility.batchAll;
 
   const DisplayValue = ({ children, title, topDivider = true }: { children: React.ReactNode, topDivider?: boolean, title: string }) => {
     return (
@@ -108,39 +87,20 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const params = useMemo(() => {
-    if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
-      return ([voteInformation.refIndex, {
-        Standard: {
-          balance: voteInformation.voteAmountBN,
-          vote: {
-            aye: voteInformation.voteType === 'Aye',
-            conviction: voteInformation.voteConvictionValue
-          }
-        }
-      }]);
-    } else if (voteInformation.voteType === 'Abstain') {
-      return ([voteInformation.refIndex, {
-        SplitAbstain: {
-          abstain: voteInformation.voteAmountBN,
-          aye: BN_ZERO,
-          nay: BN_ZERO
-        }
-      }]);
-    }
-  }, [voteInformation]);
- console.log('paramssssssssssssssssss:', params)
+  const params = useMemo(() => delegateInformation.delegatedTracks.map((track) =>
+    [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN])
+    , [delegateInformation]);
 
- useEffect(() => {
+  useEffect(() => {
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
       console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)
     }
   }, []);
 
-  const confirmVote = useCallback(async () => {
+  const confirmDelegate = useCallback(async () => {
     try {
-      if (!formatted || !vote || !api || !decimal || !params) {
+      if (!formatted || !delegate || !api || !decimal || !params || !batch) {
         return;
       }
 
@@ -150,40 +110,44 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
 
       signer.unlock(password);
 
-      setStep(2);
+      const txList = params.map((param) => delegate(...param));
 
-      const { block, failureText, fee, success, txHash } = await broadcast(api, vote, params, signer, formatted, selectedProxy);
+      setStep(4);
+
+      const calls = txList.length > 1 ? batch(txList) : txList[0];
+      const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, mayBeProxiedTx, signer, formatted);
 
       const info = {
         action: 'Governance',
-        amount: voteInformation.voteBalance,
+        amount: delegateInformation.delegateAmount,
         block: block || 0,
         date: Date.now(),
         failureText,
         fee: estimatedFee || fee,
-        from: { address: from, name: selectedProxyName || accountName },
-        subAction: 'Vote',
+        from: { address: formatted, name },
+        subAction: 'Delegate',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        // to: voteInformation.,
+        to: { address: delegateInformation.delegateeAddress, name: delegateeName },
         txHash: txHash || ''
       };
 
       setTxInfo({ ...info, api, chain });
       saveAsHistory(from, info);
 
-      setStep(3);
+      setStep(5);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [accountName, api, chain, decimal, estimatedFee, formatted, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, vote, voteInformation.voteBalance]);
+  }, [formatted, delegate, api, decimal, params, batch, selectedProxyAddress, password, setStep, selectedProxy, delegateInformation.delegateAmount, delegateInformation.delegateeAddress, estimatedFee, name, selectedProxyName, delegateeName, chain]);
 
-  const backToCastVote = useCallback(() => setStep(0), [setStep]);
+  const backToChooseDelegatee = useCallback(() => setStep(2), [setStep]);
 
   return (
     <Motion style={{ height: '100%' }}>
-      {step === 1
+      {step === 3
         ? <Grid container ref={ref}>
           {isPasswordError &&
             <WrongPasswordAlert />
@@ -194,38 +158,63 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
             selectedProxyAddress={selectedProxyAddress}
             title={t('Account')}
           /> */}
-          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
+          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Account holder')}:
+              {t<string>('Delegate from')}:
             </Typography>
-            <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+            {/* <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
               {accountName}
             </Typography>
             <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
-            </Grid>
+            </Grid> */}
+            <Identity
+              api={api}
+              chain={chain}
+              address={address}
+              identiconSize={31}
+              showSocial={false}
+              style={{ maxWidth: '100%', width: 'fit-content' }}
+            />
           </Grid>
           {selectedProxyAddress &&
             <Grid container m='auto' maxWidth='92%'>
               <ThroughProxy address={selectedProxyAddress} chain={chain} />
             </Grid>
           }
-          <DisplayValue title={t<string>('Vote')}>
-            <VoteStatus vote={voteInformation.voteType} />
-          </DisplayValue>
-          <DisplayValue title={t<string>('Vote Value({{token}})', { replace: { token } })}>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>('Delegate To')}:
+            </Typography>
+            {/* <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+              {delegateInformation.delegateeAddress}
+            </Typography>
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+              <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
+            </Grid> */}
+            <Identity
+              address={delegateInformation.delegateeAddress}
+              api={api}
+              chain={chain}
+              identiconSize={31}
+              showSocial={false}
+              style={{ maxWidth: '100%', width: 'fit-content' }}
+            />
+          </Grid>
+          <DisplayValue title={t<string>('Delegated Value ({{token}})', { replace: { token } })}>
             <Typography fontSize='28px' fontWeight={400}>
-              {voteInformation.voteBalance}
+              {delegateInformation.delegateAmount}
             </Typography>
           </DisplayValue>
-          <DisplayValue title={t<string>('Lock up Period')}>
+          <DisplayValue title={t<string>('Final delegated vote power')}>
             <Typography fontSize='28px' fontWeight={400}>
-              {voteInformation.voteLockUpUpPeriod}
+              {delegateInformation.delegatePower}
             </Typography>
           </DisplayValue>
-          <DisplayValue title={t<string>('Final vote power')}>
+          <DisplayValue title={t<string>('Number of Referenda Categories')}>
             <Typography fontSize='28px' fontWeight={400}>
-              {voteInformation.votePower}
+              {`${delegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Fee')}>
@@ -234,10 +223,10 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
           <PasswordWithTwoButtonsAndUseProxy
             chain={chain}
             isPasswordError={isPasswordError}
-            label={`${t<string>('Password')} for ${selectedProxyName || accountName}`}
+            label={`${t<string>('Password')} for ${selectedProxyName || name}`}
             onChange={setPassword}
-            onPrimaryClick={confirmVote}
-            onSecondaryClick={backToCastVote}
+            onPrimaryClick={confirmDelegate}
+            onSecondaryClick={backToChooseDelegatee}
             primaryBtnText={t<string>('Confirm')}
             proxiedAddress={formatted}
             proxies={proxyItems}
@@ -248,14 +237,15 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
             setStep={setStep}
           />
         </Grid>
-        : step === 2
+        : step === 4
           ? <WaitScreen />
-          : step === 3
+          : step === 5
             ? <Confirmation
               address={address}
+              allCategoriesLength={tracks?.length}
+              delegateInformation={delegateInformation}
               handleClose={handleClose}
               txInfo={txInfo}
-              voteInformation={voteInformation}
             />
             : <SelectProxyModal
               address={address}
