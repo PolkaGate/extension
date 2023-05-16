@@ -56,7 +56,7 @@ export default function SelectProxyModal({ address, height, proxies, proxyTypeFi
   }, [change, selectedProxy, setSelectedProxy]);
 
   return (
-    <Grid container height={`${height ?? 300}px`} direction='column'>
+    <Grid container direction='column' height={`${height ?? 300}px`}>
       <Typography fontSize='14px' fontWeight={300} m='18px auto 0' pt='25px' textAlign='left'>
         {t('Select an appropriate proxy of the account to do transaction on behalf.')}
       </Typography>
