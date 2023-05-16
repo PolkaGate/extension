@@ -74,7 +74,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const unvotedTracks = useMemo(() => accountLocks && tracks && tracks.filter((value) => !accountLocks.find((lock) => lock.classId.eq(value[0]))), [accountLocks, tracks]);
   const existingVotes: Record<string, number> | undefined = useMemo(() => {
     if (tracks && accountLocks) {
-      let result = {};
+      const result = {};
 
       accountLocks.forEach((lock) => {
         if (!result[lock.classId]) {
@@ -233,7 +233,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
     );
   };
 
-  const ReferendaTrackes = () => {
+  const ReferendaTracks = () => {
     return (
       <>
         <Grid container justifyContent='space-between' pt='15px'>
@@ -250,13 +250,13 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             </Typography>
           </Grid>
         </Grid>
-        <List disablePadding sx={{ '> :not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.main' }, bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', height: '175px', maxWidth: '100%', overflowY: 'scroll', width: '100%' }}>
+        <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', height: '175px', maxWidth: '100%', overflowY: 'scroll', width: '100%' }}>
           {unvotedTracks
             ? unvotedTracks.map((value, index) => (
               <ListItem
                 disablePadding
                 key={index}
-                sx={{ height: '36px' }}
+                sx={{ height: '25px' }}
               >
                 <ListItemButton dense onClick={handleToggle(value[0] as unknown as number)} role={undefined}>
                   <ListItemText
@@ -386,7 +386,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
                   <ExistingVotesDisplay />
                 }
               </Grid>
-              <ReferendaTrackes />
+              <ReferendaTracks />
               <AmountWithOptions
                 inputWidth={8.4}
                 label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
