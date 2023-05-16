@@ -5,7 +5,7 @@
 
 import { Info as InfoIcon, QuestionMark as QuestionIcon } from '@mui/icons-material';
 import { Grid, Tooltip } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 interface Props {
   text: NonNullable<React.ReactNode> | string | null | undefined;
@@ -18,18 +18,9 @@ interface Props {
   fontSize?: string;
 }
 
-function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, placement = 'top', showInfoMark = false, showQuestionMark = false, text }: Props): React.ReactElement<Props> {
-  const ref = useRef(null);
-  const [tpLocation, setTpLocation] = useState<number | undefined>();
-
-  useEffect(() => {
-    if (ref) {
-      setTpLocation(ref.current?.offsetWidth + iconLeft);
-    }
-  }, [iconLeft, ref.current?.offsetWidth, tpLocation]);
-
+function Infotip ({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, text }: Props): React.ReactElement<Props> {
   return (
-    <Grid item ref={ref} style={{ position: 'relative' }}>
+    <Grid item style={{ alignItems: 'center', display: 'flex'}}>
       {showQuestionMark || showInfoMark
         ? <>
           <div>
@@ -76,9 +67,7 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
                   borderRadius: '50%',
                   color: 'background.default',
                   height: '15px',
-                  left: `${tpLocation}px`,
-                  position: 'absolute',
-                  top: `${iconTop}px`,
+                  ml: '5px',
                   width: '15px'
                 }}
               />
@@ -88,9 +77,7 @@ function Infotip({ children, fontSize = '14px', iconLeft = 10, iconTop = 4, plac
                   borderRadius: '50%',
                   color: 'background.default',
                   height: '15px',
-                  left: `${tpLocation}px`,
-                  position: 'absolute',
-                  top: `${iconTop}px`,
+                  ml: '5px',
                   width: '15px'
                 }}
               />
