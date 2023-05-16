@@ -74,13 +74,13 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
           {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
           {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
             ? showShortAddress
-              ? <ShortAddress address={formatted} style={{ fontSize: style?.fontSize as string || '11px' }} />
+              ? <ShortAddress address={formatted ?? address} style={{ fontSize: style?.fontSize as string || '11px' }} />
               : t('Unknown')
             : ''
           }
           {withShortAddress &&
             <Grid container item>
-              <ShortAddress address={formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={formatted ?? address} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
