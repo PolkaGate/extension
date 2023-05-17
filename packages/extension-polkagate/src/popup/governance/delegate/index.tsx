@@ -6,21 +6,22 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Box, ClickAwayListener, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, ClickAwayListener, Grid, Modal, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountsStore } from '@polkadot/extension-base/stores';
-import { BN, BN_ONE, BN_ZERO, BN_MAX_INTEGER } from '@polkadot/util';
 import keyring from '@polkadot/ui-keyring';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, Checkbox2, Convictions, From, Infotip2, PButton, Progress, ShowBalance } from '../../../components';
+import { AmountWithOptions, Convictions, From, Infotip2, PButton, Progress, ShowBalance } from '../../../components';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../util/utils';
 import { toTitleCase } from '../utils/util';
-import AlreadyLockedTooltipText, { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
+import ReferendaTracks from './partial/ReferendaTracks';
+import { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 import ChooseDelegator from './ChooseDelegator';
 import DelegateNote from './DelegationNote';
 import Review from './Review';
@@ -42,6 +43,16 @@ export interface DelegateInformation {
   delegatedTracks: BN[];
 }
 
+export const DELEGATE_STEPS = {
+  NOTE: 0,
+  INDEX: 1,
+  CHOOSE_DELEGATOR: 2,
+  REVIEW: 3,
+  WAIT_SCREEN: 4,
+  CONFIRM: 5,
+  PROXY: 100
+};
+
 export function Delegate({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -61,7 +72,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const [conviction, setConviction] = useState<number | undefined>();
   const [checked, setChecked] = useState<BN[]>([]);
   const [showExistingVoted, setShowExistingVoted] = useState(false);
-  const [step, setStep] = useState<number>(showDelegationNote ? 0 : 1);
+  const [step, setStep] = useState<number>(showDelegationNote ? DELEGATE_STEPS.NOTE : DELEGATE_STEPS.INDEX);
   const [delegateInformation, setDelegateInformation] = useState<DelegateInformation | undefined>();
 
   const delegate = api && api.tx.convictionVoting.delegate;
@@ -179,25 +190,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
     setDelegateAmount(value.slice(0, MAX_AMOUNT_LENGTH));
   }, [decimal]);
 
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
-
-  const onSelectAll = useCallback(() => {
-    const toChecked = unvotedTracks && checked.length !== unvotedTracks.length ? unvotedTracks.map((value) => value[0]) : [];
-
-    setChecked(toChecked);
-  }, [checked.length, unvotedTracks]);
-
   const handleNext = useCallback(() => setStep(2), []);
   const toggleExistingVotes = useCallback(() => setShowExistingVoted(!showExistingVoted), [showExistingVoted]);
 
@@ -230,53 +222,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
           }
         </Grid>
       </ClickAwayListener>
-    );
-  };
-
-  const ReferendaTracks = () => {
-    return (
-      <>
-        <Grid container justifyContent='space-between' pt='15px'>
-          <Grid item>
-            <Infotip2 iconTop={26} showQuestionMark text={'Please select all the categories in which you would like to delegate your votes.'}>
-              <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: 'left' }}>
-                {t('Referenda Category')}
-              </Typography>
-            </Infotip2>
-          </Grid>
-          <Grid item onClick={onSelectAll}>
-            <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline' }}>
-              {checked.length === unvotedTracks?.length ? t('Deselect All') : t('Select All')}
-            </Typography>
-          </Grid>
-        </Grid>
-        <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', height: '175px', maxWidth: '100%', overflowY: 'scroll', width: '100%' }}>
-          {unvotedTracks
-            ? unvotedTracks.map((value, index) => (
-              <ListItem
-                disablePadding
-                key={index}
-                sx={{ height: '25px' }}
-              >
-                <ListItemButton dense onClick={handleToggle(value[0] as unknown as number)} role={undefined}>
-                  <ListItemText
-                    primary={`${toTitleCase(value[1].name as unknown as string) as string}`}
-                  />
-                  <ListItemIcon sx={{ minWidth: '20px' }}>
-                    <Checkbox2
-                      checked={checked.indexOf(value[0] as unknown as BN) !== -1}
-                      iconStyle={{ transform: 'scale(1.13)' }}
-                      label={''}
-                    // onChange={}
-                    />
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-            ))
-            : <Progress pt='35px' size={70} title={t('Loading referenda tracks...')} />
-          }
-        </List>
-      </>
     );
   };
 
@@ -347,126 +292,120 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {step === 0
-                ? t('Delegate Vote')
-                : step < 3
-                  ? t('Delegate Vote ({{step}}/3)', { replace: { step } })
-                  : step === 3
-                    ? t('Review Your Delegation ({{step}}/3)', { replace: { step } })
-                    : step === 4
-                      ? t('Delegating')
-                      : step === 5
-                        ? t('Delegation Completed')
-                        : ''
-              }
+              {step === DELEGATE_STEPS.NOTE && t<string>('Delegate Vote')}
+              {(step === DELEGATE_STEPS.INDEX || step === DELEGATE_STEPS.CHOOSE_DELEGATOR) && t<string>('Delegate Vote ({{step}}/3)', { replace: { step } })}
+              {step === DELEGATE_STEPS.REVIEW && t<string>('Review Your Delegation (3/3)')}
+              {step === DELEGATE_STEPS.WAIT_SCREEN && t<string>('Delegating')}
+              {step === DELEGATE_STEPS.CONFIRM && t<string>('Delegation Completed')}
             </Typography>
           </Grid>
           <Grid item>
-            {step !== 4 && <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />}
+            {step !== DELEGATE_STEPS.WAIT_SCREEN && <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />}
           </Grid>
         </Grid>
-        {step === 0
-          ? <DelegateNote setStep={setStep} />
-          : step === 1
-            ? <Grid container>
-              <Grid alignItems='center' container justifyContent='space-between' position='relative' pt='10px'>
-                <Grid item xs={8.5}>
-                  <From
-                    address={address}
-                    api={api}
-                    style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
-                    title={t<string>('Delegate from account')}
-                  />
-                </Grid>
-                <Grid alignItems='center' container item onClick={toggleExistingVotes} sx={{ cursor: 'pointer', mt: '25px' }} xs={3}>
-                  {t('Existing votes')}
-                  <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showExistingVoted ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-                </Grid>
-                {showExistingVoted &&
-                  <ExistingVotesDisplay />
-                }
-              </Grid>
-              <ReferendaTracks />
-              <AmountWithOptions
-                inputWidth={8.4}
-                label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
-                onChangeAmount={onValueChange}
-                onPrimary={onMaxAmount}
-                onSecondary={onLockedAmount}
-                primaryBtnText={t<string>('Max amount')}
-                secondaryBtnText={t<string>('Locked amount')}
-                style={{
-                  fontSize: '16px',
-                  mt: '15px',
-                  width: '100%'
-                }}
-                value={delegateAmount}
-              />
-              <Grid container item>
-                <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70.25%' }}>
-                  <Grid item sx={{ fontSize: '16px' }}>
-                    {t('Available Voting Balance')}
-                  </Grid>
-                  <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                    <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
-                  </Grid>
-                </Grid>
-                <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
-                  <Grid item sx={{ fontSize: '16px' }}>
-                    <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
-                      {t('Already Locked Balance')}
-                    </Infotip2>
-                  </Grid>
-                  <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                    <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
-                      <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
-                    </Infotip2>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Convictions
-                address={address}
-                conviction={conviction}
-                setConviction={setConviction}
-              >
-                <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
-                  <Grid item>
-                    <Typography sx={{ fontSize: '16px' }}>
-                      {/* {t('Your final delegated vote power after multiplying')} */}
-                      {t('Your final delegated vote power')}
-                    </Typography>
-                  </Grid>
-                  <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                    <Typography fontSize='28px' fontWeight={500}>
-                      {/* {nFormatter(delegatePower, 2)} */}
-                      {delegatePower}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Convictions>
-              <Grid container justifyContent='flex-end'>
-                <PButton
-                  _ml={0}
-                  _mt='10px'
-                  _onClick={handleNext}
-                  _width={100}
-                  disabled={nextDisable}
-                  text={t<string>('Next')}
+        {step === DELEGATE_STEPS.NOTE &&
+          <DelegateNote setStep={setStep} />
+        }
+        {step === DELEGATE_STEPS.INDEX &&
+          <Grid container>
+            <Grid alignItems='center' container justifyContent='space-between' position='relative' pt='10px'>
+              <Grid item xs={8.5}>
+                <From
+                  address={address}
+                  api={api}
+                  style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
+                  title={t<string>('Delegate from account')}
                 />
               </Grid>
+              <Grid alignItems='center' container item onClick={toggleExistingVotes} sx={{ cursor: 'pointer', mt: '25px' }} xs={3}>
+                {t('Existing votes')}
+                <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showExistingVoted ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+              </Grid>
+              {showExistingVoted &&
+                <ExistingVotesDisplay />
+              }
             </Grid>
-            : step === 2
-              ? <ChooseDelegator setDelegateInformation={setDelegateInformation} setStep={setStep} />
-              : delegateInformation &&
-              <Review
-                address={address}
-                delegateInformation={delegateInformation}
-                estimatedFee={estimatedFee}
-                formatted={String(formatted)}
-                handleClose={handleClose}
-                setStep={setStep}
-                step={step}
+            <ReferendaTracks selectedTracks={checked} setSelectedTracks={setChecked} unvotedTracks={unvotedTracks} />
+            <AmountWithOptions
+              inputWidth={8.4}
+              label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
+              onChangeAmount={onValueChange}
+              onPrimary={onMaxAmount}
+              onSecondary={onLockedAmount}
+              primaryBtnText={t<string>('Max amount')}
+              secondaryBtnText={t<string>('Locked amount')}
+              style={{
+                fontSize: '16px',
+                mt: '15px',
+                width: '100%'
+              }}
+              value={delegateAmount}
+            />
+            <Grid container item>
+              <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70.25%' }}>
+                <Grid item sx={{ fontSize: '16px' }}>
+                  {t('Available Voting Balance')}
+                </Grid>
+                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                  <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
+                </Grid>
+              </Grid>
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
+                <Grid item sx={{ fontSize: '16px' }}>
+                  <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+                    {t('Already Locked Balance')}
+                  </Infotip2>
+                </Grid>
+                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                  <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+                    <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
+                  </Infotip2>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Convictions
+              address={address}
+              conviction={conviction}
+              setConviction={setConviction}
+            >
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
+                <Grid item>
+                  <Typography sx={{ fontSize: '16px' }}>
+                    {t('Your final delegated vote power')}
+                  </Typography>
+                </Grid>
+                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                  <Typography fontSize='28px' fontWeight={500}>
+                    {delegatePower}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Convictions>
+            <Grid container justifyContent='flex-end'>
+              <PButton
+                _ml={0}
+                _mt='10px'
+                _onClick={handleNext}
+                _width={100}
+                disabled={nextDisable}
+                text={t<string>('Next')}
               />
+            </Grid>
+          </Grid>
+        }
+        {step === DELEGATE_STEPS.CHOOSE_DELEGATOR &&
+          <ChooseDelegator setDelegateInformation={setDelegateInformation} setStep={setStep} />
+        }
+        {step >= DELEGATE_STEPS.REVIEW &&
+          <Review
+            address={address}
+            delegateInformation={delegateInformation}
+            estimatedFee={estimatedFee}
+            formatted={String(formatted)}
+            handleClose={handleClose}
+            setStep={setStep}
+            step={step}
+          />
         }
       </Box>
     </Modal>
