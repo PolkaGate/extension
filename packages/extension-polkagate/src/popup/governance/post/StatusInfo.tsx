@@ -68,14 +68,13 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
   const prepareUnitPassed = useMemo(() => getUnitPassed(0, 'preparePeriod'), [getUnitPassed]);
   const decisionUnitPassed = useMemo(() => getUnitPassed(1, 'decisionPeriod'), [getUnitPassed]);
   const confirmUnitPassed = useMemo(() => getUnitPassed(2, 'confirmPeriod'), [getUnitPassed]);
-
-  if (!isOngoing) {
-    return null;
-  }
-
   const onDecisionDeposit = useCallback(() => {
     setOpenDecisionDeposit(true);
   }, []);
+
+  if (!isOngoing) {
+    return (<></>);
+  }
 
   return (
     <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mb: '10px' }} xs={12}>
