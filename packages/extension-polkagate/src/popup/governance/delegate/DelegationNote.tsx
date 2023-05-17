@@ -13,7 +13,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function DelegateNote({ setStep }: Props): React.ReactElement {
+export default function DelegateNote ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [dontDisplay, setDisplayText] = useState<boolean>(false);
 
@@ -49,12 +49,12 @@ export default function DelegateNote({ setStep }: Props): React.ReactElement {
 
   return (
     <Grid container direction='column'>
-      <Grid container item justifyContent='center' pt='45px' pb='20px'>
+      <Grid container item justifyContent='center' pb='20px' pt='45px'>
         <Typography fontSize='22px' fontWeight={700}>
           {t<string>('Some important information')}
         </Typography>
       </Grid>
-      <Grid container item sx={{ border: 1, px: '15px', pb: '15px', borderRadius: '5px', bgcolor: 'background.paper', borderColor: 'secondary.light' }}>
+      <Grid container item sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', pb: '15px', px: '15px' }}>
         <Grid container item>
           <UL
             notes={[t<string>('Delegation empowers trusted individuals  to vote on your behalf.')]}
