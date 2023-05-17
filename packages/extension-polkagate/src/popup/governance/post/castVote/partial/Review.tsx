@@ -195,7 +195,7 @@ export default function Review({ address, estimatedFee, formatted, handleClose, 
           <DisplayValue title={t<string>('Vote')}>
             <VoteStatus vote={voteInformation.voteType} />
           </DisplayValue>
-          <DisplayValue title={t<string>('Vote Value({{token}})', { replace: { token } })}>
+          <DisplayValue title={t<string>('Vote Value ({{token}})', { replace: { token } })}>
             <Typography fontSize='28px' fontWeight={400}>
               {voteInformation.voteBalance}
             </Typography>
