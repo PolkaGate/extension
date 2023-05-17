@@ -423,7 +423,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
             </Grid>
             <AmountWithOptions
               inputWidth={8.4}
-              label={t<string>(`Vote Value(${token})`)}
+              label={t<string>(`Vote Value (${token})`)}
               onChangeAmount={onVoteAmountChange}
               onPrimary={onMaxAmount}
               onSecondary={onLockedAmount}
