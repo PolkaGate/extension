@@ -10,7 +10,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
@@ -25,7 +25,7 @@ import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButt
 import SelectProxyModal from '../components/SelectProxyModal';
 import WaitScreen from '../partials/WaitScreen';
 import Confirmation from './Confirmation';
-import { DelegateInformation } from '.';
+import { DELEGATE_STEPS, DelegateInformation } from '.';
 
 interface Props {
   address: string | undefined;
@@ -112,7 +112,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
 
       const txList = params.map((param) => delegate(...param));
 
-      setStep(4);
+      setStep(DELEGATE_STEPS.WAIT_SCREEN);
 
       const calls = txList.length > 1 ? batch(txList) : txList[0];
       const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
@@ -136,42 +136,30 @@ export default function Review({ address, delegateInformation, estimatedFee, for
       setTxInfo({ ...info, api, chain });
       saveAsHistory(from, info);
 
-      setStep(5);
+      setStep(DELEGATE_STEPS.CONFIRM);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
   }, [formatted, delegate, api, decimal, params, batch, selectedProxyAddress, password, setStep, selectedProxy, delegateInformation.delegateAmount, delegateInformation.delegateeAddress, estimatedFee, name, selectedProxyName, delegateeName, chain]);
 
-  const backToChooseDelegatee = useCallback(() => setStep(2), [setStep]);
+  const backToChooseDelegatee = useCallback(() => setStep(DELEGATE_STEPS.CHOOSE_DELEGATOR), [setStep]);
 
   return (
     <Motion style={{ height: '100%' }}>
-      {step === 3
-        ? <Grid container ref={ref}>
+      {step === DELEGATE_STEPS.REVIEW &&
+        <Grid container ref={ref}>
           {isPasswordError &&
             <WrongPasswordAlert />
           }
-          {/* <AccountHolderWithProxy
-            address={address}
-            chain={chain}
-            selectedProxyAddress={selectedProxyAddress}
-            title={t('Account')}
-          /> */}
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Delegate from')}:
             </Typography>
-            {/* <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-              {accountName}
-            </Typography>
-            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-              <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
-            </Grid> */}
             <Identity
+              address={address}
               api={api}
               chain={chain}
-              address={address}
               identiconSize={31}
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
@@ -187,12 +175,6 @@ export default function Review({ address, delegateInformation, estimatedFee, for
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Delegate To')}:
             </Typography>
-            {/* <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-              {delegateInformation.delegateeAddress}
-            </Typography>
-            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-              <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
-            </Grid> */}
             <Identity
               address={delegateInformation.delegateeAddress}
               api={api}
@@ -207,7 +189,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
               {delegateInformation.delegateAmount}
             </Typography>
           </DisplayValue>
-          <DisplayValue title={t<string>('Final delegated vote power')}>
+          <DisplayValue title={t<string>('Vote ')}>
             <Typography fontSize='28px' fontWeight={400}>
               {delegateInformation.delegatePower}
             </Typography>
@@ -237,25 +219,30 @@ export default function Review({ address, delegateInformation, estimatedFee, for
             setStep={setStep}
           />
         </Grid>
-        : step === 4
-          ? <WaitScreen />
-          : step === 5
-            ? <Confirmation
-              address={address}
-              allCategoriesLength={tracks?.length}
-              delegateInformation={delegateInformation}
-              handleClose={handleClose}
-              txInfo={txInfo}
-            />
-            : <SelectProxyModal
-              address={address}
-              height={modalHeight}
-              proxies={proxyItems}
-              proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
-              selectedProxy={selectedProxy}
-              setSelectedProxy={setSelectedProxy}
-              setStep={setStep}
-            />}
+      }
+      {step === DELEGATE_STEPS.WAIT_SCREEN &&
+        <WaitScreen />
+      }
+      {step === DELEGATE_STEPS.CONFIRM &&
+        <Confirmation
+          address={address}
+          allCategoriesLength={tracks?.length}
+          delegateInformation={delegateInformation}
+          handleClose={handleClose}
+          txInfo={txInfo}
+        />
+      }
+      {step === DELEGATE_STEPS.PROXY &&
+        <SelectProxyModal
+          address={address}
+          height={modalHeight}
+          proxies={proxyItems}
+          proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+          setStep={setStep}
+        />
+      }
     </Motion>
   );
 }
