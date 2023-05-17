@@ -7,17 +7,18 @@ import { FormControl, Grid, RadioGroup, Typography, useTheme } from '@mui/materi
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountInputWithIdentity, Infotip2, Progress, TwoButtons } from '../../../components';
+import { AccountInputWithIdentity, Infotip2, TwoButtons } from '../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
+import { LoadingSkeleton } from './partial/ReferendaTracks';
 import TAccountsDisplay from './TAccountDisplay';
-import { DelegateInformation } from '.';
+import { DELEGATE_STEPS, DelegateInformation } from '.';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
 }
 
-export default function ChooseDelegator({ setDelegateInformation, setStep }: Props): React.ReactElement {
+export default function ChooseDelegator ({ setDelegateInformation, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const myFormattedAddress = useFormatted(address);
@@ -80,11 +81,11 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
   }, []);
 
   const goReview = useCallback(() => {
-    setStep(3);
+    setStep(DELEGATE_STEPS.REVIEW);
   }, [setStep]);
 
   const goBack = useCallback(() => {
-    setStep(1);
+    setStep(DELEGATE_STEPS.INDEX);
   }, [setStep]);
 
   return (
@@ -118,7 +119,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
             </Typography>
           </Grid>
         </Grid>
-        <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', height: '360px' }}>
+        <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', display: 'block', height: '360px', maxHeight: '360px', overflowY: 'scroll' }}>
           {trustedAccounts
             ? <FormControl fullWidth>
               <RadioGroup onChange={onSelectTrustedAccount} row>
@@ -127,7 +128,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
                 ))}
               </RadioGroup>
             </FormControl>
-            : <Progress pt='85px' size={90} title={t('Loading referenda tracks...')} />
+            : <LoadingSkeleton skeletonsNum={15} />
           }
         </Grid>
       </Grid>
