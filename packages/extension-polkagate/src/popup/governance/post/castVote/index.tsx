@@ -347,9 +347,15 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   }, []);
 
   const handleClose = useCallback(() => {
+    if (step === 100) {
+      setStep((step) => step - 1);
+
+      return;
+    }
+
     setOpen(false);
     refreshAll();
-  }, [refreshAll, setOpen]);
+  }, [refreshAll, setOpen, step]);
 
   const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Aye' | 'Nay' | 'Abstain'): void => {
     setVoteType(value);
