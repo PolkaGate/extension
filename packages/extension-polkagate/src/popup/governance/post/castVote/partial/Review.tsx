@@ -41,11 +41,11 @@ interface Props {
   step: number;
 }
 
-export default function Review({ address, estimatedFee, formatted, voteInformation, handleClose, setStep, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, formatted, handleClose, setStep, step, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountName(address)
+  const name = useAccountName(address);
   const { accounts } = useContext(AccountContext);
   const theme = useTheme();
   const api = useApi(address);
@@ -226,7 +226,6 @@ export default function Review({ address, estimatedFee, formatted, voteInformati
             proxyTypeFilter={['Any']}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
-            setSelectedProxy={setSelectedProxy}
             setStep={setStep}
           />
         </Grid>
