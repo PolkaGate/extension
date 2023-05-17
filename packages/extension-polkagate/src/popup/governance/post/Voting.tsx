@@ -48,11 +48,13 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
 
   const track = useTrack(address, trackName);
   const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+
+  console.log('currentBlock', currentBlock);
   const currentApprovalThreshold = useMemo((): number | undefined => {
     if (track?.[1]?.preparePeriod && currentBlock && referendumInfoFromSubscan) {
       const blockSubmitted = referendumInfoFromSubscan.timeline[0].block;
 
-      if (currentBlock - blockSubmitted < track[1].preparePeriod) {
+      if (track[1].preparePeriod.gtn(currentBlock - blockSubmitted)) {
         // in prepare period
         return 100;
       }
