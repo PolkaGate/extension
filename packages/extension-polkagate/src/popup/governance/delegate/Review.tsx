@@ -173,7 +173,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegate To')}:
+              {t<string>('Delegate to')}:
             </Typography>
             <Identity
               address={delegateInformation.delegateeAddress}
@@ -189,9 +189,9 @@ export default function Review({ address, delegateInformation, estimatedFee, for
               {delegateInformation.delegateAmount}
             </Typography>
           </DisplayValue>
-          <DisplayValue title={t<string>('Vote ')}>
+          <DisplayValue title={t<string>('Vote Multiplier')}>
             <Typography fontSize='28px' fontWeight={400}>
-              {delegateInformation.delegatePower}
+              {`${delegateInformation.delegateConviction}x`}
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Number of Referenda Categories')}>
