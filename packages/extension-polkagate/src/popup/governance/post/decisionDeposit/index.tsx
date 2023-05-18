@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, Identity, ShowBalance } from '../../../../components';
+import { AccountContext, Identity, ShowBalance, Warning } from '../../../../components';
 import { useAccountName, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { Track } from '../../../../hooks/useTrack';
 import { broadcast } from '../../../../util/api';
@@ -159,6 +159,8 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   const HEIGHT = 550;
 
+  const notEnoughBalance = useMemo(() => amount && estimatedFee && balances?.availableBalance?.lt(amount.add(estimatedFee)), [amount, balances, estimatedFee]);
+
   return (
     <DraggableModal onClose={handleClose} open={open} width={500}>
       <Grid container item justifyContent='center' sx={{ height: '625px' }} >
@@ -172,6 +174,17 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
+        {notEnoughBalance &&
+          <Grid container height='15px' item justifyContent='center' my='20px'>
+            <Warning
+              fontWeight={400}
+              isDanger
+              theme={theme}
+            >
+              {t<string>('You don\'t have sufficient funds available to complete this transaction.')}
+            </Warning>
+          </Grid>
+        }
         {step === STEPS.REVIEW &&
           <Grid container item sx={{ height: '550px' }}>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
@@ -197,7 +210,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             <Grid container item sx={{ pt: '40px' }}>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
-                disabled={amount && estimatedFee && balances?.availableBalance?.lt(amount.add(estimatedFee))}
+                disabled={notEnoughBalance}
                 isPasswordError={isPasswordError}
                 label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
                 onChange={setPassword}
