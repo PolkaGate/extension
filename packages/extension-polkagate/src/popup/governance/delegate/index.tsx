@@ -292,11 +292,21 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {step === DELEGATE_STEPS.NOTE && t<string>('Delegate Vote')}
-              {(step === DELEGATE_STEPS.INDEX || step === DELEGATE_STEPS.CHOOSE_DELEGATOR) && t<string>('Delegate Vote ({{step}}/3)', { replace: { step } })}
-              {step === DELEGATE_STEPS.REVIEW && t<string>('Review Your Delegation (3/3)')}
-              {step === DELEGATE_STEPS.WAIT_SCREEN && t<string>('Delegating')}
-              {step === DELEGATE_STEPS.CONFIRM && t<string>('Delegation Completed')}
+              {step === DELEGATE_STEPS.NOTE &&
+                t<string>('Delegate Vote')
+              }
+              {(step === DELEGATE_STEPS.INDEX || step === DELEGATE_STEPS.CHOOSE_DELEGATOR) &&
+                t<string>('Delegate Vote ({{step}}/3)', { replace: { step } })
+              }
+              {step === DELEGATE_STEPS.REVIEW &&
+                t<string>('Review Your Delegation (3/3)')
+              }
+              {step === DELEGATE_STEPS.WAIT_SCREEN &&
+                t<string>('Delegating')
+              }
+              {step === DELEGATE_STEPS.CONFIRM &&
+                t<string>('Delegation Completed')
+              }
             </Typography>
           </Grid>
           <Grid item>
@@ -396,7 +406,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         {step === DELEGATE_STEPS.CHOOSE_DELEGATOR &&
           <ChooseDelegator setDelegateInformation={setDelegateInformation} setStep={setStep} />
         }
-        {step >= DELEGATE_STEPS.REVIEW &&
+        {step >= DELEGATE_STEPS.REVIEW && delegateInformation &&
           <Review
             address={address}
             delegateInformation={delegateInformation}
