@@ -12,6 +12,7 @@ import { Track } from '../../../hooks/useTrack';
 import { remainingTime } from '../../../util/utils';
 import { Timeline } from '../utils/types';
 import { blockToUnit, blockToX, getPeriodScale } from '../utils/util';
+import PayDecisionDeposit from './decisionDeposit/PayDecisionDeposit';
 import DecisionDeposit from './decisionDeposit';
 
 interface Props {
@@ -68,9 +69,6 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
   const prepareUnitPassed = useMemo(() => getUnitPassed(0, 'preparePeriod'), [getUnitPassed]);
   const decisionUnitPassed = useMemo(() => getUnitPassed(1, 'decisionPeriod'), [getUnitPassed]);
   const confirmUnitPassed = useMemo(() => getUnitPassed(2, 'confirmPeriod'), [getUnitPassed]);
-  const onDecisionDeposit = useCallback(() => {
-    setOpenDecisionDeposit(true);
-  }, []);
 
   if (!isOngoing) {
     return (<></>);
@@ -104,13 +102,9 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
         </Infotip2>
       </Grid>
       {_status === t('Preparing') &&
-        <Grid container item sx={{ pt: '20px', pb: '10px' }}>
-          <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={t('A decision deposit is required to advance to the deciding state, and it is refundable once the referendum concludes.')}>
-            <Typography onClick={onDecisionDeposit} sx={{ color: 'primary.main', cursor: 'pointer', textDecorationLine: 'underline' }}>
-              {t('Pay Decision Deposit')}
-            </Typography>
-          </Infotip2>
-        </Grid>
+        <PayDecisionDeposit
+          setOpenDecisionDeposit={setOpenDecisionDeposit}
+        />
       }
       {openDecisionDeposit &&
         <DecisionDeposit
