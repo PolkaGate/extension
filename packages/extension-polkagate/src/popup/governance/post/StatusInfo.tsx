@@ -105,7 +105,7 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
       </Grid>
       {_status === t('Preparing') &&
         <Grid container item sx={{ pt: '20px', pb: '10px' }}>
-          <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={t('Fetching ...')}>
+          <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={t('A decision deposit is required to advance to the deciding state, and it is refundable once the referendum concludes.')}>
             <Typography onClick={onDecisionDeposit} sx={{ color: 'primary.main', cursor: 'pointer', textDecorationLine: 'underline' }}>
               {t('Pay Decision Deposit')}
             </Typography>
