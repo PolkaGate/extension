@@ -98,6 +98,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
         menuOnClick={menuOnClick}
         name={name}
         toggleVisibility={_toggleVisibility}
+        goToAccount={goToAccount}
       />
       <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {

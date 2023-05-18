@@ -30,6 +30,7 @@ interface Props {
   hideNumbers: boolean | undefined;
   identity: DeriveAccountRegistration | null | undefined;
   isHidden: boolean | undefined;
+  goToAccount: () => void;
   menuOnClick: () => void;
   name: string | undefined;
   toggleVisibility: () => void;
@@ -53,7 +54,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   )
 };
 
-export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+export default function AccountDetail({ address, chain, formatted, hideNumbers, identity, isHidden, goToAccount, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const balances = useBalances(address);
@@ -134,7 +135,7 @@ export default function AccountDetail({ address, chain, formatted, hideNumbers, 
   return (
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
-        <Grid item maxWidth='70%'>
+        <Grid item maxWidth='70%' onClick={goToAccount} sx={{ cursor: 'pointer' }}>
           <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {identity?.display || name}
           </Typography>
