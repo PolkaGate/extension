@@ -87,8 +87,10 @@ export default function Review({ address, delegateInformation, estimatedFee, for
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const params = useMemo(() => delegateInformation.delegatedTracks.map((track) =>
-    [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN])
+  const params = useMemo(() =>
+    delegateInformation.delegatedTracks.map((track) =>
+      [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN]
+    )
     , [delegateInformation]);
 
   useEffect(() => {
