@@ -90,7 +90,11 @@ export default function ReferendaTracks({ selectedTracks, setSelectedTracks, unv
             >
               <ListItemButton dense onClick={handleToggle(value[0])} role={undefined} sx={{ py: 0 }}>
                 <ListItemText
-                  primary={`${toTitleCase(value[1].name as unknown as string) as string}`}
+                  primary={
+                    <Typography fontSize='16px'>
+                      {toTitleCase(value[1].name as unknown as string) as string}
+                    </Typography>
+                  }
                 />
                 <ListItemIcon sx={{ minWidth: '20px' }}>
                   <Checkbox2
