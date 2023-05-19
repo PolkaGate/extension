@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
+import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -94,12 +94,12 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   return locks;
 }
 
-export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined {
+export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined | null {
   const api = useApi(address);
   const formatted = useFormatted(address);
   const currentBlock = useCurrentBlockNumber(address);
 
-  const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | undefined>();
+  const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null>();
   const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
 
   useEffect(() => {
@@ -110,12 +110,22 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         return undefined;
       }
 
-      const locks = await api.query[palletVote]?.classLocksFor(formatted);
-      const lockClasses = locks?.map((l) => l[0]);
+      const locks = await api.query[palletVote]?.classLocksFor(formatted) as unknown as [BN, BN][];
+      const lockClasses = locks?.length
+        ? locks.map((l) => l[0])
+        : null;
 
-      const voteParams: [string, BN][] = lockClasses?.map((classId) => [formatted, classId]);
+      console.log('locksssssss:', JSON.parse(JSON.stringify(locks)));
 
-      const votingFor: PalletConvictionVotingVoteVoting[] = await api.query[palletVote]?.votingFor.multi(voteParams);
+      if (!lockClasses) {
+        return setReferenda(null);
+      }
+
+      const voteParams: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
+
+      const votingFor = await api.query[palletVote]?.votingFor.multi(voteParams) as unknown as PalletConvictionVotingVoteVoting[];
+
+      console.log('votingFor:', JSON.parse(JSON.stringify(votingFor)));
 
       const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
@@ -133,7 +143,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
       setVotes(votes);
 
-      let refIds;
+      let refIds: BN[] = [];
 
       if (votes && votes.length) {
         const ids = votes.reduce<BN[]>((all, [, ids]) => all.concat(ids), []);
@@ -143,12 +153,20 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         }
       }
 
-      const optTally = refIds && await api.query[palletReferenda]?.referendumInfoFor.multi(refIds);
-      const referenda = optTally?.map((v, index): null | [BN, PalletReferendaReferendumInfoConvictionVotingTally] =>
-        v.isSome
-          ? [refIds[index], v.unwrap()]
-          : null
-      ).filter((v): v is [BN, PalletReferendaReferendumInfoConvictionVotingTally] => !!v);
+      if (!refIds.length) {
+        return setReferenda(null);
+      }
+
+      const optTally = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
+
+      console.log('optTally:', optTally);
+      const referenda = optTally
+        ? optTally.map((v, index) =>
+          v.isSome
+            ? [refIds[index], v.unwrap() as PalletReferendaReferendumInfoConvictionVotingTally]
+            : null
+        ).filter((v): v is [BN, PalletReferendaReferendumInfoConvictionVotingTally] => !!v)
+        : null;
 
       setReferenda(referenda);
     }
@@ -163,6 +181,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       }
 
       return accountLocks;
+    }
+
+    if (referenda === null) {
+      return null;
     }
 
     return undefined;
