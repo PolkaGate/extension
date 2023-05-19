@@ -21,9 +21,9 @@ import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../util/utils';
 import { toTitleCase } from '../utils/util';
 import ReferendaTracks from './partial/ReferendaTracks';
+import About from './About';
 import { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 import ChooseDelegator from './ChooseDelegator';
-import DelegateNote from './DelegationNote';
 import Review from './Review';
 
 interface Props {
@@ -335,7 +335,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
           </Grid>
         </Grid>
         {step === DELEGATE_STEPS.NOTE &&
-          <DelegateNote setStep={setStep} />
+          <About setStep={setStep} />
         }
         {step === DELEGATE_STEPS.INDEX &&
           <Grid container>
