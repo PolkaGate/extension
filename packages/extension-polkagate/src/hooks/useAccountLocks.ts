@@ -115,8 +115,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         ? locks.map((l) => l[0])
         : null;
 
-      console.log('locksssssss:', JSON.parse(JSON.stringify(locks)));
-
       if (!lockClasses) {
         return setReferenda(null);
       }
@@ -124,8 +122,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       const voteParams: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
 
       const votingFor = await api.query[palletVote]?.votingFor.multi(voteParams) as unknown as PalletConvictionVotingVoteVoting[];
-
-      console.log('votingFor:', JSON.parse(JSON.stringify(votingFor)));
 
       const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
@@ -159,7 +155,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
       const optTally = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
 
-      console.log('optTally:', optTally);
       const referenda = optTally
         ? optTally.map((v, index) =>
           v.isSome
