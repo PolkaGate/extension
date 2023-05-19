@@ -42,6 +42,7 @@ export default function ReferendumPost(): React.ReactElement {
   const [referendumFromSb, setReferendumFromSb] = useState<ReferendumSubScan>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
+  const [showAboutVoting, setShowAboutVoting] = useState<boolean>(false);
 
   const refIndex = useMemo(() => (postId && Number(postId)) || referendumFromSb?.referendum_index || referendumFromPA?.post_id, [postId, referendumFromPA, referendumFromSb]);
   const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
@@ -53,6 +54,10 @@ export default function ReferendumPost(): React.ReactElement {
   }, [referendumFromPA?.origin, referendumFromSb?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
+
+  useEffect(() => {
+    setShowAboutVoting(window.localStorage.getItem('cast_vote_about_disabled') !== 'true');
+  }, []);
 
   useEffect(() => {
     if (!api) {
@@ -212,6 +217,7 @@ export default function ReferendumPost(): React.ReactElement {
           open={showCastVote}
           referendumInfo={referendumFromSb}
           setOpen={setShowCastVote}
+          showAbout={showAboutVoting}
         />
       }
     </>

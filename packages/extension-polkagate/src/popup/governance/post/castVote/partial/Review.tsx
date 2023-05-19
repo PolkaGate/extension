@@ -12,7 +12,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef,useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
@@ -27,7 +27,7 @@ import PasswordWithTwoButtonsAndUseProxy from '../../../components/PasswordWithT
 import SelectProxyModal from '../../../components/SelectProxyModal';
 import WaitScreen from '../../../partials/WaitScreen';
 import { STATUS_COLOR } from '../../../utils/consts';
-import { VoteInformation } from '..';
+import { STEPS, VoteInformation } from '..';
 import Confirmation from './Confirmation';
 import DisplayValue from './DisplayValue';
 
@@ -113,7 +113,7 @@ export default function Review({ address, estimatedFee, formatted, handleClose, 
     }
   }, [voteInformation]);
 
- useEffect(() => {
+  useEffect(() => {
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
       console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)
@@ -165,8 +165,8 @@ export default function Review({ address, estimatedFee, formatted, handleClose, 
 
   return (
     <Motion style={{ height: '100%' }}>
-      {step === 1
-        ? <Grid container ref={ref}>
+      {step === STEPS.REVIEW &&
+        <Grid container ref={ref}>
           {isPasswordError &&
             <WrongPasswordAlert />
           }
@@ -229,24 +229,29 @@ export default function Review({ address, estimatedFee, formatted, handleClose, 
             setStep={setStep}
           />
         </Grid>
-        : step === 2
-          ? <WaitScreen />
-          : step === 3
-            ? <Confirmation
-              address={address}
-              handleClose={handleClose}
-              txInfo={txInfo}
-              voteInformation={voteInformation}
-            />
-            : <SelectProxyModal
-              address={address}
-              height={modalHeight}
-              proxies={proxyItems}
-              proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
-              selectedProxy={selectedProxy}
-              setSelectedProxy={setSelectedProxy}
-              setStep={setStep}
-            />}
+      }
+      {step === STEPS.WAIT_SCREEN &&
+        <WaitScreen />
+      }
+      {step === STEPS.CONFIRM &&
+        <Confirmation
+          address={address}
+          handleClose={handleClose}
+          txInfo={txInfo}
+          voteInformation={voteInformation}
+        />
+      }
+      {step === STEPS.PROXY &&
+        <SelectProxyModal
+          address={address}
+          height={modalHeight}
+          proxies={proxyItems}
+          proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+          selectedProxy={selectedProxy}
+          setSelectedProxy={setSelectedProxy}
+          setStep={setStep}
+        />
+      }
     </Motion>
   );
 }

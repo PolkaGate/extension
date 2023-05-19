@@ -26,12 +26,14 @@ import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
 import { getConviction } from '../myVote/util';
 import Review from './partial/Review';
+import About from './About';
 
 interface Props {
   address: string | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void
   referendumInfo: ReferendumSubScan | undefined;
+  showAbout: boolean;
 }
 
 export interface VoteInformation {
@@ -74,7 +76,17 @@ function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN |
   return sortedLocks?.[0] || allBalances?.lockedBalance;
 }
 
-export default function CastVote({ address, open, referendumInfo, setOpen }: Props): React.ReactElement {
+export const STEPS = {
+  ABOUT: 0,
+  MODIFY: 1,
+  INDEX: 2,
+  REVIEW: 3,
+  WAIT_SCREEN: 4,
+  CONFIRM: 5,
+  PROXY: 100
+};
+
+export default function CastVote({ address, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -137,8 +149,9 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   const myVote = useMyVote(address, refIndex, trackId);
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
-  const myVoteBalance = useMemo((): number | undefined => (myVote?.standard?.balance || myVote?.splitAbstain?.abstain || myVote?.delegating?.balance), [myVote]);
+  const myVoteBalance = myVote?.standard?.balance || myVote?.splitAbstain?.abstain || myVote?.delegating?.balance;
   const myVoteConviction = useMemo(() => (myVote?.standard?.vote ? `(${getConviction(myVote.standard.vote)}x)` : myVote?.delegating?.conviction ? `(${myVote.delegating.conviction}x)` : ''), [myVote?.delegating?.conviction, myVote?.standard?.vote]);
+  const myDelegations = myVote?.delegations?.votes;
 
   const myVoteType = getVoteType(myVote);
 
@@ -252,7 +265,46 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
   }, [decimal, lockedAmount]);
 
   const onCastVote = useCallback(() => {
-    setStep(1);
+    setStep(STEPS.REVIEW);
+  }, []);
+
+  const refreshAll = useCallback(() => {
+    setVoteAmount('0');
+    setVoteType(undefined);
+    setVoteInformation(undefined);
+    setConviction(undefined);
+    setStep(0);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    if (step === STEPS.PROXY) {
+      setStep((step) => step - 1);
+
+      return;
+    }
+
+    setOpen(false);
+    refreshAll();
+  }, [refreshAll, setOpen, step]);
+
+  const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Aye' | 'Nay' | 'Abstain'): void => {
+    setVoteType(value);
+  }, []);
+
+  const goVoteDisabled = useMemo(() => {
+    if (!voteAmount || voteAmount === '0' || voteType === undefined || voteAmountAsBN.gt(balances?.votingBalance || BN_ZERO)) {
+      return true;
+    }
+
+    if (voteType !== 'Abstain' && !conviction) {
+      return true;
+    }
+
+    return false;
+  }, [balances?.votingBalance, conviction, voteAmount, voteAmountAsBN, voteType]);
+
+  useEffect(() => {
+    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
 
   const CurrentVote = ({ api, voteBalance, voteConviction, voteType }: { api: ApiPromise | undefined, voteBalance: number, voteConviction: string, voteType: 'Aye' | 'Nay' | 'Abstain' | undefined }) => {
@@ -305,6 +357,23 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     );
   };
 
+  const CurrentDelegation = ({ api, balance }: { api: ApiPromise | undefined, balance: number }) => {
+    return (
+      <Grid alignItems='center' container direction='column' item>
+        <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
+          {t<string>('Delegated Vote Power')}
+        </Typography>
+        <Grid alignItems='center' container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', justifyContent: 'space-between', p: '5px 10px' }}>
+          <Grid alignItems='center' container item width='fit-content'>
+            <Grid item sx={{ fontSize: '28px', fontWeight: 400 }}>
+              <ShowBalance api={api} balance={balance} decimalPoint={1} />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+  };
+
   const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
     return (
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', justifyContent: 'center', pr: '5px', width: 'fit-content' }}>
@@ -338,69 +407,43 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
     );
   };
 
-  const refreshAll = useCallback(() => {
-    setVoteAmount('0');
-    setVoteType(undefined);
-    setVoteInformation(undefined);
-    setConviction(undefined);
-    setStep(0);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    if (step === 100) {
-      setStep((step) => step - 1);
-
-      return;
-    }
-
-    setOpen(false);
-    refreshAll();
-  }, [refreshAll, setOpen, step]);
-
-  const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Aye' | 'Nay' | 'Abstain'): void => {
-    setVoteType(value);
-  }, []);
-
-  const goVoteDisabled = useMemo(() => {
-    if (!voteAmount || voteAmount === '0' || voteType === undefined || voteAmountAsBN.gt(balances?.votingBalance || BN_ZERO)) {
-      return true;
-    }
-
-    if (voteType !== 'Abstain' && !conviction) {
-      return true;
-    }
-
-    return false;
-  }, [balances?.votingBalance, conviction, voteAmount, voteAmountAsBN, voteType]);
-
-  useEffect(() => {
-    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
-  }, []);
-
   return (
     <DraggableModal onClose={handleClose} open={open}>
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
-              {step === 0
-                ? t<string>('Cast Your Vote')
-                : step === 1
-                  ? t<string>('Review Your Vote')
-                  : step === 2
-                    ? t<string>('Voting')
-                    : step === 3
-                      ? t<string>('Voting Completed')
-                      : t<string>('Select Proxy')
+              {step === STEPS.ABOUT &&
+                t<string>('About Voting')
+              }
+              {step === STEPS.INDEX &&
+                t<string>('Cast Your Vote')
+              }
+              {step === STEPS.REVIEW &&
+                t<string>('Review Your Vote')
+              }
+              {step === STEPS.WAIT_SCREEN &&
+                t<string>('Voting')
+              }
+              {step === STEPS.CONFIRM &&
+                t<string>('Voting Completed')
+              }
+              {step === STEPS.PROXY &&
+                t<string>('Select Proxy')
               }
             </Typography>
           </Grid>
           <Grid item>
-            {step !== 2 && <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />}
+            {step !== STEPS.WAIT_SCREEN &&
+              <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+            }
           </Grid>
         </Grid>
-        {step === 0
-          ? <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
+        {step === STEPS.ABOUT &&
+          <About setStep={setStep} />
+        }
+        {step === STEPS.INDEX &&
+          <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
             <From
               address={address}
               api={api}
@@ -443,21 +486,33 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               value={voteAmount}
             />
             <Grid container item>
-              <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70.25%' }}>
-                <Grid item sx={{ fontSize: '16px' }}>
+              <Grid container item justifyContent='space-between' sx={{ lineHeight: '20px', mt: '10px', width: '70.25%' }}>
+                <Grid item sx={{ fontSize: '14px' }}>
                   {t('Available Voting Balance')}
                 </Grid>
-                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
                   <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
                 </Grid>
               </Grid>
+              {myDelegations !== undefined &&
+                <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '70%' }}>
+                  <Grid item sx={{ fontSize: '14px' }}>
+                    <Infotip2 showQuestionMark text={t('The voting power which is delegated to this account')}>
+                      {t('Delegated Vote Power')}
+                    </Infotip2>
+                  </Grid>
+                  <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
+                    <ShowBalance balance={myDelegations} decimal={decimal} decimalPoint={2} token={token} />
+                  </Grid>
+                </Grid>
+              }
               <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
-                <Grid item sx={{ fontSize: '16px' }}>
+                <Grid item sx={{ fontSize: '14px' }}>
                   <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                     {t('Already Locked Balance')}
                   </Infotip2>
                 </Grid>
-                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
                   <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
                     <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
                   </Infotip2>
@@ -481,9 +536,12 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
                 </Grid>
               </Convictions>
             }
-            {myVoteBalance !== undefined &&
+            {/* {myVoteBalance !== undefined &&
               <CurrentVote api={api} voteBalance={myVoteBalance} voteConviction={myVoteConviction} voteType={myVoteType} />
-            }
+            } */}
+            {/* {myDelegations !== undefined &&
+              <CurrentDelegation api={api} balance={myDelegations} />
+            } */}
             <PButton
               _ml={0}
               _mt='15px'
@@ -493,7 +551,8 @@ export default function CastVote({ address, open, referendumInfo, setOpen }: Pro
               text={t<string>('Next to review')}
             />
           </Grid>
-          : voteInformation &&
+        }
+        {step === STEPS.REVIEW && voteInformation &&
           <Review
             address={address}
             estimatedFee={estimatedFee}

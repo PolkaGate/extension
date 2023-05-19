@@ -32,9 +32,7 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
   const [showDelegationNote, setShowDelegationNote] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    const delegationNoteDisable = window.localStorage.getItem('DelegateNoteDisable');
-
-    delegationNoteDisable !== null && delegationNoteDisable === 'true' && setShowDelegationNote(false);
+    setShowDelegationNote(window.localStorage.getItem('delegate_about_disabled') !== 'true');
   }, [openDelegate, openSubmitReferendum]);
 
   const handleOpenSubmitReferendum = () => {
