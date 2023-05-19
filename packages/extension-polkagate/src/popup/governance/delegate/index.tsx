@@ -61,7 +61,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
   const tracks = useTracks(address);
-  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
+  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const blockTime = useBlockInterval(address);
   const convictionOptions = useConvictionOptions(address, blockTime, t);
   const currentBlock = useCurrentBlockNumber(address);
@@ -82,9 +82,24 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, [setOpen]);
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
-  const unvotedTracks = useMemo(() => accountLocks && tracks && tracks.filter((value) => !accountLocks.find((lock) => lock.classId.eq(value[0]))), [accountLocks, tracks]);
-  const existingVotes: Record<string, number> | undefined = useMemo(() => {
-    if (tracks && accountLocks) {
+  const unvotedTracks = useMemo(() => {
+    if (!tracks || accountLocks === undefined) {
+      return undefined;
+    }
+
+    if (accountLocks === null) {
+      return tracks;
+    }
+
+    return tracks.filter((value) => !accountLocks.find((lock) => lock.classId.eq(value[0])));
+  }, [accountLocks, tracks]);
+
+  const existingVotes: Record<string, number> | undefined | null = useMemo(() => {
+    if (tracks && accountLocks !== undefined) {
+      if (accountLocks === null) {
+        return null;
+      }
+
       const result = {};
 
       accountLocks.forEach((lock) => {
@@ -96,7 +111,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
       });
 
       const replacedKey = Object.keys(result).reduce((acc, key) => {
-        const newKey = tracks.find((value) => String(value[0]) === key)?.[1].name; // Convert numeric key to custom key
+        const newKey = tracks.find((value) => String(value[0]) === key)?.[1].name; // Convert numeric key to track names
         acc[newKey] = result[key];
 
         return acc;
@@ -113,7 +128,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
 
     const bn = conviction !== 0.1 ? delegateAmountBN.muln(conviction) : delegateAmountBN.divn(10);
 
-    return amountToHuman(bn, decimal);
+    return Number(amountToHuman(bn, decimal));
   }, [conviction, decimal, delegateAmountBN]);
 
   const nextDisable = useMemo(() => (!delegateInformation || !checked.length || delegateAmountBN.isZero() || delegateAmountBN.gt(balances?.votingBalance || BN_ZERO)), [balances?.votingBalance, checked.length, delegateAmountBN, delegateInformation]);
@@ -216,9 +231,15 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
                 </Grid>
               </Grid>
             ))
-            : <Grid container item pb='25px' style={{ border: 'none' }}>
-              <Progress pt='60px' size={50} title={t('Loading your existing votes ...')} />
-            </Grid>
+            : existingVotes === undefined
+              ? <Grid container item pb='25px' style={{ border: 'none' }}>
+                <Progress pt='60px' size={50} title={t('Loading your existing votes ...')} />
+              </Grid>
+              : <Grid container item justifyContent='center' sx={{ border: 'none', m: 'auto' }}>
+                <Typography>
+                  {t('No locks were found for the existing votes.')}
+                </Typography>
+              </Grid>
           }
         </Grid>
       </ClickAwayListener>
@@ -335,7 +356,11 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
                 <ExistingVotesDisplay />
               }
             </Grid>
-            <ReferendaTracks selectedTracks={checked} setSelectedTracks={setChecked} unvotedTracks={unvotedTracks} />
+            <ReferendaTracks
+              selectedTracks={checked}
+              setSelectedTracks={setChecked}
+              unvotedTracks={unvotedTracks}
+            />
             <AmountWithOptions
               inputWidth={8.4}
               label={t<string>('Delegate Vote Value ({{token}})', { replace: { token } })}
