@@ -378,20 +378,20 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             />
             <Grid container item>
               <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70.25%' }}>
-                <Grid item sx={{ fontSize: '16px' }}>
+                <Grid item sx={{ fontSize: '14px' }}>
                   {t('Available Voting Balance')}
                 </Grid>
-                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
                   <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
                 </Grid>
               </Grid>
               <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
-                <Grid item sx={{ fontSize: '16px' }}>
+                <Grid item sx={{ fontSize: '14px' }}>
                   <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
                     {t('Already Locked Balance')}
                   </Infotip2>
                 </Grid>
-                <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
                   <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
                     <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
                   </Infotip2>
