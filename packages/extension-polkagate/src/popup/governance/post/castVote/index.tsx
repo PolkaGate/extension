@@ -17,6 +17,7 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, From, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
+import { nFormatter } from '../../../../components/FormatPrice';
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
@@ -39,7 +40,7 @@ interface Props {
 export interface VoteInformation {
   voteBalance: string;
   voteAmountBN: BN;
-  votePower: string;
+  votePower: BN;
   voteConvictionValue: number;
   voteLockUpUpPeriod: string;
   voteType: 'Aye' | 'Nay' | 'Abstain';
@@ -161,7 +162,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const vote = api && api.tx.convictionVoting.vote;
   const [conviction, setConviction] = useState<number>();
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.INDEX);
 
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
@@ -184,10 +185,10 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
       return undefined;
     }
 
-    const bn = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
+    const multipliedAmount = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
 
-    return amountToHuman(bn, decimal);
-  }, [conviction, decimal, voteAmountAsBN]);
+    return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
+  }, [conviction, myDelegations, voteAmountAsBN]);
 
   useEffect(() => {
     convictionOptions === undefined && setConviction(1);
@@ -228,7 +229,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
       votePower,
       voteType
     });
-  }, [conviction, convictionLockUp, refIndex, trackId, voteAmount, voteAmountAsBN, votePower, voteType]);
+  }, [conviction, convictionLockUp, myDelegations, refIndex, trackId, voteAmount, voteAmountAsBN, votePower, voteType]);
 
   const onVoteAmountChange = useCallback((value: string) => {
     if (!decimal) {
@@ -357,23 +358,6 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
     );
   };
 
-  const CurrentDelegation = ({ api, balance }: { api: ApiPromise | undefined, balance: number }) => {
-    return (
-      <Grid alignItems='center' container direction='column' item>
-        <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
-          {t<string>('Delegated Vote Power')}
-        </Typography>
-        <Grid alignItems='center' container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', justifyContent: 'space-between', p: '5px 10px' }}>
-          <Grid alignItems='center' container item width='fit-content'>
-            <Grid item sx={{ fontSize: '28px', fontWeight: 400 }}>
-              <ShowBalance api={api} balance={balance} decimalPoint={1} />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    );
-  };
-
   const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
     return (
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', justifyContent: 'center', pr: '5px', width: 'fit-content' }}>
@@ -444,12 +428,12 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
         }
         {step === STEPS.INDEX &&
           <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
-            <From
+            {/* <From
               address={address}
               api={api}
               style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
               title={t<string>('Account')}
-            />
+            /> */}
             <Grid container item justifyContent='flex-start' mt='15px'>
               <FormControl fullWidth>
                 <FormLabel sx={{ color: 'text.primary', fontSize: '16px', '&.Mui-focused': { color: 'text.primary' }, textAlign: 'left' }}>
@@ -480,13 +464,13 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
               secondaryBtnText={t<string>('Locked amount')}
               style={{
                 fontSize: '16px',
-                mt: '15px',
+                mt: '25px',
                 width: '100%'
               }}
               value={voteAmount}
             />
             <Grid container item>
-              <Grid container item justifyContent='space-between' sx={{ lineHeight: '20px', mt: '10px', width: '70.25%' }}>
+              <Grid container item justifyContent='space-between' sx={{ lineHeight: '25px', mt: '10px', width: '70.25%' }}>
                 <Grid item sx={{ fontSize: '14px' }}>
                   {t('Available Voting Balance')}
                 </Grid>
@@ -494,8 +478,8 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
                   <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
                 </Grid>
               </Grid>
-              {myDelegations !== undefined &&
-                <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '70%' }}>
+              {!!myDelegations &&
+                <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '25px', width: '70%' }}>
                   <Grid item sx={{ fontSize: '14px' }}>
                     <Infotip2 showQuestionMark text={t('The voting power which is delegated to this account')}>
                       {t('Delegated Vote Power')}
@@ -506,10 +490,10 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
                   </Grid>
                 </Grid>
               }
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
+              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '25px', width: '75%' }}>
                 <Grid item sx={{ fontSize: '14px' }}>
                   <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
-                    {t('Already Locked Balance')}
+                    {t('Already Locked Amount')}
                   </Infotip2>
                 </Grid>
                 <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
@@ -520,7 +504,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
               </Grid>
             </Grid>
             {voteType !== 'Abstain' &&
-              <Convictions address={address} conviction={conviction} setConviction={setConviction}>
+              <Convictions address={address} conviction={conviction} setConviction={setConviction} mt='25px'>
                 <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
                   <Grid item>
                     <Typography sx={{ fontSize: '16px' }}>
@@ -528,10 +512,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
                     </Typography>
                   </Grid>
                   <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                    <Typography fontSize='28px' fontWeight={500}>
-                      {/* {nFormatter(votePower, 2)} */}
-                      {votePower}
-                    </Typography>
+                    <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={2} token={token} />
                   </Grid>
                 </Grid>
               </Convictions>
@@ -544,7 +525,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
             } */}
             <PButton
               _ml={0}
-              _mt='15px'
+              _mt='20px'
               _onClick={onCastVote}
               _width={100}
               disabled={goVoteDisabled}

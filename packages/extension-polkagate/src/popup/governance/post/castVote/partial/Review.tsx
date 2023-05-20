@@ -17,7 +17,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Motion, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../../components';
+import { AccountContext, Motion, ShortAddress, ShowBalance, ShowValue, WrongPasswordAlert } from '../../../../../components';
 import { useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
 import broadcast from '../../../../../util/api/broadcast';
@@ -207,7 +207,7 @@ export default function Review({ address, estimatedFee, formatted, handleClose, 
           </DisplayValue>
           <DisplayValue title={t<string>('Final vote power')}>
             <Typography fontSize='28px' fontWeight={400}>
-              {voteInformation.votePower}
+              <ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={2} token={token} />
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Fee')}>
