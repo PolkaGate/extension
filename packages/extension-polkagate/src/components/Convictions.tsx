@@ -14,9 +14,10 @@ interface Props {
   children?: React.ReactElement;
   conviction: number | undefined;
   setConviction: React.Dispatch<React.SetStateAction<number | undefined>>;
+  mt?: string;
 }
 
-export default function Convictions({ address, children, conviction, setConviction }: Props): React.ReactElement {
+export default function Convictions({ address, children, conviction, mt, setConviction }: Props): React.ReactElement {
   const { t } = useTranslation();
   const blockTime = useBlockInterval(address);
   const convictionOptions = useConvictionOptions(address, blockTime, t);
@@ -26,11 +27,11 @@ export default function Convictions({ address, children, conviction, setConvicti
   }, [setConviction]);
 
   return (
-    <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ position: 'relative' }}>
+    <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt, position: 'relative' }}>
       {/* {convictionOptions && */}
       <>
         <Select
-          _mt='15px'
+          // _mt='15px'
           defaultValue={convictionOptions?.[0]?.value}
           isDisabled={!convictionOptions}
           label={t<string>('Vote Multiplier')}
