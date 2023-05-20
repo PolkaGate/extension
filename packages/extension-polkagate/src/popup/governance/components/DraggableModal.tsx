@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Modal } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 interface Props {
   width?: number;
@@ -26,6 +26,14 @@ export function DraggableModal({ children, onClose, open, width = 500, maxHeight
     setIsDragging(true);
     setDragStartPosition({ x: e.clientX, y: e.clientY });
   };
+
+  const _onClose = useCallback((event, reason) => {
+    if (reason && reason === 'backdropClick') {
+      return;
+    }
+
+    onClose();
+  }, [onClose]);
 
   const handleMouseMove = (e) => {
     if (isDragging) {
@@ -62,7 +70,7 @@ export function DraggableModal({ children, onClose, open, width = 500, maxHeight
   };
 
   return (
-    <Modal onClose={onClose} open={open}>
+    <Modal onClose={_onClose} open={open}>
       <Box
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
