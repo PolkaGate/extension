@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Modal } from '@mui/material';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 interface Props {
   width?: number;
@@ -14,7 +14,7 @@ interface Props {
   onClose: () => void
 }
 
-export function DraggableModal({ children, onClose, open, width = 500, maxHeight = 700 }: Props): React.ReactElement<Props> {
+export function DraggableModal({ children, maxHeight = 700, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
@@ -35,7 +35,7 @@ export function DraggableModal({ children, onClose, open, width = 500, maxHeight
     onClose();
   }, [onClose]);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (isDragging) {
       const dx = e.clientX - dragStartPosition.x;
       const dy = e.clientY - dragStartPosition.y;
@@ -46,7 +46,7 @@ export function DraggableModal({ children, onClose, open, width = 500, maxHeight
       }));
       setDragStartPosition({ x: e.clientX, y: e.clientY });
     }
-  };
+  }, [dragStartPosition, isDragging]);
 
   const handleMouseUp = () => {
     setIsDragging(false);
