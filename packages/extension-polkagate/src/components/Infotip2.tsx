@@ -66,9 +66,9 @@ function Infotip2 ({ children, fontSize = '14px', placement = 'top', showInfoMar
                   bgcolor: 'secondary.light',
                   borderRadius: '50%',
                   color: 'background.default',
-                  height: '15px',
+                  height: '13px',
                   ml: '5px',
-                  width: '15px'
+                  width: '13px'
                 }}
               />
               : <InfoIcon
