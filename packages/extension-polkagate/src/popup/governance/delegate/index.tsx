@@ -25,6 +25,7 @@ import About from './About';
 import { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 import ChooseDelegator from './ChooseDelegator';
 import Review from './Review';
+import { DraggableModal } from '../components/DraggableModal';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -308,8 +309,8 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
     ), [accountLocks, currentBlock, decimal, t, token]);
 
   return (
-    <Modal onClose={handleClose} open={open}>
-      <Box sx={{ ...style }}>
+    <DraggableModal onClose={handleClose} open={open}>
+     <>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
@@ -327,6 +328,9 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
               }
               {step === DELEGATE_STEPS.CONFIRM &&
                 t<string>('Delegation Completed')
+              }
+              {step === DELEGATE_STEPS.PROXY &&
+                t<string>('Select Proxy')
               }
             </Typography>
           </Grid>
@@ -442,7 +446,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             step={step}
           />
         }
-      </Box>
-    </Modal>
+      </>
+    </DraggableModal>
   );
 }
