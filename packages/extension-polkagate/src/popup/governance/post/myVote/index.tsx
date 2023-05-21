@@ -10,27 +10,27 @@ import React, { useMemo } from 'react';
 import { ShowBalance } from '../../../../components';
 import { useApi, useDecimal, useMyVote, useToken, useTranslation } from '../../../../hooks';
 import { getVoteType } from '../../utils/util';
-import { getConviction } from './util';
+import { Vote, getConviction } from './util';
 
 interface Props {
   address: string | undefined;
   refIndex: number | undefined;
   trackId: number | undefined;
+  vote: Vote | null | undefined;
 }
 
-export default function MyVote({ address, refIndex, trackId }: Props): React.ReactElement {
+export default function MyVote({ address, refIndex, trackId, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const vote = useMyVote(address, refIndex, trackId);
 
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
 
   const voteType = getVoteType(vote);
   const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote)), [vote]);
-
+  
   return (
     <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
