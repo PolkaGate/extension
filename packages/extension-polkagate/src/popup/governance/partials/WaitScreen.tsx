@@ -9,9 +9,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '../../../hooks';
 
-function WaitScreen(): React.ReactElement {
+function WaitScreen({ defaultText }: { defaultText?: string }): React.ReactElement {
   const { t } = useTranslation();
-  const [text, setText] = useState<string>(t<string>('We are working on your transaction.'));
+  const [text, setText] = useState<string>(defaultText || t<string>('We are working on your transaction.'));
 
   const handleTxEvent = useCallback((s: CustomEventInit<any>) => {
     const event = s.detail;
@@ -48,7 +48,7 @@ function WaitScreen(): React.ReactElement {
       </Grid>
       <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} />
       <Typography sx={{ fontSize: '18px', fontWeight: 300, m: 'auto', pt: '70px', px: '20px', textAlign: 'center', width: 'fit-content' }}>
-        {t<string>('Please wait a few seconds and don’t close the tab')}
+        {t<string>('Please wait a few seconds and don’t close the window.')}
       </Typography>
     </Grid>
   );
