@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { PButton } from '../../../components';
-import { useApi, useChainName, useDecidingCount, useFullscreen, useTrack, useTranslation } from '../../../hooks';
+import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
@@ -46,6 +46,8 @@ export default function ReferendumPost(): React.ReactElement {
 
   const refIndex = useMemo(() => (postId && Number(postId)) || referendumFromSb?.referendum_index || referendumFromPA?.post_id, [postId, referendumFromPA, referendumFromSb]);
   const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
+  const vote = useMyVote(address, refIndex, trackId);
+  const hasVoted = useMemo(() => vote && ('standard' in vote), [vote]);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
@@ -198,7 +200,7 @@ export default function ReferendumPost(): React.ReactElement {
                     _mt='1px'
                     _onClick={onCastVote}
                     _width={100}
-                    text={t<string>('Cast Vote')}
+                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast Vote')}
                   />
                 </Grid>
               }
@@ -206,6 +208,7 @@ export default function ReferendumPost(): React.ReactElement {
                 address={address}
                 refIndex={refIndex}
                 trackId={trackId}
+                vote={vote}
               />
             </Grid>
           </Grid>
