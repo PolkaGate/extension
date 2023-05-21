@@ -47,7 +47,7 @@ export default function About({ setStep }: Props): React.ReactElement {
   const handleNext = useCallback(() => {
     // eslint-disable-next-line no-void
     dontDisplay && window.localStorage.setItem('cast_vote_about_disabled', 'true');
-    setStep(STEPS.INDEX);
+    setStep((step) => step + 1);
   }, [dontDisplay, setStep]);
 
   return (
