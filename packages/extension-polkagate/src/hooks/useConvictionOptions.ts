@@ -23,7 +23,7 @@ export default function useConvictionOptions(address: string | AccountId | undef
   const [savedConvictionOptions, setSavedConvictionOptions] = useState<{ text: string; value: number }[] | undefined>();
   const genesisHash = useChain(address)?.genesisHash;
   const api = useApi(address);
-  const voteLockingPeriod = api && api.consts.convictionVoting.voteLockingPeriod;
+  const voteLockingPeriod = api && api.consts.convictionVoting?.voteLockingPeriod;
 
   const getConvictionOptions = useCallback((blockTime, voteLockingPeriod, genesisHash) => {
     const options = [

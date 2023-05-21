@@ -6,7 +6,7 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { AccountHolderWithProxy, Motion, PButton, ShortAddress } from '../../../../../components';
+import { Motion, PButton, ShortAddress } from '../../../../../components';
 import { useToken, useTranslation } from '../../../../../hooks';
 import { ThroughProxy } from '../../../../../partials';
 import Explorer from '../../../../../popup/history/Explorer';

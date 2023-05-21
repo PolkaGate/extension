@@ -9,12 +9,13 @@ import React, { useCallback, useState } from 'react';
 interface Props {
   width?: number;
   maxHeight?: number;
+  minHeight?: number;
   children: React.ReactElement;
   open: boolean;
   onClose: () => void
 }
 
-export function DraggableModal({ children, maxHeight = 700, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal({ children, maxHeight = 700, minHeight = 570, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
@@ -59,7 +60,8 @@ export function DraggableModal({ children, maxHeight = 700, onClose, open, width
     boxShadow: 24,
     cursor: isDragging ? 'grabbing' : 'grab',
     left: modalPosition.x,
-    maxHeight: `${maxHeight}x`,
+    maxHeight: `${maxHeight}px`,
+    minHeight: `${minHeight}px`,
     pb: 3,
     position: 'absolute',
     pt: 2,

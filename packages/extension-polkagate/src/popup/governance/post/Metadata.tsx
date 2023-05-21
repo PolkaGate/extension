@@ -190,7 +190,7 @@ export default function Metadata({ address, referendum }: { address: string | un
               underline='none'
             >
               <Typography sx={{ py: 2 }}>
-                {t('View Call in JSON')}
+                {showJson ? t('Hide Call in JSON') : t('View Call in JSON')}
               </Typography>
             </Link>
             {showJson &&

@@ -3,32 +3,29 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, Convictions, From, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
-import { nFormatter } from '../../../../components/FormatPrice';
-import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
-import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
-import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
+import { useApi, useFormatted, useProxies, useTranslation } from '../../../../hooks';
+import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { DraggableModal } from '../../components/DraggableModal';
-import { STATUS_COLOR } from '../../utils/consts';
+import SelectProxyModal from '../../components/SelectProxyModal';
+import WaitScreen from '../../partials/WaitScreen';
 import { ReferendumSubScan } from '../../utils/types';
-import { getVoteType } from '../../utils/util';
-import { getConviction } from '../myVote/util';
+import { Vote } from '../myVote/util';
+import Preview from './partial/Preview';
 import Review from './partial/Review';
 import About from './About';
-import WaitScreen from '../../partials/WaitScreen';
+import Cast from './Cast';
+import Confirmation from './partial/Confirmation';
 
 interface Props {
   address: string | undefined;
@@ -36,6 +33,7 @@ interface Props {
   setOpen: (value: React.SetStateAction<boolean>) => void
   referendumInfo: ReferendumSubScan | undefined;
   showAbout: boolean;
+  myVote: Vote | null | undefined;
 }
 
 export interface VoteInformation {
@@ -49,157 +47,41 @@ export interface VoteInformation {
   refIndex: number;
 }
 
-const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
-
-function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN | undefined {
-  const sortedLocks = allBalances?.lockedBreakdown
-    // first sort by amount, so greatest value first
-    .sort((a, b) =>
-      b.amount.cmp(a.amount)
-    )
-    // then sort by the type of lock (we try to find relevant)
-    .sort((a, b): number => {
-      if (!a.id.eq(b.id)) {
-        for (let i = 0; i < LOCKS_ORDERED.length; i++) {
-          const lockName = LOCKS_ORDERED[i];
-
-          if (a.id.eq(lockName)) {
-            return -1;
-          } else if (b.id.eq(lockName)) {
-            return 1;
-          }
-        }
-      }
-
-      return 0;
-    })
-    .map(({ amount }) => amount);
-
-  return sortedLocks?.[0] || allBalances?.lockedBalance;
-}
-
 export const STEPS = {
   ABOUT: 0,
   CHECK_SCREEN: 1,
-  MODIFY: 2,
-  INDEX: 3,
-  REVIEW: 4,
-  WAIT_SCREEN: 5,
-  CONFIRM: 6,
+  INDEX: 2,
+  PREVIEW: 3,
+  MODIFY: 4,
+  REMOVE: 5,
+  REVIEW: 6,
+  WAIT_SCREEN: 7,
+  CONFIRM: 8,
   PROXY: 100
 };
 
-export default function CastVote({ address, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
+export default function Index({ address, myVote, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
   const formatted = useFormatted(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
-  const balances = useBalances(address, undefined, undefined, true);
-  const blockTime = useBlockInterval(address);
-  const theme = useTheme();
-  const currentBlock = useCurrentBlockNumber(address);
-  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
-  const convictionOptions = useConvictionOptions(address, blockTime, t);
+  const proxies = useProxies(api, formatted);
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
 
-  const getLockedUntil = (endBlock: BN, currentBlock: number) => {
-    if (endBlock.eq(BN_MAX_INTEGER)) {
-      return 'underway';
-    }
-
-    return remainingTime(endBlock.toNumber() - currentBlock);
-  };
-
-  const alreadyLockedTooltipText = useMemo(() => accountLocks && currentBlock &&
-    (<>
-      <Typography variant='body2'>
-        <Grid container spacing={2}>
-          <Grid item xs={2.5}>
-            {t('Ref.')}
-          </Grid>
-          <Grid item xs={3.6}>
-            {t('Amount')}
-          </Grid>
-          <Grid item xs={2.9}>
-            {t('Multiplier')}
-          </Grid>
-          <Grid item xs={3}>
-            {t('Expires')}
-          </Grid>
-          {accountLocks.map((l, index) =>
-            <React.Fragment key={index}>
-              <Grid item xs={2.5}>
-                {l.refId.toNumber()}
-              </Grid>
-              <Grid item xs={3.6}>
-                {amountToHuman(l.total, decimal)} {token}
-              </Grid>
-              <Grid item xs={2.9}>
-                {l.locked === 'None' ? 'N/A' : l.locked.replace('Locked', '')}
-              </Grid>
-              <Grid item xs={3}>
-                {getLockedUntil(l.endBlock, currentBlock)}
-              </Grid>
-            </React.Fragment>
-          )}
-        </Grid>
-      </Typography>
-    </>
-    ), [accountLocks, currentBlock, decimal, t, token]);
-
-  const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
-  const refIndex = useMemo(() => referendumInfo?.referendum_index, [referendumInfo?.referendum_index]);
-  const myVote = useMyVote(address, refIndex, trackId);
   const notVoted = useMemo(() => myVote === null || (myVote && !('standard' in myVote)), [myVote]);
 
-  const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
-  const myVoteBalance = myVote?.standard?.balance || myVote?.splitAbstain?.abstain || myVote?.delegating?.balance;
-  const myVoteConviction = useMemo(() => (myVote?.standard?.vote ? `(${getConviction(myVote.standard.vote)}x)` : myVote?.delegating?.conviction ? `(${myVote.delegating.conviction}x)` : ''), [myVote?.delegating?.conviction, myVote?.standard?.vote]);
-  const myDelegations = myVote?.delegations?.votes;
-
-  const myVoteType = getVoteType(myVote);
-
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>();
   const [voteInformation, setVoteInformation] = useState<VoteInformation | undefined>();
-  const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const vote = api && api.tx.convictionVoting.vote;
-  const [conviction, setConviction] = useState<number>();
   const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
 
-  const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
-  const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
-  const convictionLockUp = useMemo((): string | undefined => {
-    if (conviction === undefined || !convictionOptions || !convictionOptions?.length) {
-      return undefined;
-    }
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
-    const convText = convictionOptions?.find((conv) => conv.value === conviction)?.text as string;
-    const parenthesisIndex = convText?.indexOf('(') ? convText?.indexOf('(') + 1 : 0;
-    const lockUp = parenthesisIndex
-      ? convText?.slice(parenthesisIndex, -1)
-      : '0 day';
-
-    return lockUp;
-  }, [conviction, convictionOptions]);
-
-  const votePower = useMemo(() => {
-    if (conviction === undefined || voteAmountAsBN.isZero()) {
-      return undefined;
-    }
-
-    const multipliedAmount = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
-
-    return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
-  }, [conviction, myDelegations, voteAmountAsBN]);
-
-  useEffect(() => {
-    convictionOptions === undefined && setConviction(1);
-  }, [convictionOptions]);
-
-  useEffect(() => {
-    voteType === 'Abstain' && setConviction(0);
-  }, [voteType]);
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
 
   useEffect(() => {
     if (!formatted || !vote) {
@@ -217,68 +99,13 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
     vote(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [api, formatted, vote]);
 
-  useEffect(() => {
-    if (!convictionLockUp || !voteType || !votePower || !voteAmountAsBN || !trackId || !voteAmount || conviction === undefined || refIndex === undefined) {
-      return;
-    }
-
-    setVoteInformation({
-      refIndex,
-      trackId,
-      voteAmountBN: voteAmountAsBN,
-      voteBalance: voteAmount,
-      voteConvictionValue: conviction === 0.1 ? 0 : conviction,
-      voteLockUpUpPeriod: convictionLockUp,
-      votePower,
-      voteType
-    });
-  }, [conviction, convictionLockUp, myDelegations, refIndex, trackId, voteAmount, voteAmountAsBN, votePower, voteType]);
-
-  const onVoteAmountChange = useCallback((value: string) => {
-    if (!decimal) {
-      return;
-    }
-
-    if (value.length > decimal - 1) {
-      console.log(`The amount digits is more than decimal:${decimal} `);
-
-      return;
-    }
-
-    setVoteAmount(value.slice(0, MAX_AMOUNT_LENGTH));
-  }, [decimal]);
-
-  const onMaxAmount = useCallback(() => {
-    if (!api || !balances || !estimatedFee) {
-      return;
-    }
-
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
-    const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedFee));
-    const maxToHuman = amountToHuman(max.toString(), decimal);
-
-    maxToHuman && setVoteAmount(maxToHuman);
-  }, [api, balances, decimal, estimatedFee]);
-
-  const onLockedAmount = useCallback(() => {
-    if (!lockedAmount) {
-      return;
-    }
-
-    setVoteAmount(amountToHuman(lockedAmount, decimal));
-  }, [decimal, lockedAmount]);
-
-  const onCastVote = useCallback(() => {
-    setStep(STEPS.REVIEW);
-  }, []);
-
-  const refreshAll = useCallback(() => {
-    setVoteAmount('0');
-    setVoteType(undefined);
-    setVoteInformation(undefined);
-    setConviction(undefined);
-    setStep(0);
-  }, []);
+  // const refreshAll = useCallback(() => {
+  //   setVoteAmount('0');
+  //   setVoteType(undefined);
+  //   setVoteInformation(undefined);
+  //   setConviction(undefined);
+  //   setStep(0);
+  // }, []);
 
   const handleClose = useCallback(() => {
     if (step === STEPS.PROXY) {
@@ -288,65 +115,21 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
     }
 
     setOpen(false);
-    refreshAll();
-  }, [refreshAll, setOpen, step]);
-
-  const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Aye' | 'Nay' | 'Abstain'): void => {
-    setVoteType(value);
-  }, []);
-
-  const goVoteDisabled = useMemo(() => {
-    if (!voteAmount || voteAmount === '0' || voteType === undefined || voteAmountAsBN.gt(balances?.votingBalance || BN_ZERO)) {
-      return true;
-    }
-
-    if (voteType !== 'Abstain' && !conviction) {
-      return true;
-    }
-
-    return false;
-  }, [balances?.votingBalance, conviction, voteAmount, voteAmountAsBN, voteType]);
+    // refreshAll();
+  }, [setOpen, step]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
 
   useEffect(() => {
-    notVoted && step === STEPS.CHECK_SCREEN && setStep(STEPS.INDEX);
+    if (step === STEPS.CHECK_SCREEN && notVoted !== undefined) {
+      notVoted ? setStep(STEPS.INDEX) : setStep(STEPS.PREVIEW);
+    }
   }, [notVoted, step]);
 
-  const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
-    return (
-      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', justifyContent: 'center', pr: '5px', width: 'fit-content' }}>
-        <FormControlLabel
-          control={
-            <Radio
-              sx={{
-                '& .MuiSvgIcon-root': { fontSize: 28 },
-                color: 'secondary.main'
-              }}
-              value={voteOption}
-            />}
-          label={
-            <Grid alignItems='center' container justifyContent='center' width='fit-content'>
-              <Typography
-                sx={{
-                  fontSize: '24px',
-                  fontWeight: 500,
-                  pr: '3px',
-                  textTransform: 'capitalize'
-                }}
-              >
-                {t(voteOption)}
-              </Typography>
-              {children}
-            </Grid>
-          }
-          sx={{ m: 'auto' }}
-        />
-      </Grid>
-    );
-  };
+  console.log('sssstep:', step);
+  console.log('voteInformation:', voteInformation);
 
   return (
     <DraggableModal onClose={handleClose} open={open}>
@@ -362,6 +145,9 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
               }
               {step === STEPS.REVIEW &&
                 t<string>('Review Your Vote')
+              }
+              {step === STEPS.PREVIEW &&
+                t<string>('Preview Your Vote')
               }
               {step === STEPS.WAIT_SCREEN &&
                 t<string>('Voting')
@@ -384,125 +170,63 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
           <About setStep={setStep} />
         }
         {step === STEPS.INDEX &&
-          <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative' }}>
-            {/* <From
-              address={address}
-              api={api}
-              style={{ '> div': { px: '10px' }, '> p': { fontWeight: 400 } }}
-              title={t<string>('Account')}
-            /> */}
-            <Grid container item justifyContent='flex-start' mt='15px'>
-              <FormControl fullWidth>
-                <FormLabel sx={{ color: 'text.primary', fontSize: '16px', '&.Mui-focused': { color: 'text.primary' }, textAlign: 'left' }}>
-                  {t('Vote')}
-                </FormLabel>
-                <RadioGroup onChange={onSelectVote} row>
-                  <Grid alignItems='center' container justifyContent='space-between'>
-                    <VoteButton voteOption={voteOptions[0]}>
-                      <CheckIcon sx={{ color: STATUS_COLOR.Confirmed, fontSize: '28px', stroke: STATUS_COLOR.Confirmed, strokeWidth: 1.5 }} />
-                    </VoteButton>
-                    <VoteButton voteOption={voteOptions[1]}>
-                      <CloseIcon sx={{ color: 'warning.main', fontSize: '28px', stroke: theme.palette.warning.main, strokeWidth: 1.5 }} />
-                    </VoteButton>
-                    <VoteButton voteOption={voteOptions[2]}>
-                      <AbstainIcon sx={{ color: 'primary.light', fontSize: '28px' }} />
-                    </VoteButton>
-                  </Grid>
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-            <AmountWithOptions
-              inputWidth={8.4}
-              label={t<string>(`Vote Value (${token})`)}
-              onChangeAmount={onVoteAmountChange}
-              onPrimary={onMaxAmount}
-              onSecondary={onLockedAmount}
-              primaryBtnText={t<string>('Max amount')}
-              secondaryBtnText={t<string>('Locked amount')}
-              style={{
-                fontSize: '16px',
-                mt: '25px',
-                width: '100%'
-              }}
-              value={voteAmount}
-            />
-            <Grid container item>
-              <Grid container item justifyContent='space-between' sx={{ lineHeight: '25px', mt: '10px', width: '70.25%' }}>
-                <Grid item sx={{ fontSize: '14px' }}>
-                  {t('Available Voting Balance')}
-                </Grid>
-                <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-                  <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
-                </Grid>
-              </Grid>
-              {!!myDelegations &&
-                <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '25px', width: '70%' }}>
-                  <Grid item sx={{ fontSize: '14px' }}>
-                    <Infotip2 showQuestionMark text={t('The voting power which is delegated to this account')}>
-                      {t('Delegated Vote Power')}
-                    </Infotip2>
-                  </Grid>
-                  <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-                    <ShowBalance balance={myDelegations} decimal={decimal} decimalPoint={2} token={token} />
-                  </Grid>
-                </Grid>
-              }
-              <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '25px', width: '75%' }}>
-                <Grid item sx={{ fontSize: '14px' }}>
-                  <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
-                    {t('Already Locked Amount')}
-                  </Infotip2>
-                </Grid>
-                <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-                  <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
-                    <ShowBalance balance={getAlreadyLockedValue(balances)} decimal={decimal} decimalPoint={2} token={token} />
-                  </Infotip2>
-                </Grid>
-              </Grid>
-            </Grid>
-            {voteType !== 'Abstain' &&
-              <Convictions address={address} conviction={conviction} setConviction={setConviction} mt='25px'>
-                <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
-                  <Grid item>
-                    <Typography sx={{ fontSize: '16px' }}>
-                      {t('Your final vote power after multiplying')}
-                    </Typography>
-                  </Grid>
-                  <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                    <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={2} token={token} />
-                  </Grid>
-                </Grid>
-              </Convictions>
-            }
-            {/* {myVoteBalance !== undefined &&
-              <CurrentVote api={api} voteBalance={myVoteBalance} voteConviction={myVoteConviction} voteType={myVoteType} />
-            } */}
-            {/* {myDelegations !== undefined &&
-              <CurrentDelegation api={api} balance={myDelegations} />
-            } */}
-            <PButton
-              _ml={0}
-              _mt='20px'
-              _onClick={onCastVote}
-              _width={100}
-              disabled={goVoteDisabled}
-              text={t<string>('Next to review')}
-            />
-          </Grid>
+          <Cast
+            address={address}
+            referendumInfo={referendumInfo}
+            setStep={setStep}
+            setVoteInformation={setVoteInformation}
+            step={step}
+            vote={myVote}
+          />
         }
         {step === STEPS.REVIEW && voteInformation &&
           <Review
             address={address}
             estimatedFee={estimatedFee}
             formatted={String(formatted)}
-            handleClose={handleClose}
+            proxyItems={proxyItems}
+            selectedProxy={selectedProxy}
             setStep={setStep}
+            setTxInfo={setTxInfo}
             step={step}
             voteInformation={voteInformation}
           />
         }
         {step === STEPS.CHECK_SCREEN &&
-          <WaitScreen defaultText={t('Checking your voting status...')} />
+          <WaitScreen
+            defaultText={t('Checking your voting status...')}
+          />
+        }
+        {step === STEPS.PREVIEW &&
+          <Preview
+            address={address}
+            setStep={setStep}
+            step={step}
+            vote={myVote}
+          />
+        }
+        {step === STEPS.PROXY &&
+          <SelectProxyModal
+            nextStep={STEPS.REVIEW}
+            proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
+            setStep={setStep}
+            address={address}
+            // height={modalHeight}
+            proxies={proxyItems}
+          />
+        }
+        {step === STEPS.WAIT_SCREEN &&
+          <WaitScreen />
+        }
+        {step === STEPS.CONFIRM && voteInformation && txInfo &&
+          <Confirmation
+            address={address}
+            handleClose={handleClose}
+            txInfo={txInfo}
+            voteInformation={voteInformation}
+          />
         }
       </>
     </DraggableModal>

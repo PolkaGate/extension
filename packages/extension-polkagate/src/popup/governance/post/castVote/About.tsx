@@ -5,7 +5,6 @@
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { STEPS } from '.';
 
 import { Checkbox2 as Checkbox, PButton } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
@@ -52,25 +51,25 @@ export default function About({ setStep }: Props): React.ReactElement {
 
   return (
     <Grid container direction='column'>
-      <Grid container item justifyContent='center' pb='20px' pt='45px'>
+      <Grid container item justifyContent='center' pb='30px' pt='45px'>
         <Typography fontSize='22px' fontWeight={700}>
           {t<string>('Some important information')}
         </Typography>
       </Grid>
-      <Grid container item sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', pb: '15px', px: '15px' }}>
+      <Grid container item sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', display: 'block', pt: '20px', px: '15px', height: '270px' }}>
         <Grid container item>
           <UL
-            notes={[t<string>('When voting on a referendum, locking tokens for a period boosts voting power, but users can also choose not to lock their tokens.')]}
+            notes={[t<string>('Locking tokens for a referendum boosts voting power, but it\'s optional.')]}
           />
         </Grid>
         <Grid container item>
           <UL
-            notes={[t<string>('After users vote for a referendum and the result aligns with their vote, they can unlock their tokens once the unlock period expires.')]}
+            notes={[t<string>('After a successful referendum vote, users can unlock their tokens once the unlock period expires.')]}
           />
         </Grid>
         <Grid container item>
           <UL
-            notes={[t<string>('You can remove your vote during ongoing or cancelled referenda, as well as after the referenda ends if it was opposed or lacked conviction.')]}
+            notes={[t<string>('Votes can be revoked in ongoing, cancelled, or after-ended referenda if they were opposed or lacked conviction.')]}
           />
         </Grid>
       </Grid>
@@ -87,7 +86,7 @@ export default function About({ setStep }: Props): React.ReactElement {
       <Grid container item>
         <PButton
           _ml={0}
-          _mt='15px'
+          _mt='20px'
           _onClick={handleNext}
           _width={100}
           text={t<string>('Next')}

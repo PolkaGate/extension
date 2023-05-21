@@ -8,9 +8,9 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { ShowBalance } from '../../../../components';
-import { useApi, useDecimal, useMyVote, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { getVoteType } from '../../utils/util';
-import { Vote, getConviction } from './util';
+import { getConviction, Vote } from './util';
 
 interface Props {
   address: string | undefined;

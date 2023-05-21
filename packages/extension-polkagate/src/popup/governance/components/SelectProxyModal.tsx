@@ -22,9 +22,10 @@ interface Props {
   proxies: ProxyItem[] | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   height: number | undefined;
+  nextStep: number;
 }
 
-export default function SelectProxyModal({ address, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setStep }: Props): React.ReactElement<Props> {
+export default function SelectProxyModal({ address, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setStep, nextStep }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const [proxiesToSelect, setProxiesToSelect] = useState<ProxyItem[] | undefined>();
@@ -42,8 +43,8 @@ export default function SelectProxyModal({ address, height, proxies, proxyTypeFi
 
   const handleNext = useCallback(() => {
     setChange(true);
-    setStep(1);
-  }, [setStep]);
+    setStep(nextStep);
+  }, [nextStep, setStep]);
 
   const onSelect = useCallback((selected: Proxy) => {
     setChange(!change);

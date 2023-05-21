@@ -12,6 +12,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { Identity, Password, PButton, TwoButtons, Warning } from '../../../components';
 import { useAccount, useTranslation } from '../../../hooks';
 import { Proxy, ProxyItem, ProxyTypes } from '../../../util/types';
+import { STEPS } from '../post/castVote';
 
 interface Props {
   chain: Chain | null | undefined;
@@ -49,11 +50,11 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
   );
 
   const goToSelectProxy = useCallback(() => {
-    setStep && setStep(100);
+    setStep && setStep(STEPS.PROXY);
   }, [setStep]);
 
   const onBack = useCallback(() => {
-    setStep && setStep((step) => step - 1);
+    setStep && setStep(STEPS.INDEX);
   }, [setStep]);
 
   useEffect(() => {
