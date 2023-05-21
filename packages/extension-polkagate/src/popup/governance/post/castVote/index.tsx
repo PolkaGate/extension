@@ -128,9 +128,6 @@ export default function Index({ address, myVote, open, referendumInfo, setOpen, 
     }
   }, [notVoted, step]);
 
-  console.log('sssstep:', step);
-  console.log('voteInformation:', voteInformation);
-
   return (
     <DraggableModal onClose={handleClose} open={open}>
       <>
