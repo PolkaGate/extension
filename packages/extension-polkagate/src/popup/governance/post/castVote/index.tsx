@@ -28,6 +28,7 @@ import { getVoteType } from '../../utils/util';
 import { getConviction } from '../myVote/util';
 import Review from './partial/Review';
 import About from './About';
+import WaitScreen from '../../partials/WaitScreen';
 
 interface Props {
   address: string | undefined;
@@ -79,11 +80,12 @@ function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN |
 
 export const STEPS = {
   ABOUT: 0,
-  MODIFY: 1,
-  INDEX: 2,
-  REVIEW: 3,
-  WAIT_SCREEN: 4,
-  CONFIRM: 5,
+  CHECK_SCREEN: 1,
+  MODIFY: 2,
+  INDEX: 3,
+  REVIEW: 4,
+  WAIT_SCREEN: 5,
+  CONFIRM: 6,
   PROXY: 100
 };
 
@@ -148,6 +150,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const refIndex = useMemo(() => referendumInfo?.referendum_index, [referendumInfo?.referendum_index]);
   const myVote = useMyVote(address, refIndex, trackId);
+  const notVoted = useMemo(() => myVote === null || (myVote && !('standard' in myVote)), [myVote]);
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myVoteBalance = myVote?.standard?.balance || myVote?.splitAbstain?.abstain || myVote?.delegating?.balance;
@@ -162,7 +165,7 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const vote = api && api.tx.convictionVoting.vote;
   const [conviction, setConviction] = useState<number>();
-  const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.INDEX);
+  const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
 
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
@@ -308,55 +311,9 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
 
-  const CurrentVote = ({ api, voteBalance, voteConviction, voteType }: { api: ApiPromise | undefined, voteBalance: number, voteConviction: string, voteType: 'Aye' | 'Nay' | 'Abstain' | undefined }) => {
-    return (
-      <Grid alignItems='center' container direction='column' item>
-        <Typography fontSize='16px' fontWeight={400} textAlign='left' width='100%'>
-          {t<string>('Current Voting')}
-        </Typography>
-        <Grid alignItems='center' container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', justifyContent: 'space-between', p: '5px 10px' }}>
-          <Grid alignItems='center' container item width='fit-content'>
-            <Grid item sx={{ fontSize: '28px', fontWeight: 400 }}>
-              <ShowBalance api={api} balance={voteBalance} decimalPoint={1} />
-            </Grid>
-            <Grid item sx={{ fontSize: '28px', fontWeight: 400, pl: '5px' }}>
-              {voteConviction}
-            </Grid>
-          </Grid>
-          <Grid alignItems='center' container fontSize='28px' fontWeight={500} item width='fit-content'>
-            {voteType &&
-              <>
-                {myVoteType === 'Aye' && <>
-                  <CheckIcon sx={{ color: 'aye.main', fontSize: '25px', stroke: theme.palette.aye.main, strokeWidth: 1.5 }} />
-                  {t('Aye')}
-                </>
-                }
-                {myVoteType === 'Nay' && <>
-                  <CloseIcon sx={{ color: 'nay.main', fontSize: '25px', stroke: theme.palette.nay.main, strokeWidth: 1.5 }} />
-                  {t('Nay')}
-                </>
-                }
-                {myVoteType === 'Abstain' && <>
-                  <AbstainIcon sx={{ color: 'primary.light', fontSize: '25px' }} />
-                  {t('Abstain')}
-                </>
-                }
-              </>
-            }
-          </Grid>
-        </Grid>
-        <Grid container height='35px' item>
-          <Warning
-            fontWeight={400}
-            marginTop={0}
-            theme={theme}
-          >
-            {t<string>('Resubmitting the vote will override the current voting record.')}
-          </Warning>
-        </Grid>
-      </Grid>
-    );
-  };
+  useEffect(() => {
+    notVoted && step === STEPS.CHECK_SCREEN && setStep(STEPS.INDEX);
+  }, [notVoted, step]);
 
   const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
     return (
@@ -543,6 +500,9 @@ export default function CastVote({ address, open, referendumInfo, setOpen, showA
             step={step}
             voteInformation={voteInformation}
           />
+        }
+        {step === STEPS.CHECK_SCREEN &&
+          <WaitScreen defaultText={t('Checking your voting status...')} />
         }
       </>
     </DraggableModal>
