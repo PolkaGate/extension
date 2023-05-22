@@ -5,11 +5,14 @@
 
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useMemo, useRef } from 'react';
+import { Pulse } from 'better-react-spinkit';
 
 import { BN } from '@polkadot/util';
 
 import { useTranslation } from '../../../hooks';
 import { ReferendumSubScan } from '../utils/types';
+import { Grid } from '@mui/material';
+import { grey } from '@mui/material/colors';
 
 interface Props {
   referendum: ReferendumSubScan | undefined;
@@ -122,8 +125,11 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
   }, [ayesPercent, naysPercent]);
 
   return (
-    <>
-      <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
-    </>
+    <Grid alignItems='center' container height='180px' justifyContent='center' >
+      {referendum
+        ? <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
+        : <Pulse color={grey[300]} size={80} />
+      }
+    </Grid>
   );
 }

@@ -21,11 +21,11 @@ import SelectProxyModal from '../../components/SelectProxyModal';
 import WaitScreen from '../../partials/WaitScreen';
 import { ReferendumSubScan } from '../../utils/types';
 import { Vote } from '../myVote/util';
-import Preview from './partial/Preview';
-import Review from './partial/Review';
+import Preview from './Preview';
+import Review from './Review';
 import About from './About';
 import Cast from './Cast';
-import Confirmation from './partial/Confirmation';
+import Confirmation from './Confirmation';
 
 interface Props {
   address: string | undefined;
@@ -169,11 +169,11 @@ export default function Index({ address, myVote, open, referendumInfo, setOpen, 
         {step === STEPS.INDEX &&
           <Cast
             address={address}
+            previousVote={myVote}
             referendumInfo={referendumInfo}
             setStep={setStep}
             setVoteInformation={setVoteInformation}
             step={step}
-            vote={myVote}
           />
         }
         {step === STEPS.REVIEW && voteInformation &&
@@ -204,14 +204,14 @@ export default function Index({ address, myVote, open, referendumInfo, setOpen, 
         }
         {step === STEPS.PROXY &&
           <SelectProxyModal
+            address={address}
             nextStep={STEPS.REVIEW}
+            proxies={proxyItems}
             proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
             setStep={setStep}
-            address={address}
-            // height={modalHeight}
-            proxies={proxyItems}
+          // height={modalHeight}
           />
         }
         {step === STEPS.WAIT_SCREEN &&

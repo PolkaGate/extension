@@ -17,16 +17,16 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Motion, ShortAddress, ShowBalance, ShowValue, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../../hooks';
-import { ThroughProxy } from '../../../../../partials';
-import broadcast from '../../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
-import PasswordWithTwoButtonsAndUseProxy from '../../../components/PasswordWithTwoButtonsAndUseProxy';
-import { STATUS_COLOR } from '../../../utils/consts';
-import { STEPS, VoteInformation } from '..';
-import DisplayValue from './DisplayValue';
+import { AccountContext, Motion, ShortAddress, ShowBalance, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { useAccountName, useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { ThroughProxy } from '../../../../partials';
+import broadcast from '../../../../util/api/broadcast';
+import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
+import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
+import { STATUS_COLOR } from '../../utils/consts';
+import { STEPS, VoteInformation } from '.';
+import DisplayValue from './partial/DisplayValue';
 
 interface Props {
   address: string | undefined;

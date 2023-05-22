@@ -3,22 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-/**
- * @description
- * this component opens send review page
- * */
-
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Identity, Motion, ShowBalance, TwoButtons } from '../../../../../components';
-import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../../hooks';
-import { STATUS_COLOR } from '../../../utils/consts';
-import { getVoteType } from '../../../utils/util';
-import { getConviction, Vote } from '../../myVote/util';
-import { STEPS } from '..';
-import DisplayValue from './DisplayValue';
+import { Identity, Motion, ShowBalance, TwoButtons } from '../../../../components';
+import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { STATUS_COLOR } from '../../utils/consts';
+import { getVoteType } from '../../utils/util';
+import { getConviction, Vote } from '../myVote/util';
+import DisplayValue from './partial/DisplayValue';
+import { STEPS } from '.';
 
 interface Props {
   address: string | undefined;

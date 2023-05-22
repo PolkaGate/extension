@@ -16,13 +16,13 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
-import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useMyVote, useToken, useTranslation } from '../../../../hooks';
+import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
 import { STATUS_COLOR } from '../../utils/consts';
 import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
-import { Vote } from '../myVote/util';
+import { getConviction,Vote } from '../myVote/util';
 import { STEPS } from '.';
 
 interface Props {
@@ -31,7 +31,7 @@ interface Props {
   referendumInfo: ReferendumSubScan | undefined;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  vote: Vote | null | undefined;
+  previousVote: Vote | null | undefined;
 }
 
 export interface VoteInformation {
@@ -82,7 +82,7 @@ const getLockedUntil = (endBlock: BN, currentBlock: number) => {
   return remainingTime(endBlock.toNumber() - currentBlock);
 };
 
-export default function Cast({ address, referendumInfo, setStep, setVoteInformation, step, vote }: Props): React.ReactElement {
+export default function Cast({ address, previousVote, referendumInfo, setStep, setVoteInformation, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -96,16 +96,12 @@ export default function Cast({ address, referendumInfo, setStep, setVoteInformat
   const convictionOptions = useConvictionOptions(address, blockTime, t);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>(getVoteType(vote));
-  const mayBePreviousVote = amountToHuman(vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance, decimal);
-  const [voteAmount, setVoteAmount] = React.useState<string>(mayBePreviousVote || '0');
-
-  useEffect(() => {
-    mayBePreviousVote && setVoteAmount(mayBePreviousVote);
-  }, [mayBePreviousVote]);
+  const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>(getVoteType(previousVote));
+  const mayBePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain || previousVote?.delegating?.balance, decimal);
+  const [voteAmount, setVoteAmount] = React.useState<string>('0');
+  const [conviction, setConviction] = useState<number>();
 
   const tx = api && api.tx.convictionVoting.vote;
-  const [conviction, setConviction] = useState<number>();
 
   const alreadyLockedTooltipText = useMemo(() => accountLocks && currentBlock &&
     (<>
@@ -146,10 +142,10 @@ export default function Cast({ address, referendumInfo, setStep, setVoteInformat
 
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const refIndex = useMemo(() => referendumInfo?.referendum_index, [referendumInfo?.referendum_index]);
-  const myVote = useMyVote(address, refIndex, trackId);
-  const notVoted = useMemo(() => myVote === null || (myVote && !('standard' in myVote)), [myVote]);
+  // const myVote = useMyVote(address, refIndex, trackId);
+  const notVoted = useMemo(() => previousVote === null || (previousVote && !('standard' in previousVote)), [previousVote]);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
-  const myDelegations = myVote?.delegations?.votes;
+  const myDelegations = previousVote?.delegations?.votes;
 
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
@@ -172,10 +168,19 @@ export default function Cast({ address, referendumInfo, setStep, setVoteInformat
       return undefined;
     }
 
+    console.log(`voteAmountAsBN:${voteAmountAsBN}`);
+    console.log(`conviction:${conviction}`);
     const multipliedAmount = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
 
     return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
   }, [conviction, myDelegations, voteAmountAsBN]);
+
+  useEffect(() => {
+    if (mayBePreviousVote && previousVote?.standard) {
+      setVoteAmount(mayBePreviousVote);
+      setConviction(getConviction(previousVote.standard.vote));
+    }
+  }, [mayBePreviousVote, previousVote]);
 
   useEffect(() => {
     convictionOptions === undefined && setConviction(1);
@@ -404,7 +409,7 @@ export default function Cast({ address, referendumInfo, setStep, setVoteInformat
               </Typography>
             </Grid>
             <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={4} token={token} />
             </Grid>
           </Grid>
         </Convictions>
