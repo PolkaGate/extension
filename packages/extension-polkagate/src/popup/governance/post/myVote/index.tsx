@@ -14,12 +14,11 @@ import { getConviction, Vote } from './util';
 
 interface Props {
   address: string | undefined;
-  refIndex: number | undefined;
-  trackId: number | undefined;
   vote: Vote | null | undefined;
+  notVoted: boolean | undefined;
 }
 
-export default function MyVote({ address, refIndex, trackId, vote }: Props): React.ReactElement {
+export default function MyVote({ address, vote, notVoted }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -29,8 +28,6 @@ export default function MyVote({ address, refIndex, trackId, vote }: Props): Rea
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
 
   const voteType = getVoteType(vote);
-  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote)), [vote]);
-
   console.log('vote:', vote);
 
   return (

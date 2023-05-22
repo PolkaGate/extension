@@ -48,6 +48,7 @@ export default function ReferendumPost(): React.ReactElement {
   const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
   const vote = useMyVote(address, refIndex, trackId);
   const hasVoted = useMemo(() => vote && ('standard' in vote || 'splitAbstain' in vote), [vote]);
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote)), [vote]);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
@@ -206,8 +207,7 @@ export default function ReferendumPost(): React.ReactElement {
               }
               <MyVote
                 address={address}
-                refIndex={refIndex}
-                trackId={trackId}
+                notVoted={notVoted}
                 vote={vote}
               />
             </Grid>
@@ -219,6 +219,7 @@ export default function ReferendumPost(): React.ReactElement {
           address={address}
           hasVoted={hasVoted}
           myVote={vote}
+          notVoted={notVoted}
           open={showCastVote}
           referendumInfo={referendumFromSb}
           setOpen={setShowCastVote}

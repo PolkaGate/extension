@@ -35,6 +35,7 @@ interface Props {
   showAbout: boolean;
   myVote: Vote | null | undefined;
   hasVoted: boolean | null | undefined
+  notVoted: boolean | null | undefined
 }
 
 export interface VoteInformation {
@@ -61,7 +62,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, myVote, hasVoted, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
+export default function Index({ address, myVote, hasVoted,notVoted, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -70,9 +71,6 @@ export default function Index({ address, myVote, hasVoted, open, referendumInfo,
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-
-  const notVoted = useMemo(() => myVote === null || (myVote && !('standard' in myVote)), [myVote]);
-
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteInformation, setVoteInformation] = useState<VoteInformation | undefined>();
   const vote = api && api.tx.convictionVoting.vote;
