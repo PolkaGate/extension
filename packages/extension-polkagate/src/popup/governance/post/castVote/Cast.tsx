@@ -28,7 +28,8 @@ import { STEPS } from '.';
 interface Props {
   address: string | undefined;
   setVoteInformation: React.Dispatch<React.SetStateAction<VoteInformation | undefined>>;
-  referendumInfo: ReferendumSubScan | undefined;
+  trackId: number | undefined;
+  refIndex: number | undefined;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   previousVote: Vote | null | undefined;
@@ -83,7 +84,7 @@ const getLockedUntil = (endBlock: BN, currentBlock: number) => {
   return remainingTime(endBlock.toNumber() - currentBlock);
 };
 
-export default function Cast({ address, notVoted, previousVote, referendumInfo, setStep, setVoteInformation, step }: Props): React.ReactElement {
+export default function Cast({ address, notVoted, previousVote, refIndex, setStep, setVoteInformation, step, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -140,12 +141,8 @@ export default function Cast({ address, notVoted, previousVote, referendumInfo, 
       </Typography>
     </>
     ), [accountLocks, currentBlock, decimal, t, token]);
-
-  const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
-  const refIndex = useMemo(() => referendumInfo?.referendum_index, [referendumInfo?.referendum_index]);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myDelegations = previousVote?.delegations?.votes;
-
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
   const convictionLockUp = useMemo((): string | undefined => {

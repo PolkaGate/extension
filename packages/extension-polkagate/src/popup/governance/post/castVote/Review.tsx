@@ -38,9 +38,11 @@ interface Props {
   selectedProxy: Proxy | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   voteInformation: VoteInformation;
+  tx: SubmittableExtrinsicFunction<"promise", AnyTuple> | undefined;
+
 }
 
-export default function Review({ address, estimatedFee, formatted, proxyItems, selectedProxy, setStep, setTxInfo, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, step, formatted, proxyItems, selectedProxy, setStep, setTxInfo, tx, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -57,8 +59,6 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-
-  const vote = api && api.tx.convictionVoting.vote;
 
   const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {
     return (
@@ -81,26 +81,30 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
   };
 
   const params = useMemo(() => {
-    if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
-      return ([voteInformation.refIndex, {
-        Standard: {
-          balance: voteInformation.voteAmountBN,
-          vote: {
-            aye: voteInformation.voteType === 'Aye',
-            conviction: voteInformation.voteConvictionValue
+    if (step === STEPS.REVIEW) {
+      if (['Aye', 'Nay'].includes(voteInformation.voteType)) {
+        return ([voteInformation.refIndex, {
+          Standard: {
+            balance: voteInformation.voteAmountBN,
+            vote: {
+              aye: voteInformation.voteType === 'Aye',
+              conviction: voteInformation.voteConvictionValue
+            }
           }
-        }
-      }]);
-    } else if (voteInformation.voteType === 'Abstain') {
-      return ([voteInformation.refIndex, {
-        SplitAbstain: {
-          abstain: voteInformation.voteAmountBN,
-          aye: BN_ZERO,
-          nay: BN_ZERO
-        }
-      }]);
+        }]);
+      } else if (voteInformation.voteType === 'Abstain') {
+        return ([voteInformation.refIndex, {
+          SplitAbstain: {
+            abstain: voteInformation.voteAmountBN,
+            aye: BN_ZERO,
+            nay: BN_ZERO
+          }
+        }]);
+      }
+    } else if (step === STEPS.REMOVE) {
+      return [voteInformation.trackId, voteInformation.refIndex];
     }
-  }, [voteInformation]);
+  }, [step, voteInformation]);
 
   useEffect(() => {
     if (ref) {
@@ -111,7 +115,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
   const confirmVote = useCallback(async () => {
     try {
-      if (!formatted || !vote || !api || !decimal || !params) {
+      if (!formatted || !tx || !api || !decimal || !params) {
         return;
       }
 
@@ -123,7 +127,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
       setStep(STEPS.WAIT_SCREEN);
 
-      const { block, failureText, fee, success, txHash } = await broadcast(api, vote, params, signer, formatted, selectedProxy);
+      const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
         action: 'Governance',
@@ -133,7 +137,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
         failureText,
         fee: estimatedFee || fee,
         from: { address: formatted, name },
-        subAction: 'Vote',
+        subAction: step === STEPS.REMOVE ? 'Remove vote' : 'Vote',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         // to: voteInformation.,
@@ -148,11 +152,14 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, vote, api, decimal, params, selectedProxyAddress, password, setStep, selectedProxy, voteInformation.voteBalance, estimatedFee, name, selectedProxyName, setTxInfo, chain]);
+  }, [formatted, tx, api, decimal, params, selectedProxyAddress, password, setStep, selectedProxy, voteInformation, estimatedFee, name, step, selectedProxyName, setTxInfo, chain]);
 
   const backToCastVote = useCallback(() =>
     setStep(STEPS.INDEX)
     , [setStep]);
+
+    console.log('ssstttteeeep:', step);
+    console.log('params:', params);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -190,11 +197,13 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
             {voteInformation.voteBalance}
           </Typography>
         </DisplayValue>
-        <DisplayValue title={t<string>('Lock up Period')}>
-          <Typography fontSize='28px' fontWeight={400}>
-            {voteInformation.voteLockUpUpPeriod}
-          </Typography>
-        </DisplayValue>
+        {voteInformation.voteLockUpUpPeriod &&
+          <DisplayValue title={t<string>('Lock up Period')}>
+            <Typography fontSize='28px' fontWeight={400}>
+              {voteInformation.voteLockUpUpPeriod}
+            </Typography>
+          </DisplayValue>
+        }
         <DisplayValue title={t<string>('Final vote power')}>
           <Typography fontSize='28px' fontWeight={400}>
             <ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={2} token={token} />

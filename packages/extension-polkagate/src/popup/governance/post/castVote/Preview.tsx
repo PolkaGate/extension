@@ -19,10 +19,9 @@ interface Props {
   address: string | undefined;
   vote: Vote | null | undefined
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  step: number;
 }
 
-export default function Preview({ address, setStep, step, vote }: Props): React.ReactElement<Props> {
+export default function Preview({ address, setStep, vote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -73,37 +72,35 @@ export default function Preview({ address, setStep, step, vote }: Props): React.
 
   return (
     <Motion style={{ height: '100%' }}>
-      {step === STEPS.PREVIEW &&
-        <Grid container ref={ref} pt='30px'>
-          <DisplayValue title={t<string>('Account')} topDivider={false}>
-            <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-              <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
-            </Grid>
-          </DisplayValue>
-          <DisplayValue title={t<string>('Vote')}>
-            <VoteStatus vote={voteType} />
-          </DisplayValue>
-          <DisplayValue title={t<string>('Vote Value ({{token}})', { replace: { token } })}>
+      <Grid container ref={ref} pt='30px'>
+        <DisplayValue title={t<string>('Account')} topDivider={false}>
+          <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+            <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
+          </Grid>
+        </DisplayValue>
+        <DisplayValue title={t<string>('Vote')}>
+          <VoteStatus vote={voteType} />
+        </DisplayValue>
+        <DisplayValue title={t<string>('Vote Value ({{token}})', { replace: { token } })}>
+          <Typography fontSize='28px' fontWeight={400}>
+            <ShowBalance balance={voteBalance} decimal={decimal} decimalPoint={2} token={token} />
+          </Typography>
+        </DisplayValue>
+        {['Aye', 'Nay'].includes(voteType) &&
+          <DisplayValue title={t<string>('Vote Multiplier')}>
             <Typography fontSize='28px' fontWeight={400}>
-              <ShowBalance balance={voteBalance} decimal={decimal} decimalPoint={2} token={token} />
+              {voteConviction}
             </Typography>
           </DisplayValue>
-          {['Aye', 'Nay'].includes(voteType) &&
-            <DisplayValue title={t<string>('Vote Multiplier')}>
-              <Typography fontSize='28px' fontWeight={400}>
-                {voteConviction}
-              </Typography>
-            </DisplayValue>
-          }
-          <TwoButtons
-            mt='115px'
-            onPrimaryClick={onModifyClick}
-            onSecondaryClick={onRemoveClick}
-            primaryBtnText={t<string>('Modify')}
-            secondaryBtnText={t<string>('Remove')}
-          />
-        </Grid>
-      }
+        }
+        <TwoButtons
+          mt='115px'
+          onPrimaryClick={onModifyClick}
+          onSecondaryClick={onRemoveClick}
+          primaryBtnText={t<string>('Modify')}
+          secondaryBtnText={t<string>('Remove')}
+        />
+      </Grid>
     </Motion>
   );
 }

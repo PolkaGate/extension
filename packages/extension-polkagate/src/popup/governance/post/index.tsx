@@ -221,7 +221,8 @@ export default function ReferendumPost(): React.ReactElement {
           myVote={vote}
           notVoted={notVoted}
           open={showCastVote}
-          referendumInfo={referendumFromSb}
+          trackId={trackId}
+          refIndex={refIndex}
           setOpen={setShowCastVote}
           showAbout={showAboutVoting}
         />

@@ -14,24 +14,27 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useApi, useFormatted, useProxies, useTranslation } from '../../../../hooks';
+import { useApi, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal from '../../components/SelectProxyModal';
 import WaitScreen from '../../partials/WaitScreen';
 import { ReferendumSubScan } from '../../utils/types';
-import { Vote } from '../myVote/util';
-import Preview from './Preview';
-import Review from './Review';
+import { getVoteType } from '../../utils/util';
+import { getConviction, Vote } from '../myVote/util';
 import About from './About';
 import Cast from './Cast';
 import Confirmation from './Confirmation';
+import Preview from './Preview';
+import Review from './Review';
 
 interface Props {
   address: string | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void
-  referendumInfo: ReferendumSubScan | undefined;
+  trackId: number | undefined;
+  refIndex: number | undefined;
   showAbout: boolean;
   myVote: Vote | null | undefined;
   hasVoted: boolean | null | undefined
@@ -62,10 +65,11 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, myVote, hasVoted,notVoted, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
+export default function Index({ address, hasVoted, myVote, notVoted, open, trackId, refIndex, setOpen, showAbout }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
+  const decimal = useDecimal(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -76,11 +80,37 @@ export default function Index({ address, myVote, hasVoted,notVoted, open, refere
   const vote = api && api.tx.convictionVoting.vote;
   const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
 
+  const voteTx = api && api.tx.convictionVoting.vote;
+  const removeTx = api && api.tx.convictionVoting.removeVote;
+  
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
+
+  useEffect((): void => {
+    if (step === STEPS.REMOVE && myVote && decimal) {
+      const amount = amountToHuman(myVote?.standard?.balance || myVote?.splitAbstain?.abstain, decimal);
+      const conviction = myVote?.standard ? getConviction(myVote.standard.vote) : 0;
+      const myDelegations = myVote?.delegations?.votes;
+      const voteAmountBN = amountToMachine(amount, decimal);
+
+      const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
+      const votePower = myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
+
+      setVoteInformation({
+        refIndex,
+        trackId,
+        voteAmountBN,
+        voteBalance: amount,
+        voteConvictionValue: conviction === 0.1 ? 0 : conviction,
+        voteLockUpUpPeriod: undefined,
+        votePower,
+        voteType: getVoteType(myVote),
+      });
+    }
+  }, [decimal, myVote, refIndex, step, trackId]);
 
   useEffect(() => {
     if (!formatted || !vote) {
@@ -179,13 +209,14 @@ export default function Index({ address, myVote, hasVoted,notVoted, open, refere
             address={address}
             notVoted={notVoted}
             previousVote={myVote}
-            referendumInfo={referendumInfo}
+            refIndex={refIndex}
             setStep={setStep}
             setVoteInformation={setVoteInformation}
             step={step}
+            trackId={trackId}
           />
         }
-        {step === STEPS.REVIEW && voteInformation &&
+        {(step === STEPS.REVIEW || step === STEPS.REMOVE) && voteInformation &&
           <Review
             address={address}
             estimatedFee={estimatedFee}
@@ -195,6 +226,7 @@ export default function Index({ address, myVote, hasVoted,notVoted, open, refere
             setStep={setStep}
             setTxInfo={setTxInfo}
             step={step}
+            tx={STEPS.REVIEW ? voteTx : removeTx}
             voteInformation={voteInformation}
           />
         }
@@ -207,14 +239,13 @@ export default function Index({ address, myVote, hasVoted,notVoted, open, refere
           <Preview
             address={address}
             setStep={setStep}
-            step={step}
             vote={myVote}
           />
         }
         {step === STEPS.PROXY &&
           <SelectProxyModal
             address={address}
-            nextStep={STEPS.REVIEW}
+            nextStep={STEPS.REVIEW} // TODO: for REMOVE it should be STEPS.REMOVE
             proxies={proxyItems}
             proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
             selectedProxy={selectedProxy}
