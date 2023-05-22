@@ -108,7 +108,7 @@ export default function Index({ address, myVote, hasVoted,notVoted, open, refere
 
   const handleClose = useCallback(() => {
     if (step === STEPS.PROXY) {
-      setStep((step) => step - 1);
+      setStep(STEPS.REVIEW);
 
       return;
     }
