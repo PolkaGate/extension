@@ -243,6 +243,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
           setStep={setStep}
+          nextStep={DELEGATE_STEPS.REVIEW}
         />
       }
     </Motion>
