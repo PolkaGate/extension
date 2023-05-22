@@ -29,8 +29,10 @@ export default function MyVote({ address, refIndex, trackId, vote }: Props): Rea
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
 
   const voteType = getVoteType(vote);
-  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote)), [vote]);
-  
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote)), [vote]);
+
+  console.log('vote:', vote);
+
   return (
     <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>

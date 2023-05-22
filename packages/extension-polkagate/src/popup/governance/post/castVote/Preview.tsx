@@ -65,11 +65,11 @@ export default function Preview({ address, setStep, step, vote }: Props): React.
 
   const onModifyClick = useCallback(() =>
     setStep(STEPS.INDEX)
-    , [setStep]);
+  , [setStep]);
 
   const onRemoveClick = useCallback(() =>
     setStep(STEPS.REMOVE)
-    , [setStep]);
+  , [setStep]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -102,7 +102,6 @@ export default function Preview({ address, setStep, step, vote }: Props): React.
           />
         </Grid>
       }
-
     </Motion>
   );
 }

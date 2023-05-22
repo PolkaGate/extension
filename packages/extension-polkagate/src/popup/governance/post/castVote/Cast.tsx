@@ -22,7 +22,7 @@ import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/
 import { STATUS_COLOR } from '../../utils/consts';
 import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
-import { getConviction,Vote } from '../myVote/util';
+import { getConviction, Vote } from '../myVote/util';
 import { STEPS } from '.';
 
 interface Props {
@@ -32,6 +32,7 @@ interface Props {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   previousVote: Vote | null | undefined;
+  notVoted: boolean | undefined
 }
 
 export interface VoteInformation {
@@ -82,7 +83,7 @@ const getLockedUntil = (endBlock: BN, currentBlock: number) => {
   return remainingTime(endBlock.toNumber() - currentBlock);
 };
 
-export default function Cast({ address, previousVote, referendumInfo, setStep, setVoteInformation, step }: Props): React.ReactElement {
+export default function Cast({ address, notVoted, previousVote, referendumInfo, setStep, setVoteInformation, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const formatted = useFormatted(address);
@@ -97,7 +98,7 @@ export default function Cast({ address, previousVote, referendumInfo, setStep, s
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>(getVoteType(previousVote));
-  const mayBePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain || previousVote?.delegating?.balance, decimal);
+  const mayBePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain, decimal);
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const [conviction, setConviction] = useState<number>();
 
@@ -142,8 +143,6 @@ export default function Cast({ address, previousVote, referendumInfo, setStep, s
 
   const trackId = useMemo(() => referendumInfo?.origins_id, [referendumInfo?.origins_id]);
   const refIndex = useMemo(() => referendumInfo?.referendum_index, [referendumInfo?.referendum_index]);
-  // const myVote = useMyVote(address, refIndex, trackId);
-  const notVoted = useMemo(() => previousVote === null || (previousVote && !('standard' in previousVote)), [previousVote]);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myDelegations = previousVote?.delegations?.votes;
 
@@ -168,17 +167,15 @@ export default function Cast({ address, previousVote, referendumInfo, setStep, s
       return undefined;
     }
 
-    console.log(`voteAmountAsBN:${voteAmountAsBN}`);
-    console.log(`conviction:${conviction}`);
     const multipliedAmount = conviction !== 0.1 ? voteAmountAsBN.muln(conviction) : voteAmountAsBN.divn(10);
 
     return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
   }, [conviction, myDelegations, voteAmountAsBN]);
 
   useEffect(() => {
-    if (mayBePreviousVote && previousVote?.standard) {
+    if (mayBePreviousVote) {
       setVoteAmount(mayBePreviousVote);
-      setConviction(getConviction(previousVote.standard.vote));
+      previousVote?.standard && setConviction(getConviction(previousVote.standard.vote));
     }
   }, [mayBePreviousVote, previousVote]);
 

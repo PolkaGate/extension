@@ -34,6 +34,7 @@ interface Props {
   referendumInfo: ReferendumSubScan | undefined;
   showAbout: boolean;
   myVote: Vote | null | undefined;
+  hasVoted: boolean | null | undefined
 }
 
 export interface VoteInformation {
@@ -60,7 +61,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, myVote, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
+export default function Index({ address, myVote, hasVoted, open, referendumInfo, setOpen, showAbout }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -138,13 +139,22 @@ export default function Index({ address, myVote, open, referendumInfo, setOpen, 
                 t<string>('About Voting')
               }
               {step === STEPS.INDEX &&
-                t<string>('Cast Your Vote')
+                <>
+                  {
+                    hasVoted
+                      ? t<string>('Modify Your Vote')
+                      : t<string>('Cast Your Vote')
+                  }
+                </>
               }
-              {step === STEPS.REVIEW &&
-                t<string>('Review Your Vote')
+              {step === STEPS.REMOVE &&
+                t<string>('Remove Your Vote')
               }
               {step === STEPS.PREVIEW &&
                 t<string>('Preview Your Vote')
+              }
+              {step === STEPS.REVIEW &&
+                t<string>('Review Your Vote')
               }
               {step === STEPS.WAIT_SCREEN &&
                 t<string>('Voting')
@@ -169,6 +179,7 @@ export default function Index({ address, myVote, open, referendumInfo, setOpen, 
         {step === STEPS.INDEX &&
           <Cast
             address={address}
+            notVoted={notVoted}
             previousVote={myVote}
             referendumInfo={referendumInfo}
             setStep={setStep}
