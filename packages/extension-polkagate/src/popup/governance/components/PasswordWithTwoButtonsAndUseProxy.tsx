@@ -62,111 +62,109 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
   }, [password, onChange]);
 
   return (
-    <>
-      <Grid container>
-        {mustSelectProxy
-          ? <>
-            <Grid container height='50px' item sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
-              <Warning
-                fontWeight={300}
-                theme={theme}
-              >
-                {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
-              </Warning>
+    <Grid container>
+      {mustSelectProxy
+        ? <>
+          <Grid container height='50px' item sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
+            <Warning
+              fontWeight={300}
+              theme={theme}
+            >
+              {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
+            </Warning>
+          </Grid>
+          {showBackButtonWithUseProxy
+            ? <TwoButtons
+              mt='5px'
+              onPrimaryClick={goToSelectProxy}
+              onSecondaryClick={onBack}
+              primaryBtnText={t<string>('Use Proxy')}
+              secondaryBtnText={t<string>('Back')}
+            />
+            : <PButton
+              _ml={0}
+              _mt='5px'
+              _onClick={goToSelectProxy}
+              _width={100}
+              text={t<string>('Use Proxy')}
+            />
+          }
+        </>
+        : <>
+          <Grid alignItems='center' container item>
+            <Grid item xs>
+              <Password
+                disabled={disabled}
+                isError={isPasswordError}
+                isFocused={true}
+                label={label}
+                onChange={_onChange}
+                onEnter={onPrimaryClick}
+              />
             </Grid>
-            {showBackButtonWithUseProxy
-              ? <TwoButtons
-                mt='5px'
-                onPrimaryClick={goToSelectProxy}
-                onSecondaryClick={onBack}
-                primaryBtnText={t<string>('Use Proxy')}
-                secondaryBtnText={t<string>('Back')}
-              />
-              : <PButton
-                _ml={0}
-                _mt='5px'
-                _onClick={goToSelectProxy}
-                _width={100}
-                text={t<string>('Use Proxy')}
-              />
-            }
-          </>
-          : <>
-            <Grid alignItems='center' container item>
-              <Grid item xs>
-                <Password
-                  disabled={disabled}
-                  isError={isPasswordError}
-                  isFocused={true}
-                  label={label}
-                  onChange={_onChange}
-                  onEnter={onPrimaryClick}
-                />
-              </Grid>
-              {(!!proxies?.length || prevState?.selectedProxyAddress) &&
-                <Tooltip
-                  arrow
-                  componentsProps={{
-                    popper: {
-                      sx: {
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
-                          mb: '3px',
-                          p: '3px 15px'
-                        },
-                        visibility: selectedProxy ? 'visible' : 'hidden'
-                      }
-                    },
-                    tooltip: {
-                      sx: {
-                        '& .MuiTooltip-arrow': {
-                          color: '#fff',
-                          height: '10px'
-                        },
-                        backgroundColor: '#fff',
-                        color: '#000',
-                        fontWeight: 400
-                      }
+            {(!!proxies?.length || prevState?.selectedProxyAddress) &&
+              <Tooltip
+                arrow
+                componentsProps={{
+                  popper: {
+                    sx: {
+                      '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-18kejt8': {
+                        mb: '3px',
+                        p: '3px 15px'
+                      },
+                      '.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop.css-1yuxi3g': {
+                        mb: '3px',
+                        p: '3px 15px'
+                      },
+                      visibility: selectedProxy ? 'visible' : 'hidden'
                     }
-                  }}
-                  leaveDelay={300}
-                  placement='top-start'
-                  sx={{ width: 'fit-content' }}
-                  title={
-                    <>
-                      {selectedProxy &&
-                        <Identity
-                          chain={chain}
-                          formatted={selectedProxy?.delegate}
-                          identiconSize={30}
-                          style={{ fontSize: '14px' }}
-                        />
-                      }
-                    </>
+                  },
+                  tooltip: {
+                    sx: {
+                      '& .MuiTooltip-arrow': {
+                        color: '#fff',
+                        height: '10px'
+                      },
+                      backgroundColor: '#fff',
+                      color: '#000',
+                      fontWeight: 400
+                    }
                   }
-                >
-                  <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
-                    {selectedProxy ? t('Update proxy') : t('Use proxy')}
-                  </Grid>
-                </Tooltip>
-              }
-            </Grid>
-            <Grid alignItems='center' container item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
-              <TwoButtons
-                disabled={!password || isPasswordError || primaryBtn}
-                mt='8px'
-                onPrimaryClick={onPrimaryClick}
-                onSecondaryClick={onSecondaryClick}
-                primaryBtnText={primaryBtnText ?? t<string>('Confirm')}
-                secondaryBtnText={secondaryBtnText ?? t<string>('Back')}
-              />
-            </Grid>
-          </>
-        }
-      </Grid>
-    </>
+                }}
+                leaveDelay={300}
+                placement='top-start'
+                sx={{ width: 'fit-content' }}
+                title={
+                  <>
+                    {selectedProxy &&
+                      <Identity
+                        chain={chain}
+                        formatted={selectedProxy?.delegate}
+                        identiconSize={30}
+                        style={{ fontSize: '14px' }}
+                      />
+                    }
+                  </>
+                }
+              >
+                <Grid aria-label='useProxy' item onClick={goToSelectProxy} pl='10px' pt='10px' role='button' sx={{ cursor: 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}              >
+                  {selectedProxy ? t('Update proxy') : t('Use proxy')}
+                </Grid>
+              </Tooltip>
+            }
+          </Grid>
+          <Grid alignItems='center' container item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
+            <TwoButtons
+              disabled={!password || isPasswordError || primaryBtn}
+              mt='8px'
+              onPrimaryClick={onPrimaryClick}
+              onSecondaryClick={onSecondaryClick}
+              primaryBtnText={primaryBtnText ?? t<string>('Confirm')}
+              secondaryBtnText={secondaryBtnText ?? t<string>('Back')}
+            />
+          </Grid>
+        </>
+      }
+    </Grid>
   );
 }

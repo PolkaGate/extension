@@ -17,7 +17,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Motion, ShortAddress, ShowBalance, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { AccountContext, Motion, ShortAddress, ShowBalance, ShowValue, Warning, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import broadcast from '../../../../util/api/broadcast';
@@ -27,6 +27,7 @@ import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoB
 import { STATUS_COLOR } from '../../utils/consts';
 import { STEPS, VoteInformation } from '.';
 import DisplayValue from './partial/DisplayValue';
+import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 
 interface Props {
   address: string | undefined;
@@ -38,11 +39,11 @@ interface Props {
   selectedProxy: Proxy | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   voteInformation: VoteInformation;
-  tx: SubmittableExtrinsicFunction<"promise", AnyTuple> | undefined;
+  tx: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
 
 }
 
-export default function Review({ address, estimatedFee, step, formatted, proxyItems, selectedProxy, setStep, setTxInfo, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, formatted, proxyItems, selectedProxy, setStep, setTxInfo, step, tx, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -154,12 +155,9 @@ export default function Review({ address, estimatedFee, step, formatted, proxyIt
     }
   }, [formatted, tx, api, decimal, params, selectedProxyAddress, password, setStep, selectedProxy, voteInformation, estimatedFee, name, step, selectedProxyName, setTxInfo, chain]);
 
-  const backToCastVote = useCallback(() =>
-    setStep(STEPS.INDEX)
-    , [setStep]);
-
-    console.log('ssstttteeeep:', step);
-    console.log('params:', params);
+  const onBackClick = useCallback(() =>
+    setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)
+  , [setStep, step]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -167,12 +165,15 @@ export default function Review({ address, estimatedFee, step, formatted, proxyIt
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        {/* <AccountHolderWithProxy
-            address={address}
-            chain={chain}
-            selectedProxyAddress={selectedProxyAddress}
-            title={t('Account')}
-          /> */}
+        {step === STEPS.REMOVE &&
+          <Warning
+            fontWeight={400}
+            isBelowInput
+            theme={theme}
+          >
+            {t<string>('Think twice before removing your vote. It may affect the outcome.')}
+          </Warning>
+        }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
             {t<string>('Account holder')}:
@@ -212,21 +213,23 @@ export default function Review({ address, estimatedFee, step, formatted, proxyIt
         <DisplayValue title={t<string>('Fee')}>
           <ShowValue height={20} value={estimatedFee?.toHuman()} />
         </DisplayValue>
-        <PasswordWithTwoButtonsAndUseProxy
-          chain={chain}
-          isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || '...'}`}
-          onChange={setPassword}
-          onPrimaryClick={confirmVote}
-          onSecondaryClick={backToCastVote}
-          primaryBtnText={t<string>('Confirm')}
-          proxiedAddress={formatted}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any']}
-          selectedProxy={selectedProxy}
-          setIsPasswordError={setIsPasswordError}
-          setStep={setStep}
-        />
+        <Grid container item mt='15px'>
+          <PasswordWithTwoButtonsAndUseProxy
+            chain={chain}
+            isPasswordError={isPasswordError}
+            label={`${t<string>('Password')} for ${selectedProxyName || name || '...'}`}
+            onChange={setPassword}
+            onPrimaryClick={confirmVote}
+            onSecondaryClick={onBackClick}
+            primaryBtnText={t<string>('Confirm')}
+            proxiedAddress={formatted}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any']}
+            selectedProxy={selectedProxy}
+            setIsPasswordError={setIsPasswordError}
+            setStep={setStep}
+          />
+        </Grid>
       </Grid>
     </Motion>
   );

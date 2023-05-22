@@ -65,7 +65,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, hasVoted, myVote, notVoted, open, trackId, refIndex, setOpen, showAbout }: Props): React.ReactElement {
+export default function Index({ address, hasVoted, myVote, notVoted, open, refIndex, setOpen, showAbout, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -79,10 +79,11 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, track
   const [voteInformation, setVoteInformation] = useState<VoteInformation | undefined>();
   const vote = api && api.tx.convictionVoting.vote;
   const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
+  const [alterType, setAlterType] = useState<'modify' | 'remove'>();
 
   const voteTx = api && api.tx.convictionVoting.vote;
   const removeTx = api && api.tx.convictionVoting.removeVote;
-  
+
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -157,50 +158,64 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, track
     }
   }, [notVoted, step]);
 
+  const Header = () => (
+    <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
+      <Grid item>
+        <Typography fontSize='22px' fontWeight={700}>
+          {step === STEPS.ABOUT &&
+            t<string>('About Voting')
+          }
+          {step === STEPS.INDEX &&
+            <>
+              {
+                hasVoted
+                  ? t<string>('Modify Your Vote')
+                  : t<string>('Cast Your Vote')
+              }
+            </>
+          }
+          {step === STEPS.REMOVE &&
+            t<string>('Remove Your Vote')
+          }
+          {step === STEPS.PREVIEW &&
+            t<string>('Preview Your Vote')
+          }
+          {step === STEPS.REVIEW &&
+            t<string>('Review Your Vote')
+          }
+          {step === STEPS.WAIT_SCREEN &&
+            <>
+              {alterType === 'remove'
+                ? t<string>('Removing vote')
+                : t<string>('Voting')
+              }
+            </>
+          }
+          {step === STEPS.CONFIRM &&
+            <>
+              {alterType === 'remove'
+                ? t<string>('Vote has been removed')
+                : t<string>('Voting Completed')
+              }
+            </>
+          }
+          {step === STEPS.PROXY &&
+            t<string>('Select Proxy')
+          }
+        </Typography>
+      </Grid>
+      <Grid item>
+        {step !== STEPS.WAIT_SCREEN &&
+          <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+        }
+      </Grid>
+    </Grid>
+  );
+
   return (
     <DraggableModal onClose={handleClose} open={open}>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {step === STEPS.ABOUT &&
-                t<string>('About Voting')
-              }
-              {step === STEPS.INDEX &&
-                <>
-                  {
-                    hasVoted
-                      ? t<string>('Modify Your Vote')
-                      : t<string>('Cast Your Vote')
-                  }
-                </>
-              }
-              {step === STEPS.REMOVE &&
-                t<string>('Remove Your Vote')
-              }
-              {step === STEPS.PREVIEW &&
-                t<string>('Preview Your Vote')
-              }
-              {step === STEPS.REVIEW &&
-                t<string>('Review Your Vote')
-              }
-              {step === STEPS.WAIT_SCREEN &&
-                t<string>('Voting')
-              }
-              {step === STEPS.CONFIRM &&
-                t<string>('Voting Completed')
-              }
-              {step === STEPS.PROXY &&
-                t<string>('Select Proxy')
-              }
-            </Typography>
-          </Grid>
-          <Grid item>
-            {step !== STEPS.WAIT_SCREEN &&
-              <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-            }
-          </Grid>
-        </Grid>
+        <Header />
         {step === STEPS.ABOUT &&
           <About setStep={setStep} />
         }
@@ -226,7 +241,7 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, track
             setStep={setStep}
             setTxInfo={setTxInfo}
             step={step}
-            tx={STEPS.REVIEW ? voteTx : removeTx}
+            tx={alterType === 'remove' ? removeTx : voteTx}
             voteInformation={voteInformation}
           />
         }
@@ -238,6 +253,7 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, track
         {step === STEPS.PREVIEW &&
           <Preview
             address={address}
+            setAlterType={setAlterType}
             setStep={setStep}
             vote={myVote}
           />
@@ -245,7 +261,7 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, track
         {step === STEPS.PROXY &&
           <SelectProxyModal
             address={address}
-            nextStep={STEPS.REVIEW} // TODO: for REMOVE it should be STEPS.REMOVE
+            nextStep={alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW}
             proxies={proxyItems}
             proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
             selectedProxy={selectedProxy}
@@ -260,6 +276,7 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, track
         {step === STEPS.CONFIRM && voteInformation && txInfo &&
           <Confirmation
             address={address}
+            alterType={alterType}
             handleClose={handleClose}
             txInfo={txInfo}
             voteInformation={voteInformation}

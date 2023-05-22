@@ -7,6 +7,8 @@ import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } f
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { BN, BN_ZERO } from '@polkadot/util';
+
 import { Identity, Motion, ShowBalance, TwoButtons } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { STATUS_COLOR } from '../../utils/consts';
@@ -19,9 +21,10 @@ interface Props {
   address: string | undefined;
   vote: Vote | null | undefined
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  setAlterType: React.Dispatch<React.SetStateAction<'modify' | 'remove' | undefined>>
 }
 
-export default function Preview({ address, setStep, vote }: Props): React.ReactElement<Props> {
+export default function Preview({ address, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -35,6 +38,31 @@ export default function Preview({ address, setStep, vote }: Props): React.ReactE
   const voteType = getVoteType(vote);
   const voteBalance = vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance;
   const voteConviction = useMemo(() => (vote?.standard?.vote ? `${getConviction(vote.standard.vote)}x` : vote?.delegating?.conviction ? `${vote.delegating.conviction}x` : ''), [vote]);
+
+  const myDelegations = vote?.delegations?.votes;
+  const votePower = useMemo(() => {
+    const voteAmountBN = voteBalance ? new BN(voteBalance) : BN_ZERO;
+    const conviction = vote?.standard ? getConviction(vote.standard.vote) : 0;
+    const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
+
+    return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
+  }, [myDelegations, vote.standard, voteBalance]);
+
+  useEffect(() => {
+    if (ref) {
+      setModalHeight(ref.current?.offsetHeight as number);
+    }
+  }, []);
+
+  const onModifyClick = useCallback(() => {
+    setStep(STEPS.INDEX);
+    setAlterType('modify');
+  }, [setAlterType, setStep]);
+
+  const onRemoveClick = useCallback(() => {
+    setStep(STEPS.REMOVE);
+    setAlterType('remove');
+  }, [setAlterType, setStep]);
 
   const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {
     return (
@@ -56,20 +84,6 @@ export default function Preview({ address, setStep, vote }: Props): React.ReactE
     );
   };
 
-  useEffect(() => {
-    if (ref) {
-      setModalHeight(ref.current?.offsetHeight as number);
-    }
-  }, []);
-
-  const onModifyClick = useCallback(() =>
-    setStep(STEPS.INDEX)
-    , [setStep]);
-
-  const onRemoveClick = useCallback(() =>
-    setStep(STEPS.REMOVE)
-    , [setStep]);
-
   return (
     <Motion style={{ height: '100%' }}>
       <Grid container ref={ref} pt='30px'>
@@ -86,13 +100,18 @@ export default function Preview({ address, setStep, vote }: Props): React.ReactE
             <ShowBalance balance={voteBalance} decimal={decimal} decimalPoint={2} token={token} />
           </Typography>
         </DisplayValue>
-        {['Aye', 'Nay'].includes(voteType) &&
+        {voteType && ['Aye', 'Nay'].includes(voteType) &&
           <DisplayValue title={t<string>('Vote Multiplier')}>
             <Typography fontSize='28px' fontWeight={400}>
               {voteConviction}
             </Typography>
           </DisplayValue>
         }
+        <DisplayValue title={myDelegations ? t<string>('Final vote power (including delegations)') : t<string>('Final vote power')}>
+          <Typography fontSize='28px' fontWeight={400}>
+            <ShowBalance balance={votePower} decimal={decimal} decimalPoint={2} token={token} />
+          </Typography>
+        </DisplayValue>
         <TwoButtons
           mt='115px'
           onPrimaryClick={onModifyClick}

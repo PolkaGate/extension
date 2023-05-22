@@ -17,11 +17,12 @@ import { VoteInformation } from '.';
 interface Props {
   address: string | undefined;
   txInfo: TxInfo;
-  voteInformation: VoteInformation
-  handleClose: () => void
+  voteInformation: VoteInformation;
+  handleClose: () => void;
+  alterType: 'modify' | 'remove' | undefined;
 }
 
-export default function Confirmation({ address, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
+export default function Confirmation({ address, alterType, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 
@@ -89,10 +90,22 @@ export default function Confirmation({ address, handleClose, txInfo, voteInforma
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
-      <DisplayInfo caption={t<string>('Vote:')} value={t<string>(voteInformation.voteType)} />
-      <DisplayInfo caption={t<string>('Vote value:')} value={t<string>(`${voteInformation.voteBalance} {{token}}`, { replace: { token } })} />
-      <DisplayInfo caption={t<string>('Lock up period:')} value={t<string>(voteInformation.voteLockUpUpPeriod)} />
-      <DisplayInfo caption={t<string>('Your vote power:')} value={t<string>(`${voteInformation.votePower} {{token}}`, { replace: { token } })} />
+      {alterType !== 'remove' &&
+        <DisplayInfo caption={t<string>('Vote:')} value={t<string>(voteInformation.voteType)} />
+      }
+      {alterType === 'remove' &&
+        <DisplayInfo caption={t<string>('Referendum:')} value={`#${voteInformation.refIndex}`} />
+      }
+      <DisplayInfo
+        caption={alterType === 'remove' ? t<string>('Unvote value:') : t<string>('Vote value:')}
+        value={t<string>(`${voteInformation.voteBalance} {{token}}`, { replace: { token } })}
+      />
+      {voteInformation.voteLockUpUpPeriod &&
+        <DisplayInfo caption={t<string>('Lock up period:')} value={t<string>(voteInformation.voteLockUpUpPeriod)} />
+      }
+      {alterType !== 'remove' &&
+        <DisplayInfo caption={t<string>('Your vote power:')} value={t<string>(`${voteInformation.votePower} {{token}}`, { replace: { token } })} />
+      }
       <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>

@@ -84,6 +84,8 @@ const getLockedUntil = (endBlock: BN, currentBlock: number) => {
   return remainingTime(endBlock.toNumber() - currentBlock);
 };
 
+const DEFAULT_CONVICTION = 1;
+
 export default function Cast({ address, notVoted, previousVote, refIndex, setStep, setVoteInformation, step, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
@@ -181,8 +183,12 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   }, [convictionOptions]);
 
   useEffect(() => {
-    voteType === 'Abstain' && setConviction(0);
-  }, [voteType]);
+    if (voteType === 'Abstain') {
+      setConviction(0);
+    } else {
+      !conviction && setConviction(DEFAULT_CONVICTION);
+    }
+  }, [conviction, voteType]);
 
   useEffect(() => {
     if (!formatted || !tx) {
@@ -394,20 +400,22 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
           </Grid>
         </Grid>
       </Grid>
-      {voteType !== 'Abstain' &&
-        <Convictions address={address} conviction={conviction} setConviction={setConviction} mt='25px'>
-          <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
-            <Grid item>
-              <Typography sx={{ fontSize: '16px' }}>
-                {t('Your final vote power after multiplying')}
-              </Typography>
+      <Grid container item height='100px'>
+        {voteType !== 'Abstain' &&
+          <Convictions address={address} conviction={conviction} setConviction={setConviction} mt='25px'>
+            <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
+              <Grid item>
+                <Typography sx={{ fontSize: '16px' }}>
+                  {t('Your final vote power after multiplying')}
+                </Typography>
+              </Grid>
+              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={4} token={token} />
+              </Grid>
             </Grid>
-            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={4} token={token} />
-            </Grid>
-          </Grid>
-        </Convictions>
-      }
+          </Convictions>
+        }
+      </Grid>
       <PButton
         _ml={0}
         _mt='50px'
