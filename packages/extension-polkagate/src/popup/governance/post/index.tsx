@@ -14,7 +14,7 @@ import { Header } from '../Header';
 import Toolbar from '../Toolbar';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
-import { pascalCaseToTitleCase, toTitleCase } from '../utils/util';
+import { getVoteType, pascalCaseToTitleCase, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
 import Chronology from './Chronology';
 import Comments from './Comments';
@@ -139,6 +139,12 @@ export default function ReferendumPost(): React.ReactElement {
     !['Executed', 'Rejected'].includes(status || '')
     , [status]);
 
+  const isAgainstOutcome = useMemo(() => {
+    const voteType = getVoteType(vote);
+
+    return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye')
+  }, [status, vote]);
+
   return (
     <>
       <Header />
@@ -194,7 +200,7 @@ export default function ReferendumPost(): React.ReactElement {
                 referendumFromPA={referendumFromPA}
                 referendumFromSb={referendumFromSb}
               />
-              {isOngoing &&
+              {(isOngoing || isAgainstOutcome) &&
                 <Grid item sx={{ my: '15px' }} xs={12}>
                   <PButton
                     _ml={0}
@@ -221,10 +227,10 @@ export default function ReferendumPost(): React.ReactElement {
           myVote={vote}
           notVoted={notVoted}
           open={showCastVote}
-          trackId={trackId}
           refIndex={refIndex}
           setOpen={setShowCastVote}
           showAbout={showAboutVoting}
+          trackId={trackId}
         />
       }
     </>

@@ -108,7 +108,7 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, refIn
         voteConvictionValue: conviction === 0.1 ? 0 : conviction,
         voteLockUpUpPeriod: undefined,
         votePower,
-        voteType: getVoteType(myVote),
+        voteType: getVoteType(myVote)
       });
     }
   }, [decimal, myVote, refIndex, step, trackId]);
