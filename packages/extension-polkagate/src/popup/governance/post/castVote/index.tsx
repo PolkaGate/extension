@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -20,7 +20,6 @@ import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal from '../../components/SelectProxyModal';
 import WaitScreen from '../../partials/WaitScreen';
-import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
 import { getConviction, Vote } from '../myVote/util';
 import About from './About';
@@ -40,6 +39,7 @@ interface Props {
   hasVoted: boolean | null | undefined;
   notVoted: boolean | null | undefined;
   cantModify: boolean;
+  status: string | undefined;
 }
 
 export interface VoteInformation {
@@ -66,7 +66,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, showAbout, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, status, hasVoted, myVote, notVoted, open, refIndex, setOpen, showAbout, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -244,6 +244,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             step={step}
             tx={alterType === 'remove' ? removeTx : voteTx}
             voteInformation={voteInformation}
+            status={status}
           />
         }
         {step === STEPS.CHECK_SCREEN &&
@@ -254,10 +255,10 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         {step === STEPS.PREVIEW &&
           <Preview
             address={address}
+            cantModify={cantModify}
             setAlterType={setAlterType}
             setStep={setStep}
             vote={myVote}
-            cantModify={cantModify}
           />
         }
         {step === STEPS.PROXY &&

@@ -6,12 +6,12 @@
 import '@vaadin/icons';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Modal, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
-import SearchIcon from '@mui/icons-material/Search';
+
 import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
@@ -308,7 +308,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
           {!allVotes &&
             <Progress
               fontSize={16}
-              pt={20}
+              pt={10}
               size={150}
               title={t('Loading votes ...')}
             />}

@@ -20,5 +20,6 @@ export const STATUS_COLOR = {
   ToBeAwarded: '#FFA500'
 };
 
+export const ENDED_STATUSES = ['Executed', 'Rejected', 'TimedOut', 'TimeOut', 'Confirmed', 'Cancelled'];
 export const TREASURY_TRACKS = ['treasurer', 'small_tipper', 'big_tipper', 'small_spender', 'medium_spender', 'big_spender'];
 export const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);

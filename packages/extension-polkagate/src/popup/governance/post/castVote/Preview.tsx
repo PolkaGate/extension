@@ -25,7 +25,7 @@ interface Props {
   cantModify: boolean;
 }
 
-export default function Preview({ address, setAlterType, setStep, vote, cantModify }: Props): React.ReactElement<Props> {
+export default function Preview({ address, cantModify, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -42,11 +42,15 @@ export default function Preview({ address, setAlterType, setStep, vote, cantModi
   const myDelegations = vote?.delegations?.votes;
   const votePower = useMemo(() => {
     const voteAmountBN = voteBalance ? new BN(voteBalance) : BN_ZERO;
-    const conviction = vote?.standard ? getConviction(vote.standard.vote) : 0;
+    const conviction = vote?.standard
+      ? getConviction(vote.standard.vote)
+      : vote?.delegating
+        ? getConviction(String(vote.delegating.conviction))
+        : 0;
     const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
 
     return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
-  }, [myDelegations, vote.standard, voteBalance]);
+  }, [myDelegations, vote, voteBalance]);
 
   useEffect(() => {
     if (ref) {
@@ -114,13 +118,15 @@ export default function Preview({ address, setAlterType, setStep, vote, cantModi
         </DisplayValue>
         {cantModify
           ? <PButton
-            _mt='115px'
+            _ml={0}
+            _mt='40px'
             _onClick={onRemoveClick}
             _variant='contained'
+            _width={100}
             text={t<string>('Remove')}
           />
           : <TwoButtons
-            mt='115px'
+            mt='40px'
             onPrimaryClick={onModifyClick}
             onSecondaryClick={onRemoveClick}
             primaryBtnText={t<string>('Modify')}

@@ -18,7 +18,7 @@ interface Props {
   notVoted: boolean | undefined;
 }
 
-export default function MyVote({ address, vote, notVoted }: Props): React.ReactElement {
+export default function MyVote({ address, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);

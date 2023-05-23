@@ -24,7 +24,7 @@ import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
-import { STATUS_COLOR } from '../../utils/consts';
+import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
 import { STEPS, VoteInformation } from '.';
 import DisplayValue from './partial/DisplayValue';
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
@@ -40,10 +40,10 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   voteInformation: VoteInformation;
   tx: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-
+  status: string | undefined;
 }
 
-export default function Review({ address, estimatedFee, formatted, proxyItems, selectedProxy, setStep, setTxInfo, step, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, formatted, proxyItems, selectedProxy, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -60,6 +60,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const isOngoing = !ENDED_STATUSES.includes(status);
 
   const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {
     return (
@@ -157,7 +158,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
   const onBackClick = useCallback(() =>
     setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)
-  , [setStep, step]);
+    , [setStep, step]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -165,7 +166,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        {step === STEPS.REMOVE &&
+        {step === STEPS.REMOVE && isOngoing &&
           <Warning
             fontWeight={400}
             isBelowInput

@@ -12,6 +12,7 @@ import { PButton } from '../../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useTrack, useTranslation } from '../../../hooks';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
+import { ENDED_STATUSES } from '../utils/consts';
 import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { getVoteType, pascalCaseToTitleCase, toTitleCase } from '../utils/util';
@@ -48,7 +49,7 @@ export default function ReferendumPost(): React.ReactElement {
   const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
   const vote = useMyVote(address, refIndex, trackId);
   const hasVoted = useMemo(() => vote && ('standard' in vote || 'splitAbstain' in vote), [vote]);
-  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote)), [vote]);
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || 'delegating' in vote)), [vote]);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
@@ -133,19 +134,16 @@ export default function ReferendumPost(): React.ReactElement {
     </Grid>
   );
 
-  const status = useMemo(() => referendumFromSb?.status || referendumFromPA?.status, [referendumFromPA, referendumFromSb]);
+  const status = useMemo(() => referendumFromPA?.status || referendumFromSb?.status, [referendumFromPA, referendumFromSb]);
 
-  const isOngoing = useMemo(() =>
-    !['Executed', 'Rejected'].includes(status || '')
-    , [status]);
+  const isOngoing = !ENDED_STATUSES.includes(status);
+  const cantModify = ENDED_STATUSES.includes(status);
 
   const isAgainstOutcome = useMemo(() => {
     const voteType = getVoteType(vote);
 
-    return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye')
+    return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye');
   }, [status, vote]);
-
-  const cantModify = ['Executed', 'Rejected', 'TimedOut', 'Cancelled'].includes(status);
 
   return (
     <>
@@ -234,6 +232,7 @@ export default function ReferendumPost(): React.ReactElement {
           setOpen={setShowCastVote}
           showAbout={showAboutVoting}
           trackId={trackId}
+          status={status}
         />
       }
     </>
