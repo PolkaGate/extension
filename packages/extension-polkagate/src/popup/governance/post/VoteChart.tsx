@@ -3,16 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { Grid } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import { Pulse } from 'better-react-spinkit';
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Pulse } from 'better-react-spinkit';
 
 import { BN } from '@polkadot/util';
 
-import { useTranslation } from '../../../hooks';
 import { ReferendumSubScan } from '../utils/types';
-import { Grid } from '@mui/material';
-import { grey } from '@mui/material/colors';
 
 interface Props {
   referendum: ReferendumSubScan | undefined;
@@ -108,7 +107,8 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
           }
         }
       },
-      responsive: true
+      responsive: true,
+      rotation: 180 // Rotate the chart by 180 degrees
     };
 
     const chartInstance = new Chart(chartRef.current, {
