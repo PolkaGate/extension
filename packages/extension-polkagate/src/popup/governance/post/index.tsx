@@ -145,6 +145,8 @@ export default function ReferendumPost(): React.ReactElement {
     return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye')
   }, [status, vote]);
 
+  const cantModify = ['Executed', 'Rejected', 'TimedOut', 'Cancelled'].includes(status);
+
   return (
     <>
       <Header />
@@ -223,6 +225,7 @@ export default function ReferendumPost(): React.ReactElement {
       {showCastVote &&
         <CastVote
           address={address}
+          cantModify={cantModify}
           hasVoted={hasVoted}
           myVote={vote}
           notVoted={notVoted}

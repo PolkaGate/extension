@@ -37,8 +37,9 @@ interface Props {
   refIndex: number | undefined;
   showAbout: boolean;
   myVote: Vote | null | undefined;
-  hasVoted: boolean | null | undefined
-  notVoted: boolean | null | undefined
+  hasVoted: boolean | null | undefined;
+  notVoted: boolean | null | undefined;
+  cantModify: boolean;
 }
 
 export interface VoteInformation {
@@ -65,7 +66,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, hasVoted, myVote, notVoted, open, refIndex, setOpen, showAbout, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, showAbout, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -256,6 +257,7 @@ export default function Index({ address, hasVoted, myVote, notVoted, open, refIn
             setAlterType={setAlterType}
             setStep={setStep}
             vote={myVote}
+            cantModify={cantModify}
           />
         }
         {step === STEPS.PROXY &&

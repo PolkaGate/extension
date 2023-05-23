@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, TwoButtons } from '../../../../components';
+import { Identity, Motion, PButton, ShowBalance, TwoButtons } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { STATUS_COLOR } from '../../utils/consts';
 import { getVoteType } from '../../utils/util';
@@ -21,10 +21,11 @@ interface Props {
   address: string | undefined;
   vote: Vote | null | undefined
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setAlterType: React.Dispatch<React.SetStateAction<'modify' | 'remove' | undefined>>
+  setAlterType: React.Dispatch<React.SetStateAction<'modify' | 'remove' | undefined>>;
+  cantModify: boolean;
 }
 
-export default function Preview({ address, setAlterType, setStep, vote }: Props): React.ReactElement<Props> {
+export default function Preview({ address, setAlterType, setStep, vote, cantModify }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const token = useToken(address);
   const decimal = useDecimal(address);
@@ -38,7 +39,6 @@ export default function Preview({ address, setAlterType, setStep, vote }: Props)
   const voteType = getVoteType(vote);
   const voteBalance = vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance;
   const voteConviction = useMemo(() => (vote?.standard?.vote ? `${getConviction(vote.standard.vote)}x` : vote?.delegating?.conviction ? `${vote.delegating.conviction}x` : ''), [vote]);
-
   const myDelegations = vote?.delegations?.votes;
   const votePower = useMemo(() => {
     const voteAmountBN = voteBalance ? new BN(voteBalance) : BN_ZERO;
@@ -112,13 +112,21 @@ export default function Preview({ address, setAlterType, setStep, vote }: Props)
             <ShowBalance balance={votePower} decimal={decimal} decimalPoint={2} token={token} />
           </Typography>
         </DisplayValue>
-        <TwoButtons
-          mt='115px'
-          onPrimaryClick={onModifyClick}
-          onSecondaryClick={onRemoveClick}
-          primaryBtnText={t<string>('Modify')}
-          secondaryBtnText={t<string>('Remove')}
-        />
+        {cantModify
+          ? <PButton
+            _mt='115px'
+            _onClick={onRemoveClick}
+            _variant='contained'
+            text={t<string>('Remove')}
+          />
+          : <TwoButtons
+            mt='115px'
+            onPrimaryClick={onModifyClick}
+            onSecondaryClick={onRemoveClick}
+            primaryBtnText={t<string>('Modify')}
+            secondaryBtnText={t<string>('Remove')}
+          />
+        }
       </Grid>
     </Motion>
   );

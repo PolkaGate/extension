@@ -19,7 +19,6 @@ interface Props {
 }
 
 export default function VoteChart({ referendum }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
