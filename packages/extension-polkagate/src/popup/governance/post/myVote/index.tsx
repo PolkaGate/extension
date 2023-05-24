@@ -30,7 +30,9 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
   const voteType = getVoteType(vote);
   const voteMethod = vote?.standard?.balance
     ? t('Standard')
-    : vote?.delegating?.balance && t('Delegated');
+    : vote?.delegating?.voted && vote?.delegating?.balance && t('Delegated');
+
+  console.log('vote:', vote);
 
   return (
     <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>

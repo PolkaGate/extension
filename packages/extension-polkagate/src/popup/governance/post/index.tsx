@@ -49,7 +49,7 @@ export default function ReferendumPost(): React.ReactElement {
   const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
   const vote = useMyVote(address, refIndex, trackId);
   const hasVoted = useMemo(() => vote && ('standard' in vote || 'splitAbstain' in vote), [vote]);
-  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || 'delegating' in vote)), [vote]);
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
 
   const trackName = useMemo((): string | undefined => {
     const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
