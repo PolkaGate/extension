@@ -50,18 +50,17 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
     const chartData = {
       labels: [
         'Aye',
-        'Nay',
-        // 'Abstain'
+        'Nay'
       ],
       datasets: [{
-        label: 'Percentage',
-        data: [ayesPercent, naysPercent],
         backgroundColor: [
           '#008080',
           '#FF5722',
           // '#BBBBBB'
         ],
-        hoverOffset: 4
+        data: [ayesPercent, naysPercent],
+        hoverOffset: 4,
+        label: 'Percentage'
       }]
     };
 
@@ -108,7 +107,7 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
         }
       },
       responsive: true,
-      rotation: 180 // Rotate the chart by 180 degrees
+      rotation: 180
     };
 
     const chartInstance = new Chart(chartRef.current, {
@@ -124,10 +123,12 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
   }, [ayesPercent, naysPercent]);
 
   return (
-    <Grid alignItems='center' container height='180px' justifyContent='center' >
+    <Grid alignItems='center' container justifyContent='center' sx={{ height: '250px', width: '100%' }} >
       {referendum
-        ? <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />
-        : <Pulse color={grey[300]} size={80} />
+        ? <canvas id='chartCanvas' ref={chartRef} />
+        : <Grid alignItems='center' container height='100%' item justifyContent='center'>
+          <Pulse color={grey[300]} size={80} />
+        </Grid>
       }
     </Grid>
   );
