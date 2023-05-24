@@ -18,24 +18,35 @@ interface Props {
   notVoted: boolean | undefined;
 }
 
+type VotingMethod = 'Standard' | 'delegated';
+
 export default function MyVote({ address, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
-
   const voteType = getVoteType(vote);
-  console.log('vote:', vote);
+  const voteMethod = vote?.standard?.balance
+    ? t('Standard')
+    : vote?.delegating?.balance && t('Delegated');
 
   return (
     <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>
-      <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
-        <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
-          {t('My Vote')}
-        </Typography>
+      <Grid container item justifyContent='space-between' sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
+        <Grid item>
+          <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
+            {t('My Vote')}
+          </Typography>
+        </Grid>
+        <Grid item>
+          {voteMethod &&
+            <Typography sx={{ fontSize: '16px', fontWeight: 400, color: 'text.disabled' }}>
+              {voteMethod}
+            </Typography>
+          }
+        </Grid>
       </Grid>
       {notVoted
         ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
