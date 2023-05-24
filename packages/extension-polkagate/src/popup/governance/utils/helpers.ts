@@ -21,6 +21,43 @@ export interface Statistics {
   'OriginsCount': number
 }
 
+export type VoteType = {
+  decision: string;
+  voter: string;
+  balance: {
+    value: string;
+  };
+  lockPeriod: number | null;
+  isDelegated: boolean;
+}
+
+export type AbstainVoteType = {
+  decision: string;
+  voter: string;
+  balance: {
+    aye: string;
+    nay: string;
+    abstain: string;
+  };
+  lockPeriod: null;
+  isDelegated: boolean;
+}
+
+export type AllVotesType = {
+  abstain: {
+    count: number;
+    votes: AbstainVoteType[];
+  },
+  no: {
+    count: number;
+    votes: VoteType[];
+  }
+  yes: {
+    count: number;
+    votes: VoteType[];
+  }
+}
+
 export async function getReferendumStatistics(chainName: string): Promise<Statistics | null> {
   console.log('Getting ref stat from sb ... ');
 
@@ -100,6 +137,32 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
       } else {
         console.log(`Fetching message ${data}`);
 
+        return null;
+      }
+    })
+    .catch((error) => {
+      console.log(`Error getting latest referendum on ${chainName}:`, error.message);
+
+      return null;
+    });
+}
+
+export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100): Promise<AllVotesType | null> {
+  console.log(`Getting All Votes on ${chainName} for refIndex ${refIndex} from PA ...`);
+
+  const requestOptions = {
+    headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=ReferendumV2&sortBy=balance`, requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        console.log(`All votes on ${chainName} from PA:`, data);
+
+        return data;
+      } else {
         return null;
       }
     })

@@ -101,7 +101,7 @@ export default function Index({ address, cantModify, status, hasVoted, myVote, n
       const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
       const votePower = myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
 
-      setVoteInformation({
+      setVoteInformation({ // note this will be used for remove state
         refIndex,
         trackId,
         voteAmountBN,

@@ -201,7 +201,7 @@ export const formalizedStatus = (status: string): string => {
   }
 
   return output;
-}
+};
 
 export const getVoteType = (vote: Vote | null | undefined) => {
   if (vote) {
@@ -227,7 +227,7 @@ export const getVoteType = (vote: Vote | null | undefined) => {
   }
 
   return undefined;
-}
+};
 
 export function calcBlockTime (blockTime: BN, blocks: BN, t: TFunction): Result {
   // in the case of excessively large locks, limit to the max JS integer value

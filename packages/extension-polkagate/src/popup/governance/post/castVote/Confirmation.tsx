@@ -6,8 +6,8 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress } from '../../../../components';
-import { useToken, useTranslation } from '../../../../hooks';
+import { Motion, PButton, ShortAddress, ShowBalance } from '../../../../components';
+import { useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { TxInfo } from '../../../../util/types';
 import Explorer from '../../../history/Explorer';
@@ -25,6 +25,7 @@ interface Props {
 export default function Confirmation({ address, alterType, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
+  const decimal = useDecimal(address);
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
@@ -104,7 +105,7 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
         <DisplayInfo caption={t<string>('Lock up period:')} value={t<string>(voteInformation.voteLockUpUpPeriod)} />
       }
       {alterType !== 'remove' &&
-        <DisplayInfo caption={t<string>('Your vote power:')} value={t<string>(`${voteInformation.votePower} {{token}}`, { replace: { token } })} />
+        <DisplayInfo caption={t<string>('Your vote power:')} value={<ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={4} token={token} />} />
       }
       <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&

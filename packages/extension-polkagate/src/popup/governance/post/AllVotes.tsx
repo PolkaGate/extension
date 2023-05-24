@@ -15,18 +15,22 @@ import { BN } from '@polkadot/util';
 import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
-import { getReferendumVotesFromSubscan } from '../utils/helpers';
+import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../utils/helpers';
 
 interface Props {
   address: string | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void
-  referendumIndex: number | undefined;
+  refIndex: number | undefined;
   trackId: number | undefined;
   setOnChainVoteCounts: React.Dispatch<React.SetStateAction<{
     ayes: number | undefined;
     nays: number | undefined;
-  } | undefined>>
+  } | undefined>>;
+  setVoteCountsPA: React.Dispatch<React.SetStateAction<{
+    ayes: number | undefined;
+    nays: number | undefined;
+  } | undefined>>;
 }
 
 const VOTE_PER_PAGE = 10;
@@ -36,7 +40,7 @@ const TAB_MAP = {
   ABSTAIN: 3
 };
 
-export default function AllVotes({ address, open, referendumIndex, setOnChainVoteCounts, setOpen, trackId }: Props): React.ReactElement {
+export default function AllVotes({ address, open, refIndex, setOnChainVoteCounts, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -46,32 +50,52 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
   const api = useApi(address);
 
   const [tabIndex, setTabIndex] = useState<number>(1);
-  const [allVotes, setAllVotes] = React.useState<{ ayes: VoterData[], nays: VoterData[], abstains: VoterData[] } | null>();
-  const [filteredVotes, setFilteredVotes] = React.useState<{ ayes: VoterData[], nays: VoterData[], abstains: VoterData[] } | null>();
-  const [votesToShow, setVotesToShow] = React.useState<VoterData[]>();
+  const [allVotes, setAllVotes] = React.useState<AllVotesType | null>();
+  const [filteredVotes, setFilteredVotes] = React.useState<{ ayes: VoteType[], nays: VoteType[], abstains: AbstainVoteType[] } | null>();
+  const [votesToShow, setVotesToShow] = React.useState<VoteType[] | AbstainVoteType[]>();
   const [page, setPage] = React.useState<number>(1);
   const [paginationCount, setPaginationCount] = React.useState<number>(10);
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>('ASC');
   const [isSearchBarOpen, setSearchBarOpen] = React.useState<boolean>(false);
 
   useEffect(() => {
-    chainName && referendumIndex &&
-      getReferendumVotesFromSubscan(chainName, referendumIndex).then((votes) => {
+    chainName && refIndex &&
+      getReferendumVotesFromSubscan(chainName, refIndex).then((votes) => {
         // setAllVotes(votes);
         console.log('All votes from sb:', votes);
       });
-  }, [chainName, referendumIndex]);
+  }, [chainName, refIndex]);
+
+  // useEffect(() => {
+  //   api && refIndex && trackId !== undefined &&
+  //     getReferendumVotes(api, trackId, refIndex).then((votes) => {
+  //       setAllVotes(votes);
+  //       setAllVotes(votes);
+  //       setOnChainVoteCounts({ ayes: votes?.ayes?.length, nays: votes?.nays?.length });
+  //       setFilteredVotes(votes);
+  //       console.log('All votes from chain:', votes);
+  //     });
+  // }, [api, refIndex, setOnChainVoteCounts, trackId]);
 
   useEffect(() => {
-    api && referendumIndex && trackId !== undefined &&
-      getReferendumVotes(api, trackId, referendumIndex).then((votes) => {
-        setAllVotes(votes);
-        setAllVotes(votes);
-        setOnChainVoteCounts({ ayes: votes?.ayes?.length, nays: votes?.nays?.length });
-        setFilteredVotes(votes);
-        console.log('All votes from chain:', votes);
-      });
-  }, [api, referendumIndex, setOnChainVoteCounts, trackId]);
+    chainName && refIndex && getAllVotesFromPA(chainName, refIndex).then((res: AllVotesType | null) => {
+      if (!res) {
+        return setAllVotes(null);
+      }
+
+      const maxVote = Math.max(res.abstain.count, res.no.count, res.yes.count);
+
+      getAllVotesFromPA(chainName, refIndex, maxVote).then((res: AllVotesType | null) => {
+        if (!res) {
+          return setAllVotes(null);
+        }
+
+        setAllVotes(res);
+        setFilteredVotes({ ayes: res.yes.votes, nays: res.no.votes, abstains: res.abstain.votes });
+        setVoteCountsPA({ ayes: res?.yes?.count, nays: res?.no?.count });
+      }).catch(console.error);
+    }).catch(console.error);
+  }, [chainName, refIndex, setVoteCountsPA]);
 
   useEffect(() => {
     if (filteredVotes) {
@@ -89,8 +113,9 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
   }, [filteredVotes, page, tabIndex]);
 
   const handleClose = useCallback(() => {
+    allVotes && setFilteredVotes({ ayes: allVotes.yes.votes, nays: allVotes.no.votes, abstains: allVotes.abstain.votes });
     setOpen(false);
-  }, [setOpen]);
+  }, [allVotes, setOpen]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
@@ -100,11 +125,21 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
   const onSortAmount = useCallback(() => {
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
+
+    if (tabIndex === TAB_MAP.ABSTAIN) {
+      votesToShow?.sort((a, b) => amountSortType === 'ASC'
+        ? (new BN(a.balance.abstain).sub(new BN(b.balance.abstain))).isNeg() ? -1 : 1
+        : (new BN(b.balance.abstain).sub(new BN(a.balance.abstain))).isNeg() ? -1 : 1
+      );
+
+      return;
+    }
+
     votesToShow?.sort((a, b) => amountSortType === 'ASC'
-      ? (new BN(a.balance).sub(new BN(b.balance))).isNeg() ? -1 : 1
-      : (new BN(b.balance).sub(new BN(a.balance))).isNeg() ? -1 : 1
+      ? (new BN(a.balance.value).sub(new BN(b.balance.value))).isNeg() ? -1 : 1
+      : (new BN(b.balance.value).sub(new BN(a.balance.value))).isNeg() ? -1 : 1
     );
-  }, [amountSortType, votesToShow]);
+  }, [amountSortType, tabIndex, votesToShow]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
@@ -113,9 +148,9 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
   const onSearch = useCallback((filter: string) => {
     allVotes && setFilteredVotes(
       {
-        ayes: allVotes.ayes.filter((a) => a.account.includes(filter)),
-        nays: allVotes.nays.filter((b) => b.account.includes(filter)),
-        abstains: allVotes.abstains.filter((c) => c.account.includes(filter))
+        ayes: allVotes.yes.votes.filter((a) => a.voter.includes(filter)),
+        nays: allVotes.no.votes.filter((b) => b.voter.includes(filter)),
+        abstains: allVotes.abstain.votes.filter((c) => c.voter.includes(filter))
       }
     );
   }, [allVotes]);
@@ -277,7 +312,7 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                 <Identity
                   api={api}
                   chain={chain}
-                  formatted={vote.account}
+                  formatted={vote.voter}
                   identiconSize={28}
                   showShortAddress
                   showSocial={false}
@@ -291,13 +326,13 @@ export default function AllVotes({ address, open, referendumIndex, setOnChainVot
                 />
               </Grid>
               <Grid container item justifyContent='center' width='22%'>
-                <ShowBalance api={api} balance={vote.balance} decimal={decimal} decimalPoint={2} token={token} />
+                <ShowBalance api={api} balance={vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay} decimal={decimal} decimalPoint={2} token={token} />
               </Grid>
               <Grid item width='15%'>
-                {vote.conviction || '0.1'}X
+                {vote.lockPeriod || '0.1'}X
               </Grid>
               <Grid item sx={{ textAlign: 'right' }} width='12%'>
-                {vote?.isDelegating ? t('Delegated') : t('Standard')}
+                {vote?.isDelegated ? t('Delegated') : t('Standard')}
               </Grid>
             </Grid>
           ))
