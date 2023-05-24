@@ -100,8 +100,8 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
         <Grid fontWeight={700} item>
           {percent?.toFixed(1)}%
         </Grid>
-        <Grid color='text.disabled' fontWeight={400} fontSize='20px' item>
-          {`(${count || ''})`}
+        <Grid color='text.disabled' fontSize='20px' fontWeight={400} item>
+          {count ? `(${count || ''})` : ''}
         </Grid>
       </Grid>
       <Grid color='text.disabled' fontSize='16px' fontWeight={500} item>
