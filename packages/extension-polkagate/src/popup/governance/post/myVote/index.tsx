@@ -36,7 +36,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
 
   return (
     <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>
-      <Grid container item justifyContent='space-between' sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
+      <Grid alignItems='baseline' container item spacing={0.2} sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
         <Grid item>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
             {t('My Vote')}
@@ -45,7 +45,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
         <Grid item>
           {voteMethod &&
             <Typography sx={{ fontSize: '16px', fontWeight: 400, color: 'text.disabled' }}>
-              {voteMethod}
+              ({voteMethod})
             </Typography>
           }
         </Grid>
