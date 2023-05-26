@@ -3,14 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
-import { Circle } from 'better-react-spinkit';
+import { Grid, Typography, useTheme } from '@mui/material';
+import { Circle, CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useTranslation } from '../../../hooks';
 
-function WaitScreen({ defaultText }: { defaultText?: string }): React.ReactElement {
+interface Props {
+  defaultText?: string;
+  showCube?: boolean;
+}
+
+function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [text, setText] = useState<string>(defaultText || t<string>('We are working on your transaction.'));
 
   const handleTxEvent = useCallback((s: CustomEventInit<any>) => {
@@ -46,7 +52,10 @@ function WaitScreen({ defaultText }: { defaultText?: string }): React.ReactEleme
           {text}
         </Typography>
       </Grid>
-      <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} />
+      {showCube
+        ? <CubeGrid col={3} color={theme.palette.background.paper} row={3} size={135} />
+        : <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} />
+      }
       <Typography sx={{ fontSize: '18px', fontWeight: 300, m: 'auto', pt: '70px', px: '20px', textAlign: 'center', width: 'fit-content' }}>
         {t<string>('Please wait a few seconds and don’t close the window.')}
       </Typography>
