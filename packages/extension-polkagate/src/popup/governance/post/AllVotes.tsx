@@ -16,6 +16,7 @@ import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../..
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
 import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../utils/helpers';
+import { DraggableModal } from '../components/DraggableModal';
 
 interface Props {
   address: string | undefined;
@@ -171,15 +172,12 @@ export default function AllVotes({ address, open, refIndex, setOnChainVoteCounts
     px: 4,
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '762px'
+
   };
 
   return (
-    <Modal
-      onClose={handleClose}
-      open={open}
-    >
-      <Box sx={{ ...style }}>
+    <DraggableModal onClose={handleClose} open={open} width={762}>
+      <>
         <Grid alignItems='center' container>
           <Grid item>
             <Typography fontSize='22px' fontWeight={700}>
@@ -348,7 +346,7 @@ export default function AllVotes({ address, open, refIndex, setOnChainVoteCounts
               title={t('Loading votes ...')}
             />}
         </Grid>
-      </Box>
-    </Modal>
+      </>
+    </DraggableModal>
   );
 }
