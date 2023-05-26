@@ -29,7 +29,13 @@ export function hexAddressToFormatted(hexString: string, chain: Chain | undefine
   return encodeAddress(decodedBytes, chain.ss58Format);
 }
 
-export default function Metadata({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassembly | undefined }): React.ReactElement {
+interface Props {
+  decisionDepositPayer: string | undefined;
+  address: string | undefined;
+  referendum: ReferendumPolkassembly | undefined;
+}
+
+export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -96,6 +102,24 @@ export default function Metadata({ address, referendum }: { address: string | un
             />}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
+          {decisionDepositPayer &&
+            <LabelValue
+              label={t('Decision Deposit Payer')}
+              labelStyle={{ minWidth: '20%' }}
+              style={{ justifyContent: 'flex-start' }}
+              value={
+                <Identity
+                  api={api}
+                  chain={chain}
+                  formatted={decisionDepositPayer}
+                  identiconSize={25}
+                  showSocial
+                  style={{ fontSize: '16px', fontWeight: 500 }}
+                />
+              }
+              valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
+            />
+          }
           <LabelValue
             label={t('Decision Deposit')}
             labelStyle={{ minWidth: '20%' }}
