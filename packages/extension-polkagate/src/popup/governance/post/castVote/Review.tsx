@@ -17,7 +17,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Motion, ShortAddress, ShowBalance, ShowValue, Warning, WrongPasswordAlert } from '../../../../components';
+import { AccountContext, Identity, Motion, ShortAddress, ShowBalance, ShowValue, Warning, WrongPasswordAlert } from '../../../../components';
 import { useAccountName, useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import broadcast from '../../../../util/api/broadcast';
@@ -162,7 +162,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
   return (
     <Motion style={{ height: '100%' }}>
-      <Grid container ref={ref}>
+      <Grid container ref={ref} pt='30px'>
         {isPasswordError &&
           <WrongPasswordAlert />
         }
@@ -175,17 +175,11 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
             {t<string>('Think twice before removing your vote. It may affect the outcome.')}
           </Warning>
         }
-        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Account holder')}:
-          </Typography>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {name}
-          </Typography>
-          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-            <ShortAddress address={formatted ?? address} inParentheses style={{ fontSize: '16px' }} />
+        <DisplayValue title={t<string>('Account holder')} topDivider={false}>
+          <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+            <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
           </Grid>
-        </Grid>
+        </DisplayValue>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
             <ThroughProxy address={selectedProxyAddress} chain={chain} />
