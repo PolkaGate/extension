@@ -174,6 +174,7 @@ export default function ReferendumPost(): React.ReactElement {
               />
               <MetaData
                 address={address}
+                decisionDepositPayer={referendumFromSb?.decision_deposit_account?.address}
                 referendum={referendumFromPA}
               />
               <Comments
