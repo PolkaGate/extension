@@ -179,7 +179,7 @@ export default function Index({ address, cantModify, status, hasVoted, myVote, n
             t<string>('Remove Your Vote')
           }
           {step === STEPS.PREVIEW &&
-            t<string>('Preview Your Vote')
+            t<string>('Vote Details')
           }
           {step === STEPS.REVIEW &&
             t<string>('Review Your Vote')
@@ -250,6 +250,7 @@ export default function Index({ address, cantModify, status, hasVoted, myVote, n
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your voting status...')}
+            showCube
           />
         }
         {step === STEPS.PREVIEW &&
