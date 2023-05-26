@@ -158,11 +158,11 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
 
   const onBackClick = useCallback(() =>
     setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)
-    , [setStep, step]);
+  , [setStep, step]);
 
   return (
     <Motion style={{ height: '100%' }}>
-      <Grid container ref={ref} pt='30px'>
+      <Grid container ref={ref}>
         {isPasswordError &&
           <WrongPasswordAlert />
         }
@@ -175,11 +175,13 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
             {t<string>('Think twice before removing your vote. It may affect the outcome.')}
           </Warning>
         }
-        <DisplayValue title={t<string>('Account holder')} topDivider={false}>
-          <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-            <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
-          </Grid>
-        </DisplayValue>
+        <Grid container item pt='30px'>
+          <DisplayValue title={t<string>('Account holder')} topDivider={false}>
+            <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+              <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
+            </Grid>
+          </DisplayValue>
+        </Grid>
         {selectedProxyAddress &&
           <Grid container m='auto' maxWidth='92%'>
             <ThroughProxy address={selectedProxyAddress} chain={chain} />
