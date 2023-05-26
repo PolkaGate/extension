@@ -222,14 +222,14 @@ export const getVoteType = (vote: Vote | null | undefined) => {
         return 'Nay';
       }
 
-      return 'Abstain';
+      return vote?.delegating?.voted ? 'Abstain' : undefined;
     }
   }
 
   return undefined;
 };
 
-export function calcBlockTime (blockTime: BN, blocks: BN, t: TFunction): Result {
+export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
   // in the case of excessively large locks, limit to the max JS integer value
   const value = bnMin(BN_MAX_INTEGER, blockTime.mul(blocks)).toNumber();
 

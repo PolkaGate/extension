@@ -101,7 +101,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>(getVoteType(previousVote));
-  const mayBePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain || previousVote?.delegating?.balance, decimal);
+  const mayBePreviousVote = amountToHuman(previousVote?.standard?.balance || previousVote?.splitAbstain?.abstain || (previousVote?.delegating?.voted ? previousVote?.delegating?.balance : undefined), decimal);
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const [conviction, setConviction] = useState<number>();
 
@@ -175,7 +175,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
     if (mayBePreviousVote) {
       setVoteAmount(mayBePreviousVote);
       previousVote?.standard && setConviction(getConviction(previousVote.standard.vote));
-      previousVote?.delegating && setConviction(getConviction(previousVote.delegating.conviction));
+      previousVote?.delegating && previousVote?.delegating?.voted && setConviction(getConviction(String(previousVote.delegating.conviction)));
     }
   }, [mayBePreviousVote, previousVote]);
 

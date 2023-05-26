@@ -118,6 +118,15 @@ export default function ReferendumPost(): React.ReactElement {
     setShowCastVote(true)
     , []);
 
+  const status = useMemo(() => referendumFromPA?.status || referendumFromSb?.status, [referendumFromPA, referendumFromSb]);
+  const isOngoing = !ENDED_STATUSES.includes(status);
+  const cantModify = ENDED_STATUSES.includes(status) && vote;
+  const isAgainstOutcome = useMemo(() => {
+    const voteType = getVoteType(vote);
+
+    return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye');
+  }, [status, vote]);
+
   const Bread = () => (
     <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
@@ -133,17 +142,6 @@ export default function ReferendumPost(): React.ReactElement {
       </Breadcrumbs>
     </Grid>
   );
-
-  const status = useMemo(() => referendumFromPA?.status || referendumFromSb?.status, [referendumFromPA, referendumFromSb]);
-
-  const isOngoing = !ENDED_STATUSES.includes(status);
-  const cantModify = ENDED_STATUSES.includes(status);
-
-  const isAgainstOutcome = useMemo(() => {
-    const voteType = getVoteType(vote);
-
-    return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye');
-  }, [status, vote]);
 
   return (
     <>
