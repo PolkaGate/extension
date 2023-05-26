@@ -37,8 +37,8 @@ export default function ReferendumPost(): React.ReactElement {
 
   useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>(state?.selectedTopMenu);
-  const [selectedSubMenu, setSelectedSubMenu] = useState<string>();
+  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu | undefined>(state?.selectedTopMenu);
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string | undefined>();
   const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
   const [referendumFromSb, setReferendumFromSb] = useState<ReferendumSubScan>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();

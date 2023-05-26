@@ -21,7 +21,7 @@ interface Props {
   selectedTopMenu: TopMenu | undefined;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   decidingCounts: DecidingCount[] | undefined;
 }
 

@@ -122,6 +122,7 @@ export interface Timeline {
   extrinsic_index: string;
   params: null;
 }
+
 export interface ReferendumSubScan {
   referendum_index: number;
   created_block: number;

@@ -5,6 +5,18 @@ import { BN } from '@polkadot/util';
 
 export const MAX_WIDTH = '1280px';
 
+export const REFERENDA_STATUS = [
+  ['All'],
+  ['Cancelled'],
+  ['Confirmed'],
+  ['Deciding'],
+  ['Confirming', 'ConfirmStarted'],
+  ['Executed'],
+  ['Rejected'],
+  ['Submitted'],
+  ['TimedOut']
+];
+
 export const STATUS_COLOR = {
   Awarded: '#32CD32',
   Cancelled: '#737373',
@@ -13,7 +25,7 @@ export const STATUS_COLOR = {
   Confirmed: '#008080',
   Deciding: '#6A5ACD',
   DecisionDepositPlaced: '#FFA07A',
-  Executed: '#00BFFF ',
+  Executed: '#00BFFF',
   Rejected: '#FF5722',
   Submitted: '#6B9090',
   TimedOut: '#AD9C88',

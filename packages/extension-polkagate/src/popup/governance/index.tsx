@@ -7,17 +7,18 @@ import '@vaadin/icons';
 
 import { Breadcrumbs, Container, Grid, Link, Typography, useTheme } from '@mui/material';
 import { CubeGrid, Wordpress } from 'better-react-spinkit';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ActionContext, InputFilter } from '../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { REFERENDA_STATUS } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
 import { ReferendumSummary } from './ReferendumSummary';
+import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
 
@@ -40,10 +41,22 @@ export default function Governance(): React.ReactElement {
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [referendaToList, setReferenda] = useState<LatestReferenda[] | null>();
+  const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
+  const [filterState, setFilterState] = useState(0);
 
   const currentTrack = useMemo(() => tracks && tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
+
+  useEffect(() => {
+    if (!referendaToList) {
+      return;
+    }
+
+    const list = filterState ? referendaToList?.filter((ref) => REFERENDA_STATUS[filterState].includes(ref.status)) : referendaToList;
+
+    setFilteredReferenda(list);
+  }, [filterState, referendaToList]);
 
   useEffect(() => {
     if (!api) {
@@ -155,28 +168,6 @@ export default function Governance(): React.ReactElement {
     setGetMore(pageTrackRef.current.page);
   }, [pageTrackRef]);
 
-  const SearchBar = () => (
-    <Grid alignItems='center' container pt='15px'>
-      <Grid item justifyContent='flex-start' xs>
-        <InputFilter
-          autoFocus={false}
-          // onChange={onSearch}
-          placeholder={t<string>('🔍 Search ')}
-          theme={theme}
-        // value={searchKeyword ?? ''}
-        />
-      </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item py='10px' sx={{ cursor: 'pointer' }} xs={1} justifyContent='flex-start'
-        // onClick={onFilters}
-        pl='15px'>
-        {t('Filters')}
-        <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ cursor: 'pointer', width: '40%' }}>
-          <vaadin-icon icon='vaadin:ellipsis-dots-v' style={{ color: `${theme.palette.secondary.light}`, width: '33px' }} />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-
   const Bread = () => (
     <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
@@ -219,10 +210,15 @@ export default function Governance(): React.ReactElement {
             ? <AllReferendaStats address={address} referendumStats={referendumStats} setReferendumStats={setReferendumStats} />
             : <TrackStats address={address} decidingCounts={decidingCounts} selectedSubMenu={selectedSubMenu} track={currentTrack} />
           }
-          <SearchBar />
-          {referendaToList
+          <SearchBox
+            filterState={filterState}
+            referendaToList={referendaToList}
+            setFilterState={setFilterState}
+            setFilteredReferenda={setFilteredReferenda}
+          />
+          {filteredReferenda
             ? <>
-              {referendaToList.map((referendum, index) => {
+              {filteredReferenda.map((referendum, index) => {
                 if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                   return (
                     <ReferendumSummary address={address} key={index} onClick={() => getReferendaById(referendum.post_id)} referendum={referendum} />
@@ -245,7 +241,7 @@ export default function Governance(): React.ReactElement {
                 </>
               }
             </>
-            : referendaToList === null
+            : filteredReferenda === null
               ? <Grid container justifyContent='center' pt='10%'>
                 <Typography color={'text.disabled'} fontSize={20} fontWeight={500}>
                   {t('No referenda in this track to display')}
