@@ -105,7 +105,7 @@ export default function Confirmation({ address, alterType, handleClose, txInfo, 
         <DisplayInfo caption={t<string>('Lock up period:')} value={t<string>(voteInformation.voteLockUpUpPeriod)} />
       }
       {alterType !== 'remove' &&
-        <DisplayInfo caption={t<string>('Your vote power:')} value={<ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={4} token={token} />} />
+        <DisplayInfo caption={t<string>('Your voting power:')} value={<ShowBalance balance={voteInformation.votePower} decimal={decimal} decimalPoint={4} token={token} />} />
       }
       <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&

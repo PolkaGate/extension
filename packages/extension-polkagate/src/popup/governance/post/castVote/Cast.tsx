@@ -380,7 +380,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '25px', width: '70%' }}>
             <Grid item sx={{ fontSize: '14px' }}>
               <Infotip2 showQuestionMark text={t('The voting power which is delegated to this account')}>
-                {t('Delegated Vote Power')}
+                {t('Delegated Voting Power')}
               </Infotip2>
             </Grid>
             <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>

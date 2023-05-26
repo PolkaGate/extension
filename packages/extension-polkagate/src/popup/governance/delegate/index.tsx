@@ -410,7 +410,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
               <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
                 <Grid item>
                   <Typography sx={{ fontSize: '16px' }}>
-                    {t('Your final delegated vote power')}
+                    {t('Your final delegated voting power')}
                   </Typography>
                 </Grid>
                 <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>

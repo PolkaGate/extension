@@ -241,10 +241,10 @@ export default function Index({ address, cantModify, status, hasVoted, myVote, n
             selectedProxy={selectedProxy}
             setStep={setStep}
             setTxInfo={setTxInfo}
+            status={status}
             step={step}
             tx={alterType === 'remove' ? removeTx : voteTx}
             voteInformation={voteInformation}
-            status={status}
           />
         }
         {step === STEPS.CHECK_SCREEN &&

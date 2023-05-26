@@ -73,7 +73,7 @@ export default function About ({ setStep }: Props): React.ReactElement {
         <Grid container item>
           <UL
             notes={[
-              t<string>('You can give your vote power to another account with a vote multiplier.'),
+              t<string>('You can give your voting power to another account with a vote multiplier.'),
               t<string>('The duration of your tokens\' lock period depends on the selected multiplier.'),
               t<string>('You can choose to delegate votes in all tracks or specific ones.'),
               t<string>('If you have already voted in a category, it cannot be selected for delegation.')
