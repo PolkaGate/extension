@@ -90,7 +90,7 @@ export default function Preview({ address, cantModify, setAlterType, setStep, vo
 
   return (
     <Motion style={{ height: '100%' }}>
-      <Grid container ref={ref} pt='30px'>
+      <Grid container pt='30px' ref={ref}>
         <DisplayValue title={t<string>('Account')} topDivider={false}>
           <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
