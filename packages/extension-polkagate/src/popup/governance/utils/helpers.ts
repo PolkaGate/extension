@@ -155,7 +155,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=ReferendumV2&sortBy=balance`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=ReferendumV2&sortBy=time`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data) {
