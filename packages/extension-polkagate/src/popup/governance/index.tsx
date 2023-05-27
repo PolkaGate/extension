@@ -12,7 +12,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
-import { REFERENDA_STATUS } from './utils/consts';
+import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
@@ -33,7 +33,7 @@ export default function Governance(): React.ReactElement {
   const api = useApi(address);
   const tracks = useTracks(address);
   const chainName = useChainName(address);
-  const pageTrackRef = useRef({ page: 1, trackId: undefined, listFinished: false });
+  const pageTrackRef = useRef({ listFinished: false, page: 1, trackId: undefined });
   const decidingCounts = useDecidingCount(address);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -137,7 +137,7 @@ export default function Governance(): React.ReactElement {
           setReferenda([...concatenated]);
         }).catch(console.error);
       } else {
-        getLatestReferendums(chainName, pageTrackRef.current.page * 30).then((res) => {
+        getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((res) => {
           setIsLoading(false);
 
           if (res === null) {
@@ -211,6 +211,7 @@ export default function Governance(): React.ReactElement {
             : <TrackStats address={address} decidingCounts={decidingCounts} selectedSubMenu={selectedSubMenu} track={currentTrack} />
           }
           <SearchBox
+            address={address}
             filterState={filterState}
             referendaToList={referendaToList}
             setFilterState={setFilterState}
@@ -231,7 +232,7 @@ export default function Governance(): React.ReactElement {
                     !isLoading
                       ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
                         <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                          {t('Click to view more')}
+                          {t('{{count}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page } })}
                         </Typography>
                       </Grid>
                       : isLoading && <Grid container justifyContent='center'>

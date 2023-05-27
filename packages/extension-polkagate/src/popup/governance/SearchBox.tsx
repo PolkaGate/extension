@@ -11,20 +11,22 @@ import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { InputFilter, Select } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useFormatted, useTranslation } from '../../hooks';
 import { REFERENDA_STATUS } from './utils/consts';
 import { LatestReferenda } from './utils/types';
 
 interface Props {
+  address: string;
   referendaToList: LatestReferenda[] | null | undefined;
   setFilteredReferenda: React.Dispatch<React.SetStateAction<LatestReferenda[] | null | undefined>>;
   setFilterState: React.Dispatch<React.SetStateAction<number>>;
   filterState: number;
 }
 
-export default function SearchBox({ filterState, referendaToList, setFilterState, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox({ address, filterState, referendaToList, setFilterState, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
@@ -39,7 +41,11 @@ export default function SearchBox({ filterState, referendaToList, setFilterState
   }, []);
 
   const onMyReferenda = useCallback(() => {
-  }, []);
+    setFilterState(0);
+    const list = referendaToList?.filter((ref) => ref.proposer === formatted);
+
+    setFilteredReferenda(list);
+  }, [formatted, referendaToList, setFilterState, setFilteredReferenda]);
 
   const onChangeStatus = useCallback((filterState: number) => {
     filterState = filterState == 'All' ? 0 : filterState;

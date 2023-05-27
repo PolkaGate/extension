@@ -5,6 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { postData } from '../../../util/api';
 import { LatestReferenda, Origins } from './types';
+import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -181,7 +182,7 @@ export async function getTrackReferendums(chainName: string, page = 1, track: nu
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/listing/on-chain-posts?page=${page}&proposalType=referendums_v2&listingLimit=10&trackNo=${track}&trackStatus=All&sortBy=newest`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/listing/on-chain-posts?page=${page}&proposalType=referendums_v2&listingLimit=${TRACK_LIMIT_TO_LOAD_PER_REQUEST}&trackNo=${track}&trackStatus=All&sortBy=newest`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
