@@ -9,9 +9,9 @@ import React, { useCallback, useContext, useMemo, useRef, useState } from 'react
 
 import { ApiPromise } from '@polkadot/api';
 
-import { AccountContext, Identity } from '../../components';
-import { useOutsideClick } from '../../hooks';
-import { tieAccount } from '../../messaging';
+import { AccountContext, Identity } from '../../../components';
+import { useOutsideClick } from '../../../hooks';
+import { tieAccount } from '../../../messaging';
 
 interface Props {
   api: ApiPromise | undefined;

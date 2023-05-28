@@ -1,6 +1,10 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
+
+import { BN } from '@polkadot/util';
+
 export type TopMenu = 'Referenda' | 'Fellowship';
 export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
 
@@ -197,3 +201,8 @@ export interface LatestReferenda {
   track_number: number;
   type: string;
 }
+
+export type Track = [
+  id: BN,
+  info: PalletReferendaTrackInfo
+];

@@ -13,7 +13,7 @@ import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
 import { MAX_WIDTH } from './utils/consts';
-import AddressDropdown from './AddressDropdown';
+import AddressDropdown from './components/AddressDropdown';
 
 export function Header(): React.ReactElement {
   const theme = useTheme();

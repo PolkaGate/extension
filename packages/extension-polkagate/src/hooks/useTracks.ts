@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Track } from './useTrack';
+import { Track } from '../popup/governance/utils/types';
 import { useApi, useChainName } from '.';
 
 export default function useTracks(address: string | undefined): Track[] | undefined {

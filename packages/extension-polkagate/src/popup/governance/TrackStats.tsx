@@ -10,10 +10,10 @@ import { ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
+import { findItemDecidingCount } from './topMenu/ReferendaMenu';
 import { kusama } from './tracks/kusama';
 import { blockToX } from './utils/util';
 import ThresholdCurves from './Chart';
-import { findItemDecidingCount } from './ReferendaMenu';
 
 interface Props {
   address: string;

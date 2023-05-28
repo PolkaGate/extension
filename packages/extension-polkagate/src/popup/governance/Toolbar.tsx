@@ -9,10 +9,11 @@ import React, { useCallback } from 'react';
 
 import { useApi, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
+import FellowshipMenu from './topMenu/FellowShipMenu';
+import ReferendaMenu from './topMenu/ReferendaMenu';
 import { MAX_WIDTH } from './utils/consts';
 import { TopMenu } from './utils/types';
 import { Delegate } from './delegate';
-import ReferendaMenu from './ReferendaMenu';
 import { SubmitReferendum } from './submitReferendum';
 
 interface Props {
@@ -123,6 +124,9 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
       </Grid>
       {menuOpen && selectedTopMenu === 'Referenda' &&
         <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
+      }
+      {menuOpen && selectedTopMenu === 'Fellowship' &&
+        <FellowshipMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
       {openSubmitReferendum &&
         <SubmitReferendum

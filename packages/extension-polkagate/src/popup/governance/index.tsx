@@ -50,7 +50,13 @@ export default function Governance(): React.ReactElement {
   const currentTrack = useMemo(() => tracks && tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
 
   useEffect(() => {
-    if (!referendaToList) {
+    if (referendaToList === undefined) {
+      return;
+    }
+
+    if (referendaToList === null) {
+      setFilteredReferenda(null);
+
       return;
     }
 
@@ -118,7 +124,7 @@ export default function Governance(): React.ReactElement {
       }
 
       if (selectedSubMenu !== 'All') {
-        trackId !== undefined && getTrackReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
+        getTrackReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
           setIsLoading(false);
 
           if (res === null) {

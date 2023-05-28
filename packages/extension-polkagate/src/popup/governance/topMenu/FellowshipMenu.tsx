@@ -3,17 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Hub as Root } from '@mui/icons-material/';
+import { AdminPanelSettings as AdminsIcon, BorderAll as All, Groups3 as Groups3Icon, Hub as Root } from '@mui/icons-material/';
 import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { MAX_WIDTH } from './utils/consts';
+import { MAX_WIDTH } from '../utils/consts';
 
 type DecidingCount = [string, number];
 
 interface Props {
   decidingCounts: DecidingCount[] | undefined;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
 
 }
@@ -29,7 +29,7 @@ export const findItemDecidingCount = (item: string, decidingCounts: DecidingCoun
   return filtered?.[1];
 };
 
-export default function ReferendaMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+export default function FellowshipMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item, decidingCounts);
     const onSubMenuClick = useCallback(() => {
@@ -62,31 +62,11 @@ export default function ReferendaMenu({ decidingCounts, setMenuOpen, setSelected
           <MenuItem
             fontWeight={500}
             icon={<Root sx={{ fontSize: 20, mr: '10px' }} />}
-            item='Root'
+            item='Members'
             top
-            width='8%'
+            width='9%'
           />
-          <Grid container item sx={{ width: '17%' }}>
-            <MenuItem
-              clickable={false}
-              fontWeight={500}
-              icon={<Cancel sx={{ fontSize: 20, mr: '10px' }} />}
-              item='Referendum'
-              top
-              width='100%'
-            />
-            <MenuItem
-              borderWidth='1px'
-              item='Referendum Canceller'
-              width='100%'
-            />
-            <MenuItem
-              borderWidth='2px'
-              item='Referendum Killer'
-              width='100%'
-            />
-          </Grid>
-          <Grid container item sx={{ width: '25.5%' }}>
+          <Grid container item sx={{ width: '15%' }}>
             <MenuItem
               clickable={false}
               fontWeight={500}
@@ -95,73 +75,83 @@ export default function ReferendaMenu({ decidingCounts, setMenuOpen, setSelected
               top
               width='100%'
             />
-            <Grid container item xs={6}>
-              <MenuItem
-                borderWidth='1px'
-                item='Auction Admin'
-                width='100%'
-              />
-              <MenuItem
-                borderWidth='1px'
-                item='General Admin'
-                width='100%'
-              />
-            </Grid>
-            <Grid container item xs={6}>
-              <MenuItem
-                borderWidth='1px'
-                item='Lease Admin'
-                width='100%'
-              />
-              <MenuItem
-                borderWidth='2px'
-                item='Staking Admin'
-                width='100%'
-              />
-            </Grid>
+            <MenuItem
+              borderWidth='1px'
+              item='Whitelisted Caller'
+              width='100%'
+            />
+            <MenuItem
+              borderWidth='2px'
+              item='Fellowship Admin'
+              width='100%'
+            />
           </Grid>
-          <Grid container item sx={{ width: '39%' }}>
+          <Grid container item sx={{ width: '64.5%' }}>
             <MenuItem
               clickable={false}
               fontWeight={500}
-              icon={<TreasuryIcon sx={{ fontSize: 20 }} />}
-              item='Treasury'
+              icon={<Groups3Icon sx={{ fontSize: 20, mr: '10px' }} />}
+              item='Member Referenda'
               top
               width='100%'
             />
-            <Grid container item xs={3.5}>
+            <Grid container item xs={2.4}>
               <MenuItem
                 borderWidth='1px'
-                item='Small Tipper'
+                item='Candidates'
                 width='100%'
               />
               <MenuItem
                 borderWidth='1px'
-                item='Big Tipper'
-                width='100%'
-              />
-            </Grid>
-            <Grid container item xs={4.5}>
-              <MenuItem
-                borderWidth='1px'
-                item='Small Spender'
-                width='100%'
-              />
-              <MenuItem
-                borderWidth='1px'
-                item='Medium Spender'
+                item='Members'
                 width='100%'
               />
             </Grid>
-            <Grid container item xs={4}>
+            <Grid container item xs={2.4}>
               <MenuItem
                 borderWidth='1px'
-                item='Big Spender'
+                item='Proficients'
                 width='100%'
               />
               <MenuItem
                 borderWidth='2px'
-                item='Treasurer'
+                item='Fellows'
+                width='100%'
+              />
+            </Grid>
+            <Grid container item xs={2.4}>
+              <MenuItem
+                borderWidth='1px'
+                item='Senior Fellows'
+                width='100%'
+              />
+              <MenuItem
+                borderWidth='2px'
+                item='Experts'
+                width='100%'
+              />
+            </Grid>
+            <Grid container item xs={2.4}>
+              <MenuItem
+                borderWidth='1px'
+                item='Senior Experts'
+                width='100%'
+              />
+              <MenuItem
+                borderWidth='2px'
+                item='Masters'
+                width='100%'
+              />
+            </Grid>
+            <Grid container item xs={2.4}>
+              <MenuItem
+                borderWidth='1px'
+                item='Senior Masters'
+                width='100%'
+              />
+              <MenuItem
+                borderWidth='2px'
+                item='Grand Masters'
                 width='100%'
               />
             </Grid>
