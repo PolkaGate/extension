@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Box, Grid, Link, SxProps, Theme } from '@mui/material';
+import { Box, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useEffect, useMemo } from 'react';
 
@@ -47,6 +47,27 @@ function Identity({ accountInfo, address, api, msData, chain, formatted, identic
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
   const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
 
+  const merkleScienceTooltip = useMemo(() => (msData &&
+    <Typography variant='body2'>
+      <Grid container justifyContent='flex-start'>
+        <Grid item textAlign='left' xs={12}>
+          {t('Data from Merkle Science (NOT onchain data)')}
+        </Grid>
+        <Grid item textAlign='left' xs={12}>
+          {t(` - Type: ${msData.tag_type_verbose}`)}
+        </Grid>
+        <Grid item textAlign='left' xs={12}>
+          {t(` - Subtype: ${msData.tag_subtype_verbose}`)}
+        </Grid>
+        {msData.tag_type_verbose === 'Scam' &&
+          <Grid item textAlign='left' xs={12}>
+            {t(` - Name: ${msData.tag_name_verbose}`)}
+          </Grid>
+        }
+      </Grid>
+    </Typography>
+  ), [msData, t]);
+
   useEffect(() => {
     returnIdentity && _accountInfo?.identity && returnIdentity(_accountInfo.identity);
   }, [_accountInfo, returnIdentity]);
@@ -66,21 +87,21 @@ function Identity({ accountInfo, address, api, msData, chain, formatted, identic
           </Grid>
         }
         {msData &&
-          <Grid display='flex' item pr='5px'>
-            <Infotip text={`Data from Merkle Science (NOT onchain data): type: ${msData.tag_type_verbose} sub type: ${msData.tag_subtype_verbose}`}>
+          <Infotip text={merkleScienceTooltip}>
+            <Grid display='flex' item pr='5px'>
               <Box
                 component='img'
                 src={ms as string}
-                sx={{ width: '25px' }}
+                sx={{ width: '31px' }}
               />
-            </Infotip>
-          </Grid>
+            </Grid>
+          </Infotip>
         }
         <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {msData
               ? <Grid item>
-                {msData.tag_name_verbose}
+                {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
               : <>
                 {_accountInfo?.identity?.displayParent &&
