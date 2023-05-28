@@ -89,7 +89,6 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
     const vote = jsonProxyVoting?.casting?.votes?.find(([index]) => index === referendumIndex)?.[1];
 
     if (!vote?.standard) {
-
       return {
         delegating: {
           ...jsonVoting.delegating,
