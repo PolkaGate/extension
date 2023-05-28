@@ -12,6 +12,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
 import { getLatestReferendums, getTrackReferendums, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
@@ -212,10 +213,12 @@ export default function Governance(): React.ReactElement {
           }
           <SearchBox
             address={address}
+            api={api}
             filterState={filterState}
             referendaToList={referendaToList}
             setFilterState={setFilterState}
             setFilteredReferenda={setFilteredReferenda}
+            tracks={tracks}
           />
           {filteredReferenda
             ? <>

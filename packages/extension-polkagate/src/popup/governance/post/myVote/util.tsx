@@ -3,6 +3,8 @@
 
 import { ApiPromise } from '@polkadot/api';
 
+import { Track } from '../../../../hooks/useTrack';
+
 export const CONVICTION = {
   Locked1x: 1,
   Locked2x: 2,
@@ -64,7 +66,7 @@ interface Voting {
 
 export async function getAddressVote(address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
   const voting = await api.query.convictionVoting.votingFor(address, trackId);
-  const jsonVoting = voting?.toJSON() as Voting;
+  const jsonVoting = voting?.toJSON() as unknown as Voting;
 
   if (!jsonVoting) {
     return null;
@@ -113,4 +115,25 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
   }
 
   return null;
+}
+
+export async function getAllVotes(address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
+  const queries = tracks.map((t) => api.query.convictionVoting.votingFor(address, t[0]))
+  const voting = await Promise.all(queries);
+  const castedRefIndexes = voting?.map((v => {
+    const jsonV = v.toJSON() as unknown as Voting;
+
+    return jsonV?.casting?.votes?.map((vote) => vote[0]);
+  }));
+
+  console.log('castedRefIndexes:::', castedRefIndexes.flat())
+  // if (jsonVoting.delegating) {
+  //   // Then, look into the votes of the delegating target address.
+  //   const { target, conviction } = jsonVoting.delegating;
+  //   const proxyVoting = await api.query.convictionVoting.votingFor(target, trackId);
+  //   const jsonProxyVoting = proxyVoting?.toJSON() as Voting;
+  //   const vote = jsonProxyVoting?.casting?.votes?.find(([index]) => index === referendumIndex)?.[1];
+  // }
+
+  return castedRefIndexes.flat();
 }

@@ -164,6 +164,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
         />
         <LabelValue
           label={t('Participation')}
+          noBorder
           value={<ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />}
         />
         <Divider orientation='vertical' />

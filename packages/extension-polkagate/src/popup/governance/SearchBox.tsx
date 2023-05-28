@@ -8,26 +8,33 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { ApiPromise } from '@polkadot/api';
 
 import { InputFilter, Select } from '../../components';
 import { useFormatted, useTranslation } from '../../hooks';
+import { Track } from '../../hooks/useTrack';
+import { getAllVotes } from './post/myVote/util';
 import { REFERENDA_STATUS } from './utils/consts';
 import { LatestReferenda } from './utils/types';
 
 interface Props {
   address: string;
+  api: ApiPromise | undefined;
   referendaToList: LatestReferenda[] | null | undefined;
   setFilteredReferenda: React.Dispatch<React.SetStateAction<LatestReferenda[] | null | undefined>>;
   setFilterState: React.Dispatch<React.SetStateAction<number>>;
   filterState: number;
+  tracks: Track[] | undefined;
 }
 
-export default function SearchBox({ address, filterState, referendaToList, setFilterState, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox({ address, api, filterState, referendaToList, setFilterState, setFilteredReferenda, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -36,9 +43,21 @@ export default function SearchBox({ address, filterState, referendaToList, setFi
     };
   }), []);
 
+  useEffect(() => {
+    address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
+  }, [address, api, tracks]);
+
   const onAdvanced = useCallback(() => {
     setShowAdvanced(true);
   }, []);
+
+  const onMyVots = useCallback(() => {
+    setFilterState(0);
+    console.log('myVotedReferendaIndexes:', myVotedReferendaIndexes)
+    const myReferendaList = referendaToList?.filter((ref) => myVotedReferendaIndexes?.includes(ref.post_id));
+
+    setFilteredReferenda(myReferendaList);
+  }, [myVotedReferendaIndexes, referendaToList, setFilterState, setFilteredReferenda]);
 
   const onMyReferenda = useCallback(() => {
     setFilterState(0);
@@ -90,7 +109,7 @@ export default function SearchBox({ address, filterState, referendaToList, setFi
       <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onMyReferenda} pl='15px' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
         {t('My Referenda')}
       </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onMyReferenda} pl='15px' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
+      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onMyVots} pl='15px' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
         {t('My Votes')}
       </Grid>
     </Grid>
