@@ -9,9 +9,10 @@ import { useParams } from 'react-router';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { useApi, useTranslation } from '../hooks';
+import { useApi, useTranslation, useMerkleScience } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
 import { AccountContext, AddressInput, Identity } from '.';
+import { getLastMsUpdateTime } from '../util/getMS';
 
 interface Props {
   address: string | null | undefined;
@@ -23,13 +24,16 @@ interface Props {
   name?: string;
 }
 
-export default function AccountInputWithIdentity ({ address, chain, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity({ address, chain, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const params = useParams<{ address: string }>();
   const api = useApi(params.address);
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format, ignoreAddress);
+  const data = useMerkleScience(address, chain);
+
+  console.log('dddaaata:', data);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
@@ -50,6 +54,7 @@ export default function AccountInputWithIdentity ({ address, chain, ignoreAddres
             formatted={address}
             identiconSize={31}
             name={name}
+            msData={data}
           />
         </Grid>
       }

@@ -13,30 +13,32 @@ import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-deri
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { riot } from '../assets/icons';
+import { ms, riot } from '../assets/icons';
 import { useAccountInfo, useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
+import { MsData } from '../util/getMS';
 import { getSubstrateAddress } from '../util/utils';
-import { ChainLogo, Identicon, ShortAddress } from '.';
+import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {
   accountInfo?: DeriveAccountInfo;
   address?: string | AccountId;
   api?: ApiPromise;
+  chain?: Chain;
+  msData?: MsData | undefined;
   formatted?: string | AccountId;
+  identiconSize?: number;
+  judgement?: any;
   name?: string;
+  noIdenticon?: boolean;
+  returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
   style?: SxProps<Theme>;
   showChainLogo?: boolean;
-  identiconSize?: number;
-  chain?: Chain;
   showShortAddress?: boolean;
-  withShortAddress?: boolean;
   showSocial?: boolean;
-  noIdenticon?: boolean;
-  judgement?: any;
-  returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
+  withShortAddress?: boolean;
 }
 
-function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, msData, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -61,31 +63,50 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
               size={identiconSize}
               value={_formatted || address}
             />
-          </Grid>}
+          </Grid>
+        }
+        {msData &&
+          <Grid display='flex' item pr='5px'>
+            <Infotip text={`Data from Merkle Science (NOT onchain data): type: ${msData.tag_type_verbose} sub type: ${msData.tag_subtype_verbose}`}>
+              <Box
+                component='img'
+                src={ms as string}
+                sx={{ width: '25px' }}
+              />
+            </Infotip>
+          </Grid>
+        }
         <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
-            {_accountInfo?.identity?.displayParent &&
-              <Grid item>
-                {_accountInfo?.identity.displayParent}/
+            {msData
+              ? <Grid item>
+                {msData.tag_name_verbose}
               </Grid>
-            }
-            {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
-              <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
-                {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
-              </Grid>
-            }
-            {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
-              <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
-                {name || accountName}
-              </Grid>
-            }
-            {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
-              <Grid item sx={{ textAlign: 'left' }}>
-                {showShortAddress
-                  ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
-                  : t('Unknown')
+              : <>
+                {_accountInfo?.identity?.displayParent &&
+                  <Grid item>
+                    {_accountInfo?.identity.displayParent}/
+                  </Grid>
                 }
-              </Grid>
+                {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
+                  <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+                    {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
+                  </Grid>
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
+                  <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+                    {name || accountName}
+                  </Grid>
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
+                  <Grid item sx={{ textAlign: 'left' }}>
+                    {showShortAddress
+                      ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
+                      : t('Unknown')
+                    }
+                  </Grid>
+                }
+              </>
             }
           </Grid>
           {withShortAddress &&
@@ -127,12 +148,13 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
           </Grid>
         }
       </Grid>
-      {showChainLogo &&
+      {
+        showChainLogo &&
         <Grid item>
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }
-    </Grid>
+    </Grid >
   );
 }
 
