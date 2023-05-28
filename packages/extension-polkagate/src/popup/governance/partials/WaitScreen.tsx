@@ -53,7 +53,7 @@ function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElemen
         </Typography>
       </Grid>
       {showCube
-        ? <CubeGrid col={3} color={theme.palette.background.paper} row={3} size={135} />
+        ? <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={135} style={{ opacity: '0.4' }} />
         : <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} />
       }
       <Typography sx={{ fontSize: '18px', fontWeight: 300, m: 'auto', pt: '70px', px: '20px', textAlign: 'center', width: 'fit-content' }}>

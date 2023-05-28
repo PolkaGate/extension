@@ -249,7 +249,7 @@ export default function Governance(): React.ReactElement {
                 </Typography>
               </Grid>
               : <Grid container justifyContent='center' pt='10%'>
-                <CubeGrid col={3} color={theme.palette.background.paper} row={3} size={200} />
+                <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
               </Grid>
           }
         </Container>
