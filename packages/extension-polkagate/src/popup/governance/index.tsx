@@ -198,7 +198,7 @@ export default function Governance(): React.ReactElement {
         address={address}
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
-        selectedTopMenu={selectedTopMenu}
+        selectedTopMenu={selectedTopMenu || 'Referenda'}
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
         setSelectedTopMenu={setSelectedTopMenu}

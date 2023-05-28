@@ -114,9 +114,7 @@ export default function ReferendumPost(): React.ReactElement {
     setSelectedSubMenu(state?.selectedSubMenu || pascalCaseToTitleCase(referendumFromPA?.origin)?.trim());
   }, [referendumFromPA?.origin, state?.selectedSubMenu]);
 
-  const onCastVote = useCallback(() =>
-    setShowCastVote(true)
-    , []);
+  const onCastVote = useCallback(() => setShowCastVote(true), []);
 
   const status = useMemo(() => referendumFromPA?.status || referendumFromSb?.status, [referendumFromPA, referendumFromSb]);
   const isOngoing = !ENDED_STATUSES.includes(status);
@@ -150,7 +148,7 @@ export default function ReferendumPost(): React.ReactElement {
         address={address}
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
-        selectedTopMenu={selectedTopMenu}
+        selectedTopMenu={state?.selectedTopMenu || selectedTopMenu || 'Referenda'}
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
         setSelectedTopMenu={setSelectedTopMenu}
