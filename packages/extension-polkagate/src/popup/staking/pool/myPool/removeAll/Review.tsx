@@ -258,7 +258,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           onConfirmClick={unstakeOrRemoveAll}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
