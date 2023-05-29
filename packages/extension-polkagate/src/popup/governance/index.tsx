@@ -11,10 +11,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
-import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
-import { getLatestReferendums, getTrackReferendums, Statistics } from './utils/helpers';
+import { getLatestReferendums, getTrackOrFellowshipReferendums, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
@@ -34,10 +34,10 @@ export default function Governance(): React.ReactElement {
   const api = useApi(address);
   const tracks = useTracks(address);
   const chainName = useChainName(address);
-  const pageTrackRef = useRef({ listFinished: false, page: 1, trackId: undefined });
+  const pageTrackRef = useRef({ listFinished: false, page: 1, topMenu: 'Referenda', trackId: undefined });
   const decidingCounts = useDecidingCount(address);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>('Referenda');
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
@@ -79,7 +79,7 @@ export default function Governance(): React.ReactElement {
     console.log('Maximum size of the referendum queue for a single track:', api.consts.referenda.maxQueued.toString());
     console.log('minimum amount to be used as a deposit :', api.consts.referenda.submissionDeposit.toString());
     console.log('blocks after submission that a referendum must begin decided by.', api.consts.referenda.undecidingTimeout.toString());
-
+   
     api.query.referenda.referendumCount().then((count) => {
       console.log('total referendum count:', count.toNumber());
       setReferendumCount(count?.toNumber());
@@ -92,12 +92,14 @@ export default function Governance(): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
-    if (chainName && selectedSubMenu === 'All') {
-      setReferenda(undefined);
-      // eslint-disable-next-line no-void
-      void getLatestReferendums(chainName).then((res) => setReferenda(res));
-    }
-  }, [chainName, selectedSubMenu]);
+    // to view the referenda at the first page load
+    // if (chainName && selectedSubMenu === 'All') {
+    //   setReferenda(undefined);
+    //   // eslint-disable-next-line no-void
+    //   void getLatestReferendums(chainName).then((res) => setReferenda(res));
+    // }
+    
+  }, []);
 
   const getReferendaById = useCallback((postId: number) => {
     history.push({
@@ -107,64 +109,74 @@ export default function Governance(): React.ReactElement {
   }, [address, history, selectedSubMenu, selectedTopMenu]);
 
   useEffect(() => {
-    if (chainName && selectedSubMenu && tracks?.length) {
-      const trackId = tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0] as number;
-      let list = referendaToList;
-
-      if (pageTrackRef.current.trackId !== trackId) {
-        setReferenda(undefined);
-        list = [];
-        pageTrackRef.current.trackId = trackId; // Update the ref with new values
-        pageTrackRef.current.page = 1;
-        pageTrackRef.current.listFinished = false;
-      }
-
-      if (pageTrackRef.current.page > 1) {
-        setIsLoading(true);
-      }
-
-      if (selectedSubMenu !== 'All') {
-        getTrackReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
-          setIsLoading(false);
-
-          if (res === null) {
-            if (pageTrackRef.current.page === 1) { // there is no referendum for this track
-              setReferenda(null);
-
-              return;
-            }
-
-            pageTrackRef.current.listFinished = true;
-
-            return;
-          }
-
-          const concatenated = (list || []).concat(res);
-
-          setReferenda([...concatenated]);
-        }).catch(console.error);
-      } else {
-        getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((res) => {
-          setIsLoading(false);
-
-          if (res === null) {
-            if (pageTrackRef.current.page === 1) { // there is no referendum !!
-              setReferenda(null);
-
-              return;
-            }
-
-            pageTrackRef.current.listFinished = true;
-
-            return;
-          }
-
-          setReferenda(res);
-        }).catch(console.error);
-      }
+    if (!chainName || !selectedSubMenu || !selectedTopMenu) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainName, getMore, selectedSubMenu, tracks]);
+
+    const trackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
+    let list = referendaToList;
+
+    // to reset referenda list on menu change
+    if (pageTrackRef.current.trackId !== trackId || pageTrackRef.current.topMenu !== selectedTopMenu) {
+      setReferenda(undefined);
+      list = [];
+      pageTrackRef.current.trackId = trackId; // Update the ref with new values
+      pageTrackRef.current.page = 1;
+      pageTrackRef.current.listFinished = false;
+    }
+
+    if (pageTrackRef.current.page > 1) {
+      setIsLoading(true);
+    }
+
+    pageTrackRef.current.topMenu = selectedTopMenu;
+
+    console.log('pageTrackRef.current.page:',pageTrackRef.current.page)
+    console.log('selectedTopMenu:',selectedTopMenu)
+    console.log('selectedSubMenu:',selectedSubMenu)
+
+    if (selectedTopMenu === 'Referenda' && selectedSubMenu === 'All') {
+      getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((res) => {
+        setIsLoading(false);
+
+        if (res === null) {
+          if (pageTrackRef.current.page === 1) { // there is no referendum !!
+            setReferenda(null);
+
+            return;
+          }
+
+          pageTrackRef.current.listFinished = true;
+
+          return;
+        }
+
+        setReferenda(res);
+      }).catch(console.error);
+
+      return;
+    }
+
+    getTrackOrFellowshipReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
+      setIsLoading(false);
+
+      if (res === null) {
+        if (pageTrackRef.current.page === 1) { // there is no referendum for this track
+          setReferenda(null);
+
+          return;
+        }
+
+        pageTrackRef.current.listFinished = true;
+
+        return;
+      }
+
+      const concatenated = (list || []).concat(res);
+
+      setReferenda([...concatenated]);
+    }).catch(console.error);
+  }, [chainName, getMore, selectedSubMenu, tracks, selectedTopMenu]);
 
   const backToTopMenu = useCallback((event) => {
     setSelectedSubMenu('All');

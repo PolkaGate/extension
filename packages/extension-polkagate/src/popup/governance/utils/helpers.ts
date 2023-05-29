@@ -4,8 +4,8 @@
 import { ApiPromise } from '@polkadot/api';
 
 import { postData } from '../../../util/api';
-import { LatestReferenda, Origins } from './types';
 import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
+import { LatestReferenda, Origins } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -88,7 +88,7 @@ export async function getReferendumStatistics(chainName: string): Promise<Statis
 
 export async function getReferendumVotesFromSubscan(chainName: string, referendumIndex: number | undefined): Promise<string | null> {
   if (!referendumIndex) {
-    console.log('referendumIndex is undefined getting Referendum Votes ');
+    console.log('referendumIndex is undefined while getting Referendum Votesfrom Sb ');
 
     return null;
   }
@@ -174,7 +174,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
     });
 }
 
-export async function getTrackReferendums(chainName: string, page = 1, track: number): Promise<LatestReferenda[] | null> {
+export async function getTrackOrFellowshipReferendums(chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
   console.log(`Getting refs on ${chainName} track:${track}`);
 
   const requestOptions = {
