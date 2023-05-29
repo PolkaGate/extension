@@ -28,6 +28,8 @@ interface Props {
 
 export default function Toolbar({ address, decidingCounts, menuOpen, selectedTopMenu, setMenuOpen, setSelectedSubMenu, setSelectedTopMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const api = useApi(address);
+
   const [openSubmitReferendum, setOpenSubmitReferendum] = React.useState(false);
   const [openDelegate, setOpenDelegate] = React.useState(false);
   const [showDelegationNote, setShowDelegationNote] = React.useState<boolean>(true);
@@ -44,12 +46,10 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
     setOpenDelegate(true);
   };
 
-  const api = useApi(address);
-
   const onTopMenuMenuClick = useCallback((item: TopMenu) => {
     setSelectedTopMenu(item);
-    setMenuOpen(!menuOpen);
-  }, [menuOpen, setMenuOpen, setSelectedTopMenu]);
+    setMenuOpen(selectedTopMenu === item ? !menuOpen : true);
+  }, [menuOpen, selectedTopMenu, setMenuOpen, setSelectedTopMenu]);
 
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (

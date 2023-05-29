@@ -18,8 +18,6 @@ interface Props {
   notVoted: boolean | undefined;
 }
 
-type VotingMethod = 'Standard' | 'delegated';
-
 export default function MyVote({ address, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();

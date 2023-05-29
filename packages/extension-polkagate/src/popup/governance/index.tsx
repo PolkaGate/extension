@@ -13,7 +13,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
-import { getLatestReferendums, getTrackOrFellowshipReferendums, Statistics } from './utils/helpers';
+import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendums, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
@@ -111,9 +111,9 @@ export default function Governance(): React.ReactElement {
 
   }, []);
 
-  const getReferendaById = useCallback((postId: number) => {
+  const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
     history.push({
-      pathname: `/governance/${address}/${postId}`,
+      pathname: `/governance/${address}/${type === 'ReferendumV2' ? 'Referenda' : 'Fellowship'}/${postId}`,
       state: { selectedSubMenu, selectedTopMenu }
     });
   }, [address, history, selectedSubMenu, selectedTopMenu]);
@@ -178,10 +178,15 @@ export default function Governance(): React.ReactElement {
         return;
       }
 
+      getReferendumsListSb(chainName, selectedTopMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((sbRes) => {
+        console.log('sbRes:', sbRes);
+      }).catch(console.error);
+
       const concatenated = (list || []).concat(res);
 
       setReferenda([...concatenated]);
     }).catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, getMore, selectedSubMenu, tracks, selectedTopMenu]);
 
   const backToTopMenu = useCallback((event) => {
@@ -255,7 +260,7 @@ export default function Governance(): React.ReactElement {
               {filteredReferenda.map((referendum, index) => {
                 if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                   return (
-                    <ReferendumSummary address={address} key={index} onClick={() => getReferendaById(referendum.post_id)} referendum={referendum} />
+                    <ReferendumSummary address={address} key={index} onClick={() => getReferendaById(referendum.post_id, referendum.type)} referendum={referendum} />
                   );
                 }
               })}

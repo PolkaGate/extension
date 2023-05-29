@@ -5,7 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { postData } from '../../../util/api';
 import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
-import { LatestReferenda, Origins } from './types';
+import { LatestReferenda, Origins, TopMenu } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -88,7 +88,7 @@ export async function getReferendumStatistics(chainName: string): Promise<Statis
 
 export async function getReferendumVotesFromSubscan(chainName: string, referendumIndex: number | undefined): Promise<string | null> {
   if (!referendumIndex) {
-    console.log('referendumIndex is undefined while getting Referendum Votesfrom Sb ');
+    console.log('referendumIndex is undefined while getting Referendum Votes from Sb ');
 
     return null;
   }
@@ -175,7 +175,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
 }
 
 export async function getTrackOrFellowshipReferendums(chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
-  console.log(`Getting refs on ${chainName} track:${track}`);
+  console.log(`Getting refs on ${chainName} track:${track} from PA`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -186,7 +186,7 @@ export async function getTrackOrFellowshipReferendums(chainName: string, page = 
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
-        console.log(`Referendums on ${chainName}/ track:${track}:`, data.posts);
+        console.log(`Referendums on ${chainName}/ track:${track} from PA:`, data.posts);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data.posts;
@@ -203,15 +203,17 @@ export async function getTrackOrFellowshipReferendums(chainName: string, page = 
     });
 }
 
-export async function getReferendum(chainName: string, postId: number): Promise<string[] | null> {
+export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<string[] | null> {
   console.log(`Getting ref #${postId} info from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
   };
 
+  const _type = type === 'Referenda' ? 'referendums_v2' : 'fellowship_referendums';
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/posts/on-chain-post?proposalType=referendums_v2&postId=${postId}`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/posts/on-chain-post?proposalType=${_type}&postId=${postId}`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data) {
@@ -232,7 +234,7 @@ export async function getReferendum(chainName: string, postId: number): Promise<
     });
 }
 
-export async function getReferendumFromSubscan(chainName: string, postId: number): Promise<Statistics | null> {
+export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<any | null> {
   console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint
@@ -241,7 +243,7 @@ export async function getReferendumFromSubscan(chainName: string, postId: number
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + '.api.subscan.io/api/scan/referenda/referendum',
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendum`,
         {
           referendum_index: referendumIndex
         })
@@ -257,6 +259,36 @@ export async function getReferendumFromSubscan(chainName: string, postId: number
         });
     } catch (error) {
       console.log('something went wrong while getting referendum statistics');
+      resolve(null);
+    }
+  });
+}
+
+export async function getReferendumsListSb(chainName: string, type: TopMenu, listingLimit = 30): Promise<any | null> {
+  console.log('Getting ref list from sb ...');
+
+  return new Promise((resolve) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendum`,
+        {
+          // page:1,
+          row: 30
+          // status:	//completed| active
+          // Origins:
+        })
+        .then((data: { message: string; data }) => {
+          if (data.message === 'Success') {
+            console.log('Ref list from Sb:', data.data);
+
+            resolve(data.data);
+          } else {
+            console.log(`Fetching message ${data.message}`);
+            resolve(null);
+          }
+        });
+    } catch (error) {
+      console.log('something went wrong while getting referendums list');
       resolve(null);
     }
   });

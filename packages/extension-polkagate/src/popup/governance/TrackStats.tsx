@@ -32,8 +32,6 @@ const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | u
     key === item.toLowerCase().replace(' ', '_') ||
     key === item.toLowerCase());
 
-    console.log('filteredfilteredfiltered:',filtered);
-    
   return filtered?.[1];
 };
 

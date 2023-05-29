@@ -198,7 +198,7 @@ export default function Popup(): React.ReactElement {
                           <Switch>
                             <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
-                            <Route path='/governance/:address/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
+                            <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
                             <Route path='/governance/:address/'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                             <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>

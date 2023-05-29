@@ -13,7 +13,7 @@ import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useTr
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
-import { getReferendum, getReferendumFromSubscan } from '../utils/helpers';
+import { getReferendumPA, getReferendumSb } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
 import { getVoteType, pascalCaseToTitleCase, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
@@ -28,7 +28,7 @@ import Voting from './Voting';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
-  const { address, postId } = useParams<{ address?: string | undefined, postId?: string | undefined }>();
+  const { address, topMenu, postId } = useParams<{ address?: string | undefined, postId?: string | undefined }>();
   const history = useHistory();
   const { state } = useLocation();
   const api = useApi(address);
@@ -94,17 +94,22 @@ export default function ReferendumPost(): React.ReactElement {
       pathname: `/governance/${address}`,
       state: { selectedSubMenu }
     });
-  }, [address, history, selectedSubMenu]);
+  }, [address, history, selectedSubMenu,]);
 
   useEffect(() => {
-    chainName && postId && getReferendum(chainName, postId).then((res) => {
-      setReferendum(res);
-    });
+    if (!chainName || !postId) {
+      return;
+    }
 
-    chainName && postId && getReferendumFromSubscan(chainName, postId).then((res) => {
+    getReferendumPA(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
+      setReferendum(res);
+    }).catch(console.error);
+
+
+    getReferendumSb(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
       setReferendumFromSb(res);
-    });
-  }, [chainName, postId]);
+    }).catch(console.error);
+  }, [chainName, postId, selectedTopMenu, topMenu]);
 
   const backToTopMenu = useCallback(() => {
     setSelectedSubMenu('All');
@@ -148,7 +153,7 @@ export default function ReferendumPost(): React.ReactElement {
         address={address}
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
-        selectedTopMenu={state?.selectedTopMenu || selectedTopMenu || 'Referenda'}
+        selectedTopMenu={selectedTopMenu || state?.selectedTopMenu || 'Referenda'}
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
         setSelectedTopMenu={setSelectedTopMenu}
@@ -228,8 +233,8 @@ export default function ReferendumPost(): React.ReactElement {
           refIndex={refIndex}
           setOpen={setShowCastVote}
           showAbout={showAboutVoting}
-          trackId={trackId}
           status={status}
+          trackId={trackId}
         />
       }
     </>

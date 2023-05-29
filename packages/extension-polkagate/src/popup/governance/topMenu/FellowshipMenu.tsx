@@ -19,8 +19,10 @@ interface Props {
 }
 
 export default function FellowshipMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item, decidingCounts);
+
     const onSubMenuClick = useCallback(() => {
       setSelectedSubMenu(item);
       setMenuOpen((prevStatus) => !prevStatus);
@@ -32,7 +34,6 @@ export default function FellowshipMenu({ decidingCounts, setMenuOpen, setSelecte
         <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
           {item}{decidingCount ? ` (${decidingCount})` : ''}
         </Typography>
-
       </Grid>
     );
   }
