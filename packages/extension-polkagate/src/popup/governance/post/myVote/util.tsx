@@ -126,7 +126,6 @@ export async function getAllVotes(address: string, api: ApiPromise, tracks: Trac
     return jsonV?.casting?.votes?.map((vote) => vote[0]);
   }));
 
-  console.log('castedRefIndexes:::', castedRefIndexes.flat())
   // if (jsonVoting.delegating) {
   //   // Then, look into the votes of the delegating target address.
   //   const { target, conviction } = jsonVoting.delegating;

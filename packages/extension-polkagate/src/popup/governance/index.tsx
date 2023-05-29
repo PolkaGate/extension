@@ -11,7 +11,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
 import { getLatestReferendums, getTrackOrFellowshipReferendums, Statistics } from './utils/helpers';
@@ -32,7 +31,7 @@ export default function Governance(): React.ReactElement {
 
   useFullscreen();
   const api = useApi(address);
-  const tracks = useTracks(address);
+  const { fellowshipTracks, tracks } = useTracks(address);
   const chainName = useChainName(address);
   const pageTrackRef = useRef({ listFinished: false, page: 1, topMenu: 'Referenda', trackId: undefined });
   const decidingCounts = useDecidingCount(address);
@@ -47,7 +46,18 @@ export default function Governance(): React.ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>();
   const [filterState, setFilterState] = useState(0);
 
-  const currentTrack = useMemo(() => tracks && tracks.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_')), [selectedSubMenu, tracks]);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const currentTrack = useMemo(() => {
+    if (!tracks || !fellowshipTracks) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return tracks.concat(fellowshipTracks).find((t) =>
+      String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_') ||
+      String(t[1].name) === selectedSubMenu.toLowerCase() // fellowship tracks have no underscore!
+    );
+  }, [fellowshipTracks, selectedSubMenu, tracks]);
 
   useEffect(() => {
     if (referendaToList === undefined) {
@@ -79,7 +89,7 @@ export default function Governance(): React.ReactElement {
     console.log('Maximum size of the referendum queue for a single track:', api.consts.referenda.maxQueued.toString());
     console.log('minimum amount to be used as a deposit :', api.consts.referenda.submissionDeposit.toString());
     console.log('blocks after submission that a referendum must begin decided by.', api.consts.referenda.undecidingTimeout.toString());
-   
+
     api.query.referenda.referendumCount().then((count) => {
       console.log('total referendum count:', count.toNumber());
       setReferendumCount(count?.toNumber());
@@ -98,7 +108,7 @@ export default function Governance(): React.ReactElement {
     //   // eslint-disable-next-line no-void
     //   void getLatestReferendums(chainName).then((res) => setReferenda(res));
     // }
-    
+
   }, []);
 
   const getReferendaById = useCallback((postId: number) => {
@@ -130,10 +140,6 @@ export default function Governance(): React.ReactElement {
     }
 
     pageTrackRef.current.topMenu = selectedTopMenu;
-
-    console.log('pageTrackRef.current.page:',pageTrackRef.current.page)
-    console.log('selectedTopMenu:',selectedTopMenu)
-    console.log('selectedSubMenu:',selectedSubMenu)
 
     if (selectedTopMenu === 'Referenda' && selectedSubMenu === 'All') {
       getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((res) => {
@@ -227,7 +233,13 @@ export default function Governance(): React.ReactElement {
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           {selectedSubMenu === 'All'
             ? <AllReferendaStats address={address} referendumStats={referendumStats} setReferendumStats={setReferendumStats} />
-            : <TrackStats address={address} decidingCounts={decidingCounts} selectedSubMenu={selectedSubMenu} track={currentTrack} />
+            : <TrackStats
+              address={address}
+              decidingCounts={decidingCounts}
+              selectedSubMenu={selectedSubMenu}
+              selectedTopMenu={selectedTopMenu}
+              track={currentTrack}
+            />
           }
           <SearchBox
             address={address}

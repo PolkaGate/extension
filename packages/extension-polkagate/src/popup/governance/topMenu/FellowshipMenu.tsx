@@ -7,27 +7,16 @@ import { AdminPanelSettings as AdminsIcon, BorderAll as All, Groups3 as Groups3I
 import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { Count } from '../../../hooks/useDecidingCount';
 import { MAX_WIDTH } from '../utils/consts';
-
-type DecidingCount = [string, number];
+import { findItemDecidingCount } from './ReferendaMenu';
 
 interface Props {
-  decidingCounts: DecidingCount[] | undefined;
+  decidingCounts: Count[] | undefined;
   setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
 
 }
-
-export const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | undefined): number | undefined => {
-  if (!decidingCounts) {
-    return undefined;
-  }
-
-  const itemKey = item.toLowerCase().replaceAll(' ', '_');
-  const filtered = decidingCounts.find(([key]) => key === itemKey);
-
-  return filtered?.[1];
-};
 
 export default function FellowshipMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {

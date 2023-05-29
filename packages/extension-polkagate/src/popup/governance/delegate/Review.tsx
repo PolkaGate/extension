@@ -47,7 +47,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
   const chain = useChain(address);
   const proxies = useProxies(api, formatted);
   const ref = useRef(null);
-  const tracks = useTracks(address);
+  const { tracks } = useTracks(address);
   const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
 
   const [password, setPassword] = useState<string | undefined>();

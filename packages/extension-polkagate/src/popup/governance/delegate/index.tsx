@@ -61,7 +61,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const api = useApi(address);
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
-  const tracks = useTracks(address);
+  const { tracks } = useTracks(address);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const blockTime = useBlockInterval(address);
   const convictionOptions = useConvictionOptions(address, blockTime, t);

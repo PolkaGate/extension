@@ -23,7 +23,7 @@ interface Props {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
   setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
-  decidingCounts: DecidingCount[] | undefined;
+  decidingCounts: DecidingCount | undefined;
 }
 
 export default function Toolbar({ address, decidingCounts, menuOpen, selectedTopMenu, setMenuOpen, setSelectedSubMenu, setSelectedTopMenu }: Props): React.ReactElement {
@@ -123,10 +123,10 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
         </Container>
       </Grid>
       {menuOpen && selectedTopMenu === 'Referenda' &&
-        <ReferendaMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
+        <ReferendaMenu decidingCounts={decidingCounts?.referenda} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
       {menuOpen && selectedTopMenu === 'Fellowship' &&
-        <FellowshipMenu decidingCounts={decidingCounts} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
+        <FellowshipMenu decidingCounts={decidingCounts?.fellowship} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
       {openSubmitReferendum &&
         <SubmitReferendum

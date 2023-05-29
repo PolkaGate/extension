@@ -7,17 +7,16 @@ import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, Borde
 import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { Count } from '../../../hooks/useDecidingCount';
 import { MAX_WIDTH } from '../utils/consts';
 
-type DecidingCount = [string, number];
-
 interface Props {
-  decidingCounts: DecidingCount[] | undefined;
+  decidingCounts: Count[] | undefined;
   setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | undefined): number | undefined => {
+export const findItemDecidingCount = (item: string, decidingCounts: Count[] | undefined): number | undefined => {
   if (!decidingCounts) {
     return undefined;
   }

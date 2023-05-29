@@ -31,7 +31,7 @@ const SPEND_LIMITS = {
 };
 
 export const kusama: Record<string, TrackInfo[]> = {
-  fellowshipReferenda: [
+  fellowship: [
     {
       compare: compareFellowshipRank(0),
       id: 0,
