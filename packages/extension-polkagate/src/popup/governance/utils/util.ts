@@ -8,6 +8,8 @@ import { isAye, Vote } from '../post/myVote/util';
 
 type Result = [blockInterval: number, timeStr: string, time: Time];
 
+export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
+
 export function toSnakeCase(input: string | undefined): string | undefined {
   if (!input) {
     return undefined;

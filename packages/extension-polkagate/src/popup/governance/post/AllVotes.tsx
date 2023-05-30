@@ -7,19 +7,19 @@ import '@vaadin/icons';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Divider, Grid, Modal, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
 import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { getReferendumVotes, VoterData } from '../utils/getAllVotes';
-import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../utils/helpers';
 import { DraggableModal } from '../components/DraggableModal';
+import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../utils/helpers';
 
 interface Props {
   address: string | undefined;
+  isFellowship: boolean | undefined;
   open: boolean;
   setOpen: (value: React.SetStateAction<boolean>) => void
   refIndex: number | undefined;
@@ -41,7 +41,7 @@ const TAB_MAP = {
   ABSTAIN: 3
 };
 
-export default function AllVotes({ address, open, refIndex, setOnChainVoteCounts, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
+export default function AllVotes({ address, open, refIndex, isFellowship, setOnChainVoteCounts, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -79,14 +79,14 @@ export default function AllVotes({ address, open, refIndex, setOnChainVoteCounts
   // }, [api, refIndex, setOnChainVoteCounts, trackId]);
 
   useEffect(() => {
-    chainName && refIndex && getAllVotesFromPA(chainName, refIndex).then((res: AllVotesType | null) => {
+    chainName && refIndex && getAllVotesFromPA(chainName, refIndex, 100, isFellowship).then((res: AllVotesType | null) => {
       if (!res) {
         return setAllVotes(null);
       }
 
       const maxVote = Math.max(res.abstain.count, res.no.count, res.yes.count);
 
-      getAllVotesFromPA(chainName, refIndex, maxVote).then((res: AllVotesType | null) => {
+      getAllVotesFromPA(chainName, refIndex, maxVote, isFellowship).then((res: AllVotesType | null) => {
         if (!res) {
           return setAllVotes(null);
         }
@@ -96,7 +96,7 @@ export default function AllVotes({ address, open, refIndex, setOnChainVoteCounts
         setVoteCountsPA({ ayes: res?.yes?.count, nays: res?.no?.count });
       }).catch(console.error);
     }).catch(console.error);
-  }, [chainName, refIndex, setVoteCountsPA]);
+  }, [chainName, isFellowship, refIndex, setVoteCountsPA]);
 
   useEffect(() => {
     if (filteredVotes) {

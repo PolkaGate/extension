@@ -41,6 +41,7 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
 
+  const isFellowship = referendumPA?.type === 'FellowshipReferendum';
   const trackId = referendumSb?.origins_id || referendumPA?.track_number;
   const refIndex = referendumPA?.post_id || referendumSb?.referendum_index;
 
@@ -171,6 +172,7 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
       </Grid>
       <AllVotes
         address={address}
+        isFellowship={isFellowship}
         open={openAllVotes}
         refIndex={refIndex}
         setOnChainVoteCounts={setOnChainVoteCounts}

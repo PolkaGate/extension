@@ -97,13 +97,6 @@ export default function AccountDetails(): React.ReactElement {
     });
   }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api, price]);
 
-  const goToReceive = useCallback(() => {
-    history.push({
-      pathname: `/receive/${address}/`,
-      state: { pathname }
-    });
-  }, [history, address, pathname]);
-
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
   }, [genesisHash, showStakingOptions]);
@@ -125,7 +118,7 @@ export default function AccountDetails(): React.ReactElement {
 
   const goToGovernance = useCallback(() => {
     formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
-      windowOpen(`/governance/${address}`).catch(console.error);
+      windowOpen(`/governance/${address}/referenda`).catch(console.error);
   }, [address, formatted, genesisHash]);
 
   const identicon = (

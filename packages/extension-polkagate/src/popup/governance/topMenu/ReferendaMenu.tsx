@@ -6,11 +6,13 @@
 import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Hub as Root } from '@mui/icons-material/';
 import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { Count } from '../../../hooks/useDecidingCount';
 import { MAX_WIDTH } from '../utils/consts';
 
 interface Props {
+  address: string | undefined;
   decidingCounts: Count[] | undefined;
   setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -27,10 +29,16 @@ export const findItemDecidingCount = (item: string, decidingCounts: Count[] | un
   return filtered?.[1];
 };
 
-export default function ReferendaMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+  const history = useHistory();
+
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item, decidingCounts);
     const onSubMenuClick = useCallback(() => {
+      address && history.push({
+        pathname: `/governance/${address}/referenda`
+      });
+
       setSelectedSubMenu(item);
       setMenuOpen((prevStatus) => !prevStatus);
     }, [item]);

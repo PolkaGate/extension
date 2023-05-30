@@ -13,7 +13,7 @@ import DecisionDeposit from './post/decisionDeposit';
 import PayDecisionDeposit from './post/decisionDeposit/PayDecisionDeposit';
 import { STATUS_COLOR } from './utils/consts';
 import { LatestReferenda } from './utils/types';
-import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
+import { capitalizeFirstLetter, formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
 
 interface Props {
   address: string;
@@ -21,8 +21,6 @@ interface Props {
   onClick: () => void;
   referendum: LatestReferenda;
 }
-
-const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
 export function ReferendumSummary({ address, key, onClick, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();

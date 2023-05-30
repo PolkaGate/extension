@@ -91,10 +91,10 @@ export default function ReferendumPost(): React.ReactElement {
 
   useEffect(() => {
     selectedSubMenu && history.push({
-      pathname: `/governance/${address}`,
+      pathname: `/governance/${address}/${selectedTopMenu || topMenu}`,
       state: { selectedSubMenu }
     });
-  }, [address, history, selectedSubMenu,]);
+  }, [address, history, selectedSubMenu]);
 
   useEffect(() => {
     if (!chainName || !postId) {
@@ -105,15 +105,17 @@ export default function ReferendumPost(): React.ReactElement {
       setReferendumPA(res);
     }).catch(console.error);
 
-
     getReferendumSb(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
       setReferendumSb(res);
     }).catch(console.error);
   }, [chainName, postId, selectedTopMenu, topMenu]);
 
   const backToTopMenu = useCallback(() => {
+    address && (selectedTopMenu || topMenu) && history.push({
+      pathname: `/governance/${address}/${selectedTopMenu || topMenu}`
+    });
     setSelectedSubMenu('All');
-  }, []);
+  }, [address, history, selectedTopMenu, topMenu]);
 
   const backToSubMenu = useCallback(() => {
     setSelectedSubMenu(state?.selectedSubMenu || toTitleCase(referendumPA?.origin)?.trim());

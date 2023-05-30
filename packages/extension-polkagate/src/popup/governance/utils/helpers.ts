@@ -148,7 +148,7 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
     });
 }
 
-export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100): Promise<AllVotesType | null> {
+export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
   console.log(`Getting All Votes on ${chainName} for refIndex ${refIndex} from PA ...`);
 
   const requestOptions = {
@@ -156,7 +156,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=ReferendumV2&sortBy=time`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}&sortBy=time`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data) {

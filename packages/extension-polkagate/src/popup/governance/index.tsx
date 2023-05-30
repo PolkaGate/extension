@@ -22,22 +22,24 @@ import { ReferendumSummary } from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
+import { capitalizeFirstLetter } from './utils/util';
 
 export default function Governance(): React.ReactElement {
+  useFullscreen();
   const { t } = useTranslation();
   const { state } = useLocation();
   const history = useHistory();
   const theme = useTheme();
-  const { address, postId } = useParams<{ address: string, postId?: string }>();
-
-  useFullscreen();
+  const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
   const api = useApi(address);
-  const { fellowshipTracks, tracks } = useTracks(address);
   const chainName = useChainName(address);
-  const pageTrackRef = useRef({ listFinished: false, page: 1, trackId: -1, topMenu: 'Referenda' });
   const decidingCounts = useDecidingCount(address);
+
+  const { fellowshipTracks, tracks } = useTracks(address);
+
+  const pageTrackRef = useRef({ listFinished: false, page: 1, topMenu, trackId: -1 });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>('Referenda');
+  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>(topMenu);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
@@ -46,6 +48,9 @@ export default function Governance(): React.ReactElement {
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [filterState, setFilterState] = useState(0);
+
+  const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
+  const isReferenda = referendaTrackId !== undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
@@ -101,11 +106,9 @@ export default function Governance(): React.ReactElement {
   }, [address, history, selectedSubMenu, selectedTopMenu]);
 
   useEffect(() => {
-    console.log('get more:', getMore)
     chainName && selectedSubMenu && selectedTopMenu && fetchRef().catch(console.error);
 
     async function fetchRef() {
-      const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
       let list = referendaToList;
 
       // to reset referenda list on menu change
@@ -123,7 +126,7 @@ export default function Governance(): React.ReactElement {
 
       pageTrackRef.current.topMenu = selectedTopMenu;
 
-      if (selectedTopMenu === 'Referenda' && selectedSubMenu === 'All') {
+      if ((topMenu === 'referenda' || selectedTopMenu === 'Referenda') && selectedSubMenu === 'All') {
         const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST)
 
         setIsLoading(false);
@@ -201,7 +204,7 @@ export default function Governance(): React.ReactElement {
     <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
         <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {selectedTopMenu || 'Referenda'}
+          {capitalizeFirstLetter(topMenu)}
         </Link>
         <Typography color='text.primary' sx={{ fontWeight: 500 }}>
           {selectedSubMenu || 'All'}

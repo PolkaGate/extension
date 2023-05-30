@@ -123,10 +123,10 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
         </Container>
       </Grid>
       {menuOpen && selectedTopMenu === 'Referenda' &&
-        <ReferendaMenu decidingCounts={decidingCounts?.referenda} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
+        <ReferendaMenu address={address} decidingCounts={decidingCounts?.referenda} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
       {menuOpen && selectedTopMenu === 'Fellowship' &&
-        <FellowshipMenu decidingCounts={decidingCounts?.fellowship} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
+        <FellowshipMenu address={address} decidingCounts={decidingCounts?.fellowship} setMenuOpen={setMenuOpen} setSelectedSubMenu={setSelectedSubMenu} />
       }
       {openSubmitReferendum &&
         <SubmitReferendum
