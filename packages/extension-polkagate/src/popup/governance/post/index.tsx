@@ -94,7 +94,7 @@ export default function ReferendumPost(): React.ReactElement {
       pathname: `/governance/${address}/${selectedTopMenu || topMenu}`,
       state: { selectedSubMenu }
     });
-  }, [address, history, selectedSubMenu]);
+  }, [address, history, selectedSubMenu, selectedTopMenu, topMenu]);
 
   useEffect(() => {
     if (!chainName || !postId) {
