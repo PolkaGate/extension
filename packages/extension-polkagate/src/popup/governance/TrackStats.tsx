@@ -11,7 +11,6 @@ import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
 import { kusama } from './tracks/kusama';
-import { TopMenu } from './utils/types';
 import { blockToX } from './utils/util';
 import ThresholdCurves from './Chart';
 
@@ -19,7 +18,7 @@ interface Props {
   address: string;
   decidingCounts: DecidingCount | undefined;
   selectedSubMenu: string;
-  selectedTopMenu: TopMenu;
+  topMenu: 'referenda' | 'fellowship';
   track: Track | undefined;
 }
 
@@ -49,7 +48,7 @@ export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontS
   </Grid>
 );
 
-export function TrackStats({ address, decidingCounts, selectedSubMenu, selectedTopMenu, track }: Props): React.ReactElement<Props> {
+export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const decimal = useDecimal(address);
@@ -66,7 +65,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, selectedT
           </Grid>
           <Grid item xs={12}>
             <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-              {kusama[selectedTopMenu === 'Referenda' ? 'referenda' : 'fellowship'].find(({ name }) => name === String(track?.[1]?.name))?.text}
+              {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === String(track?.[1]?.name))?.text}
             </Typography>
           </Grid>
         </Grid>

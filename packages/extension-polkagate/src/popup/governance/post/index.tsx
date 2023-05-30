@@ -10,6 +10,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { PButton } from '../../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useTrack, useTranslation } from '../../../hooks';
+import Bread from '../Bread';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
@@ -91,10 +92,10 @@ export default function ReferendumPost(): React.ReactElement {
 
   useEffect(() => {
     selectedSubMenu && history.push({
-      pathname: `/governance/${address}/${selectedTopMenu || topMenu}`,
+      pathname: `/governance/${address}/${topMenu}`,
       state: { selectedSubMenu }
     });
-  }, [address, history, selectedSubMenu, selectedTopMenu, topMenu]);
+  }, [address, history, selectedSubMenu, topMenu]);
 
   useEffect(() => {
     if (!chainName || !postId) {
@@ -108,18 +109,7 @@ export default function ReferendumPost(): React.ReactElement {
     getReferendumSb(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
       setReferendumSb(res);
     }).catch(console.error);
-  }, [chainName, postId, selectedTopMenu, topMenu]);
-
-  const backToTopMenu = useCallback(() => {
-    address && (selectedTopMenu || topMenu) && history.push({
-      pathname: `/governance/${address}/${selectedTopMenu || topMenu}`
-    });
-    setSelectedSubMenu('All');
-  }, [address, history, selectedTopMenu, topMenu]);
-
-  const backToSubMenu = useCallback(() => {
-    setSelectedSubMenu(state?.selectedSubMenu || toTitleCase(referendumPA?.origin)?.trim());
-  }, [referendumPA?.origin, state?.selectedSubMenu]);
+  }, [chainName, postId, selectedSubMenu, topMenu]);
 
   const onCastVote = useCallback(() => setShowCastVote(true), []);
 
@@ -131,22 +121,6 @@ export default function ReferendumPost(): React.ReactElement {
 
     return voteType === 'Abstain' || (status === 'Executed' && voteType === 'Nay') || (status === 'Rejected' && voteType === 'Aye');
   }, [status, vote]);
-
-  const Bread = () => (
-    <Grid container sx={{ py: '10px' }}>
-      <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
-        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {selectedTopMenu || topMenu || 'Referenda'}
-        </Link>
-        <Link onClick={backToSubMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {state?.selectedSubMenu || toTitleCase(referendumPA?.origin || referendumSb?.origins)}
-        </Link>
-        <Typography color='text.primary' sx={{ fontWeight: 500 }}>
-          {`Referendum #${postId}`}
-        </Typography>
-      </Breadcrumbs>
-    </Grid>
-  );
 
   return (
     <>
@@ -161,7 +135,13 @@ export default function ReferendumPost(): React.ReactElement {
         setSelectedTopMenu={setSelectedTopMenu}
       />
       <Container disableGutters sx={{ maxWidth: 'inherit' }}>
-        <Bread />
+        <Bread
+          address={address}
+          postId={postId}
+          setSelectedSubMenu={setSelectedSubMenu}
+          subMenu={state?.selectedSubMenu || toTitleCase(referendumPA?.origin || referendumSb?.origins)}
+          topMenu={topMenu}
+        />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           <Grid container justifyContent='space-between'>
             <Grid container item md={8.9} sx={{ height: '100%' }}>

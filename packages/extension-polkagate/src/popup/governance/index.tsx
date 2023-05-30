@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Breadcrumbs, Container, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -17,12 +17,12 @@ import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './
 import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
+import Bread from './Bread';
 import { Header } from './Header';
 import { ReferendumSummary } from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
-import { capitalizeFirstLetter } from './utils/util';
 
 export default function Governance(): React.ReactElement {
   useFullscreen();
@@ -50,7 +50,6 @@ export default function Governance(): React.ReactElement {
   const [filterState, setFilterState] = useState(0);
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
-  const isReferenda = referendaTrackId !== undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
@@ -100,7 +99,7 @@ export default function Governance(): React.ReactElement {
 
   const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
     history.push({
-      pathname: `/governance/${address}/${type === 'ReferendumV2' ? 'Referenda' : 'Fellowship'}/${postId}`,
+      pathname: `/governance/${address}/${type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${postId}`,
       state: { selectedSubMenu, selectedTopMenu }
     });
   }, [address, history, selectedSubMenu, selectedTopMenu]);
@@ -189,29 +188,12 @@ export default function Governance(): React.ReactElement {
       setReferenda([...concatenated]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainName, getMore, selectedSubMenu, tracks, selectedTopMenu]);
-
-  const backToTopMenu = useCallback((event) => {
-    setSelectedSubMenu('All');
-  }, []);
+  }, [chainName, getMore, selectedSubMenu, tracks]);
 
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
     setGetMore(pageTrackRef.current.page);
   }, [pageTrackRef]);
-
-  const Bread = () => (
-    <Grid container sx={{ py: '10px' }}>
-      <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
-        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {capitalizeFirstLetter(topMenu)}
-        </Link>
-        <Typography color='text.primary' sx={{ fontWeight: 500 }}>
-          {selectedSubMenu || 'All'}
-        </Typography>
-      </Breadcrumbs>
-    </Grid>
-  );
 
   return (
     <>
@@ -226,7 +208,12 @@ export default function Governance(): React.ReactElement {
         setSelectedTopMenu={setSelectedTopMenu}
       />
       <Container disableGutters sx={{ maxWidth: 'inherit' }}>
-        <Bread />
+        <Bread
+          address={address}
+          setSelectedSubMenu={setSelectedSubMenu}
+          subMenu={selectedSubMenu}
+          topMenu={topMenu}
+        />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           {selectedSubMenu === 'All'
             ? <AllReferendaStats address={address} referendumStats={referendumStats} setReferendumStats={setReferendumStats} />
@@ -234,7 +221,7 @@ export default function Governance(): React.ReactElement {
               address={address}
               decidingCounts={decidingCounts}
               selectedSubMenu={selectedSubMenu}
-              selectedTopMenu={selectedTopMenu}
+              topMenu={topMenu}
               track={currentTrack}
             />
           }

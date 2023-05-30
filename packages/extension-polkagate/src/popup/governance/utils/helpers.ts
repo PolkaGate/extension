@@ -204,13 +204,13 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
 }
 
 export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<string[] | null> {
-  console.log(`Getting ref #${postId} info from PA ...`);
+  console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
   };
 
-  const _type = type === 'Referenda' ? 'referendums_v2' : 'fellowship_referendums';
+  const _type = type.toLocaleLowerCase() === 'referenda' ? 'referendums_v2' : 'fellowship_referendums';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return fetch(`https://api.polkassembly.io/api/v1/posts/on-chain-post?proposalType=${_type}&postId=${postId}`, requestOptions)

@@ -19,13 +19,13 @@ import { AmountWithOptions, Convictions, From, Infotip2, PButton, Progress, Show
 import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTracks, useTranslation } from '../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../util/utils';
+import { DraggableModal } from '../components/DraggableModal';
 import { toTitleCase } from '../utils/util';
 import ReferendaTracks from './partial/ReferendaTracks';
 import About from './About';
 import { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 import ChooseDelegator from './ChooseDelegator';
 import Review from './Review';
-import { DraggableModal } from '../components/DraggableModal';
 
 interface Props {
   api: ApiPromise | undefined;

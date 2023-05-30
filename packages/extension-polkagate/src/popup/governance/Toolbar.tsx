@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Button, Container, Grid, Typography } from '@mui/material';
+import { Button, ClickAwayListener, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { useApi, useTranslation } from '../../hooks';
@@ -46,14 +46,18 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
     setOpenDelegate(true);
   };
 
-  const onTopMenuMenuClick = useCallback((item: TopMenu) => {
+  const onTopMenuMenuMouseEnter = useCallback((item: TopMenu) => {
     setSelectedTopMenu(item);
-    setMenuOpen(selectedTopMenu === item ? !menuOpen : true);
-  }, [menuOpen, selectedTopMenu, setMenuOpen, setSelectedTopMenu]);
+    setMenuOpen(true);
+  }, [setMenuOpen, setSelectedTopMenu]);
+
+  const handleClickAway = useCallback(() => {
+    setMenuOpen(false);
+  }, [setMenuOpen]);
 
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
-      <Grid alignItems='center' container item justifyContent='center' onClick={() => onTopMenuMenuClick(item)} sx={{ mt: '3.5px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'white', width: '150px', height: '48px', cursor: 'pointer' }}>
+      <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} sx={{ mt: '3.5px', px: '5px', bgcolor: selectedTopMenu === item ? 'background.paper' : 'primary.main', color: selectedTopMenu === item ? 'primary.main' : 'white', width: '150px', height: '48px', cursor: 'pointer' }}>
         <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
           {item}
         </Typography>
@@ -70,10 +74,12 @@ export default function Toolbar({ address, decidingCounts, menuOpen, selectedTop
       <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
         <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
           <Grid alignItems='center' container justifyContent='space-between'>
-            <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
-              <TopMenuComponent item={'Referenda'} />
-              <TopMenuComponent item={'Fellowship'} />
-            </Grid>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
+                <TopMenuComponent item={'Referenda'} />
+                <TopMenuComponent item={'Fellowship'} />
+              </Grid>
+            </ClickAwayListener>
             <Grid container item justifyContent='flex-end' md={5}>
               <Button
                 // disabled={disabled}
