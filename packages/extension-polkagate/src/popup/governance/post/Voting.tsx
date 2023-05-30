@@ -20,11 +20,11 @@ import VoteChart from './VoteChart';
 
 interface Props {
   address: string | undefined;
-  referendumInfoFromSubscan: ReferendumSubScan | undefined;
-  referendumFromPA: ReferendumPolkassembly | undefined;
+  referendumSb: ReferendumSubScan | undefined;
+  referendumPA: ReferendumPolkassembly | undefined;
 }
 
-export default function Voting({ address, referendumFromPA, referendumInfoFromSubscan }: Props): React.ReactElement<Props> {
+export default function Voting({ address, referendumPA, referendumSb }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { state } = useLocation();
@@ -32,27 +32,30 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
   const decimal = useDecimal(address);
   const token = useToken(address);
 
+  console.log('referendumPA:', referendumPA)
+  console.log('referendumSb:', referendumSb);
+
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = useState(false);
   const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
 
-  const trackId = referendumInfoFromSubscan?.origins_id;
-  const refIndex = useMemo(() => referendumFromPA?.post_id || referendumInfoFromSubscan?.referendum_index, [referendumFromPA, referendumInfoFromSubscan]);
+  const trackId = referendumSb?.origins_id || referendumPA?.track_number;
+  const refIndex = referendumPA?.post_id || referendumSb?.referendum_index;
 
   const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumInfoFromSubscan?.origins || referendumFromPA?.origin) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumSb?.origins || referendumPA?.origin) as string | undefined;
 
     return name && toTitleCase(name);
-  }, [referendumFromPA?.origin, referendumInfoFromSubscan?.origins, state?.selectedSubMenu]);
+  }, [referendumPA?.origin, referendumSb?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumInfoFromSubscan && currentBlock - referendumInfoFromSubscan?.timeline[1]?.block);
+  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumSb && currentBlock - referendumSb?.timeline[1]?.block);
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendumInfoFromSubscan) {
-      const blockSubmitted = referendumInfoFromSubscan.timeline[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && referendumSb) {
+      const blockSubmitted = referendumSb.timeline[0].block;
 
       if (track[1].preparePeriod.gtn(currentBlock - blockSubmitted)) {
         // in prepare period
@@ -61,18 +64,18 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
 
       return threshold;
     }
-  }, [currentBlock, referendumInfoFromSubscan, threshold, track]);
+  }, [currentBlock, referendumSb, threshold, track]);
 
   const ayes = useMemo(() =>
-    onChainTally?.ayes?.toString() || referendumInfoFromSubscan?.ayes_amount || referendumFromPA?.tally?.ayes
-    , [referendumFromPA, referendumInfoFromSubscan, onChainTally]);
+    onChainTally?.ayes?.toString() || referendumSb?.ayes_amount || referendumPA?.tally?.ayes
+    , [referendumPA, referendumSb, onChainTally]);
 
   const nays = useMemo(() =>
-    onChainTally?.nays?.toString() || referendumInfoFromSubscan?.nays_amount || referendumFromPA?.tally?.nays
-    , [referendumFromPA, referendumInfoFromSubscan, onChainTally]);
+    onChainTally?.nays?.toString() || referendumSb?.nays_amount || referendumPA?.tally?.nays
+    , [referendumPA, referendumSb, onChainTally]);
 
-  const ayesCount = onChainVoteCounts?.ayes || VoteCountsPA?.ayes || referendumInfoFromSubscan?.ayes_count;
-  const naysCount = onChainVoteCounts?.nays || VoteCountsPA?.nays || referendumInfoFromSubscan?.nays_count;
+  const ayesCount = onChainVoteCounts?.ayes || VoteCountsPA?.ayes || referendumSb?.ayes_count;
+  const naysCount = onChainVoteCounts?.nays || VoteCountsPA?.nays || referendumSb?.nays_count;
 
   const ayesPercent = useMemo(() => ayes && nays ? Number(ayes) / (Number(ayes) + Number(new BN(nays))) * 100 : 0, [nays, ayes]);
   const naysPercent = useMemo(() => ayes && nays ? Number(nays) / (Number(ayes) + Number(new BN(nays))) * 100 : 0, [nays, ayes]);
@@ -94,7 +97,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
 
   const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number | undefined, amount: string | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
-      <Typography sx={{ borderBottom: `8px solid ${color}`, textAlign: 'center', fontSize: '20px', fontWeight: 500, width: '100%' }}>
+      <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '100%' }}>
         {text}
       </Typography>
       <Grid container fontSize='22px' item justifyContent='space-around'>
@@ -118,13 +121,13 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
 
   return (
     <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', pb: '20px' }}>
-      <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, my: '15px', mx: '25px' }} xs={12}>
+      <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px', my: '15px' }} xs={12}>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {t('Voting')}
         </Typography>
       </Grid>
-      <Grid item xs={12} sx={{ px: '25px' }}>
-        <VoteChart referendum={referendumInfoFromSubscan} />
+      <Grid item sx={{ px: '25px' }} xs={12}>
+        <VoteChart referendum={referendumSb} />
       </Grid>
       <Grid container item justifyContent='space-around' xs={12}>
         <Tally
@@ -160,7 +163,7 @@ export default function Voting({ address, referendumFromPA, referendumInfoFromSu
         <Button
           onClick={handleOpenAllVotes}
           // disabled={change}
-          sx={{ fontSize: '18px', fontWeight: 500, mt: '10px', textTransform: 'none', textDecoration: 'underline', width: '70%' }}
+          sx={{ fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '70%' }}
           variant='text'
         >
           {t('All votes')}

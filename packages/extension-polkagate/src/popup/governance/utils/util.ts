@@ -43,8 +43,9 @@ export function toTitleCase(input: string): string | undefined {
     return undefined;
   }
 
+  // Replace all occurrences of capital letters with a space followed by the lowercase letter
   // Replace underscores and hyphens with spaces
-  let words = input.replace(/[_-]/g, ' ').split(' ');
+ let words = input.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').split(' ');
 
   // Convert each word to title case
   words = words.map((word) => {

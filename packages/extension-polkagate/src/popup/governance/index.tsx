@@ -181,8 +181,6 @@ export default function Governance(): React.ReactElement {
         }
       }
 
-      console.log('resPAresPA:', resPA);
-
       const concatenated = (list || []).concat(resPA);
 
       setReferenda([...concatenated]);

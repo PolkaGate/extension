@@ -15,7 +15,7 @@ import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
 import { getReferendumPA, getReferendumSb } from '../utils/helpers';
 import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
-import { getVoteType, pascalCaseToTitleCase, toTitleCase } from '../utils/util';
+import { getVoteType, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
 import Chronology from './Chronology';
 import Comments from './Comments';
@@ -39,23 +39,23 @@ export default function ReferendumPost(): React.ReactElement {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu | undefined>(state?.selectedTopMenu);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string | undefined>();
-  const [referendumFromPA, setReferendum] = useState<ReferendumPolkassembly>();
-  const [referendumFromSb, setReferendumFromSb] = useState<ReferendumSubScan>();
+  const [referendumPA, setReferendumPA] = useState<ReferendumPolkassembly>();
+  const [referendumSb, setReferendumSb] = useState<ReferendumSubScan>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
   const [showAboutVoting, setShowAboutVoting] = useState<boolean>(false);
 
-  const refIndex = useMemo(() => (postId && Number(postId)) || referendumFromSb?.referendum_index || referendumFromPA?.post_id, [postId, referendumFromPA, referendumFromSb]);
-  const trackId = useMemo(() => referendumFromSb?.origins_id || referendumFromPA?.track_number, [referendumFromPA, referendumFromSb]);
+  const refIndex = useMemo(() => (postId && Number(postId)) || referendumSb?.referendum_index || referendumPA?.post_id, [postId, referendumPA, referendumSb]);
+  const trackId = useMemo(() => referendumSb?.origins_id || referendumPA?.track_number, [referendumPA, referendumSb]);
   const vote = useMyVote(address, refIndex, trackId);
   const hasVoted = useMemo(() => vote && ('standard' in vote || 'splitAbstain' in vote), [vote]);
   const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
 
   const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumFromSb?.origins || referendumFromPA?.origin) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumSb?.origins || referendumPA?.origin) as string | undefined;
 
     return name && toTitleCase(name);
-  }, [referendumFromPA?.origin, referendumFromSb?.origins, state?.selectedSubMenu]);
+  }, [referendumPA?.origin, referendumSb?.origins, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
 
@@ -102,12 +102,12 @@ export default function ReferendumPost(): React.ReactElement {
     }
 
     getReferendumPA(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
-      setReferendum(res);
+      setReferendumPA(res);
     }).catch(console.error);
 
 
     getReferendumSb(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
-      setReferendumFromSb(res);
+      setReferendumSb(res);
     }).catch(console.error);
   }, [chainName, postId, selectedTopMenu, topMenu]);
 
@@ -116,12 +116,12 @@ export default function ReferendumPost(): React.ReactElement {
   }, []);
 
   const backToSubMenu = useCallback(() => {
-    setSelectedSubMenu(state?.selectedSubMenu || pascalCaseToTitleCase(referendumFromPA?.origin)?.trim());
-  }, [referendumFromPA?.origin, state?.selectedSubMenu]);
+    setSelectedSubMenu(state?.selectedSubMenu || toTitleCase(referendumPA?.origin)?.trim());
+  }, [referendumPA?.origin, state?.selectedSubMenu]);
 
   const onCastVote = useCallback(() => setShowCastVote(true), []);
 
-  const status = useMemo(() => referendumFromPA?.status || referendumFromSb?.status, [referendumFromPA, referendumFromSb]);
+  const status = useMemo(() => referendumPA?.status || referendumSb?.status, [referendumPA, referendumSb]);
   const isOngoing = !ENDED_STATUSES.includes(status);
   const cantModify = ENDED_STATUSES.includes(status) && vote;
   const isAgainstOutcome = useMemo(() => {
@@ -134,10 +134,10 @@ export default function ReferendumPost(): React.ReactElement {
     <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
         <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {selectedTopMenu || 'Referenda'}
+          {selectedTopMenu || topMenu || 'Referenda'}
         </Link>
         <Link onClick={backToSubMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {state?.selectedSubMenu || pascalCaseToTitleCase(referendumFromPA?.origin)}
+          {state?.selectedSubMenu || toTitleCase(referendumPA?.origin || referendumSb?.origins)}
         </Link>
         <Typography color='text.primary' sx={{ fontWeight: 500 }}>
           {`Referendum #${postId}`}
@@ -166,21 +166,21 @@ export default function ReferendumPost(): React.ReactElement {
               <Description
                 address={address}
                 currentTreasuryApprovalList={currentTreasuryApprovalList}
-                referendum={referendumFromPA}
+                referendum={referendumPA}
               />
               <Chronology
                 address={address}
                 currentTreasuryApprovalList={currentTreasuryApprovalList}
-                referendum={referendumFromPA}
+                referendum={referendumPA}
               />
               <MetaData
                 address={address}
-                decisionDepositPayer={referendumFromSb?.decision_deposit_account?.address}
-                referendum={referendumFromPA}
+                decisionDepositPayer={referendumSb?.decision_deposit_account?.address}
+                referendum={referendumPA}
               />
               <Comments
                 address={address}
-                referendum={referendumFromPA}
+                referendum={referendumPA}
               />
             </Grid>
             <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '450px' }}>
@@ -189,18 +189,18 @@ export default function ReferendumPost(): React.ReactElement {
                 isOngoing={isOngoing}
                 refIndex={refIndex}
                 status={status}
-                timeline={referendumFromSb?.timeline}
+                timeline={referendumSb?.timeline}
                 track={track}
               />
               <Voting
                 address={address}
-                referendumFromPA={referendumFromPA}
-                referendumInfoFromSubscan={referendumFromSb}
+                referendumPA={referendumPA}
+                referendumSb={referendumSb}
               />
               <Support
                 address={address}
-                referendumFromPA={referendumFromPA}
-                referendumFromSb={referendumFromSb}
+                referendumPA={referendumPA}
+                referendumSb={referendumSb}
               />
               {(isOngoing || isAgainstOutcome) &&
                 <Grid item sx={{ my: '15px' }} xs={12}>
