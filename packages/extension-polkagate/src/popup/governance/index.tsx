@@ -39,7 +39,6 @@ export default function Governance(): React.ReactElement {
 
   const pageTrackRef = useRef({ listFinished: false, page: 1, topMenu, trackId: -1 });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>(topMenu);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
@@ -100,18 +99,18 @@ export default function Governance(): React.ReactElement {
   const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
     history.push({
       pathname: `/governance/${address}/${type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${postId}`,
-      state: { selectedSubMenu, selectedTopMenu }
+      state: { selectedSubMenu }
     });
-  }, [address, history, selectedSubMenu, selectedTopMenu]);
+  }, [address, history, selectedSubMenu]);
 
   useEffect(() => {
-    chainName && selectedSubMenu && selectedTopMenu && fetchRef().catch(console.error);
+    chainName && selectedSubMenu && fetchRef().catch(console.error);
 
     async function fetchRef() {
       let list = referendaToList;
 
       // to reset referenda list on menu change
-      if (pageTrackRef.current.trackId !== referendaTrackId || pageTrackRef.current.topMenu !== selectedTopMenu) {
+      if (pageTrackRef.current.trackId !== referendaTrackId || pageTrackRef.current.topMenu !== topMenu) {
         setReferenda(undefined);
         list = [];
         pageTrackRef.current.trackId = referendaTrackId as number; // Update the ref with new values
@@ -123,9 +122,9 @@ export default function Governance(): React.ReactElement {
         setIsLoading(true);
       }
 
-      pageTrackRef.current.topMenu = selectedTopMenu;
+      pageTrackRef.current.topMenu = topMenu;
 
-      if ((topMenu === 'referenda' || selectedTopMenu === 'Referenda') && selectedSubMenu === 'All') {
+      if (topMenu === 'referenda' && selectedSubMenu === 'All') {
         const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST)
 
         setIsLoading(false);
@@ -163,8 +162,8 @@ export default function Governance(): React.ReactElement {
         return;
       }
 
-      if (selectedTopMenu === 'Fellowship') {
-        const resSb = await getReferendumsListSb(chainName, selectedTopMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
+      if (topMenu === 'fellowship') {
+        const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
         if (resSb) {
           const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
@@ -199,13 +198,10 @@ export default function Governance(): React.ReactElement {
     <>
       <Header />
       <Toolbar
-        address={address}
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
-        selectedTopMenu={selectedTopMenu || 'Referenda'}
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
-        setSelectedTopMenu={setSelectedTopMenu}
       />
       <Container disableGutters sx={{ maxWidth: 'inherit' }}>
         <Bread

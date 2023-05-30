@@ -38,7 +38,6 @@ export default function ReferendumPost(): React.ReactElement {
 
   useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu | undefined>(state?.selectedTopMenu);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string | undefined>();
   const [referendumPA, setReferendumPA] = useState<ReferendumPolkassembly>();
   const [referendumSb, setReferendumSb] = useState<ReferendumSubScan>();
@@ -102,11 +101,11 @@ export default function ReferendumPost(): React.ReactElement {
       return;
     }
 
-    getReferendumPA(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
+    getReferendumPA(chainName, topMenu, Number(postId)).then((res) => {
       setReferendumPA(res);
     }).catch(console.error);
 
-    getReferendumSb(chainName, selectedTopMenu || topMenu, Number(postId)).then((res) => {
+    getReferendumSb(chainName, topMenu, Number(postId)).then((res) => {
       setReferendumSb(res);
     }).catch(console.error);
   }, [chainName, postId, selectedSubMenu, topMenu]);
@@ -126,13 +125,10 @@ export default function ReferendumPost(): React.ReactElement {
     <>
       <Header />
       <Toolbar
-        address={address}
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
-        selectedTopMenu={selectedTopMenu || state?.selectedTopMenu || 'Referenda'}
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
-        setSelectedTopMenu={setSelectedTopMenu}
       />
       <Container disableGutters sx={{ maxWidth: 'inherit' }}>
         <Bread
