@@ -105,7 +105,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
           data: supportY,
           fill: false,
           label: 'Support',
-          pointRadius: 0,
+          pointRadius: 0
         },
         {
           borderColor: `${theme.palette.approval.main}`,

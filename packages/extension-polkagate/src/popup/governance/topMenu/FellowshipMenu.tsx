@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { AdminPanelSettings as AdminsIcon, BorderAll as All, Groups3 as Groups3Icon, Hub as Root } from '@mui/icons-material/';
+import { AdminPanelSettings as AdminsIcon, BorderAll as All, Groups3 as Groups3Icon, List as ListIcon } from '@mui/icons-material/';
 import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
@@ -19,7 +19,6 @@ interface Props {
 }
 
 export default function FellowshipMenu({ decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
-
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item, decidingCounts);
 
@@ -51,7 +50,7 @@ export default function FellowshipMenu({ decidingCounts, setMenuOpen, setSelecte
           />
           <MenuItem
             fontWeight={500}
-            icon={<Root sx={{ fontSize: 20, mr: '10px' }} />}
+            icon={<ListIcon sx={{ fontSize: 20, mr: '10px' }} />}
             item='Members'
             top
             width='9%'

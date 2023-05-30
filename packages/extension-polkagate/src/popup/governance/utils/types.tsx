@@ -200,6 +200,8 @@ export interface LatestReferenda {
   title: string;
   track_number: number;
   type: string;
+  fellowship_origins?: string;
+  fellowship_origins_id?: number
 }
 
 export type Track = [

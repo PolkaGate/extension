@@ -6,14 +6,15 @@
 import '@vaadin/icons';
 
 import { Breadcrumbs, Container, Grid, Link, Typography, useTheme } from '@mui/material';
-import { CubeGrid, Wordpress } from 'better-react-spinkit';
+import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import HorizontalWaiting from './components/HorizontalWaiting';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
-import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendums, Statistics } from './utils/helpers';
+import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import { Header } from './Header';
@@ -33,7 +34,7 @@ export default function Governance(): React.ReactElement {
   const api = useApi(address);
   const { fellowshipTracks, tracks } = useTracks(address);
   const chainName = useChainName(address);
-  const pageTrackRef = useRef({ listFinished: false, page: 1, topMenu: 'Referenda', trackId: undefined });
+  const pageTrackRef = useRef({ listFinished: false, page: 1, trackId: -1, topMenu: 'Referenda' });
   const decidingCounts = useDecidingCount(address);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedTopMenu, setSelectedTopMenu] = useState<TopMenu>('Referenda');
@@ -86,30 +87,11 @@ export default function Governance(): React.ReactElement {
       return;
     }
 
-    console.log('Maximum size of the referendum queue for a single track:', api.consts.referenda.maxQueued.toString());
-    console.log('minimum amount to be used as a deposit :', api.consts.referenda.submissionDeposit.toString());
-    console.log('blocks after submission that a referendum must begin decided by.', api.consts.referenda.undecidingTimeout.toString());
-
     api.query.referenda.referendumCount().then((count) => {
       console.log('total referendum count:', count.toNumber());
       setReferendumCount(count?.toNumber());
     }).catch(console.error);
-
-    // const trackId_mediumSpender = 33;
-    // api.query.referenda.trackQueue(trackId_mediumSpender).then((res) => {
-    //   console.log('trackQueue for trackId_mediumSpender:', res.toString());
-    // }).catch(console.error);
   }, [api]);
-
-  useEffect(() => {
-    // to view the referenda at the first page load
-    // if (chainName && selectedSubMenu === 'All') {
-    //   setReferenda(undefined);
-    //   // eslint-disable-next-line no-void
-    //   void getLatestReferendums(chainName).then((res) => setReferenda(res));
-    // }
-
-  }, []);
 
   const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
     history.push({
@@ -119,33 +101,34 @@ export default function Governance(): React.ReactElement {
   }, [address, history, selectedSubMenu, selectedTopMenu]);
 
   useEffect(() => {
-    if (!chainName || !selectedSubMenu || !selectedTopMenu) {
-      return;
-    }
+    console.log('get more:', getMore)
+    chainName && selectedSubMenu && selectedTopMenu && fetchRef().catch(console.error);
 
-    const trackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
-    let list = referendaToList;
+    async function fetchRef() {
+      const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
+      let list = referendaToList;
 
-    // to reset referenda list on menu change
-    if (pageTrackRef.current.trackId !== trackId || pageTrackRef.current.topMenu !== selectedTopMenu) {
-      setReferenda(undefined);
-      list = [];
-      pageTrackRef.current.trackId = trackId; // Update the ref with new values
-      pageTrackRef.current.page = 1;
-      pageTrackRef.current.listFinished = false;
-    }
+      // to reset referenda list on menu change
+      if (pageTrackRef.current.trackId !== referendaTrackId || pageTrackRef.current.topMenu !== selectedTopMenu) {
+        setReferenda(undefined);
+        list = [];
+        pageTrackRef.current.trackId = referendaTrackId as number; // Update the ref with new values
+        pageTrackRef.current.page = 1;
+        pageTrackRef.current.listFinished = false;
+      }
 
-    if (pageTrackRef.current.page > 1) {
-      setIsLoading(true);
-    }
+      if (pageTrackRef.current.page > 1) {
+        setIsLoading(true);
+      }
 
-    pageTrackRef.current.topMenu = selectedTopMenu;
+      pageTrackRef.current.topMenu = selectedTopMenu;
 
-    if (selectedTopMenu === 'Referenda' && selectedSubMenu === 'All') {
-      getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((res) => {
+      if (selectedTopMenu === 'Referenda' && selectedSubMenu === 'All') {
+        const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST)
+
         setIsLoading(false);
 
-        if (res === null) {
+        if (allReferenda === null) {
           if (pageTrackRef.current.page === 1) { // there is no referendum !!
             setReferenda(null);
 
@@ -157,16 +140,16 @@ export default function Governance(): React.ReactElement {
           return;
         }
 
-        setReferenda(res);
-      }).catch(console.error);
+        setReferenda(allReferenda);
 
-      return;
-    }
+        return;
+      }
 
-    getTrackOrFellowshipReferendums(chainName, pageTrackRef.current.page, trackId).then((res) => {
+      let resPA = await getTrackOrFellowshipReferendumsPA(chainName, pageTrackRef.current.page, referendaTrackId);
+
       setIsLoading(false);
 
-      if (res === null) {
+      if (resPA === null) {
         if (pageTrackRef.current.page === 1) { // there is no referendum for this track
           setReferenda(null);
 
@@ -178,14 +161,32 @@ export default function Governance(): React.ReactElement {
         return;
       }
 
-      getReferendumsListSb(chainName, selectedTopMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST).then((sbRes) => {
-        console.log('sbRes:', sbRes);
-      }).catch(console.error);
+      if (selectedTopMenu === 'Fellowship') {
+        const resSb = await getReferendumsListSb(chainName, selectedTopMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
-      const concatenated = (list || []).concat(res);
+        if (resSb) {
+          const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
+
+          pageTrackRef.current.trackId = fellowshipTrackId as number;
+          resPA = resPA.map((r) => {
+            const found = resSb.list.find((f) => f.referendum_index === r.post_id);
+
+            if (found) {
+              r.fellowship_origins = found.origins;
+              r.fellowship_origins_id = found.origins_id;
+            }
+
+            return r;
+          }).filter((r) => selectedSubMenu === 'All' || r.fellowship_origins_id === fellowshipTrackId);
+        }
+      }
+
+      console.log('resPAresPA:', resPA);
+
+      const concatenated = (list || []).concat(resPA);
 
       setReferenda([...concatenated]);
-    }).catch(console.error);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, getMore, selectedSubMenu, tracks, selectedTopMenu]);
 
@@ -209,16 +210,6 @@ export default function Governance(): React.ReactElement {
         </Typography>
       </Breadcrumbs>
     </Grid>
-  );
-
-  const HorizontalWaiting = ({ color }: { color: string }) => (
-    <div>
-      <Wordpress color={color} timingFunction='linear' />
-      <Wordpress color={color} timingFunction='ease' />
-      <Wordpress color={color} timingFunction='ease-in' />
-      <Wordpress color={color} timingFunction='ease-out' />
-      <Wordpress color={color} timingFunction='ease-in-out' />
-    </div>
   );
 
   return (
@@ -260,7 +251,12 @@ export default function Governance(): React.ReactElement {
               {filteredReferenda.map((referendum, index) => {
                 if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
                   return (
-                    <ReferendumSummary address={address} key={index} onClick={() => getReferendaById(referendum.post_id, referendum.type)} referendum={referendum} />
+                    <ReferendumSummary
+                      address={address}
+                      key={index}
+                      onClick={() => getReferendaById(referendum.post_id, referendum.type)}
+                      referendum={referendum}
+                    />
                   );
                 }
               })}

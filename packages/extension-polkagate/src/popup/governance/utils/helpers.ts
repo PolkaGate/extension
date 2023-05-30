@@ -174,7 +174,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
     });
 }
 
-export async function getTrackOrFellowshipReferendums(chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
+export async function getTrackOrFellowshipReferendumsPA(chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
   console.log(`Getting refs on ${chainName} track:${track} from PA`);
 
   const requestOptions = {
@@ -264,17 +264,43 @@ export async function getReferendumSb(chainName: string, type: TopMenu, postId: 
   });
 }
 
-export async function getReferendumsListSb(chainName: string, type: TopMenu, listingLimit = 30): Promise<any | null> {
+interface RefListSb {
+  count: number;
+  list: {
+    referendum_index: number;
+    created_block: number;
+    created_block_timestamp: number;
+    origins_id: number;
+    origins: string;
+    account: {
+      address: string;
+      display?: string;
+      judgements?: {
+        index: number;
+        judgement: string;
+      }[];
+      identity?: boolean;
+      account_index?: string;
+    };
+    call_module: string;
+    call_name: string;
+    status: string;
+    latest_block_num: number;
+    latest_block_timestamp: number;
+  }[];
+}
+
+export async function getReferendumsListSb(chainName: string, type: TopMenu, listingLimit = 30): Promise<RefListSb | null> {
   console.log('Getting ref list from sb ...');
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendum`,
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendums`,
         {
           // page:1,
-          row: 30
-          // status:	//completed| active
+          row: listingLimit
+          // status:	//completed | active
           // Origins:
         })
         .then((data: { message: string; data }) => {

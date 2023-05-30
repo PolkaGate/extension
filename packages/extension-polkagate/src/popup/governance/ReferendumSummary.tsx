@@ -18,9 +18,11 @@ import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from './u
 interface Props {
   address: string;
   key: number;
-  referendum: LatestReferenda;
   onClick: () => void;
+  referendum: LatestReferenda;
 }
+
+const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
 export function ReferendumSummary({ address, key, onClick, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -28,7 +30,7 @@ export function ReferendumSummary({ address, key, onClick, referendum }: Props):
   const chain = useChain(address);
   const theme = useTheme();
   const track = useTrack(address, referendum.origin);
-
+  const origin = referendum.origin || referendum?.fellowship_origins;
   const [openDecisionDeposit, setOpenDecisionDeposit] = useState<boolean>();
 
   return (
@@ -45,10 +47,10 @@ export function ReferendumSummary({ address, key, onClick, referendum }: Props):
             <Identity api={api} chain={chain} formatted={referendum.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
           </Grid>
           <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-          {referendum.origin &&
+          {origin &&
             <>
               <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main}`, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '0.5px 14.5px' }}>
-                {referendum.origin.replace(/([A-Z])/g, ' $1').trim()}
+                {capitalizeFirstLetter(origin.replace(/([A-Z])/g, ' $1').trim())}
               </Grid>
               <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
             </>
