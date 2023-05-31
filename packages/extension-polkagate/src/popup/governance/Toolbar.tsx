@@ -20,7 +20,7 @@ import { SubmitReferendum } from './submitReferendum';
 interface Props {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
   decidingCounts: DecidingCount | undefined;
 }
 
