@@ -105,11 +105,11 @@ export default function Governance(): React.ReactElement {
     async function fetchRef() {
       let list = referenda;
 
-      // to reset referenda list on menu change
-      if (pageTrackRef.current.trackId !== referendaTrackId || pageTrackRef.current.topMenu !== topMenu) {
+      // Reset referenda list on menu change
+      if (pageTrackRef.current.trackId !== currentTrack?.[0]?.toNumber() || pageTrackRef.current.topMenu !== topMenu) {
         setReferenda(undefined);
         list = [];
-        pageTrackRef.current.trackId = referendaTrackId as number; // Update the ref with new values
+        pageTrackRef.current.trackId = currentTrack as number; // Update the ref with new values
         pageTrackRef.current.page = 1;
         pageTrackRef.current.listFinished = false;
       }
