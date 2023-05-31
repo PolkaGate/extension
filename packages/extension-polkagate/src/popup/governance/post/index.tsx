@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Breadcrumbs, Container, Grid, Link, Typography } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -15,7 +15,7 @@ import { Header } from '../Header';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
 import { getReferendumPA, getReferendumSb } from '../utils/helpers';
-import { Proposal, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from '../utils/types';
+import { Proposal, ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
 import { getVoteType, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
 import Chronology from './Chronology';
@@ -29,7 +29,7 @@ import Voting from './Voting';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
-  const { address, topMenu, postId } = useParams<{ address?: string | undefined, postId?: string | undefined }>();
+  const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: string | undefined, postId?: string | undefined }>();
   const history = useHistory();
   const { state } = useLocation();
   const api = useApi(address);
@@ -39,8 +39,8 @@ export default function ReferendumPost(): React.ReactElement {
   useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string | undefined>();
-  const [referendumPA, setReferendumPA] = useState<ReferendumPolkassembly>();
-  const [referendumSb, setReferendumSb] = useState<ReferendumSubScan>();
+  const [referendumPA, setReferendumPA] = useState<ReferendumPolkassembly | null>();
+  const [referendumSb, setReferendumSb] = useState<ReferendumSubScan | null>();
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
   const [showAboutVoting, setShowAboutVoting] = useState<boolean>(false);

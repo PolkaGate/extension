@@ -118,7 +118,7 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
 }
 
 export async function getAllVotes(address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
-  const queries = tracks.map((t) => api.query.convictionVoting.votingFor(address, t[0]))
+  const queries = tracks.map((t) => api.query.convictionVoting.votingFor(address, t[0]));
   const voting = await Promise.all(queries);
   const castedRefIndexes = voting?.map((v => {
     const jsonV = v.toJSON() as unknown as Voting;

@@ -11,40 +11,40 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { ReferendumSubScan } from '../utils/types';
-
 interface Props {
-  referendum: ReferendumSubScan | undefined;
+  ayes: string | undefined;
+  nays: string | undefined;
+  height?: string;
 }
 
-export default function VoteChart({ referendum }: Props): React.ReactElement<Props> {
+function VoteChart({ ayes, height, nays }: Props): React.ReactElement<Props> {
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
 
   const ayesPercent = useMemo(() => {
-    if (referendum) {
-      const totalAmount = (Number(referendum.ayes_amount) + Number(new BN(referendum.nays_amount)));
+    if (ayes && nays) {
+      const totalAmount = (Number(ayes) + Number(new BN(nays)));
 
       if (totalAmount === 0) {
         return 0;
       }
 
-      return Number(referendum.ayes_amount) / totalAmount * 100;
+      return Number(ayes) / totalAmount * 100;
     }
-  }, [referendum]);
+  }, [ayes, nays]);
 
   const naysPercent = useMemo(() => {
-    if (referendum) {
-      const totalAmount = (Number(referendum.ayes_amount) + Number(new BN(referendum.nays_amount)));
+    if (ayes && nays) {
+      const totalAmount = (Number(ayes) + Number(new BN(nays)));
 
       if (totalAmount === 0) {
         return 0;
       }
 
-      return Number(referendum.nays_amount) / totalAmount * 100;
+      return Number(nays) / totalAmount * 100;
     }
-  }, [referendum]);
+  }, [ayes, nays]);
 
   useEffect(() => {
     const chartData = {
@@ -123,8 +123,8 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
   }, [ayesPercent, naysPercent]);
 
   return (
-    <Grid alignItems='center' container justifyContent='center' sx={{ height: '250px', width: '100%' }} >
-      {referendum
+    <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '250px', width: '100%' }} >
+      {ayes && nays
         ? <canvas id='chartCanvas' ref={chartRef} />
         : <Grid alignItems='center' container height='100%' item justifyContent='center'>
           <Pulse color={grey[300]} size={80} />
@@ -133,3 +133,5 @@ export default function VoteChart({ referendum }: Props): React.ReactElement<Pro
     </Grid>
   );
 }
+
+export default React.memo(VoteChart);

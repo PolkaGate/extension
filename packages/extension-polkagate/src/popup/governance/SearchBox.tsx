@@ -8,33 +8,29 @@ import '@vaadin/icons';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-
-import { InputFilter, Select } from '../../components';
+import { Checkbox2, InputFilter, Select } from '../../components';
 import { useFormatted, useTranslation } from '../../hooks';
-import { Track } from '../../hooks/useTrack';
-import { getAllVotes } from './post/myVote/util';
 import { REFERENDA_STATUS } from './utils/consts';
 import { LatestReferenda } from './utils/types';
 
 interface Props {
   address: string;
-  api: ApiPromise | undefined;
   referendaToList: LatestReferenda[] | null | undefined;
   setFilteredReferenda: React.Dispatch<React.SetStateAction<LatestReferenda[] | null | undefined>>;
   setFilterState: React.Dispatch<React.SetStateAction<number>>;
   filterState: number;
-  tracks: Track[] | undefined;
+  myVotedReferendaIndexes: number[] | null | undefined;
 }
 
-export default function SearchBox({ address, api, filterState, referendaToList, setFilterState, setFilteredReferenda, tracks }: Props): React.ReactElement {
+export default function SearchBox({ address, filterState, myVotedReferendaIndexes, referendaToList, setFilterState, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
+  const [showMyReferenda, setShowMyReferenda] = useState<boolean>(false);
+  const [showMyVoted, setShowMyVoted] = useState<boolean>(false);
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -43,28 +39,37 @@ export default function SearchBox({ address, api, filterState, referendaToList, 
     };
   }), []);
 
-  useEffect(() => {
-    address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
-  }, [address, api, tracks]);
-
   const onAdvanced = useCallback(() => {
     setShowAdvanced(true);
   }, []);
 
-  const onMyVots = useCallback(() => {
+  const onMyVotes = useCallback(() => {
     setFilterState(0);
-    console.log('myVotedReferendaIndexes:', myVotedReferendaIndexes)
-    const myReferendaList = referendaToList?.filter((ref) => myVotedReferendaIndexes?.includes(ref.post_id));
-
-    setFilteredReferenda(myReferendaList);
-  }, [myVotedReferendaIndexes, referendaToList, setFilterState, setFilteredReferenda]);
+    setShowMyVoted((prev) => !prev);
+  }, [setFilterState]);
 
   const onMyReferenda = useCallback(() => {
     setFilterState(0);
-    const list = referendaToList?.filter((ref) => ref.proposer === formatted);
+    setShowMyReferenda((prev) => !prev);
+  }, [setFilterState]);
 
-    setFilteredReferenda(list);
-  }, [formatted, referendaToList, setFilterState, setFilteredReferenda]);
+  useEffect(() => {
+    const filtered = [];
+
+    if (showMyReferenda) {
+      const mySubmittedReferendaList = referendaToList?.filter((ref) => ref.proposer === formatted);
+
+      mySubmittedReferendaList && filtered.push(...mySubmittedReferendaList);
+    }
+
+    if (showMyVoted) {
+      const myVotedList = referendaToList?.filter((ref) => myVotedReferendaIndexes?.includes(ref.post_id));
+
+      myVotedList && filtered.push(...myVotedList);
+    }
+
+    setFilteredReferenda((showMyReferenda || showMyVoted) ? filtered : referendaToList);
+  }, [formatted, myVotedReferendaIndexes, referendaToList, setFilteredReferenda, showMyReferenda, showMyVoted]);
 
   const onChangeStatus = useCallback((filterState: number) => {
     filterState = filterState == 'All' ? 0 : filterState;
@@ -75,8 +80,8 @@ export default function SearchBox({ address, api, filterState, referendaToList, 
   }, [referendaToList, setFilterState, setFilteredReferenda]);
 
   return (
-    <Grid alignItems='center' container pt='15px'>
-      <Grid item justifyContent='flex-start' xs sx={{ ml: '5px' }}>
+    <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
+      <Grid item justifyContent='flex-start' sx={{ ml: '5px' }} md={6}>
         <InputFilter
           autoFocus={false}
           // onChange={onSearch}
@@ -85,13 +90,13 @@ export default function SearchBox({ address, api, filterState, referendaToList, 
         // value={searchKeyword ?? ''}
         />
       </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onAdvanced} pl='15px' py='10px' sx={{ cursor: 'pointer' }} xs={1.4}>
+      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onAdvanced} py='10px' sx={{ cursor: 'pointer' }} width='fit-content'>
         {t('Advanced')}
         <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer', width: '25px' }}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' py='10px' xs={2}>
+      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' py='10px' width='fit-content'>
         {t('Status')}
         <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ width: '130px' }}>
           {statusOptions &&
@@ -106,11 +111,21 @@ export default function SearchBox({ address, api, filterState, referendaToList, 
           }
         </Grid>
       </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onMyReferenda} pl='15px' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
-        {t('My Referenda')}
+      <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
+        <Checkbox2
+          checked={showMyReferenda}
+          label={t('My Referenda')}
+          labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+          onChange={onMyReferenda}
+        />
       </Grid>
-      <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onMyVots} pl='15px' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
-        {t('My Votes')}
+      <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
+        <Checkbox2
+          checked={showMyVoted}
+          label={t('My Votes')}
+          labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+          onChange={onMyVotes}
+        />
       </Grid>
     </Grid>
   );

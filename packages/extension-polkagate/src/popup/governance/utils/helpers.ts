@@ -5,7 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { postData } from '../../../util/api';
 import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
-import { LatestReferenda, Origins, TopMenu } from './types';
+import { LatestReferenda, Origins, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -203,7 +203,7 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
     });
 }
 
-export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<string[] | null> {
+export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<ReferendumPolkassembly | null> {
   console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
 
   const requestOptions = {
@@ -234,7 +234,7 @@ export async function getReferendumPA(chainName: string, type: TopMenu, postId: 
     });
 }
 
-export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<any | null> {
+export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<ReferendumSubScan | null> {
   console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint

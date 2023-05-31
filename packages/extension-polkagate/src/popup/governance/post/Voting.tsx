@@ -32,9 +32,6 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
   const decimal = useDecimal(address);
   const token = useToken(address);
 
-  console.log('referendumPA:', referendumPA)
-  console.log('referendumSb:', referendumSb);
-
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = useState(false);
   const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
@@ -128,7 +125,10 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
         </Typography>
       </Grid>
       <Grid item sx={{ px: '25px' }} xs={12}>
-        <VoteChart referendum={referendumSb} />
+        <VoteChart
+          ayes={ayes}
+          nays={nays}
+        />
       </Grid>
       <Grid container item justifyContent='space-around' xs={12}>
         <Tally

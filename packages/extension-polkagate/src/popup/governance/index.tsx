@@ -23,6 +23,7 @@ import { ReferendumSummary } from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
+import { getAllVotes } from './post/myVote/util';
 
 export default function Governance(): React.ReactElement {
   useFullscreen();
@@ -47,8 +48,13 @@ export default function Governance(): React.ReactElement {
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [filterState, setFilterState] = useState(0);
+  const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
+
+  useEffect(() => {
+    address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
+  }, [address, api, tracks]);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
@@ -219,12 +225,11 @@ export default function Governance(): React.ReactElement {
           }
           <SearchBox
             address={address}
-            api={api}
             filterState={filterState}
+            myVotedReferendaIndexes={myVotedReferendaIndexes}
             referendaToList={referenda}
             setFilterState={setFilterState}
             setFilteredReferenda={setFilteredReferenda}
-            tracks={tracks}
           />
           {filteredReferenda
             ? <>
@@ -234,6 +239,7 @@ export default function Governance(): React.ReactElement {
                     <ReferendumSummary
                       address={address}
                       key={index}
+                      myVotedReferendaIndexes={myVotedReferendaIndexes}
                       onClick={() => getReferendaById(referendum.post_id, referendum.type)}
                       referendum={referendum}
                     />
