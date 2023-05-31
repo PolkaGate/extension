@@ -32,6 +32,10 @@ export const findItemDecidingCount = (item: string, decidingCounts: Count[] | un
 export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   const history = useHistory();
 
+  const onMouseLeave = useCallback(() => {
+    setMenuOpen(false);
+  }, [setMenuOpen]);
+
   function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item, decidingCounts);
     const onSubMenuClick = useCallback(() => {
@@ -54,9 +58,9 @@ export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, se
   }
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', py: '15px', zIndex: 10, position: 'absolute', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
+    <Grid alignItems='flex-start' container item onMouseLeave={onMouseLeave} sx={{ bgcolor: 'background.paper', py: '15px', zIndex: 10, position: 'absolute', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
-        <Grid alignItems='flex-start' container item >
+        <Grid alignItems='flex-start' container item>
           <MenuItem
             fontWeight={500}
             icon={<All sx={{ fontSize: 20, fontWeight: 500, mr: '10px' }} />}
