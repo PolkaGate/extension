@@ -42,7 +42,7 @@ export default function Governance(): React.ReactElement {
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
-  const [referendaToList, setReferenda] = useState<LatestReferenda[] | null>();
+  const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -64,20 +64,16 @@ export default function Governance(): React.ReactElement {
   }, [fellowshipTracks, selectedSubMenu, tracks]);
 
   useEffect(() => {
-    if (referendaToList === undefined) {
-      return;
-    }
-
-    if (referendaToList === null) {
-      setFilteredReferenda(null);
+    if (!referenda) {
+      setFilteredReferenda(referenda);
 
       return;
     }
 
-    const list = filterState ? referendaToList?.filter((ref) => REFERENDA_STATUS[filterState].includes(ref.status)) : referendaToList;
+    const list = filterState ? referenda?.filter((ref) => REFERENDA_STATUS[filterState].includes(ref.status)) : referenda;
 
     setFilteredReferenda(list);
-  }, [filterState, referendaToList]);
+  }, [filterState, referenda]);
 
   useEffect(() => {
     if (!api) {
@@ -107,7 +103,7 @@ export default function Governance(): React.ReactElement {
     chainName && selectedSubMenu && fetchRef().catch(console.error);
 
     async function fetchRef() {
-      let list = referendaToList;
+      let list = referenda;
 
       // to reset referenda list on menu change
       if (pageTrackRef.current.trackId !== referendaTrackId || pageTrackRef.current.topMenu !== topMenu) {
@@ -225,7 +221,7 @@ export default function Governance(): React.ReactElement {
             address={address}
             api={api}
             filterState={filterState}
-            referendaToList={referendaToList}
+            referendaToList={referenda}
             setFilterState={setFilterState}
             setFilteredReferenda={setFilteredReferenda}
             tracks={tracks}
