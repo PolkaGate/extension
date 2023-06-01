@@ -13,17 +13,17 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import HorizontalWaiting from './components/HorizontalWaiting';
+import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
 import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
 import { LatestReferenda, TopMenu } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
 import { Header } from './Header';
-import { ReferendumSummary } from './ReferendumSummary';
+import ReferendumSummary from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
-import { getAllVotes } from './post/myVote/util';
 
 export default function Governance(): React.ReactElement {
   useFullscreen();
@@ -38,7 +38,7 @@ export default function Governance(): React.ReactElement {
 
   const { fellowshipTracks, tracks } = useTracks(address);
 
-  const pageTrackRef = useRef({ listFinished: false, page: 1, topMenu, trackId: -1 });
+  const pageTrackRef = useRef({ listFinished: false, page: 1, subMenu: 'All', topMenu });
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<number | undefined>();
@@ -51,11 +51,6 @@ export default function Governance(): React.ReactElement {
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
-
-  useEffect(() => {
-    address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
-  }, [address, api, tracks]);
-
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
     if (!tracks || !fellowshipTracks) {
@@ -69,10 +64,16 @@ export default function Governance(): React.ReactElement {
     );
   }, [fellowshipTracks, selectedSubMenu, tracks]);
 
+  const isSubMenuChanged = pageTrackRef.current.subMenu !== selectedSubMenu;
+  const isTopMenuChanged = pageTrackRef.current.topMenu !== topMenu;
+
+  useEffect(() => {
+    address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
+  }, [address, api, tracks]);
+
+
   useEffect(() => {
     if (!referenda) {
-      setFilteredReferenda(referenda);
-
       return;
     }
 
@@ -112,10 +113,10 @@ export default function Governance(): React.ReactElement {
       let list = referenda;
 
       // Reset referenda list on menu change
-      if (pageTrackRef.current.trackId !== currentTrack?.[0]?.toNumber() || pageTrackRef.current.topMenu !== topMenu) {
+      if (isSubMenuChanged || isTopMenuChanged) {
         setReferenda(undefined);
         list = [];
-        pageTrackRef.current.trackId = currentTrack as number; // Update the ref with new values
+        pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
         pageTrackRef.current.page = 1;
         pageTrackRef.current.listFinished = false;
       }
@@ -170,7 +171,8 @@ export default function Governance(): React.ReactElement {
         if (resSb) {
           const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
 
-          pageTrackRef.current.trackId = fellowshipTrackId as number;
+          pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
+
           resPA = resPA.map((r) => {
             const found = resSb.list.find((f) => f.referendum_index === r.post_id);
 
@@ -188,8 +190,7 @@ export default function Governance(): React.ReactElement {
 
       setReferenda([...concatenated]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainName, getMore, selectedSubMenu, tracks]);
+  }, [chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
 
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };

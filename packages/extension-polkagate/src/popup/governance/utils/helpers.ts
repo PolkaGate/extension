@@ -217,7 +217,7 @@ export async function getReferendumPA(chainName: string, type: TopMenu, postId: 
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        console.log(`Ref #${postId} info from PA:`, data);
+        // console.log(`Ref #${postId} info from PA:`, data);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data;
@@ -249,7 +249,7 @@ export async function getReferendumSb(chainName: string, type: TopMenu, postId: 
         })
         .then((data: { message: string; data }) => {
           if (data.message === 'Success') {
-            console.log(`Ref ${postId} info from Sb:`, data.data);
+            // console.log(`Ref ${postId} info from Sb:`, data.data);
 
             resolve(data.data);
           } else {

@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { PalletRankedCollectiveTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
+
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import type { PalletRankedCollectiveTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 
 import { BN } from '@polkadot/util';
 
@@ -29,7 +30,7 @@ interface Props {
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
-export function ReferendumSummary({ myVotedReferendaIndexes, key, onClick, referendum }: Props): React.ReactElement<Props> {
+function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: string | undefined }>();
   const api = useApi(address);
@@ -68,8 +69,8 @@ export function ReferendumSummary({ myVotedReferendaIndexes, key, onClick, refer
       }
 
       return ayesBN.gte(naysBN)
-        ? `${t('Aye')} ${(Number(ayes) / total * 100).toFixed(2)}%`
-        : `${t('Nay')} ${(Number(nays) / total * 100).toFixed(2)}%`;
+        ? `${t('Aye')} ${parseFloat((Number(ayes) / total * 100).toFixed(2))}%`
+        : `${t('Nay')} ${parseFloat((Number(nays) / total * 100).toFixed(2))}%`;
     }
   }, [ayes, nays, t]);
 
@@ -184,3 +185,5 @@ export function ReferendumSummary({ myVotedReferendaIndexes, key, onClick, refer
     </Grid>
   );
 }
+
+export default React.memo(ReferendumSummary);
