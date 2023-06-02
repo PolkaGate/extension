@@ -60,7 +60,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           position: 'relative'
         }}
       >
-        <Grid item sx={{ bgcolor: '#454545', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
+        <Grid item sx={{ bgcolor: 'label.main', color: 'white', fontSize: '10px', ml: 3, position: 'absolute', px: 1, width: 'fit-content' }}>
           {label}
         </Grid>
         <AccountPreview

@@ -11,6 +11,7 @@ declare module '@mui/material/styles' {
   interface Palette {
     aye: Palette['primary'];
     nay: Palette['primary'];
+    label: Palette['primary'];
     approval: Palette['primary'];
     support: Palette['primary'];
   }
@@ -18,6 +19,7 @@ declare module '@mui/material/styles' {
     approval?: PaletteOptions['primary'];
     aye?: PaletteOptions['primary'];
     nay?: PaletteOptions['primary'];
+    label?: PaletteOptions['primary'];
     support?: PaletteOptions['primary'];
   }
 }
@@ -31,6 +33,7 @@ export const darkTheme: ThemeOptions = {
     support: { main: '#BCE2DB', contrastText: '#4B2338' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
+    label: { main: '#454545' },
     background: { default: '#171717', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
