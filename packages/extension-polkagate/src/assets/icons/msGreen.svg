@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1080" height="1080" viewBox="0 0 1080 1080" xml:space="preserve">
+<defs>
+</defs>
+<g transform="matrix(1 0 0 1 540 540)" id="1a0cfb5b-6130-41b4-b0ba-950bce2457d8"  >
+</g>
+<g transform="matrix(1 0 0 1 540 540)" id="3d0f4e72-13e3-4a1b-b27c-effd0d284410"  >
+<rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke"  x="-540" y="-540" rx="0" ry="0" width="1080" height="1080" />
+</g>
+<g transform="matrix(13.25 0 0 13.25 882.47 542.4)"  >
+<path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(31, 119, 32); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-82.7, -54.17)" d="M 94.4726 44.4656 C 93.7324 41.6176 92.6649 38.8624 91.2908 36.2539 L 84.7086 41.6986 L 69.697 54.0982 L 76.2364 59.5242 L 87.1591 50.4872 C 87.3166 51.7459 87.3975 53.0128 87.4012 54.2812 C 87.4059 58.5319 86.5199 62.7377 84.7988 66.6338 L 91.3715 72.0833 C 95.7784 63.5575 96.8747 53.7344 94.4536 44.4656 L 94.4726 44.4656 Z" stroke-linecap="round" />
+</g>
+<g transform="matrix(13.25 0 0 13.25 334.42 573.17)"  >
+<path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(31, 119, 32); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-41.35, -56.49)" d="M 56.6494 65.7408 L 54.3464 63.8092 L 45.372 56.2867 L 43.0263 54.3173 L 28.0547 41.7545 L 21.5114 36.2539 C 20.1227 38.8903 19.0409 41.677 18.2872 44.5594 C 15.8404 53.9276 16.9061 63.8668 21.2835 72.5039 L 27.8695 66.9985 C 26.177 63.0832 25.3059 58.8624 25.3101 54.5972 C 25.3137 53.2833 25.3993 51.9708 25.5665 50.6675 L 36.4878 59.8131 L 38.8382 61.7827 L 47.8032 69.3051 L 50.1061 71.2366 L 56.6494 76.7278 L 63.226 71.2319 L 65.6951 69.1627 L 59.1519 63.6764 L 56.6494 65.7408 Z" stroke-linecap="round" />
+</g>
+<g transform="matrix(13.25 0 0 13.25 537.74 546.78)"  >
+<path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(31, 119, 32); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-56.69, -54.5)" d="M 37.0948 30.2485 C 37.8603 29.6177 38.6573 29.0312 39.4857 28.4888 C 46.6844 23.7136 55.5401 22.1446 63.9386 24.1562 C 72.3371 26.1677 79.5245 31.5794 83.7848 39.0991 L 90.2112 33.7159 C 84.3756 24.2781 74.84 17.7367 63.942 15.6951 C 53.0438 13.6535 41.7909 16.3005 32.9413 22.9872 C 32.1569 23.5785 31.4057 24.2029 30.6685 24.851 C 28.5639 26.7074 26.6631 28.7832 24.9982 31.0432 L 78.9272 76.3563 C 68.3816 87.137 51.6335 88.7993 39.1787 80.3015 C 38.3423 79.7339 37.5342 79.1236 36.7593 78.4802 C 33.7998 76.0075 31.3203 73.0104 29.4446 69.6391 L 23.0042 75.027 C 30.1605 86.7959 42.9277 93.9786 56.6904 93.9786 C 70.4531 93.9786 83.2203 86.7959 90.3765 75.027 L 83.9407 69.6248 L 37.0948 30.2485 Z" stroke-linecap="round" />
+</g>
+</svg>
