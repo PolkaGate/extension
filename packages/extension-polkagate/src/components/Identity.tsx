@@ -49,7 +49,8 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
 
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
-
+  const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
+  
   const merkleScienceTooltip = useMemo(() => (msData &&
     <Typography variant='body2'>
       <Grid container justifyContent='flex-start'>
@@ -131,7 +132,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
                 {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
                   <Grid item sx={{ textAlign: 'left' }}>
                     {showShortAddress
-                      ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
+                      ? <ShortAddress address={_formatted} style={{ fontSize: '11px' }} />
                       : t('Unknown')
                     }
                   </Grid>
