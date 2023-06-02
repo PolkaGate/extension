@@ -60,7 +60,7 @@ export type AllVotesType = {
 }
 
 export async function getReferendumStatistics(chainName: string): Promise<Statistics | null> {
-  console.log('Getting ref stat from sb ... ');
+  // console.log('Getting ref stat from sb ... ');
 
   return new Promise((resolve) => {
     try {
@@ -204,7 +204,7 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
 }
 
 export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<ReferendumPolkassembly | null> {
-  console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
+  // console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -235,7 +235,7 @@ export async function getReferendumPA(chainName: string, type: TopMenu, postId: 
 }
 
 export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<ReferendumSubScan | null> {
-  console.log(`Getting ref #${postId} info from sb ...`);
+  // console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint
   const referendumIndex: number = postId >>> 0; // Use bitwise zero-fill right shift to convert to unsigned integer
