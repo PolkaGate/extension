@@ -93,8 +93,8 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
         <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {msData
-              ? <Grid container item >
-                <Grid display='flex' item xs={1.25}>
+              ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
+                <Grid display='flex' item sx={{ width: '25px' }}>
                   <Infotip text={merkleScienceTooltip}>
                     <Box
                       component='img'
@@ -109,7 +109,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
                     />
                   </Infotip>
                 </Grid>
-                <Grid xs={10.5} color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item>
+                <Grid color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item sx={{ maxWidth: 'calc(100% - 25px)' }}>
                   {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
                 </Grid>
               </Grid>
