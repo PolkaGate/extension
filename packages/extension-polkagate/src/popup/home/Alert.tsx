@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionContext, Header, PButton, Popup } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
+import { HeaderBrand } from '../../partials';
 import { NEW_VERSION_ALERT } from '../../util/constants';
 
 interface Props {
@@ -17,27 +18,23 @@ interface Props {
 
 export default function Alert({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const goHome = useCallback(() => {
+  const onClose = useCallback(() => {
     window.localStorage.setItem(NEW_VERSION_ALERT, 'ok');
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
 
-  const UL = ({ notes, title }: { title: string, notes: string[] }) => {
+  const UL = ({ notes }: { notes: string[] }) => {
     return (
-      <Grid container direction='column' pt='15px'>
-        <Grid container item>
-          <Typography fontSize='16px' fontWeight={500}>
-            {title}
-          </Typography>
-        </Grid>
+      <Grid container direction='column' py='15px'>
         <Grid container item>
           <ul style={{ margin: 0, paddingLeft: '25px' }}>
             {notes.map((note, index) => (
-              <li key={index} style={{ paddingTop: '10px' }}>
-                <Typography fontSize='14px' fontWeight={400} textAlign='left'>
+              <li key={index} style={{ paddingBottom: '5px', paddingTop: '5px', color: `${theme.palette.secondary.light}` }}>
+                <Typography color='text.primary' fontSize='14px' fontWeight={400} textAlign='left'>
                   {note}
                 </Typography>
               </li>
@@ -50,25 +47,33 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
 
   return (
     <Popup show={show}>
-      <Header onClose={goHome} text={t<string>('Updates')} />
+      <HeaderBrand
+        backgroundDefault
+        noBorder
+        onClose={onClose}
+        showBrand
+        showClose
+        showCloseX
+        text={t<string>('Polkagate')}
+      />
       <Grid container direction='column' px='15px'>
-        <Grid container item justifyContent='center' py='50px'>
-          <Typography fontSize='22px' fontWeight={700} pt='45px'>
-            {t<string>('PolkaGate Updated!')}
+        <Grid container item justifyContent='center' pb='20px' pt='50px'>
+          <Typography fontSize='22px' fontWeight={400}>
+            {t<string>('Important Updates')}
           </Typography>
         </Grid>
-        <Grid container item>
+        <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Testnet is now disabled by default but can be enabled through the main menu/setting by selecting "Enable testnet chain."'),
-              t<string>('"Lucky Friday" has been added as an endpoint to both the Kusama and Polkadot networks.'),
+              t<string>('Before transactions, accounts undergo due diligence utilizing Merkle Science to mitigate risks and provide essential information to users.'),
+              t<string>('“Nomination pools” has been added as a new proxy type on Kusama.'),
+              t<string>('You can now click on the account name to go to that account page.'),
               t<string>('Various known issues have been fixed.')
             ]}
-            title={t<string>('Here are the latest changes:')}
           />
         </Grid>
       </Grid>
-      <PButton _onClick={goHome} text={t<string>('Ok')} />
+      <PButton _onClick={onClose} text={t<string>('Close')} />
     </Popup>
   );
 }
