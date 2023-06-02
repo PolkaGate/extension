@@ -192,7 +192,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

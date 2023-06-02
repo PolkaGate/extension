@@ -181,7 +181,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

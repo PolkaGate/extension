@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Box, Grid, Link, SxProps, Theme } from '@mui/material';
+import { Box, Grid, Link, SxProps, Theme, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useEffect, useMemo } from 'react';
 
@@ -13,38 +13,63 @@ import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-deri
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { riot } from '../assets/icons';
-import { useAccountInfo, useAccountName, useChain, useTranslation } from '../hooks';
-import useFormatted2 from '../hooks/useFormatted2';
+import { ms, msGreen, msWarning, riot } from '../assets/icons';
+import { useAccountInfo, useAccountName, useChain, useFormatted, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';
-import { ChainLogo, Identicon, ShortAddress } from '.';
+import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {
   accountInfo?: DeriveAccountInfo;
   address?: string | AccountId;
   api?: ApiPromise;
+  chain?: Chain;
   formatted?: string | AccountId;
+  identiconSize?: number;
+  judgement?: any;
   name?: string;
+  noIdenticon?: boolean;
+  returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
   style?: SxProps<Theme>;
   showChainLogo?: boolean;
-  identiconSize?: number;
-  chain?: Chain | null;
   showShortAddress?: boolean;
-  withShortAddress?: boolean;
   showSocial?: boolean;
-  noIdenticon?: boolean;
-  judgement?: any;
-  returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
-  direction?: 'row' | 'column';
+  withShortAddress?: boolean;
 }
 
 function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
-  const _formatted = useFormatted2(address, formatted, _chain);
+  const _formatted = useFormatted(address, formatted);
+  const msData = useMerkleScience(_formatted, chain);
+
+  const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
+  const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
+  const _showSocial = msData ? false : showSocial;
+
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
+
+  const merkleScienceTooltip = useMemo(() => (msData &&
+    <Typography variant='body2'>
+      <Grid container justifyContent='flex-start'>
+        <Grid item textAlign='left' xs={12}>
+          {t('Data from Merkle Science (NOT onchain data)')}
+        </Grid>
+        <Grid item textAlign='left' xs={12}>
+          {t(` - Type: ${msData.tag_type_verbose}`)}
+        </Grid>
+        <Grid item textAlign='left' xs={12}>
+          {t(` - Subtype: ${msData.tag_subtype_verbose}`)}
+        </Grid>
+        {msData.tag_type_verbose === 'Scam' &&
+          <Grid item textAlign='left' xs={12}>
+            {t(` - Name: ${msData.tag_name_verbose}`)}
+          </Grid>
+        }
+      </Grid>
+    </Typography>
+  ), [msData, t]);
 
   useEffect(() => {
     returnIdentity && _accountInfo?.identity && returnIdentity(_accountInfo.identity);
@@ -62,31 +87,66 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               size={identiconSize}
               value={_formatted || address}
             />
-          </Grid>}
-        <Grid direction='column' item maxWidth='fit-content' overflow='hidden' sx={{ fontSize: style?.fontSize as string ?? '28px', fontWeight: 400 }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
-          {_accountInfo?.identity.displayParent ? _accountInfo?.identity.displayParent + '/' : ''}
-          {_accountInfo?.identity?.display
-            ? _accountInfo?.identity.displayParent
-              ? <span style={{ color: grey[500] }}>{_accountInfo?.identity?.display}</span>
-              : _accountInfo?.identity?.display
-            : ''}
-          {_accountInfo?.nickname ? _accountInfo?.nickname : ''}
-          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name ? name : ''}
-          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
-          {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
-            ? showShortAddress
-              ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string || '11px' }} />
-              : t('Unknown')
-            : ''
-          }
-          {withShortAddress && direction === 'column' &&
+          </Grid>
+        }
+        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
+          <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
+            {msData
+              ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
+                <Grid display='flex' item sx={{ width: '25px' }}>
+                  <Infotip text={merkleScienceTooltip}>
+                    <Box
+                      component='img'
+                      src={
+                        isMSgreen
+                          ? msGreen as string
+                          : isMSwarning
+                            ? msWarning as string
+                            : ms as string
+                      }
+                      sx={{ width: '20px' }}
+                    />
+                  </Infotip>
+                </Grid>
+                <Grid color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item sx={{ maxWidth: 'calc(100% - 25px)' }}>
+                  {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
+                </Grid>
+              </Grid>
+              : <>
+                {_accountInfo?.identity?.displayParent &&
+                  <Grid item>
+                    {_accountInfo?.identity.displayParent}/
+                  </Grid>
+                }
+                {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
+                  <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+                    {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
+                  </Grid>
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
+                  <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
+                    {name || accountName}
+                  </Grid>
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
+                  <Grid item sx={{ textAlign: 'left' }}>
+                    {showShortAddress
+                      ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
+                      : t('Unknown')
+                    }
+                  </Grid>
+                }
+              </>
+            }
+          </Grid>
+          {withShortAddress &&
             <Grid container item>
               <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
-        {showSocial &&
-          <Grid container id='socials' item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
+        {_showSocial &&
+          <Grid container id='socials' item justifyContent='flex-end' pl='5px' width='fit-content'>
             {_accountInfo?.identity?.email &&
               <Grid item>
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
@@ -125,7 +185,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
       </Grid>
       {
         showChainLogo &&
-        <Grid container item xs={1}>
+        <Grid item>
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }
