@@ -65,7 +65,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Before transactions, accounts undergo due diligence utilizing Merkle Science to mitigate risks and provide essential information to users.'),
+              t<string>('Be aware of risky accounts (scam, phishing, theft, etc.) identified through Merkle Science for a safer transaction experience.'),
               t<string>('“Nomination pools” has been added as a new proxy type on Kusama.'),
               t<string>('You can now click on the account name to go to that account page.'),
               t<string>('Various known issues have been fixed.')
