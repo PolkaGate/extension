@@ -19,7 +19,7 @@ export default function useMerkleScience(address: string | AccountId | null | un
 
     chrome.storage.local.get('merkleScience', (res) => {
       const data = res?.merkleScience as MsData[];
-      console.log('data:', data.find((i) => i.tag_type_verbose === 'Theft'))
+      // console.log('data:', data.find((i) => i.tag_type_verbose === 'Theft'))
       const found = data?.find((d) => d.address === address);
 
       setData(found);
