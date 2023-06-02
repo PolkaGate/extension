@@ -193,7 +193,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
           </DisplayValue>
           <DisplayValue title={t<string>('Vote Multiplier')}>
             <Typography fontSize='28px' fontWeight={400}>
-              {`${delegateInformation.delegateConviction}x`}
+              {`${delegateInformation.delegateConviction ? delegateInformation.delegateConviction : 0.1}x`}
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Number of Referenda Categories')}>
