@@ -13,9 +13,8 @@ import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-deri
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { ms, riot } from '../assets/icons';
-import { useAccountInfo, useAccountName, useChain, useFormatted, useTranslation } from '../hooks';
-import { MsData } from '../util/getMS';
+import { ms, msGreen, msWarning, riot } from '../assets/icons';
+import { useAccountInfo, useAccountName, useChain, useFormatted, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -24,7 +23,6 @@ interface Props {
   address?: string | AccountId;
   api?: ApiPromise;
   chain?: Chain;
-  msData?: MsData | undefined;
   formatted?: string | AccountId;
   identiconSize?: number;
   judgement?: any;
@@ -38,11 +36,17 @@ interface Props {
   withShortAddress?: boolean;
 }
 
-function Identity({ accountInfo, address, api, msData, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
   const _formatted = useFormatted(address, formatted);
+  const msData = useMerkleScience(_formatted, chain);
+
+  const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
+  const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
+  const _showSocial = msData ? false : showSocial;
+
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
   const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
@@ -86,22 +90,28 @@ function Identity({ accountInfo, address, api, msData, chain, formatted, identic
             />
           </Grid>
         }
-        {msData &&
-          <Infotip text={merkleScienceTooltip}>
-            <Grid display='flex' item pr='5px'>
-              <Box
-                component='img'
-                src={ms as string}
-                sx={{ width: '31px' }}
-              />
-            </Grid>
-          </Infotip>
-        }
-        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
+        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {msData
-              ? <Grid item>
-                {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
+              ? <Grid container item >
+                <Grid display='flex' item xs={1.25}>
+                  <Infotip text={merkleScienceTooltip}>
+                    <Box
+                      component='img'
+                      src={
+                        isMSgreen
+                          ? msGreen as string
+                          : isMSwarning
+                            ? msWarning as string
+                            : ms as string
+                      }
+                      sx={{ width: '20px' }}
+                    />
+                  </Infotip>
+                </Grid>
+                <Grid xs={10.5} color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item>
+                  {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
+                </Grid>
               </Grid>
               : <>
                 {_accountInfo?.identity?.displayParent &&
@@ -136,7 +146,7 @@ function Identity({ accountInfo, address, api, msData, chain, formatted, identic
             </Grid>
           }
         </Grid>
-        {showSocial &&
+        {_showSocial &&
           <Grid container id='socials' item justifyContent='flex-end' pl='5px' width='fit-content'>
             {_accountInfo?.identity?.email &&
               <Grid item>
@@ -175,7 +185,7 @@ function Identity({ accountInfo, address, api, msData, chain, formatted, identic
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }
-    </Grid >
+    </Grid>
   );
 }
 

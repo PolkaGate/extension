@@ -9,7 +9,6 @@ interface Commit {
   };
 }
 
-
 export interface MsData {
   address: string;
   tag_name_verbose: string;

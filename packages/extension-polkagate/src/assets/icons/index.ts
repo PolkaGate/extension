@@ -39,3 +39,5 @@ export { default as stars6White } from './stars6White.svg';
 export { default as stars5White } from './stars5White.svg';
 export { default as stars5Black } from './stars5Black.svg';
 export { default as ms } from './ms.svg';
+export { default as msGreen } from './msGreen.svg';
+export { default as msWarning } from './msWarning.svg';
