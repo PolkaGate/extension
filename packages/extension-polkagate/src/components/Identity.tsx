@@ -23,6 +23,7 @@ interface Props {
   address?: string | AccountId;
   api?: ApiPromise;
   chain?: Chain;
+  direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
   judgement?: any;
@@ -140,7 +141,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               </>
             }
           </Grid>
-          {withShortAddress &&
+          {withShortAddress && direction === 'column' &&
             <Grid container item>
               <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
@@ -190,7 +191,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }
-    </Grid >
+    </Grid>
   );
 }
 
