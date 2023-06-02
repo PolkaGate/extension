@@ -15,9 +15,10 @@ interface Props {
   ayes: string | undefined;
   nays: string | undefined;
   height?: string;
+  noBorderColor?: boolean;
 }
 
-function VoteChart({ ayes, height, nays }: Props): React.ReactElement<Props> {
+function VoteChart({ ayes, height, nays, noBorderColor = false }: Props): React.ReactElement<Props> {
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
@@ -58,6 +59,7 @@ function VoteChart({ ayes, height, nays }: Props): React.ReactElement<Props> {
           '#FF5722',
           // '#BBBBBB'
         ],
+        borderColor: noBorderColor ? 'transparent' : 'white',
         data: [ayesPercent, naysPercent],
         hoverOffset: 4,
         label: 'Percentage'
@@ -120,7 +122,7 @@ function VoteChart({ ayes, height, nays }: Props): React.ReactElement<Props> {
     return () => {
       chartInstance.destroy();
     };
-  }, [ayesPercent, naysPercent]);
+  }, [ayesPercent, naysPercent, noBorderColor]);
 
   return (
     <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '250px', width: '100%' }} >
