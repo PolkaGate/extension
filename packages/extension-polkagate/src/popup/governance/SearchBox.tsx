@@ -114,6 +114,7 @@ export default function SearchBox({ address, filterState, myVotedReferendaIndexe
       <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
         <Checkbox2
           checked={showMyReferenda}
+          disabled={!referendaToList}
           label={t('My Referenda')}
           labelStyle={{ fontSize: '16px', fontWeight: '400' }}
           onChange={onMyReferenda}
@@ -122,6 +123,7 @@ export default function SearchBox({ address, filterState, myVotedReferendaIndexe
       <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
         <Checkbox2
           checked={showMyVoted}
+          disabled={!myVotedReferendaIndexes}
           label={t('My Votes')}
           labelStyle={{ fontSize: '16px', fontWeight: '400' }}
           onChange={onMyVotes}
