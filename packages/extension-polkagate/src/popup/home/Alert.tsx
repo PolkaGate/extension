@@ -60,8 +60,8 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item>
           <UL
             notes={[
-              t<string>('Testnet is now disabled by default but can be enabled through the main menu/setting by selecting "Enable testnet chain."'),
-              t<string>('"Lucky Friday" has been added as an endpoint to both the Kusama and Polkadot networks.'),
+              t<string>('“Nomination pools” has been added as a new proxy type on Kusama.'),
+              t<string>('You can now click on the account name to go to that account page.'),
               t<string>('Various known issues have been fixed.')
             ]}
             title={t<string>('Here are the latest changes:')}
