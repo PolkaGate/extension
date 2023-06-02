@@ -9,7 +9,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { POLKADOT_GENESIS_HASH } from '../util/constants';
 import { getJsonFileFromRepo, MsData } from '../util/getMS';
 
-export default function useMerkleScience(address: string | AccountId | null | undefined, chain: Chain | undefined): MsData | undefined {
+export default function useMerkleScience(address: string | AccountId | null | undefined, chain: Chain | undefined, initialize?: boolean): MsData | undefined {
   const [data, setData] = useState<MsData>();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function useMerkleScience(address: string | AccountId | null | un
 
     chrome.storage.local.get('merkleScience', (res) => {
       const data = res?.merkleScience as MsData[];
-      console.log('data:', data.find((i)=>i.tag_type_verbose==='Scam'))
+      // console.log('data:', data.find((i) => i.tag_type_verbose === 'Scam'))
       const found = data?.find((d) => d.address === address);
 
       setData(found);
@@ -27,13 +27,14 @@ export default function useMerkleScience(address: string | AccountId | null | un
   }, [address, chain]);
 
   useEffect(() => {
-    getJsonFileFromRepo().then((data) => {
+    initialize && getJsonFileFromRepo().then((data) => {
       if (data) {
         // eslint-disable-next-line no-void
         void chrome.storage.local.set({ merkleScience: data });
+        console.log('Merkle Science data is loaded!');
       }
     }).catch(console.error);
-  }, []);
+  }, [initialize]);
 
   return data;
 }
