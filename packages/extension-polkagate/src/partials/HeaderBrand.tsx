@@ -1,11 +1,13 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import '@vaadin/icons';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowBackIos as ArrowBackIosIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, Menu as MenuIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
@@ -27,14 +29,17 @@ interface Props {
   onBackClick?: () => void;
   onRefresh?: () => void;
   showClose?: boolean;
+  showCloseX?: boolean;
   isRefreshing?: boolean;
   _centerItem?: JSX.Element;
   noBorder?: boolean;
   shortBorder?: boolean;
   paddingBottom?: number;
+  onClose?: () => void;
+  backgroundDefault?: boolean;
 }
 
-function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onClose, backgroundDefault, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -54,7 +59,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
     }
   }, [address]);
 
-  const onClose = useCallback(() => {
+  const _onClose = useCallback(() => {
     onAction('/');
   }, [onAction]);
 
@@ -124,8 +129,11 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
         </IconButton>
       }
       {showClose &&
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose} size='small' sx={{ p: 0 }}>
-          <vaadin-icon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
+        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
+          {showCloseX
+            ? <CloseIcon sx={{ fontSize: 40 }} />
+            : <vaadin-icon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ height: '22px', width: '22px', color: `${theme.palette.secondary.light}` }} />
+          }
         </IconButton>
       }
     </Grid>
@@ -136,7 +144,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onB
       <Container
         disableGutters
         sx={{
-          bgcolor: showBrand && 'background.paper',
+          bgcolor: (backgroundDefault && 'background.default') || (showBrand && 'background.paper'),
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
