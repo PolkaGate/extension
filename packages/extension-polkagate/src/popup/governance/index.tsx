@@ -5,29 +5,26 @@
 
 import '@vaadin/icons';
 
-import type { StorageKey } from '@polkadot/types';
-
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { Identity } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
 import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
-import { LatestReferenda, TopMenu } from './utils/types';
+import { LatestReferenda } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
+import FellowshipsList from './FellowshipsList';
 import { Header } from './Header';
 import ReferendumSummary from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
-import FellowshipsList from './FellowshipsList';
 
 export type Fellowship = [string, number];
 
