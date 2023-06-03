@@ -38,14 +38,14 @@ function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, n
       </Grid>
       <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: `${identiconSize}px`, pt: `${pt2}px` }}>
         {chain &&
-           <Grid item mr='5px'>
-             <Identicon
-               iconTheme={chain?.icon || 'polkadot'}
-               prefix={chain?.ss58Format ?? 42}
-               size={identiconSize}
-               value={addr}
-             />
-           </Grid>
+            <Grid item mr='5px'>
+              <Identicon
+                iconTheme={chain?.icon || 'polkadot'}
+                prefix={chain?.ss58Format ?? 42}
+                size={identiconSize}
+                value={addr}
+              />
+            </Grid>
         }
         <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {name}
@@ -57,7 +57,7 @@ function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, n
   );
 }
 
- type TransferType = 'All' | 'Max' | 'Normal';
+  type TransferType = 'All' | 'Max' | 'Normal';
 
 interface Props {
   address: string;
@@ -176,7 +176,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           }}
         />
         {isPasswordError &&
-           <WrongPasswordAlert />
+            <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>

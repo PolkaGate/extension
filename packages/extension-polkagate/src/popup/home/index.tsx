@@ -10,7 +10,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../../components';
-import { useChainNames, usePrices, useTranslation } from '../../hooks';
+import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
@@ -30,6 +30,7 @@ export default function Home(): React.ReactElement {
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
 
+  useMerkleScience(undefined, undefined, true);// to download the data file
   usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
