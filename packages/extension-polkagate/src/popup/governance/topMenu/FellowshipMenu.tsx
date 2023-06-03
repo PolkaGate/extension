@@ -63,11 +63,11 @@ export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, s
           <MenuItem
             fontWeight={500}
             icon={<ListIcon sx={{ fontSize: 20, mr: '10px' }} />}
-            item='Members'
+            item='Fellowships'
             top
-            width='9%'
+            width='10%'
           />
-          <Grid container item sx={{ width: '15%' }}>
+          <Grid container item sx={{ width: '14%' }}>
             <MenuItem
               clickable={false}
               fontWeight={500}

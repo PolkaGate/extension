@@ -5,13 +5,16 @@
 
 import '@vaadin/icons';
 
+import type { StorageKey } from '@polkadot/types';
+
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { Identity } from '../../components';
+import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
@@ -24,6 +27,9 @@ import ReferendumSummary from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
 import { TrackStats } from './TrackStats';
+import FellowshipsList from './FellowshipsList';
+
+export type Fellowship = [string, number];
 
 export default function Governance(): React.ReactElement {
   useFullscreen();
@@ -33,6 +39,7 @@ export default function Governance(): React.ReactElement {
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
   const api = useApi(address);
+  const chain = useChain(address);
   const chainName = useChainName(address);
   const decidingCounts = useDecidingCount(address);
 
@@ -49,6 +56,7 @@ export default function Governance(): React.ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>();
   const [filterState, setFilterState] = useState(0);
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
+  const [fellowships, setFellowships] = useState<Fellowship[] | null>();
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -70,7 +78,6 @@ export default function Governance(): React.ReactElement {
   useEffect(() => {
     address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
   }, [address, api, tracks]);
-
 
   useEffect(() => {
     if (!referenda) {
@@ -128,7 +135,7 @@ export default function Governance(): React.ReactElement {
       pageTrackRef.current.topMenu = topMenu;
 
       if (topMenu === 'referenda' && selectedSubMenu === 'All') {
-        const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST)
+        const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
         setIsLoading(false);
 
@@ -192,6 +199,22 @@ export default function Governance(): React.ReactElement {
     }
   }, [chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
 
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.query.fellowshipCollective.members.entries().then((keys) => {
+      const fellowships = keys.map(([{ args: [id] }, option]) => {
+        return [id.toString(), option?.value?.rank?.toNumber()] as Fellowship;
+      });
+
+      fellowships.sort((a, b) => b[1] - a[1]);
+      setFellowships(fellowships);
+      console.log('fellowships:', fellowships);
+    }).catch(console.error);
+  }, [api]);
+
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
     setGetMore(pageTrackRef.current.page);
@@ -216,7 +239,8 @@ export default function Governance(): React.ReactElement {
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           {selectedSubMenu === 'All'
             ? <AllReferendaStats address={address} referendumStats={referendumStats} setReferendumStats={setReferendumStats} />
-            : <TrackStats
+            : selectedSubMenu !== 'Fellowships' &&
+            <TrackStats
               address={address}
               decidingCounts={decidingCounts}
               selectedSubMenu={selectedSubMenu}
@@ -224,57 +248,86 @@ export default function Governance(): React.ReactElement {
               track={currentTrack}
             />
           }
-          <SearchBox
-            address={address}
-            filterState={filterState}
-            myVotedReferendaIndexes={myVotedReferendaIndexes}
-            referendaToList={referenda}
-            setFilterState={setFilterState}
-            setFilteredReferenda={setFilteredReferenda}
-          />
-          {filteredReferenda
-            ? <>
-              {filteredReferenda.map((referendum, index) => {
-                if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
-                  return (
-                    <ReferendumSummary
-                      address={address}
-                      key={index}
-                      myVotedReferendaIndexes={myVotedReferendaIndexes}
-                      onClick={() => getReferendaById(referendum.post_id, referendum.type)}
-                      referendum={referendum}
-                    />
-                  );
-                }
-              })}
-              {!pageTrackRef.current.listFinished &&
-                <>
-                  {
-                    !isLoading
-                      ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
-                        <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                          {t('{{count}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page } })}
-                        </Typography>
-                      </Grid>
-                      : isLoading && <Grid container justifyContent='center'>
-                        <HorizontalWaiting color={theme.palette.primary.main} />
-                      </Grid>
+          {selectedSubMenu !== 'Fellowships' &&
+            <SearchBox
+              address={address}
+              filterState={filterState}
+              myVotedReferendaIndexes={myVotedReferendaIndexes}
+              referendaToList={referenda}
+              setFilterState={setFilterState}
+              setFilteredReferenda={setFilteredReferenda}
+            />
+          }
+          {selectedSubMenu === 'Fellowships'
+            ? <FellowshipsList
+              address={address}
+              fellowships={fellowships}
+            />
+            : <>
+              {filteredReferenda
+                ? <>
+                  {filteredReferenda.map((referendum, index) => {
+                    if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
+                      return (
+                        <ReferendumSummary
+                          address={address}
+                          key={index}
+                          myVotedReferendaIndexes={myVotedReferendaIndexes}
+                          onClick={() => getReferendaById(referendum.post_id, referendum.type)}
+                          referendum={referendum}
+                        />
+                      );
+                    }
+                  })}
+                  {!pageTrackRef.current.listFinished &&
+                    <>
+                      {
+                        !isLoading
+                          ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
+                            <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                              {t('{{count}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page } })}
+                            </Typography>
+                          </Grid>
+                          : isLoading && <Grid container justifyContent='center'>
+                            <HorizontalWaiting color={theme.palette.primary.main} />
+                          </Grid>
+                      }
+                    </>
                   }
                 </>
+                : filteredReferenda === null
+                  ? <Grid container justifyContent='center' pt='10%'>
+                    <Typography color={'text.disabled'} fontSize={20} fontWeight={500}>
+                      {t('No referenda in this track to display')}
+                    </Typography>
+                  </Grid>
+                  : <Grid container justifyContent='center' pt='10%'>
+                    <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
+                  </Grid>
               }
             </>
-            : filteredReferenda === null
-              ? <Grid container justifyContent='center' pt='10%'>
-                <Typography color={'text.disabled'} fontSize={20} fontWeight={500}>
-                  {t('No referenda in this track to display')}
-                </Typography>
-              </Grid>
-              : <Grid container justifyContent='center' pt='10%'>
-                <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
-              </Grid>
           }
         </Container>
       </Container>
     </>
   );
 }
+
+const getRankedColor = (rank: number): string => {
+  switch (rank) {
+    case 6:
+      return '#FFD700';
+    case 5:
+      return '#FFA500';
+    case 4:
+      return '#93D243';
+    case 3:
+      return '#7AB8F4';
+    case 2:
+      return '#E198E1';
+    case 1:
+      return '#DEBFBF';
+    default:
+      return '';
+  }
+};

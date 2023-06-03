@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 
 import { useApi, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
-import FellowshipMenu from './topMenu/FellowShipMenu';
+import FellowshipMenu from './topMenu/FellowshipMenu';
 import ReferendaMenu from './topMenu/ReferendaMenu';
 import { MAX_WIDTH } from './utils/consts';
 import { TopMenu } from './utils/types';
