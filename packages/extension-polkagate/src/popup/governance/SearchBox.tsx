@@ -17,10 +17,8 @@ import { LatestReferenda } from './utils/types';
 
 interface Props {
   address: string;
-  referendaToList: LatestReferenda[] | null | undefined;
+  referenda: LatestReferenda[] | null | undefined;
   setFilteredReferenda: React.Dispatch<React.SetStateAction<LatestReferenda[] | null | undefined>>;
-  setFilterState: React.Dispatch<React.SetStateAction<number>>;
-  filterState: number;
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
@@ -31,16 +29,21 @@ type Filter = {
   beneficiary?: boolean;
 }
 
-const DEFAULT_FILTER = { beneficiary: true, proposers: true, refIndex: true, titles: true };
+const DEFAULT_FILTER = {
+  advanced: {
+    beneficiary: true, proposers: true, refIndex: true, titles: true
+  },
+  myReferenda: false,
+  myVotes: false,
+  status: REFERENDA_STATUS[0]
+};
 
-export default function SearchBox({ address, filterState, myVotedReferendaIndexes, referendaToList, setFilterState, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [showMyReferenda, setShowMyReferenda] = useState<boolean>(false);
-  const [showMyVoted, setShowMyVoted] = useState<boolean>(false);
-  const [filter, setFilter] = useState<Filter>({ ...DEFAULT_FILTER });
+  const [filter, setFilter] = useState({ ...DEFAULT_FILTER });
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -54,53 +57,68 @@ export default function SearchBox({ address, filterState, myVotedReferendaIndexe
   }, [showAdvanced]);
 
   const onMyVotes = useCallback(() => {
-    setFilterState(0);
-    setShowMyVoted((prev) => !prev);
-  }, [setFilterState]);
+    filter.myVotes = !filter.myVotes;
+    setFilter({ ...filter });
+  }, [filter]);
 
   const onFilter = useCallback((key: string) => {
-    filter[key] = !filter[key];
+    filter.advanced[key] = !filter.advanced[key];
     setFilter({ ...filter });
   }, [filter]);
 
   const onReset = useCallback(() => {
     setFilter({ ...DEFAULT_FILTER });
   }, []);
- 
+
   const onSearch = useCallback(() => {
 
   }, []);
 
   const onMyReferenda = useCallback(() => {
-    setFilterState(0);
-    setShowMyReferenda((prev) => !prev);
-  }, [setFilterState]);
+    filter.myReferenda = !filter.myReferenda;
+    setFilter({ ...filter });
+  }, [filter]);
 
   useEffect(() => {
+    if (!referenda) {
+      return;
+    }
+
+    /**  To apply filtering ... */
     const filtered = [];
 
-    if (showMyReferenda) {
-      const mySubmittedReferendaList = referendaToList?.filter((ref) => ref.proposer === formatted);
+    if (filter.myReferenda) {
+      const mySubmittedReferendaList = referenda.filter((r) => r.proposer === formatted);
 
       mySubmittedReferendaList && filtered.push(...mySubmittedReferendaList);
     }
 
-    if (showMyVoted) {
-      const myVotedList = referendaToList?.filter((ref) => myVotedReferendaIndexes?.includes(ref.post_id));
+    if (filter.myVotes) {
+      const myVotedList = referenda.filter((r) => myVotedReferendaIndexes?.includes(r.post_id));
 
       myVotedList && filtered.push(...myVotedList);
     }
 
-    setFilteredReferenda((showMyReferenda || showMyVoted) ? filtered : referendaToList);
-  }, [formatted, myVotedReferendaIndexes, referendaToList, setFilteredReferenda, showMyReferenda, showMyVoted]);
+    if (!filter.status.includes('All')) {
+      const filterBasedOnStatus = referenda.filter((r) => filter.status.includes(r.status));
 
-  const onChangeStatus = useCallback((filterState: number) => {
-    filterState = filterState == 'All' ? 0 : filterState;
-    setFilterState(filterState);
-    const list = referendaToList?.filter((ref) => REFERENDA_STATUS[filterState].includes(ref.status));
+      filterBasedOnStatus && filtered.push(...filterBasedOnStatus);
+    }
 
+    // to remove duplicates
+    const uniqueFiltered = [...new Set(filtered)];
+
+    setFilteredReferenda(uniqueFiltered.length ? uniqueFiltered : referenda);
+  }, [filter, formatted, myVotedReferendaIndexes, referenda, setFilteredReferenda]);
+
+  const onChangeStatus = useCallback((s: number) => {
+    s = String(s) === 'All' ? 0 : s;
+    const list = referenda?.filter((ref) => REFERENDA_STATUS[s].includes(ref.status));
     setFilteredReferenda(list);
-  }, [referendaToList, setFilterState, setFilteredReferenda]);
+
+    filter.status = String(s) === 'All' ? s : REFERENDA_STATUS[s];
+    setFilter({ ...filter });
+  }, [filter, referenda, setFilteredReferenda]);
 
   return (
     <>
@@ -130,26 +148,26 @@ export default function SearchBox({ address, filterState, myVotedReferendaIndexe
                 // label={t<string>('Status')}
                 onChange={onChangeStatus}
                 options={statusOptions}
-                value={filterState}
+                value={REFERENDA_STATUS.findIndex((s) => s === filter.status)}
               />
             }
           </Grid>
         </Grid>
         <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
           <Checkbox2
-            checked={showMyReferenda}
-            disabled={!referendaToList}
+            checked={filter.myReferenda}
+            disabled={!referenda}
             label={t('My Referenda')}
-            labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+            labelStyle={{ fontSize: '16px', fontWeight: 400 }}
             onChange={onMyReferenda}
           />
         </Grid>
         <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
           <Checkbox2
-            checked={showMyVoted}
+            checked={filter.myVotes}
             disabled={!myVotedReferendaIndexes}
             label={t('My Votes')}
-            labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+            labelStyle={{ fontSize: '16px', fontWeight: 400 }}
             onChange={onMyVotes}
           />
         </Grid>
@@ -161,33 +179,33 @@ export default function SearchBox({ address, filterState, myVotedReferendaIndexe
           </Grid>
           <Grid item ml='22px'>
             <Checkbox2
-              checked={filter.refIndex}
+              checked={filter.advanced.refIndex}
               label={t('Ref. Index')}
-              labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+              labelStyle={{ fontSize: '16px', fontWeight: 400 }}
               onChange={() => onFilter('refIndex')}
             />
           </Grid>
           <Grid item ml='22px'>
             <Checkbox2
-              checked={filter.titles}
+              checked={filter.advanced.titles}
               label={t('Titles')}
-              labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+              labelStyle={{ fontSize: '16px', fontWeight: 400 }}
               onChange={() => onFilter('titles')}
             />
           </Grid>
           <Grid item ml='22px'>
             <Checkbox2
-              checked={filter.proposers}
+              checked={filter.advanced.proposers}
               label={t('Proposers')}
-              labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+              labelStyle={{ fontSize: '16px', fontWeight: 400 }}
               onChange={() => onFilter('proposers')}
             />
           </Grid>
           <Grid item ml='22px'>
             <Checkbox2
-              checked={filter.beneficiary}
+              checked={filter.advanced.beneficiary}
               label={t('Beneficiary')}
-              labelStyle={{ fontSize: '16px', fontWeight: '400' }}
+              labelStyle={{ fontSize: '16px', fontWeight: 400 }}
               onChange={() => onFilter('beneficiary')}
             />
           </Grid>

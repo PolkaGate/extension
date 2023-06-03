@@ -36,7 +36,6 @@ export default function Governance(): React.ReactElement {
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
   const api = useApi(address);
-  const chain = useChain(address);
   const chainName = useChainName(address);
   const decidingCounts = useDecidingCount(address);
 
@@ -51,7 +50,6 @@ export default function Governance(): React.ReactElement {
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>();
-  const [filterState, setFilterState] = useState(0);
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
 
@@ -75,16 +73,6 @@ export default function Governance(): React.ReactElement {
   useEffect(() => {
     address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
   }, [address, api, tracks]);
-
-  useEffect(() => {
-    if (!referenda) {
-      return;
-    }
-
-    const list = filterState ? referenda?.filter((ref) => REFERENDA_STATUS[filterState].includes(ref.status)) : referenda;
-
-    setFilteredReferenda(list);
-  }, [filterState, referenda]);
 
   useEffect(() => {
     if (!api) {
@@ -248,10 +236,8 @@ export default function Governance(): React.ReactElement {
           {selectedSubMenu !== 'Fellowships' &&
             <SearchBox
               address={address}
-              filterState={filterState}
               myVotedReferendaIndexes={myVotedReferendaIndexes}
-              referendaToList={referenda}
-              setFilterState={setFilterState}
+              referenda={referenda}
               setFilteredReferenda={setFilteredReferenda}
             />
           }
@@ -282,7 +268,7 @@ export default function Governance(): React.ReactElement {
                         !isLoading
                           ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
                             <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                              {t('{{count}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page } })}
+                              {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount } })}
                             </Typography>
                           </Grid>
                           : isLoading && <Grid container justifyContent='center'>
