@@ -34,7 +34,7 @@ export default function FellowshipsList({ address, fellowships }: Props): React.
       </Grid>
       {fellowships
         ? fellowships.map(([fellow, rank]) => (
-          <Grid container item justifyContent='space-between' key={fellow} sx={{ borderBottom: 1, borderColor: '#CCCCCC', lineHeight: '36px' }}>
+          <Grid alignItems='center' container item justifyContent='space-between' key={fellow} sx={{ borderBottom: 1, borderColor: '#CCCCCC', lineHeight: '36px' }}>
             <Grid item>
               <Identity
                 api={api}
