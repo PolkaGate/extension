@@ -10,7 +10,8 @@ import { LatestReferenda, Origins, ReferendumPolkassembly, ReferendumSubScan, To
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
   'referendum_locked': string,
-  'referendum_participate': string,
+  'referendum_participate'?: string,
+  'active_fellowship_members'?: string,
   'voting_total': number,
   'confirm_total': number,
   'origins':
@@ -59,13 +60,13 @@ export type AllVotesType = {
   }
 }
 
-export async function getReferendumStatistics(chainName: string): Promise<Statistics | null> {
+export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
   // console.log('Getting ref stat from sb ... ');
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + '.api.subscan.io/api/scan/referenda/statistics',
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type}/statistics`,
         {
           'Content-Type': 'application/json'
         })

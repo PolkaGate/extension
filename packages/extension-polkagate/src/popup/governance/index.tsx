@@ -11,10 +11,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
-import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST, REFERENDA_STATUS } from './utils/consts';
+import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST } from './utils/consts';
 import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
 import { LatestReferenda } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
@@ -44,7 +44,7 @@ export default function Governance(): React.ReactElement {
   const pageTrackRef = useRef({ listFinished: false, page: 1, subMenu: 'All', topMenu });
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
-  const [referendumCount, setReferendumCount] = useState<number | undefined>();
+  const [referendumCount, setReferendumCount] = useState<{ referenda: number | undefined, fellowship: number | undefined }>({ fellowship: undefined, referenda: undefined });
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
@@ -86,8 +86,13 @@ export default function Governance(): React.ReactElement {
     }
 
     api.query.referenda.referendumCount().then((count) => {
-      console.log('total referendum count:', count.toNumber());
-      setReferendumCount(count?.toNumber());
+      referendumCount.referenda = count?.toNumber();
+      setReferendumCount({ ...referendumCount });
+    }).catch(console.error);
+
+    api.query.fellowshipReferenda.referendumCount().then((count) => {
+      referendumCount.fellowship = count?.toNumber();
+      setReferendumCount({ ...referendumCount });
     }).catch(console.error);
   }, [api]);
 
@@ -157,7 +162,7 @@ export default function Governance(): React.ReactElement {
         return;
       }
 
-      if (topMenu === 'fellowship') {
+      if (topMenu === 'fellowship' && !['Whitelisted Caller', 'Fellowship Admin'].includes(selectedSubMenu)) {
         const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
         if (resSb) {
@@ -196,7 +201,6 @@ export default function Governance(): React.ReactElement {
 
       fellowships.sort((a, b) => b[1] - a[1]);
       setFellowships(fellowships);
-      console.log('fellowships:', fellowships);
     }).catch(console.error);
   }, [api]);
 
@@ -223,7 +227,12 @@ export default function Governance(): React.ReactElement {
         />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
           {selectedSubMenu === 'All'
-            ? <AllReferendaStats address={address} referendumStats={referendumStats} setReferendumStats={setReferendumStats} />
+            ? <AllReferendaStats
+              address={address}
+              referendumStats={referendumStats}
+              setReferendumStats={setReferendumStats}
+              topMenu={topMenu}
+            />
             : selectedSubMenu !== 'Fellowships' &&
             <TrackStats
               address={address}
@@ -250,7 +259,7 @@ export default function Governance(): React.ReactElement {
               {filteredReferenda
                 ? <>
                   {filteredReferenda.map((referendum, index) => {
-                    if (referendum?.post_id < (referendumCount || referendumStats?.OriginsCount)) {
+                    if (referendum?.post_id < (referendumCount[topMenu] || referendumStats?.OriginsCount)) {
                       return (
                         <ReferendumSummary
                           address={address}
@@ -268,7 +277,7 @@ export default function Governance(): React.ReactElement {
                         !isLoading
                           ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
                             <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                              {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount } })}
+                              {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount: referendumCount[topMenu] } })}
                             </Typography>
                           </Grid>
                           : isLoading && <Grid container justifyContent='center'>
@@ -295,22 +304,3 @@ export default function Governance(): React.ReactElement {
     </>
   );
 }
-
-const getRankedColor = (rank: number): string => {
-  switch (rank) {
-    case 6:
-      return '#FFD700';
-    case 5:
-      return '#FFA500';
-    case 4:
-      return '#93D243';
-    case 3:
-      return '#7AB8F4';
-    case 2:
-      return '#E198E1';
-    case 1:
-      return '#DEBFBF';
-    default:
-      return '';
-  }
-};

@@ -18,6 +18,7 @@ interface Props {
   address: string;
   referendumStats: Statistics | undefined;
   setReferendumStats: React.Dispatch<React.SetStateAction<Statistics | undefined>>;
+  topMenu: 'referenda' | 'fellowship';
 }
 
 export interface TreasuryStats {
@@ -67,7 +68,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, style, title, tokenP
   )
 }
 
-export function AllReferendaStats({ address, referendumStats, setReferendumStats }: Props): React.ReactElement<Props> {
+export function AllReferendaStats({ address, referendumStats, setReferendumStats, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const chainName = useChainName(address);
@@ -78,7 +79,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
 
   useEffect(() => {
-    // reset all if chainchanged
+    // reset all if chain changed
     setTreasuryStats(undefined);
 
     /** To fetch treasury info */
@@ -141,10 +142,10 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
   }, [api]);
 
   useEffect(() => {
-    chainName && getReferendumStatistics(chainName).then((stat) => {
+    chainName && getReferendumStatistics(chainName, topMenu).then((stat) => {
       setReferendumStats(stat);
     });
-  }, [chainName, setReferendumStats]);
+  }, [chainName, setReferendumStats, topMenu]);
 
   return (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
@@ -162,11 +163,20 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
           label={t('Deciding')}
           value={referendumStats?.voting_total}
         />
-        <LabelValue
-          label={t('Participation')}
-          noBorder
-          value={<ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />}
-        />
+        {referendumStats?.referendum_participate &&
+          <LabelValue
+            label={t('Participation')}
+            noBorder
+            value={<ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />}
+          />
+        }
+        {referendumStats?.active_fellowship_members &&
+          <LabelValue
+            label={t('Active Members')}
+            noBorder
+            value={referendumStats?.active_fellowship_members}
+          />
+        }
         <Divider orientation='vertical' />
       </Grid>
       <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />
