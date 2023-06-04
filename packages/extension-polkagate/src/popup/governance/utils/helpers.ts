@@ -12,6 +12,7 @@ export interface Statistics {
   'referendum_locked': string,
   'referendum_participate'?: string,
   'active_fellowship_members'?: string,
+  'fellowship_members'?: string;
   'voting_total': number,
   'confirm_total': number,
   'origins':

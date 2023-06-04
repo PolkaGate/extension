@@ -49,7 +49,7 @@ export default function Governance(): React.ReactElement {
   const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
-  const [isLoading, setIsLoading] = useState<boolean>();
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>();
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
 
@@ -112,6 +112,7 @@ export default function Governance(): React.ReactElement {
       // Reset referenda list on menu change
       if (isSubMenuChanged || isTopMenuChanged) {
         setReferenda(undefined);
+        setFilteredReferenda(undefined);
         list = [];
         pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
         pageTrackRef.current.page = 1;
@@ -119,7 +120,7 @@ export default function Governance(): React.ReactElement {
       }
 
       if (pageTrackRef.current.page > 1) {
-        setIsLoading(true);
+        setIsLoadingMore(true);
       }
 
       pageTrackRef.current.topMenu = topMenu;
@@ -127,7 +128,7 @@ export default function Governance(): React.ReactElement {
       if (topMenu === 'referenda' && selectedSubMenu === 'All') {
         const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
-        setIsLoading(false);
+        setIsLoadingMore(false);
 
         if (allReferenda === null) {
           if (pageTrackRef.current.page === 1) { // there is no referendum !!
@@ -148,7 +149,7 @@ export default function Governance(): React.ReactElement {
 
       let resPA = await getTrackOrFellowshipReferendumsPA(chainName, pageTrackRef.current.page, referendaTrackId);
 
-      setIsLoading(false);
+      setIsLoadingMore(false);
 
       if (resPA === null) {
         if (pageTrackRef.current.page === 1) { // there is no referendum for this track
@@ -163,31 +164,39 @@ export default function Governance(): React.ReactElement {
       }
 
       if (topMenu === 'fellowship' && !['Whitelisted Caller', 'Fellowship Admin'].includes(selectedSubMenu)) {
-        const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
-
-        if (resSb) {
-          const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
-
-          pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
-
-          resPA = resPA.map((r) => {
-            const found = resSb.list.find((f) => f.referendum_index === r.post_id);
-
-            if (found) {
-              r.fellowship_origins = found.origins;
-              r.fellowship_origins_id = found.origins_id;
-            }
-
-            return r;
-          }).filter((r) => selectedSubMenu === 'All' || r.fellowship_origins_id === fellowshipTrackId);
-        }
+        resPA = await addFellowshipOriginsFromSb(resPA) || resPA;
       }
 
       const concatenated = (list || []).concat(resPA);
 
+      console.log('concatenated:', concatenated);
       setReferenda([...concatenated]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
+
+  const addFellowshipOriginsFromSb = useCallback(async (resPA: LatestReferenda[]): Promise<LatestReferenda[] | undefined> => {
+    const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
+
+    if (resSb) {
+      const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
+
+      pageTrackRef.current.subMenu = selectedSubMenu;
+
+      return resPA.map((r) => {
+        const found = resSb.list.find((f) => f.referendum_index === r.post_id);
+
+        if (found) {
+          r.fellowship_origins = found.origins;
+          r.fellowship_origins_id = found.origins_id;
+        }
+
+        return r;
+      }).filter((r) => selectedSubMenu === 'All' || r.fellowship_origins_id === fellowshipTrackId);
+    }
+
+    return undefined;
+  }, [chainName, fellowshipTracks, selectedSubMenu, topMenu]);
 
   useEffect(() => {
     if (!api) {
@@ -259,7 +268,9 @@ export default function Governance(): React.ReactElement {
               {filteredReferenda
                 ? <>
                   {filteredReferenda.map((referendum, index) => {
-                    if (referendum?.post_id < (referendumCount[topMenu] || referendumStats?.OriginsCount)) {
+                    if (referendum?.post_id
+                      // < (referendumCount[topMenu] || referendumStats?.OriginsCount)
+                    ) {
                       return (
                         <ReferendumSummary
                           address={address}
@@ -274,13 +285,13 @@ export default function Governance(): React.ReactElement {
                   {!pageTrackRef.current.listFinished &&
                     <>
                       {
-                        !isLoading
+                        !isLoadingMore
                           ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
                             <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
                               {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount: referendumCount[topMenu] } })}
                             </Typography>
                           </Grid>
-                          : isLoading && <Grid container justifyContent='center'>
+                          : isLoadingMore && <Grid container justifyContent='center'>
                             <HorizontalWaiting color={theme.palette.primary.main} />
                           </Grid>
                       }

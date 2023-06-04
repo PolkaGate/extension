@@ -163,18 +163,16 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
           label={t('Deciding')}
           value={referendumStats?.voting_total}
         />
-        {referendumStats?.referendum_participate &&
-          <LabelValue
+        {referendumStats?.active_fellowship_members
+          ? <LabelValue
+            label={t('Active Members')}
+            noBorder
+            value={`${referendumStats?.active_fellowship_members} out of ${referendumStats?.fellowship_members}`}
+          />
+          : <LabelValue
             label={t('Participation')}
             noBorder
             value={<ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />}
-          />
-        }
-        {referendumStats?.active_fellowship_members &&
-          <LabelValue
-            label={t('Active Members')}
-            noBorder
-            value={referendumStats?.active_fellowship_members}
           />
         }
         <Divider orientation='vertical' />

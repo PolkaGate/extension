@@ -80,8 +80,12 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
   }, [filter]);
 
   useEffect(() => {
-    if (!referenda) {
+    if (referenda === undefined) {
       return;
+    }
+
+    if (referenda === null) {
+      return setFilteredReferenda(null);
     }
 
     /**  To apply filtering ... */
