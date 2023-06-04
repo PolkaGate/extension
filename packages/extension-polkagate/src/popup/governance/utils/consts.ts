@@ -28,6 +28,7 @@ export const STATUS_COLOR = {
   Deciding: '#6A5ACD',
   DecisionDepositPlaced: '#FFA07A',
   Executed: '#00BFFF',
+  ExecutionFailed:'#FF0000',
   Rejected: '#FF5722',
   Submitted: '#6B9090',
   TimedOut: '#AD9C88',
