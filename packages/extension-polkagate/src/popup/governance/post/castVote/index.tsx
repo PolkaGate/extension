@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -91,7 +91,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  useEffect((): void => {
+  const votedInfo = useMemo(() => {
     if (step === STEPS.REMOVE && myVote && decimal) {
       const amount = amountToHuman(myVote?.standard?.balance || myVote?.splitAbstain?.abstain, decimal);
       const conviction = myVote?.standard ? getConviction(myVote.standard.vote) : 0;
@@ -101,7 +101,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
       const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
       const votePower = myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
 
-      setVoteInformation({ // note this will be used for remove state
+      return { // note this will be used for remove state
         refIndex,
         trackId,
         voteAmountBN,
@@ -110,7 +110,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         voteLockUpUpPeriod: undefined,
         votePower,
         voteType: getVoteType(myVote)
-      });
+      };
     }
   }, [decimal, myVote, refIndex, step, trackId]);
 
@@ -130,14 +130,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     vote(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [api, formatted, vote]);
 
-  // const refreshAll = useCallback(() => {
-  //   setVoteAmount('0');
-  //   setVoteType(undefined);
-  //   setVoteInformation(undefined);
-  //   setConviction(undefined);
-  //   setStep(0);
-  // }, []);
-
   const handleClose = useCallback(() => {
     if (step === STEPS.PROXY) {
       setStep(STEPS.REVIEW);
@@ -146,7 +138,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     }
 
     setOpen(false);
-    // refreshAll();
   }, [setOpen, step]);
 
   useEffect(() => {
@@ -232,7 +223,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             trackId={trackId}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.REMOVE) && voteInformation &&
+        {((step === STEPS.REVIEW && voteInformation) || (step === STEPS.REMOVE && votedInfo)) && (
           <Review
             address={address}
             estimatedFee={estimatedFee}
@@ -244,9 +235,9 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             status={status}
             step={step}
             tx={alterType === 'remove' ? removeTx : voteTx}
-            voteInformation={voteInformation}
+            voteInformation={voteInformation || votedInfo}
           />
-        }
+        )}
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your voting status...')}

@@ -208,3 +208,44 @@ export type Track = [
   id: BN,
   info: PalletReferendaTrackInfo
 ];
+
+export type Referendum = {
+  index: number,
+  content?: string | undefined,
+  created_at?: Date | undefined,
+  title?: string | undefined,
+  trackId?: number | undefined,
+  trackName?: string | undefined,
+  status?: string | undefined,
+  statusHistory?: ReferendumHistory[] | undefined,
+  timelineSb?: Timeline[] | undefined,
+  timelinePA?: {
+    created_at: Date,
+    hash: string,
+    index: number,
+    statuses: ReferendumHistory[],
+    type: string
+  }[] | undefined,
+  supportAmount?: string | undefined,
+  type?: string | undefined,
+  ayesAmount?: string | undefined,
+  naysAmount?: string | undefined,
+  ayesCount?: number | undefined,
+  naysCount?: number | undefined,
+  comments?: CommentType[] | undefined,
+  proposer?: string | undefined,
+  submissionAmount?: string | undefined,
+  decisionDepositAmount?: string | undefined,
+  requestedFor?: string | undefined,
+  enactAfter?: number | undefined,
+  method?: string | undefined,
+  hash?: string | undefined,
+  call?: {
+    method: string,
+    args: Record<string, any>,
+    description: string
+    section: string
+  } | undefined,
+  decisionDepositPayer?: string | undefined,
+  requested?: string | undefined
+}

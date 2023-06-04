@@ -41,7 +41,7 @@ const TAB_MAP = {
   ABSTAIN: 3
 };
 
-export default function AllVotes({ address, open, refIndex, isFellowship, setOnChainVoteCounts, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
+export default function AllVotes({ address, isFellowship, open, refIndex, setOnChainVoteCounts, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -336,7 +336,12 @@ export default function AllVotes({ address, open, refIndex, isFellowship, setOnC
           ))
           }
           {votesToShow &&
-            <Pagination count={paginationCount} onChange={onPageChange} sx={{ bottom: '-18px', position: 'absolute' }} />
+            <Pagination
+              count={paginationCount}
+              onChange={onPageChange}
+              page={page}
+              sx={{ bottom: '-18px', position: 'absolute' }}
+            />
           }
           {!allVotes &&
             <Progress

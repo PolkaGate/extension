@@ -267,21 +267,16 @@ export default function Governance(): React.ReactElement {
             : <>
               {filteredReferenda
                 ? <>
-                  {filteredReferenda.map((referendum, index) => {
-                    if (referendum?.post_id
-                      // < (referendumCount[topMenu] || referendumStats?.OriginsCount)
-                    ) {
-                      return (
-                        <ReferendumSummary
-                          address={address}
-                          key={index}
-                          myVotedReferendaIndexes={myVotedReferendaIndexes}
-                          onClick={() => getReferendaById(referendum.post_id, referendum.type)}
-                          referendum={referendum}
-                        />
-                      );
-                    }
-                  })}
+                  {filteredReferenda.map((r, index) => (
+                    <ReferendumSummary
+                      address={address}
+                      key={index}
+                      myVotedReferendaIndexes={myVotedReferendaIndexes}
+                      onClick={() => getReferendaById(r.post_id, r.type)}
+                      refSummary={r}
+                    />
+                  )
+                  )}
                   {!pageTrackRef.current.listFinished &&
                     <>
                       {

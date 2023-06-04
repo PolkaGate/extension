@@ -3,32 +3,28 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { PalletRankedCollectiveTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
-
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { ShowBalance, ShowValue } from '../../../components';
-import { useApi, useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
-import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
+import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { Referendum } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import AllVotes from './AllVotes';
 import VoteChart from './VoteChart';
 
 interface Props {
   address: string | undefined;
-  referendumSb: ReferendumSubScan | undefined;
-  referendumPA: ReferendumPolkassembly | undefined;
+  referendum: Referendum | undefined;
 }
 
-export default function Voting({ address, referendumPA, referendumSb }: Props): React.ReactElement<Props> {
+export default function Voting({ address, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { state } = useLocation();
-  const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
@@ -36,24 +32,20 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
   const [openAllVotes, setOpenAllVotes] = useState(false);
   const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
-  const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
 
-  const isFellowship = referendumPA?.type === 'FellowshipReferendum';
-  const trackId = referendumSb?.origins_id || referendumPA?.track_number;
-  const refIndex = referendumPA?.post_id || referendumSb?.referendum_index;
-
+  const isFellowship = referendum?.type === 'FellowshipReferendum';
   const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumSb?.origins || referendumPA?.origin) as string | undefined;
+    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendum?.trackName) as string | undefined;
 
     return name && toTitleCase(name);
-  }, [referendumPA?.origin, referendumSb?.origins, state?.selectedSubMenu]);
+  }, [referendum, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendumSb && currentBlock - referendumSb?.timeline[1]?.block);
+  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum && currentBlock - referendum?.timelineSb[1]?.block);
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendumSb) {
-      const blockSubmitted = referendumSb.timeline[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && referendum) {
+      const blockSubmitted = referendum.timelineSb[0].block;
 
       if (track[1].preparePeriod.gtn(currentBlock - blockSubmitted)) {
         // in prepare period
@@ -62,32 +54,10 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
 
       return threshold;
     }
-  }, [currentBlock, referendumSb, threshold, track]);
+  }, [currentBlock, referendum, threshold, track]);
 
-  const ayes = useMemo(() =>
-    onChainTally?.ayes?.toString() || referendumSb?.ayes_amount || referendumPA?.tally?.ayes
-    , [referendumPA, referendumSb, onChainTally]);
-
-  const nays = useMemo(() =>
-    onChainTally?.nays?.toString() || referendumSb?.nays_amount || referendumPA?.tally?.nays
-    , [referendumPA, referendumSb, onChainTally]);
-
-  const ayesCount = onChainVoteCounts?.ayes || VoteCountsPA?.ayes || referendumSb?.ayes_count;
-  const naysCount = onChainVoteCounts?.nays || VoteCountsPA?.nays || referendumSb?.nays_count;
-
-  const ayesPercent = useMemo(() => ayes && nays ? Number(ayes) / (Number(ayes) + Number(new BN(nays))) * 100 : 0, [nays, ayes]);
-  const naysPercent = useMemo(() => ayes && nays ? Number(nays) / (Number(ayes) + Number(new BN(nays))) * 100 : 0, [nays, ayes]);
-
-  useEffect(() => {
-    api && refIndex && api.query.referenda?.referendumInfoFor(refIndex).then((res) => {
-      const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
-      const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing && mayBeUnwrappedResult.asOngoing;
-      const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
-
-      setOnChainTally(mayBeTally);
-      console.log('referendumInfoFor:', res.unwrap());
-    }).catch(console.error);
-  }, [api, refIndex]);
+  const ayesPercent = useMemo(() => referendum?.ayesAmount && referendum?.naysAmount ? Number(referendum.ayesAmount) / (Number(referendum.ayesAmount) + Number(new BN(referendum.naysAmount))) * 100 : 0, [referendum]);
+  const naysPercent = useMemo(() => referendum?.ayesAmount && referendum?.naysAmount ? Number(referendum.naysAmount) / (Number(referendum.ayesAmount) + Number(new BN(referendum.naysAmount))) * 100 : 0, [referendum]);
 
   const handleOpenAllVotes = () => {
     setOpenAllVotes(true);
@@ -126,22 +96,22 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
       </Grid>
       <Grid item sx={{ px: '25px' }} xs={12}>
         <VoteChart
-          ayes={ayes}
-          nays={nays}
+          ayes={referendum?.ayesAmount}
+          nays={referendum?.naysAmount}
         />
       </Grid>
       <Grid container item justifyContent='space-around' xs={12}>
         <Tally
-          amount={ayes}
+          amount={referendum?.ayesAmount}
           color={`${theme.palette.aye.main}`}
-          count={ayesCount}
+          count={referendum?.ayesCount}
           percent={ayesPercent}
           text={t('Ayes')}
         />
         <Tally
-          amount={nays}
+          amount={referendum?.naysAmount}
           color={`${theme.palette.nay.main}`}
-          count={naysCount}
+          count={referendum?.naysCount}
           percent={naysPercent}
           text={t('Nays')}
         />
@@ -174,11 +144,11 @@ export default function Voting({ address, referendumPA, referendumSb }: Props): 
         address={address}
         isFellowship={isFellowship}
         open={openAllVotes}
-        refIndex={refIndex}
+        refIndex={referendum?.index}
         setOnChainVoteCounts={setOnChainVoteCounts}
         setOpen={setOpenAllVotes}
         setVoteCountsPA={setVoteCountsPA}
-        trackId={trackId}
+        trackId={referendum?.trackId}
       />
     </Grid>
   );

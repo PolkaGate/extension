@@ -5,25 +5,21 @@
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { Infotip2, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
-import { ReferendumPolkassembly, ReferendumSubScan } from '../utils/types';
-import { toTitleCase } from '../utils/util';
+import { Referendum } from '../utils/types';
 
 interface Props {
   address: string | undefined;
-  referendumSb: ReferendumSubScan | undefined;
-  referendumPA: ReferendumPolkassembly | undefined;
+  referendum: Referendum | undefined;
 }
 
-export default function Support({ address, referendumPA, referendumSb }: Props): React.ReactElement<Props> {
+export default function Support({ address, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { state } = useLocation();
   const decimal = useDecimal(address);
   const api = useApi(address);
   const token = useToken(address);
@@ -31,19 +27,14 @@ export default function Support({ address, referendumPA, referendumSb }: Props):
 
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
-  const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendumSb?.origins || referendumPA?.origin) as string | undefined;
 
-    return name && toTitleCase(name);
-  }, [referendumPA?.origin, referendumSb?.origins, state?.selectedSubMenu]);
+  const track = useTrack(address, referendum?.trackName);
 
-  const track = useTrack(address, trackName);
-
-  const threshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendumSb && currentBlock - referendumSb?.timeline[1]?.block);
+  const threshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendum && currentBlock - referendum?.timelineSb[1]?.block);
 
   const currentSupportThreshold = useMemo(() => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendumSb) {
-      const blockSubmitted = referendumSb.timeline[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && referendum) {
+      const blockSubmitted = referendum.timelineSb[0].block;
 
       if (currentBlock - blockSubmitted < track[1].preparePeriod) {
         // in prepare period
@@ -52,11 +43,11 @@ export default function Support({ address, referendumPA, referendumSb }: Props):
 
       return threshold;
     }
-  }, [currentBlock, referendumSb, threshold, track]);
+  }, [currentBlock, referendum, threshold, track]);
 
   const supportPercent = useMemo(() =>
-    totalIssuance && inactiveIssuance && referendumSb && (Number(referendumSb.support_amount) * 100 / Number(totalIssuance.sub(inactiveIssuance)))
-    , [inactiveIssuance, referendumSb, totalIssuance]);
+    totalIssuance && inactiveIssuance && referendum && (Number(referendum.supportAmount) * 100 / Number(totalIssuance.sub(inactiveIssuance)))
+    , [inactiveIssuance, referendum, totalIssuance]);
 
   useEffect(() => {
     if (!api) {
@@ -113,7 +104,7 @@ export default function Support({ address, referendumPA, referendumSb }: Props):
       </Grid>
       <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
         <Tally
-          amount={referendumSb?.support_amount}
+          amount={referendum?.supportAmount}
           color={`${theme.palette.support.contrastText}`}
           percent={supportPercent}
           text={t('Current')}

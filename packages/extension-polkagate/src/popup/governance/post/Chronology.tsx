@@ -20,7 +20,7 @@ import { BN } from '@polkadot/util';
 import { subscan } from '../../../assets/icons';
 import { useApi, useChain, useChainName, useCurrentBlockNumber, useTranslation } from '../../../hooks';
 import { STATUS_COLOR, TREASURY_TRACKS } from '../utils/consts';
-import { Proposal, ReferendumHistory, ReferendumPolkassembly } from '../utils/types';
+import { Proposal, ReferendumHistory, Referendum } from '../utils/types';
 import { pascalCaseToTitleCase, toSnakeCase } from '../utils/util';
 import { hexAddressToFormatted } from './MetaData';
 
@@ -45,7 +45,7 @@ const toFormattedDate = ((dateString: Date | undefined): string | undefined => {
 
 interface Props {
   address: string | undefined;
-  referendum: ReferendumPolkassembly | undefined;
+  referendum: Referendum | undefined;
   currentTreasuryApprovalList: Proposal[] | undefined
 }
 
@@ -110,7 +110,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   };
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1 }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1, borderRadius: '10px' }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>

@@ -8,11 +8,11 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, Grid, Typography
 import React, { useEffect, useMemo } from 'react';
 
 import { useChainName, useTranslation } from '../../../hooks';
-import { ReferendumPolkassembly } from '../utils/types';
+import { Referendum } from '../utils/types';
 import CommentView from './Comment';
 import Replies from './Replies';
 
-export default function Comments({ address, referendum }: { address: string | undefined, referendum: ReferendumPolkassembly | undefined }): React.ReactElement {
+export default function Comments({ address, referendum }: { address: string | undefined, referendum: Referendum | undefined }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ChainName = useChainName(address);
@@ -29,18 +29,18 @@ export default function Comments({ address, referendum }: { address: string | un
   const sortedComments = useMemo(() => referendum?.comments?.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)), [referendum]);
 
   function openPolkassembly() {
-    window.open(`https://${ChainName}.polkassembly.io/referenda/${referendum?.post_id}`, '_blank');
+    window.open(`https://${ChainName}.polkassembly.io/referenda/${referendum?.index}`, '_blank');
   }
 
   function openSubsquare() {
-    window.open(`https://${ChainName}.subsquare.io/referenda/referendum/${referendum?.post_id}`, '_blank');
+    window.open(`https://${ChainName}.subsquare.io/referenda/referendum/${referendum?.index}`, '_blank');
   }
 
   // console.log('sortedComments to apply reactions:', sortedComments);
 
   return (
     <Accordion expanded={expanded} onChange={handleChange} sx={{ my: 1, px: '3%', width: 'inherit' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0, borderRadius:'10px' }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>

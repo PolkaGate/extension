@@ -26,7 +26,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
   const token = useToken(address);
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
   const voteType = getVoteType(vote);
-  const voteMethod = vote?.standard?.balance
+  const voteMethod = vote?.standard?.balance || vote?.splitAbstain?.abstain
     ? t('Standard')
     : vote?.delegating?.voted && vote?.delegating?.balance && t('Delegated');
 

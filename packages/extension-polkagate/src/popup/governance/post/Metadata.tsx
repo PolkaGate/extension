@@ -16,7 +16,7 @@ import { subscan } from '../../../assets/icons';
 import { Identity, ShowBalance } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
-import { ReferendumPolkassembly } from '../utils/types';
+import { Referendum } from '../utils/types';
 import { pascalCaseToTitleCase } from '../utils/util';
 
 export function hexAddressToFormatted(hexString: string, chain: Chain | undefined): string | undefined {
@@ -32,7 +32,7 @@ export function hexAddressToFormatted(hexString: string, chain: Chain | undefine
 interface Props {
   decisionDepositPayer: string | undefined;
   address: string | undefined;
-  referendum: ReferendumPolkassembly | undefined;
+  referendum: Referendum | undefined;
 }
 
 export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
@@ -47,15 +47,15 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
   const [expanded, setExpanded] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
 
-  const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.post_id);
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
+  const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.index);
+  const mayBeBeneficiary = hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1 }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1, borderRadius: '10px' }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded && `1px solid ${theme.palette.text.disabled}`, px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
@@ -71,7 +71,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             label={t('Origin')}
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}
-            value={pascalCaseToTitleCase(referendum?.origin)}
+            value={pascalCaseToTitleCase(referendum?.trackName)}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
@@ -95,7 +95,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}
             value={<ShowBalance
-              balance={new BN(referendum?.submitted_amount)}
+              balance={referendum?.submissionAmount && new BN(referendum.submissionAmount)}
               decimal={decimal}
               decimalPoint={2}
               token={token}
@@ -125,7 +125,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}
             value={<ShowBalance
-              balance={new BN(referendum?.decision_deposit_amount)}
+              balance={referendum?.decisionDepositAmount && new BN(referendum.decisionDepositAmount)}
               decimal={decimal}
               decimalPoint={2}
               token={token}
@@ -139,7 +139,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
                 labelStyle={{ minWidth: '20%' }}
                 style={{ justifyContent: 'flex-start' }}
                 value={<ShowBalance
-                  balance={new BN(referendum?.proposed_call?.args?.amount)}
+                  balance={referendum?.call?.args?.amoun && new BN(referendum.call.args.amount)}
                   decimal={decimal}
                   decimalPoint={2}
                   token={token}
@@ -169,7 +169,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             label={t('Enact After')}
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}
-            value={t<string>('{{ enactment_after_block }} blocks', { replace: { enactment_after_block: referendum?.enactment_after_block } })}
+            value={t<string>('{{ enactAfter }} blocks', { replace: { enactAfter: referendum?.enactAfter } })}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
@@ -219,7 +219,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             </Link>
             {showJson &&
               <Grid item sx={{ maxWidth: 'inherit', overflowX: 'auto' }}>
-                <JsonToTable json={referendum?.proposed_call} />
+                <JsonToTable json={referendum?.call} />
               </Grid>
             }
           </Grid>

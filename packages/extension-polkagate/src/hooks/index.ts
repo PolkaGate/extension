@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
+export { default as useReferenda } from './useReferenda';
 export { default as useAccountLocks } from './useAccountLocks';
 export { default as useBlockInterval } from './useBlockInterval';
 export { default as useFullscreen } from './useFullscreen';

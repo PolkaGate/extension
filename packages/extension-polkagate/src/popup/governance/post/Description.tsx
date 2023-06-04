@@ -15,13 +15,13 @@ import { Identity, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
-import { Proposal, ReferendumPolkassembly } from '../utils/types';
+import { Proposal, Referendum } from '../utils/types';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
 import { hexAddressToFormatted } from './MetaData';
 
 interface Props {
   address: string | undefined;
-  referendum: ReferendumPolkassembly | undefined;
+  referendum: Referendum | undefined;
   currentTreasuryApprovalList: Proposal[] | undefined;
 }
 
@@ -34,7 +34,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  
+
   const [expanded, setExpanded] = useState<boolean>(false);
 
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
@@ -60,8 +60,19 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           </Typography>
         </Paper>
       }
-      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%' }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
+      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', borderRadius: '10px' }}>
+        <AccordionSummary
+          expandIcon={
+            <ExpandMoreIcon
+              sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }}
+            />
+          }
+          sx={{
+            borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none',
+            px: 0,
+            height: 120,
+          }}
+        >
           <Grid container item>
             <Grid container item xs={12}>
               <Typography fontSize={24} fontWeight={500}>
@@ -76,35 +87,38 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                 <Grid item>
                   <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
-                <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+                <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px' }} />
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
                   <ShowValue value={referendum?.method} width='50px' />
                 </Grid>
-                <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+                <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px' }} />
                 <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, pl: '1%' }}>
                   <ShowValue value={referendum?.created_at && formatRelativeTime(referendum?.created_at)} />
                 </Grid>
-                <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
-                <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-                  {referendum?.requested &&
-                    <LabelValue
-                      label={`${t('Requested')}: `}
-                      labelStyle={{ fontSize: 14 }}
-                      noBorder
-                      value={
-                        <ShowBalance
-                          balance={new BN(referendum?.requested)}
-                          decimal={decimal}
-                          decimalPoint={2}
-                          token={token}
-                        />
-                      }
-                      valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
-                    />}
-                </Grid>
+                {referendum?.requested &&
+                  <>
+                    <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px' }} />
+                    <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+                      <LabelValue
+                        label={`${t('Requested')}: `}
+                        labelStyle={{ fontSize: 14 }}
+                        noBorder
+                        value={
+                          <ShowBalance
+                            balance={new BN(referendum?.requested)}
+                            decimal={decimal}
+                            decimalPoint={2}
+                            token={token}
+                          />
+                        }
+                        valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
+                      />
+                    </Grid>
+                  </>
+                }
               </Grid>
-              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], p: '5px 10px' }} md={1.5}>
+              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], px: '5px', lineHeight: '24px' }} md={1.5}>
                 {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>

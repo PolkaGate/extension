@@ -91,20 +91,24 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     /**  To apply filtering ... */
     const filtered = [];
 
+    // filter discussions if any
+     const onlyReferenda = referenda.filter((r) => r.type !== 'Discussions');
+
+
     if (filter.myReferenda) {
-      const mySubmittedReferendaList = referenda.filter((r) => r.proposer === formatted);
+      const mySubmittedReferendaList = onlyReferenda.filter((r) => r.proposer === formatted);
 
       mySubmittedReferendaList && filtered.push(...mySubmittedReferendaList);
     }
 
     if (filter.myVotes) {
-      const myVotedList = referenda.filter((r) => myVotedReferendaIndexes?.includes(r.post_id));
+      const myVotedList = onlyReferenda.filter((r) => myVotedReferendaIndexes?.includes(r.post_id));
 
       myVotedList && filtered.push(...myVotedList);
     }
 
     if (!filter.status.includes('All')) {
-      const filterBasedOnStatus = referenda.filter((r) => filter.status.includes(r.status));
+      const filterBasedOnStatus = onlyReferenda.filter((r) => filter.status.includes(r.status));
 
       filterBasedOnStatus && filtered.push(...filterBasedOnStatus);
     }
@@ -112,7 +116,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     // to remove duplicates
     const uniqueFiltered = [...new Set(filtered)];
 
-    setFilteredReferenda(uniqueFiltered.length ? uniqueFiltered : referenda);
+    setFilteredReferenda(uniqueFiltered.length ? uniqueFiltered : onlyReferenda);
   }, [filter, formatted, myVotedReferendaIndexes, referenda, setFilteredReferenda]);
 
   const onChangeStatus = useCallback((s: number) => {
