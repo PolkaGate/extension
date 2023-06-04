@@ -92,7 +92,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     const filtered = [];
 
     // filter discussions if any
-     const onlyReferenda = referenda.filter((r) => r.type !== 'Discussions');
+    const onlyReferenda = referenda.filter((r) => r.type !== 'Discussions');
 
 
     if (filter.myReferenda) {
@@ -130,8 +130,8 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
 
   return (
     <>
-      <Grid alignItems='center' container justifyContent='space-between' pt='15px'>
-        <Grid item justifyContent='flex-start' md={6} sx={{ ml: '5px' }}>
+      <Grid alignItems='center' container justifyContent='space-between' pt='15px' px='5px'>
+        <Grid item justifyContent='flex-start' md={6}>
           <InputFilter
             autoFocus={false}
             onChange={onSearch}
@@ -175,7 +175,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
             checked={filter.myVotes}
             disabled={!myVotedReferendaIndexes}
             label={t('My Votes')}
-            labelStyle={{ fontSize: '16px', fontWeight: 400 }}
+            labelStyle={{ fontSize: '16px', fontWeight: 400}}
             onChange={onMyVotes}
           />
         </Grid>

@@ -85,26 +85,34 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
           <Grid item sx={{ maxWidth: '22%', mb: '10px' }}>
             <Identity api={api} chain={chain} formatted={refSummary.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
           </Grid>
-          <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+          <Grid item mx='2%'>
+            <Divider flexItem orientation='vertical' sx={{ height: '34px' }} />
+          </Grid>
           {origin &&
             <>
               <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main} `, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '0.5px 14.5px' }}>
                 {capitalizeFirstLetter(origin.replace(/([A-Z])/g, ' $1').trim())}
               </Grid>
-              <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+              <Grid item mx='2%'>
+                <Divider flexItem orientation='vertical' sx={{ height: '34px' }} />
+              </Grid>
             </>
           }
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6, maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {refSummary.method}
           </Grid>
-          <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+          <Grid item mx='2%'>
+            <Divider flexItem orientation='vertical' sx={{ height: '34px' }} />
+          </Grid>
           <ClockIcon sx={{ fontSize: 27 }} />
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
             {formatRelativeTime(refSummary.created_at)}
           </Grid>
           {newReferenda?.ayesAmount && newReferenda?.naysAmount &&
             <>
-              <Divider flexItem orientation='vertical' sx={{ mx: '2%' }} />
+              <Grid item mx='2%'>
+                <Divider flexItem orientation='vertical' sx={{ height: '34px' }} />
+              </Grid>
               <Grid item sx={{ width: '30px' }}>
                 <VoteChart
                   ayes={newReferenda.ayesAmount}
