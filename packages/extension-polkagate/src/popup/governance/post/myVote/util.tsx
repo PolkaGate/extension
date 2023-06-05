@@ -40,16 +40,16 @@ export interface Vote {
     vote: string;
     balance: number;
   };
-  delegations: {
+  delegations?: {
     votes: number;
     capital: number;
   };
-  splitAbstain: {
+  splitAbstain?: {
     abstain: number;
     aye: number;
     nay: number;
   };
-  delegating: {
+  delegating?: {
     balance: number;
     aye?: boolean;
     nay?: boolean;
@@ -110,7 +110,7 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
         conviction: CONVICTION[conviction],
         voted: true,
         aye
-      },
+      }
     };
   }
 

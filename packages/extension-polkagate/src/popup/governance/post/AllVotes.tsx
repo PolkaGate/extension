@@ -41,7 +41,7 @@ const TAB_MAP = {
   ABSTAIN: 3
 };
 
-export default function AllVotes({ address, isFellowship, open, refIndex, setOnChainVoteCounts, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
+export default function AllVotes({ address, isFellowship, open, refIndex, setOpen, setVoteCountsPA }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -159,21 +159,6 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOnC
   const openSearchBar = useCallback(() => {
     !isSearchBarOpen && setSearchBarOpen(true);
   }, [isSearchBarOpen]);
-
-  const style = {
-    bgcolor: 'background.default',
-    border: '2px solid #000',
-    borderRadius: '10px',
-    boxShadow: 24,
-    left: '50%',
-    pb: 3,
-    position: 'absolute',
-    pt: 2,
-    px: 4,
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-
-  };
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>

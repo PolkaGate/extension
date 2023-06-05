@@ -33,7 +33,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
   console.log('vote:', vote);
 
   return (
-    <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', py: '10px', mt: '10px' }} xs={12}>
+    <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', py: '10px' }} xs={12}>
       <Grid alignItems='baseline' container item spacing={0.2} sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
         <Grid item>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
@@ -42,7 +42,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
         </Grid>
         <Grid item>
           {voteMethod &&
-            <Typography sx={{ fontSize: '16px', fontWeight: 400, color: 'text.disabled' }}>
+            <Typography sx={{ color: 'text.disabled', fontSize: '16px', fontWeight: 400 }}>
               ({voteMethod})
             </Typography>
           }
@@ -67,20 +67,23 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} xs>
             {voteType &&
               <>
-                {voteType === 'Aye' && <>
-                  <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
-                  {t('Aye')}
-                </>
+                {voteType === 'Aye' &&
+                  <>
+                    <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
+                    {t('Aye')}
+                  </>
                 }
-                {voteType === 'Nay' && <>
-                  <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
-                  {t('Nay')}
-                </>
+                {voteType === 'Nay' &&
+                  <>
+                    <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
+                    {t('Nay')}
+                  </>
                 }
-                {voteType === 'Abstain' && <>
-                  <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
-                  {t('Abstain')}
-                </>
+                {voteType === 'Abstain' &&
+                  <>
+                    <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
+                    {t('Abstain')}
+                  </>
                 }
               </>
             }
@@ -88,6 +91,5 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
         </Grid>
       }
     </Grid>
-
   );
 }
