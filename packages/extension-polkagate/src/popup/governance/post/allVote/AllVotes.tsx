@@ -56,7 +56,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
 
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [allVotes, setAllVotes] = React.useState<AllVotesType | null>();
-  const [allVotesNested, setAllVotesNested] = React.useState<AllVotesType | null>();
+  const [NestedVotes, setNestedVotes] = React.useState<AllVotesType | null>();
   const [filteredVotes, setFilteredVotes] = React.useState<{ ayes: VoteType[], nays: VoteType[], abstains: AbstainVoteType[] } | null>();
   const [votesToShow, setVotesToShow] = React.useState<VoteType[] | AbstainVoteType[]>();
   const [page, setPage] = React.useState<number>(1);
@@ -104,21 +104,30 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, [chainName, isFellowship, refIndex, setVoteCountsPA]);
 
   useEffect(() => {
+    setNestedVotes(allVotes);
+  }, [allVotes]);
+
+  useEffect(() => {
     if (!allVotes || !api || !trackId || !refIndex) {
       return;
     }
 
-    allVotes.abstain.votes.map((v) => {
-      if (v.isDelegated) {
-        getAddressVote(String(v.voter), api, Number(refIndex), Number(trackId)).then((delegatedVoteInfo) => {
-          if (delegatedVoteInfo) {
-            v.delegatee = delegatedVoteInfo.delegating?.target;
-          }
-        }).catch(console.error);
-      }
+    const keys = Object.keys(allVotes);
 
-      return v;
-    });
+    keys.map((key) =>
+      allVotes[key as keyof AllVotesType].votes.map((v) => {
+        if (v.isDelegated) {
+          getAddressVote(String(v.voter), api, Number(refIndex), Number(trackId)).then((delegatedVoteInfo) => {
+            if (delegatedVoteInfo) {
+              v.delegatee = delegatedVoteInfo.delegating?.target;
+              setNestedVotes({ ...allVotes });
+            }
+          }).catch(console.error);
+        }
+
+        return v;
+      })
+    );
   }, [allVotes, api, refIndex, trackId]);
 
   console.log(' allVotes.abstain:', allVotes?.abstain);
@@ -142,9 +151,9 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, [filteredVotes, page, tabIndex]);
 
   const handleClose = useCallback(() => {
-    allVotes && setFilteredVotes({ abstains: allVotes.abstain.votes, ayes: allVotes.yes.votes, nays: allVotes.no.votes });
+    NestedVotes && setFilteredVotes({ abstains: NestedVotes.abstain.votes, ayes: NestedVotes.yes.votes, nays: NestedVotes.no.votes });
     setOpen(false);
-  }, [allVotes, setOpen]);
+  }, [NestedVotes, setOpen]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
@@ -175,14 +184,14 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, []);
 
   const onSearch = useCallback((filter: string) => {
-    allVotes && setFilteredVotes(
+    NestedVotes && setFilteredVotes(
       {
-        abstains: allVotes.abstain.votes.filter((c) => c.voter.includes(filter)),
-        ayes: allVotes.yes.votes.filter((a) => a.voter.includes(filter)),
-        nays: allVotes.no.votes.filter((b) => b.voter.includes(filter))
+        abstains: NestedVotes.abstain.votes.filter((c) => c.voter.includes(filter)),
+        ayes: NestedVotes.yes.votes.filter((a) => a.voter.includes(filter)),
+        nays: NestedVotes.no.votes.filter((b) => b.voter.includes(filter))
       }
     );
-  }, [allVotes]);
+  }, [NestedVotes]);
 
   const openSearchBar = useCallback(() => {
     !isSearchBarOpen && setSearchBarOpen(true);
@@ -307,7 +316,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
               {t('Vote')}
             </Grid>
             <Grid item width='15%'>
-              {t('Delegator')}
+              {t('Delegators')}
             </Grid>
             <Grid alignItems='center' container item justifyContent='center' width='12%'>
               <Infotip2 iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
@@ -337,17 +346,17 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
                 />
               </Grid>
               <Grid container item justifyContent='center' width='22%'>
-                {/* <Amount
+                <Amount
                   address={address}
-                  allVotes={allVotes}
+                  allVotes={NestedVotes}
                   vote={vote}
                   voteType={tabIndex}
-                /> */}
+                />
               </Grid>
               <Grid item width='15%'>
                 <Delegators
                   address={address}
-                  allVotes={allVotes}
+                  allVotes={NestedVotes}
                   vote={vote}
                   voteType={tabIndex}
                 />

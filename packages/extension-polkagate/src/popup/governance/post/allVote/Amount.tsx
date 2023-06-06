@@ -38,8 +38,8 @@ export default function Amount({ address, allVotes, vote, voteType }: Props): Re
 
     const delegators = allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter);
     let sum = new BN(voteTypeStr === 'abstain' ? vote.balance.abstain : vote.balance.value);
-console.log('delegators.len:', delegators?.length)
-console.log('delegators:', delegators)
+
+    console.log('delegators:', delegators)
     for (const d of delegators) {
       sum = sum.add(new BN(d.balance.value));
     }
