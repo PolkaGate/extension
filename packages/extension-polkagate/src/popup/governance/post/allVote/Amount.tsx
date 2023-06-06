@@ -3,10 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../../../components';
 import { useApi, useDecimal, useToken } from '../../../../hooks';
@@ -15,20 +14,23 @@ import { VOTE_TYPE_MAP } from './AllVotes';
 
 interface Props {
   address: string;
-  vote: VoteType | AbstainVoteType;
-  allVotes: AllVotesType;
+  vote: AbstainVoteType | VoteType;
+  nestedVotes: AllVotesType;
   voteType: number
 
 }
 
-export default function Amount({ address, allVotes, vote, voteType }: Props): React.ReactElement {
+export default function Amount({ address, nestedVotes, vote, voteType }: Props): React.ReactElement {
   const token = useToken(address);
   const decimal = useDecimal(address);
   const api = useApi(address);
 
   const [amount, setAmount] = useState<BN>();
-  const getVoteValue = useCallback((voteTypeStr: 'abstain' | 'no' | 'yes', vote: AbstainVoteType | VoteType) => {
-    const value = voteTypeStr === 'abstain' ? vote.balance.abstain : vote.balance.value;
+
+  const getVoteValue = useCallback((voteTypeStr: 'abstain' | 'other', vote: AbstainVoteType | VoteType) => {
+    const value = voteTypeStr === 'abstain'
+      ? vote.balance.abstain || new BN(vote.balance.aye).add(new BN(vote.balance.nay))
+      : new BN(vote.balance.value).muln(vote.lockPeriod || 0.1);
 
     return new BN(value);
   }, []);
@@ -36,20 +38,25 @@ export default function Amount({ address, allVotes, vote, voteType }: Props): Re
   useEffect(() => {
     const voteTypeStr = voteType === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : voteType === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
-    const delegators = allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter);
-    let sum = voteTypeStr === 'abstain'
-      ? new BN(vote.balance.abstain)
-      : new BN(vote.balance.value).muln(vote.lockPeriod || 0.1);
+    const delegators = nestedVotes[voteTypeStr as keyof AllVotesType].votes.filter((v) => v.delegatee === vote.voter);
 
-    console.log('delegators:', delegators)
+
+    let sum = getVoteValue(voteTypeStr, vote);
+
     for (const d of delegators) {
-      sum = sum.add(new BN(d.balance.value));
+      sum = sum.add(getVoteValue('other', d));
     }
 
     setAmount(sum);
-  }, [allVotes, voteType, vote, getVoteValue]);
 
-  // console.log(`amount:${amount}`)
+    const index = nestedVotes[voteTypeStr as keyof AllVotesType].votes.findIndex((v) => v.voter === vote.voter);
+
+    if (index !== -1) {
+      nestedVotes[voteTypeStr as keyof AllVotesType].votes[index].votePower = sum;
+    }
+  }, [nestedVotes, voteType, vote, getVoteValue]);
+
+  console.log('nestedVotes:', nestedVotes);
 
   return (
     <ShowBalance api={api} balance={amount} decimal={decimal} decimalPoint={2} token={token} />

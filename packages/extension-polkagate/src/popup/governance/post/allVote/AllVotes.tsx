@@ -6,13 +6,14 @@
 import '@vaadin/icons';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../../components';
+import { Identity, Infotip2, InputFilter, Progress, ShowValue } from '../../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../../utils/helpers';
@@ -56,7 +57,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
 
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [allVotes, setAllVotes] = React.useState<AllVotesType | null>();
-  const [NestedVotes, setNestedVotes] = React.useState<AllVotesType | null>();
+  const [nestedVotes, setNestedVotes] = React.useState<AllVotesType | null>();
   const [filteredVotes, setFilteredVotes] = React.useState<{ ayes: VoteType[], nays: VoteType[], abstains: AbstainVoteType[] } | null>();
   const [votesToShow, setVotesToShow] = React.useState<VoteType[] | AbstainVoteType[]>();
   const [page, setPage] = React.useState<number>(1);
@@ -151,9 +152,9 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, [filteredVotes, page, tabIndex]);
 
   const handleClose = useCallback(() => {
-    NestedVotes && setFilteredVotes({ abstains: NestedVotes.abstain.votes, ayes: NestedVotes.yes.votes, nays: NestedVotes.no.votes });
+    nestedVotes && setFilteredVotes({ abstains: nestedVotes.abstain.votes, ayes: nestedVotes.yes.votes, nays: nestedVotes.no.votes });
     setOpen(false);
-  }, [NestedVotes, setOpen]);
+  }, [nestedVotes, setOpen]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
@@ -164,34 +165,27 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
 
-    if (tabIndex === VOTE_TYPE_MAP.ABSTAIN) {
-      votesToShow?.sort((a, b) => amountSortType === 'ASC'
-        ? (new BN(a.balance.abstain).sub(new BN(b.balance.abstain))).isNeg() ? -1 : 1
-        : (new BN(b.balance.abstain).sub(new BN(a.balance.abstain))).isNeg() ? -1 : 1
-      );
+    const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
-      return;
-    }
-
-    votesToShow?.sort((a, b) => amountSortType === 'ASC'
-      ? (new BN(a.balance.value).sub(new BN(b.balance.value))).isNeg() ? -1 : 1
-      : (new BN(b.balance.value).sub(new BN(a.balance.value))).isNeg() ? -1 : 1
+    nestedVotes?.[voteTypeStr]?.votes?.sort((a, b) => amountSortType === 'ASC'
+      ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
+      : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
     );
-  }, [amountSortType, tabIndex, votesToShow]);
+  }, [amountSortType, nestedVotes, tabIndex]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
   }, []);
 
   const onSearch = useCallback((filter: string) => {
-    NestedVotes && setFilteredVotes(
+    nestedVotes && setFilteredVotes(
       {
-        abstains: NestedVotes.abstain.votes.filter((c) => c.voter.includes(filter)),
-        ayes: NestedVotes.yes.votes.filter((a) => a.voter.includes(filter)),
-        nays: NestedVotes.no.votes.filter((b) => b.voter.includes(filter))
+        abstains: nestedVotes.abstain.votes.filter((c) => c.voter.includes(filter)),
+        ayes: nestedVotes.yes.votes.filter((a) => a.voter.includes(filter)),
+        nays: nestedVotes.no.votes.filter((b) => b.voter.includes(filter))
       }
     );
-  }, [NestedVotes]);
+  }, [nestedVotes]);
 
   const openSearchBar = useCallback(() => {
     !isSearchBarOpen && setSearchBarOpen(true);
@@ -306,66 +300,66 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '460px' }}>
-          <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', fontSize: '20px', fontWeight: 400 }}>
-            <Grid item width='38%'>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '505px' }}>
+          <Grid container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', pb: '5px', fontSize: '20px', fontWeight: 400 }}>
+            <Grid item width='40%'>
               {t('Voter')}
             </Grid>
-            <Grid item width='22%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortAmount} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
-              {t('Vote')}
+            <Grid item width='30%'>
+              <vaadin-icon icon='vaadin:sort' onClick={onSortAmount} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+              {t('Votes')}
             </Grid>
-            <Grid item width='15%'>
-              {t('Delegators')}
-            </Grid>
-            <Grid alignItems='center' container item justifyContent='center' width='12%'>
-              <Infotip2 iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
-                <Typography fontSize='20px' width='fit-content'>
-                  {t('>')}
-                </Typography>
+            <Grid item width='20%'>
+              <Infotip2 iconTop={7} showQuestionMark text={t('The number of delegators who have delegated their votes to this voter.')}>
+                {t('Delegators')}
               </Infotip2>
             </Grid>
           </Grid>
-          {votesToShow?.map((vote, index) => (
-            <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '5px' }}>
-              <Grid container item justifyContent='flex-start' width='38%'>
-                <Identity
-                  api={api}
-                  chain={chain}
-                  formatted={vote.voter}
-                  identiconSize={28}
-                  showShortAddress
-                  showSocial={false}
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    maxWidth: '100%',
-                    minWidth: '35%',
-                    width: 'fit-content'
-                  }}
-                />
+          {votesToShow?.map((vote, index) => {
+            const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
+            const delegatorsCount = allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter)?.length || 0;
+
+            return (
+              <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
+                <Grid container item justifyContent='flex-start' width='40%'>
+                  <Identity
+                    api={api}
+                    chain={chain}
+                    formatted={vote.voter}
+                    identiconSize={28}
+                    showShortAddress
+                    showSocial={false}
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: 400,
+                      maxWidth: '100%',
+                      minWidth: '35%',
+                      width: 'fit-content'
+                    }}
+                  />
+                </Grid>
+                <Grid container item justifyContent='center' width='30%'>
+                  <Amount
+                    address={address}
+                    nestedVotes={nestedVotes}
+                    vote={vote}
+                    voteType={tabIndex}
+                  />
+                </Grid>
+                <Grid item textAlign='center' width='20%'>
+                  <ShowValue value={delegatorsCount} />
+                </Grid>
+                <Grid alignItems='center' container justifyContent='flex-end' width='10%'>
+                  <Grid item sx={{ textAlign: 'right' }}>
+                    <Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '36px', mr: '3px', width: '1px' }} />
+                  </Grid>
+                  <Grid item>
+                    <ChevronRightIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid container item justifyContent='center' width='22%'>
-                <Amount
-                  address={address}
-                  allVotes={NestedVotes}
-                  vote={vote}
-                  voteType={tabIndex}
-                />
-              </Grid>
-              <Grid item width='15%'>
-                <Delegators
-                  address={address}
-                  allVotes={NestedVotes}
-                  vote={vote}
-                  voteType={tabIndex}
-                />
-              </Grid>
-              <Grid item sx={{ textAlign: 'right' }} width='12%'>
-                {vote?.isDelegated ? t('Delegated') : t('Standard')}
-              </Grid>
-            </Grid>
-          ))
+            );
+          })
           }
           {votesToShow &&
             <Pagination

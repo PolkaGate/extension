@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
 import { postData } from '../../../util/api';
 import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
@@ -33,6 +34,7 @@ export type VoteType = {
   lockPeriod: number | null;
   isDelegated: boolean;
   delegatee?: string;
+  votePower?: BN;
 }
 
 export type AbstainVoteType = {
@@ -47,6 +49,7 @@ export type AbstainVoteType = {
   lockPeriod: null;
   isDelegated: boolean;
   delegatee?: string;
+  votePower?: BN;
 }
 
 export type AllVotesType = {
