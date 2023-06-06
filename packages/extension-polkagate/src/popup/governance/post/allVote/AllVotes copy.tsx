@@ -12,10 +12,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { DraggableModal } from '../components/DraggableModal';
-import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../utils/helpers';
+import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../../components';
+import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { DraggableModal } from '../../components/DraggableModal';
+import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../../utils/helpers';
 
 interface Props {
   address: string | undefined;
@@ -92,7 +92,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
         }
 
         setAllVotes(res);
-        setFilteredVotes({ ayes: res.yes.votes, nays: res.no.votes, abstains: res.abstain.votes });
+        setFilteredVotes({ abstains: res.abstain.votes, ayes: res.yes.votes, nays: res.no.votes });
         setVoteCountsPA({ ayes: res?.yes?.count, nays: res?.no?.count });
       }).catch(console.error);
     }).catch(console.error);
@@ -114,7 +114,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, [filteredVotes, page, tabIndex]);
 
   const handleClose = useCallback(() => {
-    allVotes && setFilteredVotes({ ayes: allVotes.yes.votes, nays: allVotes.no.votes, abstains: allVotes.abstain.votes });
+    allVotes && setFilteredVotes({ abstains: allVotes.abstain.votes, ayes: allVotes.yes.votes, nays: allVotes.no.votes });
     setOpen(false);
   }, [allVotes, setOpen]);
 
@@ -149,9 +149,9 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const onSearch = useCallback((filter: string) => {
     allVotes && setFilteredVotes(
       {
+        abstains: allVotes.abstain.votes.filter((c) => c.voter.includes(filter)),
         ayes: allVotes.yes.votes.filter((a) => a.voter.includes(filter)),
-        nays: allVotes.no.votes.filter((b) => b.voter.includes(filter)),
-        abstains: allVotes.abstain.votes.filter((c) => c.voter.includes(filter))
+        nays: allVotes.no.votes.filter((b) => b.voter.includes(filter))
       }
     );
   }, [allVotes]);

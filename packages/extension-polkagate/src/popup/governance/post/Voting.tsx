@@ -13,7 +13,7 @@ import { ShowBalance, ShowValue } from '../../../components';
 import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { Referendum } from '../utils/types';
 import { toTitleCase } from '../utils/util';
-import AllVotes from './AllVotes';
+import AllVotes from './allVote/AllVotes';
 import VoteChart from './VoteChart';
 
 interface Props {

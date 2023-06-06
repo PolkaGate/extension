@@ -32,18 +32,22 @@ export type VoteType = {
   };
   lockPeriod: number | null;
   isDelegated: boolean;
+  delegatee?: string;
+
 }
 
 export type AbstainVoteType = {
   decision: string;
   voter: string;
   balance: {
-    aye: string;
-    nay: string;
-    abstain: string;
+    aye?: string; // when vote is standard
+    nay?: string; // when vote is standard
+    abstain?: string; // when vote is standard
+    value?: string; // when vote is delegated
   };
   lockPeriod: null;
   isDelegated: boolean;
+  delegatee?: string;
 }
 
 export type AllVotesType = {
