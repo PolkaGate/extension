@@ -33,7 +33,6 @@ export type VoteType = {
   lockPeriod: number | null;
   isDelegated: boolean;
   delegatee?: string;
-
 }
 
 export type AbstainVoteType = {

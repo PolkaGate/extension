@@ -130,7 +130,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
     );
   }, [allVotes, api, refIndex, trackId]);
 
-  console.log(' allVotes.abstain:', allVotes?.abstain);
+  console.log(' allVotes:', allVotes);
 
   useEffect(() => {
     if (filteredVotes) {

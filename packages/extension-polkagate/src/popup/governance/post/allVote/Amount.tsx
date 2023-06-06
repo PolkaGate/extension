@@ -37,7 +37,9 @@ export default function Amount({ address, allVotes, vote, voteType }: Props): Re
     const voteTypeStr = voteType === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : voteType === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
     const delegators = allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter);
-    let sum = new BN(voteTypeStr === 'abstain' ? vote.balance.abstain : vote.balance.value);
+    let sum = voteTypeStr === 'abstain'
+      ? new BN(vote.balance.abstain)
+      : new BN(vote.balance.value).muln(vote.lockPeriod || 0.1);
 
     console.log('delegators:', delegators)
     for (const d of delegators) {
