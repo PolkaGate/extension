@@ -67,6 +67,12 @@ export type AllVotesType = {
   }
 }
 
+export type FilteredVotes = {
+  abstain: AbstainVoteType[];
+  no: VoteType[];
+  yes: VoteType[];
+}
+
 export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
   // console.log('Getting ref stat from sb ... ');
 

@@ -11,15 +11,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { BN } from '@polkadot/util';
 
 import { Identity, Infotip2, InputFilter, Progress, ShowValue } from '../../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
-import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../../utils/helpers';
+import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../../utils/helpers';
 import { getAddressVote } from '../myVote/util';
 import Amount from './Amount';
-import Delegators from './Delegators';
 
 interface Props {
   address: string | undefined;
@@ -57,8 +55,8 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
 
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [allVotes, setAllVotes] = React.useState<AllVotesType | null>();
-  const [nestedVotes, setNestedVotes] = React.useState<AllVotesType | null>();
-  const [filteredVotes, setFilteredVotes] = React.useState<{ ayes: VoteType[], nays: VoteType[], abstains: AbstainVoteType[] } | null>();
+  const [showDelegatorsOf, setShowDelegators] = React.useState<VoteType | AbstainVoteType | null>();
+  const [filteredVotes, setFilteredVotes] = React.useState<FilteredVotes | null>();
   const [votesToShow, setVotesToShow] = React.useState<VoteType[] | AbstainVoteType[]>();
   const [page, setPage] = React.useState<number>(1);
   const [paginationCount, setPaginationCount] = React.useState<number>(10);
@@ -98,15 +96,15 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
         }
 
         setAllVotes(res);
-        setFilteredVotes({ abstains: res.abstain.votes, ayes: res.yes.votes, nays: res.no.votes });
+        setFilteredVotes({
+          abstain: res.abstain.votes.filter((v) => !v.isDelegated),
+          yes: res.yes.votes.filter((v) => !v.isDelegated),
+          no: res.no.votes.filter((v) => !v.isDelegated)
+        });
         setVoteCountsPA({ ayes: res?.yes?.count, nays: res?.no?.count });
       }).catch(console.error);
     }).catch(console.error);
   }, [chainName, isFellowship, refIndex, setVoteCountsPA]);
-
-  useEffect(() => {
-    setNestedVotes(allVotes);
-  }, [allVotes]);
 
   useEffect(() => {
     if (!allVotes || !api || !trackId || !refIndex) {
@@ -121,7 +119,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           getAddressVote(String(v.voter), api, Number(refIndex), Number(trackId)).then((delegatedVoteInfo) => {
             if (delegatedVoteInfo) {
               v.delegatee = delegatedVoteInfo.delegating?.target;
-              setNestedVotes({ ...allVotes });
+              setAllVotes({ ...allVotes });
             }
           }).catch(console.error);
         }
@@ -129,18 +127,18 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
         return v;
       })
     );
-  }, [allVotes, api, refIndex, trackId]);
+  }, [allVotes?.yes?.votes?.length, allVotes?.abstain?.votes?.length, allVotes?.no?.votes?.length, api, refIndex, trackId]);
 
-  console.log(' allVotes:', allVotes);
+  // console.log(' allVotes:', allVotes);
 
   useEffect(() => {
     if (filteredVotes) {
-      let votesBasedOnType = filteredVotes.ayes;
+      let votesBasedOnType = filteredVotes.yes;
 
       if (tabIndex === VOTE_TYPE_MAP.NAY) {
-        votesBasedOnType = filteredVotes.nays;
+        votesBasedOnType = filteredVotes.no;
       } else if (tabIndex === VOTE_TYPE_MAP.ABSTAIN) {
-        votesBasedOnType = filteredVotes.abstains;
+        votesBasedOnType = filteredVotes.abstain;
       }
 
       // filter to just show standards, and delegated as nested
@@ -152,44 +150,56 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, [filteredVotes, page, tabIndex]);
 
   const handleClose = useCallback(() => {
-    nestedVotes && setFilteredVotes({ abstains: nestedVotes.abstain.votes, ayes: nestedVotes.yes.votes, nays: nestedVotes.no.votes });
+    allVotes && setFilteredVotes({
+      abstain: allVotes.abstain.votes.filter((v) => !v.isDelegated),
+      yes: allVotes.yes.votes.filter((v) => !v.isDelegated),
+      no: allVotes.no.votes.filter((v) => !v.isDelegated)
+    });
     setOpen(false);
-  }, [nestedVotes, setOpen]);
+  }, [allVotes, setOpen]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
     setPage(1);
   }, []);
 
-  const onSortAmount = useCallback(() => {
+  const onSortVotes = useCallback(() => {
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
 
     const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
-    nestedVotes?.[voteTypeStr]?.votes?.sort((a, b) => amountSortType === 'ASC'
+    filteredVotes?.[voteTypeStr]?.sort((a, b) => amountSortType === 'ASC'
       ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
       : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
     );
-  }, [amountSortType, nestedVotes, tabIndex]);
+
+    setFilteredVotes({ ...filteredVotes });
+    console.log(' sorted:', JSON.parse(JSON.stringify(filteredVotes?.[voteTypeStr])));
+  }, [amountSortType, filteredVotes, tabIndex]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
   }, []);
 
   const onSearch = useCallback((filter: string) => {
-    nestedVotes && setFilteredVotes(
+    allVotes && setFilteredVotes(
       {
-        abstains: nestedVotes.abstain.votes.filter((c) => c.voter.includes(filter)),
-        ayes: nestedVotes.yes.votes.filter((a) => a.voter.includes(filter)),
-        nays: nestedVotes.no.votes.filter((b) => b.voter.includes(filter))
+        abstain: allVotes.abstain.votes.filter((a) => a.voter.includes(filter) && !a.isDelegated),
+        yes: allVotes.yes.votes.filter((y) => y.voter.includes(filter) && !y.isDelegated),
+        no: allVotes.no.votes.filter((n) => n.voter.includes(filter) && !n.isDelegated)
       }
     );
-  }, [nestedVotes]);
+  }, [allVotes]);
 
   const openSearchBar = useCallback(() => {
     !isSearchBarOpen && setSearchBarOpen(true);
   }, [isSearchBarOpen]);
+
+  const openDelegations = useCallback((vote: VoteType | AbstainVoteType) => {
+    setShowDelegators(vote);
+    console.log(vote)
+  }, []);
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>
@@ -224,7 +234,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             <Tab
               icon={<CheckIcon sx={{ color: 'success.main' }} />}
               iconPosition='start'
-              label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.ayes?.length || 0 } })}
+              label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.yes?.length || 0 } })}
               sx={{
                 ':is(button.MuiButtonBase-root.MuiTab-root)': {
                   height: '49px',
@@ -250,7 +260,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             <Tab
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
-              label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.nays?.length || 0 } })}
+              label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.no?.length || 0 } })}
               sx={{
                 ':is(button.MuiButtonBase-root.MuiTab-root)': {
                   height: '49px',
@@ -276,7 +286,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             <Tab
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
-              label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstains?.length || 0 } })}
+              label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
               sx={{
                 ':is(button.MuiButtonBase-root.MuiTab-root)': {
                   height: '49px',
@@ -306,7 +316,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
               {t('Voter')}
             </Grid>
             <Grid item width='30%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortAmount} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+              <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
               {t('Votes')}
             </Grid>
             <Grid item width='20%'>
@@ -317,7 +327,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           </Grid>
           {votesToShow?.map((vote, index) => {
             const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
-            const delegatorsCount = allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter)?.length || 0;
+            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter)?.length || 0) as number;
 
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
@@ -338,10 +348,10 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
                     }}
                   />
                 </Grid>
-                <Grid container item justifyContent='center' width='30%'>
+                <Grid container item justifyContent='flex-end' width='20%'>
                   <Amount
                     address={address}
-                    nestedVotes={nestedVotes}
+                    allVotes={allVotes}
                     vote={vote}
                     voteType={tabIndex}
                   />
@@ -353,8 +363,8 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
                   <Grid item sx={{ textAlign: 'right' }}>
                     <Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '36px', mr: '3px', width: '1px' }} />
                   </Grid>
-                  <Grid item>
-                    <ChevronRightIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />
+                  <Grid item sx={{ cursor: 'pointer' }} onClick={() => openDelegations(vote)}>
+                    <ChevronRightIcon sx={{ color: `${delegatorsCount ? theme.palette.primary.main : theme.palette.action.disabledBackground}`, fontSize: '37px' }} />
                   </Grid>
                 </Grid>
               </Grid>
