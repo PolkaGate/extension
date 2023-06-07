@@ -23,9 +23,8 @@ import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../components/SelectProxyModal';
-import WaitScreen from '../partials/WaitScreen';
-import Confirmation from './Confirmation';
-import { DELEGATE_STEPS, DelegateInformation } from '.';
+import DisplayValue from '../post/castVote/partial/DisplayValue';
+import { DelegateInformation, STEPS } from '.';
 
 interface Props {
   address: string | undefined;
@@ -35,13 +34,14 @@ interface Props {
   estimatedFee: Balance | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review({ address, delegateInformation, estimatedFee, formatted, handleClose, setStep, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, formatted, setTxInfo, setStep, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountName(address)
+  const name = useAccountName(address);
   const { accounts } = useContext(AccountContext);
   const api = useApi(address);
   const chain = useChain(address);
@@ -54,7 +54,6 @@ export default function Review({ address, delegateInformation, estimatedFee, for
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
-  const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [modalHeight, setModalHeight] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -62,24 +61,6 @@ export default function Review({ address, delegateInformation, estimatedFee, for
 
   const delegate = api && api.tx.convictionVoting.delegate;
   const batch = api && api.tx.utility.batchAll;
-
-  const DisplayValue = ({ children, title, topDivider = true }: { children: React.ReactNode, topDivider?: boolean, title: string }) => {
-    return (
-      <Grid alignItems='center' container direction='column' justifyContent='center'>
-        <Grid item>
-          {topDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '5px', width: '170px' }} />}
-        </Grid>
-        <Grid item>
-          <Typography>
-            {title}
-          </Typography>
-        </Grid>
-        <Grid fontSize='28px' fontWeight={400} item>
-          {children}
-        </Grid>
-      </Grid>
-    );
-  };
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -90,13 +71,11 @@ export default function Review({ address, delegateInformation, estimatedFee, for
   const params = useMemo(() =>
     delegateInformation.delegatedTracks.map((track) =>
       [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN]
-    )
-    , [delegateInformation]);
+    ), [delegateInformation]);
 
   useEffect(() => {
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
-      console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)
     }
   }, []);
 
@@ -114,7 +93,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
 
       const txList = params.map((param) => delegate(...param));
 
-      setStep(DELEGATE_STEPS.WAIT_SCREEN);
+      setStep(STEPS.WAIT_SCREEN);
 
       const calls = txList.length > 1 ? batch(txList) : txList[0];
       const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
@@ -138,18 +117,18 @@ export default function Review({ address, delegateInformation, estimatedFee, for
       setTxInfo({ ...info, api, chain });
       saveAsHistory(from, info);
 
-      setStep(DELEGATE_STEPS.CONFIRM);
+      setStep(STEPS.CONFIRM);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, delegate, api, decimal, params, batch, selectedProxyAddress, password, setStep, selectedProxy, delegateInformation.delegateAmount, delegateInformation.delegateeAddress, estimatedFee, name, selectedProxyName, delegateeName, chain]);
+  }, [api, batch, chain, decimal, delegate, delegateInformation.delegateAmount, delegateInformation.delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, setTxInfo]);
 
-  const backToChooseDelegatee = useCallback(() => setStep(DELEGATE_STEPS.CHOOSE_DELEGATOR), [setStep]);
+  const backToChooseDelegatee = useCallback(() => setStep(STEPS.CHOOSE_DELEGATOR), [setStep]);
 
   return (
     <Motion style={{ height: '100%' }}>
-      {step === DELEGATE_STEPS.REVIEW &&
+      {step === STEPS.REVIEW &&
         <Grid container ref={ref}>
           {isPasswordError &&
             <WrongPasswordAlert />
@@ -217,33 +196,20 @@ export default function Review({ address, delegateInformation, estimatedFee, for
             proxyTypeFilter={['Any']}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
-            setSelectedProxy={setSelectedProxy}
             setStep={setStep}
           />
         </Grid>
       }
-      {step === DELEGATE_STEPS.WAIT_SCREEN &&
-        <WaitScreen />
-      }
-      {step === DELEGATE_STEPS.CONFIRM &&
-        <Confirmation
-          address={address}
-          allCategoriesLength={tracks?.length}
-          delegateInformation={delegateInformation}
-          handleClose={handleClose}
-          txInfo={txInfo}
-        />
-      }
-      {step === DELEGATE_STEPS.PROXY &&
+      {step === STEPS.PROXY &&
         <SelectProxyModal
           address={address}
           height={modalHeight}
+          nextStep={STEPS.REVIEW}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
           selectedProxy={selectedProxy}
           setSelectedProxy={setSelectedProxy}
           setStep={setStep}
-          nextStep={DELEGATE_STEPS.REVIEW}
         />
       }
     </Motion>

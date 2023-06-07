@@ -11,7 +11,7 @@ import { AccountInputWithIdentity, Infotip2, TwoButtons } from '../../../compone
 import { useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
 import { LoadingSkeleton } from './partial/ReferendaTracks';
 import TAccountsDisplay from './TAccountDisplay';
-import { DELEGATE_STEPS, DelegateInformation } from '.';
+import { STEPS, DelegateInformation } from '.';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -81,11 +81,11 @@ export default function ChooseDelegator ({ setDelegateInformation, setStep }: Pr
   }, []);
 
   const goReview = useCallback(() => {
-    setStep(DELEGATE_STEPS.REVIEW);
+    setStep(STEPS.REVIEW);
   }, [setStep]);
 
   const goBack = useCallback(() => {
-    setStep(DELEGATE_STEPS.INDEX);
+    setStep(STEPS.INDEX);
   }, [setStep]);
 
   return (
