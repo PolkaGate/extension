@@ -16,7 +16,8 @@ import { toTitleCase } from '../../utils/util';
 interface Props {
   selectedTracks: BN[];
   unvotedTracks: Track[] | undefined;
-  setSelectedTracks: React.Dispatch<React.SetStateAction<BN[]>>
+  setSelectedTracks: React.Dispatch<React.SetStateAction<BN[]>>;
+  maximumHeight?: string;
 }
 
 export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skeletonsNum: number, withCheckBox: boolean }) => {
@@ -41,7 +42,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks({ selectedTracks, setSelectedTracks, unvotedTracks }: Props): React.ReactElement {
+export default function ReferendaTracks({ maximumHeight = '175px', selectedTracks, setSelectedTracks, unvotedTracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -52,7 +53,7 @@ export default function ReferendaTracks({ selectedTracks, setSelectedTracks, unv
   }, [selectedTracks.length, setSelectedTracks, unvotedTracks]);
 
   const handleToggle = (value: BN) => () => {
-    const currentIndex = selectedTracks.indexOf(value);
+    const currentIndex = selectedTracks.findIndex((track) => track.eq(value));
     const newChecked = [...selectedTracks];
 
     if (currentIndex === -1) {
@@ -80,7 +81,7 @@ export default function ReferendaTracks({ selectedTracks, setSelectedTracks, unv
           </Typography>
         </Grid>
       </Grid>
-      <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', height: '175px', maxWidth: '100%', overflowY: 'scroll', width: '100%' }}>
+      <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', maxHeight: maximumHeight, maxWidth: '100%', minHeight: '175px', overflowY: 'scroll', width: '100%' }}>
         {unvotedTracks?.length
           ? unvotedTracks.map((value, index) => (
             <ListItem
@@ -98,7 +99,7 @@ export default function ReferendaTracks({ selectedTracks, setSelectedTracks, unv
                 />
                 <ListItemIcon sx={{ minWidth: '20px' }}>
                   <Checkbox2
-                    checked={selectedTracks.indexOf(value[0]) !== -1}
+                    checked={!!selectedTracks.find((track) => track.eq(value[0]))}
                     iconStyle={{ transform: 'scale(1.13)' }}
                     label={''}
                   />
