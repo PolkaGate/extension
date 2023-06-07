@@ -33,7 +33,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
   const threshold = useCurrentSupportThreshold(track?.[1], currentBlock && referendum && currentBlock - referendum?.timelineSb[1]?.block);
 
   const currentSupportThreshold = useMemo(() => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendum) {
+    if (track?.[1]?.preparePeriod && currentBlock && referendum?.timelineSb?.[0].block) {
       const blockSubmitted = referendum.timelineSb[0].block;
 
       if (currentBlock - blockSubmitted < track[1].preparePeriod) {

@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useApi, useChainName, useTranslation } from '../../../../hooks';
 import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, VoteType } from '../../utils/helpers';
@@ -28,6 +28,8 @@ interface Props {
   } | undefined>>;
 }
 
+export const VOTE_PER_PAGE = 10;
+
 export const VOTE_TYPE_MAP = {
   AYE: 1,
   NAY: 2,
@@ -38,9 +40,10 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const { t } = useTranslation();
   const chainName = useChainName(address);
   const api = useApi(address);
-  const [allVotes, setAllVotes] = React.useState<AllVotesType | null>();
-  const [showDelegatorsOf, setShowDelegators] = React.useState<VoteType | AbstainVoteType | null>();
-  const [filteredVotes, setFilteredVotes] = React.useState<FilteredVotes | null>();
+  const [allVotes, setAllVotes] = useState<AllVotesType | null>();
+  const [showDelegatorsOf, setShowDelegators] = useState<VoteType | AbstainVoteType | null>();
+  const [filteredVotes, setFilteredVotes] = useState<FilteredVotes | null>();
+  const [numberOfFetchedDelagatees, setNumberOfFetchedDelagatees] = useState<number>(0);
 
   // useEffect(() => {
   //   chainName && refIndex &&
@@ -101,6 +104,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             if (delegatedVoteInfo) {
               v.delegatee = delegatedVoteInfo.delegating?.target;
               setAllVotes({ ...allVotes });
+              setNumberOfFetchedDelagatees((prev) => prev + 1);
             }
           }).catch(console.error);
         }
@@ -121,6 +125,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           setFilteredVotes={setFilteredVotes}
           setOpen={setOpen}
           setShowDelegators={setShowDelegators}
+          numberOfFetchedDelagatees={numberOfFetchedDelagatees}
         />
         : <Delegators
           address={address}

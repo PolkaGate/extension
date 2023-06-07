@@ -8,14 +8,15 @@ import '@vaadin/icons';
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Box, Divider, Grid, LinearProgress, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Identity, Infotip2, InputFilter, Progress, ShowValue } from '../../../../components';
 import { useApi, useChain, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
 import Amount from './Amount';
+import { VOTE_PER_PAGE } from '.';
 
 interface Props {
   address: string | undefined;
@@ -25,9 +26,8 @@ interface Props {
   setShowDelegators: React.Dispatch<React.SetStateAction<VoteType | AbstainVoteType | null | undefined>>;
   setFilteredVotes: React.Dispatch<React.SetStateAction<FilteredVotes | null | undefined>>;
   setOpen: (value: React.SetStateAction<boolean>) => void;
+  numberOfFetchedDelagatees: number
 }
-
-const VOTE_PER_PAGE = 10;
 
 export const VOTE_TYPE_MAP = {
   AYE: 1,
@@ -39,7 +39,7 @@ function noop() {
   // This function does nothing.
 }
 
-export default function Standards({ address, allVotes, filteredVotes, open, setFilteredVotes, setOpen, setShowDelegators }: Props): React.ReactElement {
+export default function Standards({ address, allVotes, filteredVotes, numberOfFetchedDelagatees, open, setFilteredVotes, setOpen, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -47,11 +47,24 @@ export default function Standards({ address, allVotes, filteredVotes, open, setF
 
   const [tabIndex, setTabIndex] = useState<number>(1);
 
-  const [votesToShow, setVotesToShow] = React.useState<VoteType[] | AbstainVoteType[]>();
-  const [page, setPage] = React.useState<number>(1);
-  const [paginationCount, setPaginationCount] = React.useState<number>(10);
+  const [votesToShow, setVotesToShow] = useState<VoteType[] | AbstainVoteType[]>();
+  const [page, setPage] = useState<number>(1);
+  const [paginationCount, setPaginationCount] = useState<number>(10);
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>('ASC');
-  const [isSearchBarOpen, setSearchBarOpen] = React.useState<boolean>(false);
+  const [isSearchBarOpen, setSearchBarOpen] = useState<boolean>(false);
+
+  const totalNumberOfDelegators = useMemo(() => {
+    if (!allVotes) {
+      return undefined;
+    }
+
+    return [
+      allVotes.abstain?.votes,
+      allVotes.yes?.votes,
+      allVotes.no?.votes
+    ]
+      .reduce((total, votes) => total + (votes?.filter((v) => v.isDelegated)?.length || 0), 0);
+  }, [allVotes]);
 
   useEffect(() => {
     if (filteredVotes) {
@@ -246,6 +259,14 @@ export default function Standards({ address, allVotes, filteredVotes, open, setF
               </Infotip2>
             </Grid>
           </Grid>
+          {allVotes &&
+            <LinearProgress
+              color='success'
+              sx={{ height: '3px', mt: '0px', width: '100%' }}
+              value={totalNumberOfDelegators ? numberOfFetchedDelagatees * 100 / totalNumberOfDelegators : 0}
+              variant={numberOfFetchedDelagatees ? 'determinate' : 'indeterminate'}
+            />
+          }
           {votesToShow?.map((vote, index) => {
             const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
             const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter)?.length || 0) as number;
@@ -306,6 +327,7 @@ export default function Standards({ address, allVotes, filteredVotes, open, setF
               pt={10}
               size={150}
               title={t('Loading votes ...')}
+              size='large'
             />}
         </Grid>
       </>
