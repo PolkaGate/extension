@@ -20,9 +20,11 @@ interface Props {
   delegateInformation: DelegateInformation;
   handleClose: () => void;
   allCategoriesLength: number;
+  removedTracksLength?: number | undefined;
+  status: 'Delegate' | 'Remove' | 'Modify';
 }
 
-export default function Confirmation({ address, allCategoriesLength, delegateInformation, handleClose, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, allCategoriesLength, delegateInformation, handleClose, txInfo, status, removedTracksLength }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 
@@ -52,28 +54,14 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
         success={txInfo.success}
       />
       {txInfo?.failureText &&
-        <Typography
-          fontSize='16px'
-          fontWeight={400}
-          m='auto'
-          sx={{
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: '2',
-            display: '-webkit-box',
-            mb: '15px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }}
-          textAlign='center'
-          width='92%'
-        >
+        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
           {txInfo.failureText}
         </Typography>
       }
       {/* <AccountHolderWithProxy address={address} chain={txInfo.chain} showDivider selectedProxyAddress={txInfo.throughProxy?.address} /> */}
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Delegation from')}:
+          {status === 'Remove' ? t<string>('Account holder') : t<string>('Delegation from')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
@@ -90,23 +78,40 @@ export default function Confirmation({ address, allCategoriesLength, delegateInf
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
-      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Delegation to')}:
-        </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {txInfo.to?.name}
-        </Typography>
-        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          <ShortAddress address={txInfo.to?.address} inParentheses style={{ fontSize: '16px' }} />
-        </Grid>
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
-      </Grid>
-      <DisplayInfo caption={t<string>('Vote value:')} value={t<string>(`${delegateInformation.delegateAmount} {{token}}`, { replace: { token } })} />
-      <DisplayInfo caption={t<string>('Vote multiplier:')} value={t<string>(`${delegateInformation.delegateConviction === 0 ? 0.1 : delegateInformation.delegateConviction}x`)} />
-      <DisplayInfo caption={t<string>('Number of referenda categories:')} value={t<string>(`${delegateInformation.delegatedTracks.length} of ${allCategoriesLength}`, { replace: { token } })} />
+      {txInfo.to?.name &&
+        <>
+          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {status === 'Remove' ? t<string>('Remove delegation from') : t<string>('Delegation to')}:
+            </Typography>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+              {txInfo.to?.name}
+            </Typography>
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+              <ShortAddress address={txInfo.to?.address} inParentheses style={{ fontSize: '16px' }} />
+            </Grid>
+          </Grid>
+          <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+          </Grid>
+        </>
+      }
+      {status !== 'Remove' && delegateInformation.delegateAmount &&
+        <DisplayInfo
+          caption={t<string>('Vote value:')}
+          value={t<string>(`${delegateInformation.delegateAmount} {{token}}`, { replace: { token } })}
+        />
+      }
+      {status !== 'Remove' && delegateInformation?.delegateConviction === undefined &&
+        <DisplayInfo
+          caption={t<string>('Vote multiplier:')}
+          value={t<string>(`${delegateInformation.delegateConviction === 0 ? 0.1 : delegateInformation.delegateConviction}x`)}
+        />
+      }
+      <DisplayInfo
+        caption={t<string>('Number of referenda categories:')}
+        value={t<string>(`${status === 'Remove' && removedTracksLength ? removedTracksLength : delegateInformation.delegatedTracks.length} of ${allCategoriesLength}`, { replace: { token } })}
+      />
       <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
