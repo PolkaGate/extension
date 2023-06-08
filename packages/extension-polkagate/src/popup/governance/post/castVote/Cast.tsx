@@ -20,7 +20,6 @@ import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOp
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
 import { STATUS_COLOR } from '../../utils/consts';
-import { ReferendumSubScan } from '../../utils/types';
 import { getVoteType } from '../../utils/util';
 import { getConviction, Vote } from '../myVote/util';
 import { STEPS } from '.';
