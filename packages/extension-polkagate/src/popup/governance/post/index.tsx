@@ -142,7 +142,7 @@ export default function ReferendumPost(): React.ReactElement {
                 referendum={newReferenda}
               />
             </Grid>
-            <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '450px' }}>
+            <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '290px' }}>
               <StatusInfo
                 address={address}
                 isOngoing={isOngoing}
