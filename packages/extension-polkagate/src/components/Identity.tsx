@@ -81,7 +81,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
         {!noIdenticon &&
-          <Grid item m='auto 0' pr='5px' width='fit-content'>
+          <Grid item m='auto 0' pr='5px'>
             <Identicon
               iconTheme={_chain?.icon ?? 'polkadot'}
               judgement={judgement || _judgement}
