@@ -92,7 +92,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
   }, [proxies]);
 
   const votedInfo = useMemo(() => {
-    if (step === STEPS.REMOVE && myVote && decimal) {
+    if (myVote && decimal) {
       const amount = amountToHuman(myVote?.standard?.balance || myVote?.splitAbstain?.abstain, decimal);
       const conviction = myVote?.standard ? getConviction(myVote.standard.vote) : 0;
       const myDelegations = myVote?.delegations?.votes;
@@ -112,7 +112,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         voteType: getVoteType(myVote)
       };
     }
-  }, [decimal, myVote, refIndex, step, trackId]);
+  }, [decimal, myVote, refIndex, trackId]);
 
   useEffect(() => {
     if (!formatted || !vote) {
@@ -204,6 +204,9 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     </Grid>
   );
 
+  console.log('votedInfo:', votedInfo)
+  console.log('txInfo:', txInfo)
+
   return (
     <DraggableModal onClose={handleClose} open={open}>
       <>
@@ -277,13 +280,13 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />
         }
-        {step === STEPS.CONFIRM && voteInformation && txInfo &&
+        {step === STEPS.CONFIRM && (voteInformation || votedInfo) && txInfo &&
           <Confirmation
             address={address}
             alterType={alterType}
             handleClose={handleClose}
             txInfo={txInfo}
-            voteInformation={voteInformation}
+            voteInformation={voteInformation || votedInfo}
           />
         }
       </>
