@@ -95,7 +95,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}
             value={<ShowBalance
-              balance={referendum?.submissionAmount && new BN(referendum.submissionAmount)}
+              balance={referendum?.submissionAmount}
               decimal={decimal}
               decimalPoint={2}
               token={token}
@@ -125,7 +125,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}
             value={<ShowBalance
-              balance={referendum?.decisionDepositAmount && new BN(referendum.decisionDepositAmount)}
+              balance={referendum?.decisionDepositAmount}
               decimal={decimal}
               decimalPoint={2}
               token={token}
@@ -139,7 +139,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
                 labelStyle={{ minWidth: '20%' }}
                 style={{ justifyContent: 'flex-start' }}
                 value={<ShowBalance
-                  balance={referendum?.call?.args?.amoun && new BN(referendum.call.args.amount)}
+                  balance={referendum?.call?.args?.amount || referendum?.requested}
                   decimal={decimal}
                   decimalPoint={2}
                   token={token}
@@ -214,7 +214,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
               underline='none'
             >
               <Typography sx={{ py: 2 }}>
-                {showJson ? t('Hide Call in JSON') : t('View Call in JSON')}
+                {showJson ? t('Hide Call') : t('View Call in JSON')}
               </Typography>
             </Link>
             {showJson &&
