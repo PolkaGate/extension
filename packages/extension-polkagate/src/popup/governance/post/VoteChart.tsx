@@ -125,7 +125,7 @@ function VoteChart({ ayes, height, nays, noBorderColor = false }: Props): React.
   }, [ayesPercent, naysPercent, noBorderColor]);
 
   return (
-    <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '250px', width: '100%' }} >
+    <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '240px', width: '100%' }} >
       {ayes && nays
         ? <canvas id='chartCanvas' ref={chartRef} />
         : <Grid alignItems='center' container height='100%' item justifyContent='center'>
