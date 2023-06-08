@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
 import { postData } from '../../../util/api';
 import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
@@ -32,18 +33,23 @@ export type VoteType = {
   };
   lockPeriod: number | null;
   isDelegated: boolean;
+  delegatee?: string;
+  votePower?: BN;
 }
 
 export type AbstainVoteType = {
   decision: string;
   voter: string;
   balance: {
-    aye: string;
-    nay: string;
-    abstain: string;
+    aye?: string; // when vote is standard
+    nay?: string; // when vote is standard
+    abstain?: string; // when vote is standard
+    value?: string; // when vote is delegated
   };
   lockPeriod: null;
   isDelegated: boolean;
+  delegatee?: string;
+  votePower?: BN;
 }
 
 export type AllVotesType = {
@@ -59,6 +65,12 @@ export type AllVotesType = {
     count: number;
     votes: VoteType[];
   }
+}
+
+export type FilteredVotes = {
+  abstain: AbstainVoteType[];
+  no: VoteType[];
+  yes: VoteType[];
 }
 
 export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {

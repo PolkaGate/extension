@@ -159,7 +159,7 @@ export default function ReferendumPost(): React.ReactElement {
                 address={address}
                 referendum={newReferenda}
               />
-              {(isOngoing || isAgainstOutcome) &&
+              {(isOngoing || (hasVoted && isAgainstOutcome)) &&
                 <Grid item sx={{ my: '15px' }} xs={12}>
                   <PButton
                     _ml={0}

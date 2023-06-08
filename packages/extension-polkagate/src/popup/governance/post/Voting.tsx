@@ -13,7 +13,7 @@ import { ShowBalance, ShowValue } from '../../../components';
 import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { Referendum } from '../utils/types';
 import { toTitleCase } from '../utils/util';
-import AllVotes from './AllVotes';
+import AllVotes from './allVote';
 import VoteChart from './VoteChart';
 
 interface Props {
@@ -41,7 +41,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   }, [referendum, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
-  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum && currentBlock - referendum?.timelineSb[1]?.block);
+  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum?.timelineSb?.[1]?.block && (currentBlock - referendum.timelineSb[1].block));
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
     if (track?.[1]?.preparePeriod && currentBlock && referendum?.timelineSb) {

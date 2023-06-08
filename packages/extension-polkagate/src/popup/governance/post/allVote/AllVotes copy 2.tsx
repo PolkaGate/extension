@@ -6,16 +6,18 @@
 import '@vaadin/icons';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { BN } from '@polkadot/util';
 
-import { Identity, Infotip2, InputFilter, Progress, ShowBalance } from '../../../components';
-import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { DraggableModal } from '../components/DraggableModal';
-import { AbstainVoteType, AllVotesType, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../utils/helpers';
+import { Identity, Infotip2, InputFilter, Progress, ShowValue } from '../../../../components';
+import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { DraggableModal } from '../../components/DraggableModal';
+import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, getReferendumVotesFromSubscan, VoteType } from '../../utils/helpers';
+import { getAddressVote } from '../myVote/util';
+import Amount from './Amount';
 
 interface Props {
   address: string | undefined;
@@ -35,13 +37,14 @@ interface Props {
 }
 
 const VOTE_PER_PAGE = 10;
-const TAB_MAP = {
+
+export const VOTE_TYPE_MAP = {
   AYE: 1,
   NAY: 2,
   ABSTAIN: 3
 };
 
-export default function AllVotes({ address, isFellowship, open, refIndex, setOpen, setVoteCountsPA }: Props): React.ReactElement {
+export default function AllVotes({ address, isFellowship, open, refIndex, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);
@@ -52,7 +55,8 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
 
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [allVotes, setAllVotes] = React.useState<AllVotesType | null>();
-  const [filteredVotes, setFilteredVotes] = React.useState<{ ayes: VoteType[], nays: VoteType[], abstains: AbstainVoteType[] } | null>();
+  const [showDelegatorsOf, setShowDelegators] = React.useState<VoteType | AbstainVoteType | null>();
+  const [filteredVotes, setFilteredVotes] = React.useState<FilteredVotes | null>();
   const [votesToShow, setVotesToShow] = React.useState<VoteType[] | AbstainVoteType[]>();
   const [page, setPage] = React.useState<number>(1);
   const [paginationCount, setPaginationCount] = React.useState<number>(10);
@@ -92,21 +96,53 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
         }
 
         setAllVotes(res);
-        setFilteredVotes({ ayes: res.yes.votes, nays: res.no.votes, abstains: res.abstain.votes });
+        setFilteredVotes({
+          abstain: res.abstain.votes.filter((v) => !v.isDelegated),
+          yes: res.yes.votes.filter((v) => !v.isDelegated),
+          no: res.no.votes.filter((v) => !v.isDelegated)
+        });
         setVoteCountsPA({ ayes: res?.yes?.count, nays: res?.no?.count });
       }).catch(console.error);
     }).catch(console.error);
   }, [chainName, isFellowship, refIndex, setVoteCountsPA]);
 
   useEffect(() => {
-    if (filteredVotes) {
-      let votesBasedOnType = filteredVotes.ayes;
+    if (!allVotes || !api || !trackId || !refIndex) {
+      return;
+    }
 
-      if (tabIndex === TAB_MAP.NAY) {
-        votesBasedOnType = filteredVotes.nays;
-      } else if (tabIndex === TAB_MAP.ABSTAIN) {
-        votesBasedOnType = filteredVotes.abstains;
+    const keys = Object.keys(allVotes);
+
+    keys.map((key) =>
+      allVotes[key as keyof AllVotesType].votes.map((v) => {
+        if (v.isDelegated) {
+          getAddressVote(String(v.voter), api, Number(refIndex), Number(trackId)).then((delegatedVoteInfo) => {
+            if (delegatedVoteInfo) {
+              v.delegatee = delegatedVoteInfo.delegating?.target;
+              setAllVotes({ ...allVotes });
+            }
+          }).catch(console.error);
+        }
+
+        return v;
+      })
+    );
+  }, [allVotes?.yes?.votes?.length, allVotes?.abstain?.votes?.length, allVotes?.no?.votes?.length, api, refIndex, trackId]);
+
+  // console.log(' allVotes:', allVotes);
+
+  useEffect(() => {
+    if (filteredVotes) {
+      let votesBasedOnType = filteredVotes.yes;
+
+      if (tabIndex === VOTE_TYPE_MAP.NAY) {
+        votesBasedOnType = filteredVotes.no;
+      } else if (tabIndex === VOTE_TYPE_MAP.ABSTAIN) {
+        votesBasedOnType = filteredVotes.abstain;
       }
+
+      // filter to just show standards, and delegated as nested
+      votesBasedOnType = votesBasedOnType.filter((v) => !v.isDelegated);
 
       setVotesToShow(votesBasedOnType.slice((page - 1) * VOTE_PER_PAGE, page * VOTE_PER_PAGE));
       setPaginationCount(Math.ceil(votesBasedOnType.length / VOTE_PER_PAGE));
@@ -114,7 +150,11 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   }, [filteredVotes, page, tabIndex]);
 
   const handleClose = useCallback(() => {
-    allVotes && setFilteredVotes({ ayes: allVotes.yes.votes, nays: allVotes.no.votes, abstains: allVotes.abstain.votes });
+    allVotes && setFilteredVotes({
+      abstain: allVotes.abstain.votes.filter((v) => !v.isDelegated),
+      yes: allVotes.yes.votes.filter((v) => !v.isDelegated),
+      no: allVotes.no.votes.filter((v) => !v.isDelegated)
+    });
     setOpen(false);
   }, [allVotes, setOpen]);
 
@@ -123,24 +163,20 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
     setPage(1);
   }, []);
 
-  const onSortAmount = useCallback(() => {
+  const onSortVotes = useCallback(() => {
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
 
-    if (tabIndex === TAB_MAP.ABSTAIN) {
-      votesToShow?.sort((a, b) => amountSortType === 'ASC'
-        ? (new BN(a.balance.abstain).sub(new BN(b.balance.abstain))).isNeg() ? -1 : 1
-        : (new BN(b.balance.abstain).sub(new BN(a.balance.abstain))).isNeg() ? -1 : 1
-      );
+    const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
-      return;
-    }
-
-    votesToShow?.sort((a, b) => amountSortType === 'ASC'
-      ? (new BN(a.balance.value).sub(new BN(b.balance.value))).isNeg() ? -1 : 1
-      : (new BN(b.balance.value).sub(new BN(a.balance.value))).isNeg() ? -1 : 1
+    filteredVotes?.[voteTypeStr]?.sort((a, b) => amountSortType === 'ASC'
+      ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
+      : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
     );
-  }, [amountSortType, tabIndex, votesToShow]);
+
+    setFilteredVotes({ ...filteredVotes });
+    console.log(' sorted:', JSON.parse(JSON.stringify(filteredVotes?.[voteTypeStr])));
+  }, [amountSortType, filteredVotes, tabIndex]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
@@ -149,9 +185,9 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const onSearch = useCallback((filter: string) => {
     allVotes && setFilteredVotes(
       {
-        ayes: allVotes.yes.votes.filter((a) => a.voter.includes(filter)),
-        nays: allVotes.no.votes.filter((b) => b.voter.includes(filter)),
-        abstains: allVotes.abstain.votes.filter((c) => c.voter.includes(filter))
+        abstain: allVotes.abstain.votes.filter((a) => a.voter.includes(filter) && !a.isDelegated),
+        yes: allVotes.yes.votes.filter((y) => y.voter.includes(filter) && !y.isDelegated),
+        no: allVotes.no.votes.filter((n) => n.voter.includes(filter) && !n.isDelegated)
       }
     );
   }, [allVotes]);
@@ -159,6 +195,11 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const openSearchBar = useCallback(() => {
     !isSearchBarOpen && setSearchBarOpen(true);
   }, [isSearchBarOpen]);
+
+  const openDelegations = useCallback((vote: VoteType | AbstainVoteType) => {
+    setShowDelegators(vote);
+    console.log(vote)
+  }, []);
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>
@@ -193,7 +234,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             <Tab
               icon={<CheckIcon sx={{ color: 'success.main' }} />}
               iconPosition='start'
-              label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.ayes?.length || 0 } })}
+              label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.yes?.length || 0 } })}
               sx={{
                 ':is(button.MuiButtonBase-root.MuiTab-root)': {
                   height: '49px',
@@ -219,7 +260,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             <Tab
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
-              label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.nays?.length || 0 } })}
+              label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.no?.length || 0 } })}
               sx={{
                 ':is(button.MuiButtonBase-root.MuiTab-root)': {
                   height: '49px',
@@ -245,7 +286,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             <Tab
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
-              label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstains?.length || 0 } })}
+              label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
               sx={{
                 ':is(button.MuiButtonBase-root.MuiTab-root)': {
                   height: '49px',
@@ -269,56 +310,66 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '460px' }}>
-          <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', fontSize: '20px', fontWeight: 400 }}>
-            <Grid item width='38%'>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '505px' }}>
+          <Grid container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', pb: '5px', fontSize: '20px', fontWeight: 400 }}>
+            <Grid item width='40%'>
               {t('Voter')}
             </Grid>
-            <Grid item width='22%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortAmount} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
-              {t('Amount')}
+            <Grid item width='30%'>
+              <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+              {t('Votes')}
             </Grid>
-            <Grid item width='15%'>
-              {t('Conviction')}
-            </Grid>
-            <Grid alignItems='center' container item justifyContent='center' width='12%'>
-              <Infotip2 iconTop={7} showQuestionMark text={t('Delegated: representatives vote on behalf of token holders, Standard: token holders vote directly')}>
-                <Typography fontSize='20px' width='fit-content'>
-                  {t('Type')}
-                </Typography>
+            <Grid item width='20%'>
+              <Infotip2 iconTop={7} showQuestionMark text={t('The number of delegators who have delegated their votes to this voter.')}>
+                {t('Delegators')}
               </Infotip2>
             </Grid>
           </Grid>
-          {votesToShow?.map((vote, index) => (
-            <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '5px' }}>
-              <Grid container item justifyContent='flex-start' width='38%'>
-                <Identity
-                  api={api}
-                  chain={chain}
-                  formatted={vote.voter}
-                  identiconSize={28}
-                  showShortAddress
-                  showSocial={false}
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    maxWidth: '100%',
-                    minWidth: '35%',
-                    width: 'fit-content'
-                  }}
-                />
+          {votesToShow?.map((vote, index) => {
+            const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
+            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter)?.length || 0) as number;
+
+            return (
+              <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
+                <Grid container item justifyContent='flex-start' width='40%'>
+                  <Identity
+                    api={api}
+                    chain={chain}
+                    formatted={vote.voter}
+                    identiconSize={28}
+                    showShortAddress
+                    showSocial={false}
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: 400,
+                      maxWidth: '100%',
+                      minWidth: '35%',
+                      width: 'fit-content'
+                    }}
+                  />
+                </Grid>
+                <Grid container item justifyContent='flex-end' width='20%'>
+                  <Amount
+                    address={address}
+                    allVotes={allVotes}
+                    vote={vote}
+                    voteType={tabIndex}
+                  />
+                </Grid>
+                <Grid item textAlign='center' width='20%'>
+                  <ShowValue value={delegatorsCount} />
+                </Grid>
+                <Grid alignItems='center' container justifyContent='flex-end' width='10%'>
+                  <Grid item sx={{ textAlign: 'right' }}>
+                    <Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '36px', mr: '3px', width: '1px' }} />
+                  </Grid>
+                  <Grid item sx={{ cursor: 'pointer' }} onClick={() => openDelegations(vote)}>
+                    <ChevronRightIcon sx={{ color: `${delegatorsCount ? theme.palette.primary.main : theme.palette.action.disabledBackground}`, fontSize: '37px' }} />
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid container item justifyContent='center' width='22%'>
-                <ShowBalance api={api} balance={vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay} decimal={decimal} decimalPoint={2} token={token} />
-              </Grid>
-              <Grid item width='15%'>
-                {vote.lockPeriod || '0.1'}X
-              </Grid>
-              <Grid item sx={{ textAlign: 'right' }} width='12%'>
-                {vote?.isDelegated ? t('Delegated') : t('Standard')}
-              </Grid>
-            </Grid>
-          ))
+            );
+          })
           }
           {votesToShow &&
             <Pagination
