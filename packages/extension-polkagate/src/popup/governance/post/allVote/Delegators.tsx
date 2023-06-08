@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Check as CheckIcon, ArrowBackIos as ArrowBackIosIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
+import { ArrowBackIos as ArrowBackIosIcon, Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Pagination, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -19,10 +19,11 @@ import { getVoteValue } from './Amount';
 
 interface Props {
   address: string | undefined;
-  allVotes: AllVotesType | null | undefined
-  standard: VoteType | AbstainVoteType
+  allVotes: AllVotesType | null | undefined;
+  standard: VoteType | AbstainVoteType;
   open: boolean;
-  closeDelegators: () => void
+  closeDelegators: () => void;
+  handleCloseStandards: () => void
 }
 
 const DELEGATORS_PER_PAGE = 7;
@@ -47,7 +48,7 @@ const sanitizeVote = (vote: string) => {
   return voteMappings[vote.toLowerCase()];
 };
 
-export default function Delegators({ address, allVotes, closeDelegators, open, standard }: Props): React.ReactElement {
+export default function Delegators({ address, allVotes, closeDelegators, handleCloseStandards, open, standard }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -80,9 +81,14 @@ export default function Delegators({ address, allVotes, closeDelegators, open, s
     }
   }, [delegatorList, page]);
 
+  const onBackClick = useCallback(() => {
+    closeDelegators();
+  }, [closeDelegators]);
+
   const handleClose = useCallback(() => {
     closeDelegators();
-  }, [allVotes, closeDelegators]);
+    handleCloseStandards();
+  }, [closeDelegators, handleCloseStandards]);
 
   const onSortVotes = useCallback(() => {
     // setPage(1);
@@ -167,12 +173,12 @@ export default function Delegators({ address, allVotes, closeDelegators, open, s
   );
 
   return (
-    <DraggableModal onClose={handleClose} open={open} width={762}>
+    <DraggableModal onClose={onBackClick} open={open} width={762}>
       <>
         <Grid alignItems='center' container sx={{ height: '55px' }}>
           <Grid item xs={0.3}>
             <ArrowBackIosIcon
-              onClick={handleClose}
+              onClick={onBackClick}
               sx={{
                 color: 'secondary.light',
                 cursor: 'pointer',

@@ -11,9 +11,10 @@ import { useTranslation } from '../../../../hooks';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  nextStep: number;
 }
 
-export default function About({ setStep }: Props): React.ReactElement {
+export default function About({ nextStep, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [dontDisplay, setDisplayText] = useState<boolean>(false);
 
@@ -46,8 +47,8 @@ export default function About({ setStep }: Props): React.ReactElement {
   const handleNext = useCallback(() => {
     // eslint-disable-next-line no-void
     dontDisplay && window.localStorage.setItem('cast_vote_about_disabled', 'true');
-    setStep((step) => step + 1);
-  }, [dontDisplay, setStep]);
+    setStep(nextStep);
+  }, [dontDisplay, nextStep, setStep]);
 
   return (
     <Grid container direction='column'>

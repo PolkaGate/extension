@@ -14,7 +14,7 @@ interface Props {
   showCube?: boolean;
 }
 
-function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElement {
+function WaitScreen ({ defaultText, showCube = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [text, setText] = useState<string>(defaultText || t<string>('We are working on your transaction.'));

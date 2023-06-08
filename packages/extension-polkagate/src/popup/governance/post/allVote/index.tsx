@@ -3,9 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { useApi, useChainName, useTranslation } from '../../../../hooks';
+import { useApi, useChainName } from '../../../../hooks';
 import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, VoteType } from '../../utils/helpers';
 import { getAddressVote } from '../myVote/util';
 import Delegators from './Delegators';
@@ -37,21 +37,12 @@ export const VOTE_TYPE_MAP = {
 };
 
 export default function AllVotes({ address, isFellowship, open, refIndex, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
-  const { t } = useTranslation();
   const chainName = useChainName(address);
   const api = useApi(address);
   const [allVotes, setAllVotes] = useState<AllVotesType | null>();
   const [showDelegatorsOf, setShowDelegators] = useState<VoteType | AbstainVoteType | null>();
   const [filteredVotes, setFilteredVotes] = useState<FilteredVotes | null>();
   const [numberOfFetchedDelagatees, setNumberOfFetchedDelagatees] = useState<number>(0);
-
-  // useEffect(() => {
-  //   chainName && refIndex &&
-  //     getReferendumVotesFromSubscan(chainName, refIndex).then((votes) => {
-  //       // setAllVotes(votes);
-  //       console.log('All votes from sb:', votes);
-  //     });
-  // }, [chainName, refIndex]);
 
   // useEffect(() => {
   //   api && refIndex && trackId !== undefined &&
@@ -114,6 +105,15 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
     );
   }, [allVotes?.yes?.votes?.length, allVotes?.abstain?.votes?.length, allVotes?.no?.votes?.length, api, refIndex, trackId]);
 
+  const handleClose = useCallback(() => {
+    allVotes && setFilteredVotes({
+      abstain: allVotes.abstain.votes.filter((v) => !v.isDelegated),
+      no: allVotes.no.votes.filter((v) => !v.isDelegated),
+      yes: allVotes.yes.votes.filter((v) => !v.isDelegated)
+    });
+    setOpen(false);
+  }, [allVotes, setFilteredVotes, setOpen]);
+
   return (
     <>
       {!showDelegatorsOf
@@ -121,18 +121,19 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           address={address}
           allVotes={allVotes}
           filteredVotes={filteredVotes}
+          handleClose={handleClose}
+          numberOfFetchedDelagatees={numberOfFetchedDelagatees}
           open={open}
           setFilteredVotes={setFilteredVotes}
-          setOpen={setOpen}
           setShowDelegators={setShowDelegators}
-          numberOfFetchedDelagatees={numberOfFetchedDelagatees}
         />
         : <Delegators
           address={address}
           allVotes={allVotes}
+          closeDelegators={() => setShowDelegators(null)}
+          handleCloseStandards={handleClose}
           open={!!showDelegatorsOf}
           standard={showDelegatorsOf}
-          closeDelegators={() => setShowDelegators(null)}
         />
       }
     </>

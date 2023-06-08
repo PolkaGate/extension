@@ -20,12 +20,14 @@ interface Props {
 
 }
 
-export const getVoteValue = (vote: AbstainVoteType | VoteType, voteTypeStr?: 'abstain' | 'other' | 'capital') => {
+export const getVoteValue = (vote: AbstainVoteType | VoteType, voteTypeStr?: 'abstain' | 'other' | 'capital'): BN => {
   voteTypeStr = voteTypeStr || ('abstain' in vote.balance ? 'abstain' : 'other');
 
   const value = voteTypeStr === 'abstain'
     ? vote.balance.abstain || new BN(vote.balance.aye).add(new BN(vote.balance.nay))
-    : new BN(vote.balance.value).muln(vote.lockPeriod || 0.1);
+    : vote.lockPeriod === 0
+      ? new BN(vote.balance.value).div(new BN(10))
+      : new BN(vote.balance.value).muln(vote.lockPeriod || 1);
 
   return new BN(value);
 };
@@ -36,8 +38,6 @@ export default function Amount({ address, allVotes, vote, voteType }: Props): Re
   const api = useApi(address);
 
   const [amount, setAmount] = useState<BN>();
-
-
 
   useEffect(() => {
     const voteTypeStr = voteType === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : voteType === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';

@@ -209,7 +209,22 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
       <>
         <Header />
         {step === STEPS.ABOUT &&
-          <About setStep={setStep} />
+          <About
+            setStep={setStep}
+            nextStep={
+              notVoted === undefined
+                ? STEPS.CHECK_SCREEN
+                : notVoted || notVoted === null
+                  ? STEPS.INDEX
+                  : STEPS.PREVIEW
+            }
+          />
+        }
+        {step === STEPS.CHECK_SCREEN &&
+          <WaitScreen
+            defaultText={t('Checking your voting status...')}
+            showCube
+          />
         }
         {step === STEPS.INDEX &&
           <Cast
@@ -238,12 +253,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             voteInformation={voteInformation || votedInfo}
           />
         )}
-        {step === STEPS.CHECK_SCREEN &&
-          <WaitScreen
-            defaultText={t('Checking your voting status...')}
-            showCube
-          />
-        }
         {step === STEPS.PREVIEW &&
           <Preview
             address={address}

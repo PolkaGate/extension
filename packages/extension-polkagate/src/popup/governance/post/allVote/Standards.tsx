@@ -25,8 +25,8 @@ interface Props {
   open: boolean;
   setShowDelegators: React.Dispatch<React.SetStateAction<VoteType | AbstainVoteType | null | undefined>>;
   setFilteredVotes: React.Dispatch<React.SetStateAction<FilteredVotes | null | undefined>>;
-  setOpen: (value: React.SetStateAction<boolean>) => void;
-  numberOfFetchedDelagatees: number
+  handleClose: () => void;
+    numberOfFetchedDelagatees: number
 }
 
 export const VOTE_TYPE_MAP = {
@@ -39,7 +39,7 @@ function noop() {
   // This function does nothing.
 }
 
-export default function Standards({ address, allVotes, filteredVotes, numberOfFetchedDelagatees, open, setFilteredVotes, setOpen, setShowDelegators }: Props): React.ReactElement {
+export default function Standards({ address, allVotes, filteredVotes, numberOfFetchedDelagatees, open, setFilteredVotes, handleClose, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -84,15 +84,6 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
     }
   }, [filteredVotes, page, tabIndex]);
 
-  const handleClose = useCallback(() => {
-    allVotes && setFilteredVotes({
-      abstain: allVotes.abstain.votes.filter((v) => !v.isDelegated),
-      yes: allVotes.yes.votes.filter((v) => !v.isDelegated),
-      no: allVotes.no.votes.filter((v) => !v.isDelegated)
-    });
-    setOpen(false);
-  }, [allVotes, setFilteredVotes, setOpen]);
-
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
     setPage(1);
@@ -132,7 +123,6 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
 
   const openDelegations = useCallback((vote: VoteType | AbstainVoteType) => {
     setShowDelegators(vote);
-    console.log(vote)
   }, [setShowDelegators]);
 
   return (
