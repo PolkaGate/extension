@@ -145,9 +145,9 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
             </Typography>
           </Grid>
           <Grid item>
-            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', opacity: 0.3, height: '30px', mx: '5px', width: '2px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '15px', opacity: 0.3, width: '2px' }} />
           </Grid>
-          <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', px: '10px', textAlign: 'start' }} xs>
+          <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start' }} xs>
             {isSearchBarOpen
               ? <InputFilter
                 autoFocus={false}
@@ -156,7 +156,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
                 theme={theme}
               // value={searchKeyword ?? ''}
               />
-              : <SearchIcon sx={{ color: 'rgba(0,0,0,0.2)', fontSize: '30px', width: 'fit-content' }} />
+              : <SearchIcon sx={{ color: 'rgba(0,0,0,0.2)', display: 'block', fontSize: '30px', width: 'fit-content' }} />
             }
           </Grid>
           <Grid item>
@@ -318,6 +318,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
               count={paginationCount}
               onChange={onPageChange}
               page={page}
+              size='large'
               sx={{ bottom: '-18px', position: 'absolute' }}
             />
           }
@@ -327,7 +328,6 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
               pt={10}
               size={150}
               title={t('Loading votes ...')}
-              size='large'
             />}
         </Grid>
       </>
