@@ -45,7 +45,7 @@ export interface DelegateInformation {
   delegatedTracks: BN[];
 }
 
-export interface DiffDelegation {
+export interface AlreadyDelegateInformation {
   delegatee: string;
   info: {
     track: BN;
@@ -79,9 +79,10 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const [step, setStep] = useState<number>(showDelegationNote ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
   const [delegateInformation, setDelegateInformation] = useState<DelegateInformation | undefined>();
   const [alreadyDelegationInfo, setAlreadyDelegationInfo] = useState<DelegationInfo[] | null | undefined>();
-  const [filteredDelegation, setFilteredDelegation] = useState<DiffDelegation[] | undefined>();
+  const [filteredDelegation, setFilteredDelegation] = useState<AlreadyDelegateInformation[] | undefined>();
   const [status, setStatus] = useState<'Delegate' | 'Remove' | 'Modify'>('Delegate');
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
+  const [selectedTracksLength, setSelectedTracksLength] = useState<number | undefined>();
 
   const delegate = api && api.tx.convictionVoting.delegate;
 
@@ -132,7 +133,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, [api, formatted, delegate]);
 
   const filterDelegation = useCallback((infos: DelegationInfo[]) => {
-    const temp: DiffDelegation[] = [];
+    const temp: AlreadyDelegateInformation[] = [];
 
     infos.forEach((info) => {
       if (temp.length === 0) {
@@ -174,9 +175,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
 
     setFilteredDelegation(filtered);
   }, [alreadyDelegationInfo, filterDelegation]);
-
-  console.log('txInfo:', txInfo)
-  console.log('(status == Remove ? true : delegateInformation):', (status === 'Remove' ? true : delegateInformation))
 
   return (
     <DraggableModal onClose={handleClose} open={open}>
@@ -232,6 +230,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your delegating status...')}
+            showCube
           />
         }
         {step === STEPS.INDEX &&
@@ -261,6 +260,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             setStep={setStep}
             setTxInfo={setTxInfo}
             step={step}
+            setSelectedTracksLength={setSelectedTracksLength}
           />
         }
         {(step === STEPS.REVIEW || step === STEPS.PROXY) && delegateInformation &&
@@ -284,7 +284,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             allCategoriesLength={tracks?.length}
             delegateInformation={delegateInformation}
             handleClose={handleClose}
-            removedTracksLength={5}
+            removedTracksLength={selectedTracksLength}
             status={status}
             txInfo={txInfo}
           />

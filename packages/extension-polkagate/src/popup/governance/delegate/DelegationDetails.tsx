@@ -21,16 +21,17 @@ import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ReferendaTable from './partial/ReferendaTable';
 import RemoveDelegate from './RemoveDelegate';
-import { DelegateInformation, DiffDelegation, STEPS } from '.';
+import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 
 interface Props {
   address: string | undefined;
   formatted: string | undefined;
-  filteredDelegation: DiffDelegation[] | null | undefined;
+  filteredDelegation: AlreadyDelegateInformation[] | null | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
-  setStatus: React.Dispatch<React.SetStateAction<'Delegate' | 'Remove' | 'Modify'>>
+  setStatus: React.Dispatch<React.SetStateAction<'Delegate' | 'Remove' | 'Modify'>>;
+  setSelectedTracksLength: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 interface ArrowsProps {
@@ -38,7 +39,7 @@ interface ArrowsProps {
   onPrevious: () => void;
 }
 
-export default function DelegationDetails({ address, filteredDelegation, formatted, setStep, setStatus, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function DelegationDetails({ address, filteredDelegation, formatted, setStep, setStatus, setTxInfo, step, setSelectedTracksLength }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
@@ -73,7 +74,11 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
     return false;
   }, [delegateeIndex, filteredDelegation]);
 
-  const delegateAmountInHuman = useMemo(() => filteredDelegation && !variousDelegation ? amountToHuman(filteredDelegation[delegateeIndex].info[0].delegatedBalance, decimal) : undefined, [decimal, delegateeIndex, variousDelegation, filteredDelegation]);
+  const delegateAmountInHuman = useMemo(() =>
+    filteredDelegation && !variousDelegation
+      ? amountToHuman(filteredDelegation[delegateeIndex].info[0].delegatedBalance, decimal)
+      : undefined
+    , [decimal, delegateeIndex, variousDelegation, filteredDelegation]);
 
   const delegatePower = useCallback((conviction: number, delegateAmountBN: BN) => {
     if (conviction === undefined || delegateAmountBN.isZero()) {
@@ -86,17 +91,24 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
   }, [decimal]);
 
   const classicDelegation: DelegateInformation | undefined = useMemo(() =>
-    filteredDelegation && filteredDelegation.length === 1 && !variousDelegation
+    filteredDelegation && !variousDelegation && delegateAmountInHuman
       ? {
         delegateAmount: delegateAmountInHuman,
-        delegateAmountBN: filteredDelegation[0].info[0].delegatedBalance,
-        delegateConviction: filteredDelegation[0].info[0].conviction,
-        delegatePower: delegatePower(filteredDelegation[0].info[0].conviction, filteredDelegation[0].info[0].delegatedBalance),
-        delegatedTracks: filteredDelegation[0].info.map((value) => value.track),
-        delegateeAddress: filteredDelegation[0].delegatee
+        delegateAmountBN: filteredDelegation[delegateeIndex].info[0].delegatedBalance,
+        delegateConviction: filteredDelegation[delegateeIndex].info[0].conviction,
+        delegatePower: delegatePower(filteredDelegation[delegateeIndex].info[0].conviction, filteredDelegation[0].info[0].delegatedBalance),
+        delegatedTracks: filteredDelegation[delegateeIndex].info.map((value) => value.track),
+        delegateeAddress: filteredDelegation[delegateeIndex].delegatee
       }
       : undefined
-    , [delegateAmountInHuman, delegatePower, filteredDelegation, variousDelegation]);
+    , [delegateAmountInHuman, delegatePower, filteredDelegation, variousDelegation, delegateeIndex]);
+
+  const delegatedConviction = useMemo(() =>
+    filteredDelegation
+      ? filteredDelegation[delegateeIndex].info[0].conviction
+        ? filteredDelegation[delegateeIndex].info[0].conviction
+        : 0.1
+      : undefined, [delegateeIndex, filteredDelegation]);
 
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='10px auto 0'>
@@ -165,7 +177,7 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
               ? <Arrows onNext={nextDelegatee} onPrevious={previousDelegatee} />
               : <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '10px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegate to')}:
+                  {t<string>('Delegatee')}:
                 </Typography>
                 <Identity
                   api={api}
@@ -197,7 +209,7 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
               </DisplayValue>
               <DisplayValue title={t<string>('Vote Multiplier')}>
                 <Typography fontSize='28px' fontWeight={400}>
-                  {`${filteredDelegation[delegateeIndex].info[0].conviction ? filteredDelegation[delegateeIndex].info[0].conviction : 0.1}x`}
+                  {`${delegatedConviction}x`}
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
@@ -218,16 +230,17 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
           </Grid>
         </Grid>
       }
-      {(step === STEPS.REMOVE || step === STEPS.PROXY) && filteredDelegation &&
+      {(step === STEPS.REMOVE || step === STEPS.PROXY) && filteredDelegation && variousDelegation !== undefined &&
         <RemoveDelegate
           address={address}
-          delegateInformation={filteredDelegation[delegateeIndex]}
+          classicDelegateInformation={variousDelegation ? undefined : classicDelegation}
           formatted={formatted}
+          mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
           modalHeight={modalHeight}
-          mode={classicDelegation ? 'classic' : 'variousDelegation'}
           setStep={setStep}
           setTxInfo={setTxInfo}
           step={step}
+          setSelectedTracksLength={setSelectedTracksLength}
         />
       }
     </Motion>

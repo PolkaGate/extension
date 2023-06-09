@@ -22,9 +22,10 @@ interface Props {
   }[];
   token: string | undefined;
   decimal: number | undefined;
+  maxTableHeight?: number | undefined;
 }
 
-export default function ReferendaTable({ decimal, delegatedInfo, token, tracks }: Props): React.ReactElement {
+export default function ReferendaTable({ decimal, delegatedInfo, maxTableHeight, token, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const trackName = useCallback((track: BN) => {
@@ -40,7 +41,7 @@ export default function ReferendaTable({ decimal, delegatedInfo, token, tracks }
           {t<string>('Number of Referenda Categories')}
         </Typography>
       </Grid>
-      <Grid container sx={{ '>:last-child': { border: 'none' }, border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', bgcolor: 'background.paper', maxHeight: '270px', scrollbarWidth: 'none', overflowY: 'scroll' }}>
+      <Grid container sx={{ '>:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', maxHeight: `${maxTableHeight ?? 270}px`, overflowY: 'scroll', scrollbarWidth: 'none' }}>
         <Grid alignItems='center' container sx={{ borderBottom: '2px solid', borderBottomColor: 'rgba(0,0,0,0.2)', height: '38px', justifyContent: 'space-between', px: '25px' }}>
           <Typography fontSize={20} fontWeight={400} width='fit-content'>{t<string>('Track name')}</Typography>
           <Typography fontSize={20} fontWeight={400} width='fit-content'>{t<string>('Value')}</Typography>
