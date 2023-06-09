@@ -88,7 +88,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   );
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', pb: '20px' }}>
+    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', pb: '20px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px', my: '15px' }} xs={12}>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {t('Voting')}

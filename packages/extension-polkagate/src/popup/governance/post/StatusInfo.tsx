@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { Infotip2, ShowValue } from '../../../components';
@@ -26,6 +26,7 @@ interface Props {
 
 export default function StatusInfo({ address, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();
   const [openDecisionDeposit, setOpenDecisionDeposit] = useState<boolean>();
   const currentBlock = useCurrentBlockNumber(address);
@@ -75,7 +76,7 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
   }
 
   return (
-    <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mb: '10px' }} xs={12}>
+    <Grid alignItems={decisionUnitPassed || confirmUnitPassed ? 'center' : 'end'} container item justifyContent='space-between' sx={{ p: '10px 25px', bgcolor: 'background.paper', borderRadius: '10px', mb: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }} xs={12}>
       <Grid item>
         <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>
           {_status || t('Status')}

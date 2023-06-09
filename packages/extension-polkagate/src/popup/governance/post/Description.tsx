@@ -60,7 +60,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           </Typography>
         </Paper>
       }
-      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', borderRadius: '10px' }}>
+      <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', borderRadius: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
         <AccordionSummary
           expandIcon={
             <ExpandMoreIcon

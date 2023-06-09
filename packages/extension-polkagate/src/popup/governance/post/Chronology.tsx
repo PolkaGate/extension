@@ -110,7 +110,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   };
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1, borderRadius: '10px' }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1, borderRadius: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
       <AccordionSummary
         expandIcon={
           <ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />

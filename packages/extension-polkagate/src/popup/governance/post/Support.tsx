@@ -94,7 +94,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
   );
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '45px' }}>
+    <Grid alignItems='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', pb: '45px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
       <Grid item sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mt: '15px', mx: '25px' }} xs={12}>
         <Infotip2 iconLeft={-150} iconTop={10} showQuestionMark text={t('Support is determined by the proportion of tokens contributed in voting out of the total token supply.')}>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>

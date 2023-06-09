@@ -31,7 +31,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
     : vote?.delegating?.voted && vote?.delegating?.balance && t('Delegated');
 
   return (
-    <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', py: '10px' }} xs={12}>
+    <Grid alignItems={'center'} container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', mt: '10px', py: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }} xs={12}>
       <Grid alignItems='baseline' container item spacing={0.2} sx={{ borderBottom: `1px solid ${theme.palette.text.disabled}`, mx: '25px' }} xs={12}>
         <Grid item>
           <Typography sx={{ fontSize: '22px', fontWeight: 700 }}>

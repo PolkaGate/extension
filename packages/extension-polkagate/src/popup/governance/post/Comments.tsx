@@ -39,8 +39,8 @@ export default function Comments({ address, referendum }: { address: string | un
   // console.log('sortedComments to apply reactions:', sortedComments);
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ my: 1, px: '3%', width: 'inherit' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0, borderRadius:'10px' }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ my: 1, px: '3%', width: 'inherit', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0, borderRadius: '10px' }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -62,13 +62,14 @@ export default function Comments({ address, referendum }: { address: string | un
           <Grid container item justifyContent='flex-end' spacing={5} sx={{ mt: '30px' }}>
             <Grid item>
               <Button onClick={openPolkassembly} sx={{
-                textTransform: 'none', borderColor: `${theme.palette.text.primary}`
+                color: 'text.primary',
+                textTransform: 'none', borderColor: 'primary.main'
               }} variant='outlined'>
                 {'Comment on Polkassembly'}
               </Button>
             </Grid>
             <Grid item>
-              <Button onClick={openSubsquare} sx={{ borderColor: `${theme.palette.text.primary}`, textTransform: 'none' }} variant='outlined'>
+              <Button onClick={openSubsquare} sx={{ borderColor: 'primary.main', color: 'text.primary', textTransform: 'none' }} variant='outlined'>
                 {'Comment on Subsquare'}
               </Button>
             </Grid>
