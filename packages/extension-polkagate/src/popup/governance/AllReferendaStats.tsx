@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, LinearProgress, SxProps, Typography } from '@mui/material';
+import { Divider, Grid, LinearProgress, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
@@ -70,6 +70,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, style, title, tokenP
 
 export function AllReferendaStats({ address, referendumStats, setReferendumStats, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
@@ -148,7 +149,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
   }, [chainName, setReferendumStats, topMenu]);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
       <Grid container item sx={{ ml: '3%' }} xs={2.5}>
         <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
           <Typography fontSize={20} fontWeight={500}>

@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ShowBalance, ShowValue } from '../../components';
@@ -50,12 +50,13 @@ export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontS
 
 export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '260px', pb: '20px' }}>
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '260px', pb: '20px' }}>
       <Grid container item md={7} sx={{ mx: '3%', pt: '15px' }}>
         <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
           <Grid item xs={12}>

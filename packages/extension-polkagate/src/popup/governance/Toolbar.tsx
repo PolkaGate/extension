@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
-import { Button, ClickAwayListener, Container, Grid, Typography } from '@mui/material';
+import { Button, ClickAwayListener, Container, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -26,6 +26,7 @@ interface Props {
 
 export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
   const api = useApi(address);
 
@@ -55,9 +56,18 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
     setMenuOpen(false);
   }, [setMenuOpen]);
 
+  const menuBgColor = theme.palette.mode === 'light' ? 'primary.main' : 'background.paper';
+  const menuTextColor = theme.palette.mode === 'light' ? 'primary.main' : 'text.primary';
+  const selectedMenuBgColor = theme.palette.mode === 'light' ? 'background.paper' : 'primary.main';
+
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
-      <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} sx={{ mt: '3.5px', px: '5px', bgcolor: hoveredTopMenu === item.toLowerCase() ? 'background.paper' : 'primary.main', color: hoveredTopMenu === item.toLowerCase() ? 'primary.main' : 'white', width: '150px', height: '48px', cursor: 'pointer' }}>
+      <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} sx={{
+        mt: '3.5px', px: '5px',
+        bgcolor: hoveredTopMenu === item.toLowerCase() ? selectedMenuBgColor : menuBgColor,
+        color: hoveredTopMenu === item.toLowerCase() ? menuTextColor : 'white',
+        width: '150px', height: '46px', cursor: 'pointer'
+      }}>
         <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
           {item}
         </Typography>
@@ -71,7 +81,7 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
 
   return (
     <>
-      <Grid container id='menu' sx={{ bgcolor: 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
+      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderTop: 1, borderColor: theme.palette.mode === 'dark' && 'primary.main', height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500 }}>
         <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
           <Grid alignItems='center' container justifyContent='space-between'>
             <ClickAwayListener onClickAway={handleClickAway}>
@@ -85,9 +95,9 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
                 // disabled={disabled}
                 onClick={handleOpenDelegate}
                 sx={{
-                  backgroundColor: 'background.paper',
+                  backgroundColor: theme.palette.mode === 'light' ? 'background.paper' : 'primary.main',
                   borderRadius: '5px',
-                  color: 'primary.main',
+                  color: theme.palette.mode === 'light' ? 'primary.main' : 'text.primary',
                   fontSize: '18px',
                   fontWeight: 500,
                   height: '36px',
@@ -106,9 +116,9 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
                 disabled={!api}
                 onClick={handleOpenSubmitReferendum}
                 sx={{
-                  backgroundColor: 'background.paper',
+                  backgroundColor: theme.palette.mode === 'light' ? 'background.paper' : 'primary.main',
                   borderRadius: '5px',
-                  color: 'primary.main',
+                  color: theme.palette.mode === 'light' ? 'primary.main' : 'text.primary',
                   fontSize: '18px',
                   fontWeight: 500,
                   height: '36px',

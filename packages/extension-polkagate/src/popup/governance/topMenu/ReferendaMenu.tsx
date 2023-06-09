@@ -4,7 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Hub as Root } from '@mui/icons-material/';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
+import { Theme } from '@polkadot/extension-ui/types';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -31,7 +32,7 @@ export const findItemDecidingCount = (item: string, decidingCounts: Count[] | un
 
 export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   const history = useHistory();
-
+  const theme = useTheme();
   const onMouseLeave = useCallback(() => {
     setMenuOpen(false);
   }, [setMenuOpen]);
@@ -48,7 +49,7 @@ export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, se
     }, [item]);
 
     return (
-      <Grid alignItems='center' container item sx={{ borderBottom: top && `${borderWidth} solid`, color: clickable && 'primary.main', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' } }}>
+      <Grid alignItems='center' container item sx={{ borderBottom: top && `${borderWidth} solid`, color: clickable && 'secondary.main', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' } }}>
         {icon}
         <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
           {item}{decidingCount ? ` (${decidingCount})` : ''}
@@ -58,7 +59,7 @@ export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, se
   }
 
   return (
-    <Grid alignItems='flex-start' container item onMouseLeave={onMouseLeave} sx={{ bgcolor: 'background.paper', py: '15px', zIndex: 10, position: 'absolute', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
+    <Grid alignItems='flex-start' container item onMouseLeave={onMouseLeave} sx={{ bgcolor: 'background.paper', borderTop: 2, borderBottom: 2, borderColor: theme.palette.mode === 'dark' ? 'primary.main':'background.paper', py: '15px', zIndex: 10, position: 'absolute', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
         <Grid alignItems='flex-start' container item>
           <MenuItem
