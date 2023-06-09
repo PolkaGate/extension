@@ -1,10 +1,16 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
+
+import { ApiPromise } from '@polkadot/api';
 import { TFunction } from '@polkadot/apps-config/types';
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, extractTime } from '@polkadot/util';
 
+import { Track } from '../../../hooks/useTrack';
 import { isAye, Vote } from '../post/myVote/util';
+import { DelegationInfo } from './types';
 
 type Result = [blockInterval: number, timeStr: string, time: Time];
 
@@ -269,4 +275,25 @@ export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
       .join(' ')}`,
     time
   ];
+}
+
+export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted: string | AccountId | undefined, tracks: Track[] | undefined): Promise<DelegationInfo[] | null | undefined> {
+  if (!api || !formatted || !tracks || !tracks.length) {
+    return undefined;
+  }
+
+  const delegatedTracks: DelegationInfo[] = [];
+
+  for (const track of tracks) {
+    const votingFor = await api.query.convictionVoting.votingFor(String(formatted), track[0]) as unknown as PalletConvictionVotingVoteVoting | undefined;
+
+    votingFor && votingFor.isDelegating === true && delegatedTracks.push({
+      conviction: votingFor.asDelegating.conviction.toNumber(),
+      delegatedBalance: votingFor.asDelegating.balance,
+      delegatee: votingFor.asDelegating.target,
+      track: track[0]
+    });
+  }
+
+  return delegatedTracks.length ? delegatedTracks : null;
 }

@@ -11,9 +11,10 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
 import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTracks, useTranslation } from '../../../hooks';
@@ -24,20 +25,22 @@ import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../components/SelectProxyModal';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import { DelegateInformation, STEPS } from '.';
+import ReferendaTable from './partial/ReferendaTable';
+import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 
 interface Props {
   address: string | undefined;
   formatted: string | undefined;
-  delegateInformation: DelegateInformation;
-  handleClose: () => void;
-  estimatedFee: Balance | undefined;
+  classicDelegateInformation: DelegateInformation | undefined;
+  mixedDelegateInformation: AlreadyDelegateInformation | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   step: number;
-  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
+  modalHeight: number;
+  setSelectedTracksLength: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function Review({ address, delegateInformation, estimatedFee, formatted, setTxInfo, setStep, step }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, modalHeight, setStep, setTxInfo, step, setSelectedTracksLength }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -46,21 +49,38 @@ export default function Review({ address, delegateInformation, estimatedFee, for
   const api = useApi(address);
   const chain = useChain(address);
   const proxies = useProxies(api, formatted);
-  const ref = useRef(null);
   const { tracks } = useTracks(address);
-  const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
+  const delegateeAddress = classicDelegateInformation
+    ? classicDelegateInformation.delegateeAddress
+    : mixedDelegateInformation
+      ? mixedDelegateInformation.delegatee
+      : undefined;
+  const delegateeName = useAccountInfo(api, delegateeAddress)?.identity.display;
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
-  const [modalHeight, setModalHeight] = useState<number | undefined>();
+  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
-  const delegate = api && api.tx.convictionVoting.delegate;
+  const undelegate = api && api.tx.convictionVoting.undelegate;
   const batch = api && api.tx.utility.batchAll;
+
+  useEffect(() => {
+    if (!formatted || !undelegate) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
+    undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [api, formatted, undelegate]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -68,20 +88,29 @@ export default function Review({ address, delegateInformation, estimatedFee, for
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const params = useMemo(() =>
-    delegateInformation.delegatedTracks.map((track) =>
-      [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN]
-    ), [delegateInformation]);
-
-  useEffect(() => {
-    if (ref) {
-      setModalHeight(ref.current?.offsetHeight as number);
+  const delegatedTracks = useMemo(() => {
+    if (classicDelegateInformation) {
+      return classicDelegateInformation.delegatedTracks;
     }
-  }, []);
 
-  const confirmDelegate = useCallback(async () => {
+    if (mixedDelegateInformation) {
+      return mixedDelegateInformation.info.map((value) => value.track);
+    }
+
+    return undefined;
+  }, [classicDelegateInformation, mixedDelegateInformation]);
+
+  const params = useMemo(() => {
+    if (!delegatedTracks || delegatedTracks.length === 0) {
+      return undefined;
+    }
+
+    return delegatedTracks;
+  }, [delegatedTracks]);
+
+  const removeDelegate = useCallback(async () => {
     try {
-      if (!formatted || !delegate || !api || !decimal || !params || !batch) {
+      if (!formatted || !undelegate || !api || !decimal || !params || !batch) {
         return;
       }
 
@@ -91,9 +120,10 @@ export default function Review({ address, delegateInformation, estimatedFee, for
 
       signer.unlock(password);
 
-      const txList = params.map((param) => delegate(...param));
+      const txList = params.map((param) => undelegate(param));
 
       setStep(STEPS.WAIT_SCREEN);
+      setSelectedTracksLength(params.length);
 
       const calls = txList.length > 1 ? batch(txList) : txList[0];
       const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
@@ -101,16 +131,16 @@ export default function Review({ address, delegateInformation, estimatedFee, for
 
       const info = {
         action: 'Governance',
-        amount: delegateInformation.delegateAmount,
+        amount: 'delegateInformation.delegateAmount',
         block: block || 0,
         date: Date.now(),
         failureText,
         fee: estimatedFee || fee,
         from: { address: formatted, name },
-        subAction: 'Delegate',
+        subAction: 'RemoveDelegate',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        to: { address: delegateInformation.delegateeAddress, name: delegateeName },
+        to: { address: delegateeAddress, name: delegateeName },
         txHash: txHash || ''
       };
 
@@ -122,26 +152,27 @@ export default function Review({ address, delegateInformation, estimatedFee, for
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batch, chain, decimal, delegate, delegateInformation.delegateAmount, delegateInformation.delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, setTxInfo]);
+  }, [api, batch, chain, decimal, delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, setTxInfo, undelegate]);
 
-  const backToChooseDelegatee = useCallback(() => setStep(STEPS.CHOOSE_DELEGATOR), [setStep]);
+  const backToPreview = useCallback(() => setStep(STEPS.PREVIEW), [setStep]);
 
   return (
-    <Motion style={{ height: '100%' }}>
-      {step === STEPS.REVIEW &&
-        <Grid container ref={ref}>
+    <Motion style={{ height: modalHeight }}>
+      {step === STEPS.REMOVE &&
+        <Grid container>
           {isPasswordError &&
             <WrongPasswordAlert />
           }
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegate from')}:
+              {t<string>('Account Holder')}:
             </Typography>
             <Identity
               address={address}
               api={api}
               chain={chain}
               identiconSize={31}
+              showShortAddress
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
             />
@@ -154,57 +185,77 @@ export default function Review({ address, delegateInformation, estimatedFee, for
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegate to')}:
+              {t<string>('Delegatee')}:
             </Typography>
             <Identity
-              address={delegateInformation.delegateeAddress}
               api={api}
               chain={chain}
+              formatted={delegateeAddress}
               identiconSize={31}
+              showShortAddress
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
             />
           </Grid>
-          <DisplayValue title={t<string>('Delegated Value ({{token}})', { replace: { token } })}>
-            <Typography fontSize='28px' fontWeight={400}>
-              {delegateInformation.delegateAmount}
-            </Typography>
-          </DisplayValue>
-          <DisplayValue title={t<string>('Vote Multiplier')}>
-            <Typography fontSize='28px' fontWeight={400}>
-              {`${delegateInformation.delegateConviction ? delegateInformation.delegateConviction : 0.1}x`}
-            </Typography>
-          </DisplayValue>
-          <DisplayValue title={t<string>('Number of Referenda Categories')}>
-            <Typography fontSize='28px' fontWeight={400}>
-              {`${delegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
-            </Typography>
-          </DisplayValue>
+          {classicDelegateInformation &&
+            <>
+              <DisplayValue title={t<string>('Delegated Value ({{token}})', { replace: { token } })}>
+                <Typography fontSize='28px' fontWeight={400}>
+                  {classicDelegateInformation.delegateAmount}
+                </Typography>
+              </DisplayValue>
+              <DisplayValue title={t<string>('Vote Multiplier')}>
+                <Typography fontSize='28px' fontWeight={400}>
+                  {classicDelegateInformation.delegateConviction}
+                </Typography>
+              </DisplayValue>
+              <DisplayValue title={t<string>('Number of Referenda Categories')}>
+                <Typography fontSize='28px' fontWeight={400}>
+                  {`${classicDelegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
+                </Typography>
+              </DisplayValue>
+            </>
+          }
+          {mixedDelegateInformation &&
+            <>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+              <ReferendaTable
+                decimal={decimal}
+                delegatedInfo={mixedDelegateInformation.info}
+                maxTableHeight={180}
+                token={token}
+                tracks={tracks}
+              />
+            </>
+          }
           <DisplayValue title={t<string>('Fee')}>
             <ShowValue height={20} value={estimatedFee?.toHuman()} />
           </DisplayValue>
-          <PasswordWithTwoButtonsAndUseProxy
-            chain={chain}
-            isPasswordError={isPasswordError}
-            label={`${t<string>('Password')} for ${selectedProxyName || name}`}
-            onChange={setPassword}
-            onPrimaryClick={confirmDelegate}
-            onSecondaryClick={backToChooseDelegatee}
-            primaryBtnText={t<string>('Confirm')}
-            proxiedAddress={formatted}
-            proxies={proxyItems}
-            proxyTypeFilter={['Any']}
-            selectedProxy={selectedProxy}
-            setIsPasswordError={setIsPasswordError}
-            setStep={setStep}
-          />
+          <Grid container item pt='20px'>
+            <PasswordWithTwoButtonsAndUseProxy
+              chain={chain}
+              disabled={!delegatedTracks || delegatedTracks.length === 0}
+              isPasswordError={isPasswordError}
+              label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+              onChange={setPassword}
+              onPrimaryClick={removeDelegate}
+              onSecondaryClick={backToPreview}
+              primaryBtnText={t<string>('Confirm')}
+              proxiedAddress={formatted}
+              proxies={proxyItems}
+              proxyTypeFilter={['Any']}
+              selectedProxy={selectedProxy}
+              setIsPasswordError={setIsPasswordError}
+              setStep={setStep}
+            />
+          </Grid>
         </Grid>
       }
       {step === STEPS.PROXY &&
         <SelectProxyModal
           address={address}
           height={modalHeight}
-          nextStep={STEPS.REVIEW}
+          nextStep={STEPS.REMOVE}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
           selectedProxy={selectedProxy}

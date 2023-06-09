@@ -53,10 +53,6 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
     setStep && setStep(STEPS.PROXY);
   }, [setStep]);
 
-  const onBack = useCallback(() => {
-    setStep && setStep(STEPS.INDEX);
-  }, [setStep]);
-
   useEffect(() => {
     onChange(password);
   }, [password, onChange]);
@@ -77,7 +73,7 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
             ? <TwoButtons
               mt='5px'
               onPrimaryClick={goToSelectProxy}
-              onSecondaryClick={onBack}
+              onSecondaryClick={onSecondaryClick}
               primaryBtnText={t<string>('Use Proxy')}
               secondaryBtnText={t<string>('Back')}
             />
@@ -155,7 +151,7 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
           </Grid>
           <Grid alignItems='center' container item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
             <TwoButtons
-              disabled={!password || isPasswordError || primaryBtn}
+              disabled={!password || isPasswordError || primaryBtn || disabled}
               mt='8px'
               onPrimaryClick={onPrimaryClick}
               onSecondaryClick={onSecondaryClick}

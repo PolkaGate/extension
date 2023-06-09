@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { AccountId } from '@polkadot/types/interfaces/runtime';
+
 import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
 import { BN } from '@polkadot/util';
@@ -248,4 +250,12 @@ export type Referendum = {
   } | undefined,
   decisionDepositPayer?: string | undefined,
   requested?: string | undefined
+}
+
+
+export interface DelegationInfo {
+  track: BN;
+  delegatedBalance: BN;
+  delegatee: AccountId;
+  conviction: number;
 }
