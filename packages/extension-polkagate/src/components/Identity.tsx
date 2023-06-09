@@ -91,7 +91,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             />
           </Grid>
         }
-        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(100% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
+        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(100% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize + 5}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {msData
               ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
