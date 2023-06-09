@@ -16,8 +16,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance2, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { useAccountName, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -57,6 +57,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   const tx = api.tx.nominationPools.bondExtra;
   const params = useMemo(() => ['Rewards'], []);
   const decimal = api.registry.chainDecimals[0];
+  const token = useToken(address);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -148,9 +149,11 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
           <AmountFee
             address={address}
             amount={
-              <FormatBalance
-                api={api}
-                value={amount} />
+              <FormatBalance2
+                decimals={[decimal]}
+                tokens={[token]}
+                value={amount}
+              />
             }
             fee={estimatedFee}
             label={t('Amount')}
@@ -161,8 +164,9 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
           <AmountFee
             address={address}
             amount={
-              <FormatBalance
-                api={api}
+              <FormatBalance2
+                decimals={[decimal]}
+                tokens={[token]}
                 value={amount.add(staked).sub(estimatedFee ?? BN_ZERO)}
               />
             }
