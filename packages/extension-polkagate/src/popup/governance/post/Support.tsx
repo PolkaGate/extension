@@ -69,7 +69,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
           <ShowValue value={percent !== undefined ? `${percent?.toFixed(2)}%` : undefined} />
         </Grid>
       </Grid>
-      <Grid color='text.disabled' fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
+      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
         <ShowBalance
           balance={amount !== undefined ? new BN(amount) : undefined}
           decimal={decimal}
@@ -77,7 +77,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
           token={token}
         />
       </Grid>
-      <Grid color='text.disabled' container fontSize='14px' fontWeight={400} item justifyContent='center'>
+      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} container fontSize='14px' fontWeight={400} item justifyContent='center'>
         <Grid item pr='3px'>
           {t('of')}
         </Grid>

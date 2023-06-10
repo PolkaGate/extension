@@ -13,7 +13,7 @@ import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineOppositeContent, { timelineOppositeContentClasses } from '@mui/lab/TimelineOppositeContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -101,16 +101,14 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
     }
   }, [currentTreasuryApprovalList, isAwardedBasedOnPA, isInTreasuryQueue, isTreasuryProposalBasedOnPA, referendum]);
 
-  useEffect(() =>
-    setExpanded(!!referendum?.statusHistory?.length)
-    , [referendum]);
+  useEffect(() => setExpanded(!!referendum?.statusHistory?.length), [referendum]);
 
-  const handleChange = (event, isExpanded: boolean) => {
+  const handleChange = useCallback((event, isExpanded: boolean) => {
     setExpanded(isExpanded);
-  };
+  }, []);
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ width: 'inherit', px: '3%', mt: 1, borderRadius: '10px', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ borderRadius: '10px', mt: 1, px: '3%', width: 'inherit', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
       <AccordionSummary
         expandIcon={
           <ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />
@@ -182,7 +180,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                   <TimelineSeparator sx={{ color: 'primary.main' }}>
                     {index !== sortedHistory?.length - 1
                       ? <TimelineDot color='primary' sx={{ borderWidth: '4px', height: '20px', width: '20px' }} variant='outlined' />
-                      : <TimelineDot sx={{ bgcolor: 'white', boxShadow: 'none' }}>
+                      : <TimelineDot sx={{ bgcolor:'background.paper', boxShadow: 'none' }}>
                         <Square sx={{ border: 'none', color: 'primary.main', fontSize: '27px', mt: '-8px', mx: '-10px' }} />
                       </TimelineDot>
                     }
