@@ -4,12 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { ShowBalance, ShowValue } from '../../../components';
+import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
 import { Referendum } from '../utils/types';
 import { toTitleCase } from '../utils/util';
@@ -59,9 +60,9 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   const ayesPercent = useMemo(() => referendum?.ayesAmount && referendum?.naysAmount ? Number(referendum.ayesAmount) / (Number(referendum.ayesAmount) + Number(new BN(referendum.naysAmount))) * 100 : 0, [referendum]);
   const naysPercent = useMemo(() => referendum?.ayesAmount && referendum?.naysAmount ? Number(referendum.naysAmount) / (Number(referendum.ayesAmount) + Number(new BN(referendum.naysAmount))) * 100 : 0, [referendum]);
 
-  const handleOpenAllVotes = () => {
+  const handleOpenAllVotes = useCallback(() => {
     setOpenAllVotes(true);
-  };
+  }, []);
 
   const Tally = ({ amount, color, count, percent, text }: { text: string, percent: number, color: string, count: number | undefined, amount: string | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
@@ -73,10 +74,10 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
           {percent?.toFixed(1)}%
         </Grid>
         <Grid color='text.disabled' fontSize='20px' fontWeight={400} item>
-          {count ? `(${count || ''})` : ''}
+          {count ? `(${nFormatter(count, 0) || ''})` : ''}
         </Grid>
       </Grid>
-      <Grid color='text.disabled' fontSize='16px' fontWeight={500} item>
+      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item>
         <ShowBalance
           balance={amount && new BN(amount)}
           decimal={decimal}
@@ -133,8 +134,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
       <Grid color='primary.main' container justifyContent='center'>
         <Button
           onClick={handleOpenAllVotes}
-          // disabled={change}
-          sx={{ fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '70%' }}
+          sx={{ color: 'secondary.light', fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '70%' }}
           variant='text'
         >
           {t('All votes')}
