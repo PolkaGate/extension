@@ -26,7 +26,7 @@ interface Props {
   setShowDelegators: React.Dispatch<React.SetStateAction<VoteType | AbstainVoteType | null | undefined>>;
   setFilteredVotes: React.Dispatch<React.SetStateAction<FilteredVotes | null | undefined>>;
   handleClose: () => void;
-    numberOfFetchedDelagatees: number
+  numberOfFetchedDelagatees: number
 }
 
 export const VOTE_TYPE_MAP = {
@@ -125,6 +125,26 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
     setShowDelegators(vote);
   }, [setShowDelegators]);
 
+  const tabStyle = {
+    ':is(button.MuiButtonBase-root.MuiTab-root)': {
+      height: '49px',
+      minHeight: '49px'
+    },
+    ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+      bgcolor: 'background.paper',
+      color: 'secondary.light',
+      fontWeight: 500
+    },
+    borderBlock: '5px solid',
+    borderBlockColor: 'rgba(0,0,0,0.2)',
+    color: 'text.primary',
+    fontSize: '18px',
+    fontWeight: 400,
+    minWidth: '108px',
+    textTransform: 'capitalize',
+    width: '33%'
+  }
+
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>
       <>
@@ -159,25 +179,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
               icon={<CheckIcon sx={{ color: 'success.main' }} />}
               iconPosition='start'
               label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.yes?.length || 0 } })}
-              sx={{
-                ':is(button.MuiButtonBase-root.MuiTab-root)': {
-                  height: '49px',
-                  minHeight: '49px'
-                },
-                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
-                  bgcolor: '#fff',
-                  color: 'secondary.light',
-                  fontWeight: 500
-                },
-                borderBlock: '5px solid',
-                borderBlockColor: 'rgba(0,0,0,0.2)',
-                color: 'text.primary',
-                fontSize: '18px',
-                fontWeight: 400,
-                minWidth: '108px',
-                textTransform: 'capitalize',
-                width: '33%'
-              }}
+              sx={tabStyle}
               value={1}
             />
             <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
@@ -185,25 +187,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
               label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.no?.length || 0 } })}
-              sx={{
-                ':is(button.MuiButtonBase-root.MuiTab-root)': {
-                  height: '49px',
-                  minHeight: '49px'
-                },
-                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
-                  bgcolor: '#fff',
-                  color: 'secondary.light',
-                  fontWeight: 500
-                },
-                borderBlock: '5px solid',
-                borderBlockColor: 'rgba(0,0,0,0.2)',
-                color: 'text.primary',
-                fontSize: '18px',
-                fontWeight: 400,
-                minWidth: '108px',
-                textTransform: 'capitalize',
-                width: '33%'
-              }}
+              sx={tabStyle}
               value={2}
             />
             <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
@@ -211,25 +195,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
               label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
-              sx={{
-                ':is(button.MuiButtonBase-root.MuiTab-root)': {
-                  height: '49px',
-                  minHeight: '49px'
-                },
-                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
-                  bgcolor: '#fff',
-                  color: 'secondary.light',
-                  fontWeight: 500
-                },
-                borderBlock: '5px solid',
-                borderBlockColor: 'rgba(0,0,0,0.2)',
-                color: 'text.primary',
-                fontSize: '18px',
-                fontWeight: 400,
-                minWidth: '108px',
-                textTransform: 'capitalize',
-                width: '33%'
-              }}
+              sx={tabStyle}
               value={3}
             />
           </Tabs>
