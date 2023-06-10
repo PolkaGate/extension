@@ -161,7 +161,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
             }
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
+        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'secondary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
           <Checkbox2
             checked={filter.myReferenda}
             disabled={!referenda}
@@ -170,7 +170,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
             onChange={onMyReferenda}
           />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'primary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
+        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ cursor: 'pointer', color: 'secondary.main', textDecorationLine: 'underline', width: 'fit-content' }} >
           <Checkbox2
             checked={filter.myVotes}
             disabled={!myVotedReferendaIndexes}
