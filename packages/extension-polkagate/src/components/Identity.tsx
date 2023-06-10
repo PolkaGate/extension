@@ -44,8 +44,6 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   const _formatted = useFormatted2(address, formatted, chain);
   const msData = useMerkleScience(_formatted, chain);
 
-  console.log('_formatted:', _formatted);
-
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
   const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
   const _showSocial = msData ? false : showSocial;
