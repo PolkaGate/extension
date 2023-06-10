@@ -34,12 +34,16 @@ export default function Bread({ address, postId, setSelectedSubMenu, subMenu, to
   return (
     <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
-        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-          {capitalizeFirstLetter(topMenu)}
+        <Link onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
+          <Typography color='text.primary' sx={{ fontWeight: 500 }}>
+            {capitalizeFirstLetter(topMenu)}
+          </Typography>
         </Link>
         {postId
-          ? <Link onClick={backToSubMenu} sx={{ cursor: 'pointer', fontWeight: 500 }} underline='hover'>
-            {subMenu}
+          ? <Link onClick={backToSubMenu} sx={{ cursor: 'pointer' }} underline='hover'>
+            <Typography color='text.primary' sx={{ fontWeight: 500 }}>
+              {subMenu}
+            </Typography>
           </Link>
           : <Typography color='text.primary' sx={{ fontWeight: 500 }}>
             {subMenu || 'All'}
