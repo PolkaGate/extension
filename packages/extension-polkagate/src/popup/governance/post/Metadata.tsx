@@ -210,7 +210,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
           <Grid container item>
             <Link
               onClick={() => setShowJson(!showJson)}
-              sx={{ cursor: 'pointer' }}
+              sx={{ cursor: 'pointer', color: `${theme.palette.secondary.main}` }}
               underline='none'
             >
               <Typography sx={{ py: 2 }}>
