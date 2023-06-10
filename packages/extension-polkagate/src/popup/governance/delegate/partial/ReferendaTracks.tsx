@@ -101,7 +101,7 @@ export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '
     <>
       <Grid container justifyContent='space-between' pt='15px'>
         <Grid item>
-          <Infotip2 iconTop={26} showQuestionMark text={t<string>('Please select all the categories in which you would like to delegate your votes.')}>
+          <Infotip2 iconTop={26} showQuestionMark text={t<string>('Please select the categories for which you would like to delegate your votes.')}>
             <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: 'left' }}>
               {t('Referenda Category')}
             </Typography>
@@ -137,7 +137,7 @@ export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '
                             {`${toTitleCase(value[1].name as unknown as string) as string} (Has already ${trackVotes} votes)`}
                           </Typography>
                           : trackVotes && trackLockExpired
-                            ? <Infotip2 showWarningMark text={t<string>('This category contains expired locks, which can be unlocked and available.')}>
+                            ? <Infotip2 showWarningMark text={t<string>('This category includes expired locks that can be unlocked and made available.')}>
                               <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
                                 {`${toTitleCase(value[1].name as unknown as string) as string}`}
                               </Typography>
