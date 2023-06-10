@@ -30,7 +30,7 @@ export const darkTheme: ThemeOptions = {
     mode: 'dark',
     primary: { main: '#99004F', light: '#838383', contrastText: '#212121' },
     secondary: { main: '#BA2882', light: '#BA2682', contrastText: '#747474' },
-    support: { main: '#BCE2DB', contrastText: '#4B2338' },
+    support: { main: '#BCE2DB', contrastText: '#008080' },
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },

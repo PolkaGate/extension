@@ -13,7 +13,7 @@ import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineOppositeContent, { timelineOppositeContentClasses } from '@mui/lab/TimelineOppositeContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -73,7 +73,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   /** not a totally correct way to find but will work in most times */
   const [expanded, setExpanded] = React.useState(false);
   const [treasuryAwardedBlock, setTreasuryAwardedBlock] = React.useState<number>();
-  const isTreasury = TREASURY_TRACKS.includes(toSnakeCase(referendum?.origin));
+  const isTreasury = TREASURY_TRACKS.includes(toSnakeCase(referendum?.trackName));
   const isExecuted = referendum?.status === 'Executed';
   const mayBeExecutionBlock = sortedHistory?.find((h) => h.status === 'Executed')?.block;
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
@@ -160,12 +160,12 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                 </Timeline>
               </Grid>
               <Grid item xs>
-                <Typography sx={{ borderLeft: '4px solid #E8E0E5', color: 'text.disabled', height: '55%', lineHeight: '45px', textAlign: 'center' }}>
+                <Typography sx={{ borderLeft: `4px solid ${theme.palette.mode === 'light' ? '#E8E0E5' : theme.palette.secondary.contrastText}`, color: 'secondary.contrastText', height: '55%', lineHeight: '45px', textAlign: 'center' }}>
                   {t('Treasury')}
                 </Typography>
               </Grid>
             </Grid>
-            <Divider sx={{ border: 'none', borderTopColor: '#000', borderTopStyle: 'dashed', borderTopWidth: '2px', height: '1px', mt: '-18px', opacity: '0.2', width: '100%' }} variant='middle' />
+            <Divider sx={{ border: 'none', borderTopColor: 'secondary.contrastText', borderTopStyle: 'dashed', borderTopWidth: '2px', height: '1px', mt: '-18px', opacity: '0.2', width: '100%' }} variant='middle' />
           </>
         }
         {/* ---------------------------------------------------------------------- */}
@@ -180,7 +180,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
                   <TimelineSeparator sx={{ color: 'primary.main' }}>
                     {index !== sortedHistory?.length - 1
                       ? <TimelineDot color='primary' sx={{ borderWidth: '4px', height: '20px', width: '20px' }} variant='outlined' />
-                      : <TimelineDot sx={{ bgcolor:'background.paper', boxShadow: 'none' }}>
+                      : <TimelineDot sx={{ bgcolor: 'background.paper', boxShadow: 'none' }}>
                         <Square sx={{ border: 'none', color: 'primary.main', fontSize: '27px', mt: '-8px', mx: '-10px' }} />
                       </TimelineDot>
                     }
@@ -210,7 +210,7 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
           </Grid>
           {isTreasury && isExecuted &&
             <Grid item xs>
-              <Typography sx={{ alignItems: 'center', borderLeft: '4px solid #E8E0E5', color: 'text.disabled', display: 'flex', height: '90%', justifyContent: 'center' }}>
+              <Typography sx={{ alignItems: 'center', borderLeft: `4px solid ${theme.palette.mode === 'light' ? '#E8E0E5' : theme.palette.secondary.contrastText}`, color: 'secondary.contrastText', display: 'flex', height: '90%', justifyContent: 'center' }}>
                 {t('Referendum')}
               </Typography>
             </Grid>

@@ -19,15 +19,13 @@ export default function PayDecisionDeposit({ setOpenDecisionDeposit, style }: Pr
   const { t } = useTranslation();
   const onDecisionDeposit = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('openDecisionDeposit::::::');
-
     setOpenDecisionDeposit(true);
   }, [setOpenDecisionDeposit]);
 
   return (
-    <Grid container item sx={{ pt: '20px', pb: '10px', ...style }}>
+    <Grid container item sx={{ pb: '10px', pt: '20px', ...style }}>
       <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={t('A decision deposit is required to advance to the deciding state, and it is refundable once the referendum concludes.')}>
-        <Typography onClick={onDecisionDeposit} sx={{ color: 'primary.main', cursor: 'pointer', textDecorationLine: 'underline' }}>
+        <Typography onClick={onDecisionDeposit} sx={{ color: 'secondary.main', cursor: 'pointer', textDecorationLine: 'underline' }}>
           {t('Pay Decision Deposit')}
         </Typography>
       </Infotip2>
