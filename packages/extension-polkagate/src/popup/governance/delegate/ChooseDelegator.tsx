@@ -18,7 +18,7 @@ interface Props {
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
 }
 
-export default function ChooseDelegator ({ setDelegateInformation, setStep }: Props): React.ReactElement {
+export default function ChooseDelegator({ setDelegateInformation, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const myFormattedAddress = useFormatted(address);
@@ -124,7 +124,13 @@ export default function ChooseDelegator ({ setDelegateInformation, setStep }: Pr
             ? <FormControl fullWidth>
               <RadioGroup onChange={onSelectTrustedAccount} row>
                 {trustedAccounts.map((trustedAccount) => (
-                  <TAccountsDisplay address={trustedAccount} api={api} chain={chain} key={trustedAccount} selectedTrustedAddress={selectedTrustedAddress} />
+                  <TAccountsDisplay
+                    address={trustedAccount}
+                    api={api}
+                    chain={chain}
+                    key={trustedAccount}
+                    selectedTrustedAddress={selectedTrustedAddress}
+                  />
                 ))}
               </RadioGroup>
             </FormControl>

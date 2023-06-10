@@ -34,6 +34,7 @@ export { useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useEndpoint2 } from './useEndpoint2';
 export { default as useFormatted } from './useFormatted';
+export { default as useFormatted2 } from './useFormatted2';
 export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { usePoolMembers } from './usePoolMembers';
 export { default as useToken } from './useToken';
