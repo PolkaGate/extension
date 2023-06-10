@@ -5,7 +5,7 @@
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
 import { Button, ClickAwayListener, Container, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { useParams } from 'react-router';
 
 import { useApi, useTranslation } from '../../hooks';
@@ -24,11 +24,14 @@ interface Props {
   decidingCounts: DecidingCount | undefined;
 }
 
+const MENU_DELAY = 150; // mili sec
+
 export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
   const api = useApi(address);
+  const ref = useRef<{ timeoutId: NodeJS.Timeout | null }>({ timeoutId: null });
 
   const [openSubmitReferendum, setOpenSubmitReferendum] = useState(false);
   const [openDelegate, setOpenDelegate] = useState(false);
@@ -48,9 +51,18 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
   };
 
   const onTopMenuMenuMouseEnter = useCallback((item: TopMenu) => {
-    setHoveredTopMenu(item.toLowerCase());
-    setMenuOpen(true);
+    clearTimeout(ref.current.timeoutId as NodeJS.Timeout);// Clear any existing timeout
+
+    // Set a new timeout of 0.5 seconds
+    ref.current.timeoutId = setTimeout(() => {
+      setHoveredTopMenu(item.toLowerCase());
+      setMenuOpen(true);
+    }, MENU_DELAY);
   }, [setMenuOpen]);
+
+  const onTopMenuMenuMouseLeave = useCallback((item: TopMenu) => {
+    !menuOpen && clearTimeout(ref.current.timeoutId as NodeJS.Timeout);// Clear any existing timeout
+  }, [menuOpen]);
 
   const handleClickAway = useCallback(() => {
     setMenuOpen(false);
@@ -62,12 +74,22 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
 
   function TopMenuComponent({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
     return (
-      <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} sx={{
-        mt: '3.5px', px: '5px',
-        bgcolor: hoveredTopMenu === item.toLowerCase() ? selectedMenuBgColor : menuBgColor,
-        color: hoveredTopMenu === item.toLowerCase() ? menuTextColor : 'white',
-        width: '150px', height: '46px', cursor: 'pointer'
-      }}>
+      <Grid
+        alignItems='center'
+        container
+        item
+        justifyContent='center'
+        onMouseEnter={() => onTopMenuMenuMouseEnter(item)}
+        onMouseLeave={() => onTopMenuMenuMouseLeave(item)}
+        sx={{
+          bgcolor: hoveredTopMenu === item.toLowerCase() ? selectedMenuBgColor : menuBgColor,
+          color: hoveredTopMenu === item.toLowerCase() ? menuTextColor : 'white',
+          cursor: 'pointer',
+          height: '46px',
+          mt: '3.5px',
+          px: '5px',
+          width: '150px'
+        }}>
         <Typography sx={{ display: 'inline-block', fontWeight: 500, fontSize: '20px' }}>
           {item}
         </Typography>
