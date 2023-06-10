@@ -3,8 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Info as InfoIcon, QuestionMark as QuestionIcon } from '@mui/icons-material';
-import { Grid, Tooltip } from '@mui/material';
+import { Grid, Tooltip, useTheme } from '@mui/material';
 import React from 'react';
 
 interface Props {
@@ -13,15 +15,18 @@ interface Props {
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-end' | 'bottom-start' | 'left-end' | 'left-start' | 'right-end' | 'right-start' | 'top-end' | 'top-start' | undefined
   showQuestionMark?: boolean;
   showInfoMark?: boolean;
+  showWarningMark?: boolean;
   iconTop?: number;
   iconLeft?: number;
   fontSize?: string;
 }
 
-function Infotip2 ({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, text }: Props): React.ReactElement<Props> {
+function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, text, showWarningMark }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
   return (
-    <Grid item style={{ alignItems: 'center', display: 'flex'}}>
-      {showQuestionMark || showInfoMark
+    <Grid item style={{ alignItems: 'center', display: 'flex' }}>
+      {showQuestionMark || showInfoMark || showWarningMark
         ? <>
           <div>
             {children}
@@ -71,16 +76,22 @@ function Infotip2 ({ children, fontSize = '14px', placement = 'top', showInfoMar
                   width: '13px'
                 }}
               />
-              : <InfoIcon
-                sx={{
-                  bgcolor: 'secondary.light',
-                  borderRadius: '50%',
-                  color: 'background.default',
-                  height: '15px',
-                  ml: '5px',
-                  width: '15px'
-                }}
-              />
+              : showInfoMark
+                ? <InfoIcon
+                  sx={{
+                    bgcolor: 'secondary.light',
+                    borderRadius: '50%',
+                    color: 'background.default',
+                    height: '15px',
+                    ml: '5px',
+                    width: '15px'
+                  }}
+                />
+                : <FontAwesomeIcon
+                  color={theme.palette.secondary.light}
+                  icon={faExclamationTriangle}
+                  style={{ paddingLeft: '7px', fontSize: '17px' }}
+                />
             }
           </Tooltip>
         </>
