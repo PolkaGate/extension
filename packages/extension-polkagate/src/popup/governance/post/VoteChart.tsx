@@ -16,9 +16,10 @@ interface Props {
   nays: string | undefined;
   height?: string;
   noBorderColor?: boolean;
+  showTooltip?: boolean;
 }
 
-function VoteChart({ ayes, height, nays, noBorderColor = false }: Props): React.ReactElement<Props> {
+function VoteChart({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
@@ -83,19 +84,27 @@ function VoteChart({ ayes, height, nays, noBorderColor = false }: Props): React.
             weight: 'bold'
           },
           callbacks: {
-            label: function (TooltipItem: string | { label: string }[] | undefined) {
-              if (!TooltipItem) {
+            label: function (tooltipItem: string | { label: string }[] | undefined) {
+              if (!tooltipItem) {
                 return;
               }
 
-              return `${TooltipItem.formattedValue} %`;
+              if (showTooltip) {
+                return `${tooltipItem.formattedValue} %`;
+              } else {
+                return '';
+              }
             },
-            title: function (TooltipItem: string | { label: string }[] | undefined) {
-              if (!TooltipItem) {
+            title: function (tooltipItem: string | { label: string }[] | undefined) {
+              if (!tooltipItem) {
                 return;
               }
 
-              return `${TooltipItem[0].label}`;
+              if (showTooltip) {
+                return `${tooltipItem[0].label}`;
+              } else {
+                return '';
+              }
             }
           },
           displayColors: false,
@@ -122,7 +131,7 @@ function VoteChart({ ayes, height, nays, noBorderColor = false }: Props): React.
     return () => {
       chartInstance.destroy();
     };
-  }, [ayesPercent, naysPercent, noBorderColor]);
+  }, [ayesPercent, naysPercent, noBorderColor, showTooltip]);
 
   return (
     <Grid alignItems='center' container justifyContent='center' sx={{ height: height || '240px', width: '100%' }} >

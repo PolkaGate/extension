@@ -67,7 +67,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
   );
 
   return (
-    <Grid item key={key} onClick={!openDecisionDeposit ? onClick : () => null} sx={{ bgcolor: 'background.paper',border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '0 20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+    <Grid item key={key} onClick={!openDecisionDeposit ? onClick : () => null} sx={{ bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '0 20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
           <Grid item sx={{ bgcolor: 'label.main', color: 'text.secondary', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
@@ -117,6 +117,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
                   height='30px'
                   nays={newReferenda.naysAmount}
                   noBorderColor
+                  showTooltip={false}
                 />
               </Grid>
               {resultInPercent &&
