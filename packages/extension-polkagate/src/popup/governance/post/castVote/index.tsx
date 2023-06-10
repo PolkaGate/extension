@@ -97,7 +97,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
       const conviction = myVote?.standard ? getConviction(myVote.standard.vote) : 0;
       const myDelegations = myVote?.delegations?.votes;
       const voteAmountBN = amountToMachine(amount, decimal);
-
       const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
       const votePower = myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;
 
@@ -203,9 +202,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
       </Grid>
     </Grid>
   );
-
-  console.log('votedInfo:', votedInfo)
-  console.log('txInfo:', txInfo)
 
   return (
     <DraggableModal onClose={handleClose} open={open}>
