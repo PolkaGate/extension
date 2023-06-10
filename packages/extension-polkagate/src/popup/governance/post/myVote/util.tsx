@@ -4,6 +4,7 @@
 import { ApiPromise } from '@polkadot/api';
 
 import { Track } from '../../../../hooks/useTrack';
+import { BN } from '@polkadot/util';
 
 export const CONVICTION = {
   Locked1x: 1,
@@ -22,12 +23,7 @@ export const isAye = (vote: string) => (vote & AYE_BITS) === AYE_BITS;
 export const getConviction = (vote: string) => (vote & CON_MASK) === 0 ? 0.1 : (vote & CON_MASK);
 
 interface Votes {
-  votes: [number, {
-    standard: {
-      vote: string;
-      balance: number;
-    };
-  }][];
+  votes: [number, Vote][];
   delegations: {
     votes: number;
     capital: number;
@@ -53,6 +49,7 @@ export interface Vote {
     balance: number;
     aye?: boolean;
     nay?: boolean;
+    abstain?: boolean;
     conviction: number;
     target?: string;
     voted?: boolean;
@@ -90,7 +87,8 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
     const jsonProxyVoting = proxyVoting?.toJSON() as Voting;
     const vote = jsonProxyVoting?.casting?.votes?.find(([index]) => index === referendumIndex)?.[1];
 
-    if (!vote?.standard) {
+    if (!vote?.standard && !vote?.splitAbstain) {
+
       return {
         delegating: {
           ...jsonVoting.delegating,
@@ -102,14 +100,19 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
 
     // If the delegating target address has standard vote on this referendum,
     // means this address has voted on this referendum.
-    const aye = isAye(vote.standard.vote);
+    const aye = vote?.standard && isAye(vote.standard.vote);
+    const abstain = vote?.splitAbstain && (
+      vote.splitAbstain?.abstain
+        ? new BN(vote.splitAbstain.abstain)
+        : new BN(vote.splitAbstain.aye || 0).add(new BN(vote.splitAbstain.nay || 0)));
 
     return {
       delegating: {
         ...jsonVoting.delegating,
+        abstain,
+        aye,
         conviction: CONVICTION[conviction],
         voted: true,
-        aye
       }
     };
   }
