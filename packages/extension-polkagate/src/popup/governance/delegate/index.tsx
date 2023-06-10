@@ -256,11 +256,11 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             address={address}
             filteredDelegation={filteredDelegation}
             formatted={String(formatted)}
+            setSelectedTracksLength={setSelectedTracksLength}
             setStatus={setStatus}
             setStep={setStep}
             setTxInfo={setTxInfo}
             step={step}
-            setSelectedTracksLength={setSelectedTracksLength}
           />
         }
         {(step === STEPS.REVIEW || step === STEPS.PROXY) && delegateInformation &&

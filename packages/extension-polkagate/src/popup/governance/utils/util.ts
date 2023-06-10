@@ -6,9 +6,10 @@ import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import { ApiPromise } from '@polkadot/api';
 import { TFunction } from '@polkadot/apps-config/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMin, extractTime } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
 
 import { Track } from '../../../hooks/useTrack';
+import { remainingTime } from '../../../util/utils';
 import { isAye, Vote } from '../post/myVote/util';
 import { DelegationInfo } from './types';
 
@@ -53,7 +54,7 @@ export function toTitleCase(input: string): string | undefined {
 
   // Replace all occurrences of capital letters with a space followed by the lowercase letter
   // Replace underscores and hyphens with spaces
- let words = input.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').split(' ');
+  let words = input.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').split(' ');
 
   // Convert each word to title case
   words = words.map((word) => {
@@ -297,3 +298,11 @@ export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted
 
   return delegatedTracks.length ? delegatedTracks : null;
 }
+
+export const getLockedUntil = (endBlock: BN, currentBlock: number) => {
+  if (endBlock.eq(BN_MAX_INTEGER)) {
+    return 'underway';
+  }
+
+  return remainingTime(endBlock.toNumber() - currentBlock);
+};
