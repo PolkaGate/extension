@@ -81,6 +81,8 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
       return setFilteredReferenda([...referenda]);
     }
 
+    keyword = keyword.trim();
+
     const _filtered = referenda?.filter((r) =>
       (filter.advanced.refIndex && String(r.post_id) === keyword) ||
       (filter.advanced.titles && r.title.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) ||
