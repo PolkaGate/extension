@@ -30,6 +30,12 @@ export function toSnakeCase(input: string | undefined): string | undefined {
   return output;
 }
 
+export function toCamelCase(str: string): string {
+  return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
+    return index === 0 ? match.toLowerCase() : match.toUpperCase();
+  }).replace(/\s+/g, '');
+}
+
 export function toPascalCase(input: string): string | undefined {
   if (!input) {
     return undefined;
