@@ -162,7 +162,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
               ? <InputFilter
                 autoFocus={false}
                 onChange={onSearch}
-                placeholder={t<string>('🔍 Search voter')}
+                placeholder={t<string>('🔍 Search by voter address')}
                 theme={theme}
               // value={searchKeyword ?? ''}
               />
@@ -200,7 +200,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '505px' }}>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '510px' }}>
           <Grid container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', pb: '5px', fontSize: '20px', fontWeight: 400 }}>
             <Grid item width='40%'>
               {t('Voter')}
