@@ -65,8 +65,8 @@ export default function Support({ address, referendum }: Props): React.ReactElem
         {text}
       </Typography>
       <Grid container fontSize='22px' item>
-        <Grid fontWeight={700} item sx={{ height: '27px', textAlign: 'center' }} xs={12} mt='15px'>
-          <ShowValue value={percent !== undefined ? `${percent?.toFixed(2)}%` : undefined} />
+        <Grid fontWeight={700} item mt='15px' sx={{ height: '27px', textAlign: 'center' }} xs={12}>
+          <ShowValue value={percent !== undefined ? `${percent.toFixed(2)}%` : undefined} />
         </Grid>
       </Grid>
       <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
