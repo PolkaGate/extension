@@ -62,7 +62,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
 
   const totalDelegatedValue = standard.votePower && standard.votePower.sub(getVoteValue(standard));
 
-  const delegatorList = useMemo(() => allVotes && allVotes[standard.decision].votes.filter((v) => v.isDelegated && v.delegatee === standard.voter), [allVotes, standard]);
+  const delegatorList = useMemo(() => allVotes && allVotes[standard.decision].votes.filter((v) => v.isDelegated && v.delegatee?.toString() === standard.voter), [allVotes, standard]);
 
   const capitalDelegated = useMemo(() => {
     let sum = BN_ZERO;

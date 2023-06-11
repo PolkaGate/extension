@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
+
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
@@ -33,7 +35,7 @@ export type VoteType = {
   };
   lockPeriod: number | null;
   isDelegated: boolean;
-  delegatee?: string;
+  delegatee?: AccountId32;
   votePower?: BN;
 }
 
@@ -48,7 +50,7 @@ export type AbstainVoteType = {
   };
   lockPeriod: null;
   isDelegated: boolean;
-  delegatee?: string;
+  delegatee?: AccountId32;
   votePower?: BN;
 }
 

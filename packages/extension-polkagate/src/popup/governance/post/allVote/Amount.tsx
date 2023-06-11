@@ -42,8 +42,7 @@ export default function Amount({ address, allVotes, vote, voteType }: Props): Re
   useEffect(() => {
     const voteTypeStr = voteType === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : voteType === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
-    const delegators = allVotes[voteTypeStr as keyof AllVotesType].votes.filter((v) => v.delegatee === vote.voter);
-
+    const delegators = allVotes[voteTypeStr as keyof AllVotesType].votes.filter((v) => v.delegatee?.toString() === vote.voter);
 
     let sum = getVoteValue(vote, voteTypeStr);
 
