@@ -26,12 +26,12 @@ type Filter = {
   refIndex?: boolean;
   titles?: boolean;
   proposers?: boolean;
-  beneficiary?: boolean;
+  methods?: boolean;
 }
 
 const DEFAULT_FILTER = {
   advanced: {
-    beneficiary: true, proposers: true, refIndex: true, titles: true
+    methods: true, proposers: true, refIndex: true, titles: true
   },
   myReferenda: false,
   myVotes: false,
@@ -70,9 +70,26 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     setFilter({ ...DEFAULT_FILTER });
   }, []);
 
-  const onSearch = useCallback(() => {
+  const onSearch = useCallback((keyword: string) => {
+    if (!referenda) {
+      return;
+    }
 
-  }, []);
+    if (!keyword) {
+      console.log('referenda in no keyword:', referenda)
+
+      return setFilteredReferenda([...referenda]);
+    }
+
+    const _filtered = referenda?.filter((r) =>
+      (filter.advanced.refIndex && String(r.post_id) === keyword) ||
+      (filter.advanced.titles && r.title.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) ||
+      (filter.advanced.methods && r.method.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) ||
+      (filter.advanced.proposers && r.proposer === keyword)
+    );
+
+    setFilteredReferenda([..._filtered]);
+  }, [filter, referenda, setFilteredReferenda]);
 
   const onMyReferenda = useCallback(() => {
     filter.myReferenda = !filter.myReferenda;
@@ -89,39 +106,32 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     }
 
     /**  To apply filtering ... */
-    const filtered = [];
-
-    // filter discussions if any
-    const onlyReferenda = referenda.filter((r) => r.type !== 'Discussions');
-
+    let filtered = [...referenda];
 
     if (filter.myReferenda) {
-      const mySubmittedReferendaList = onlyReferenda.filter((r) => r.proposer === formatted);
-
-      mySubmittedReferendaList && filtered.push(...mySubmittedReferendaList);
+      filtered = filtered.filter((r) => r.proposer === formatted);
     }
 
     if (filter.myVotes) {
-      const myVotedList = onlyReferenda.filter((r) => myVotedReferendaIndexes?.includes(r.post_id));
-
-      myVotedList && filtered.push(...myVotedList);
+      filtered = filtered.filter((r) => myVotedReferendaIndexes?.includes(r.post_id));
     }
 
     if (!filter.status.includes('All')) {
-      const filterBasedOnStatus = onlyReferenda.filter((r) => filter.status.includes(r.status));
-
-      filterBasedOnStatus && filtered.push(...filterBasedOnStatus);
+      filtered = filtered.filter((r) => filter.status.includes(r.status));
     }
 
     // to remove duplicates
     const uniqueFiltered = [...new Set(filtered)];
 
-    setFilteredReferenda(uniqueFiltered.length ? uniqueFiltered : onlyReferenda);
+    const isAnyFilterOn = filter.myReferenda || filter.myVotes || !filter.status.includes('All');
+
+    setFilteredReferenda(isAnyFilterOn ? uniqueFiltered : referenda);
   }, [filter, formatted, myVotedReferendaIndexes, referenda, setFilteredReferenda]);
 
   const onChangeStatus = useCallback((s: number) => {
     s = String(s) === 'All' ? 0 : s;
     const list = referenda?.filter((ref) => REFERENDA_STATUS[s].includes(ref.status));
+
     setFilteredReferenda(list);
 
     filter.status = String(s) === 'All' ? s : REFERENDA_STATUS[s];
@@ -175,7 +185,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
             checked={filter.myVotes}
             disabled={!myVotedReferendaIndexes}
             label={t('My Votes')}
-            labelStyle={{ fontSize: '16px', fontWeight: 400}}
+            labelStyle={{ fontSize: '16px', fontWeight: 400 }}
             onChange={onMyVotes}
           />
         </Grid>
@@ -211,13 +221,13 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
           </Grid>
           <Grid item ml='22px'>
             <Checkbox2
-              checked={filter.advanced.beneficiary}
-              label={t('Beneficiary')}
+              checked={filter.advanced.methods}
+              label={t('Methods')}
               labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-              onChange={() => onFilter('beneficiary')}
+              onChange={() => onFilter('methods')}
             />
           </Grid>
-          <Grid item onClick={onReset} sx={{ color: 'primary.main', cursor: 'pointer', textDecorationLine: 'underline', ml: '22px' }}>
+          <Grid item onClick={onReset} sx={{ color: 'secondary.light', cursor: 'pointer', textDecorationLine: 'underline', ml: '22px' }}>
             {t('Reset')}
           </Grid>
         </Grid>
