@@ -75,6 +75,10 @@ export default function Governance(): React.ReactElement {
   }, [address, api, tracks]);
 
   useEffect(() => {
+    referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
+  }, [referenda]);
+
+  useEffect(() => {
     if (!api) {
       return;
     }
@@ -94,6 +98,7 @@ export default function Governance(): React.ReactElement {
       referendumCount.fellowship = count?.toNumber();
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
 
   const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
@@ -283,7 +288,7 @@ export default function Governance(): React.ReactElement {
                         !isLoadingMore
                           ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
                             <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                              {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount: referendumCount[topMenu] } })}
+                              {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                             </Typography>
                           </Grid>
                           : isLoadingMore && <Grid container justifyContent='center'>
