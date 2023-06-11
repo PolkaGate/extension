@@ -131,7 +131,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
 
   const handleClose = useCallback(() => {
     if (step === STEPS.PROXY) {
-      setStep(STEPS.REVIEW);
+      setStep(alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW);
 
       return;
     }
@@ -209,7 +209,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         <Header />
         {step === STEPS.ABOUT &&
           <About
-            setStep={setStep}
             nextStep={
               notVoted === undefined
                 ? STEPS.CHECK_SCREEN
@@ -217,6 +216,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
                   ? STEPS.INDEX
                   : STEPS.PREVIEW
             }
+            setStep={setStep}
           />
         }
         {step === STEPS.CHECK_SCREEN &&
