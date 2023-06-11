@@ -32,6 +32,7 @@ interface Props {
 export const VOTE_TYPE_MAP = {
   AYE: 1,
   NAY: 2,
+  // eslint-disable-next-line sort-keys
   ABSTAIN: 3
 };
 
@@ -39,18 +40,17 @@ function noop() {
   // This function does nothing.
 }
 
-export default function Standards({ address, allVotes, filteredVotes, numberOfFetchedDelagatees, open, setFilteredVotes, handleClose, setShowDelegators }: Props): React.ReactElement {
+export default function Standards({ address, allVotes, filteredVotes, handleClose, numberOfFetchedDelagatees, open, setFilteredVotes, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
   const api = useApi(address);
 
   const [tabIndex, setTabIndex] = useState<number>(1);
-
   const [votesToShow, setVotesToShow] = useState<VoteType[] | AbstainVoteType[]>();
   const [page, setPage] = useState<number>(1);
   const [paginationCount, setPaginationCount] = useState<number>(10);
-  const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>('ASC');
+  const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
   const [isSearchBarOpen, setSearchBarOpen] = useState<boolean>(false);
 
   const totalNumberOfDelegators = useMemo(() => {
@@ -79,10 +79,15 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
       // filter to just show standards, and delegated as nested
       votesBasedOnType = votesBasedOnType.filter((v) => !v.isDelegated);
 
+      amountSortType && votesBasedOnType.sort((a, b) => amountSortType === 'ASC'
+        ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
+        : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
+      );
+
       setVotesToShow(votesBasedOnType.slice((page - 1) * VOTE_PER_PAGE, page * VOTE_PER_PAGE));
       setPaginationCount(Math.ceil(votesBasedOnType.length / VOTE_PER_PAGE));
     }
-  }, [filteredVotes, page, tabIndex]);
+  }, [amountSortType, filteredVotes, page, tabIndex]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
@@ -93,15 +98,15 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
 
-    const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
+    // const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
-    filteredVotes?.[voteTypeStr]?.sort((a, b) => amountSortType === 'ASC'
-      ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
-      : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
-    );
+    // filteredVotes?.[voteTypeStr]?.sort((a, b) => amountSortType === 'ASC'
+    //   ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
+    //   : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
+    // );
 
-    setFilteredVotes({ ...filteredVotes });
-  }, [amountSortType, filteredVotes, setFilteredVotes, tabIndex]);
+    // setFilteredVotes({ ...filteredVotes });
+  }, []);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
