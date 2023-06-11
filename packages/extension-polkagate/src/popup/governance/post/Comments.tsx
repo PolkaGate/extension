@@ -36,11 +36,9 @@ export default function Comments({ address, referendum }: { address: string | un
     window.open(`https://${ChainName}.subsquare.io/referenda/referendum/${referendum?.index}`, '_blank');
   }
 
-  // console.log('sortedComments to apply reactions:', sortedComments);
-
   return (
-    <Accordion expanded={expanded} onChange={handleChange} sx={{ my: 1, px: '3%', width: 'inherit', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0, borderRadius: '10px' }}>
+    <Accordion expanded={expanded} onChange={handleChange} sx={{ border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', my: 1, px: '3%', width: 'inherit' }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '37px' }} />} sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}>
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
@@ -52,7 +50,7 @@ export default function Comments({ address, referendum }: { address: string | un
       <AccordionDetails sx={{ px: 0 }}>
         <Grid container item xs={12}>
           {sortedComments?.map((comment, index) => (
-            <Grid container key={index} sx={{ borderBottom: index !== sortedComments.length - 1 && `0.01px solid ${theme.palette.text.disabled}` }}>
+            <Grid container key={index} sx={{ borderBottom: index !== sortedComments.length - 1 ? `0.01px solid ${theme.palette.text.disabled}` : undefined }}>
               <CommentView address={address} comment={comment} />
               {!!comment?.replies?.length &&
                 <Replies address={address} replies={comment?.replies} />
