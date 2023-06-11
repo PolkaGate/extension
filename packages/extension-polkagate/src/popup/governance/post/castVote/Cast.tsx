@@ -252,42 +252,42 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   }, [notVoted, setStep, step]);
 
   const alreadyLockedTooltipText = useMemo(() => accountLocks && currentBlock &&
-  (<>
-    <Typography variant='body2'>
-      <Grid container spacing={2}>
-        <Grid item xs={2.5}>
-          {t('Ref.')}
+    (<Grid container item sx={{ maxHeight: '400px', overflow: 'hidden', overflowY: 'scroll' }}>
+      <Typography variant='body2'>
+        <Grid container spacing={2}>
+          <Grid item xs={2.5}>
+            {t('Ref.')}
+          </Grid>
+          <Grid item xs={3.6}>
+            {t('Amount')}
+          </Grid>
+          <Grid item xs={2.9}>
+            {t('Multiplier')}
+          </Grid>
+          <Grid item xs={3}>
+            {t('Expires')}
+          </Grid>
+          {accountLocks.map((l, index) =>
+            <React.Fragment key={index}>
+              <Grid item xs={2.5}>
+                {l.refId.toNumber()}
+              </Grid>
+              <Grid item xs={3.6}>
+                {amountToHuman(l.total, decimal)} {token}
+              </Grid>
+              <Grid item xs={2.9}>
+                {l.locked === 'None' ? 'N/A' : l.locked.replace('Locked', '')}
+              </Grid>
+              <Grid item xs={3}>
+                {getLockedUntil(l.endBlock, currentBlock)}
+              </Grid>
+            </React.Fragment>
+          )}
         </Grid>
-        <Grid item xs={3.6}>
-          {t('Amount')}
-        </Grid>
-        <Grid item xs={2.9}>
-          {t('Multiplier')}
-        </Grid>
-        <Grid item xs={3}>
-          {t('Expires')}
-        </Grid>
-        {accountLocks.map((l, index) =>
-          <React.Fragment key={index}>
-            <Grid item xs={2.5}>
-              {l.refId.toNumber()}
-            </Grid>
-            <Grid item xs={3.6}>
-              {amountToHuman(l.total, decimal)} {token}
-            </Grid>
-            <Grid item xs={2.9}>
-              {l.locked === 'None' ? 'N/A' : l.locked.replace('Locked', '')}
-            </Grid>
-            <Grid item xs={3}>
-              {getLockedUntil(l.endBlock, currentBlock)}
-            </Grid>
-          </React.Fragment>
-        )}
-      </Grid>
-    </Typography>
-  </>
-  ), [accountLocks, currentBlock, decimal, t, token]);
-  
+      </Typography>
+    </Grid>
+    ), [accountLocks, currentBlock, decimal, t, token]);
+
   const VoteButton = ({ children, voteOption }: { children: React.ReactNode, voteOption: string }) => {
     return (
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', justifyContent: 'center', pr: '5px', width: 'fit-content' }}>
