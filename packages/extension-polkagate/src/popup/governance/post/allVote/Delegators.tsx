@@ -245,7 +245,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
             <Grid item width='15%'>
               {t('Conviction')}
             </Grid>
-            <Grid alignItems='center' container item justifyContent='center' width='18%'>
+            <Grid alignItems='center' container item justifyContent='flex-end' width='18%'>
               <Typography fontSize='20px' width='fit-content'>
                 {t('Votes')}
               </Typography>
@@ -293,8 +293,8 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
               count={paginationCount}
               onChange={onPageChange}
               page={page}
-              sx={{ bottom: '8px', position: 'absolute' }}
               size='large'
+              sx={{ bottom: '8px', position: 'absolute' }}
             />
           }
         </Grid>
