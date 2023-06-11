@@ -75,9 +75,9 @@ export default function Governance(): React.ReactElement {
     address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
   }, [address, api, tracks]);
 
-  useEffect(() => {
-    referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
-  }, [referenda]);
+  // useEffect(() => {
+  //   referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
+  // }, [referenda]);
 
   useEffect(() => {
     if (!api) {
@@ -149,7 +149,10 @@ export default function Governance(): React.ReactElement {
           return;
         }
 
-        setReferenda(allReferenda);
+        // filter discussions if any
+        const onlyReferenda = allReferenda.filter((r) => r.type !== 'Discussions');
+
+        setReferenda(onlyReferenda);
 
         return;
       }
@@ -294,7 +297,7 @@ export default function Governance(): React.ReactElement {
                                 {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
                               </Typography>
                               : <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                                {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount: referendumCount[topMenu] } })}
+                                {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                               </Typography>
                             }
                           </Grid>
