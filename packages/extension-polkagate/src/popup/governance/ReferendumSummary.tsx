@@ -62,7 +62,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
 
   const VerticalBar = () => (
     <Grid item mx='1.5%'>
-      <Divider flexItem orientation='vertical' sx={{ height: '34px' }} />
+      <Divider flexItem orientation='vertical' sx={{ bgcolor: `${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : theme.palette.text.disabled}`, height: '34px' }} />
     </Grid>
   );
 
