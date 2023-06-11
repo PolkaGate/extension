@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
 
 import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
