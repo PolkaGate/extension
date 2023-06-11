@@ -34,7 +34,6 @@ export default function useReferenda(address: AccountId | string | undefined, ty
       const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
 
       setOnChainTally(mayBeTally);
-      console.log('referendumInfoFor:', res.unwrap());
     }).catch(console.error);
   }, [api, id]);
 
