@@ -16,7 +16,7 @@ export interface Props {
   width?: string;
 }
 
-export default function ShowValue({ value, unit, height = 20, width = '90px' }: Props): React.ReactElement<Props> {
+export default function ShowValue({ height = 20, unit, value, width = '90px' }: Props): React.ReactElement<Props> {
   return (
     <>
       {value !== undefined

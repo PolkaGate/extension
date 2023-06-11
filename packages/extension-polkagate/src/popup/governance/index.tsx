@@ -52,6 +52,7 @@ export default function Governance(): React.ReactElement {
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>();
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
+  const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -85,6 +86,7 @@ export default function Governance(): React.ReactElement {
 
     if (!api.consts.referenda || !api.query.referenda) {
       console.log('OpenGov is not supported on this chain');
+      setNotSupportedChain(true);
 
       return;
     }
@@ -208,7 +210,7 @@ export default function Governance(): React.ReactElement {
       return;
     }
 
-    api.query.fellowshipCollective.members.entries().then((keys) => {
+    api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => {
       const fellowships = keys.map(([{ args: [id] }, option]) => {
         return [id.toString(), option?.value?.rank?.toNumber()] as Fellowship;
       });
@@ -287,9 +289,14 @@ export default function Governance(): React.ReactElement {
                       {
                         !isLoadingMore
                           ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
-                            <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                              {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
-                            </Typography>
+                            {notSupportedChain
+                              ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda} pt='50px'>
+                                {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
+                              </Typography>
+                              : <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                                {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST * pageTrackRef.current.page, referendumCount: referendumCount[topMenu] } })}
+                              </Typography>
+                            }
                           </Grid>
                           : isLoadingMore && <Grid container justifyContent='center'>
                             <HorizontalWaiting color={theme.palette.primary.main} />

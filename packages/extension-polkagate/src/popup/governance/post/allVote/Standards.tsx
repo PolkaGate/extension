@@ -143,7 +143,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
     minWidth: '108px',
     textTransform: 'capitalize',
     width: '33%'
-  }
+  };
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>
@@ -166,7 +166,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
                 theme={theme}
               // value={searchKeyword ?? ''}
               />
-              : <SearchIcon sx={{ color: 'rgba(0,0,0,0.2)', display: 'block', fontSize: '30px', width: 'fit-content' }} />
+              : <SearchIcon sx={{ color: 'secondary.contrastText', display: 'block', fontSize: '30px', width: 'fit-content' }} />
             }
           </Grid>
           <Grid item>
@@ -225,7 +225,7 @@ export default function Standards({ address, allVotes, filteredVotes, numberOfFe
           }
           {votesToShow?.map((vote, index) => {
             const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
-            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee === vote.voter)?.length || 0) as number;
+            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee?.toString() === vote.voter)?.length || 0) as number;
 
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
