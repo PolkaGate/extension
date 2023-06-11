@@ -64,7 +64,7 @@ export default function ReferendumPost(): React.ReactElement {
       return;
     }
 
-    api.query.treasury.approvals().then((approvals) => {
+    api.query.treasury?.approvals().then((approvals) => {
       if (approvals.toJSON().length) {
         const approvalsIds = approvals.toJSON();
 
