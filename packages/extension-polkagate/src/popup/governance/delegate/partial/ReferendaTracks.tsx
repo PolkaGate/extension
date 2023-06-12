@@ -16,11 +16,10 @@ import { getLockedUntil, toTitleCase } from '../../utils/util';
 
 interface Props {
   selectedTracks: BN[];
-  unvotedTracks: Track[] | undefined;
+  tracks: Track[] | undefined;
   setSelectedTracks: React.Dispatch<React.SetStateAction<BN[]>>;
   maximumHeight?: string;
   filterLockedTracks?: {
-    lockTracks: object | null | undefined;
     currentBlockNumber: number | undefined;
     accountLocks: Lock[] | null | undefined;
   };
@@ -48,37 +47,75 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, unvotedTracks }: Props): React.ReactElement {
+export default function ReferendaTracks({ filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const allSelected: BN[] = useMemo(() => {
-    if (!unvotedTracks || unvotedTracks.length === 0) {
+  const existingVotes = useMemo(() => {
+    if (tracks && filterLockedTracks?.accountLocks !== undefined) {
+      if (filterLockedTracks.accountLocks === null) {
+        return null;
+      }
+
+      const result = {};
+
+      filterLockedTracks.accountLocks.forEach((lock) => {
+        if (!result[lock.classId]) {
+          result[lock.classId] = 1;
+        } else {
+          result[lock.classId]++;
+        }
+      });
+
+      // const replacedKey = Object.keys(result).reduce((acc, key) => {
+      //   const newKey = tracks.find((value) => String(value[0]) === key)?.[1].name; // Convert numeric key to track names
+
+      //   acc[newKey] = result[key];
+
+      //   return acc;
+      // }, {});
+
+      return result;
+    }
+
+    return undefined;
+  }, [filterLockedTracks?.accountLocks, tracks]);
+
+  const availableToSelect: BN[] = useMemo(() => {
+    if (!tracks || tracks.length === 0) {
       return [];
     }
 
-    if (filterLockedTracks && filterLockedTracks.lockTracks) {
+    if (filterLockedTracks && existingVotes) {
       // eslint-disable-next-line no-prototype-builtins
-      const availableTracks = unvotedTracks.filter((track) => !filterLockedTracks.lockTracks?.hasOwnProperty(track[0]));
+      const availableTracks = tracks.filter((track) => !existingVotes?.hasOwnProperty(track[0]));
       const toSelect = availableTracks.map((track) => track[0]);
 
       return toSelect;
     }
 
     if (!filterLockedTracks) {
-      const toSelect = selectedTracks.length !== unvotedTracks.length ? unvotedTracks.map((value) => value[0]) : [];
+      const toSelect = selectedTracks.length !== tracks.length ? tracks.map((value) => value[0]) : [];
 
       return toSelect;
     }
 
-    return [];
-  }, [filterLockedTracks, selectedTracks.length, unvotedTracks]);
+    return tracks.map((track) => track[0]);
+  }, [existingVotes, filterLockedTracks, selectedTracks.length, tracks]);
+
+  const allSelected = useMemo(() => {
+    const sortFunction = (valueOne: BN, valueTwo: BN) => valueOne.gt(valueTwo) ? -1 : 1;
+    const arrOne = [...availableToSelect];
+    const arrTwo = [...selectedTracks];
+
+    return JSON.stringify(arrOne.sort(sortFunction)) === JSON.stringify(arrTwo.sort(sortFunction));
+  }, [availableToSelect, selectedTracks]);
 
   const onSelectAll = useCallback(() => {
-    const toCheck = selectedTracks.length === allSelected.length ? [] : allSelected;
+    const toCheck = allSelected ? [] : availableToSelect;
 
     setSelectedTracks(toCheck);
-  }, [allSelected, selectedTracks.length, setSelectedTracks]);
+  }, [allSelected, availableToSelect, setSelectedTracks]);
 
   const handleToggle = (value: BN, nullifier: boolean) => () => {
     if (nullifier) {
@@ -109,16 +146,16 @@ export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '
         </Grid>
         <Grid item onClick={onSelectAll}>
           <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline' }}>
-            {selectedTracks.length === allSelected.length ? t('Deselect All') : t('Select All')}
+            {allSelected ? t('Deselect All') : t('Select All')}
           </Typography>
         </Grid>
       </Grid>
       <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', maxHeight: maximumHeight, maxWidth: '100%', minHeight: '175px', overflowY: 'scroll', width: '100%' }}>
-        {unvotedTracks?.length
-          ? unvotedTracks.map((value, index) => {
+        {tracks?.length
+          ? tracks.map((value, index) => {
             const checked = selectedTracks.length !== 0 && !!selectedTracks.find((track) => track.eq(value[0]));
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-prototype-builtins
-            const trackVotes: number = filterLockedTracks?.lockTracks?.hasOwnProperty(value[0]) ? filterLockedTracks.lockTracks[value[0]] : 0;
+            const trackVotes: number = existingVotes?.hasOwnProperty(value[0]) ? existingVotes[value[0]] : 0;
             const lockedTrack = filterLockedTracks?.accountLocks?.find((lock) => lock.classId.eq(value[0]));
             const trackLockExpired: boolean | undefined = filterLockedTracks && lockedTrack && !!filterLockedTracks.currentBlockNumber && getLockedUntil(lockedTrack.endBlock, filterLockedTracks.currentBlockNumber) === 'finished';
 
