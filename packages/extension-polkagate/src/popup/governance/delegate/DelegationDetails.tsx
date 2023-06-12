@@ -124,7 +124,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
       <Grid alignItems='center' container item justifyContent='center' xs={10}>
         <Grid alignItems='center' container direction='column' justifyContent='center' width='90%'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Delegate To')}:
+            {t<string>('Delegatee')}
           </Typography>
           <Identity
             formatted={filteredDelegation[delegateeIndex].delegatee}
@@ -166,7 +166,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
         <Grid container ref={ref}>
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegate from')}:
+              {t<string>('Delegate from')}
             </Typography>
             <Identity
               address={address}
@@ -183,7 +183,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
               ? <Arrows onNext={nextDelegatee} onPrevious={previousDelegatee} />
               : <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '10px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegatee')}:
+                  {t<string>('Delegatee')}
                 </Typography>
                 <Identity
                   api={api}

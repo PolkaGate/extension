@@ -152,7 +152,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batch, chain, decimal, delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, setTxInfo, undelegate]);
+  }, [api, batch, chain, decimal, delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setSelectedTracksLength, setStep, setTxInfo, undelegate]);
 
   const backToPreview = useCallback(() => setStep(STEPS.PREVIEW), [setStep]);
 
@@ -165,7 +165,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           }
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Account Holder')}:
+              {t<string>('Account Holder')}
             </Typography>
             <Identity
               address={address}
@@ -185,7 +185,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegatee')}:
+              {t<string>('Delegatee')}
             </Typography>
             <Identity
               api={api}

@@ -285,7 +285,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               }
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account Holder')}:
+                  {t<string>('Delegate from')}
                 </Typography>
                 <Identity
                   address={address}
@@ -305,7 +305,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegatee')}:
+                  {t<string>('Delegatee')}
                 </Typography>
                 <Identity
                   api={api}
