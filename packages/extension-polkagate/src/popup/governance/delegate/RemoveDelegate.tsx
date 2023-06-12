@@ -69,19 +69,6 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const undelegate = api && api.tx.convictionVoting.undelegate;
   const batch = api && api.tx.utility.batchAll;
 
-  useEffect(() => {
-    if (!formatted || !undelegate) {
-      return;
-    }
-
-    if (!api?.call?.transactionPaymentApi) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, undelegate]);
-
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -107,6 +94,21 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
     return delegatedTracks;
   }, [delegatedTracks]);
+
+  useEffect(() => {
+    if (!formatted || !undelegate || !params || !batch) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
+    params.length === 1
+      ? undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error)
+      : batch(params.map((param) => undelegate(param))).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [api, batch, formatted, params, undelegate]);
 
   const removeDelegate = useCallback(async () => {
     try {
