@@ -131,19 +131,6 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
     conviction === undefined && setConviction(classicDelegateInformation.delegateConviction);
   }, [classicDelegateInformation, conviction, delegatedTracks]);
 
-  useEffect(() => {
-    if (!formatted || !undelegate) {
-      return;
-    }
-
-    if (!api?.call?.transactionPaymentApi) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, undelegate]);
-
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -193,6 +180,23 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
 
     return transactions;
   }, [acceptableConviction, batch, compareSelectedTracks, conviction, delegate, delegateAmountBN, delegateeAddress, newConviction, newDelegateAmountBN, newSelectedTracks, selectedTracks, undelegate]);
+
+  useEffect(() => {
+    if (!formatted || !undelegate || !txList || !batch) {
+      setEstimatedFee(undefined);
+
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
+    txList.length === 1
+      ? txList[0].paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error)
+      : batch(txList).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [api, batch, formatted, txList, undelegate]);
 
   const modifyDelegate = useCallback(async () => {
     try {
