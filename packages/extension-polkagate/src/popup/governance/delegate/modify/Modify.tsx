@@ -9,6 +9,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { Chain } from '@polkadot/extension-chains/types';
 import { BN } from '@polkadot/util';
 
 import { Convictions, From, TwoButtons } from '../../../../components';
@@ -44,9 +45,10 @@ interface Props {
   delegatePower: number;
   delegateAmount: string;
   nextButtonDisabled: boolean;
+  chain: Chain | null | undefined;
 }
 
-export default function Modify({ accountLocks, address, api, balances, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
+export default function Modify ({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onValueChange = useCallback((value: string) => {
@@ -89,6 +91,7 @@ export default function Modify({ accountLocks, address, api, balances, convictio
   return (
     <>
       <From
+        _chain={chain}
         api={api}
         formatted={delegateeAddress}
         style={{ py: '10px' }}
@@ -135,12 +138,12 @@ export default function Modify({ accountLocks, address, api, balances, convictio
       />
       <Grid container item sx={{ '> div': { ml: 0, width: '100%' } }}>
         <TwoButtons
+          disabled={nextButtonDisabled}
           mt='15px'
           onPrimaryClick={goReviewModify}
           onSecondaryClick={backToPreview}
           primaryBtnText={t<string>('Next')}
           secondaryBtnText={t<string>('Back')}
-          disabled={nextButtonDisabled}
         />
       </Grid>
     </>
