@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -15,13 +15,14 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useApi, useFormatted, useTracks, useTranslation } from '../../../hooks';
+import { useAccountLocks, useApi, useBalances, useFormatted, useTracks, useTranslation } from '../../../hooks';
 import { TxInfo } from '../../../util/types';
 import { DraggableModal } from '../components/DraggableModal';
 import WaitScreen from '../partials/WaitScreen';
 import { DelegationInfo } from '../utils/types';
 import { getMyDelegationInfo } from '../utils/util';
 import About from './About';
+import { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
 import ChooseDelegator from './ChooseDelegator';
 import Confirmation from './Confirmation';
 import DelegateVote from './Delegate';
@@ -74,6 +75,9 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const api = useApi(address);
   const { tracks } = useTracks(address);
   const formatted = useFormatted(address);
+  const balances = useBalances(address, undefined, undefined, true);
+  const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
+  const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [step, setStep] = useState<number>(showDelegationNote ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
@@ -197,10 +201,15 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
               {step === STEPS.REMOVE &&
                 t<string>('Remove Delegate')
               }
+              {step === STEPS.MODIFY &&
+                t<string>('Modify Delegate')
+              }
               {step === STEPS.WAIT_SCREEN
                 ? status === 'Delegate'
                   ? t<string>('Delegating')
-                  : t<string>('Removing Delegation')
+                  : status === 'Modify'
+                    ? t<string>('Modifying Delegation')
+                    : t<string>('Removing Delegation')
                 : undefined
               }
               {step === STEPS.CONFIRM
@@ -208,9 +217,13 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
                   ? txInfo?.success
                     ? t<string>('Delegation Completed')
                     : t<string>('Delegation Failed')
-                  : txInfo?.success
-                    ? t<string>('Delegations Removed')
-                    : t<string>('Removing Delegations Failed')
+                  : status === 'Modify'
+                    ? txInfo?.success
+                      ? t<string>('Delegations Modified')
+                      : t<string>('Modifying Delegations Failed')
+                    : txInfo?.success
+                      ? t<string>('Delegations Removed')
+                      : t<string>('Removing Delegations Failed')
                 : undefined
               }
               {step === STEPS.PROXY &&
@@ -235,10 +248,13 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         }
         {step === STEPS.INDEX &&
           <DelegateVote
+            accountLocks={accountLocks}
             address={address}
             api={api}
+            balances={balances}
             delegateInformation={delegateInformation}
             estimatedFee={estimatedFee}
+            lockedAmount={lockedAmount}
             setDelegateInformation={setDelegateInformation}
             setStatus={setStatus}
             setStep={setStep}
@@ -251,11 +267,15 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             setStep={setStep}
           />
         }
-        {(step === STEPS.PREVIEW || step === STEPS.REMOVE || step === STEPS.PROXY) &&
+        {(step === STEPS.PREVIEW || step === STEPS.REMOVE || step === STEPS.MODIFY || step === STEPS.PROXY) &&
           <DelegationDetails
+            accountLocks={accountLocks}
             address={address}
+            balances={balances}
             filteredDelegation={filteredDelegation}
             formatted={String(formatted)}
+            lockedAmount={lockedAmount}
+            setDelegateInformation={setDelegateInformation}
             setSelectedTracksLength={setSelectedTracksLength}
             setStatus={setStatus}
             setStep={setStep}
