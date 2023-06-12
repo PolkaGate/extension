@@ -87,9 +87,14 @@ export default function Governance(): React.ReactElement {
     if (!api.consts.referenda || !api.query.referenda) {
       console.log('OpenGov is not supported on this chain');
       setNotSupportedChain(true);
-
+      // to reset refs on non supported chain, or when chain has changed
+      pageTrackRef.current.page = 1;
+      pageTrackRef.current.listFinished = false;
+      
       return;
     }
+
+    setNotSupportedChain(false);
 
     api.query.referenda.referendumCount().then((count) => {
       referendumCount.referenda = count?.toNumber();
@@ -101,7 +106,7 @@ export default function Governance(): React.ReactElement {
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api]);
+  }, [api, chainName]);
 
   const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
     history.push({
