@@ -116,6 +116,17 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
         : 0.1
       : undefined, [delegateeIndex, filteredDelegation]);
 
+  const otherDelegatedTracks = useMemo(() => {
+    if (!filteredDelegation || filteredDelegation.length === 1) {
+      return;
+    }
+
+    return filteredDelegation.flatMap((delegation, index) =>
+      index !== delegateeIndex
+        ? delegation.info.map((delegateInfo) => delegateInfo.track)
+        : []);
+  }, [delegateeIndex, filteredDelegation]);
+
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='10px auto 0'>
       <Grid alignItems='center' container item onClick={onPrevious} sx={{ cursor: 'pointer' }} xs={1}>
@@ -259,6 +270,7 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           lockedAmount={lockedAmount}
           mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
           modalHeight={modalHeight}
+          otherDelegatedTracks={otherDelegatedTracks}
           setDelegateInformation={setDelegateInformation}
           setSelectedTracksLength={setSelectedTracksLength}
           setStep={setStep}

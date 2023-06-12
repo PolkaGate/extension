@@ -46,9 +46,10 @@ interface Props {
   balances: BalancesInfo | undefined;
   accountLocks: Lock[] | null | undefined;
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
+  otherDelegatedTracks: BN[] | undefined;
 }
 
-export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, modalHeight, setDelegateInformation, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, modalHeight, otherDelegatedTracks, setDelegateInformation, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -268,6 +269,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               estimatedFee={estimatedFee}
               lockedAmount={lockedAmount}
               nextButtonDisabled={nextButtonDisabled}
+              otherDelegatedTracks={otherDelegatedTracks}
               selectedTracks={newSelectedTracks}
               setConviction={setNewConviction}
               setDelegateAmount={setNewDelegateAmount}

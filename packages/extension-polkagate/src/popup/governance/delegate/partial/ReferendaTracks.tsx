@@ -23,6 +23,7 @@ interface Props {
     currentBlockNumber: number | undefined;
     accountLocks: Lock[] | null | undefined;
   };
+  filterDelegatedTracks?: BN[] | undefined;
 }
 
 export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skeletonsNum: number, withCheckBox: boolean }) => {
@@ -47,7 +48,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks({ filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
+export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -81,27 +82,29 @@ export default function ReferendaTracks({ filterLockedTracks, maximumHeight = '1
     return undefined;
   }, [filterLockedTracks?.accountLocks, tracks]);
 
-  const availableToSelect: BN[] = useMemo(() => {
+  const availableToSelect = useMemo(() => {
     if (!tracks || tracks.length === 0) {
       return [];
     }
 
+    let toSelect = [];
+
     if (filterLockedTracks && existingVotes) {
-      // eslint-disable-next-line no-prototype-builtins
-      const availableTracks = tracks.filter((track) => !existingVotes?.hasOwnProperty(track[0]));
-      const toSelect = availableTracks.map((track) => track[0]);
+      const availableTracks = tracks.filter((track) => !(track[0] in existingVotes));
 
-      return toSelect;
+      toSelect = availableTracks.map((track) => track[0]);
+    } else if (!filterLockedTracks) {
+      toSelect = selectedTracks.length !== tracks.length ? tracks.map((value) => value[0]) : [];
+    } else {
+      toSelect = tracks.map((track) => track[0]);
     }
 
-    if (!filterLockedTracks) {
-      const toSelect = selectedTracks.length !== tracks.length ? tracks.map((value) => value[0]) : [];
-
-      return toSelect;
+    if (filterDelegatedTracks) {
+      toSelect = toSelect.filter((track) => !filterDelegatedTracks.some((delegatedTrack) => delegatedTrack.eq(track)));
     }
 
-    return tracks.map((track) => track[0]);
-  }, [existingVotes, filterLockedTracks, selectedTracks.length, tracks]);
+    return toSelect;
+  }, [existingVotes, filterLockedTracks, filterDelegatedTracks, selectedTracks.length, tracks]);
 
   const allSelected = useMemo(() => {
     const sortFunction = (valueOne: BN, valueTwo: BN) => valueOne.gt(valueTwo) ? -1 : 1;
@@ -158,14 +161,15 @@ export default function ReferendaTracks({ filterLockedTracks, maximumHeight = '1
             const trackVotes: number = existingVotes?.hasOwnProperty(value[0]) ? existingVotes[value[0]] : 0;
             const lockedTrack = filterLockedTracks?.accountLocks?.find((lock) => lock.classId.eq(value[0]));
             const trackLockExpired: boolean | undefined = filterLockedTracks && lockedTrack && !!filterLockedTracks.currentBlockNumber && getLockedUntil(lockedTrack.endBlock, filterLockedTracks.currentBlockNumber) === 'finished';
+            const filterTrack = filterDelegatedTracks && filterDelegatedTracks.some((filterT) => filterT.eq(value[0]));
 
             return (
               <ListItem
                 disablePadding
                 key={index}
-                sx={{ bgcolor: trackLockExpired ? '#ffb80080' : trackVotes ? '#E8E0E5' : 'inherit', height: '25px' }}
+                sx={{ bgcolor: trackLockExpired ? '#ffb80080' : trackVotes || filterTrack ? '#E8E0E5' : 'inherit', height: '25px' }}
               >
-                <ListItemButton dense onClick={handleToggle(value[0], !!trackVotes)} role={undefined} sx={{ py: 0 }}>
+                <ListItemButton dense onClick={handleToggle(value[0], !!trackVotes || !!filterTrack)} role={undefined} sx={{ py: 0 }}>
                   <ListItemText
                     primary={
                       <>
@@ -179,9 +183,13 @@ export default function ReferendaTracks({ filterLockedTracks, maximumHeight = '1
                                 {`${toTitleCase(value[1].name as unknown as string) as string}`}
                               </Typography>
                             </Infotip2>
-                            : <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
-                              {`${toTitleCase(value[1].name as unknown as string) as string}`}
-                            </Typography>
+                            : filterTrack
+                              ? <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
+                                {`${toTitleCase(value[1].name as unknown as string) as string} (delegated to another account)`}
+                              </Typography>
+                              : <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
+                                {`${toTitleCase(value[1].name as unknown as string) as string}`}
+                              </Typography>
                         }
 
                       </>
@@ -190,8 +198,8 @@ export default function ReferendaTracks({ filterLockedTracks, maximumHeight = '1
                   <ListItemIcon sx={{ minWidth: '20px' }}>
                     <Checkbox2
                       checked={checked}
-                      disabled={!!trackVotes}
-                      iconStyle={{ backgroundColor: !!trackVotes || trackLockExpired ? '#747474' : 'inherit', borderRadius: '5px', transform: 'scale(1.13)' }}
+                      disabled={!!trackVotes || filterTrack}
+                      iconStyle={{ backgroundColor: !!trackVotes || trackLockExpired || filterTrack ? '#747474' : 'inherit', borderRadius: '5px', transform: 'scale(1.13)' }}
                       label={''}
                     />
                   </ListItemIcon>
