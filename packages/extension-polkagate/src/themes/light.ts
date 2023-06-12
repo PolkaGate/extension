@@ -34,9 +34,9 @@ export const lightTheme: ThemeOptions = {
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
-    label: { main: '#454545' },
+    label: { main: '#FFFFFF' },
     background: { default: '#F1F1F1', paper: '#fff' },
-    text: { primary: '#4B2338', secondary: '#FFFFFF', disabled: '#747474' },
+    text: { primary: '#63364D', secondary: '#FFFFFF', disabled: '#747474' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
     success: { main: '#1F7720' },
     warning: { main: '#FF002B' }

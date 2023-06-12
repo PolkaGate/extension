@@ -34,7 +34,7 @@ export const darkTheme: ThemeOptions = {
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
-    label: { main: '#454545' },
+    label: { main: '#63364D' },
     background: { default: '#171717', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },

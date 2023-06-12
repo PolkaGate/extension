@@ -109,7 +109,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   }, []);
 
   const AmountVal = ({ label, value }: { label: string, value: BN | undefined }) => (
-    <Grid container item spacing={1} width='225px'>
+    <Grid alignItems='baseline' container item spacing={1} width='225px'>
       <Grid item>
         <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
           {label}
@@ -138,7 +138,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
           value={getVoteCapital(standard)}
         />
         {standard && standard?.lockPeriod !== null &&
-          <Grid container item spacing={1} width='180px'>
+          <Grid alignItems='baseline' container item spacing={1} width='180px'>
             <Grid item>
               <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
                 {t('Conviction')}

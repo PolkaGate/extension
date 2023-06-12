@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Typography } from '@mui/material';
+import { Grid, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { Infotip2 } from '../../../../components';
@@ -17,6 +17,7 @@ interface Props {
 
 export default function PayDecisionDeposit({ setOpenDecisionDeposit, style }: Props): React.ReactElement | null {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onDecisionDeposit = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     setOpenDecisionDeposit(true);
@@ -25,7 +26,7 @@ export default function PayDecisionDeposit({ setOpenDecisionDeposit, style }: Pr
   return (
     <Grid container item sx={{ pb: '10px', pt: '20px', ...style }}>
       <Infotip2 iconLeft={2} iconTop={3} showQuestionMark text={t('A decision deposit is required to advance to the deciding state, and it is refundable once the referendum concludes.')}>
-        <Typography onClick={onDecisionDeposit} sx={{ color: 'secondary.main', cursor: 'pointer', textDecorationLine: 'underline' }}>
+        <Typography onClick={onDecisionDeposit} sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline' }}>
           {t('Pay Decision Deposit')}
         </Typography>
       </Infotip2>

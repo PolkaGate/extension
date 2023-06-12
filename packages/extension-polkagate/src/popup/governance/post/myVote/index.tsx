@@ -40,7 +40,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
         </Grid>
         <Grid item>
           {voteMethod &&
-            <Typography sx={{ color: 'text.disabled', fontSize: '16px', fontWeight: 400 }}>
+            <Typography sx={{ fontSize: '16px', fontWeight: 400, pl: '3px' }}>
               ({voteMethod})
             </Typography>
           }
