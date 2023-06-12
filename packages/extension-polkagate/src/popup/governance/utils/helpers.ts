@@ -165,7 +165,7 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
 }
 
 export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
-  console.log(`Getting All Votes on ${chainName} for refIndex ${refIndex} from PA ...`);
+  console.log(`Getting All Votes on ${chainName} for refIndex: ${refIndex} from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }

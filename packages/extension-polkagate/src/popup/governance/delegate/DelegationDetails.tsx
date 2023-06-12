@@ -20,8 +20,8 @@ import { Lock } from '../../../hooks/useAccountLocks';
 import { BalancesInfo, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import ReferendaTable from './partial/ReferendaTable';
 import ModifyDelegate from './modify/ModifyDelegate';
+import ReferendaTable from './partial/ReferendaTable';
 import RemoveDelegate from './RemoveDelegate';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 

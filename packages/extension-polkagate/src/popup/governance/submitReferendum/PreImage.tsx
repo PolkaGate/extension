@@ -127,8 +127,8 @@ export function PreImage({ address, hash, key }: Props): React.ReactElement<Prop
     return result;
   }, []);
 
-  console.log('preimage:', preImage);
-  console.log('params:', params);
+  // console.log('preimage:', preImage);
+  // console.log('params:', params);
 
   const call = useMemo(() =>
     preImage?.proposal && preImage.proposal.callIndex
