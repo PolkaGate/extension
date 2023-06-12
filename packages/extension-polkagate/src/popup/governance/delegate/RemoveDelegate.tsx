@@ -69,19 +69,6 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const undelegate = api && api.tx.convictionVoting.undelegate;
   const batch = api && api.tx.utility.batchAll;
 
-  useEffect(() => {
-    if (!formatted || !undelegate) {
-      return;
-    }
-
-    if (!api?.call?.transactionPaymentApi) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, undelegate]);
-
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
@@ -107,6 +94,21 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
     return delegatedTracks;
   }, [delegatedTracks]);
+
+  useEffect(() => {
+    if (!formatted || !undelegate || !params || !batch) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
+    params.length === 1
+      ? undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error)
+      : batch(params.map((param) => undelegate(param))).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [api, batch, formatted, params, undelegate]);
 
   const removeDelegate = useCallback(async () => {
     try {
@@ -152,7 +154,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, batch, chain, decimal, delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, setTxInfo, undelegate]);
+  }, [api, batch, chain, decimal, delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setSelectedTracksLength, setStep, setTxInfo, undelegate]);
 
   const backToPreview = useCallback(() => setStep(STEPS.PREVIEW), [setStep]);
 
@@ -165,7 +167,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           }
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Account Holder')}:
+              {t<string>('Account Holder')}
             </Typography>
             <Identity
               address={address}
@@ -185,7 +187,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegatee')}:
+              {t<string>('Delegatee')}
             </Typography>
             <Identity
               api={api}

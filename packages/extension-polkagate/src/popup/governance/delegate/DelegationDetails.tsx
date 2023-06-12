@@ -16,10 +16,12 @@ import { BN } from '@polkadot/util';
 
 import { Identity, Motion, TwoButtons } from '../../../components';
 import { useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
-import { TxInfo } from '../../../util/types';
+import { Lock } from '../../../hooks/useAccountLocks';
+import { BalancesInfo, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ReferendaTable from './partial/ReferendaTable';
+import ModifyDelegate from './modify/ModifyDelegate';
 import RemoveDelegate from './RemoveDelegate';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 
@@ -32,6 +34,10 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   setStatus: React.Dispatch<React.SetStateAction<'Delegate' | 'Remove' | 'Modify'>>;
   setSelectedTracksLength: React.Dispatch<React.SetStateAction<number | undefined>>;
+  lockedAmount: BN | undefined;
+  balances: BalancesInfo | undefined;
+  accountLocks: Lock[] | null | undefined;
+  setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
 }
 
 interface ArrowsProps {
@@ -39,7 +45,7 @@ interface ArrowsProps {
   onPrevious: () => void;
 }
 
-export default function DelegationDetails({ address, filteredDelegation, formatted, setStep, setStatus, setTxInfo, step, setSelectedTracksLength }: Props): React.ReactElement<Props> {
+export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, setDelegateInformation, setSelectedTracksLength, setStatus, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
@@ -110,6 +116,17 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
         : 0.1
       : undefined, [delegateeIndex, filteredDelegation]);
 
+  const otherDelegatedTracks = useMemo(() => {
+    if (!filteredDelegation || filteredDelegation.length === 1) {
+      return;
+    }
+
+    return filteredDelegation.flatMap((delegation, index) =>
+      index !== delegateeIndex
+        ? delegation.info.map((delegateInfo) => delegateInfo.track)
+        : []);
+  }, [delegateeIndex, filteredDelegation]);
+
   const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
     <Grid container justifyContent='space-between' m='10px auto 0'>
       <Grid alignItems='center' container item onClick={onPrevious} sx={{ cursor: 'pointer' }} xs={1}>
@@ -118,7 +135,7 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
       <Grid alignItems='center' container item justifyContent='center' xs={10}>
         <Grid alignItems='center' container direction='column' justifyContent='center' width='90%'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Delegate To')}:
+            {t<string>('Delegatee')}
           </Typography>
           <Identity
             formatted={filteredDelegation[delegateeIndex].delegatee}
@@ -160,7 +177,7 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
         <Grid container ref={ref}>
           <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Delegate from')}:
+              {t<string>('Delegate from')}
             </Typography>
             <Identity
               address={address}
@@ -177,7 +194,7 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
               ? <Arrows onNext={nextDelegatee} onPrevious={previousDelegatee} />
               : <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '10px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Delegatee')}:
+                  {t<string>('Delegatee')}
                 </Typography>
                 <Identity
                   api={api}
@@ -237,10 +254,28 @@ export default function DelegationDetails({ address, filteredDelegation, formatt
           formatted={formatted}
           mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
           modalHeight={modalHeight}
+          setSelectedTracksLength={setSelectedTracksLength}
           setStep={setStep}
           setTxInfo={setTxInfo}
           step={step}
+        />
+      }
+      {(step === STEPS.MODIFY || step === STEPS.PROXY) && filteredDelegation && variousDelegation !== undefined &&
+        <ModifyDelegate
+          accountLocks={accountLocks}
+          address={address}
+          balances={balances}
+          classicDelegateInformation={variousDelegation ? undefined : classicDelegation}
+          formatted={formatted}
+          lockedAmount={lockedAmount}
+          mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
+          modalHeight={modalHeight}
+          otherDelegatedTracks={otherDelegatedTracks}
+          setDelegateInformation={setDelegateInformation}
           setSelectedTracksLength={setSelectedTracksLength}
+          setStep={setStep}
+          setTxInfo={setTxInfo}
+          step={step}
         />
       }
     </Motion>

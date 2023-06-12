@@ -16,14 +16,14 @@ import { getLockedUntil, toTitleCase } from '../../utils/util';
 
 interface Props {
   selectedTracks: BN[];
-  unvotedTracks: Track[] | undefined;
+  tracks: Track[] | undefined;
   setSelectedTracks: React.Dispatch<React.SetStateAction<BN[]>>;
   maximumHeight?: string;
   filterLockedTracks?: {
-    lockTracks: object | null | undefined;
     currentBlockNumber: number | undefined;
     accountLocks: Lock[] | null | undefined;
   };
+  filterDelegatedTracks?: BN[] | undefined;
 }
 
 export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skeletonsNum: number, withCheckBox: boolean }) => {
@@ -48,37 +48,77 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, unvotedTracks }: Props): React.ReactElement {
+export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const allSelected: BN[] = useMemo(() => {
-    if (!unvotedTracks || unvotedTracks.length === 0) {
+  const existingVotes = useMemo(() => {
+    if (tracks && filterLockedTracks?.accountLocks !== undefined) {
+      if (filterLockedTracks.accountLocks === null) {
+        return null;
+      }
+
+      const result = {};
+
+      filterLockedTracks.accountLocks.forEach((lock) => {
+        if (!result[lock.classId]) {
+          result[lock.classId] = 1;
+        } else {
+          result[lock.classId]++;
+        }
+      });
+
+      // const replacedKey = Object.keys(result).reduce((acc, key) => {
+      //   const newKey = tracks.find((value) => String(value[0]) === key)?.[1].name; // Convert numeric key to track names
+
+      //   acc[newKey] = result[key];
+
+      //   return acc;
+      // }, {});
+
+      return result;
+    }
+
+    return undefined;
+  }, [filterLockedTracks?.accountLocks, tracks]);
+
+  const availableToSelect = useMemo(() => {
+    if (!tracks || tracks.length === 0) {
       return [];
     }
 
-    if (filterLockedTracks && filterLockedTracks.lockTracks) {
-      // eslint-disable-next-line no-prototype-builtins
-      const availableTracks = unvotedTracks.filter((track) => !filterLockedTracks.lockTracks?.hasOwnProperty(track[0]));
-      const toSelect = availableTracks.map((track) => track[0]);
+    let toSelect = [];
 
-      return toSelect;
+    if (filterLockedTracks && existingVotes) {
+      const availableTracks = tracks.filter((track) => !(track[0] in existingVotes));
+
+      toSelect = availableTracks.map((track) => track[0]);
+    } else if (!filterLockedTracks) {
+      toSelect = selectedTracks.length !== tracks.length ? tracks.map((value) => value[0]) : [];
+    } else {
+      toSelect = tracks.map((track) => track[0]);
     }
 
-    if (!filterLockedTracks) {
-      const toSelect = selectedTracks.length !== unvotedTracks.length ? unvotedTracks.map((value) => value[0]) : [];
-
-      return toSelect;
+    if (filterDelegatedTracks) {
+      toSelect = toSelect.filter((track) => !filterDelegatedTracks.some((delegatedTrack) => delegatedTrack.eq(track)));
     }
 
-    return [];
-  }, [filterLockedTracks, selectedTracks.length, unvotedTracks]);
+    return toSelect;
+  }, [existingVotes, filterLockedTracks, filterDelegatedTracks, selectedTracks.length, tracks]);
+
+  const allSelected = useMemo(() => {
+    const sortFunction = (valueOne: BN, valueTwo: BN) => valueOne.gt(valueTwo) ? -1 : 1;
+    const arrOne = [...availableToSelect];
+    const arrTwo = [...selectedTracks];
+
+    return JSON.stringify(arrOne.sort(sortFunction)) === JSON.stringify(arrTwo.sort(sortFunction));
+  }, [availableToSelect, selectedTracks]);
 
   const onSelectAll = useCallback(() => {
-    const toCheck = selectedTracks.length === allSelected.length ? [] : allSelected;
+    const toCheck = allSelected ? [] : availableToSelect;
 
     setSelectedTracks(toCheck);
-  }, [allSelected, selectedTracks.length, setSelectedTracks]);
+  }, [allSelected, availableToSelect, setSelectedTracks]);
 
   const handleToggle = (value: BN, nullifier: boolean) => () => {
     if (nullifier) {
@@ -109,26 +149,27 @@ export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '
         </Grid>
         <Grid item onClick={onSelectAll}>
           <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline' }}>
-            {selectedTracks.length === allSelected.length ? t('Deselect All') : t('Select All')}
+            {allSelected ? t('Deselect All') : t('Select All')}
           </Typography>
         </Grid>
       </Grid>
       <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', maxHeight: maximumHeight, maxWidth: '100%', minHeight: '175px', overflowY: 'scroll', width: '100%' }}>
-        {unvotedTracks?.length
-          ? unvotedTracks.map((value, index) => {
+        {tracks?.length
+          ? tracks.map((value, index) => {
             const checked = selectedTracks.length !== 0 && !!selectedTracks.find((track) => track.eq(value[0]));
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-prototype-builtins
-            const trackVotes: number = filterLockedTracks?.lockTracks?.hasOwnProperty(value[0]) ? filterLockedTracks.lockTracks[value[0]] : 0;
+            const trackVotes: number = existingVotes?.hasOwnProperty(value[0]) ? existingVotes[value[0]] : 0;
             const lockedTrack = filterLockedTracks?.accountLocks?.find((lock) => lock.classId.eq(value[0]));
             const trackLockExpired: boolean | undefined = filterLockedTracks && lockedTrack && !!filterLockedTracks.currentBlockNumber && getLockedUntil(lockedTrack.endBlock, filterLockedTracks.currentBlockNumber) === 'finished';
+            const filterTrack = filterDelegatedTracks && filterDelegatedTracks.some((filterT) => filterT.eq(value[0]));
 
             return (
               <ListItem
                 disablePadding
                 key={index}
-                sx={{ bgcolor: trackLockExpired ? '#ffb80080' : trackVotes ? '#E8E0E5' : 'inherit', height: '25px' }}
+                sx={{ bgcolor: trackLockExpired ? '#ffb80080' : trackVotes || filterTrack ? '#E8E0E5' : 'inherit', height: '25px' }}
               >
-                <ListItemButton dense onClick={handleToggle(value[0], !!trackVotes)} role={undefined} sx={{ py: 0 }}>
+                <ListItemButton dense onClick={handleToggle(value[0], !!trackVotes || !!filterTrack)} role={undefined} sx={{ py: 0 }}>
                   <ListItemText
                     primary={
                       <>
@@ -142,9 +183,13 @@ export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '
                                 {`${toTitleCase(value[1].name as unknown as string) as string}`}
                               </Typography>
                             </Infotip2>
-                            : <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
-                              {`${toTitleCase(value[1].name as unknown as string) as string}`}
-                            </Typography>
+                            : filterTrack
+                              ? <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
+                                {`${toTitleCase(value[1].name as unknown as string) as string} (delegated to another account)`}
+                              </Typography>
+                              : <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
+                                {`${toTitleCase(value[1].name as unknown as string) as string}`}
+                              </Typography>
                         }
 
                       </>
@@ -153,8 +198,8 @@ export default function ReferendaTracks ({ filterLockedTracks, maximumHeight = '
                   <ListItemIcon sx={{ minWidth: '20px' }}>
                     <Checkbox2
                       checked={checked}
-                      disabled={!!trackVotes}
-                      iconStyle={{ backgroundColor: !!trackVotes || trackLockExpired ? '#747474' : 'inherit', borderRadius: '5px', transform: 'scale(1.13)' }}
+                      disabled={!!trackVotes || filterTrack}
+                      iconStyle={{ backgroundColor: !!trackVotes || trackLockExpired || filterTrack ? '#747474' : 'inherit', borderRadius: '5px', transform: 'scale(1.13)' }}
                       label={''}
                     />
                   </ListItemIcon>

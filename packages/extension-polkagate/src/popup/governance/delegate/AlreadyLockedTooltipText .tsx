@@ -11,6 +11,7 @@ import React from 'react';
 import { BN, BN_MAX_INTEGER } from '@polkadot/util';
 
 import { useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { Lock } from '../../../hooks/useAccountLocks';
 import { amountToHuman, remainingTime } from '../../../util/utils';
 
 interface Props {
