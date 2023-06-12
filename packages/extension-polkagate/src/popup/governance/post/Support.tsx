@@ -45,9 +45,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
     }
   }, [currentBlock, referendum, threshold, track]);
 
-  const supportPercent = useMemo(() =>
-    totalIssuance && inactiveIssuance && referendum && (Number(referendum.supportAmount) * 100 / Number(totalIssuance.sub(inactiveIssuance)))
-    , [inactiveIssuance, referendum, totalIssuance]);
+  const supportPercent = useMemo(() => totalIssuance && inactiveIssuance && referendum?.supportAmount && (Number(referendum.supportAmount) * 100 / Number(totalIssuance.sub(inactiveIssuance))), [inactiveIssuance, referendum, totalIssuance]);
 
   useEffect(() => {
     if (!api) {
@@ -58,8 +56,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
     api.query.balances.inactiveIssuance().then(setInactiveIssuance).catch(console.error);
   }, [api]);
 
-  const Tally = ({ amount, color, percent, text, total }:
-    { text: string, percent: number | undefined, color: string, amount: string | undefined, total: BN | undefined }) => (
+  const Tally = ({ amount, color, percent, text, total }: { text: string, percent: number | undefined, color: string, amount: string | undefined, total: BN | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
       <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '100%' }}>
         {text}
