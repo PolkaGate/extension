@@ -43,6 +43,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const [showDelegatorsOf, setShowDelegators] = useState<VoteType | AbstainVoteType | null>();
   const [filteredVotes, setFilteredVotes] = useState<FilteredVotes | null>();
   const [numberOfFetchedDelagatees, setNumberOfFetchedDelagatees] = useState<number>(0);
+  const [standardPage, setStandardPage] = useState<number>(1);
 
   // useEffect(() => {
   //   api && refIndex && trackId !== undefined &&
@@ -126,6 +127,8 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           open={open}
           setFilteredVotes={setFilteredVotes}
           setShowDelegators={setShowDelegators}
+          page={standardPage}
+          setPage={setStandardPage}
         />
         : <Delegators
           address={address}

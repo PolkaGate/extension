@@ -11,11 +11,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, LinearProgress, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Identity, Infotip2, InputFilter, Progress, ShowValue } from '../../../../components';
-import { useApi, useChain, useTranslation } from '../../../../hooks';
+import { Identity, Infotip2, InputFilter, Progress, ShowBalance, ShowValue } from '../../../../components';
+import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
-import Amount from './Amount';
+import Amount, { getVoteValue } from './Amount';
 import { VOTE_PER_PAGE } from '.';
 
 interface Props {
@@ -26,7 +26,9 @@ interface Props {
   setShowDelegators: React.Dispatch<React.SetStateAction<VoteType | AbstainVoteType | null | undefined>>;
   setFilteredVotes: React.Dispatch<React.SetStateAction<FilteredVotes | null | undefined>>;
   handleClose: () => void;
-  numberOfFetchedDelagatees: number
+  numberOfFetchedDelagatees: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  page: number;
 }
 
 export const VOTE_TYPE_MAP = {
@@ -40,15 +42,16 @@ function noop() {
   // This function does nothing.
 }
 
-export default function Standards({ address, allVotes, filteredVotes, handleClose, numberOfFetchedDelagatees, open, setFilteredVotes, setShowDelegators }: Props): React.ReactElement {
+export default function Standards({ address, allVotes, filteredVotes, handleClose, numberOfFetchedDelagatees, open, page, setFilteredVotes, setPage, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
   const api = useApi(address);
 
   const [tabIndex, setTabIndex] = useState<number>(1);
   const [votesToShow, setVotesToShow] = useState<VoteType[] | AbstainVoteType[]>();
-  const [page, setPage] = useState<number>(1);
   const [paginationCount, setPaginationCount] = useState<number>(10);
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
   const [isSearchBarOpen, setSearchBarOpen] = useState<boolean>(false);
@@ -205,19 +208,27 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '510px' }}>
-          <Grid container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', pb: '5px', fontSize: '20px', fontWeight: 400 }}>
-            <Grid item width='40%'>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '530px' }}>
+          <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '19px', fontWeight: 400 }}>
+            <Grid item width='35%'>
               {t('Voter')}
             </Grid>
-            <Grid item width='30%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
-              {t('Votes')}
+            <Grid container item sx={{ borderLeft: 1, borderRight: 1, borderColor: 'secondary.contrastText' }} width='35%'>
+              <Grid item xs={12}>
+                {t('Standard Vote')}
+              </Grid>
+              <Grid container item justifyContent='space-around' xs={12}>
+                <Grid item>
+                  <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+                  {t('Votes')}
+                </Grid>
+                <Grid item>
+                  {t('Conviction')}
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item width='20%'>
-              <Infotip2 iconTop={7} showQuestionMark text={t('The number of delegators who have delegated their votes to this voter.')}>
-                {t('Delegators')}
-              </Infotip2>
+            <Grid item width='27%'>
+              {t('Delegated Vote')}
             </Grid>
           </Grid>
           {allVotes &&
@@ -230,11 +241,12 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
           }
           {votesToShow?.map((vote, index) => {
             const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
-            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee?.toString() === vote.voter)?.length || 0) as number;
+            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee?.toString() === vote.voter)?.length) as number;
+            const totalDelegatedValue = vote.votePower && vote.votePower.sub(getVoteValue(vote));
 
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
-                <Grid container item justifyContent='flex-start' width='40%'>
+                <Grid container item justifyContent='flex-start' width='35%'>
                   <Identity
                     api={api}
                     chain={chain}
@@ -245,28 +257,38 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                     style={{
                       fontSize: '16px',
                       fontWeight: 400,
-                      maxWidth: '100%',
+                      maxWidth: '99%',
                       minWidth: '35%',
                       width: 'fit-content'
                     }}
                   />
                 </Grid>
-                <Grid container item justifyContent='flex-end' width='20%'>
-                  <Amount
-                    address={address}
-                    allVotes={allVotes}
-                    vote={vote}
-                    voteType={tabIndex}
-                  />
+                <Grid alignItems='center' container item justifyContent='space-around' sx={{ height: '43px', borderLeft: 1, borderRight: 1, borderColor: 'secondary.contrastText' }} width='35%'>
+                  <Grid item>
+                    <Amount
+                      address={address}
+                      allVotes={allVotes}
+                      vote={vote}
+                      voteType={tabIndex}
+                    />
+                  </Grid>
+                  {vote?.lockPeriod !== null &&
+                    <Grid item>
+                      {`${vote.lockPeriod ? vote.lockPeriod : 0.1}x`}
+                    </Grid>
+                  }
                 </Grid>
-                <Grid item textAlign='center' width='20%'>
-                  <ShowValue value={delegatorsCount} />
+                <Grid container item justifyContent='center' width='21%'>{
+                  delegatorsCount === 0
+                    ? '-'
+                    : <ShowBalance balance={totalDelegatedValue} decimal={decimal} decimalPoint={2} token={token} />
+                }
                 </Grid>
-                <Grid alignItems='center' container justifyContent='flex-end' width='10%'>
+                <Grid alignItems='center' container justifyContent='flex-end' width='9%'>
                   <Grid item sx={{ textAlign: 'right' }}>
                     <Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '36px', mr: '3px', width: '1px' }} />
                   </Grid>
-                  <Grid item sx={{ cursor: 'pointer' }} onClick={delegatorsCount ? () => openDelegations(vote) : noop}>
+                  <Grid item onClick={delegatorsCount ? () => openDelegations(vote) : noop} sx={{ cursor: 'pointer' }}>
                     <ChevronRightIcon sx={{ color: `${delegatorsCount ? theme.palette.primary.main : theme.palette.action.disabledBackground}`, fontSize: '37px' }} />
                   </Grid>
                 </Grid>
