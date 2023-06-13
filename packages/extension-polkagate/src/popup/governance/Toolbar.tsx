@@ -134,7 +134,7 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
               >
                 {t('Delegate Vote')}
               </Button>
-              <Button
+              {/* <Button
                 disabled={!api}
                 onClick={handleOpenSubmitReferendum}
                 sx={{
@@ -155,7 +155,7 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
                 variant='contained'
               >
                 {t('Submit Referendum')}
-              </Button>
+              </Button> */}
             </Grid>
           </Grid>
         </Container>
