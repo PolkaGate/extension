@@ -24,6 +24,7 @@ import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../components/SelectProxyModal';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
+import TracksList from './partial/tracksList';
 import { DelegateInformation, STEPS } from '.';
 
 interface Props {
@@ -176,9 +177,12 @@ export default function Review({ address, delegateInformation, estimatedFee, for
             </Typography>
           </DisplayValue>
           <DisplayValue title={t<string>('Number of Referenda Categories')}>
-            <Typography fontSize='28px' fontWeight={400}>
-              {`${delegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
-            </Typography>
+            <Grid container direction='row'>
+              <Typography fontSize='28px' fontWeight={400} width='fit-content'>
+                {`${delegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
+              </Typography>
+              <TracksList selectedTracks={delegateInformation.delegatedTracks} tracks={tracks} />
+            </Grid>
           </DisplayValue>
           <DisplayValue title={t<string>('Fee')}>
             <ShowValue height={20} value={estimatedFee?.toHuman()} />

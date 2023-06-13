@@ -22,6 +22,7 @@ import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ModifyDelegate from './modify/ModifyDelegate';
 import ReferendaTable from './partial/ReferendaTable';
+import TracksList from './partial/tracksList';
 import RemoveDelegate from './RemoveDelegate';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 
@@ -60,7 +61,6 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
   useEffect(() => {
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
-      console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)
     }
   }, []);
 
@@ -230,9 +230,12 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
-                <Typography fontSize='28px' fontWeight={400}>
-                  {`${filteredDelegation[delegateeIndex].info.length} of ${tracks?.length ?? 15}`}
-                </Typography>
+                <Grid container direction='row'>
+                  <Typography fontSize='28px' fontWeight={400} width='fit-content'>
+                    {`${filteredDelegation[delegateeIndex].info.length} of ${tracks?.length ?? 15}`}
+                  </Typography>
+                  <TracksList selectedTracks={filteredDelegation[delegateeIndex].info.map((track) => track.track)} tracks={tracks} />
+                </Grid>
               </DisplayValue>
             </>
           }

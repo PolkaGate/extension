@@ -26,6 +26,7 @@ import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButt
 import SelectProxyModal from '../components/SelectProxyModal';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ReferendaTable from './partial/ReferendaTable';
+import TracksList from './partial/tracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 
 interface Props {
@@ -212,9 +213,12 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
-                <Typography fontSize='28px' fontWeight={400}>
-                  {`${classicDelegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
-                </Typography>
+                <Grid container direction='row'>
+                  <Typography fontSize='28px' fontWeight={400} width='fit-content'>
+                    {`${classicDelegateInformation.delegatedTracks.length} of ${tracks?.length ?? 15}`}
+                  </Typography>
+                  <TracksList selectedTracks={classicDelegateInformation.delegatedTracks} tracks={tracks} />
+                </Grid>
               </DisplayValue>
             </>
           }

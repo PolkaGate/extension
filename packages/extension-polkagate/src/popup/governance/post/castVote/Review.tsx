@@ -111,7 +111,6 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
   useEffect(() => {
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
-      console.log('ref.current?.offsetHeight:', ref.current?.offsetHeight)
     }
   }, []);
 
