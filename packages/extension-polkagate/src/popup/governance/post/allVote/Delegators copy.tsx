@@ -6,7 +6,7 @@
 import '@vaadin/icons';
 
 import { ArrowBackIos as ArrowBackIosIcon, Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
-import { Divider, Grid, Pagination, Typography, useTheme } from '@mui/material';
+import { Grid, Pagination, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
@@ -109,22 +109,22 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   }, []);
 
   const AmountVal = ({ label, value }: { label: string, value: BN | undefined }) => (
-    <Grid alignItems='baseline' container item spacing={0.5} width='200px'>
+    <Grid alignItems='baseline' container item spacing={1} width='225px'>
       <Grid item>
         <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
           {label}
         </Typography>
       </Grid>
-      <Grid fontSize='18px' fontWeight={500} item>
+      <Grid fontSize='20px' fontWeight={500} item>
         <ShowBalance balance={value} decimal={decimal} decimalPoint={2} token={token} />
       </Grid>
     </Grid>
   );
 
   const StandardSummary = () => (
-    <Grid container sx={{ pb: '10px' }}>
+    <Grid container sx={{ borderTop: 1, borderColor: 'action.disabledBackground', py: '10px' }}>
       <Grid container item textAlign='left'>
-        <Typography color='text.disabled' fontSize='19px' fontWeight={400}>
+        <Typography color='text.disabled' fontSize='20px' fontWeight={400}>
           {t('Standard')}
         </Typography>
       </Grid>
@@ -138,7 +138,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
           value={getVoteCapital(standard)}
         />
         {standard && standard?.lockPeriod !== null &&
-          <Grid alignItems='baseline' container item spacing={0.5} width='120px'>
+          <Grid alignItems='baseline' container item spacing={1} width='180px'>
             <Grid item>
               <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
                 {t('Conviction')}
@@ -153,9 +153,9 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
     </Grid>);
 
   const DelegatedSummary = () => (
-    <Grid container item sx={{ py: '7px' }}>
+    <Grid container item sx={{ borderTop: 1, borderColor: 'action.disabledBackground', py: '7px' }}>
       <Grid container item textAlign='left'>
-        <Typography color='text.disabled' fontSize='19px' fontWeight={400}>
+        <Typography color='text.disabled' fontSize='20px' fontWeight={400}>
           {t('Delegated')}
         </Typography>
       </Grid>
@@ -172,43 +172,10 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
     </Grid>
   );
 
-  const Summary = () => (
-    <Grid container item>
-      <Grid alignItems='center' container display='block' item justifyContent='flex-start' textAlign='left' xs={2} pt='18px'>
-        <Grid item>
-          {standard.decision === 'yes'
-            ? <CheckIcon sx={{ color: 'success.main', fontSize: '40px' }} />
-            : standard.decision === 'no'
-              ? <CloseIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
-              : <AbstainIcon sx={{ color: 'primary.light', fontSize: '40px' }} />
-          }
-        </Grid>
-        <Grid fontSize='20px' fontWeight={400} item>
-          {sanitizeVote(standard?.decision)}
-        </Grid>
-        <Grid fontSize='22px' fontWeight={500} item xs={12}>
-          <ShowBalance balance={totalDelegatedValue?.add(getVoteValue(standard))} decimal={decimal} decimalPoint={2} token={token} />
-        </Grid>
-      </Grid>
-      <Divider flexItem orientation='vertical' sx={{ bgcolor: (theme) => `rgba(${theme.palette.secondary.contrastText}, 0.2)`, height: '150px', mt: '20px', mr: '20px' }} />
-      <Grid container item sx={{ pt: '5px' }} xs>
-        <Grid item sx={{ pt: '5px' }} xs={12}>
-          <StandardSummary />
-        </Grid>
-        <Grid item sx={{ pt: '5px' }} xs={12}>
-          <Divider orientation='horizontal' sx={{ bgcolor: (theme) => `rgba(${theme.palette.secondary.contrastText}, 0.2)`, with: '1px' }} />
-        </Grid>
-        <Grid item sx={{ pt: '5px' }} xs={12}>
-          <DelegatedSummary />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-
   return (
     <DraggableModal onClose={onBackClick} open={open} width={762}>
       <>
-        <Grid alignItems='center' container sx={{ borderBottom: `3px solid ${theme.palette.action.disabledBackground}`, height: '55px', mb: '5px' }}>
+        <Grid alignItems='center' container sx={{ height: '55px' }}>
           <Grid item xs={0.3}>
             <ArrowBackIosIcon
               onClick={onBackClick}
@@ -247,8 +214,26 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
-        <Summary />
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '12px', position: 'relative', height: '420px', border: 1, borderColor: 'secondary.light', px: '8px', bgcolor: 'background.paper', borderRadius: '5px' }}>
+        <StandardSummary />
+        <Grid container sx={{ position: 'relative' }}>
+          <Grid item xs={10} sx={{ pt: '5px' }}>
+            <DelegatedSummary />
+          </Grid>
+          <Grid alignItems='center' container item sx={{ position: 'absolute', top: '-20px', left: '600px' }} xs={2}>
+            <Grid item >
+              {standard.decision === 'yes'
+                ? <CheckIcon sx={{ color: 'success.main', fontSize: '40px' }} />
+                : standard.decision === 'no'
+                  ? <CloseIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
+                  : <AbstainIcon sx={{ color: 'primary.light', fontSize: '40px' }} />
+              }
+            </Grid>
+            <Grid fontSize='20px' fontWeight={400} item xs={2}>
+              {sanitizeVote(standard?.decision)}
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '420px', border: 1, borderColor: 'secondary.light', px: '8px', bgcolor: 'background.paper', borderRadius: '5px' }}>
           <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', pt: '20px', fontSize: '20px', fontWeight: 400 }}>
             <Grid item width='35%'>
               {t('Delegators ({{count}})', { replace: { count: delegatorList?.length } })}
