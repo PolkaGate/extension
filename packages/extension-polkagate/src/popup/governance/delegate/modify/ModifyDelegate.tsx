@@ -28,7 +28,7 @@ import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } fr
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../../components/SelectProxyModal';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import ReferendaTable from '../partial/ReferendaTable';
+import TracksList from '../partial/tracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import Modify from './modify';
 
@@ -334,9 +334,12 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
-                <Typography fontSize='28px' fontWeight={400}>
-                  {`${newSelectedTracks.length ?? selectedTracks.length} of ${tracks?.length ?? 15}`}
-                </Typography>
+                <Grid container direction='row'>
+                  <Typography fontSize='28px' fontWeight={400} width='fit-content'>
+                    {`${newSelectedTracks.length ?? selectedTracks.length} of ${tracks?.length ?? 15}`}
+                  </Typography>
+                  <TracksList selectedTracks={newSelectedTracks ?? selectedTracks} tracks={tracks} />
+                </Grid>
               </DisplayValue>
               <DisplayValue title={t<string>('Fee')}>
                 <ShowValue height={20} value={estimatedFee?.toHuman()} />
