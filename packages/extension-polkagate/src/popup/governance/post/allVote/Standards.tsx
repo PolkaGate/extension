@@ -204,7 +204,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             <Tab
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
-              label={t<string>('Abstain ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
+              label={t<string>('Abstains ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
               sx={tabStyle}
               value={3}
             />
@@ -244,8 +244,8 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             />
           }
           {votesToShow?.map((vote, index) => {
-            const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee?.toString() === vote.voter)?.length) as number;
             const totalDelegatedValue = vote.votePower && vote.votePower.sub(getVoteValue(vote));
+            const hasDelegators = totalDelegatedValue && !totalDelegatedValue.isZero();
 
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
@@ -282,17 +282,17 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                   }
                 </Grid>
                 <Grid container item justifyContent='center' width='21%'>{
-                  delegatorsCount === 0
-                    ? '-'
-                    : <ShowBalance balance={totalDelegatedValue} decimal={decimal} decimalPoint={2} token={token} />
+                  hasDelegators
+                    ? <ShowBalance balance={totalDelegatedValue} decimal={decimal} decimalPoint={2} token={token} />
+                    : '-'
                 }
                 </Grid>
                 <Grid alignItems='center' container justifyContent='flex-end' width='9%'>
                   <Grid item sx={{ textAlign: 'right' }}>
                     <Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '36px', mr: '3px', width: '1px' }} />
                   </Grid>
-                  <Grid item onClick={delegatorsCount ? () => openDelegations(vote) : noop} sx={{ cursor: 'pointer' }}>
-                    <ChevronRightIcon sx={{ color: `${delegatorsCount ? theme.palette.primary.main : theme.palette.action.disabledBackground}`, fontSize: '37px' }} />
+                  <Grid item onClick={hasDelegators ? () => openDelegations(vote) : noop} sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    <ChevronRightIcon sx={{ color: `${hasDelegators ? theme.palette.primary.main : theme.palette.action.disabledBackground}`, fontSize: '37px' }} />
                   </Grid>
                 </Grid>
               </Grid>

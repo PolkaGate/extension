@@ -9,7 +9,8 @@
   "permissions": [
     "storage",
     "unlimitedStorage",
-    "tabs"
+    "tabs",
+    "offscreen"
   ],
   "background": {
     "service_worker": "background.js",
