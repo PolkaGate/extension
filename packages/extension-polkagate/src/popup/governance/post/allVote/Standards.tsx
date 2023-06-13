@@ -11,7 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, Divider, Grid, LinearProgress, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Identity, Infotip2, InputFilter, Progress, ShowBalance, ShowValue } from '../../../../components';
+import { Identity, InputFilter, Progress, ShowBalance } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
@@ -56,6 +56,8 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
   const [isSearchBarOpen, setSearchBarOpen] = useState<boolean>(false);
 
+  const voteTypeStr = useMemo(() => tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no', [tabIndex]);
+
   const totalNumberOfDelegators = useMemo(() => {
     if (!allVotes) {
       return undefined;
@@ -95,7 +97,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   const handleTabChange = useCallback((event: React.SyntheticEvent<Element, Event>, tabIndex: number) => {
     setTabIndex(tabIndex);
     setPage(1);
-  }, []);
+  }, [setPage]);
 
   const onSortVotes = useCallback(() => {
     setPage(1);
@@ -109,11 +111,11 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
     // );
 
     // setFilteredVotes({ ...filteredVotes });
-  }, []);
+  }, [setPage]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
-  }, []);
+  }, [setPage]);
 
   const onSearch = useCallback((filter: string) => {
     allVotes && setFilteredVotes(
@@ -220,11 +222,13 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               <Grid container item justifyContent='space-around' xs={12}>
                 <Grid item>
                   <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
-                  {t('Votes')}
+                  {t('Value')}
                 </Grid>
-                <Grid item>
-                  {t('Conviction')}
-                </Grid>
+                {voteTypeStr !== 'abstain' &&
+                  <Grid item>
+                    {t('Conviction')}
+                  </Grid>
+                }
               </Grid>
             </Grid>
             <Grid item width='27%'>
@@ -240,7 +244,6 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             />
           }
           {votesToShow?.map((vote, index) => {
-            const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
             const delegatorsCount = (allVotes[voteTypeStr].votes.filter((v) => v.delegatee?.toString() === vote.voter)?.length) as number;
             const totalDelegatedValue = vote.votePower && vote.votePower.sub(getVoteValue(vote));
 
