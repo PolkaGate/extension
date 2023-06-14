@@ -32,7 +32,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
   const { t } = useTranslation();
 
   const alreadyLockedTooltipText = useMemo(() => accountLocks && currentBlock &&
-    (<>
+    (<Grid container item sx={{ maxHeight: '400px', overflow: 'hidden', overflowY: 'scroll' }}>
       <Typography variant='body2'>
         <Grid container spacing={2}>
           <Grid item xs={2.5}>
@@ -65,7 +65,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
           )}
         </Grid>
       </Typography>
-    </>
+    </Grid>
     ), [accountLocks, currentBlock, decimal, t, token]);
 
   const VotingInformation = () => (
