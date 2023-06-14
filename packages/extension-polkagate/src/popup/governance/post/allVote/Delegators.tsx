@@ -60,20 +60,29 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const [paginationCount, setPaginationCount] = React.useState<number>(10);
   const [votesToShow, setVotesToShow] = useState<VoteType[] | AbstainVoteType[]>();
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
+  const [delegatorList, setDelegatorList] = useState<VoteType[] | AbstainVoteType[]>();
 
   const totalDelegatedValue = standard.votePower && standard.votePower.sub(getVoteValue(standard));
-
-  const delegatorList = useMemo((): VoteType[] | AbstainVoteType[] => allVotes && allVotes[standard.decision].votes.filter((v) => v.isDelegated && v.delegatee?.toString() === standard.voter), [allVotes, standard]);
 
   const capitalDelegated = useMemo(() => {
     let sum = BN_ZERO;
 
-    for (let i = 0; i < delegatorList.length; i++) {
+    for (let i = 0; i < delegatorList?.length; i++) {
       sum = sum.add(new BN(delegatorList[i].balance.value));
     }
 
     return sum;
   }, [delegatorList]);
+
+  useEffect(() => {
+    if (!allVotes) {
+      return;
+    }
+
+    const list = allVotes[standard.decision].votes.filter((v) => v.isDelegated && v.delegatee?.toString() === standard.voter);
+
+    setDelegatorList(list);
+  }, [allVotes, standard.decision, standard.voter]);
 
   useEffect(() => {
     if (delegatorList) {
@@ -95,15 +104,12 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
 
-    // const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
-
-    // filteredVotes?.[voteTypeStr]?.sort((a, b) => amountSortType === 'ASC'
-    //   ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
-    //   : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
-    // );
-
-    // setFilteredVotes({ ...filteredVotes });
-  }, []);
+    delegatorList.sort((a, b) => amountSortType === 'ASC'
+      ? a?.balance?.value && b?.balance?.value && (new BN(a.balance.value).sub(new BN(b.balance.value))).isNeg() ? -1 : 1
+      : a?.balance?.value && b?.balance?.value && (new BN(b.balance.value).sub(new BN(a.balance.value))).isNeg() ? -1 : 1
+    );
+    setDelegatorList([...delegatorList]);
+  }, [amountSortType, delegatorList]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
