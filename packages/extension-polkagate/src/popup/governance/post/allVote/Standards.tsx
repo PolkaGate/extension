@@ -15,8 +15,7 @@ import { Identity, InputFilter, Progress, ShowBalance } from '../../../../compon
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
-import Amount, { getVoteValue } from './Amount';
-import { VOTE_PER_PAGE } from '.';
+import { getVoteValue, VOTE_PER_PAGE } from '.';
 
 interface Props {
   address: string | undefined;
@@ -72,6 +71,24 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   }, [allVotes]);
 
   useEffect(() => {
+    allVotes && Object.keys(allVotes).map((voteType) => {
+      const standards = allVotes[voteType as keyof AllVotesType].votes.filter((v) => !v.isDelegated);
+
+      standards.map((s: VoteType | AbstainVoteType) => {
+        const delegators = allVotes[voteType as keyof AllVotesType].votes.filter((v) => v.delegatee?.toString() === s.voter) as VoteType[] | AbstainVoteType[];
+
+        let sum = getVoteValue(s, voteType);
+
+        for (const d of delegators) {
+          sum = sum.add(getVoteValue(d, 'other'));
+        }
+
+        s.votePower = sum;
+      });
+    });
+  }, [allVotes]);
+
+  useEffect(() => {
     if (filteredVotes) {
       let votesBasedOnType = filteredVotes.yes;
 
@@ -102,15 +119,6 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   const onSortVotes = useCallback(() => {
     setPage(1);
     setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
-
-    // const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
-
-    // filteredVotes?.[voteTypeStr]?.sort((a, b) => amountSortType === 'ASC'
-    //   ? a?.votePower && b?.votePower && (a.votePower.sub(b.votePower)).isNeg() ? -1 : 1
-    //   : a?.votePower && b?.votePower && (b.votePower.sub(a.votePower)).isNeg() ? -1 : 1
-    // );
-
-    // setFilteredVotes({ ...filteredVotes });
   }, [setPage]);
 
   const onPageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
@@ -211,7 +219,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
           </Tabs>
         </Box>
         <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '530px' }}>
-          <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '19px', fontWeight: 400 }}>
+          <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '18px', fontWeight: 400 }}>
             <Grid item width='35%'>
               {t('Voter')}
             </Grid>
@@ -250,33 +258,14 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
                 <Grid container item justifyContent='flex-start' width='35%'>
-                  <Identity
-                    api={api}
-                    chain={chain}
-                    formatted={vote.voter}
-                    identiconSize={28}
-                    showShortAddress
-                    showSocial={false}
-                    style={{
-                      fontSize: '16px',
-                      fontWeight: 400,
-                      maxWidth: '99%',
-                      minWidth: '35%',
-                      width: 'fit-content'
-                    }}
-                  />
+                  <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '99%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
-                <Grid alignItems='center' container item justifyContent='space-around' sx={{ height: '43px', borderLeft: 1, borderRight: 1, borderColor: 'secondary.contrastText' }} width='35%'>
-                  <Grid item>
-                    <Amount
-                      address={address}
-                      allVotes={allVotes}
-                      vote={vote}
-                      voteType={tabIndex}
-                    />
+                <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 1, borderRight: 1, height: '43px' }} width='35%'>
+                  <Grid container item justifyContent='flex-end' xs>
+                    <ShowBalance balance={getVoteValue(vote)} decimal={decimal} decimalPoint={2} token={token} />
                   </Grid>
                   {vote?.lockPeriod !== null &&
-                    <Grid item>
+                    <Grid container item justifyContent='center' xs={6}>
                       {`${vote.lockPeriod ? vote.lockPeriod : 0.1}x`}
                     </Grid>
                   }

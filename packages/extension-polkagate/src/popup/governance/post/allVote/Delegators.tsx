@@ -15,7 +15,7 @@ import { Identity, ShowBalance } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, VoteType } from '../../utils/helpers';
-import { getVoteValue } from './Amount';
+import { getVoteValue } from '.';
 
 interface Props {
   address: string | undefined;
@@ -59,6 +59,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const [page, setPage] = React.useState<number>(1);
   const [paginationCount, setPaginationCount] = React.useState<number>(10);
   const [votesToShow, setVotesToShow] = useState<VoteType[] | AbstainVoteType[]>();
+  const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
 
   const totalDelegatedValue = standard.votePower && standard.votePower.sub(getVoteValue(standard));
 
@@ -91,8 +92,8 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   }, [closeDelegators, handleCloseStandards]);
 
   const onSortVotes = useCallback(() => {
-    // setPage(1);
-    // setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
+    setPage(1);
+    setAmountSortType((prev) => prev === 'ASC' ? 'DESC' : 'ASC');
 
     // const voteTypeStr = tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no';
 
@@ -128,7 +129,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
           {t('Standard')}
         </Typography>
       </Grid>
-      <Grid container item sx={{ fontSize: '20', fontWeight: 500, pl: '32px' }} textAlign='left'>
+      <Grid alignItems='baseline' container item sx={{ fontSize: '20', fontWeight: 500, pl: '32px' }} textAlign='left'>
         <AmountVal
           label={t('Vote')}
           value={getVoteValue(standard)}
@@ -150,16 +151,17 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
           </Grid>
         }
       </Grid>
-    </Grid>);
+    </Grid>
+  );
 
   const DelegatedSummary = () => (
     <Grid container item sx={{ py: '7px' }}>
       <Grid container item textAlign='left'>
-        <Typography color='text.disabled' fontSize='19px' fontWeight={400}>
+        <Typography color='text.disabled' fontSize='19px' fontWeight={500}>
           {t('Delegated')}
         </Typography>
       </Grid>
-      <Grid container item sx={{ fontSize: '20', fontWeight: 500, pl: '32px' }} textAlign='left'>
+      <Grid container item sx={{ pl: '32px' }} textAlign='left'>
         <AmountVal
           label={t('Vote')}
           value={totalDelegatedValue}
@@ -173,8 +175,8 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   );
 
   const Summary = () => (
-    <Grid container item>
-      <Grid alignItems='center' container display='block' item justifyContent='flex-start' textAlign='left' xs={2} pt='18px'>
+    <Grid container item sx={{ border: 1, borderColor: 'secondary.light', px: '8px', bgcolor: 'background.paper', borderRadius: '5px' }}>
+      <Grid alignItems='center' container display='block' item justifyContent='flex-start' pl='8px' pr='5px' pt='18px' textAlign='left' xs={2}>
         <Grid item>
           {standard.decision === 'yes'
             ? <CheckIcon sx={{ color: 'success.main', fontSize: '40px' }} />
@@ -205,114 +207,108 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
     </Grid>
   );
 
+  const Header = () => (
+    <Grid alignItems='center' container sx={{ height: '55px', mb: '5px' }}>
+      <Grid item xs={0.3}>
+        <ArrowBackIosIcon
+          onClick={onBackClick}
+          sx={{
+            color: 'secondary.light',
+            cursor: 'pointer',
+            fontSize: 25,
+            stroke: theme.palette.secondary.light,
+            strokeWidth: 1.5
+          }}
+        />
+      </Grid>
+      <Grid item xs={3}>
+        <Typography fontSize='22px' fontWeight={700}>
+          {t('Vote Details of')}
+        </Typography>
+      </Grid>
+      <Grid item sx={{ pl: '6px' }} xs>
+        <Identity
+          api={api}
+          chain={chain}
+          formatted={standard.voter}
+          identiconSize={28}
+          showShortAddress
+          showSocial={false}
+          style={{
+            fontSize: '16px',
+            fontWeight: 400,
+            maxWidth: '100%',
+            minWidth: '35%',
+            width: 'fit-content'
+          }}
+        />
+      </Grid>
+      <Grid item xs={1}>
+        <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+      </Grid>
+    </Grid>
+  );
+
+  const DelegatorsTable = () => (
+    <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '12px', position: 'relative', height: '420px', border: 1, borderColor: 'secondary.light', px: '8px', bgcolor: 'background.paper', borderRadius: '5px' }}>
+      <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', pt: '20px', fontSize: '20px', fontWeight: 400 }}>
+        <Grid item width='35%'>
+          {t('Delegators ({{count}})', { replace: { count: delegatorList?.length } })}
+        </Grid>
+        <Grid item width='22%'>
+          <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
+          {t('Amount')}
+        </Grid>
+        <Grid item width='15%'>
+          {t('Conviction')}
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='flex-end' width='18%'>
+          <Typography fontSize='20px' width='fit-content'>
+            {t('Votes')}
+          </Typography>
+        </Grid>
+      </Grid>
+      {votesToShow?.map((vote, index) => (
+        <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '6px' }}>
+          <Grid container item justifyContent='flex-start' width='35%'>
+            <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+          </Grid>
+          <Grid container item justifyContent='center' width='22%'>
+            <ShowBalance api={api} balance={vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay} decimal={decimal} decimalPoint={2} token={token} />
+          </Grid>
+          <Grid item width='15%'>
+            {vote.lockPeriod || 0.1}X
+          </Grid>
+          <Grid container item justifyContent='flex-end' width='18%'>
+            <ShowBalance
+              api={api}
+              balance={new BN(vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay).muln(vote.lockPeriod || 0.1)}
+              decimal={decimal}
+              decimalPoint={2}
+              token={token}
+            />
+          </Grid>
+        </Grid>
+      ))
+      }
+      {votesToShow &&
+        <Pagination
+          count={paginationCount}
+          onChange={onPageChange}
+          page={page}
+          size='large'
+          sx={{ bottom: '8px', position: 'absolute' }}
+        />
+      }
+    </Grid>
+  );
+
   return (
     <DraggableModal onClose={onBackClick} open={open} width={762}>
       <>
-        <Grid alignItems='center' container sx={{ borderBottom: `3px solid ${theme.palette.action.disabledBackground}`, height: '55px', mb: '5px' }}>
-          <Grid item xs={0.3}>
-            <ArrowBackIosIcon
-              onClick={onBackClick}
-              sx={{
-                color: 'secondary.light',
-                cursor: 'pointer',
-                fontSize: 25,
-                stroke: theme.palette.secondary.light,
-                strokeWidth: 1.5
-              }}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('Vote Details of')}
-            </Typography>
-          </Grid>
-          <Grid item sx={{ pl: '6px' }} xs>
-            <Identity
-              api={api}
-              chain={chain}
-              formatted={standard.voter}
-              identiconSize={28}
-              showShortAddress
-              showSocial={false}
-              style={{
-                fontSize: '16px',
-                fontWeight: 400,
-                maxWidth: '100%',
-                minWidth: '35%',
-                width: 'fit-content'
-              }}
-            />
-          </Grid>
-          <Grid item xs={1}>
-            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <Header />
         <Summary />
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '12px', position: 'relative', height: '420px', border: 1, borderColor: 'secondary.light', px: '8px', bgcolor: 'background.paper', borderRadius: '5px' }}>
-          <Grid container id='table header' justifyContent='space-around' sx={{ borderBottom: 2, borderColor: 'primary.light', mb: '10px', pt: '20px', fontSize: '20px', fontWeight: 400 }}>
-            <Grid item width='35%'>
-              {t('Delegators ({{count}})', { replace: { count: delegatorList?.length } })}
-            </Grid>
-            <Grid item width='22%'>
-              <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '20px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
-              {t('Amount')}
-            </Grid>
-            <Grid item width='15%'>
-              {t('Conviction')}
-            </Grid>
-            <Grid alignItems='center' container item justifyContent='flex-end' width='18%'>
-              <Typography fontSize='20px' width='fit-content'>
-                {t('Votes')}
-              </Typography>
-            </Grid>
-          </Grid>
-          {votesToShow?.map((vote, index) => (
-            <Grid alignItems='flex-start' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400, py: '6px' }}>
-              <Grid container item justifyContent='flex-start' width='35%'>
-                <Identity
-                  api={api}
-                  chain={chain}
-                  formatted={vote.voter}
-                  identiconSize={28}
-                  showShortAddress
-                  showSocial={false}
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    maxWidth: '100%',
-                    minWidth: '35%',
-                    width: 'fit-content'
-                  }}
-                />
-              </Grid>
-              <Grid container item justifyContent='center' width='22%'>
-                <ShowBalance api={api} balance={vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay} decimal={decimal} decimalPoint={2} token={token} />
-              </Grid>
-              <Grid item width='15%'>
-                {vote.lockPeriod || 0.1}X
-              </Grid>
-              <Grid container item justifyContent='flex-end' width='18%'>
-                <ShowBalance
-                  api={api}
-                  balance={new BN(vote.balance?.value || vote.balance?.abstain || vote.balance?.aye || vote.balance?.nay).muln(vote.lockPeriod || 0.1)}
-                  decimal={decimal}
-                  decimalPoint={2}
-                  token={token}
-                />
-              </Grid>
-            </Grid>
-          ))
-          }
-          {votesToShow &&
-            <Pagination
-              count={paginationCount}
-              onChange={onPageChange}
-              page={page}
-              size='large'
-              sx={{ bottom: '8px', position: 'absolute' }}
-            />
-          }
-        </Grid>
+        <DelegatorsTable />
       </>
     </DraggableModal>
   );

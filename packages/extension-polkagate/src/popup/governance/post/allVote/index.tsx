@@ -5,6 +5,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { BN } from '@polkadot/util';
+
 import { useApi, useChainName } from '../../../../hooks';
 import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, VoteType } from '../../utils/helpers';
 import { getAddressVote } from '../myVote/util';
@@ -34,6 +36,18 @@ export const VOTE_TYPE_MAP = {
   AYE: 1,
   NAY: 2,
   ABSTAIN: 3
+};
+
+export const getVoteValue = (vote: AbstainVoteType | VoteType, voteTypeStr?: 'abstain' | 'other' | 'capital'): BN => {
+  voteTypeStr = voteTypeStr || ('abstain' in vote.balance ? 'abstain' : 'other');
+
+  const value = voteTypeStr === 'abstain'
+    ? vote.balance.abstain || new BN(vote.balance.aye).add(new BN(vote.balance.nay))
+    : vote.lockPeriod === 0
+      ? new BN(vote.balance.value).div(new BN(10))
+      : new BN(vote.balance.value).muln(vote.lockPeriod || 1);
+
+  return new BN(value);
 };
 
 export default function AllVotes({ address, isFellowship, open, refIndex, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
@@ -125,10 +139,10 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           handleClose={handleClose}
           numberOfFetchedDelagatees={numberOfFetchedDelagatees}
           open={open}
-          setFilteredVotes={setFilteredVotes}
-          setShowDelegators={setShowDelegators}
           page={standardPage}
+          setFilteredVotes={setFilteredVotes}
           setPage={setStandardPage}
+          setShowDelegators={setShowDelegators}
         />
         : <Delegators
           address={address}
