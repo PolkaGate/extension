@@ -1,10 +1,11 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -24,6 +25,7 @@ interface Props {
     accountLocks: Lock[] | null | undefined;
   };
   filterDelegatedTracks?: BN[] | undefined;
+  firstSelections?: BN[] | undefined;
 }
 
 export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skeletonsNum: number, withCheckBox: boolean }) => {
@@ -48,7 +50,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
+export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -162,36 +164,34 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
             const lockedTrack = filterLockedTracks?.accountLocks?.find((lock) => lock.classId.eq(value[0]));
             const trackLockExpired: boolean | undefined = filterLockedTracks && lockedTrack && !!filterLockedTracks.currentBlockNumber && getLockedUntil(lockedTrack.endBlock, filterLockedTracks.currentBlockNumber) === 'finished';
             const filterTrack = filterDelegatedTracks && filterDelegatedTracks.some((filterT) => filterT.eq(value[0]));
+            const deselected = firstSelections?.some((track) => track.eq(value[0]));
 
             return (
               <ListItem
                 disablePadding
                 key={index}
-                sx={{ bgcolor: trackLockExpired ? '#ffb80080' : trackVotes || filterTrack ? '#E8E0E5' : 'inherit', height: '25px' }}
+                sx={{ bgcolor: deselected ? '#EBCCDC' : 'inherit', height: '25px' }}
               >
                 <ListItemButton dense onClick={handleToggle(value[0], !!trackVotes || !!filterTrack)} role={undefined} sx={{ py: 0 }}>
                   <ListItemText
                     primary={
                       <>
-                        {trackVotes && !trackLockExpired
-                          ? <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
-                            {`${toTitleCase(value[1].name as unknown as string) as string} (Has already ${trackVotes} votes)`}
+                        {(!!trackVotes && !trackLockExpired) || filterTrack || (!!trackVotes && trackLockExpired)
+                          ? <Infotip2 showInfoMark={!trackLockExpired} showWarningMark={trackLockExpired} text={
+                            filterTrack
+                              ? t<string>('Already delegated to another account')
+                              : trackLockExpired
+                                ? t<string>('This category includes expired locks that can be unlocked and made available.')
+                                : t<string>('Has already {{trackVotes}} votes', { replace: { trackVotes } })
+                          }>
+                            <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
+                              {`${toTitleCase(value[1].name as unknown as string) as string}`}
+                            </Typography>
+                          </Infotip2>
+                          : <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
+                            {`${toTitleCase(value[1].name as unknown as string) as string}`}
                           </Typography>
-                          : trackVotes && trackLockExpired
-                            ? <Infotip2 showWarningMark text={t<string>('This category includes expired locks that can be unlocked and made available.')}>
-                              <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
-                                {`${toTitleCase(value[1].name as unknown as string) as string}`}
-                              </Typography>
-                            </Infotip2>
-                            : filterTrack
-                              ? <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
-                                {`${toTitleCase(value[1].name as unknown as string) as string} (delegated to another account)`}
-                              </Typography>
-                              : <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
-                                {`${toTitleCase(value[1].name as unknown as string) as string}`}
-                              </Typography>
                         }
-
                       </>
                     }
                   />
