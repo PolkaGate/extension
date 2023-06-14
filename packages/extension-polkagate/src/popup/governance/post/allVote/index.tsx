@@ -12,6 +12,7 @@ import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, VoteTy
 import { getAddressVote } from '../myVote/util';
 import Delegators from './Delegators';
 import Standards from './Standards';
+import FellowshipVotes from './FellowshipVotes';
 
 interface Props {
   address: string | undefined;
@@ -142,18 +143,31 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   return (
     <>
       {!showDelegatorsOf
-        ? <Standards
-          address={address}
-          allVotes={allVotes}
-          filteredVotes={filteredVotes}
-          handleClose={handleClose}
-          numberOfFetchedDelagatees={numberOfFetchedDelagatees}
-          open={open}
-          page={standardPage}
-          setFilteredVotes={setFilteredVotes}
-          setPage={setStandardPage}
-          setShowDelegators={setShowDelegators}
-        />
+        ? isFellowship
+          ? <FellowshipVotes
+            address={address}
+            allVotes={allVotes}
+            filteredVotes={filteredVotes}
+            handleClose={handleClose}
+            numberOfFetchedDelagatees={numberOfFetchedDelagatees}
+            open={open}
+            page={standardPage}
+            setFilteredVotes={setFilteredVotes}
+            setPage={setStandardPage}
+            setShowDelegators={setShowDelegators}
+          />
+          : <Standards
+            address={address}
+            allVotes={allVotes}
+            filteredVotes={filteredVotes}
+            handleClose={handleClose}
+            numberOfFetchedDelagatees={numberOfFetchedDelagatees}
+            open={open}
+            page={standardPage}
+            setFilteredVotes={setFilteredVotes}
+            setPage={setStandardPage}
+            setShowDelegators={setShowDelegators}
+          />
         : <Delegators
           address={address}
           allVotes={allVotes}
