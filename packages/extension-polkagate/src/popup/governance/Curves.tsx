@@ -109,7 +109,6 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
         {
           borderColor: `${theme.palette.support.contrastText}`,
           borderWidth: 2,
-          color: `${theme.palette.text.primary}`,
           data: supportY,
           fill: false,
           label: 'Support',
@@ -118,7 +117,6 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
         {
           borderColor: `${theme.palette.approval.main}`,
           borderWidth: 2,
-          color: `${theme.palette.text.primary}`,
           data: approvalY,
           fill: false,
           label: 'Approval',
@@ -135,7 +133,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
           labels: {
             borderRadius: 0,
             borderWidth: 3,
-            color: 'black',
+            color: `${theme.palette.text.primary}`,
             font: {
               size: 15,
               weight: 400
