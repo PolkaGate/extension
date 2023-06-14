@@ -7,11 +7,11 @@ import { FormControl, Grid, RadioGroup, Typography, useTheme } from '@mui/materi
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { AccountInputWithIdentity, Infotip2, TwoButtons } from '../../../components';
-import { useApi, useChain, useFormatted, useTranslation } from '../../../hooks';
-import { LoadingSkeleton } from './partial/ReferendaTracks';
-import TAccountsDisplay from './TAccountDisplay';
-import { STEPS, DelegateInformation } from '.';
+import { AccountInputWithIdentity, Infotip2, TwoButtons } from '../../../../components';
+import { useApi, useChain, useFormatted, useTranslation } from '../../../../hooks';
+import { LoadingSkeleton } from '../partial/ReferendaTracks';
+import TAccountsDisplay from '../partial/TAccountDisplay';
+import { STEPS, DelegateInformation } from '..';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;

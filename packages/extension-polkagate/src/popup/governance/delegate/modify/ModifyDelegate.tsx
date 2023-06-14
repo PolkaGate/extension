@@ -11,7 +11,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
@@ -19,14 +19,13 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useCurrentBlockNumber, useDecimal, useProxies, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { useAccountInfo, useAccountName, useApi, useChain, useCurrentBlockNumber, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
 import { signAndSend } from '../../../../util/api';
 import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../../components/SelectProxyModal';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import TracksList from '../partial/tracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
@@ -40,16 +39,22 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   step: number;
-  modalHeight: number;
   setSelectedTracksLength: React.Dispatch<React.SetStateAction<number | undefined>>;
   lockedAmount: BN | undefined;
   balances: BalancesInfo | undefined;
   accountLocks: Lock[] | null | undefined;
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
   otherDelegatedTracks: BN[] | undefined;
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
+  selectedProxy: Proxy | undefined;
+  proxyItems: ProxyItem[] | undefined;
+  setMode: React.Dispatch<React.SetStateAction<ModifyModes>>;
+  mode: ModifyModes;
 }
 
-export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, modalHeight, otherDelegatedTracks, setDelegateInformation, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export type ModifyModes = 'Modify' | 'ReviewModify';
+
+export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, proxyItems, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -57,9 +62,9 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   const { accounts } = useContext(AccountContext);
   const api = useApi(address);
   const chain = useChain(address);
-  const proxies = useProxies(api, formatted);
   const { tracks } = useTracks(address);
   const currentBlock = useCurrentBlockNumber(address);
+  const ref = useRef(null);
 
   const delegateeAddress = classicDelegateInformation
     ? classicDelegateInformation.delegateeAddress
@@ -70,10 +75,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [mode, setMode] = useState<'Modify' | 'ReviewModify'>('Modify');
   const [delegateAmount, setDelegateAmount] = useState<string>('0');
   const [conviction, setConviction] = useState<number | undefined>();
   const [selectedTracks, setSelectedTracks] = useState<BN[]>([]);
@@ -117,6 +119,12 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   }, [classicDelegateInformation, mixedDelegateInformation]);
 
   useEffect(() => {
+    if (ref) {
+      setModalHeight(ref.current?.offsetHeight as number);
+    }
+  }, [setModalHeight]);
+
+  useEffect(() => {
     conviction === undefined && classicDelegateInformation && setConviction(classicDelegateInformation.delegateConviction);
   }, [classicDelegateInformation, conviction]);
 
@@ -130,12 +138,6 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
     setDelegateAmount(classicDelegateInformation.delegateAmount);
     conviction === undefined && setConviction(classicDelegateInformation.delegateConviction);
   }, [classicDelegateInformation, conviction, delegatedTracks]);
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
 
   const compareSelectedTracks = useCallback((arrNew: BN[], arrOld: BN[]) => {
     const tracksToAdd = [];
@@ -251,12 +253,12 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
 
   const backToModify = useCallback(() => setMode('Modify'), []);
 
-  const nextButtonDisabled = useMemo(() => newDelegateAmount === delegateAmount && conviction === newConviction && compareSelectedTracks(newSelectedTracks, selectedTracks) === false, [compareSelectedTracks, conviction, delegateAmount, newConviction, newDelegateAmount, newSelectedTracks, selectedTracks]);
+  const nextButtonDisabled = useMemo(() => (!newDelegateAmount || newDelegateAmount === delegateAmount) && (newConviction === undefined || conviction === newConviction) && compareSelectedTracks(newSelectedTracks, selectedTracks) === false, [compareSelectedTracks, conviction, delegateAmount, newConviction, newDelegateAmount, newSelectedTracks, selectedTracks]);
 
   return (
-    <Motion style={{ height: modalHeight }}>
+    <Motion>
       {step === STEPS.MODIFY &&
-        <Grid container>
+        <Grid container ref={ref}>
           {mode === 'Modify' &&
             <Modify
               accountLocks={accountLocks}
@@ -289,7 +291,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               {isPasswordError &&
                 <WrongPasswordAlert />
               }
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
+              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Delegate from')}
                 </Typography>
@@ -330,7 +332,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               </DisplayValue>
               <DisplayValue title={t<string>('Vote Multiplier')}>
                 <Typography fontSize='28px' fontWeight={400}>
-                  {acceptableConviction === 0 ? 0.1 : acceptableConviction}
+                  {`${acceptableConviction === 0 ? 0.1 : acceptableConviction}x`}
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
@@ -344,7 +346,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               <DisplayValue title={t<string>('Fee')}>
                 <ShowValue height={20} value={estimatedFee?.toHuman()} />
               </DisplayValue>
-              <Grid container item pt='20px'>
+              <Grid container item pt='10px'>
                 <PasswordWithTwoButtonsAndUseProxy
                   chain={chain}
                   isPasswordError={isPasswordError}
@@ -364,18 +366,6 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
             </>
           }
         </Grid>
-      }
-      {step === STEPS.PROXY &&
-        <SelectProxyModal
-          address={address}
-          height={modalHeight}
-          nextStep={STEPS.REMOVE}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          setStep={setStep}
-        />
       }
     </Motion>
   );

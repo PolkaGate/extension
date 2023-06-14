@@ -15,19 +15,21 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useAccountLocks, useApi, useBalances, useFormatted, useTracks, useTranslation } from '../../../hooks';
-import { TxInfo } from '../../../util/types';
+import { useAccountLocks, useApi, useBalances, useFormatted, useProxies, useTracks, useTranslation } from '../../../hooks';
+import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { DraggableModal } from '../components/DraggableModal';
+import SelectProxyModal from '../components/SelectProxyModal';
 import WaitScreen from '../partials/WaitScreen';
 import { DelegationInfo } from '../utils/types';
 import { getMyDelegationInfo } from '../utils/util';
 import About from './About';
-import { getAlreadyLockedValue } from './AlreadyLockedTooltipText ';
-import ChooseDelegator from './ChooseDelegator';
-import Confirmation from './Confirmation';
-import DelegateVote from './Delegate';
+import { getAlreadyLockedValue } from './partial/AlreadyLockedTooltipText';
+import ChooseDelegator from './delegate/ChooseDelegator';
+import Confirmation from './partial/Confirmation';
+import DelegateVote from './delegate/Delegate';
 import DelegationDetails from './DelegationDetails';
 import Review from './Review';
+import { ModifyModes } from './modify/ModifyDelegate';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -78,21 +80,37 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const balances = useBalances(address, undefined, undefined, true);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
+  const proxies = useProxies(api, formatted);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [step, setStep] = useState<number>(showDelegationNote ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
+  const [mode, setMode] = useState<ModifyModes>('Modify');
   const [delegateInformation, setDelegateInformation] = useState<DelegateInformation | undefined>();
   const [alreadyDelegationInfo, setAlreadyDelegationInfo] = useState<DelegationInfo[] | null | undefined>();
   const [filteredDelegation, setFilteredDelegation] = useState<AlreadyDelegateInformation[] | undefined>();
   const [status, setStatus] = useState<'Delegate' | 'Remove' | 'Modify'>('Delegate');
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [selectedTracksLength, setSelectedTracksLength] = useState<number | undefined>();
+  const [modalHeight, setModalHeight] = useState<number | undefined>();
+  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
+  const [proxyStep, setProxyStep] = useState<number>();
 
   const delegate = api && api.tx.convictionVoting.delegate;
 
+  useEffect(() => {
+    if (step === STEPS.PROXY) {
+      return;
+    }
+
+    setProxyStep(step);
+  }, [step]);
+
+  console.log('proxyStep:', proxyStep)
+
   const handleClose = useCallback(() => {
-    setOpen(false);
-  }, [setOpen]);
+    step !== STEPS.PROXY ? setOpen(false) : setStep(proxyStep);
+  }, [proxyStep, setOpen, step]);
 
   useEffect(() => {
     if (step > STEPS.CHECK_SCREEN) {
@@ -179,6 +197,12 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
 
     setFilteredDelegation(filtered);
   }, [alreadyDelegationInfo, filterDelegation]);
+
+  useEffect((): void => {
+    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+    setProxyItems(fetchedProxyItems);
+  }, [proxies]);
 
   return (
     <DraggableModal onClose={handleClose} open={open}>
@@ -267,7 +291,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             setStep={setStep}
           />
         }
-        {(step === STEPS.PREVIEW || step === STEPS.REMOVE || step === STEPS.MODIFY || step === STEPS.PROXY) &&
+        {(step === STEPS.PREVIEW || step === STEPS.REMOVE || step === STEPS.MODIFY) &&
           <DelegationDetails
             accountLocks={accountLocks}
             address={address}
@@ -275,7 +299,12 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             filteredDelegation={filteredDelegation}
             formatted={String(formatted)}
             lockedAmount={lockedAmount}
+            mode={mode}
+            proxyItems={proxyItems}
+            selectedProxy={selectedProxy}
             setDelegateInformation={setDelegateInformation}
+            setModalHeight={setModalHeight}
+            setMode={setMode}
             setSelectedTracksLength={setSelectedTracksLength}
             setStatus={setStatus}
             setStep={setStep}
@@ -283,16 +312,31 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             step={step}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.PROXY) && delegateInformation &&
+        {step === STEPS.REVIEW && delegateInformation &&
           <Review
             address={address}
             delegateInformation={delegateInformation}
             estimatedFee={estimatedFee}
             formatted={String(formatted)}
             handleClose={handleClose}
+            proxyItems={proxyItems}
+            selectedProxy={selectedProxy}
+            setModalHeight={setModalHeight}
             setStep={setStep}
             setTxInfo={setTxInfo}
             step={step}
+          />
+        }
+        {step === STEPS.PROXY &&
+          <SelectProxyModal
+            address={address}
+            height={modalHeight}
+            nextStep={proxyStep}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
+            setStep={setStep}
           />
         }
         {step === STEPS.WAIT_SCREEN &&

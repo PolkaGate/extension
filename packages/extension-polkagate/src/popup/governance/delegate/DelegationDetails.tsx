@@ -10,20 +10,20 @@
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
 import { Identity, Motion, TwoButtons } from '../../../components';
 import { useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
-import { BalancesInfo, TxInfo } from '../../../util/types';
+import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
-import ModifyDelegate from './modify/ModifyDelegate';
+import ModifyDelegate, { ModifyModes } from './modify/ModifyDelegate';
 import ReferendaTable from './partial/ReferendaTable';
 import TracksList from './partial/tracksList';
-import RemoveDelegate from './RemoveDelegate';
+import RemoveDelegate from './remove/RemoveDelegate';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 
 interface Props {
@@ -39,6 +39,11 @@ interface Props {
   balances: BalancesInfo | undefined;
   accountLocks: Lock[] | null | undefined;
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
+  selectedProxy: Proxy | undefined;
+  proxyItems: ProxyItem[] | undefined;
+  setMode: React.Dispatch<React.SetStateAction<ModifyModes>>;
+  mode: ModifyModes;
 }
 
 interface ArrowsProps {
@@ -46,7 +51,7 @@ interface ArrowsProps {
   onPrevious: () => void;
 }
 
-export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, setDelegateInformation, setSelectedTracksLength, setStatus, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function DelegationDetails({ accountLocks, address, balances, filteredDelegation, formatted, lockedAmount, mode, proxyItems, selectedProxy, setDelegateInformation, setModalHeight, setMode, setSelectedTracksLength, setStatus, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
@@ -56,13 +61,6 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
   const ref = useRef(null);
 
   const [delegateeIndex, setDelegateeIndex] = useState<number>(0);
-  const [modalHeight, setModalHeight] = useState<number | undefined>();
-
-  useEffect(() => {
-    if (ref) {
-      setModalHeight(ref.current?.offsetHeight as number);
-    }
-  }, []);
 
   const variousDelegation = useMemo(() => {
     if (!filteredDelegation) {
@@ -256,7 +254,9 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           classicDelegateInformation={variousDelegation ? undefined : classicDelegation}
           formatted={formatted}
           mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
-          modalHeight={modalHeight}
+          proxyItems={proxyItems}
+          selectedProxy={selectedProxy}
+          setModalHeight={setModalHeight}
           setSelectedTracksLength={setSelectedTracksLength}
           setStep={setStep}
           setTxInfo={setTxInfo}
@@ -272,9 +272,13 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           formatted={formatted}
           lockedAmount={lockedAmount}
           mixedDelegateInformation={variousDelegation ? filteredDelegation[delegateeIndex] : undefined}
-          modalHeight={modalHeight}
+          mode={mode}
           otherDelegatedTracks={otherDelegatedTracks}
+          proxyItems={proxyItems}
+          selectedProxy={selectedProxy}
           setDelegateInformation={setDelegateInformation}
+          setModalHeight={setModalHeight}
+          setMode={setMode}
           setSelectedTracksLength={setSelectedTracksLength}
           setStep={setStep}
           setTxInfo={setTxInfo}
