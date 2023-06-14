@@ -3,10 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid } from '@mui/material';
+import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { useApi, useBlockInterval, useConvictionOptions, useTranslation } from '../hooks';
+import { useBlockInterval, useConvictionOptions, useTranslation } from '../hooks';
 import { Select } from '.';
 
 interface Props {
@@ -14,10 +14,10 @@ interface Props {
   children?: React.ReactElement;
   conviction: number | undefined;
   setConviction: React.Dispatch<React.SetStateAction<number | undefined>>;
-  mt?: string;
+  style?: SxProps<Theme> | undefined;
 }
 
-export default function Convictions({ address, children, conviction, mt, setConviction }: Props): React.ReactElement {
+export default function Convictions({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const blockTime = useBlockInterval(address);
   const convictionOptions = useConvictionOptions(address, blockTime, t);
@@ -27,21 +27,16 @@ export default function Convictions({ address, children, conviction, mt, setConv
   }, [setConviction]);
 
   return (
-    <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt, position: 'relative' }}>
-      {/* {convictionOptions && */}
-      <>
-        <Select
-          // _mt='15px'
-          defaultValue={convictionOptions?.[0]?.value}
-          isDisabled={!convictionOptions}
-          label={t<string>('Vote Multiplier')}
-          onChange={onChangeConviction}
-          options={convictionOptions || []}
-          value={conviction || convictionOptions?.[0]?.value}
-        />
-        {children}
-      </>
-      {/* } */}
+    <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', ...style }}>
+      <Select
+        defaultValue={convictionOptions?.[0]?.value}
+        isDisabled={!convictionOptions}
+        label={t<string>('Vote Multiplier')}
+        onChange={onChangeConviction}
+        options={convictionOptions || []}
+        value={conviction || convictionOptions?.[0]?.value}
+      />
+      {children}
     </Grid>
   );
 }
