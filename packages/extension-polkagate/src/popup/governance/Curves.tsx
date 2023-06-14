@@ -4,6 +4,9 @@
 import type { PalletReferendaCurve, PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
 import { useTheme } from '@emotion/react';
+import { Grid } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import { Pulse } from 'better-react-spinkit';
 import { Chart, registerables } from 'chart.js';
 import React, { useEffect, useRef } from 'react';
 
@@ -60,7 +63,7 @@ export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN):
   throw new Error(`Unknown curve found ${curve.type}`);
 }
 
-const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo }) => {
+const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | undefined }) => {
   const chartRef = useRef(null);
   const theme = useTheme();
 
@@ -68,6 +71,10 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
   Chart.register(...registerables);
 
   useEffect(() => {
+    if (!trackInfo) {
+      return;
+    }
+
     const { decisionPeriod, minApproval, minSupport } = trackInfo;
     const CURVE_LENGTH = decisionPeriod.divn(10 * 60).toNumber();
 
@@ -102,6 +109,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
         {
           borderColor: `${theme.palette.support.contrastText}`,
           borderWidth: 2,
+          color: `${theme.palette.text.primary}`,
           data: supportY,
           fill: false,
           label: 'Support',
@@ -110,6 +118,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
         {
           borderColor: `${theme.palette.approval.main}`,
           borderWidth: 2,
+          color: `${theme.palette.text.primary}`,
           data: approvalY,
           fill: false,
           label: 'Approval',
@@ -204,7 +213,16 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo })
     };
   }, [theme, trackInfo]);
 
-  return <canvas height='150' id='chartCanvas' ref={chartRef} width='250' />;
+  return (
+    <Grid alignItems='center' container justifyContent='center' sx={{ height: '190px', width: '100%' }}>
+      {trackInfo
+        ? <canvas id='chartCanvas' ref={chartRef} width='250' />
+        : <Grid alignItems='center' container height='100%' item justifyContent='center'>
+          <Pulse color={grey[300]} size={80} />
+        </Grid>
+      }
+    </Grid>
+  );
 };
 
 export default React.memo(ThresholdCurves);

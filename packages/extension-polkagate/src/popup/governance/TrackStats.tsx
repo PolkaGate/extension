@@ -13,7 +13,7 @@ import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
 import { kusama } from './tracks/kusama';
 import { blockToX } from './utils/util';
-import ThresholdCurves from './Chart';
+import ThresholdCurves from './Curves';
 
 interface Props {
   address: string;
@@ -65,7 +65,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
   const token = useToken(address);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '260px', pb: '20px' }}>
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '245px' }}>
       <Grid container item md={7} sx={{ mx: '3%', pt: '15px' }}>
         <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
           <Grid item xs={12}>
@@ -79,7 +79,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             </Typography>
           </Grid>
         </Grid>
-        <Grid container item justifyContent='space-between' sx={{ mr: '3%', mt: '30px' }}>
+        <Grid container item justifyContent='space-between' sx={{ mr: '3%', mt: '12px' }}>
           <Grid container item xs={5.5}>
             <LabelValue
               label={t('Remaining Slots')}
@@ -92,6 +92,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             <LabelValue
               label={t('Decision Period')}
               value={blockToX(track?.[1]?.decisionPeriod)}
+              noBorder
             />
           </Grid>
           <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />
@@ -107,6 +108,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             <LabelValue
               label={t('Decision deposit')}
               value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
+              noBorder
             />
           </Grid>
         </Grid>
@@ -115,9 +117,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
         <Typography align='left' fontSize={18} fontWeight={400}>
           {t('Threshold Curves')}
         </Typography>
-        {track &&
-          <ThresholdCurves trackInfo={track?.[1]} />
-        }
+        <ThresholdCurves trackInfo={track?.[1]} />
       </Grid>
     </Grid>
   );

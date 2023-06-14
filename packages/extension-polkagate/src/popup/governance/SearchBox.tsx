@@ -22,6 +22,18 @@ interface Props {
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
+type Filter = {
+  advanced: {
+    refIndex?: boolean;
+    titles?: boolean;
+    proposers?: boolean;
+    methods?: boolean;
+  }
+  myReferenda: boolean;
+  myVotes: boolean;
+  status: string;
+}
+
 const DEFAULT_FILTER = {
   advanced: {
     methods: true, proposers: true, refIndex: true, titles: true
@@ -36,7 +48,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
   const theme = useTheme();
   const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [filter, setFilter] = useState(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
+  const [filter, setFilter] = useState<Filter>(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -60,7 +72,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
   }, [filter]);
 
   const onReset = useCallback(() => {
-    setFilter(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
+    setFilter(JSON.parse(JSON.stringify(DEFAULT_FILTER)) as Filter);
   }, []);
 
   const onSearch = useCallback((keyword: string) => {
@@ -156,8 +168,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
           <Grid alignItems='center' container item justifyContent='center' pl='10px' sx={{ width: '130px' }}>
             {statusOptions &&
               <Select
-                // _mt='15px'
-                defaultValue={0}
+                defaultValue={'All'}
                 // label={t<string>('Status')}
                 onChange={onChangeStatus}
                 options={statusOptions}

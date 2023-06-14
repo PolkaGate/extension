@@ -106,8 +106,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
     setProxyStep(step);
   }, [step]);
 
-  console.log('proxyStep:', proxyStep)
-
   const handleClose = useCallback(() => {
     step !== STEPS.PROXY ? setOpen(false) : setStep(proxyStep);
   }, [proxyStep, setOpen, step]);

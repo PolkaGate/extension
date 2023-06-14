@@ -149,7 +149,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
   }, [chainName, setReferendumStats, topMenu]);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
       <Grid container item sx={{ ml: '3%' }} xs={2.5}>
         <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
           <Typography fontSize={20} fontWeight={500}>

@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { curveThreshold } from '../popup/governance/Chart';
+import { curveThreshold } from '../popup/governance/Curves';
 
 const MIN_SUPPORT = 0;
 
