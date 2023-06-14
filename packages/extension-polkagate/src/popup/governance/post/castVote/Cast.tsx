@@ -403,7 +403,12 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
       </Grid>
       <Grid container item height={mayBePreviousVote ? '85px' : '100px'}>
         {voteType !== 'Abstain' &&
-          <Convictions address={address} conviction={conviction} setConviction={setConviction} mt='25px'>
+          <Convictions
+            address={address}
+            conviction={conviction}
+            setConviction={setConviction}
+            style={{ mt: '25px' }}
+          >
             <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
               <Grid item>
                 <Typography sx={{ fontSize: '16px' }}>
