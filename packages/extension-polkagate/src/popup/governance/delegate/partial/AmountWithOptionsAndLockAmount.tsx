@@ -71,7 +71,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
   const VotingInformation = () => (
     <Grid container item pb='10px'>
       <Grid container item justifyContent='space-between' sx={{ mt: '10px', width: '70.25%' }}>
-        <Grid item sx={{ fontSize: '14px' }}>
+        <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
           {t('Available Voting Balance')}
         </Grid>
         <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
@@ -79,7 +79,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
-        <Grid item sx={{ fontSize: '14px' }}>
+        <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
           <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
             {t('Already Locked Balance')}
           </Infotip2>
@@ -104,6 +104,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
         primaryBtnText={t<string>('Max amount')}
         secondaryBtnText={t<string>('Locked amount')}
         style={{
+          '> div div div': { fontSize: '16px', fontWeight: 400 },
           fontSize: '16px',
           mt: '15px',
           width: '100%'
