@@ -43,8 +43,9 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
   const theme = useTheme();
   const formatted = useFormatted(address);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [filter, setFilter] = useState({ ...DEFAULT_FILTER });
+  const [filter, setFilter] = useState(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
 
+  console.log("filter:",filter)
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
       text: status[0],
@@ -67,7 +68,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
   }, [filter]);
 
   const onReset = useCallback(() => {
-    setFilter({ ...DEFAULT_FILTER });
+    setFilter(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
   }, []);
 
   const onSearch = useCallback((keyword: string) => {
