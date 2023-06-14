@@ -191,10 +191,10 @@ export default function ReferendumPost(): React.ReactElement {
           open={showCastVote}
           refIndex={newReferenda?.index}
           setOpen={setShowCastVote}
+          setRefresh={setRefresh}
           showAbout={showAboutVoting}
           status={newReferenda?.status}
           trackId={newReferenda?.trackId}
-          setRefresh={setRefresh}
         />
       }
     </>

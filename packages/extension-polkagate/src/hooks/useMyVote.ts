@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { getAddressVote, Vote } from '../popup/governance/post/myVote/util';
 import { useApi, useFormatted } from '.';
@@ -17,22 +17,26 @@ export default function useMyVote(
   const formatted = useFormatted(address);
   const [vote, setVote] = useState<Vote | null | undefined>();
 
-  useEffect(() => {
-    const fetchVote = async () => {
-      try {
-        if (formatted && api && refIndex !== undefined && trackId !== undefined) {
-          const vote = await getAddressVote(String(formatted), api, Number(refIndex), Number(trackId));
+  const fetchVote = useCallback(async () => {
+    try {
+      if (formatted && api && refIndex !== undefined && trackId !== undefined) {
+        const vote = await getAddressVote(String(formatted), api, Number(refIndex), Number(trackId));
 
-          setVote(vote);
-          setRefresh && setRefresh(false);
-        }
-      } catch (error) {
-        console.error(error);
+        setVote(vote);
+        setRefresh && setRefresh(false);
       }
-    };
+    } catch (error) {
+      console.error(error);
+    }
+  }, [api, formatted, refIndex, setRefresh, trackId]);
 
-    fetchVote();
-  }, [api, formatted, refIndex, trackId, refresh, setRefresh]);
+  useEffect(() => {
+    fetchVote().catch(console.error);
+  }, [fetchVote]);
+
+  useEffect(() => {
+    refresh && fetchVote();
+  }, [fetchVote, refresh]);
 
   return vote;
 }
