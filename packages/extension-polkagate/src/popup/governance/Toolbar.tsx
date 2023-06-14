@@ -107,12 +107,12 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
         <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
           <Grid alignItems='center' container justifyContent='space-between'>
             <ClickAwayListener onClickAway={handleClickAway}>
-              <Grid alignItems='flex-end' container item justifyContent='flex-start' md={4}>
+              <Grid alignItems='flex-end' container item justifyContent='flex-start' xs={6}>
                 <TopMenuComponent item={'Referenda'} />
                 <TopMenuComponent item={'Fellowship'} />
               </Grid>
             </ClickAwayListener>
-            <Grid container item justifyContent='flex-end' md={5}>
+            <Grid container item justifyContent='flex-end' xs={6}>
               <Button
                 // disabled={disabled}
                 onClick={handleOpenDelegate}
