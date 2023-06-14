@@ -22,13 +22,6 @@ interface Props {
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
-type Filter = {
-  refIndex?: boolean;
-  titles?: boolean;
-  proposers?: boolean;
-  methods?: boolean;
-}
-
 const DEFAULT_FILTER = {
   advanced: {
     methods: true, proposers: true, refIndex: true, titles: true
@@ -45,7 +38,6 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [filter, setFilter] = useState(JSON.parse(JSON.stringify(DEFAULT_FILTER)));
 
-  console.log("filter:",filter)
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
       text: status[0],
