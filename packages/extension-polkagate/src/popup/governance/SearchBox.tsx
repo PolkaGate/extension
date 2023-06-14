@@ -172,7 +172,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
                 // label={t<string>('Status')}
                 onChange={onChangeStatus}
                 options={statusOptions}
-                value={REFERENDA_STATUS.findIndex((s) => s === filter.status)}
+                // value={REFERENDA_STATUS.findIndex((s) => s === filter?.status?.[0]) || 'All'}
               />
             }
           </Grid>
