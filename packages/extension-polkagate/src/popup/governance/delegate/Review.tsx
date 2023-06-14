@@ -16,13 +16,12 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import keyring from '@polkadot/ui-keyring';
 
 import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTracks, useTranslation } from '../../../hooks';
+import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { signAndSend } from '../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../components/SelectProxyModal';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import TracksList from './partial/tracksList';
 import { DelegateInformation, STEPS } from '.';
@@ -35,27 +34,26 @@ interface Props {
   estimatedFee: Balance | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
-  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
+  selectedProxy: Proxy | undefined;
+  proxyItems: ProxyItem[] | undefined;
 }
 
-export default function Review({ address, delegateInformation, estimatedFee, formatted, setTxInfo, setStep, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, formatted, proxyItems, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
   const name = useAccountName(address);
-  const { accounts } = useContext(AccountContext);
   const api = useApi(address);
   const chain = useChain(address);
-  const proxies = useProxies(api, formatted);
   const ref = useRef(null);
   const { tracks } = useTracks(address);
   const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
+  const { accounts } = useContext(AccountContext);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
-  const [modalHeight, setModalHeight] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
@@ -63,22 +61,16 @@ export default function Review({ address, delegateInformation, estimatedFee, for
   const delegate = api && api.tx.convictionVoting.delegate;
   const batch = api && api.tx.utility.batchAll;
 
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
+  useEffect(() => {
+    if (ref) {
+      setModalHeight(ref.current?.offsetHeight as number);
+    }
+  }, [setModalHeight]);
 
   const params = useMemo(() =>
     delegateInformation.delegatedTracks.map((track) =>
       [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN]
     ), [delegateInformation]);
-
-  useEffect(() => {
-    if (ref) {
-      setModalHeight(ref.current?.offsetHeight as number);
-    }
-  }, []);
 
   const confirmDelegate = useCallback(async () => {
     try {
@@ -134,7 +126,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
           {isPasswordError &&
             <WrongPasswordAlert />
           }
-          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
+          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Delegate from')}
             </Typography>
@@ -203,18 +195,6 @@ export default function Review({ address, delegateInformation, estimatedFee, for
             setStep={setStep}
           />
         </Grid>
-      }
-      {step === STEPS.PROXY &&
-        <SelectProxyModal
-          address={address}
-          height={modalHeight}
-          nextStep={STEPS.REVIEW}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          setStep={setStep}
-        />
       }
     </Motion>
   );

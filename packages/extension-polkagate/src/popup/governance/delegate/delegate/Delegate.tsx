@@ -12,16 +12,16 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Convictions, PButton } from '../../../components';
-import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../hooks';
-import { Lock } from '../../../hooks/useAccountLocks';
-import { MAX_AMOUNT_LENGTH } from '../../../util/constants';
-import { BalancesInfo } from '../../../util/types';
-import { amountToHuman, amountToMachine } from '../../../util/utils';
-import { Track } from '../utils/types';
-import AmountWithOptionsAndLockAmount from './partial/AmountWithOptionsAndLockAmount';
-import ReferendaTracks from './partial/ReferendaTracks';
-import { DelegateInformation, STEPS } from '.';
+import { Convictions, PButton } from '../../../../components';
+import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { Lock } from '../../../../hooks/useAccountLocks';
+import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { BalancesInfo } from '../../../../util/types';
+import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import { Track } from '../../utils/types';
+import AmountWithOptionsAndLockAmount from '../partial/AmountWithOptionsAndLockAmount';
+import ReferendaTracks from '../partial/ReferendaTracks';
+import { DelegateInformation, STEPS } from '..';
 
 interface Props {
   address: string | undefined;

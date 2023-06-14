@@ -11,23 +11,22 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useProxies, useToken, useTracks, useTranslation } from '../../../hooks';
-import { ThroughProxy } from '../../../partials';
-import { signAndSend } from '../../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
-import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../components/SelectProxyModal';
-import DisplayValue from '../post/castVote/partial/DisplayValue';
-import ReferendaTable from './partial/ReferendaTable';
-import TracksList from './partial/tracksList';
-import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
+import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { ThroughProxy } from '../../../../partials';
+import { signAndSend } from '../../../../util/api';
+import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
+import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
+import DisplayValue from '../../post/castVote/partial/DisplayValue';
+import ReferendaTable from '../partial/ReferendaTable';
+import TracksList from '../partial/tracksList';
+import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 
 interface Props {
   address: string | undefined;
@@ -37,11 +36,13 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   step: number;
-  modalHeight: number;
   setSelectedTracksLength: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
+  selectedProxy: Proxy | undefined;
+  proxyItems: ProxyItem[] | undefined;
 }
 
-export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, modalHeight, setStep, setTxInfo, step, setSelectedTracksLength }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, proxyItems, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -49,7 +50,6 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const { accounts } = useContext(AccountContext);
   const api = useApi(address);
   const chain = useChain(address);
-  const proxies = useProxies(api, formatted);
   const { tracks } = useTracks(address);
   const delegateeAddress = classicDelegateInformation
     ? classicDelegateInformation.delegateeAddress
@@ -57,11 +57,10 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
       ? mixedDelegateInformation.delegatee
       : undefined;
   const delegateeName = useAccountInfo(api, delegateeAddress)?.identity.display;
+  const ref = useRef(null);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -69,12 +68,6 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
   const undelegate = api && api.tx.convictionVoting.undelegate;
   const batch = api && api.tx.utility.batchAll;
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
 
   const delegatedTracks = useMemo(() => {
     if (classicDelegateInformation) {
@@ -95,6 +88,12 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
     return delegatedTracks;
   }, [delegatedTracks]);
+
+  useEffect(() => {
+    if (ref) {
+      setModalHeight(ref.current?.offsetHeight as number);
+    }
+  }, [setModalHeight]);
 
   useEffect(() => {
     if (!formatted || !undelegate || !params || !batch) {
@@ -160,13 +159,13 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const backToPreview = useCallback(() => setStep(STEPS.PREVIEW), [setStep]);
 
   return (
-    <Motion style={{ height: modalHeight }}>
+    <Motion>
       {step === STEPS.REMOVE &&
-        <Grid container>
+        <Grid container ref={ref}>
           {isPasswordError &&
             <WrongPasswordAlert />
           }
-          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
+          <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Account Holder')}
             </Typography>
@@ -209,7 +208,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
               </DisplayValue>
               <DisplayValue title={t<string>('Vote Multiplier')}>
                 <Typography fontSize='28px' fontWeight={400}>
-                  {classicDelegateInformation.delegateConviction}
+                  {`${classicDelegateInformation.delegateConviction}x`}
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
@@ -237,7 +236,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           <DisplayValue title={t<string>('Fee')}>
             <ShowValue height={20} value={estimatedFee?.toHuman()} />
           </DisplayValue>
-          <Grid container item pt='20px'>
+          <Grid container item pt='10px'>
             <PasswordWithTwoButtonsAndUseProxy
               chain={chain}
               disabled={!delegatedTracks || delegatedTracks.length === 0}
@@ -256,18 +255,6 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
             />
           </Grid>
         </Grid>
-      }
-      {step === STEPS.PROXY &&
-        <SelectProxyModal
-          address={address}
-          height={modalHeight}
-          nextStep={STEPS.REMOVE}
-          proxies={proxyItems}
-          proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
-          selectedProxy={selectedProxy}
-          setSelectedProxy={setSelectedProxy}
-          setStep={setStep}
-        />
       }
     </Motion>
   );

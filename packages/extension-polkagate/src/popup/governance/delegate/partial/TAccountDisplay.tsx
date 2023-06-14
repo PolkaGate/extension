@@ -9,7 +9,7 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identity } from '../../../components';
+import { Identity } from '../../../../components';
 
 export default function TAccountsDisplay ({ address, api, chain, selectedTrustedAddress }: { chain: Chain | null | undefined, address: string, api: ApiPromise, selectedTrustedAddress: string | undefined }): React.ReactElement {
   return (
