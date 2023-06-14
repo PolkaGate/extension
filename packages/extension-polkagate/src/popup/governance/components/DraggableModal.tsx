@@ -15,7 +15,7 @@ interface Props {
   onClose: () => void
 }
 
-export function DraggableModal({ children, maxHeight = 700, minHeight = 570, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal({ children, maxHeight = 740, minHeight = 570, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
