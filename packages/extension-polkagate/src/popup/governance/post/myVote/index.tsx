@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { ShowBalance } from '../../../../components';
@@ -52,41 +52,45 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
             {t('No votes cast yet.')}
           </Typography>
         </Grid>
-        : <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
-          <Grid container item xs={8}>
-            <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-              <ShowBalance api={api} balance={voteBalance} decimal={decimal} decimalPoint={1} token={token} />
+        : !voteBalance
+          ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
+            <Skeleton sx={{ borderRadius: '5px', display: 'inline-block', height: '20px', transform: 'none', width: '90%' }} />
+          </Grid>
+          : <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
+            <Grid container item xs={8}>
+              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+                <ShowBalance api={api} balance={voteBalance} decimal={decimal} decimalPoint={1} token={token} />
+              </Grid>
+              <Grid item sx={{ fontSize: '18px', fontWeight: 500, pl: '5px' }}>
+                {vote?.standard?.vote && `(${getConviction(vote.standard.vote)}x)`}
+                {vote?.delegating?.conviction && `(${vote.delegating.conviction}x)`}
+              </Grid>
             </Grid>
-            <Grid item sx={{ fontSize: '18px', fontWeight: 500, pl: '5px' }}>
-              {vote?.standard?.vote && `(${getConviction(vote.standard.vote)}x)`}
-              {vote?.delegating?.conviction && `(${vote.delegating.conviction}x)`}
+            <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} xs>
+              {voteType &&
+                <>
+                  {voteType === 'Aye' &&
+                    <>
+                      <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
+                      {t('Aye')}
+                    </>
+                  }
+                  {voteType === 'Nay' &&
+                    <>
+                      <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
+                      {t('Nay')}
+                    </>
+                  }
+                  {voteType === 'Abstain' &&
+                    <>
+                      <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
+                      {t('Abstain')}
+                    </>
+                  }
+                </>
+              }
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ fontSize: '16px', fontWeight: 400 }} xs>
-            {voteType &&
-              <>
-                {voteType === 'Aye' &&
-                  <>
-                    <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
-                    {t('Aye')}
-                  </>
-                }
-                {voteType === 'Nay' &&
-                  <>
-                    <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
-                    {t('Nay')}
-                  </>
-                }
-                {voteType === 'Abstain' &&
-                  <>
-                    <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
-                    {t('Abstain')}
-                  </>
-                }
-              </>
-            }
-          </Grid>
-        </Grid>
       }
     </Grid>
   );
