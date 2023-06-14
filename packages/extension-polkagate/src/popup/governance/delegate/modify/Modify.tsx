@@ -47,9 +47,10 @@ interface Props {
   nextButtonDisabled: boolean;
   chain: Chain | null | undefined;
   otherDelegatedTracks: BN[] | undefined;
+  delegatedTracks: BN[] | undefined;
 }
 
-export default function Modify({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, otherDelegatedTracks, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
+export default function Modify({ accountLocks, address, api, balances, chain, conviction, currentBlock, decimal, delegateAmount, delegatePower, delegatedTracks, delegateeAddress, estimatedFee, lockedAmount, nextButtonDisabled, otherDelegatedTracks, selectedTracks, setConviction, setDelegateAmount, setMode, setSelectedTracks, setStep, token, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onValueChange = useCallback((value: string) => {
@@ -135,6 +136,7 @@ export default function Modify({ accountLocks, address, api, balances, chain, co
           accountLocks,
           currentBlockNumber: currentBlock
         }}
+        firstSelections={delegatedTracks}
         selectedTracks={selectedTracks}
         setSelectedTracks={setSelectedTracks}
         tracks={tracks}

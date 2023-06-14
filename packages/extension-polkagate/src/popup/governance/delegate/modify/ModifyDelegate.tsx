@@ -271,6 +271,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
               decimal={decimal}
               delegateAmount={newDelegateAmount ?? delegateAmount}
               delegatePower={delegatePower}
+              delegatedTracks={delegatedTracks}
               delegateeAddress={delegateeAddress}
               estimatedFee={estimatedFee}
               lockedAmount={lockedAmount}
