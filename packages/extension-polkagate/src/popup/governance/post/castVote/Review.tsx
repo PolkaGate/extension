@@ -174,7 +174,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
             {t<string>('Think twice before removing your vote. It may affect the outcome.')}
           </Warning>
         }
-        <Grid container item pt='30px'>
+        <Grid container item pt='10px'>
           <DisplayValue title={t<string>('Account holder')} topDivider={false}>
             <Grid container fontSize='16px' fontWeight={400} item lineHeight='45px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
               <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
