@@ -184,7 +184,6 @@ export default function Governance(): React.ReactElement {
 
       const concatenated = (list || []).concat(resPA);
 
-      console.log('concatenated:', concatenated);
       setReferenda([...concatenated]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

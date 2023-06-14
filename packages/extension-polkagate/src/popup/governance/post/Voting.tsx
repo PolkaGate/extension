@@ -151,7 +151,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
       <Grid color='primary.main' container justifyContent='center'>
         <Button
           onClick={handleOpenAllVotes}
-          sx={{ color: 'secondary.light', fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '90%' }}
+          sx={{ color: 'secondary.light', fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '82%' }}
           variant='outlined'
         >
           {t('All votes')}

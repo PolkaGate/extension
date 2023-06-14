@@ -163,41 +163,45 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
     width: '33%'
   };
 
+  const Header = () => (
+    <Grid alignItems='center' container>
+      <Grid item>
+        <Typography fontSize='22px' fontWeight={700}>
+          {t('All Votes')}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '15px', opacity: 0.3, width: '2px' }} />
+      </Grid>
+      <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start' }} xs>
+        {isSearchBarOpen
+          ? <InputFilter
+            autoFocus={false}
+            onChange={onSearch}
+            placeholder={t<string>('🔍 Search by voter address')}
+            theme={theme}
+          // value={searchKeyword ?? ''}
+          />
+          : <SearchIcon sx={{ color: 'secondary.contrastText', display: 'block', fontSize: '30px', width: 'fit-content' }} />
+        }
+      </Grid>
+      <Grid item>
+        <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+      </Grid>
+    </Grid>
+  );
+
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>
       <>
-        <Grid alignItems='center' container>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {t('All Votes')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '15px', opacity: 0.3, width: '2px' }} />
-          </Grid>
-          <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start' }} xs>
-            {isSearchBarOpen
-              ? <InputFilter
-                autoFocus={false}
-                onChange={onSearch}
-                placeholder={t<string>('🔍 Search by voter address')}
-                theme={theme}
-              // value={searchKeyword ?? ''}
-              />
-              : <SearchIcon sx={{ color: 'secondary.contrastText', display: 'block', fontSize: '30px', width: 'fit-content' }} />
-            }
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <Header />
         <Box>
           <Tabs centered onChange={handleTabChange} sx={{ pt: '15px', 'span.MuiTabs-indicator': { bgcolor: 'secondary.light', height: '5px', width: '100%' } }} value={tabIndex}>
             <Tab
               icon={<CheckIcon sx={{ color: 'success.main' }} />}
               iconPosition='start'
               label={t<string>('Ayes ({{ayesCount}})', { replace: { ayesCount: filteredVotes?.yes?.length || 0 } })}
-              sx={tabStyle}
+              sx={{ ...tabStyle, width: '35%' }}
               value={1}
             />
             <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
@@ -205,7 +209,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
               label={t<string>('Nays ({{naysCount}})', { replace: { naysCount: filteredVotes?.no?.length || 0 } })}
-              sx={tabStyle}
+              sx={{ ...tabStyle, width: '34%' }}
               value={2}
             />
             <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
@@ -213,21 +217,21 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
               label={t<string>('Abstains ({{abstainsCount}})', { replace: { abstainsCount: filteredVotes?.abstain?.length || 0 } })}
-              sx={tabStyle}
+              sx={{ ...tabStyle, width: '30%' }}
               value={3}
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ mt: '20px', position: 'relative', height: '530px' }}>
-          <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '18px', fontWeight: 400 }}>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ border: 1, borderColor: 'secondary.light', borderRadius: '10px', p: '0 8px 8px', position: 'relative', height: '555px' }}>
+          <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '17px', fontWeight: 400 }}>
             <Grid item width='35%'>
               {t('Voter')}
             </Grid>
-            <Grid container item sx={{ borderLeft: 1, borderRight: 1, borderColor: 'secondary.contrastText' }} width='35%'>
+            <Grid container item sx={{ borderLeft: 0.5, borderRight: 0.5, borderColor: 'secondary.contrastText' }} width='35%'>
               <Grid item xs={12}>
                 {t('Standard Vote')}
               </Grid>
-              <Grid container item justifyContent='space-around' xs={12}>
+              <Grid container item justifyContent='space-around' xs={12} fontSize='16px'>
                 <Grid item>
                   <vaadin-icon icon='vaadin:sort' onClick={onSortVotes} style={{ height: '25px', color: `${theme.palette.primary.main}`, cursor: 'pointer' }} />
                   {t('Value')}
@@ -260,7 +264,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                 <Grid container item justifyContent='flex-start' width='35%'>
                   <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '99%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
-                <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 1, borderRight: 1, height: '43px' }} width='35%'>
+                <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 0.5, borderRight: 0.5, height: '43px' }} width='35%'>
                   <Grid container item justifyContent={vote?.lockPeriod == null ? 'center' : 'flex-end'} xs>
                     <ShowBalance balance={getVoteCapital(vote)} decimal={decimal} decimalPoint={2} token={token} />
                   </Grid>
@@ -294,7 +298,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               onChange={onPageChange}
               page={page}
               size='large'
-              sx={{ bottom: '-18px', position: 'absolute' }}
+              sx={{ bottom: '5px', position: 'absolute' }}
             />
           }
           {!allVotes &&
