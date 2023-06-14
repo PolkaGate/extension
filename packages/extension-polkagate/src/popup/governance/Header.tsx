@@ -28,7 +28,7 @@ export function Header(): React.ReactElement {
     , [onAction, postId, topMenu]);
 
   return (
-    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#180710', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
+    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: 'black', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
         <Grid alignItems='center' container justifyContent='space-between'>
           <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: 'white', fontFamily: 'Eras' }} xs={6}>

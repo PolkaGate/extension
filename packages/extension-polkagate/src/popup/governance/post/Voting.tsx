@@ -42,6 +42,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   }, [referendum, state?.selectedSubMenu]);
 
   const track = useTrack(address, trackName);
+
   const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum?.timelineSb?.[1]?.block && (currentBlock - referendum.timelineSb[1].block));
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
@@ -57,8 +58,21 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
     }
   }, [currentBlock, referendum, threshold, track]);
 
-  const ayesPercent = useMemo(() => referendum?.ayesAmount && referendum?.naysAmount ? Number(referendum.ayesAmount) / (Number(referendum.ayesAmount) + Number(new BN(referendum.naysAmount))) * 100 : 0, [referendum]);
-  const naysPercent = useMemo(() => referendum?.ayesAmount && referendum?.naysAmount ? Number(referendum.naysAmount) / (Number(referendum.ayesAmount) + Number(new BN(referendum.naysAmount))) * 100 : 0, [referendum]);
+  const totalVoteAmount = (referendum?.ayesAmount !== undefined && referendum?.naysAmount !== undefined &&
+    Number(referendum.ayesAmount) + Number(referendum.naysAmount)
+  );
+  const ayesPercent = useMemo(() => referendum && totalVoteAmount !== undefined
+    ? Number(referendum.ayesAmount) !== 0
+      ? Number(referendum.ayesAmount) / totalVoteAmount * 100
+      : 0
+    : 0, [referendum, totalVoteAmount]);
+
+  const naysPercent = useMemo(() => referendum && totalVoteAmount !== undefined
+    ? Number(referendum.naysAmount) !== 0
+      ? Number(referendum.naysAmount) / totalVoteAmount * 100
+      : 0
+    : 0
+    , [referendum, totalVoteAmount]);
 
   const handleOpenAllVotes = useCallback(() => {
     setOpenAllVotes(true);
@@ -71,19 +85,22 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
       </Typography>
       <Grid container fontSize='22px' item justifyContent='space-around'>
         <Grid fontWeight={700} item>
-          {percent?.toFixed(1)}%
+          {percent === 0 ? '0' : percent?.toFixed(1)}%
         </Grid>
         <Grid color='text.disabled' fontSize='20px' fontWeight={400} item>
-          {count ? `(${nFormatter(count, 0) || ''})` : ''}
+          {count !== undefined ? `(${nFormatter(count, 0) || ''})` : ''}
         </Grid>
       </Grid>
       <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item>
-        <ShowBalance
-          balance={amount && new BN(amount)}
-          decimal={decimal}
-          decimalPoint={2}
-          token={token}
-        />
+        {isFellowship
+          ? <ShowValue value={amount} />
+          : <ShowBalance
+            balance={amount && new BN(amount)}
+            decimal={decimal}
+            decimalPoint={2}
+            token={token}
+          />
+        }
       </Grid>
     </Grid>
   );
@@ -134,8 +151,8 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
       <Grid color='primary.main' container justifyContent='center'>
         <Button
           onClick={handleOpenAllVotes}
-          sx={{ color: 'secondary.light', fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '70%' }}
-          variant='text'
+          sx={{ color: 'secondary.light', fontSize: '18px', fontWeight: 500, mt: '10px', textDecoration: 'underline', textTransform: 'none', width: '90%' }}
+          variant='outlined'
         >
           {t('All votes')}
         </Button>

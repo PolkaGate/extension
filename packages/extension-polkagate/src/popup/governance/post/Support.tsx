@@ -27,9 +27,10 @@ export default function Support({ address, referendum }: Props): React.ReactElem
 
   const [totalIssuance, setTotalIssuance] = useState<BN>();
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
+  const [fellowshipCount, setFellowshipCount] = useState<number>();
 
   const track = useTrack(address, referendum?.trackName);
-
+  const isFellowship = referendum?.type === 'FellowshipReferendum';
   const threshold = useCurrentSupportThreshold(track?.[1], (currentBlock && referendum && referendum?.timelineSb?.[1]?.block) && currentBlock - referendum.timelineSb[1].block);
 
   const currentSupportThreshold = useMemo(() => {
@@ -45,7 +46,15 @@ export default function Support({ address, referendum }: Props): React.ReactElem
     }
   }, [currentBlock, referendum, threshold, track]);
 
-  const supportPercent = useMemo(() => totalIssuance && inactiveIssuance && referendum?.supportAmount && (Number(referendum.supportAmount) * 100 / Number(totalIssuance.sub(inactiveIssuance))), [inactiveIssuance, referendum, totalIssuance]);
+  const supportPercent = useMemo(() => {
+    if (totalIssuance && inactiveIssuance && referendum?.supportAmount) {
+      if (isFellowship) {
+        return fellowshipCount && (Number(referendum.ayesCount) * 100 / fellowshipCount);
+      }
+
+      return (Number(referendum.supportAmount) * 100 / Number(totalIssuance.sub(inactiveIssuance)));
+    }
+  }, [fellowshipCount, inactiveIssuance, isFellowship, referendum, totalIssuance]);
 
   useEffect(() => {
     if (!api) {
@@ -54,6 +63,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
 
     api.query.balances.totalIssuance().then(setTotalIssuance).catch(console.error);
     api.query.balances.inactiveIssuance().then(setInactiveIssuance).catch(console.error);
+    api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => setFellowshipCount(keys?.length));
   }, [api]);
 
   const Tally = ({ amount, color, percent, text, total }: { text: string, percent: number | undefined, color: string, amount: string | undefined, total: BN | undefined }) => (
@@ -67,24 +77,34 @@ export default function Support({ address, referendum }: Props): React.ReactElem
         </Grid>
       </Grid>
       <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
-        <ShowBalance
-          balance={amount !== undefined ? new BN(amount) : undefined}
-          decimal={decimal}
-          decimalPoint={2}
-          token={token}
-        />
+        {isFellowship
+          ? <ShowValue
+            value={amount}
+          />
+          : <ShowBalance
+            balance={amount !== undefined ? new BN(amount) : undefined}
+            decimal={decimal}
+            decimalPoint={2}
+            token={token}
+          />
+        }
       </Grid>
       <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} container fontSize='14px' fontWeight={400} item justifyContent='center'>
         <Grid item pr='3px'>
           {t('of')}
         </Grid>
         <Grid item>
-          <ShowBalance
-            balance={total && new BN(total)}
-            decimal={decimal}
-            decimalPoint={2}
-            token={token}
-          />
+          {isFellowship
+            ? <ShowValue
+              value={fellowshipCount}
+            />
+            : <ShowBalance
+              balance={total && new BN(total)}
+              decimal={decimal}
+              decimalPoint={2}
+              token={token}
+            />
+          }
         </Grid>
       </Grid>
     </Grid>
@@ -101,18 +121,20 @@ export default function Support({ address, referendum }: Props): React.ReactElem
       </Grid>
       <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
         <Tally
-          amount={referendum?.supportAmount}
+          amount={isFellowship ? referendum?.ayesCount : referendum?.supportAmount}
           color={`${theme.palette.support.contrastText}`}
           percent={supportPercent}
           text={t('Current')}
-          total={totalIssuance}
+          total={isFellowship ? fellowshipCount : totalIssuance}
         />
         <Tally
-          amount={currentSupportThreshold && totalIssuance?.divn(100).muln(currentSupportThreshold)?.toString()}
+          amount={isFellowship
+            ? currentSupportThreshold && fellowshipCount && Math.ceil(fellowshipCount / 100 * currentSupportThreshold)
+            : currentSupportThreshold && totalIssuance?.divn(100).muln(currentSupportThreshold)?.toString()}
           color={`${theme.palette.support.main}`}
           percent={currentSupportThreshold}
           text={t('Threshold')}
-          total={totalIssuance}
+          total={isFellowship ? fellowshipCount : totalIssuance}
         />
       </Grid>
     </Grid>

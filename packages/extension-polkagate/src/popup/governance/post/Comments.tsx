@@ -18,6 +18,8 @@ export default function Comments({ address, referendum }: { address: string | un
   const ChainName = useChainName(address);
   const [expanded, setExpanded] = React.useState(false);
 
+  const type = referendum?.type === 'FellowshipReferendum' ? 'fellowship' : 'referenda';
+
   useEffect(() =>
     setExpanded(!!referendum?.comments?.length)
     , [referendum]);
@@ -33,7 +35,7 @@ export default function Comments({ address, referendum }: { address: string | un
   }
 
   function openSubsquare() {
-    window.open(`https://${ChainName}.subsquare.io/referenda/referendum/${referendum?.index}`, '_blank');
+    window.open(`https://${ChainName}.subsquare.io/${type}/referendum/${referendum?.index}`, '_blank');
   }
 
   return (
@@ -59,12 +61,14 @@ export default function Comments({ address, referendum }: { address: string | un
           ))}
           <Grid container item justifyContent='flex-end' spacing={5} sx={{ mt: '30px' }}>
             <Grid item>
-              <Button onClick={openPolkassembly} sx={{
-                color: 'text.primary',
-                textTransform: 'none', borderColor: 'primary.main'
-              }} variant='outlined'>
-                {'Comment on Polkassembly'}
-              </Button>
+              {type !== 'fellowship' &&
+                <Button onClick={openPolkassembly} sx={{
+                  color: 'text.primary',
+                  textTransform: 'none', borderColor: 'primary.main'
+                }} variant='outlined'>
+                  {'Comment on Polkassembly'}
+                </Button>
+              }
             </Grid>
             <Grid item>
               <Button onClick={openSubsquare} sx={{ borderColor: 'primary.main', color: 'text.primary', textTransform: 'none' }} variant='outlined'>

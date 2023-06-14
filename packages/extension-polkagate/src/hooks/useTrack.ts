@@ -8,10 +8,13 @@ import { toSnakeCase } from '../popup/governance/utils/util';
 import { useTracks } from '.';
 
 export default function useTrack(address: string | undefined, trackName: string | undefined): Track | undefined {
-  const { tracks } = useTracks(address);
+  const { fellowshipTracks, tracks } = useTracks(address);
   const snakeCaseTrackName = trackName && toSnakeCase(trackName);
 
-  const track = useMemo(() => snakeCaseTrackName ? tracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName) : undefined
+  const track = useMemo(() => snakeCaseTrackName
+    ? tracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName) ||
+    fellowshipTracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName)
+    : undefined
     , [snakeCaseTrackName, tracks]);
 
   return track;
