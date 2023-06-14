@@ -84,7 +84,7 @@ export default function SelectProxyModal({ address, height, proxies, proxyTypeFi
         _ml={0}
         _onClick={handleNext}
         disabled={change}
-        text={t('Done')}
+        text={t('Apply')}
       />
     </Grid>
   );
