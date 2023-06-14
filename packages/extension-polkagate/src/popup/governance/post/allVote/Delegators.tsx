@@ -15,7 +15,7 @@ import { Identity, ShowBalance } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, VoteType } from '../../utils/helpers';
-import { getVoteValue } from '.';
+import { getVoteCapital, getVoteValue } from '.';
 
 interface Props {
   address: string | undefined;
@@ -27,16 +27,6 @@ interface Props {
 }
 
 const DELEGATORS_PER_PAGE = 7;
-
-export const getVoteCapital = (vote: VoteType | AbstainVoteType) => {
-  let voteTypeStr = 'abstain' in vote.balance ? 'abstain' : 'other';
-
-  const value = voteTypeStr === 'abstain'
-    ? vote.balance.abstain || new BN(vote.balance.aye).add(new BN(vote.balance.nay))
-    : new BN(vote.balance.value);
-
-  return new BN(value);
-};
 
 const sanitizeVote = (vote: string) => {
   const voteMappings: { [key: string]: string } = {

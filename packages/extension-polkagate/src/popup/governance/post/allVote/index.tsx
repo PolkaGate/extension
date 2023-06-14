@@ -50,6 +50,16 @@ export const getVoteValue = (vote: AbstainVoteType | VoteType, voteTypeStr?: 'ab
   return new BN(value);
 };
 
+export const getVoteCapital = (vote: VoteType | AbstainVoteType) => {
+  let voteTypeStr = 'abstain' in vote.balance ? 'abstain' : 'other';
+
+  const value = voteTypeStr === 'abstain'
+    ? vote.balance.abstain || new BN(vote.balance.aye).add(new BN(vote.balance.nay))
+    : new BN(vote.balance.value);
+
+  return new BN(value);
+};
+
 export default function AllVotes({ address, isFellowship, open, refIndex, setOpen, setVoteCountsPA, trackId }: Props): React.ReactElement {
   const chainName = useChainName(address);
   const api = useApi(address);

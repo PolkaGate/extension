@@ -15,7 +15,7 @@ import { Identity, InputFilter, Progress, ShowBalance } from '../../../../compon
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
-import { getVoteValue, VOTE_PER_PAGE } from '.';
+import { getVoteCapital, getVoteValue, VOTE_PER_PAGE } from '.';
 
 interface Props {
   address: string | undefined;
@@ -261,8 +261,8 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                   <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '99%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
                 <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 1, borderRight: 1, height: '43px' }} width='35%'>
-                  <Grid container item justifyContent='flex-end' xs>
-                    <ShowBalance balance={getVoteValue(vote)} decimal={decimal} decimalPoint={2} token={token} />
+                  <Grid container item justifyContent={vote?.lockPeriod == null ? 'center' : 'flex-end'} xs>
+                    <ShowBalance balance={getVoteCapital(vote)} decimal={decimal} decimalPoint={2} token={token} />
                   </Grid>
                   {vote?.lockPeriod !== null &&
                     <Grid container item justifyContent='center' xs={6}>
