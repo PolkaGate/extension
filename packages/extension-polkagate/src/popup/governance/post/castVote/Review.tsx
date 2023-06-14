@@ -14,6 +14,7 @@ import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } f
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
@@ -25,9 +26,8 @@ import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
-import { STEPS, VoteInformation } from '.';
 import DisplayValue from './partial/DisplayValue';
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import { STEPS, VoteInformation } from '.';
 
 interface Props {
   address: string | undefined;
@@ -41,9 +41,10 @@ interface Props {
   voteInformation: VoteInformation;
   tx: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   status: string | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review({ address, estimatedFee, formatted, proxyItems, selectedProxy, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, formatted, proxyItems, selectedProxy, setRefresh, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -149,15 +150,16 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
       saveAsHistory(from, info);
 
       setStep(STEPS.CONFIRM);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, tx, api, decimal, params, selectedProxyAddress, password, setStep, selectedProxy, voteInformation, estimatedFee, name, step, selectedProxyName, setTxInfo, chain]);
+  }, [formatted, tx, api, decimal, params, selectedProxyAddress, setRefresh, password, setStep, selectedProxy, voteInformation, estimatedFee, name, step, selectedProxyName, setTxInfo, chain]);
 
   const onBackClick = useCallback(() =>
     setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)
-  , [setStep, step]);
+    , [setStep, step]);
 
   return (
     <Motion style={{ height: '100%' }}>

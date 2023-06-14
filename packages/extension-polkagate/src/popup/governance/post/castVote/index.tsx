@@ -40,6 +40,7 @@ interface Props {
   notVoted: boolean | null | undefined;
   cantModify: boolean;
   status: string | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface VoteInformation {
@@ -66,7 +67,7 @@ export const STEPS = {
   PROXY: 100
 };
 
-export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -244,6 +245,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             formatted={String(formatted)}
             proxyItems={proxyItems}
             selectedProxy={selectedProxy}
+            setRefresh={setRefresh}
             setStep={setStep}
             setTxInfo={setTxInfo}
             status={status}

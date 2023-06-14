@@ -42,8 +42,9 @@ export default function ReferendumPost(): React.ReactElement {
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
   const [showAboutVoting, setShowAboutVoting] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
 
-  const vote = useMyVote(address, postId, newReferenda?.trackId);
+  const vote = useMyVote(address, postId, newReferenda?.trackId, refresh, setRefresh);
   const hasVoted = useMemo(() => vote && ('standard' in vote || 'splitAbstain' in vote), [vote]);
   const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
 
@@ -193,6 +194,7 @@ export default function ReferendumPost(): React.ReactElement {
           showAbout={showAboutVoting}
           status={newReferenda?.status}
           trackId={newReferenda?.trackId}
+          setRefresh={setRefresh}
         />
       }
     </>
