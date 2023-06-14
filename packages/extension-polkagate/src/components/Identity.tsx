@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
-import { useAccountInfo, useAccountName, useChain, useFormatted, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountInfo, useAccountName, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
@@ -23,6 +23,7 @@ interface Props {
   address?: string | AccountId;
   api?: ApiPromise;
   chain?: Chain;
+  direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
   judgement?: any;
@@ -36,11 +37,11 @@ interface Props {
   withShortAddress?: boolean;
 }
 
-function Identity({ accountInfo, address, api, chain, formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
-  const _formatted = useFormatted(address, formatted);
+  const _formatted = useFormatted2(address, formatted, chain);
   const msData = useMerkleScience(_formatted, chain);
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
@@ -78,7 +79,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
-      <Grid alignItems='center' container item xs={showChainLogo || noIdenticon ? 11 : 12}>
+      <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
         {!noIdenticon &&
           <Grid item m='auto 0' pr='5px'>
             <Identicon
@@ -90,7 +91,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
             />
           </Grid>
         }
-        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(97% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize}px)`, width: 'max-content' }}>
+        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(100% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize + 5}px)`, width: 'max-content' }}>
           <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
             {msData
               ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
@@ -132,7 +133,7 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
                 {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
                   <Grid item sx={{ textAlign: 'left' }}>
                     {showShortAddress
-                      ? <ShortAddress address={formatted} style={{ fontSize: '11px' }} />
+                      ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize || '11px' }} />
                       : t('Unknown')
                     }
                   </Grid>
@@ -140,9 +141,9 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
               </>
             }
           </Grid>
-          {withShortAddress &&
+          {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
@@ -176,6 +177,11 @@ function Identity({ accountInfo, address, api, chain, formatted, identiconSize =
                 </Link>
               </Grid>
             }
+          </Grid>
+        }
+        {withShortAddress && direction === 'row' &&
+          <Grid container item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
+            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
           </Grid>
         }
       </Grid>

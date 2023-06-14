@@ -9,7 +9,7 @@
     "packages/**/src/**/*",
     "packages/extension-polkagate/icons",
     "packages/extension-polkagate/src/components/themes.ts"
-  ],
+, "packages/extension/public/offscreen.js"  ],
   "exclude": [
     "**/node_modules/**/*"
   ]

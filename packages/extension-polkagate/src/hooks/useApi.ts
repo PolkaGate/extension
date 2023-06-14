@@ -17,13 +17,17 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
   useEffect(() => {
-    if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const api = apisContext?.apis[chain.genesisHash].api;
+    if (api?.isConnected) {
+      return;
+    }
 
-      if (api?.isConnected) {
+    if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
+      const savedApi = apisContext.apis[chain.genesisHash].api;
+
+      if (savedApi?.isConnected) {
         console.log(`♻ using the saved api for ${chain.name}`);
 
-        return setApi(api);
+        return setApi(savedApi);
       }
     }
 
@@ -36,11 +40,10 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     ApiPromise.create({ provider: wsProvider }).then((api) => {
       setApi(api);
 
-      apisContext.apis[String(api.genesisHash.toHex())] = { api, apiEndpoint: endpoint };
+      apisContext.apis[String(api.genesisHash.toHex())] = { api, endpoint };
       apisContext.setIt(apisContext.apis);
     }).catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apisContext?.apis?.length, endpoint, stateApi, chain]);
+  }, [apisContext, endpoint, stateApi, chain, api]);
 
   return api;
 }

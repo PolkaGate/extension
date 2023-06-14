@@ -14,7 +14,21 @@ import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
 import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useToken } from '.';
 
-export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
+const hexToStr = (hexString: string) => {
+  const trimmedHexString = hexString.substr(2); // Remove the "0x" prefix
+  let result = '';
+
+  for (let i = 0; i < trimmedHexString.length; i += 2) {
+    const hexValue = parseInt(trimmedHexString.substr(i, 2), 16);
+    const asciiChar = String.fromCharCode(hexValue);
+
+    result += asciiChar;
+  }
+
+  return result;
+}
+
+export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
   const account = useAccount(address);
   const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
@@ -228,6 +242,10 @@ export default function useBalances(address: string | undefined, refresh?: boole
     setBalances(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName]);
+
+  if (onlyNew) {
+    return newBalances; //  returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance
+  }
 
   // return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
   return overall && overall.genesisHash === chain?.genesisHash && overall.token === currentToken && overall.decimal === currentDecimal

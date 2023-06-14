@@ -42,7 +42,7 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
     );
 
-    return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
+    return endpoints?.filter((e) => String(e.value).startsWith('ws')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);
 
   return endpoints ?? [];
