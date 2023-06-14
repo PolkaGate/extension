@@ -144,7 +144,9 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
   const EditAdvance = () => (
     <Grid container item>
       <Grid container item onClick={toggleAdvance} sx={{ cursor: 'pointer' }}>
-        <Typography>{t<string>('Advance')}</Typography>
+        <Typography color='secondary.main' fontSize='16px' fontWeight={400}>
+          {t<string>('Advanced')}
+        </Typography>
         <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto 8px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvance ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
       </Grid>
       {showAdvance &&
@@ -179,10 +181,11 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
         address={address}
         conviction={conviction}
         setConviction={setConviction}
+        style={{ py: '15px' }}
       >
-        <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ fontSize: '16px', fontWeight: 400, lineHeight: '24px' }}>
           <Grid item>
-            <Typography sx={{ fontSize: '16px' }}>
+            <Typography fontSize='16px' fontWeight={400}>
               {t('Your final delegated vote power')}
             </Typography>
           </Grid>
@@ -204,6 +207,6 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
           text={t<string>('Next')}
         />
       </Grid>
-    </Grid>
+    </Grid >
   );
 }

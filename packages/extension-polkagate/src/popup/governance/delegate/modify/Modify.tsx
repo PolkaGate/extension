@@ -114,6 +114,7 @@ export default function Modify({ accountLocks, address, api, balances, chain, co
         address={address}
         conviction={conviction}
         setConviction={setConviction}
+        style={{ pt: '15px' }}
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
           <Grid item>
