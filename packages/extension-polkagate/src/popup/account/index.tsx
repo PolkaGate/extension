@@ -10,7 +10,7 @@
 
 import '@vaadin/icons';
 
-import { faCoins, faHistory, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Box, Container, Grid, IconButton, useTheme } from '@mui/material';
@@ -21,9 +21,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector, SelectChain } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
-import { tieAccount } from '../../messaging';
+import { tieAccount, windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
-import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import StakingOption from '../staking/Options';
@@ -97,13 +97,6 @@ export default function AccountDetails(): React.ReactElement {
     });
   }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api, price]);
 
-  const goToReceive = useCallback(() => {
-    history.push({
-      pathname: `/receive/${address}/`,
-      state: { pathname }
-    });
-  }, [history, address, pathname]);
-
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
   }, [genesisHash, showStakingOptions]);
@@ -122,6 +115,11 @@ export default function AccountDetails(): React.ReactElement {
         pathname: `/crowdloans/${address}`
       });
   }, [address, formatted, genesisHash, history]);
+
+  const goToGovernance = useCallback(() => {
+    formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
+      windowOpen(`/governance/${address}/referenda`).catch(console.error);
+  }, [address, formatted, genesisHash]);
 
   const identicon = (
     <Identicon
@@ -222,9 +220,16 @@ export default function AccountDetails(): React.ReactElement {
           />
           <HorizontalMenuItem
             divider
-            icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
-            onClick={goToReceive}
-            title={t<string>('Receive')}
+            icon={
+              <FontAwesomeIcon
+                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faVoteYea}
+                size='lg'
+              />
+            }
+            onClick={goToGovernance}
+            // textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
+            title={t<string>('Governance')}
           />
           <HorizontalMenuItem
             divider
@@ -243,14 +248,15 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={
-              <vaadin-icon
-                icon='vaadin:piggy-bank-coin'
-                style={{ color: `${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`, height: '35px' }}
+              <FontAwesomeIcon
+                color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faPiggyBank}
+                size='lg'
+                flip='horizontal'
               />
             }
-            labelMarginTop='-5px'
             onClick={goToCrowdLoans}
-            title={t<string>('Crowdloans')}
+            title={t<string>('Crowdloan')}
           />
           <HorizontalMenuItem
             icon={

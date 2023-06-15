@@ -65,9 +65,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Merkle Science datasets are utilized to identify risky Polkadot accounts associated with scams, phishing, theft, and other malicious activities, ensuring a safer transaction experience.'),
-              t<string>('“Nomination pools” has been added as a new proxy type on Kusama.'),
-              t<string>('You can now click on the account name to go to that account page.'),
+              t<string>('Governance 2 (OpenGov) is now available on the Polkagate extension. Easily participate in voting or delegate your voting power.'),
               t<string>('Various known issues have been fixed.')
             ]}
           />

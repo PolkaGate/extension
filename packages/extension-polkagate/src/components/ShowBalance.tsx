@@ -17,7 +17,7 @@ import FormatBalance from './FormatBalance';
 import { FormatBalance2 } from '.';
 
 export interface Props {
-  balance: Balance | string | BN | null | undefined;
+  balance: Balance | string | BN | number | null | undefined;
   api?: ApiPromise | undefined;
   decimalPoint?: number;
   height?: number;
