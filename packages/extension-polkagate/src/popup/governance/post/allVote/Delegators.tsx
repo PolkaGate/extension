@@ -106,13 +106,13 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   }, []);
 
   const AmountVal = ({ label, value }: { label: string, value: BN | undefined }) => (
-    <Grid alignItems='baseline' container item spacing={1} width='200px'>
+    <Grid alignItems='baseline' container item justifyContent='flex-start' spacing={1} width='33%'>
       <Grid item>
-        <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
+        <Typography color='text.disabled' fontSize='17px' fontWeight={400}>
           {label}
         </Typography>
       </Grid>
-      <Grid fontSize='18px' fontWeight={500} item>
+      <Grid fontSize='17px' fontWeight={500} item>
         <ShowBalance balance={value} decimal={decimal} decimalPoint={2} token={token} />
       </Grid>
     </Grid>
@@ -121,11 +121,11 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const StandardSummary = () => (
     <Grid container sx={{ pb: '10px' }}>
       <Grid container item textAlign='left'>
-        <Typography color='text.disabled' fontSize='19px' fontWeight={400}>
+        <Typography color='text.disabled' fontSize='18px' fontWeight={500}>
           {t('Standard')}
         </Typography>
       </Grid>
-      <Grid alignItems='baseline' container item sx={{ fontSize: '20', fontWeight: 500, pl: '32px' }} textAlign='left'>
+      <Grid alignItems='baseline' container item sx={{ pl: '30px' }} textAlign='left'>
         <AmountVal
           label={t('Vote')}
           value={getVoteValue(standard)}
@@ -135,7 +135,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
           value={getVoteCapital(standard)}
         />
         {standard && standard?.lockPeriod !== null &&
-          <Grid alignItems='baseline' container item spacing={1} width='120px'>
+          <Grid alignItems='baseline' justifyContent='flex-end' container item spacing={1} width='33%'>
             <Grid item>
               <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
                 {t('Conviction')}
@@ -153,11 +153,11 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const DelegatedSummary = () => (
     <Grid container item sx={{ py: '7px' }}>
       <Grid container item textAlign='left'>
-        <Typography color='text.disabled' fontSize='19px' fontWeight={500}>
+        <Typography color='text.disabled' fontSize='18px' fontWeight={500}>
           {t('Delegated')}
         </Typography>
       </Grid>
-      <Grid container item sx={{ pl: '32px' }} textAlign='left'>
+      <Grid container item sx={{ pl: '30px' }} textAlign='left'>
         <AmountVal
           label={t('Vote')}
           value={totalDelegatedValue}
