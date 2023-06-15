@@ -91,7 +91,7 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
     // Then, look into the votes of the delegating target address.
     const { conviction, target } = voting.asDelegating;
     const proxyVoting = await api.query.convictionVoting.votingFor(target, trackId) as unknown as PalletConvictionVotingVoteVoting;
-    const vote = proxyVoting.asCasting.votes.find(([index]) => index.toNumber() === referendumIndex)?.[1];
+    const vote = proxyVoting.isCasting && proxyVoting.asCasting.votes.find(([index]) => index.toNumber() === referendumIndex)?.[1];
 
     if (!vote?.isStandard && !vote?.isSplitAbstain) {
       return {
