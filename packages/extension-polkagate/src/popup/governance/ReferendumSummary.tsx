@@ -85,7 +85,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
       </Grid>
       <Grid alignItems='center' container item justifyContent='space-between'>
         <Grid alignItems='center' container item xs={9.5}>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '15px' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400, mr: '10px' }}>
             {t('By')}:
           </Grid>
           <Grid item sx={{ maxWidth: '22%', mb: '10px' }}>
@@ -100,7 +100,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
               <VerticalBar />
             </>
           }
-          <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6, maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {refSummary.method}
           </Grid>
           <VerticalBar />
@@ -130,7 +130,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
           {refSummary.status === 'Submitted' &&
             <>
               <VerticalBar />
-              <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
+              <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '5px' }}>
                 <PayDecisionDeposit
                   setOpenDecisionDeposit={setOpenDecisionDeposit}
                   style={{ p: 0 }}
