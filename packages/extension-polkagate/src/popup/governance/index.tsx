@@ -57,12 +57,12 @@ export default function Governance(): React.ReactElement {
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
-    if (!tracks || !fellowshipTracks) {
+    if (!tracks && !fellowshipTracks) {
       return;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return tracks.concat(fellowshipTracks).find((t) =>
+    return (tracks || []).concat(fellowshipTracks || []).find((t) =>
       String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_') ||
       String(t[1].name) === selectedSubMenu.toLowerCase() // fellowship tracks have no underscore!
     );
@@ -90,7 +90,7 @@ export default function Governance(): React.ReactElement {
       // to reset refs on non supported chain, or when chain has changed
       pageTrackRef.current.page = 1;
       pageTrackRef.current.listFinished = false;
-      
+
       return;
     }
 
@@ -101,7 +101,7 @@ export default function Governance(): React.ReactElement {
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
 
-    api.query.fellowshipReferenda.referendumCount().then((count) => {
+    api.query.fellowshipReferenda && api.query.fellowshipReferenda.referendumCount().then((count) => {
       referendumCount.fellowship = count?.toNumber();
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
