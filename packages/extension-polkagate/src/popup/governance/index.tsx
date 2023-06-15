@@ -75,9 +75,9 @@ export default function Governance(): React.ReactElement {
     address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
   }, [address, api, tracks]);
 
-  // useEffect(() => {
-  //   referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
-  // }, [referenda]);
+  useEffect(() => {
+    referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
+  }, [referenda]);
 
   useEffect(() => {
     if (!api) {
