@@ -100,7 +100,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
               <VerticalBar />
             </>
           }
-          <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6, maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6, maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {refSummary.method}
           </Grid>
           <VerticalBar />
