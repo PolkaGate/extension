@@ -167,7 +167,7 @@ export default function ReferendumPost(): React.ReactElement {
                     _onClick={onCastVote}
                     _width={100}
                     disabled={topMenu === 'fellowship'}
-                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast Your Vote')}
+                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast a Vote')}
                   />
                 </Grid>
               }
