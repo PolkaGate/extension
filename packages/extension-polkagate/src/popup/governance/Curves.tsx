@@ -202,7 +202,7 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
     const chartInstance = new Chart(chartRef.current, {
       data: chartData,
       options: chartOptions,
-      type: 'line'
+      type: 'bar'
     });
 
     // Clean up the chart instance on component unmount
