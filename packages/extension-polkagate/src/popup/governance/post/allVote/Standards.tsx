@@ -224,10 +224,10 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
         </Box>
         <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ border: 1, borderColor: 'secondary.light', borderRadius: '10px', p: '0 8px 8px', position: 'relative', height: '555px' }}>
           <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '17px', fontWeight: 400 }}>
-            <Grid item width='35%'>
+            <Grid item width='45%'>
               {t('Voter')}
             </Grid>
-            <Grid container item sx={{ borderLeft: 0.5, borderRight: 0.5, borderColor: 'secondary.contrastText' }} width='35%'>
+            <Grid container item sx={{ borderLeft: 0.5, borderRight: 0.5, borderColor: 'secondary.contrastText' }} width='30%'>
               <Grid item xs={12}>
                 {t('Standard Vote')}
               </Grid>
@@ -243,7 +243,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                 }
               </Grid>
             </Grid>
-            <Grid item width='27%'>
+            <Grid item width='25%'>
               {t('Delegated Vote')}
             </Grid>
           </Grid>
@@ -261,10 +261,10 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
 
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>
-                <Grid container item justifyContent='flex-start' width='35%'>
+                <Grid container item justifyContent='flex-start' width='45%'>
                   <Identity api={api} chain={chain} formatted={vote.voter} identiconSize={28} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, maxWidth: '99%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
-                <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 0.5, borderRight: 0.5, height: '43px' }} width='35%'>
+                <Grid alignItems='center' container item justifyContent='space-around' sx={{ borderColor: 'secondary.contrastText', borderLeft: 0.5, borderRight: 0.5, height: '43px' }} width='30%'>
                   <Grid container item justifyContent={vote?.lockPeriod == null ? 'center' : 'flex-end'} xs>
                     <ShowBalance balance={getVoteCapital(vote)} decimal={decimal} decimalPoint={2} token={token} />
                   </Grid>
@@ -274,7 +274,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                     </Grid>
                   }
                 </Grid>
-                <Grid container item justifyContent='center' width='23%'>{
+                <Grid container item justifyContent='center' width='18%'>{
                   hasDelegators
                     ? <ShowBalance balance={totalDelegatedValue} decimal={decimal} decimalPoint={2} token={token} />
                     : '-'
