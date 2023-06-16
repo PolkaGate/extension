@@ -78,18 +78,20 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
           <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
-          <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
-            {t('Already Locked Balance')}
-          </Infotip2>
+      {lockedAmount && !lockedAmount?.isZero() &&
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
+            <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+              {t('Already Locked Amount')}
+            </Infotip2>
+          </Grid>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
+            <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
+              <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
+            </Infotip2>
+          </Grid>
         </Grid>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-          <Infotip2 showInfoMark text={alreadyLockedTooltipText || 'Fetching ...'}>
-            <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
-          </Infotip2>
-        </Grid>
-      </Grid>
+      }
     </Grid>
   );
 
