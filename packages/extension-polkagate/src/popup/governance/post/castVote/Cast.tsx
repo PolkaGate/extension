@@ -376,7 +376,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
             <ShowBalance balance={balances?.votingBalance} decimal={decimal} decimalPoint={2} token={token} />
           </Grid>
         </Grid>
-        {!!myDelegations &&
+        {myDelegations && !myDelegations.isZero() &&
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '25px', width: '70%' }}>
             <Grid item sx={{ fontSize: '14px' }}>
               <Infotip2 showQuestionMark text={t('The voting power which is delegated to this account')}>
