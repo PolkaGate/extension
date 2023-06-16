@@ -80,6 +80,10 @@ export default function Governance(): React.ReactElement {
   }, [referenda]);
 
   useEffect(() => {
+    setReferenda(undefined)
+  }, [chainName]);
+
+  useEffect(() => {
     if (!api) {
       return;
     }
