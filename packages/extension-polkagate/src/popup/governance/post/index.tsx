@@ -144,6 +144,23 @@ export default function ReferendumPost(): React.ReactElement {
               />
             </Grid>
             <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '290px' }}>
+              {(isOngoing || (hasVoted && isAgainstOutcome)) &&
+                <Grid item sx={{ mb: '10px' }} xs={12}>
+                  <PButton
+                    _ml={0}
+                    _mt='1px'
+                    _onClick={onCastVote}
+                    _width={100}
+                    disabled={topMenu === 'fellowship'}
+                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast Your Vote')}
+                  />
+                </Grid>
+              }
+              <MyVote
+                address={address}
+                notVoted={notVoted}
+                vote={vote}
+              />
               <StatusInfo
                 address={address}
                 isOngoing={isOngoing}
@@ -159,23 +176,6 @@ export default function ReferendumPost(): React.ReactElement {
               <Support
                 address={address}
                 referendum={newReferenda}
-              />
-              {(isOngoing || (hasVoted && isAgainstOutcome)) &&
-                <Grid item sx={{ my: '15px' }} xs={12}>
-                  <PButton
-                    _ml={0}
-                    _mt='1px'
-                    _onClick={onCastVote}
-                    _width={100}
-                    disabled={topMenu === 'fellowship'}
-                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast Your Vote')}
-                  />
-                </Grid>
-              }
-              <MyVote
-                address={address}
-                notVoted={notVoted}
-                vote={vote}
               />
             </Grid>
           </Grid>
