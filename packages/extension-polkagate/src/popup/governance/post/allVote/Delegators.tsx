@@ -108,7 +108,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const AmountVal = ({ label, value, width = '33%', labelStyle = { fontSize: '17px', fontWeight: 400 }, valueStyle = { fontSize: '17px', fontWeight: 500 } }: { label: string, value: BN | undefined, labelStyle?: SxProps, valueStyle?: SxProps, width?: string }) => (
     <Grid alignItems='baseline' container item justifyContent='flex-start' spacing={1} width={width}>
       <Grid item>
-        <Typography color='text.disabled' sx={{ ...labelStyle }}>
+        <Typography color='secondary.contrastText' sx={{ ...labelStyle }}>
           {label}
         </Typography>
       </Grid>
@@ -121,7 +121,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const StandardSummary = () => (
     <Grid container sx={{ pb: '10px' }}>
       <Grid container item textAlign='left' xs={2}>
-        <Typography color='text.disabled' fontSize='20px' fontWeight={500}>
+        <Typography color='secondary.contrastText' fontSize='20px' fontWeight={500}>
           {t('Standard')}
         </Typography>
       </Grid>
@@ -137,7 +137,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
         {standard && standard?.lockPeriod !== null &&
           <Grid alignItems='baseline' justifyContent='flex-end' container item spacing={1} width='33%'>
             <Grid item>
-              <Typography color='text.disabled' fontSize='18px' fontWeight={400}>
+              <Typography color='secondary.contrastText' fontSize='18px' fontWeight={400}>
                 {t('Conviction')}
               </Typography>
             </Grid>
@@ -153,7 +153,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const DelegatedSummary = () => (
     <Grid container item sx={{ py: '7px' }}>
       <Grid container item textAlign='left' xs={2}>
-        <Typography color='text.disabled' fontSize='20px' fontWeight={500}>
+        <Typography color='secondary.contrastText' fontSize='20px' fontWeight={500}>
           {t('Delegated')}
         </Typography>
       </Grid>
@@ -235,13 +235,13 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
             </Grid>
           </Grid>
           <Grid item sx={{ pt: '5px' }} xs={12}>
-            <Divider orientation='horizontal' sx={{ bgcolor: (theme) => `rgba(${theme.palette.secondary.contrastText}, 0.2)`, with: '1px' }} />
+            <Divider orientation='horizontal' sx={{ bgcolor: (theme) => theme.palette.mode === 'light' ? `rgba(${theme.palette.secondary.contrastText}, 0.2)` : 'secondary.contrastText' }} />
           </Grid>
           <Grid item sx={{ pt: '5px' }} xs={12}>
             <StandardSummary />
           </Grid>
           <Grid container item justifyContent='flex-end' sx={{ pt: '5px' }} xs={12}>
-            <Divider orientation='horizontal' sx={{ bgcolor: (theme) => `rgba(${theme.palette.secondary.contrastText}, 0.2)`, with: '1px', width: '80%' }} />
+            <Divider orientation='horizontal' sx={{ bgcolor: (theme) => theme.palette.mode === 'light' ? `rgba(${theme.palette.secondary.contrastText}, 0.2)` : 'secondary.contrastText', width: '80%' }} />
           </Grid>
           <Grid item sx={{ pt: '5px' }} xs={12}>
             <DelegatedSummary />
