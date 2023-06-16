@@ -12,7 +12,7 @@ import { useParams } from 'react-router';
 import { BN } from '@polkadot/util';
 
 import { Identity } from '../../components';
-import { useApi, useChain, useFormatted, useReferenda, useTrack, useTranslation } from '../../hooks';
+import { useApi, useChain, useFormatted, useReferendum, useTrack, useTranslation } from '../../hooks';
 import DecisionDeposit from './post/decisionDeposit';
 import PayDecisionDeposit from './post/decisionDeposit/PayDecisionDeposit';
 import VoteChart from './post/VoteChart';
@@ -31,7 +31,7 @@ interface Props {
 function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: string | undefined }>();
-  const newReferenda = useReferenda(address, topMenu, refSummary?.post_id);
+  const newReferendum = useReferendum(address, topMenu, refSummary?.post_id);
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -45,20 +45,20 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
   const isThisMine = refSummary.proposer === formatted;
 
   const resultInPercent = useMemo(() => {
-    if (newReferenda?.ayesAmount && newReferenda?.naysAmount) {
-      const ayesBN = new BN(newReferenda?.ayesAmount);
-      const naysBN = new BN(newReferenda?.naysAmount);
-      const total = (Number(newReferenda?.ayesAmount) + Number(new BN(newReferenda?.naysAmount)));
+    if (newReferendum?.ayesAmount && newReferendum?.naysAmount) {
+      const ayesBN = new BN(newReferendum?.ayesAmount);
+      const naysBN = new BN(newReferendum?.naysAmount);
+      const total = (Number(newReferendum?.ayesAmount) + Number(new BN(newReferendum?.naysAmount)));
 
       if (total === 0) {
         return;
       }
 
       return ayesBN.gte(naysBN)
-        ? `${t('Aye')} ${parseFloat((Number(newReferenda?.ayesAmount) / total * 100).toFixed(2))}%`
-        : `${t('Nay')} ${parseFloat((Number(newReferenda?.naysAmount) / total * 100).toFixed(2))}%`;
+        ? `${t('Aye')} ${parseFloat((Number(newReferendum?.ayesAmount) / total * 100).toFixed(2))}%`
+        : `${t('Nay')} ${parseFloat((Number(newReferendum?.naysAmount) / total * 100).toFixed(2))}%`;
     }
-  }, [newReferenda, t]);
+  }, [newReferendum, t]);
 
   const VerticalBar = () => (
     <Grid item mx='1.5%'>
@@ -108,14 +108,14 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
             {formatRelativeTime(refSummary.created_at)}
           </Grid>
-          {newReferenda?.ayesAmount && newReferenda?.naysAmount &&
+          {newReferendum?.ayesAmount && newReferendum?.naysAmount &&
             <>
               <VerticalBar />
               <Grid item sx={{ width: '30px' }}>
                 <VoteChart
-                  ayes={newReferenda.ayesAmount}
+                  ayes={newReferendum.ayesAmount}
                   height='30px'
-                  nays={newReferenda.naysAmount}
+                  nays={newReferendum.naysAmount}
                   noBorderColor
                   showTooltip={false}
                 />
@@ -147,7 +147,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
         <DecisionDeposit
           address={address}
           open={openDecisionDeposit}
-          refIndex={newReferenda?.index}
+          refIndex={newReferendum?.index}
           setOpen={setOpenDecisionDeposit}
           track={track}
         />

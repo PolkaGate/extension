@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { PButton } from '../../../components';
-import { useApi, useDecidingCount, useFullscreen, useMyVote, useReferenda, useTrack, useTranslation } from '../../../hooks';
+import { useApi, useDecidingCount, useFullscreen, useMyVote, useReferendum, useTrack, useTranslation } from '../../../hooks';
 import Bread from '../Bread';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
@@ -29,7 +29,7 @@ import Voting from './Voting';
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: 'referenda' | 'fellowship' | undefined, postId?: string | undefined }>();
-  const newReferenda = useReferenda(address, topMenu, postId);
+  const newReferenda = useReferendum(address, topMenu, postId && Number(postId));
 
   const history = useHistory();
   const { state } = useLocation();
