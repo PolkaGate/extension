@@ -212,14 +212,14 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
-        <Grid container item sx={{ border: 1, borderColor: 'secondary.light', px: '8px', bgcolor: 'background.paper', borderRadius: '5px' }}>
-          <Grid alignItems='center' container item justifyContent='center' spacing={1}>
+        <Grid container item sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.light', px: '8px', borderRadius: '5px' }}>
+          <Grid alignItems='flex-end' container item justifyContent='center' spacing={1}>
             <Grid item>
               {standard.decision === 'yes'
-                ? <CheckIcon sx={{ color: 'success.main', stroke: `${theme.palette.success.main}`, fontSize: '40px' }} />
+                ? <CheckIcon sx={{ color: 'success.main', fontSize: '40px', stroke: `${theme.palette.success.main}` }} />
                 : standard.decision === 'no'
-                  ? <CloseIcon sx={{ color: 'warning.main', stroke: `${theme.palette.warning.main}`, fontSize: '40px' }} />
-                  : <AbstainIcon sx={{ color: 'primary.light', stroke: `${theme.palette.primary.light}`, fontSize: '40px' }} />
+                  ? <CloseIcon sx={{ color: 'warning.main', fontSize: '38px', stroke: `${theme.palette.warning.main}` }} />
+                  : <AbstainIcon sx={{ color: 'primary.light', fontSize: '30px', stroke: `${theme.palette.primary.light}` }} />
               }
             </Grid>
             <Grid fontSize='26px' fontWeight={700} item pr='10px'>
