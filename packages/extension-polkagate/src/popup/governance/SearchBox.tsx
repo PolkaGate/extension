@@ -81,8 +81,6 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     }
 
     if (!keyword) {
-      console.log('referenda in no keyword:', referenda)
-
       return setFilteredReferenda([...referenda]);
     }
 
