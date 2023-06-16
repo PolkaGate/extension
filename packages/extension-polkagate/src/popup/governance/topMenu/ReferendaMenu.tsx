@@ -49,7 +49,7 @@ export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, se
     }, [item]);
 
     return (
-      <Grid alignItems='center' container item sx={{ borderBottom: top && `${borderWidth} solid`, color: clickable && 'secondary.main', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' } }}>
+      <Grid alignItems='center' container item sx={{ borderBottom: top && `${borderWidth} solid`, color: clickable && 'secondary.light', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'secondary.light', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' } }}>
         {icon}
         <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
           {item}{decidingCount ? ` (${decidingCount})` : ''}
