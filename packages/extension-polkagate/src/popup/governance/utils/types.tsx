@@ -1,10 +1,9 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
+import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 export type TopMenu = 'Referenda' | 'Fellowship';
@@ -50,134 +49,137 @@ export interface ReferendumHistory {
   block: number
 }
 
-export interface ReferendumPolkassembly {
-  bond: any,
-  comments: CommentType[],
-  content: string,
-  created_at: Date,
-  curator: any,
-  curator_deposit: any,
+export interface ReferendumPA {
+  bond: any;
+  chainName: 'Polkadot' | 'Kusama';
+  comments: CommentType[];
+  content: string;
+  created_at: number;
+  curator: any;
+  curator_deposit: any;
   deciding: {
-    confirming: any,
-    since: number
-  },
-  decision_deposit_amount: string,
-  delay: any,
-  deposit: any,
-  description: any,
-  enactment_after_block: number,
-  enactment_at_block: any,
-  end: any,
-  ended_at: Date,
-  fee: any,
-  hash: string,
-  last_edited_at: Date,
-  method: string,
-  origin: string,
-  payee: null,
-  post_id: number,
-  post_reactions: Reaction,
-  proposal_arguments: any,
+    confirming: any;
+    since: number;
+  };
+  decision_deposit_amount: string;
+  delay: any;
+  deposit: any;
+  description: any;
+  enactment_after_block: number;
+  enactment_at_block: any;
+  end: any;
+  ended_at: Date;
+  fee: any;
+  hash: string;
+  last_edited_at: Date;
+  method: string;
+  origin: string;
+  payee: null;
+  post_id: number;
+  post_reactions: Reaction;
+  proposal_arguments: any;
   proposed_call: {
-    method: string,
-    args: Record<string, any>,
-    description: string
-    section: string
-  },
-  proposer: string,
-  requested: string,
-  reward: any,
-  status: string,
-  statusHistory: ReferendumHistory[],
-  submission_deposit_amount: string,
-  submitted_amount: string,
+    args: Record<string, any>;
+    description: string;
+    method: string;
+    section: string;
+  };
+  proposer: string;
+  requested: string;
+  reward: any;
+  spam_users_count: number;
+  status: string;
+  statusHistory: ReferendumHistory[];
+  submission_deposit_amount: string;
+  submitted_amount: string;
   tally: {
-    ayes: string,
-    bareAyes: string,
-    nays: string,
-    support: string
-  },
+    ayes: string;
+    bareAyes: string;
+    nays: string;
+    support: string;
+  };
   timeline: [
     {
-      created_at: Date,
-      hash: string,
-      index: number,
-      statuses: ReferendumHistory[],
-      type: string
+      created_at: Date;
+      hash: string;
+      index: number;
+      statuses: ReferendumHistory[];
+      type: string;
     }
-  ],
+  ];
+  title: string;
   topic: {
-    id: number,
-    name: string,
-  },
-  track_number: number,
-  type: string,
-  user_id: number,
-  title: string,
-  tags: any[],
-  post_link: any,
-  spam_users_count: number
+    id: number;
+    name: string;
+  };
+  track_number: number;
+  type: string;
+  user_id: number;
+  tags: any[];
+  post_link: any;
 }
 
 export interface Timeline {
   block: number;
   status: string;
   time: number;
+  timestamp?: Date;
   prophecy: boolean;
   index: number;
   extrinsic_index: string;
   params: null;
 }
 
-export interface ReferendumSubScan {
-  referendum_index: number;
-  created_block: number;
-  created_block_timestamp: number;
-  origins_id: number;
-  origins: string;
+export interface ReferendumSb {
+  ayes_amount: string;
+  ayes_count: number;
+  abstains_count: number;
   account: {
     address: string;
     display: string;
     identity: boolean;
   };
-  deposit_balance: string;
-  decision_deposit_account: {
-    address: string;
-    display: string;
-    identity: boolean;
-  };
-  decision_deposit_balance: string;
-  status: string;
-  latest_block_num: number;
-  latest_block_timestamp: number;
-  pre_image: {
-    hash: string;
-    created_block: number;
-    updated_block: number;
-    status: string;
-    amount: string;
-    call_module: string;
-    call_name: string;
-    params: string;
-    author: {
-      address: string;
-      display: string;
-      identity: boolean;
-    };
-  };
+  bare_ayes: string;
   beneficiary: {
     address: string;
     display: string;
     identity: boolean;
   };
   beneficiary_amount: string;
-  ayes_amount: string;
-  ayes_count: number;
+  chainName: 'Polkadot' | 'Kusama';
+  created_block: number;
+  created_block_timestamp: number;
+  decision_deposit_account: {
+    address: string;
+    display: string;
+    identity: boolean;
+  };
+  decision_deposit_balance: string;
+  deposit_balance: string;
+  latest_block_num: number;
+  latest_block_timestamp: number;
   nays_amount: string;
   nays_count: number;
-  abstains_count: number;
+  origins: string;
+  origins_id: number;
+  pre_image: {
+    amount: string;
+    author: {
+      address: string;
+      display: string;
+      identity: boolean;
+    };
+    call_module: string;
+    call_name: string;
+    created_block: number;
+    hash: string;
+    params: string;
+    status: string;
+    updated_block: number;
+  };
+  referendum_index: number;
+  status: string;
   support_amount: string;
-  bare_ayes: string;
   timeline: Timeline[];
 }
 
@@ -220,9 +222,10 @@ export type Referendum = {
     method: string,
     section: string
   } | undefined,
+  chainName?: 'Polkadot' | 'Kusama',
   comments?: CommentType[] | undefined,
   content?: string | undefined,
-  created_at?: Date | undefined,
+  created_at?: number | undefined,
   decisionDepositAmount?: string | undefined,
   decisionDepositPayer?: string | undefined,
   enactAfter?: number | undefined,
