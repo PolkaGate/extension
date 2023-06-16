@@ -149,11 +149,11 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const arr = last[k];
       const found = arr.find((r) => r.index === id);
 
-      if (found) {
-        // console.log(`retrieving ref ${found.index} FROM local`);
+      // if (found) {
+      //   // console.log(`retrieving ref ${found.index} FROM local`);
 
-        return setReferendum(found);
-      }
+      //   return setReferendum(found);
+      // }
 
       setNotInLocalStorage(true);
     });
