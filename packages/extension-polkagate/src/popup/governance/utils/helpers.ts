@@ -8,7 +8,7 @@ import { BN } from '@polkadot/util';
 
 import { postData } from '../../../util/api';
 import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
-import { LatestReferenda, Origins, ReferendumPolkassembly, ReferendumSubScan, TopMenu } from './types';
+import { LatestReferenda, Origins, ReferendumPA, ReferendumSb, TopMenu } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -219,7 +219,7 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
     });
 }
 
-export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<ReferendumPolkassembly | null> {
+export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<ReferendumPA | null> {
   // console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
 
   const requestOptions = {
@@ -236,7 +236,7 @@ export async function getReferendumPA(chainName: string, type: TopMenu, postId: 
         // console.log(`Ref #${postId} info from PA:`, data);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return data;
+        return { ...data, chainName };
       } else {
         console.log('Fetched message:', data);
 
@@ -250,7 +250,7 @@ export async function getReferendumPA(chainName: string, type: TopMenu, postId: 
     });
 }
 
-export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<ReferendumSubScan | null> {
+export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<ReferendumSb | null> {
   // console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint
@@ -266,8 +266,13 @@ export async function getReferendumSb(chainName: string, type: TopMenu, postId: 
         .then((data: { message: string; data }) => {
           if (data.message === 'Success') {
             // console.log(`Ref ${postId} info from Sb:`, data.data);
+            const ref = data.data as ReferendumSb;
 
-            resolve(data.data);
+            ref.timeline?.forEach((r) => {
+              r.timestamp = new Date(r.time * 1000).toISOString();
+            });
+
+            resolve({ ...ref, chainName });
           } else {
             console.log(`Fetching message ${data.message}`);
             resolve(null);
