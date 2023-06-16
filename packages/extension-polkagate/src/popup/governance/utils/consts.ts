@@ -6,6 +6,9 @@ import { BN } from '@polkadot/util';
 export const MAX_WIDTH = '1280px';
 export const TRACK_LIMIT_TO_LOAD_PER_REQUEST = 15;
 export const LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST = 15;
+export const REFERENDA_LIMIT_SAVED_LOCAL = 30;
+
+export const FINISHED_REFERENDUM_STATUSES = ['Cancelled', 'Confirmed', 'Executed', 'Rejected', 'TimedOut'];
 
 export const REFERENDA_STATUS = [
   ['All'],
@@ -28,7 +31,7 @@ export const STATUS_COLOR = {
   Deciding: '#6A5ACD',
   DecisionDepositPlaced: '#FFA07A',
   Executed: '#00BFFF',
-  ExecutionFailed:'#FF0000',
+  ExecutionFailed: '#FF0000',
   Rejected: '#FF5722',
   Submitted: '#6B9090',
   TimedOut: '#AD9C88',
