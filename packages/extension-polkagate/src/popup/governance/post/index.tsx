@@ -61,6 +61,7 @@ export default function ReferendumPost(): React.ReactElement {
   useEffect(() => {
     setShowAboutVoting(window.localStorage.getItem('cast_vote_about_disabled') !== 'true');
   }, []);
+  
   useEffect(() => {
     if (!chainName) {
       return;
