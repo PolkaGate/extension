@@ -4,12 +4,12 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { PButton } from '../../../components';
-import { useApi, useDecidingCount, useFullscreen, useMyVote, useReferendum, useTrack, useTranslation } from '../../../hooks';
+import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useReferendum, useTrack, useTranslation } from '../../../hooks';
 import Bread from '../Bread';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
@@ -33,7 +33,9 @@ export default function ReferendumPost(): React.ReactElement {
 
   const history = useHistory();
   const { state } = useLocation();
+  const chainName = useChainName(address);
   const api = useApi(address);
+  const ref = useRef('');
   const decidingCounts = useDecidingCount(address);
 
   useFullscreen();
@@ -59,6 +61,19 @@ export default function ReferendumPost(): React.ReactElement {
   useEffect(() => {
     setShowAboutVoting(window.localStorage.getItem('cast_vote_about_disabled') !== 'true');
   }, []);
+  useEffect(() => {
+    if (!chainName) {
+      return;
+    }
+
+    if (!ref.current) {
+      ref.current = chainName;
+    } else if (ref.current !== chainName) {
+      history.push({
+        pathname: `/governance/${address}/${topMenu}`,
+      });
+    }
+  }, [address, chainName, history, topMenu]);
 
   useEffect(() => {
     if (!api) {
