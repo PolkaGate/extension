@@ -69,8 +69,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           }
           sx={{
             borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none',
-            px: 0,
-            height: 120,
+            px: 0
           }}
         >
           <Grid container item>
