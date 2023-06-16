@@ -139,7 +139,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
             </>
           }
         </Grid>
-        <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[refSummary.status], p: '5px 15px', width: 'fit-content' }}>
+        <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[refSummary.status], px: '10px', height: '27px', minWidth: '119px', width: 'fit-content' }}>
           {pascalCaseToTitleCase(formalizedStatus(refSummary.status))}
         </Grid>
       </Grid>
