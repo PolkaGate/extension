@@ -41,8 +41,8 @@ export interface Vote {
     balance: number;
   };
   delegations?: {
-    votes: number;
-    capital: number;
+    votes: BN;
+    capital: BN;
   };
   splitAbstain?: {
     abstain: number;
@@ -57,6 +57,11 @@ export interface Vote {
     conviction: number;
     target?: AccountId32;
     voted?: boolean;
+    delegations: {
+      votes: BN;
+      capital: BN;
+    };
+    prior: any;
   }
 }
 
