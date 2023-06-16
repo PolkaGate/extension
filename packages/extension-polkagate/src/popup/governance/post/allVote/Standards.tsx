@@ -54,6 +54,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   const [paginationCount, setPaginationCount] = useState<number>(10);
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
   const [isSearchBarOpen, setSearchBarOpen] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const voteTypeStr = useMemo(() => tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no', [tabIndex]);
 
@@ -126,6 +127,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   }, [setPage]);
 
   const onSearch = useCallback((filter: string) => {
+    setSearchKeyword(filter);
     allVotes && setFilteredVotes(
       {
         abstain: allVotes.abstain.votes.filter((a) => a.voter.includes(filter) && !a.isDelegated),
@@ -176,11 +178,11 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
       <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start' }} xs>
         {isSearchBarOpen
           ? <InputFilter
-            autoFocus={false}
+            // autoFocus={false}
             onChange={onSearch}
             placeholder={t<string>('🔍 Search by voter address')}
             theme={theme}
-          // value={searchKeyword ?? ''}
+            value={searchKeyword ?? ''}
           />
           : <SearchIcon sx={{ color: 'secondary.contrastText', display: 'block', fontSize: '30px', width: 'fit-content' }} />
         }
