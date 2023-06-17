@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FINISHED_REFERENDUM_STATUSES, REFERENDA_LIMIT_SAVED_LOCAL } from '../popup/governance/utils/consts';
-import { getReferendumPA, getReferendumSb } from '../popup/governance/utils/helpers';
+import { getReferendumPA, getReferendumSb, isFinished } from '../popup/governance/utils/helpers';
 import { Referendum, ReferendumPA, ReferendumSb } from '../popup/governance/utils/types';
 import { useApi, useChainName } from '.';
 
@@ -16,7 +16,6 @@ type ReferendumData = {
   [key: string]: Referendum[];
 };
 
-const isFinished = (referendum: Referendum) => referendum?.status && FINISHED_REFERENDUM_STATUSES.includes(referendum.status);
 const isAlreadySaved = (list: Referendum[], referendum: Referendum) => list?.find((r) => r?.index === referendum?.index)
 
 export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number): Referendum | undefined {

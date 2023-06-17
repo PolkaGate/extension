@@ -16,9 +16,10 @@ interface Props {
   address: string | undefined;
   vote: Vote | null | undefined;
   notVoted: boolean | undefined;
+  isFinished: boolean | undefined;
 }
 
-export default function MyVote({ address, notVoted, vote }: Props): React.ReactElement {
+export default function MyVote({ address, notVoted, vote, isFinished }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -48,9 +49,14 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
       </Grid>
       {notVoted
         ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
-          <Typography sx={{ fontSize: '24px', fontWeight: 700 }}>
-            {t('No votes cast yet.')}
-          </Typography>
+          {isFinished
+            ? <Typography sx={{ fontSize: '22px', fontWeight: 500 }}>
+              {t('No voting participation.')}
+            </Typography>
+            : <Typography sx={{ fontSize: '24px', fontWeight: 700 }}>
+              {t('No votes cast yet.')}
+            </Typography>
+          }
         </Grid>
         : !voteBalance
           ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
