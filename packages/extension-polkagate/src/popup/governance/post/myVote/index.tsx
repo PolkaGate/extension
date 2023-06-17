@@ -77,19 +77,19 @@ export default function MyVote({ address, notVoted, vote, isFinished }: Props): 
                 <>
                   {voteType === 'Aye' &&
                     <>
-                      <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
+                      <CheckIcon sx={{ color: 'aye.main', fontSize: '24px', stroke: theme.palette.aye.main, strokeWidth: 1.5 }} />
                       {t('Aye')}
                     </>
                   }
                   {voteType === 'Nay' &&
                     <>
-                      <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
+                      <CloseIcon sx={{ color: 'nay.main', fontSize: '24px', stroke: theme.palette.nay.main, strokeWidth: 1.5 }} />
                       {t('Nay')}
                     </>
                   }
                   {voteType === 'Abstain' &&
                     <>
-                      <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
+                      <AbstainIcon sx={{ color: 'primary.light', fontSize: '22px', mr: '2px', stroke: theme.palette.primary.light, strokeWidth: 1.5 }} />
                       {t('Abstain')}
                     </>
                   }
