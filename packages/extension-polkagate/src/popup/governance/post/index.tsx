@@ -14,6 +14,7 @@ import Bread from '../Bread';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
+import { isFinished } from '../utils/helpers';
 import { Proposal } from '../utils/types';
 import { getVoteType, toTitleCase } from '../utils/util';
 import CastVote from './castVote';
@@ -25,7 +26,6 @@ import MyVote from './myVote';
 import StatusInfo from './StatusInfo';
 import Support from './Support';
 import Voting from './Voting';
-import { isFinished } from '../utils/helpers';
 
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
@@ -134,7 +134,7 @@ export default function ReferendumPost(): React.ReactElement {
           address={address}
           postId={postId}
           setSelectedSubMenu={setSelectedSubMenu}
-          subMenu={state?.selectedSubMenu || toTitleCase(referendum?.trackName)}
+          subMenu={toTitleCase(referendum?.trackName) || state?.selectedSubMenu || '...'}
           topMenu={topMenu}
         />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
