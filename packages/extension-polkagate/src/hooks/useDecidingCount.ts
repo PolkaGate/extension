@@ -20,38 +20,45 @@ export default function useDecidingCount(address: string | undefined): DecidingC
 
   useEffect(() => {
     async function fetchDecidingCounts() {
-      if (!trackIds || !fellowshipTrackIds || !api) {
+      if ((!trackIds && !fellowshipTrackIds) || !api) {
         return;
       }
 
       try {
-        const counts = await Promise.all(trackIds.map(([id]) => api.query.referenda.decidingCount(id)));
-        const fellowshipCounts = await Promise.all(fellowshipTracks.map(([id]) => api.query.fellowshipReferenda.decidingCount(id)));
-        const fellowshipDecidingCounts: Count[] = [];
-
         let allCount = 0;
-        const decidingCounts = counts.map((count, index): Count => {
-          if (!['whitelisted_caller', 'fellowship_admin'].includes(trackIds[index][1])) {
-            allCount += count.toNumber();
-          }
-          else {
-            fellowshipDecidingCounts.push([String(trackIds[index][1]), count.toNumber() as number]);
-          }
+        const fellowshipDecidingCounts: Count[] = [];
+        let decidingCounts;
+        let fellowshipCounts;
 
-          return [String(trackIds[index][1]), count.toNumber() as number];
-        });
+        if (trackIds) {
+          const counts = await Promise.all(trackIds.map(([id]) => api.query.referenda.decidingCount(id)));
 
-        decidingCounts.push(['all', allCount]);
+          decidingCounts = counts.map((count, index): Count => {
+            if (!['whitelisted_caller', 'fellowship_admin'].includes(trackIds[index][1])) {
+              allCount += count.toNumber();
+            } else {
+              fellowshipDecidingCounts.push([String(trackIds[index][1]), count.toNumber() as number]);
+            }
 
-        allCount = 0;
-        const Counts = fellowshipCounts.map((c, index): Count => {
-          allCount += c.toNumber();
+            return [String(trackIds[index][1]), count.toNumber() as number];
+          });
 
-          return [String(fellowshipTrackIds[index][1]), c.toNumber() as number];
-        });
+          decidingCounts.push(['all', allCount]);
+        }
 
-        fellowshipDecidingCounts.push(...Counts);
-        fellowshipDecidingCounts.push(['all', allCount]);
+        if (fellowshipTrackIds) {
+          fellowshipCounts = await Promise.all(fellowshipTracks.map(([id]) => api.query.fellowshipReferenda.decidingCount(id)));
+
+          allCount = 0;
+          const Counts = fellowshipCounts.map((c, index): Count => {
+            allCount += c.toNumber();
+
+            return [String(fellowshipTrackIds[index][1]), c.toNumber() as number];
+          });
+
+          fellowshipDecidingCounts.push(...Counts);
+          fellowshipDecidingCounts.push(['all', allCount]);
+        }
 
         setCounts({ fellowship: fellowshipDecidingCounts, referenda: decidingCounts });
       } catch (error) {

@@ -38,6 +38,7 @@ export default function Governance(): React.ReactElement {
   const api = useApi(address);
   const chainName = useChainName(address);
   const decidingCounts = useDecidingCount(address);
+  const chainChangeRef = useRef('');
 
   const { fellowshipTracks, tracks } = useTracks(address);
 
@@ -57,12 +58,12 @@ export default function Governance(): React.ReactElement {
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
-    if (!tracks || !fellowshipTracks) {
+    if (!tracks && !fellowshipTracks) {
       return;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return tracks.concat(fellowshipTracks).find((t) =>
+    return (tracks || []).concat(fellowshipTracks || []).find((t) =>
       String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_') ||
       String(t[1].name) === selectedSubMenu.toLowerCase() // fellowship tracks have no underscore!
     );
@@ -72,12 +73,26 @@ export default function Governance(): React.ReactElement {
   const isTopMenuChanged = pageTrackRef.current.topMenu !== topMenu;
 
   useEffect(() => {
+    if (!chainName) {
+      return;
+    }
+
+    if (!chainChangeRef.current) {
+      chainChangeRef.current = chainName;
+    } else if (chainChangeRef.current !== chainName) {
+      chainChangeRef.current = chainName;
+      setReferenda(undefined);
+      setFilteredReferenda(undefined);
+    }
+  }, [address, chainName]);
+
+  useEffect(() => {
     address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
   }, [address, api, tracks]);
 
-  // useEffect(() => {
-  //   referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
-  // }, [referenda]);
+  useEffect(() => {
+    referenda && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
+  }, [referenda]);
 
   useEffect(() => {
     if (!api) {
@@ -90,7 +105,7 @@ export default function Governance(): React.ReactElement {
       // to reset refs on non supported chain, or when chain has changed
       pageTrackRef.current.page = 1;
       pageTrackRef.current.listFinished = false;
-      
+
       return;
     }
 
@@ -101,7 +116,7 @@ export default function Governance(): React.ReactElement {
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
 
-    api.query.fellowshipReferenda.referendumCount().then((count) => {
+    api.query.fellowshipReferenda && api.query.fellowshipReferenda.referendumCount().then((count) => {
       referendumCount.fellowship = count?.toNumber();
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
@@ -300,9 +315,13 @@ export default function Governance(): React.ReactElement {
                               ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda} pt='50px'>
                                 {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
                               </Typography>
-                              : <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                                {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
-                              </Typography>
+                              : referenda?.length < referendumCount[topMenu] ?
+                                <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                                  {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
+                                </Typography>
+                                : <Typography color='text.disabled' fontSize='15px'>
+                                  {t('No more referenda to load.')}
+                                </Typography>
                             }
                           </Grid>
                           : isLoadingMore && <Grid container justifyContent='center'>

@@ -51,6 +51,10 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
     setExpanded(isExpanded);
   };
 
+  const VDivider = () => (
+    <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px', bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled' }} />
+  );
+
   return (
     <>
       {mayBeTreasuryProposalId &&
@@ -69,8 +73,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           }
           sx={{
             borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none',
-            px: 0,
-            height: 120,
+            px: 0
           }}
         >
           <Grid container item>
@@ -87,18 +90,18 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                 <Grid item>
                   <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showShortAddress={!!referendum?.proposer} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
-                <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px' }} />
+                <VDivider />
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, opacity: 0.6 }}>
                   <ShowValue value={referendum?.method} width='50px' />
                 </Grid>
-                <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px' }} />
+                <VDivider />
                 <ClockIcon sx={{ fontSize: 27, ml: '10px' }} />
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, pl: '1%' }}>
                   <ShowValue value={referendum?.created_at && formatRelativeTime(referendum?.created_at)} />
                 </Grid>
-                {referendum?.requested &&
+                {referendum?.requested && Number(referendum.requested) > 0 &&
                   <>
-                    <Divider flexItem orientation='vertical' sx={{ mx: '2%', my: '10px' }} />
+                    <VDivider />
                     <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
                       <LabelValue
                         label={`${t('Requested')}: `}

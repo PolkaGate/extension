@@ -8,10 +8,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { AccountInputWithIdentity, Infotip2, TwoButtons } from '../../../../components';
-import { useApi, useChain, useFormatted, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useFormatted, useTranslation } from '../../../../hooks';
 import { LoadingSkeleton } from '../partial/ReferendaTracks';
 import TAccountsDisplay from '../partial/TAccountDisplay';
-import { STEPS, DelegateInformation } from '..';
+import { DelegateInformation, STEPS } from '..';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -23,6 +23,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
   const { address } = useParams<{ address: string }>();
   const myFormattedAddress = useFormatted(address);
   const chain = useChain(address);
+  const chainName = useChainName(address);
   const api = useApi(address);
   const theme = useTheme();
 
@@ -33,7 +34,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
   const nextDisable = useMemo(() => (!delegatorAddress && !selectedTrustedAddress), [delegatorAddress, selectedTrustedAddress]);
 
   const getTrustedAccountsFromGithub = useCallback(() => {
-    fetch('https://raw.githubusercontent.com/PolkaGate/polkagate-extension/main/trustedDelegationAccounts.json').then((response) => {
+    fetch('https://raw.githubusercontent.com/PolkaGate/polkagate-extension/main/trustedDelegationAccounts2.json').then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -41,7 +42,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
       return response.json();
     }).then((data) => {
       try {
-        const arrayData = Object.values(data as object);
+        const arrayData = data?.[chainName] && Object.values(data[chainName] as object);
 
         setTrustedAccounts(arrayData);
       } catch (error) {
@@ -50,11 +51,11 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
     }).catch((error) => {
       console.error('Error fetching file:', error);
     });
-  }, []);
+  }, [chainName]);
 
   useEffect(() => {
-    getTrustedAccountsFromGithub();
-  }, [getTrustedAccountsFromGithub]);
+    chainName && getTrustedAccountsFromGithub();
+  }, [chainName, getTrustedAccountsFromGithub]);
 
   useEffect(() => {
     if (!delegatorAddress && !selectedTrustedAddress) {

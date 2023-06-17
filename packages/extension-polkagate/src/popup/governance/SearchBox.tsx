@@ -81,8 +81,6 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
     }
 
     if (!keyword) {
-      console.log('referenda in no keyword:', referenda)
-
       return setFilteredReferenda([...referenda]);
     }
 
@@ -90,8 +88,8 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
 
     const _filtered = referenda?.filter((r) =>
       (filter.advanced.refIndex && String(r.post_id) === keyword) ||
-      (filter.advanced.titles && r.title.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) ||
-      (filter.advanced.methods && r.method.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) ||
+      (filter.advanced.titles && r.title && r.title.toLowerCase().includes(keyword.toLowerCase())) ||
+      (filter.advanced.methods && r.method && r.method.toLowerCase().includes(keyword.toLowerCase())) ||
       (filter.advanced.proposers && r.proposer === keyword)
     );
 
@@ -172,7 +170,7 @@ export default function SearchBox({ address, myVotedReferendaIndexes, referenda,
                 // label={t<string>('Status')}
                 onChange={onChangeStatus}
                 options={statusOptions}
-                // value={REFERENDA_STATUS.findIndex((s) => s === filter?.status?.[0]) || 'All'}
+              // value={REFERENDA_STATUS.findIndex((s) => s === filter?.status?.[0]) || 'All'}
               />
             }
           </Grid>

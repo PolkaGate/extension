@@ -4,12 +4,12 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { PButton } from '../../../components';
-import { useApi, useDecidingCount, useFullscreen, useMyVote, useReferenda, useTrack, useTranslation } from '../../../hooks';
+import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useReferendum, useTrack, useTranslation } from '../../../hooks';
 import Bread from '../Bread';
 import { Header } from '../Header';
 import Toolbar from '../Toolbar';
@@ -29,11 +29,13 @@ import Voting from './Voting';
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: 'referenda' | 'fellowship' | undefined, postId?: string | undefined }>();
-  const newReferenda = useReferenda(address, topMenu, postId);
+  const newReferenda = useReferendum(address, topMenu, postId && Number(postId));
 
   const history = useHistory();
   const { state } = useLocation();
+  const chainName = useChainName(address);
   const api = useApi(address);
+  const ref = useRef('');
   const decidingCounts = useDecidingCount(address);
 
   useFullscreen();
@@ -59,6 +61,20 @@ export default function ReferendumPost(): React.ReactElement {
   useEffect(() => {
     setShowAboutVoting(window.localStorage.getItem('cast_vote_about_disabled') !== 'true');
   }, []);
+  
+  useEffect(() => {
+    if (!chainName) {
+      return;
+    }
+
+    if (!ref.current) {
+      ref.current = chainName;
+    } else if (ref.current !== chainName) {
+      history.push({
+        pathname: `/governance/${address}/${topMenu}`,
+      });
+    }
+  }, [address, chainName, history, topMenu]);
 
   useEffect(() => {
     if (!api) {
@@ -144,6 +160,23 @@ export default function ReferendumPost(): React.ReactElement {
               />
             </Grid>
             <Grid container item md={2.9} sx={{ height: '100%', maxWidth: '290px' }}>
+              {(isOngoing || (hasVoted && isAgainstOutcome)) &&
+                <Grid item sx={{ mb: '10px' }} xs={12}>
+                  <PButton
+                    _ml={0}
+                    _mt='1px'
+                    _onClick={onCastVote}
+                    _width={100}
+                    disabled={topMenu === 'fellowship'}
+                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast a Vote')}
+                  />
+                </Grid>
+              }
+              <MyVote
+                address={address}
+                notVoted={notVoted}
+                vote={vote}
+              />
               <StatusInfo
                 address={address}
                 isOngoing={isOngoing}
@@ -159,23 +192,6 @@ export default function ReferendumPost(): React.ReactElement {
               <Support
                 address={address}
                 referendum={newReferenda}
-              />
-              {(isOngoing || (hasVoted && isAgainstOutcome)) &&
-                <Grid item sx={{ my: '15px' }} xs={12}>
-                  <PButton
-                    _ml={0}
-                    _mt='1px'
-                    _onClick={onCastVote}
-                    _width={100}
-                    disabled={topMenu === 'fellowship'}
-                    text={hasVoted ? t<string>('Manage my Vote') : t<string>('Cast Your Vote')}
-                  />
-                </Grid>
-              }
-              <MyVote
-                address={address}
-                notVoted={notVoted}
-                vote={vote}
               />
             </Grid>
           </Grid>

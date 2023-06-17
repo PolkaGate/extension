@@ -37,7 +37,7 @@ interface Props {
   accountLocks: Lock[] | null | undefined;
 }
 
-export default function DelegateVote ({ accountLocks, address, api, balances, delegateInformation, estimatedFee, lockedAmount, setDelegateInformation, setStatus, setStep, tracks }: Props): React.ReactElement {
+export default function DelegateVote({ accountLocks, address, api, balances, delegateInformation, estimatedFee, lockedAmount, setDelegateInformation, setStatus, setStep, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [showAdvance, setShowAdvance] = useState<boolean>(false);
   const currentBlock = useCurrentBlockNumber(address);
@@ -115,9 +115,9 @@ export default function DelegateVote ({ accountLocks, address, api, balances, de
 
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
     const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedFee));
-    const maxToHuman = amountToHuman(max.toString(), decimal);
+    const maxToHuman = balances.votingBalance?.isZero() ? BN_ZERO : amountToHuman(max.toString(), decimal);
 
-    maxToHuman && setDelegateAmount(maxToHuman);
+    maxToHuman && setDelegateAmount(String(maxToHuman));
   }, [api, balances, decimal, estimatedFee]);
 
   const handleNext = useCallback(() => {
