@@ -12,6 +12,7 @@ import { BN } from '@polkadot/util';
 import { ShowBalance, ShowValue } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
 import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
+import { OnchainVotes } from '../utils/getAllVotes';
 import { Referendum } from '../utils/types';
 import { toTitleCase } from '../utils/util';
 import AllVotes from './allVote';
@@ -31,7 +32,6 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
 
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = useState(false);
-  const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
 
   const isFellowship = referendum?.type === 'FellowshipReferendum';
@@ -58,9 +58,10 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
     }
   }, [currentBlock, referendum, threshold, track]);
 
-  const totalVoteAmount = (referendum?.ayesAmount !== undefined && referendum?.naysAmount !== undefined &&
-    Number(referendum.ayesAmount) + Number(referendum.naysAmount)
-  );
+  const totalVoteAmount = (referendum?.ayesAmount !== undefined && referendum?.naysAmount !== undefined)
+    ? Number(referendum.ayesAmount) + Number(referendum.naysAmount)
+    : undefined;
+
   const ayesPercent = useMemo(() => referendum && totalVoteAmount !== undefined
     ? Number(referendum.ayesAmount) !== 0
       ? Number(referendum.ayesAmount) / totalVoteAmount * 100
@@ -162,7 +163,6 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
         isFellowship={isFellowship}
         open={openAllVotes}
         refIndex={referendum?.index}
-        setOnChainVoteCounts={setOnChainVoteCounts}
         setOpen={setOpenAllVotes}
         setVoteCountsPA={setVoteCountsPA}
         trackId={referendum?.trackId}

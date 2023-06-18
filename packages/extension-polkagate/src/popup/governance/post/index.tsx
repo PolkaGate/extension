@@ -30,7 +30,8 @@ import Voting from './Voting';
 export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: 'referenda' | 'fellowship' | undefined, postId?: string | undefined }>();
-  const referendum = useReferendum(address, topMenu, postId && Number(postId));
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const referendum = useReferendum(address, topMenu, postId && Number(postId), refresh);
 
   const history = useHistory();
   const { state } = useLocation();
@@ -45,7 +46,6 @@ export default function ReferendumPost(): React.ReactElement {
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
   const [showAboutVoting, setShowAboutVoting] = useState<boolean>(false);
-  const [refresh, setRefresh] = useState<boolean>(false);
 
   const vote = useMyVote(address, postId, referendum?.trackId, refresh, setRefresh);
   const hasVoted = useMemo(() => vote && ('standard' in vote || 'splitAbstain' in vote), [vote]);

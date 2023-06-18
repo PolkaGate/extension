@@ -7,7 +7,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { FINISHED_REFERENDUM_STATUSES, REFERENDA_LIMIT_SAVED_LOCAL } from '../popup/governance/utils/consts';
+import { REFERENDA_LIMIT_SAVED_LOCAL } from '../popup/governance/utils/consts';
+import { getReferendumVotes, OnchainVotes } from '../popup/governance/utils/getAllVotes';
 import { getReferendumPA, getReferendumSb, isFinished } from '../popup/governance/utils/helpers';
 import { Referendum, ReferendumPA, ReferendumSb } from '../popup/governance/utils/types';
 import { useApi, useChainName } from '.';
@@ -18,7 +19,7 @@ type ReferendumData = {
 
 const isAlreadySaved = (list: Referendum[], referendum: Referendum) => list?.find((r) => r?.index === referendum?.index)
 
-export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number): Referendum | undefined {
+export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh: boolean): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
 
@@ -26,24 +27,31 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const [referendumPA, setReferendumPA] = useState<ReferendumPA | null>();
   const [referendumSb, setReferendumSb] = useState<ReferendumSb | null>();
   const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
-  const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
-  const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
+  const [onchainVotes, setOnchainVotes] = useState<OnchainVotes | null>();
   const [notInLocalStorage, setNotInLocalStorage] = useState<boolean>();
 
   const ayesAmount = useMemo(() => onChainTally?.ayes?.toString() || referendumSb?.ayes_amount || referendumPA?.tally?.ayes, [referendumPA, referendumSb, onChainTally]);
   const naysAmount = useMemo(() => onChainTally?.nays?.toString() || referendumSb?.nays_amount || referendumPA?.tally?.nays, [referendumPA, referendumSb, onChainTally]);
-  const ayesCount = onChainVoteCounts?.ayes || VoteCountsPA?.ayes || referendumSb?.ayes_count;
-  const naysCount = onChainVoteCounts?.nays || VoteCountsPA?.nays || referendumSb?.nays_count;
+  const ayesCount = onchainVotes?.ayes?.length || referendumSb?.ayes_count;
+  const naysCount = onchainVotes?.nays?.length || referendumSb?.nays_count;
 
   useEffect(() => {
-    api && id && api.query.referenda?.referendumInfoFor(id).then((res) => {
+    api && id !== undefined && referendum?.trackId !== undefined &&
+      getReferendumVotes(api, referendum.trackId, id).then((votes) => {
+        setOnchainVotes(votes);
+        console.log('All votes from chain:', votes);
+      });
+  }, [api, id, referendum]);
+
+  useEffect(() => {
+    api && id !== undefined && api.query.referenda?.referendumInfoFor(id).then((res) => {
       const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
       const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing && mayBeUnwrappedResult.asOngoing;
       const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
 
       setOnChainTally(mayBeTally);
     }).catch(console.error);
-  }, [api, id]);
+  }, [api, id, refresh]);
 
   useEffect(() => {
     if (!referendumPA && !referendumSb) {
@@ -83,7 +91,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
   }, [ayesAmount, ayesCount, id, naysAmount, naysCount, referendumPA, referendumSb]);
 
   useEffect(() => {
-    if (!id || !chainName || !type || !notInLocalStorage) {
+    if (id === undefined || !chainName || !type || !notInLocalStorage) {
       return;
     }
 
