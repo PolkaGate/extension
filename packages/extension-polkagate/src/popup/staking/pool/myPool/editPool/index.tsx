@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../../util/types';
 
@@ -27,7 +29,6 @@ export interface ChangesProps {
   newRoles: {
     newRoot: string | undefined | null;
     newNominator: string | undefined | null;
-    newStateToggler: string | undefined | null;
     newBouncer: string | undefined | null;
   } | undefined
 }
@@ -43,15 +44,12 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const myPoolName = pool?.metadata;
   const myPoolRoles = pool?.bondedPool?.roles;
 
-  const stateTogglerOrBouncer = pool?.bondedPool?.roles && 'stateToggler' in pool?.bondedPool?.roles;
-
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
   const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
-  const [newStateTogglerAddress, setNewStateTogglerAddress] = useState<string | null | undefined>();
   const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
@@ -73,8 +71,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     !depositorAddress && pool?.bondedPool?.roles && setDepositorAddress(pool?.bondedPool?.roles.depositor.toString());
     !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
     !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
-    stateTogglerOrBouncer && !newStateTogglerAddress && pool?.bondedPool?.roles && setNewStateTogglerAddress(pool?.bondedPool?.roles.stateToggler?.toString());
-    !stateTogglerOrBouncer && !newBouncerAddress && pool?.bondedPool?.roles && setNewBouncerAddress(pool?.bondedPool?.roles.bouncer?.toString());
+    !newBouncerAddress && pool?.bondedPool?.roles && setNewBouncerAddress(pool?.bondedPool?.roles.bouncer?.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);// needs to be run only once to initialize
 
@@ -96,18 +93,17 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
       newRoles: {
         newNominator: getChangedValue(newNominatorAddress, myPoolRoles?.nominator?.toString()),
         newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString()),
-        newStateToggler: getChangedValue(newStateTogglerAddress, myPoolRoles?.stateToggler?.toString()),
         newBouncer: getChangedValue(newBouncerAddress, myPoolRoles?.bouncer?.toString())
       }
     });
-  }, [newPoolName, newRootAddress, newNominatorAddress, newStateTogglerAddress, myPoolName, myPoolRoles?.root, myPoolRoles?.nominator, myPoolRoles?.stateToggler, myPoolRoles?.bouncer, newBouncerAddress]);
+  }, [myPoolName, myPoolRoles?.bouncer, myPoolRoles?.nominator, myPoolRoles?.root, newBouncerAddress, newNominatorAddress, newPoolName, newRootAddress]);
 
   const nextBtnDisable = useMemo(() =>
     changes?.newPoolName === undefined &&
     changes?.newRoles?.newNominator === undefined &&
     changes?.newRoles?.newRoot === undefined &&
-    (stateTogglerOrBouncer ? changes?.newRoles?.newStateToggler === undefined : changes?.newRoles?.newBouncer === undefined)
-    , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot, changes?.newRoles?.newStateToggler, stateTogglerOrBouncer]);
+    changes?.newRoles?.newBouncer === undefined
+    , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot]);
 
   return (
     <>
@@ -163,11 +159,11 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           }}
         />
         <AddressInput
-          address={stateTogglerOrBouncer ? newStateTogglerAddress : newBouncerAddress}
+          address={newBouncerAddress}
           allAddresses={allAddresses}
           chain={chain}
-          label={stateTogglerOrBouncer ? t<string>('State toggler') : t<string>('Bouncer')}
-          setAddress={stateTogglerOrBouncer ? setNewStateTogglerAddress : setNewBouncerAddress}
+          label={t<string>('Bouncer')}
+          setAddress={setNewBouncerAddress}
           showIdenticon
           style={{
             m: '15px auto 0',
