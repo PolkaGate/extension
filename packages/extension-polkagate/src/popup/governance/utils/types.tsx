@@ -222,7 +222,7 @@ export type Referendum = {
     method: string,
     section: string
   } | undefined,
-  chainName?: 'Polkadot' | 'Kusama',
+  chainName?: 'Polkadot' | 'Kusama' | string,
   comments?: CommentType[] | undefined,
   content?: string | undefined,
   created_at?: number | undefined,
