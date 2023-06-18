@@ -11,8 +11,8 @@ import { useApi, useChainName } from '../../../../hooks';
 import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, VoteType } from '../../utils/helpers';
 import { getAddressVote } from '../myVote/util';
 import Delegators from './Delegators';
-import Standards from './Standards';
 import FellowshipVotes from './FellowshipVotes';
+import Standards from './Standards';
 
 interface Props {
   address: string | undefined;
