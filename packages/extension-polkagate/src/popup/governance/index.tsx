@@ -46,7 +46,6 @@ export default function Governance(): React.ReactElement {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<{ referenda: number | undefined, fellowship: number | undefined }>({ fellowship: undefined, referenda: undefined });
-  const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
@@ -267,8 +266,6 @@ export default function Governance(): React.ReactElement {
           {selectedSubMenu === 'All'
             ? <AllReferendaStats
               address={address}
-              referendumStats={referendumStats}
-              setReferendumStats={setReferendumStats}
               topMenu={topMenu}
             />
             : selectedSubMenu !== 'Fellowships' &&

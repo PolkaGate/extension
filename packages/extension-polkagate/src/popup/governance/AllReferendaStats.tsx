@@ -4,20 +4,18 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, LinearProgress, SxProps, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
-import { useApi, useChainName, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
 import { remainingTime } from '../../util/utils';
 import { getReferendumStatistics, Statistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
 
 interface Props {
   address: string;
-  referendumStats: Statistics | undefined;
-  setReferendumStats: React.Dispatch<React.SetStateAction<Statistics | undefined>>;
   topMenu: 'referenda' | 'fellowship';
 }
 
@@ -68,15 +66,18 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, style, title, tokenP
   )
 }
 
-export function AllReferendaStats({ address, referendumStats, setReferendumStats, topMenu }: Props): React.ReactElement<Props> {
+export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const decidingCounts = useDecidingCount(address);
   const api = useApi(address);
+  const chain = useChain(address);
   const chainName = useChainName(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
   const price = usePrice(address);
 
+  const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
 
   useEffect(() => {
@@ -139,14 +140,19 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
       }
     }
 
-    fetchData();
-  }, [api]);
+    if (api?.genesisHash && chain?.genesisHash === api?.genesisHash.toString()) {
+      // eslint-disable-next-line no-void
+      void fetchData();
+    }
+  }, [api, api?.genesisHash, chain?.genesisHash]);
 
   useEffect(() => {
     chainName && getReferendumStatistics(chainName, topMenu).then((stat) => {
       setReferendumStats(stat);
     });
   }, [chainName, setReferendumStats, topMenu]);
+
+  const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);
 
   return (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
@@ -162,7 +168,7 @@ export function AllReferendaStats({ address, referendumStats, setReferendumStats
         />
         <LabelValue
           label={t('Deciding')}
-          value={referendumStats?.voting_total}
+          value={allDeciding || referendumStats?.voting_total}
         />
         {referendumStats?.active_fellowship_members
           ? <LabelValue
