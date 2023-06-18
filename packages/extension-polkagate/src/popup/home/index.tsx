@@ -10,8 +10,10 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../../components';
-import { useChainNames, usePrices, useTranslation } from '../../hooks';
+import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
+import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import getNetworkMap from '../../util/getNetworkMap';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
@@ -21,20 +23,37 @@ import YouHave from './YouHave';
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts, hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
   const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
 
+  useMerkleScience(undefined, undefined, true);// to download the data file
   usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
   const networkMap = useMemo(() => getNetworkMap(), []);
 
   useEffect(() => {
-    setShowAlert(window.localStorage.getItem('export_account_open') !== 'ok');
+    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
+
+    isTestnetDisabled && (
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      })
+    );
+  }, [accounts]);
+
+  useEffect(() => {
+    const value = window.localStorage.getItem(NEW_VERSION_ALERT);
+
+    if (!value || (value && value !== 'ok')) {
+      setShowAlert(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -79,7 +98,10 @@ export default function Home(): React.ReactElement {
 
   return (
     <>
-      <Alert show={show} setShowAlert={setShowAlert} />
+      <Alert
+        setShowAlert={setShowAlert}
+        show={show}
+      />
       {(hierarchy.length === 0)
         ? <AddAccount />
         : (

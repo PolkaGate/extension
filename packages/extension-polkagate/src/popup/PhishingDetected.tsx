@@ -26,12 +26,7 @@ export default function PhishingDetected(): React.ReactElement {
   return (
     <>
       <Header onClose={goHome} text={t<string>('Phishing detected')} />
-      <Grid
-        height='120px'
-        m='auto'
-        pt='30px'
-        width='90%'
-      >
+      <Grid height='120px' m='auto' pt='30px' width='90%'>
         <Warning
           fontWeight={400}
           isBelowInput
@@ -44,12 +39,7 @@ export default function PhishingDetected(): React.ReactElement {
       <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '25px auto', overflow: 'hidden', py: '20px', textOverflow: 'ellipsis', width: '92%' }}>
         {decodedWebsite}
       </Grid>
-      <Grid
-        height='80px'
-        m='auto'
-        sx={{ '> div .warning-message': { display: 'block' } }}
-        width='90%'
-      >
+      <Grid height='80px' m='auto' sx={{ '> div .warning-message': { display: 'block' } }} width='90%' >
         <Warning
           fontWeight={400}
           isBelowInput

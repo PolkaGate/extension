@@ -10,7 +10,7 @@
 
 import '@vaadin/icons';
 
-import { faCoins, faHistory, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Box, Container, Grid, IconButton, useTheme } from '@mui/material';
@@ -19,14 +19,13 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, HorizontalMenuItem, Identicon, Motion, Select, SelectChain } from '../../components';
-import { useAccount, useApi, useBalances, useChain, useChainName, useEndpoint2, useEndpoints, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
-import { tieAccount, updateMeta } from '../../messaging';
+import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector, SelectChain } from '../../components';
+import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
+import { tieAccount, windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
-import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
-import { prepareMetaData } from '../../util/utils';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
@@ -43,11 +42,9 @@ export default function AccountDetails(): React.ReactElement {
   const api = useApi(address, state?.api);
   const identity = useMyAccountIdentity(address);
   const price = usePrice(address);
-  const endpoint = useEndpoint2(address);
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chain = useChain(address);
-  const endpointOptions = useEndpoints(chain?.genesisHash);
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
@@ -89,11 +86,6 @@ export default function AccountDetails(): React.ReactElement {
     tieAccount(address, genesisHash || null).catch(console.error);
   }, [address]);
 
-  const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
-  }, [address, chainName]);
-
   const goToSend = useCallback(() => {
     if (!availableProxiesForTransfer?.length && account?.isExternal) {
       return; // Account is external and does not have any available proxy for transfer funds
@@ -104,13 +96,6 @@ export default function AccountDetails(): React.ReactElement {
       state: { api, balances, price: price?.amount }
     });
   }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api, price]);
-
-  const goToReceive = useCallback(() => {
-    history.push({
-      pathname: `/receive/${address}/`,
-      state: { pathname }
-    });
-  }, [history, address, pathname]);
 
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
@@ -130,6 +115,11 @@ export default function AccountDetails(): React.ReactElement {
         pathname: `/crowdloans/${address}`
       });
   }, [address, formatted, genesisHash, history]);
+
+  const goToGovernance = useCallback(() => {
+    formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
+      windowOpen(`/governance/${address}/referenda`).catch(console.error);
+  }, [address, formatted, genesisHash]);
 
   const identicon = (
     <Identicon
@@ -198,15 +188,11 @@ export default function AccountDetails(): React.ReactElement {
                 style={{ width: '100%' }}
               />
             </Grid>
-            <Grid height='20px' item mt='10px' xs>
-              {endpoint &&
-                <Select
-                  label={'Remote node'}
-                  onChange={_onChangeEndpoint}
-                  options={endpointOptions}
-                  value={endpoint}
-                />
-              }
+            <Grid height='20px' item mt='5px' xs>
+              <RemoteNodeSelector
+                address={address}
+                genesisHash={genesisHash}
+              />
             </Grid>
             <Grid item pt='50px' xs>
               <LabelBalancePrice api={api} balances={balanceToShow} label={'Total'} price={price} />
@@ -234,9 +220,16 @@ export default function AccountDetails(): React.ReactElement {
           />
           <HorizontalMenuItem
             divider
-            icon={<vaadin-icon icon='vaadin:qrcode' style={{ height: '28px', color: `${theme.palette.text.primary}`, m: 'auto' }} />}
-            onClick={goToReceive}
-            title={t<string>('Receive')}
+            icon={
+              <FontAwesomeIcon
+                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faVoteYea}
+                size='lg'
+              />
+            }
+            onClick={goToGovernance}
+            // textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
+            title={t<string>('Governance')}
           />
           <HorizontalMenuItem
             divider
@@ -255,14 +248,15 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={
-              <vaadin-icon
-                icon='vaadin:piggy-bank-coin'
-                style={{ color: `${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`, height: '35px' }}
+              <FontAwesomeIcon
+                color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                icon={faPiggyBank}
+                size='lg'
+                flip='horizontal'
               />
             }
-            labelMarginTop='-5px'
             onClick={goToCrowdLoans}
-            title={t<string>('Crowdloans')}
+            title={t<string>('Crowdloan')}
           />
           <HorizontalMenuItem
             icon={

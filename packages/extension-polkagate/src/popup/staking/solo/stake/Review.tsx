@@ -23,7 +23,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountName, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -55,6 +55,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountName(address);
   const token = useToken(address);
+  const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
@@ -127,7 +128,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: isFirstTimeStaking && selectedValidators ? 'Stake/Nominate' : 'Stake',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,

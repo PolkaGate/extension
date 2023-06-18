@@ -117,15 +117,15 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
   return encodeAddress(publicKey, prefix);
 }
 
-export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
-  return {
-    available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
-    feeFrozen: BigInt(String(balance.feeFrozen)),
-    miscFrozen: BigInt(String(balance.miscFrozen)),
-    reserved: BigInt(String(balance.reserved)),
-    total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
-  };
-}
+// export function handleAccountBalance(balance: any): { available: bigint, feeFrozen: bigint, miscFrozen: bigint, reserved: bigint, total: bigint } {
+//   return {
+//     available: BigInt(String(balance.free)) - BigInt(String(balance.miscFrozen)),
+//     feeFrozen: BigInt(String(balance.feeFrozen)),
+//     miscFrozen: BigInt(String(balance.miscFrozen)),
+//     reserved: BigInt(String(balance.reserved)),
+//     total: BigInt(String(balance.free)) + BigInt(String(balance.reserved))
+//   };
+// }
 
 export function getSubstrateAddress(address: AccountId | string | undefined): string | undefined {
   if (!address) {
@@ -157,8 +157,8 @@ export function prepareMetaData(chain: Chain | null | string, label: string, met
       availableBalance: balances.availableBalance.toString(),
       decimals,
       freeBalance: balances.freeBalance.toString(),
-      frozenFee: balances.frozenFee.toString(),
-      frozenMisc: balances.frozenMisc.toString(),
+      // frozenFee: balances.frozenFee.toString(),
+      // frozenMisc: balances.frozenMisc.toString(),
       lockedBalance: balances.lockedBalance.toString(),
       reservedBalance: balances.reservedBalance.toString(),
       tokens,
@@ -212,7 +212,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number): string {
+export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) { return ''; }
@@ -226,7 +226,7 @@ export function remainingTime(blocks: number): string {
 
   mins -= hrs * 60;
 
-  if (mins) { time += mins + ' mins '; }
+  if (!(noMinutes && days) && mins) { time += mins + ' mins '; }
 
   hrs -= days * 24;
 

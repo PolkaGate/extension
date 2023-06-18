@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { BalancesInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -58,19 +58,28 @@ export default function Index(): React.ReactElement {
   const rewards = useStakingRewards(address, stakingAccount);
   const api = useApi(address, state?.api);
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
-  const myBalances = useBalances(address, refresh, setRefresh);
-  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId, refresh, setRefresh);
+  const balances = useBalances(address, refresh, setRefresh);
   const nominatorInfo = useMinToReceiveRewardsInSolo(address);
   const identity = useMyAccountIdentity(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
 
-  const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
+  const role = useCallback((): string =>
+    String(stakingAccount?.controllerId) === String(stakingAccount?.stashId)
+      ? 'Both'
+      : String(formatted) === String(stakingAccount?.stashId)
+        ? 'Stash'
+        : String(formatted) === String(stakingAccount?.controllerId)
+          ? 'Controller'
+          : 'undefined' // default
+    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
+
+  const canStake = ['Both', 'Stash'].includes(role());
+  const canUnstake = ['Both', 'Controller'].includes(role());
+
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active, [stakingAccount?.stakingLedger?.active]);
   const availableToSoloStake = balances?.freeBalance && staked && balances.freeBalance.sub(staked);
-  // const decimal = stakingAccount?.decimal;
-  // const token = stakingAccount?.token;
   const isBalanceOutdated = useMemo(() => stakingAccount && (Date.now() - (stakingAccount.date || 0)) > BALANCES_VALIDITY_PERIOD, [stakingAccount]);
 
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -84,15 +93,6 @@ export default function Index(): React.ReactElement {
   const [showRewardsDetail, setShowRewardsDetail] = useState<boolean>(false);
 
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
-  const role = useCallback((): string =>
-    String(stakingAccount?.controllerId) === String(stakingAccount?.stashId)
-      ? 'Both'
-      : String(formatted) === String(stakingAccount?.stashId)
-        ? 'Stash'
-        : String(formatted) === String(stakingAccount?.controllerId)
-          ? 'Controller'
-          : 'undefined' // default
-    , [formatted, stakingAccount?.controllerId, stakingAccount?.stashId]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
@@ -124,7 +124,7 @@ export default function Index(): React.ReactElement {
     if (stakingAccount?.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = new BN(value as string);
+          const amount = new BN(value as unknown as string);
 
           unlockingValue = unlockingValue.add(amount);
 
@@ -215,8 +215,8 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Disabled?: boolean, link2Text?: Text, onLink2?: () => void, showDivider?: boolean }) => {
-    const _link1Disable = !value || value?.isZero() || formatted !== stakingAccount?.controllerId;
+  const Row = ({ label, link1Text, link2Disabled, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: string, onLink1?: () => void, link2Disabled?: boolean, link2Text?: string, onLink2?: () => void, showDivider?: boolean }) => {
+    const _link1Disable = (!value || value?.isZero() || formatted !== stakingAccount?.controllerId) && link1Text !== t('Details');
     const _link2Disable = _link1Disable || link2Disabled;
 
     return (
@@ -304,7 +304,7 @@ export default function Index(): React.ReactElement {
           <Row
             label={t('Staked')}
             link1Text={t('Unstake')}
-            link2Disabled={!api || (api && !api.consts?.fastUnstake?.deposit)}
+            link2Disabled={!api || (api && !api.consts?.fastUnstake?.deposit) || !canUnstake}
             link2Text={t('Fast Unstake')}
             onLink1={goToUnstake}
             onLink2={api && api.consts?.fastUnstake?.deposit && goToFastUnstake}
@@ -326,13 +326,17 @@ export default function Index(): React.ReactElement {
             label={t('Unstaking')}
             link1Text={t('Restake')}
             onLink1={unlockingAmount && !unlockingAmount?.isZero() && goToRestake}
+            showDivider={canStake}
             value={unlockingAmount}
+
           />
-          <Row
-            label={t('Available to stake')}
-            showDivider={false}
-            value={availableToSoloStake}
-          />
+          {canStake &&
+            <Row
+              label={t('Available to stake')}
+              showDivider={false}
+              value={availableToSoloStake}
+            />
+          }
         </Grid>
       </Container>
       <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
@@ -347,6 +351,7 @@ export default function Index(): React.ReactElement {
             />
           }
           onClick={goToStake}
+          textDisabled={role() === 'Controller'}
           title={t<string>('Stake')}
         />
         <HorizontalMenuItem
@@ -360,6 +365,7 @@ export default function Index(): React.ReactElement {
             />
           }
           onClick={goToNominations}
+          // textDisabled={role() === 'Stash'}
           title={t<string>('Validators')}
         />
         {stakingAccount?.stakingLedger?.total?.gt(BN_ZERO) &&
@@ -369,13 +375,14 @@ export default function Index(): React.ReactElement {
               <Box
                 component='img'
                 src={
-                  ['Both', 'undefined'].includes(role())
+                  (['Both', 'undefined'].includes(role())
                     ? (theme.palette.mode === 'dark' ? soloSettingWhite : soloSettingBlack)
                     : role() === 'Stash'
                       ? (theme.palette.mode === 'dark' ? stashSettingWhite : stashSettingBlack)
                       : (role() === 'Controller' && theme.palette.mode === 'dark')
                         ? controllerSettingWhite
                         : controllerSettingBlack
+                  ) as string
                 }
               />
             }

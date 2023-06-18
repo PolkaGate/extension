@@ -10,8 +10,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { LinkOption } from '@polkadot/apps-config/settings/types';
 
-import { useGenesisHashOptions, useTranslation } from './';
 import { sanitizeChainName } from '../util/utils';
+import { useGenesisHashOptions, useTranslation } from './';
 
 interface Option {
   text: string;
@@ -37,9 +37,12 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
     const option = genesisOptions?.find((o) => o.value === genesisHash);
     const chainName = sanitizeChainName(option?.text);
 
-    const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
+    const endpoints = allEndpoints?.filter((e) => e.value &&
+      (String(e.text)?.toLowerCase() === chainName?.toLowerCase() ||
+        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
+    );
 
-    return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
+    return endpoints?.filter((e) => String(e.value).startsWith('ws')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);
 
   return endpoints ?? [];

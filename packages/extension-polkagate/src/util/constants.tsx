@@ -5,6 +5,7 @@
 import { BN } from '@polkadot/util';
 
 export const EXTENSION_NAME = 'Polkagate';
+export const NEW_VERSION_ALERT = 'alert_v0.1.4.0';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
@@ -38,7 +39,7 @@ export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_STAKE_ICON = 5000;// msec
 export const CHAINS_WITH_BLACK_LOGO = ['Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
-export const DISABLED_NETWORKS = ['Bittensor', '3DP network', 'xx network', 'Ajuna Network', 'Phala Network', 'Polkadex Mainnet', 'Polymesh', 'Stafi'];
+export const DISABLED_NETWORKS = ['Bittensor', '3DP network', 'xx network', 'Ajuna Network', 'Polkadex Mainnet', 'Polymesh', 'Stafi'];
 export const RELAY_CHAINS = [
   {
     name: 'Polkadot',
@@ -54,13 +55,18 @@ export const RELAY_CHAINS = [
   }
 ];
 
+export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3';
+export const TEST_NETS = [
+  '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e' // Westend
+];
+
 export const CROWDLOANS_CHAINS = [
-  '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3', // POLKADOT
+  POLKADOT_GENESIS_HASH, // POLKADOT
   '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe' // KUSAMA
 ];
 
 export const GOVERNANCE_CHAINS = [
-  '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3', // POLKADOT
+  POLKADOT_GENESIS_HASH, // POLKADOT
   '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe' // KUSAMA
 ];
 
@@ -71,13 +77,13 @@ export const SOCIAL_RECOVERY_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3', // POLKADOT
+  POLKADOT_GENESIS_HASH, // POLKADOT
   '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e', // WESTEND
   '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe' // KUSAMA
 ];
 
 export const INITIAL_RECENT_CHAINS_GENESISHASH = [
-  '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3', // POLKADOT
+  POLKADOT_GENESIS_HASH, // POLKADOT
   '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e', // WESTEND
   '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe', // KUSAMA
   '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c' // ACALA
@@ -92,8 +98,8 @@ export const STATES_NEEDS_MESSAGE = ['withdrawUnbound', 'unstake', 'stopNominati
 export const CONFIRMING_STATE = ['fail', 'success', 'confirming'];
 
 const PROXY_TYPE_POLKADOT = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction'];
-const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction'];
-const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction'];
+const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
+const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
 
 export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND };
 

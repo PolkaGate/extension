@@ -23,11 +23,11 @@ Currently, the following features are available:
 
 The following features will be available in the next milestone:
 
-  - Governance 1 (vote referendums, endorse proposals, vote/unvote councils, propose treasury proposals and tips, etc.)
   - Identity management
   - Light client integration 
   - OPenGov (Governance 2)
-  - Social Recovery
+  - Social recovery
+  - Cross chain transfer
   
 
 # ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)

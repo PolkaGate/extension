@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, ActionContext, Address, ChainLogo, Password, Label, PButton, Warning } from '../../components';
+import { AccountContext, ActionContext, Address, ChainLogo, Label, Password, PButton, Warning } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { validateAccount, validateDerivationPath } from '../../messaging';
 import { nextDerivationPath } from '../../util/nextDerivationPath';
@@ -142,11 +142,7 @@ export default function SelectParent({ className, isLocked, onDerivationConfirme
                 width: '92%'
               }}
             >
-              <Grid
-                item
-                maxWidth='275px'
-                width='275px'
-              >
+              <Grid item maxWidth='275px' width='275px'>
                 <Address
                   address={parentAddress}
                   className='address'

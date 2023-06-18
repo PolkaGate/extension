@@ -3,10 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import '@vaadin/icons';
 
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';

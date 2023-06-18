@@ -1,0 +1,14 @@
+1. add the following to @polkadot/networks/defaults/genesis.js
+  // Added for Polkagate
+  amplitude: ['0xcceae7f3b9947cdb67369c026ef78efa5f34a08fe5808d373c04421ecf4f1aaf'],
+  pendulum: ['0x5d3c298622d5634ed019bf61ea4b71655030015bde9beb0d6a24743714462c86']
+
+// to add endpoints
+2. replace ./replacements/productionRelayKusama.js in @polkadot/apps-config/endpoints/productionRelayKusama.js
+3. replace ./replacements/productionRelayPolkadot.js in @polkadot/apps-config/endpoints/productionRelayPolkadot.js // note it is Alphabetic based
+
+
+4. add pendulum.svg from ./replacements to @polkadot/apps-config/ui/logos/chains
+5. replace index.js from ./replacements to @polkadot/apps-config/ui/logos
+
+6. update composable chain "displayName" from "Composable" to "Composable Finance" in @substrate/ss58-registry/esm/index.js

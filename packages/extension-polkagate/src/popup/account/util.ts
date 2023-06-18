@@ -35,10 +35,10 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances.freeBalance;
     case ('reserved balance'):
       return balances.reservedBalance;
-    case ('frozen misc'):
-      return balances.frozenMisc;
-    case ('frozen fee'):
-      return balances.frozenFee;
+    // case ('frozen misc'):
+    //   return balances.frozenMisc;
+    // case ('frozen fee'):
+    //   return balances.frozenFee;
     case ('locked balance'):
       return balances.lockedBalance;
     case ('vested balance'):

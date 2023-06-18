@@ -128,7 +128,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       }
 
       const from = selectedProxyAddress ?? formatted;
-      const signer = keyring.getPair(selectedProxyAddress ?? formatted);
+      const signer = keyring.getPair(from);
 
       signer.unlock(password);
       setShowWaitScreen(true);
@@ -144,7 +144,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: 'Edit Pool',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -237,7 +237,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         onConfirmClick={goEditPool}
         proxiedAddress={formatted}
         proxies={proxyItems}
-        proxyTypeFilter={['Any', 'NonTransfer']}
+        proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
         selectedProxy={selectedProxy}
         setIsPasswordError={setIsPasswordError}
         setSelectedProxy={setSelectedProxy}

@@ -30,8 +30,8 @@ export interface LastBalances {
   tokens: string[];
   freeBalance: BN;
   reservedBalance: BN;
-  frozenMisc: BN;
-  frozenFee: BN;
+  // frozenMisc: BN;
+  // frozenFee: BN;
   lockedBalance: BN;
   vestedBalance: BN;
   vestedClaimable: BN;
@@ -516,7 +516,7 @@ export interface AlertType {
   severity: 'error' | 'warning' | 'info' | 'success'
 }
 
-export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society';
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;
@@ -698,8 +698,8 @@ export interface APIs {
   [genesisHash: string]: ApiProps;
 }
 export interface APIsContext {
-  apis: APIs;
-  setIt: (apis: APIs) => void;
+  apis: { [key: string]: { api: ApiPromise; endpoint: string; } };
+  setIt: (apis: { [key: string]: { api: ApiPromise; endpoint: string; } }) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }

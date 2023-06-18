@@ -15,7 +15,7 @@ interface Props {
   decimals?: number;
 }
 
-function nFormatter(num: number, digits: number) {
+export function nFormatter(num: number, decimalPoint: number) {
   const lookup = [
     { value: 1, symbol: '' },
     { value: 1e3, symbol: 'k' },
@@ -32,10 +32,10 @@ function nFormatter(num: number, digits: number) {
   });
 
   if (!item && num > 0) {
-    return num.toFixed(digits).replace(rx, '$1');
+    return num.toFixed(decimalPoint).replace(rx, '$1');
   }
 
-  return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
+  return item ? (num / item.value).toFixed(decimalPoint).replace(rx, '$1') + item.symbol : '0';
 }
 
 function FormatPrice({ amount, decimalPoint = 2, decimals, num, price }: Props): React.ReactElement<Props> {

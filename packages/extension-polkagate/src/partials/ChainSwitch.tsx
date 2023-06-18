@@ -13,16 +13,17 @@ import { useLocation } from 'react-router-dom';
 import { twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
 import { useAccount, useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { sanitizeChainName } from '../util/utils';
 
 interface Props {
   address: string | undefined;
   children?: React.ReactNode;
+  invert?: boolean;
 }
 
-function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
+function ChainSwitch({ address, children, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const account = useAccount(address);
@@ -32,6 +33,13 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   const currentChainNameFromAccount = useChainName(address);
   const [currentChainNameJustSelected, setCurrentChainNameJustSelected] = useState<string>();
   const currentChainName = currentChainNameJustSelected || currentChainNameFromAccount;
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+
+  const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , [showOtherChains]);
 
   const availableChains = useMemo(() => {
     if (!pathname || !account?.genesisHash) {
@@ -44,6 +52,10 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
 
     if (pathname.includes('crowdloans')) {
       return CROWDLOANS_CHAINS.filter((chain) => chain !== account.genesisHash);
+    }
+
+    if (pathname.includes('governance')) {
+      return GOVERNANCE_CHAINS.filter((chain) => chain !== account.genesisHash);
     }
 
     return undefined;
@@ -127,6 +139,10 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
   };
 
   const selectNetwork = useCallback((newChainName: string) => {
+    if (isTestnetDisabled(newChainName)) {
+      return;
+    }
+
     const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
     setCurrentChainNameJustSelected(newChainName);
@@ -135,7 +151,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
       setCurrentChainNameJustSelected(currentChainNameFromAccount);
       console.error(err);
     });
-  }, [address, currentChainNameFromAccount, genesisHashes]);
+  }, [address, currentChainNameFromAccount, genesisHashes, isTestnetDisabled]);
 
   const toggleChainSwitch = useCallback(() => chainNamesToShow && chainNamesToShow.length > 1 ? setShowOtherChains(!showOtherChains) : selectNetwork(chainNamesToShow[0]), [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
@@ -152,7 +168,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
         <Grid container item mr='12px' width='fit-content'>
           {children}
         </Grid>
-        <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', p: '5px', width: 'fit-content' }}>
+        <Grid container item sx={{ bgcolor: invert ? 'black' : 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', p: '5px', width: 'fit-content' }}>
           <Grid container height='28px' item position='relative' width='28px'>
             {showOtherChains
               ? <ClickAwayListener onClickAway={closeChainSwitch}>
@@ -202,8 +218,9 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
                   animationName: `${showOtherChains
                     ? twoItemSlide.down[index]
                     : twoItemSlide.up[index]}`,
-                  cursor: 'pointer',
+                  cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
                   left: 0,
+                  opacity: isTestnetDisabled(name) ? '0.6' : 1,
                   top: '-5px'
                 }}
               >
@@ -213,7 +230,7 @@ function ChainSwitch({ address, children }: Props): React.ReactElement<Props> {
                     border: 'none',
                     borderRadius: '50%',
                     boxShadow: `0px 0px 5px ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'}`,
-                    filter: (name === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+                    filter: (name === 'Kusama' && theme.palette.mode === 'dark') || invert ? 'invert(1)' : '',
                     height: '30px',
                     width: '30px'
                   }}

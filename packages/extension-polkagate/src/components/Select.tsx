@@ -19,8 +19,8 @@ interface DropdownOption {
 }
 
 interface Props {
-  defaultValue: string | undefined;
-  value: string | undefined;
+  defaultValue: string | number | undefined;
+  value: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;

@@ -98,6 +98,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
         menuOnClick={menuOnClick}
         name={name}
         toggleVisibility={_toggleVisibility}
+        goToAccount={goToAccount}
       />
       <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
@@ -109,9 +110,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
           isExternal={isExternal}
           isHardware={isHardware}
           isMenuOpen={showActionsMenu}
-          name={name}
           setShowMenu={setShowActionsMenu}
-          type={type}
         />
       }
       <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>

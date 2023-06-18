@@ -12,12 +12,14 @@ import '@vaadin/icons';
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
+import { QrCode2 } from '@mui/icons-material';
 import { Box, Divider, Grid, Link, Typography } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
-import { ShortAddress } from '../../components';
-import { useAccount, useChainName, useFormatted } from '../../hooks';
+import { Infotip, ShortAddress } from '../../components';
+import { useAccount, useChainName, useFormatted, useTranslation } from '../../hooks';
 
 interface Props {
   address: string;
@@ -26,9 +28,19 @@ interface Props {
 }
 
 function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chainName = useChainName(address);
+  const history = useHistory();
+  const { pathname } = useLocation();
+
+  const goToReceive = useCallback(() => {
+    history.push({
+      pathname: `/receive/${address}/`,
+      state: { pathname }
+    });
+  }, [history, address, pathname]);
 
   const subscanLink = (address: string) => `https://${chainName}.subscan.io/account/${String(address)}`;
 
@@ -44,17 +56,24 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
         <Grid item>
-          <Link
-            href={`${subscanLink(formatted)}`}
-            rel='noreferrer'
-            target='_blank'
-            underline='none'
-          >
-            <Box alt={'subscan'} component='img' height='20px' mt='5px' src={subscan} width='20px' />
-          </Link>
+          <Infotip placement='top' text={t('Receive')}>
+            <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '9px', mr: '4px', cursor: 'pointer' }} />
+          </Infotip>
+        </Grid>
+        <Grid item>
+          <Infotip placement='top' text={t('Subscan')}>
+            <Link
+              href={`${subscanLink(formatted)}`}
+              rel='noreferrer'
+              target='_blank'
+              underline='none'
+            >
+              <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan} width='20px' />
+            </Link>
+          </Infotip>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px' }} />
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
     </>
   );
 }

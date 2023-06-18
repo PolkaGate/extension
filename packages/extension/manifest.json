@@ -5,11 +5,12 @@
   "name": "PolkaGate: The gateway to the Polkadot eco.",
   "short_name": "PolkaGate",
   "manifest_version": 3,
-  "version": "0.1.1.9",
+  "version": "0.1.3",
   "permissions": [
     "storage",
     "unlimitedStorage",
-    "tabs"
+    "tabs",
+    "offscreen"
   ],
   "background": {
     "service_worker": "background.js",

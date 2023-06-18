@@ -3,17 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Divider, Grid, Link, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { subscan } from '../assets/icons/';
 import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../components';
 import { useTranslation } from '../hooks';
+import Explorer from '../popup/history/Explorer';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
-import Explorer from '../popup/history/Explorer';
 
 interface Props {
   showConfirmation: boolean;

@@ -167,8 +167,6 @@ export default function TransactionHistory(): React.ReactElement<''> {
 
     const res = await getTxTransfers(chainName, String(formatted), pageNum, SINGLE_PAGE_SIZE);
 
-    console.log('Received raw data from subscan:', res);
-
     const { count, transfers } = res.data || {};
     const nextPageNum = pageNum + 1;
 

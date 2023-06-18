@@ -6,12 +6,13 @@ import { Circle } from 'better-react-spinkit';
 import React from 'react';
 
 interface Props {
+  fontSize?: number;
   title?: string;
   pt?: number | string;
   size?: number;
 }
 
-function Progress({ pt = '50px', title, size = 25 }: Props): React.ReactElement<Props> {
+function Progress({ pt = '50px', title, size = 25, fontSize = 13 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -25,7 +26,7 @@ function Progress({ pt = '50px', title, size = 25 }: Props): React.ReactElement<
       <Circle color={theme.palette.primary.main} scaleEnd={0.7} scaleStart={0.4} size={size} />
       <Grid
         item
-        sx={{ fontSize: 13, paddingTop: '20px' }}
+        sx={{ fontSize, paddingTop: '20px' }}
       >
         {title}
       </Grid>
