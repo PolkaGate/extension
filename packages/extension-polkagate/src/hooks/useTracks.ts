@@ -19,18 +19,28 @@ export default function useTracks(address: string | undefined): { fellowshipTrac
   }, [api]);
 
   // useEffect(() => {
-  //   if (tracks && chainName) {
-  //     chrome.storage.local.set({ referendaTracks: { ...savedTracks, [chainName]: tracks } });
-  //   }
-  // }, [tracks, chainName, savedTracks]);
+  //   if (api && chainName && newTracks) {
+  //     chrome.storage.local.get('tracks', (res) => {
+  //       const k = `${chainName}`;
+  //       const last = res?.tracks ?? {};
 
-  // useEffect(() => {
-  //   if (chainName && !tracks) {
-  //     chrome.storage.local.get('referendaTracks', (res) => {
-  //       setSavedTracks(res?.referendaTracks?.[chainName] || []);
+  //       last[k] = JSON.parse(JSON.stringify(newTracks));
+
+  //       // eslint-disable-next-line no-void
+  //       void chrome.storage.local.set({ tracks: last });
   //     });
   //   }
-  // }, [chainName, tracks]);
+  // }, [chainName, savedTracks, api, newTracks]);
+
+  // useEffect(() => {
+  //   if (chainName && !newTracks?.tracks) {
+  //     chrome.storage.local.get('tracks', (res) => {
+
+  //       console.log('resresresres:', res)
+  //       setSavedTracks(res?.tracks?.[chainName]);
+  //     });
+  //   }
+  // }, [chainName, newTracks]);
 
   return tracks;//|| savedTracks;
 }
