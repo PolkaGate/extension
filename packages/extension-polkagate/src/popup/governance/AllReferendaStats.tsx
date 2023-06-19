@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, LinearProgress, SxProps, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useState,useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -155,7 +155,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
+    <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: theme.palette.mode === 'light' ? '2px 3px 4px rgba(0, 0, 0, 0.1)' : '2px 3px 4px rgba(255, 255, 255, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
       <Grid container item sx={{ ml: '3%' }} xs={2.5}>
         <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
           <Typography fontSize={20} fontWeight={500}>

@@ -239,7 +239,7 @@ export type Referendum = {
   requestedFor?: string | undefined,
   status?: string | undefined,
   statusHistory?: ReferendumHistory[] | undefined,
-  submissionBlock?: number;
+  submissionBlockOC?: number;
   submissionAmount?: string | undefined,
   supportAmount?: string | undefined,
   title?: string | undefined,

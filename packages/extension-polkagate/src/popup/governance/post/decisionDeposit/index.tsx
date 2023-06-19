@@ -16,7 +16,6 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Identity, ShowBalance, Warning } from '../../../../components';
 import { useAccountName, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
-import { Track } from '../../../../hooks/useTrack';
 import { broadcast } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
@@ -24,6 +23,7 @@ import { DraggableModal } from '../../components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../../components/SelectProxyModal';
 import WaitScreen from '../../partials/WaitScreen';
+import { Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
 
