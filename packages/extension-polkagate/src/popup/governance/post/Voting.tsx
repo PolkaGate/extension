@@ -48,6 +48,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum?.timelineSb?.[1]?.block && (currentBlock - referendum.timelineSb[1].block));
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
+    console.log('track?.[1]?.preparePeriod', track)
     if (track?.[1]?.preparePeriod && currentBlock && (referendum?.timelineSb || referendum?.submissionBlock)) {
       const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlock;
 
