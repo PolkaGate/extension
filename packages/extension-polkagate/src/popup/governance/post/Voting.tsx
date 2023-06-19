@@ -31,7 +31,7 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   const token = useToken(address);
 
   console.log('referendum inVoting:', referendum);
-  
+
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = useState(false);
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
@@ -48,8 +48,8 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum?.timelineSb?.[1]?.block && (currentBlock - referendum.timelineSb[1].block));
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendum?.timelineSb) {
-      const blockSubmitted = referendum.timelineSb[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && (referendum?.timelineSb || referendum?.submissionBlock)) {
+      const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlock;
 
       if (track[1].preparePeriod.gtn(currentBlock - blockSubmitted)) {
         // in prepare period
