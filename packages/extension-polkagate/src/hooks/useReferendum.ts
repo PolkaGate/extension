@@ -40,6 +40,12 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const naysCount = onchainVotes?.nays?.length || referendumSb?.nays_count;
 
   const trackId = referendum?.trackId || (onchainRefInfo?.isOngoing ? onchainRefInfo?.asOngoing?.track?.toNumber() : undefined);
+  const onChainStatus = (onchainRefInfo?.isOngoing && 'Deciding') ||
+    (onchainRefInfo?.isApproved && 'Executed') ||
+    (onchainRefInfo?.isCancelled && 'Cancelled') ||
+    (onchainRefInfo?.isRejected && 'Rejected') ||
+    (onchainRefInfo?.isTimedOut && 'TimedOut') ||
+    (onchainRefInfo?.isKilled && 'Killed');
 
   useEffect(() => {
     api && id !== undefined && trackId !== undefined &&
@@ -75,7 +81,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const blockHash = await api.rpc.chain.getBlockHash(blockNumber);
       const { block } = await api.rpc.chain.getBlock(blockHash);
 
-      const timestamp = block.extrinsics[0].method.args[0].toNumber() as number;
+      const timestamp = block.extrinsics[0] ? block.extrinsics[0].method.args[0].toNumber() as number : undefined;
 
       return timestamp;
     } catch (error) {
@@ -102,9 +108,17 @@ export default function useReferendum(address: AccountId | string | undefined, t
       comments: referendumPA?.comments,
       content: referendumPA?.content,
       created_at: referendumPA?.created_at || (referendumSb?.created_block_timestamp && referendumSb.created_block_timestamp * 1000) || mayDecidingTimeOC,
-      decisionDepositAmount: referendumPA?.decision_deposit_amount || referendumSb?.decision_deposit_balance || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.amount.toString() : undefined),
-      decisionDepositPayer: referendumSb?.decision_deposit_account?.address || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.who.toString() : undefined),
-      enactAfter: referendumPA?.enactment_after_block || (onchainRefInfo?.isOngoing && onchainRefInfo.asOngoing.enactment.asAfter.toNumber()),
+      decisionDepositAmount: referendumPA?.decision_deposit_amount || referendumSb?.decision_deposit_balance ||
+        (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.amount && onchainRefInfo.asOngoing.decisionDeposit.value.amount.toString() : undefined),
+      decisionDepositPayer: referendumSb?.decision_deposit_account?.address || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.decisionDeposit.value.who && onchainRefInfo.asOngoing.decisionDeposit.value.who.toString() : undefined),
+      enactAfter: referendumPA?.enactment_after_block ||
+        (onchainRefInfo?.isOngoing
+          ? onchainRefInfo.asOngoing.enactment.isAfter
+            ? onchainRefInfo.asOngoing.enactment.asAfter.toNumber()
+            : onchainRefInfo.asOngoing.enactment.isAt
+              ? onchainRefInfo.asOngoing.enactment.asAt.toNumber()
+              : undefined
+          : undefined),
       hash: referendumPA?.hash || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.proposal.hash.toString() : undefined),
       index: Number(id),
       method: referendumPA?.method || referendumSb?.pre_image?.call_name,
@@ -113,8 +127,13 @@ export default function useReferendum(address: AccountId | string | undefined, t
       proposer: referendumPA?.proposer || referendumSb?.account?.address || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.submissionDeposit.who.toString() : undefined),
       requested: referendumPA?.requested || referendumSb?.beneficiary_amount, // needs double check if is the same as requestedFor
       // requestedFor: referendumPA?.proposed_call?.args?.amount,
-      status: referendumPA?.status || referendumSb?.status,
+      status: referendumPA?.status || referendumSb?.status || onChainStatus,
       statusHistory: referendumPA?.statusHistory || referendumSb?.timeline,
+      submissionBlock: onchainRefInfo?.isOngoing
+        ? onchainRefInfo.asOngoing.submitted.toNumber()
+        : onchainRefInfo?.isApproved
+          ? onchainRefInfo.asApproved[0].toNumber()
+          : undefined,
       submissionAmount: referendumPA?.submitted_amount || referendumSb?.pre_image?.amount || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.submissionDeposit.amount.toString() : undefined),
       supportAmount: referendumSb?.support_amount,
       timelinePA: referendumPA?.timeline,
@@ -124,7 +143,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       trackName: referendumSb?.origins || referendumPA?.origin || mayOriginOC,
       type: referendumPA?.type
     });
-  }, [ayesAmount, ayesCount, chainName, convertBlockNumberToDate, id, mayDecidingTimeOC, mayOriginOC, naysAmount, naysCount, onchainRefInfo, referendumPA, referendumSb, trackId]);
+  }, [ayesAmount, ayesCount, chainName, convertBlockNumberToDate, id, mayDecidingTimeOC, mayOriginOC, naysAmount, naysCount, onChainStatus, onchainRefInfo, referendumPA, referendumSb, trackId]);
 
   useEffect(() => {
     if (id === undefined || !chainName || !type || !notInLocalStorage) {
