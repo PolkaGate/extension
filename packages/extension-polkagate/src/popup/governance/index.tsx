@@ -53,6 +53,22 @@ export default function Governance(): React.ReactElement {
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
+  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
+
+  const fetchJson = () => {
+    fetch('./manifest.json')
+      .then((response) => {
+        return response.json();
+      }).then((data: chrome.runtime.Manifest) => {
+        setManifest(data);
+      }).catch((e: Error) => {
+        console.log(e.message);
+      });
+  };
+
+  useEffect(() => {
+    fetchJson();
+  }, []);
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -259,7 +275,7 @@ export default function Governance(): React.ReactElement {
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
       />
-      <Container disableGutters sx={{ maxWidth: 'inherit' }}>
+      <Container disableGutters sx={{ maxWidth: 'inherit', position: 'relative' }}>
         <Bread
           address={address}
           setSelectedSubMenu={setSelectedSubMenu}
@@ -342,6 +358,9 @@ export default function Governance(): React.ReactElement {
                     <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
                   </Grid>
               }
+              <Grid color={'text.disabled'} container fontSize='13px' item justifyContent='center'>
+                {`${t('Version')} ${manifest?.version || ''}`}
+              </Grid>
             </>
           }
         </Container>

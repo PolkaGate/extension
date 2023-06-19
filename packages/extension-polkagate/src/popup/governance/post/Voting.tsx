@@ -30,6 +30,8 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
   const decimal = useDecimal(address);
   const token = useToken(address);
 
+  console.log('referendum inVoting:', referendum);
+  
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = useState(false);
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
