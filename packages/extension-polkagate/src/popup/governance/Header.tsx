@@ -3,11 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Container, Grid, useTheme } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 import { useParams } from 'react-router';
 
-import { logoBlack, logoWhite } from '../../assets/logos';
+import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
@@ -17,8 +17,6 @@ import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 export function Header(): React.ReactElement {
-  const theme = useTheme();
-
   const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
@@ -36,7 +34,7 @@ export function Header(): React.ReactElement {
           <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: 'white', fontFamily: 'Eras' }} xs={6}>
             <Box
               component='img'
-              src={theme.palette.mode === 'light' ? logoBlack as string : logoWhite as string}
+              src={logoBlack as string}
               sx={{ height: 50, mr: '1%', width: 50 }}
             />
             {EXTENSION_NAME}
