@@ -49,7 +49,7 @@ export default function CreatePool(): React.ReactElement {
   const [toReviewDisabled, setToReviewDisabled] = useState<boolean>(true);
   const [showReview, setShowReview] = useState<boolean>(false);
   const [nominatorId, setNominatorId] = useState<string>();
-  const [stateTogglerId, setStateTogglerId] = useState<string>();
+  const [bouncerId, setBouncerId] = useState<string>();
   const [newPool, setNewPool] = useState<PoolInfo | undefined>();
 
   const ED = api && api.consts.balances.existentialDeposit as unknown as BN;
@@ -107,7 +107,7 @@ export default function CreatePool(): React.ReactElement {
           depositor: formatted,
           nominator: nominatorId,
           root: formatted,
-          stateToggler: stateTogglerId
+          bouncer: bouncerId
         },
         state: 'Creating'
       },
@@ -116,11 +116,11 @@ export default function CreatePool(): React.ReactElement {
       rewardPool: null
     });
     setShowReview(!showReview);
-  }, [DEFAULT_POOLNAME, amountAsBN, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, showReview, stateTogglerId]);
+  }, [DEFAULT_POOLNAME, amountAsBN, formatted, nominatorId, poolName, poolStakingConsts?.lastPoolId, showReview, bouncerId]);
 
   useEffect(() => {
     !nominatorId && formatted && setNominatorId(String(formatted));
-    !stateTogglerId && formatted && setStateTogglerId(String(formatted));
+    !bouncerId && formatted && setBouncerId(String(formatted));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatted]);
 
@@ -129,11 +129,11 @@ export default function CreatePool(): React.ReactElement {
       return;
     }
 
-    const goTo = !(formatted && nominatorId && stateTogglerId && createAmount);
+    const goTo = !(formatted && nominatorId && bouncerId && createAmount);
     const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
 
     setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, stateTogglerId]);
+  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -152,14 +152,14 @@ export default function CreatePool(): React.ReactElement {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    api && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
+    api && api.tx.nominationPools.create(String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
-    });
+    }).catch(console.error);
 
-    api && api.tx.nominationPools.create(String(availableBalance), formatted, nominatorId, stateTogglerId).paymentInfo(formatted).then((i) => {
+    api && api.tx.nominationPools.create(String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
-    });
-  }, [amountAsBN, api, availableBalance, formatted, nominatorId, stateTogglerId]);
+    }).catch(console.error);
+  }, [amountAsBN, api, availableBalance, formatted, nominatorId, bouncerId]);
 
   return (
     <>
@@ -196,7 +196,7 @@ export default function CreatePool(): React.ReactElement {
         {t<string>('Roles')}
       </Typography>
       <Typography fontSize='14px' fontWeight={300} sx={{ m: 'auto', width: '90%' }} textAlign='left'>
-        {t<string>('All the roles (Depositor, Root, Nominator, and State toggler) are set to the following ID by default although you can update the Nominator and State toggler by clicking on “Update roles”.')}
+        {t<string>('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
       </Typography>
       <AddressInput address={formatted} chain={chain} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
       <Grid ml='4%' onClick={onUpdateRoles} width='fit-content'>
@@ -208,14 +208,14 @@ export default function CreatePool(): React.ReactElement {
       {showRoles &&
         <UpdateRoles
           address={address}
+          bouncerId={bouncerId}
           chain={chain}
           formatted={formatted}
           nominatorId={nominatorId}
+          setBouncerId={setBouncerId}
           setNominatorId={setNominatorId}
           setShow={setShowRoles}
-          setStateTogglerId={setStateTogglerId}
           show={showRoles}
-          stateTogglerId={stateTogglerId}
         />
       }
       {showReview && newPool &&

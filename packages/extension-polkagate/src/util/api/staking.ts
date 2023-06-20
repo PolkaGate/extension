@@ -241,7 +241,7 @@ export async function createPool(
     }
 
     const created = api.tx.utility.batch([
-      api.tx.nominationPools.create(value, roles.root, roles.nominator, roles.stateToggler),
+      api.tx.nominationPools.create(value, roles.root, roles.nominator, roles.bouncer),
       api.tx.nominationPools.setMetadata(poolId, poolName)
     ]);
 
@@ -287,9 +287,9 @@ export async function editPool(
     const calls = [];
 
     basePool.metadata !== pool.metadata &&
-      calls.push(api.tx.nominationPools.setMetadata(pool.member.poolId, pool.metadata));
-    JSON.stringify(basePool.bondedPool.roles) !== JSON.stringify(pool.bondedPool.roles) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.member.poolId, getRole('root'), getRole('nominator'), getRole('stateToggler')))
+      calls.push(api.tx.nominationPools.setMetadata(pool.member?.poolId, pool.metadata));
+    JSON.stringify(basePool.bondedPool?.roles) !== JSON.stringify(pool.bondedPool?.roles) &&
+      calls.push(api.tx.nominationPools.updateRoles(pool.member?.poolId, getRole('root'), getRole('nominator'), getRole('bouncer')));
 
     const updated = api.tx.utility.batch(calls);
     const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, updated) : updated;

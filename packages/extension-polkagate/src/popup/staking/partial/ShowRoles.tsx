@@ -39,7 +39,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
         { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
         { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
         { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
-        { label: t<string>('State toggler'), address: pool.bondedPool?.roles?.stateToggler?.toString() ?? '' }
+        { label: t<string>('Bouncer'), address: pool.bondedPool?.roles?.bouncer?.toString() ?? '' }
       ]);
     }
 
