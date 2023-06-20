@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, LinearProgress, SxProps, Typography, useTheme } from '@mui/material';
-import React, { useEffect, useState,useMemo } from 'react';
+import { Container, Divider, Grid, LinearProgress, makeStyles, SxProps, Typography, useMediaQuery, useTheme } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -37,38 +37,52 @@ export interface TreasuryStats {
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
-const TreasuryBalanceStat = ({ address, balance, noDivider, style, title, tokenPrice }: { address: string, title: string, balance: BN | undefined, tokenPrice: number | undefined, noDivider?: boolean, style?: SxProps }) => {
+interface TreasuryBalanceStatProps {
+  address: string;
+  title: string;
+  balance: BN | undefined;
+  tokenPrice: number | undefined;
+  noDivider?: boolean;
+  style?: SxProps;
+  rowDisplay?: boolean;
+}
+
+const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, title, tokenPrice }: TreasuryBalanceStatProps) => {
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
   return (
     <>
-      <Grid container item sx={{ ...style }} xs={2}>
-        <Grid item md={12} sx={{ height: '25px' }}>
-          <Typography fontSize={18} fontWeight={400}>
+      <Grid container item sx={{ ...style, justifyContent: rowDisplay ? 'space-between' : 'flex-start' }}>
+        <Grid alignItems='center' container item width='fit-content'>
+          <Typography fontSize={18} fontWeight={400} lineHeight='25px'>
             {title}
           </Typography>
         </Grid>
-        <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, letterSpacing: '-0.015em', pt: '10px', height: '36px' }} xs={12}>
-          <ShowBalance api={api} balance={balance} decimal={decimal} decimalPoint={2} token={token} />
-        </Grid>
-        <Grid item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} xs={12}>
-          <FormatPrice
-            amount={balance}
-            decimals={decimal}
-            price={tokenPrice}
-          />
+        <Grid alignItems='flex-start' container direction='column' item width={rowDisplay ? 'fit-content' : '100%'}>
+          <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+            <ShowBalance api={api} balance={balance} decimal={decimal} decimalPoint={2} token={token} />
+          </Grid>
+          <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
+            <FormatPrice
+              amount={balance}
+              decimals={decimal}
+              price={tokenPrice}
+            />
+          </Grid>
         </Grid>
       </Grid>
-      {!noDivider && <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />}
+      {!noDivider && <Divider flexItem orientation={rowDisplay ? 'horizontal' : 'vertical'} sx={{ width: rowDisplay ? '100%' : 'auto' }} />}
     </>
-  )
-}
+  );
+};
 
 export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
+  const secondBreakpoint = !useMediaQuery('(min-width:700px)');
   const decidingCounts = useDecidingCount(address);
   const api = useApi(address);
   const chain = useChain(address);
@@ -79,6 +93,31 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
+
+  const styles = {
+    parent: {
+      alignItems: 'start',
+      bgcolor: 'background.paper',
+      border: 1,
+      borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main',
+      borderRadius: '10px',
+      boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)',
+      justifyContent: 'space-around',
+      p: '15px'
+    },
+    firstChild: {
+      boxSizing: 'content-box',
+      maxWidth: secondBreakpoint ? '100%' : firstBreakpoint ? '400px' : '292px',
+      minWidth: ' 225px',
+      width: secondBreakpoint ? '100%' : firstBreakpoint ? '40%' : 'auto'
+    },
+    secondChild: {
+      justifyContent: firstBreakpoint ? 'initial' : 'space-around',
+      maxWidth: secondBreakpoint ? '100%' : firstBreakpoint ? '500px' : '730px',
+      minWidth: secondBreakpoint ? '100%' : firstBreakpoint ? '365px' : '635px',
+      width: secondBreakpoint ? '100%' : firstBreakpoint ? '52%' : '65%'
+    }
+  };
 
   useEffect(() => {
     // reset all if chain changed
@@ -149,87 +188,104 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   useEffect(() => {
     chainName && getReferendumStatistics(chainName, topMenu).then((stat) => {
       setReferendumStats(stat);
-    });
+    }).catch(console.error);
   }, [chainName, setReferendumStats, topMenu]);
 
   const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '180px', pt: '15px', pb: '20px' }}>
-      <Grid container item sx={{ ml: '3%' }} xs={2.5}>
-        <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
-          <Typography fontSize={20} fontWeight={500}>
-            {t('Referenda stats')}
-          </Typography>
-        </Grid>
-        <LabelValue
-          label={t('Confirming')}
-          value={referendumStats?.confirm_total}
-        />
-        <LabelValue
-          label={t('Deciding')}
-          value={allDeciding || referendumStats?.voting_total}
-        />
-        {referendumStats?.active_fellowship_members
-          ? <LabelValue
-            label={t('Active Members')}
-            noBorder
-            value={`${referendumStats?.active_fellowship_members} out of ${referendumStats?.fellowship_members}`}
-          />
-          : <LabelValue
-            label={t('Participation')}
-            noBorder
-            value={<ShowBalance api={api} balance={referendumStats?.referendum_participate} decimal={decimal} decimalPoint={2} token={token} />}
-          />
-        }
-        <Divider orientation='vertical' />
-      </Grid>
-      <Divider flexItem orientation='vertical' sx={{ mx: '10px' }} />
-      <Grid container item sx={{ pr: '3%' }} xs={8.5}>
-        <Grid item sx={{ borderBottom: '2px solid gray', mb: '10px' }} xs={12}>
-          <Typography fontSize={20} fontWeight={500}>
-            {t('Treasury stats')}
-          </Typography>
-        </Grid>
-        <TreasuryBalanceStat
-          address={address}
-          balance={treasuryStats?.availableTreasuryBalance}
-          title={t('Available')}
-          tokenPrice={price?.amount}
-        />
-        <TreasuryBalanceStat
-          address={address}
-          balance={treasuryStats?.approved}
-          title={t('Approved')}
-          tokenPrice={price?.amount}
-        />
-        <Grid container item xs={3.5}>
-          <Grid item md={12} sx={{ height: '25px' }}>
-            <Typography fontWeight={400}>
-              {t('Spend Period')}
+    <Container disableGutters sx={{ px: '8px' }}>
+      <Grid container sx={styles.parent}>
+        <Grid container item sx={styles.firstChild}>
+          <Grid container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
+            <Typography fontSize={20} fontWeight={500}>
+              {t('Referenda stats')}
             </Typography>
           </Grid>
-          <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, pt: '10px', letterSpacing: '-0.015em', height: '36px' }}>
-            <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='20px' /> {t('days')}
-          </Grid>
-          <Grid alignItems='center' container item spacing={1} sx={{ fontSize: '18px', letterSpacing: '-0.015em' }}>
-            <Grid item>
-              <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: '185px' }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
-            </Grid>
-            <Grid fontSize={18} fontWeight={400} item sx={{ textAlign: 'right' }}>
-              {treasuryStats?.remainingSpendPeriodPercent}%
-            </Grid>
-          </Grid>
+          <LabelValue
+            label={t('Confirming')}
+            value={referendumStats?.confirm_total}
+          />
+          <LabelValue
+            label={t('Deciding')}
+            value={allDeciding || referendumStats?.voting_total}
+          />
+          {referendumStats?.active_fellowship_members
+            ? <LabelValue
+              label={t('Active Members')}
+              noBorder
+              value={`${referendumStats?.active_fellowship_members} out of ${referendumStats?.fellowship_members}`}
+            />
+            : <LabelValue
+              label={t('Participation')}
+              noBorder
+              value={
+                <ShowBalance
+                  api={api}
+                  balance={referendumStats?.referendum_participate}
+                  decimal={decimal}
+                  decimalPoint={2}
+                  token={token}
+                />
+              }
+            />
+          }
         </Grid>
-        <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />
-        <TreasuryBalanceStat
-          address={address}
-          balance={treasuryStats?.nextBurn}
-          noDivider
-          title={t('Next Burn')}
-          tokenPrice={price?.amount}
-        />
+        <Divider flexItem orientation={secondBreakpoint ? 'horizontal' : 'vertical'} sx={{ my: '15px', width: secondBreakpoint ? '100%' : 'auto' }} />
+        <Grid container item sx={styles.secondChild}>
+          <Grid container item sx={{ borderBottom: '2px solid gray', mb: firstBreakpoint ? 0 : '10px' }}>
+            <Typography fontSize={20} fontWeight={500}>
+              {t('Treasury stats')}
+            </Typography>
+          </Grid>
+          <TreasuryBalanceStat
+            address={address}
+            balance={treasuryStats?.availableTreasuryBalance}
+            rowDisplay={firstBreakpoint}
+            style={{ maxWidth: firstBreakpoint ? '100%' : '135px', minWidth: '120px' }}
+            title={t('Available')}
+            tokenPrice={price?.amount}
+          />
+          <TreasuryBalanceStat
+            address={address}
+            balance={treasuryStats?.approved}
+            rowDisplay={firstBreakpoint}
+            style={{ maxWidth: firstBreakpoint ? '100%' : '115px', minWidth: '105px' }}
+            title={t('Approved')}
+            tokenPrice={price?.amount}
+          />
+          <Grid container item justifyContent={firstBreakpoint ? 'space-between' : 'flex-start'} maxWidth={firstBreakpoint ? '100%' : '250px'} width={firstBreakpoint ? '100%' : 'fit-content'}>
+            <Grid alignItems='center' container item width='fit-content'>
+              <Typography fontSize={18} fontWeight={400} lineHeight='25px'>
+                {t('Spend Period')}
+              </Typography>
+            </Grid>
+            <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'}>
+              <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='20px' /> {t('days')}
+              </Grid>
+              <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
+                <Grid alignItems='center' container item pr='5px' width='fit-content'>
+                  <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: '185px' }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
+                </Grid>
+                <Grid fontSize={18} fontWeight={400} item>
+                  {treasuryStats?.remainingSpendPeriodPercent}%
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Divider flexItem orientation={firstBreakpoint ? 'horizontal' : 'vertical'} sx={{ width: firstBreakpoint ? '100%' : 'auto' }} />
+          <TreasuryBalanceStat
+            address={address}
+            balance={treasuryStats?.nextBurn}
+            noDivider
+            rowDisplay={firstBreakpoint}
+            style={{ maxWidth: firstBreakpoint ? '100%' : '115px', minWidth: '100px' }}
+            title={t('Next Burn')}
+            tokenPrice={price?.amount}
+          />
+        </Grid>
       </Grid>
-    </Grid>
+    </Container>
   );
 }
