@@ -44,7 +44,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const onChainStatus = (onchainRefInfo?.isOngoing
     ? (onchainRefInfo.asOngoing.deciding.isNone && 'Submitted') ||
     (onchainRefInfo.asOngoing.deciding.value.confirming.isNone && 'Deciding') ||
-    (onchainRefInfo.asOngoing.deciding.value.confirming.isSome && 'Confirming')
+    (onchainRefInfo.asOngoing.deciding.value.confirming.isSome && 'ConfirmStarted')
     : undefined) ||
     (onchainRefInfo?.isApproved && 'Executed') ||
     (onchainRefInfo?.isCancelled && 'Cancelled') ||
@@ -80,12 +80,12 @@ export default function useReferendum(address: AccountId | string | undefined, t
     ? [
       onchainRefInfo.asOngoing.submitted.toNumber(),
       onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.since ? onchainRefInfo.asOngoing.deciding.value.since.toNumber() : undefined,
-      onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome ? onchainRefInfo.asOngoing.deciding.value.confirming.toNumber() : undefined
+      onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome && onchainRefInfo.asOngoing.deciding.value.confirming ? onchainRefInfo.asOngoing.deciding.value.confirming.value.toNumber() : undefined
     ]
     : undefined
     , [onchainRefInfo]);
 
-  const convertBlockNumberToDate = useCallback(async (blockNumber: u32): Promise<number | undefined> => {
+  const convertBlockNumberToDate = useCallback(async (blockNumber: u32 | number): Promise<number | undefined> => {
     if (!api) {
       return;
     }
@@ -94,7 +94,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const blockHash = await api.rpc.chain.getBlockHash(blockNumber);
       const { block } = await api.rpc.chain.getBlock(blockHash);
 
-      const timestamp = block.extrinsics[0] ? block.extrinsics[0].method.args[0].toNumber() as number : undefined;
+      const timestamp = block.extrinsics[0] && block.extrinsics[0].method.args[0] ? block.extrinsics[0].method.args[0].toNumber() as number : undefined;
 
       return timestamp;
     } catch (error) {
@@ -112,31 +112,31 @@ export default function useReferendum(address: AccountId | string | undefined, t
         const temp = [];
 
         if (timeLineOC[0]) {
-          const timestamp = await convertBlockNumberToDate(timeLineOC[0])
+          const timestamp = await convertBlockNumberToDate(timeLineOC[0]);
 
           temp.push({
-            block: timeLineOC[0] as number,
+            block: timeLineOC[0],
             status: 'Submitted',
             timestamp
           });
         }
 
         if (timeLineOC[1]) {
-          const timestamp = await convertBlockNumberToDate(timeLineOC[1])
+          const timestamp = await convertBlockNumberToDate(timeLineOC[1]);
 
           temp.push({
-            block: timeLineOC[1] as number,
+            block: timeLineOC[1],
             status: 'Deciding',
             timestamp
           });
         }
 
         if (timeLineOC[2]) {
-          const timestamp = await convertBlockNumberToDate(timeLineOC[2])
+          const timestamp = await convertBlockNumberToDate(timeLineOC[2]);
 
           temp.push({
-            block: timeLineOC[2] as number,
-            status: 'Confirming',
+            block: timeLineOC[2],
+            status: 'ConfirmStarted',
             timestamp
           });
         }
