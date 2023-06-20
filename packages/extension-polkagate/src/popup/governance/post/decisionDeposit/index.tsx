@@ -193,9 +193,21 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                   #{refIndex}
                 </Typography>
               </DisplayValue>
-              <DisplayValue title={t<string>('Account')}>
-                <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
-              </DisplayValue>
+              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                  {t<string>('Account')}
+                </Typography>
+                <Identity
+                  address={address}
+                  api={api}
+                  chain={chain}
+                  direction='row'
+                  identiconSize={35}
+                  showSocial={false}
+                  style={{ maxWidth: '100%', width: 'fit-content' }}
+                  withShortAddress
+                />
+              </Grid>
               <DisplayValue title={t<string>('Decision Deposit')}>
                 <Grid alignItems='center' container height={42} item>
                   <ShowBalance balance={amount} decimal={decimal} skeletonWidth={130} token={token} />

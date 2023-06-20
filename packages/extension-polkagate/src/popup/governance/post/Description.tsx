@@ -87,7 +87,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, mr: '17px' }}>
                   {t('By')}:
                 </Grid>
-                <Grid item>
+                <Grid item maxWidth='30%'>
                   <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showShortAddress={!!referendum?.proposer} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
                 <VDivider />
