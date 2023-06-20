@@ -13,10 +13,12 @@ import { useApi, useChain } from '../../hooks';
 import { ChainSwitch } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
+import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 export function Header(): React.ReactElement {
   const theme = useTheme();
+
   const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
@@ -40,7 +42,10 @@ export function Header(): React.ReactElement {
             {EXTENSION_NAME}
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ color: 'text.primary' }} xs={6}>
-            <Grid container item justifyContent='flex-end' sx={{ color: 'text.primary', maxWidth: 'calc(100% - 50px)', pr: '8px', width: 'fit-content' }}>
+            <Grid container item justifyContent='flex-end' width='fit-content'>
+              <ThemeChanger />
+            </Grid>
+            <Grid container item justifyContent='flex-end' sx={{ color: 'text.primary', maxWidth: 'calc(100% - 130px)', px: '15px', width: 'fit-content' }}>
               <AddressDropdown
                 api={api}
                 chainGenesis={chain?.genesisHash}

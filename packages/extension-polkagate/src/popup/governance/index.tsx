@@ -176,10 +176,6 @@ export default function Governance(): React.ReactElement {
         return;
       }
 
-      if (referendaTrackId === undefined && topMenu === 'referenda') {
-        return;
-      }
-
       let resPA = await getTrackOrFellowshipReferendumsPA(chainName, pageTrackRef.current.page, referendaTrackId);
 
       setIsLoadingMore(false);
