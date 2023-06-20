@@ -10,7 +10,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { REFERENDA_LIMIT_SAVED_LOCAL } from '../popup/governance/utils/consts';
 import { getReferendumVotes, OnchainVotes } from '../popup/governance/utils/getAllVotes';
-import { getReferendumPA, isFinished } from '../popup/governance/utils/helpers';
+import { getReferendumPA, getReferendumSb, isFinished } from '../popup/governance/utils/helpers';
 import { Referendum, ReferendumHistory, ReferendumPA, ReferendumSb } from '../popup/governance/utils/types';
 import { useApi, useChainName } from '.';
 
@@ -164,7 +164,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing ? mayBeUnwrappedResult?.asOngoing : undefined;
       const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
 
-      console.log('referendum Info for:', JSON.parse(JSON.stringify(mayBeUnwrappedResult)))
+      // console.log('referendum Info for:', JSON.parse(JSON.stringify(mayBeUnwrappedResult)))
 
       setOnchainRefInfo(mayBeUnwrappedResult);
       setOnChainTally(mayBeTally);
@@ -237,13 +237,13 @@ export default function useReferendum(address: AccountId | string | undefined, t
       return;
     }
 
-    // getReferendumPA(chainName, type, id).then((res) => {
-    //   setReferendumPA(res);
-    // }).catch(console.error);
+    getReferendumPA(chainName, type, id).then((res) => {
+      setReferendumPA(res);
+    }).catch(console.error);
 
-    // getReferendumSb(chainName, type, id).then((res) => {
-    //   setReferendumSb(res);
-    // }).catch(console.error);
+    getReferendumSb(chainName, type, id).then((res) => {
+      setReferendumSb(res);
+    }).catch(console.error);
   }, [chainName, id, notInLocalStorage, type]);
 
   useEffect(() => {
