@@ -191,7 +191,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
               {t('Vote Details of')}
             </Typography>
           </Grid>
-          <Grid item sx={{ pl: '6px' }} xs>
+          <Grid item sx={{ pl: '6px' }} xs={7.7}>
             <Identity
               api={api}
               chain={chain}
