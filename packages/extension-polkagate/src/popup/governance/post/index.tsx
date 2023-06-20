@@ -33,7 +33,7 @@ export default function ReferendumPost(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
   const referendum = useReferendum(address, topMenu, postId && Number(postId), refresh);
 
-  console.log('* referendum:', referendum);
+  // console.log('* referendum:', referendum);
 
   const history = useHistory();
   const { state } = useLocation();
