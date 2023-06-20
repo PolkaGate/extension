@@ -7,7 +7,7 @@ import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { Track } from '../../../../hooks/useTrack';
+import { Track } from '../../utils/types';
 import { toCamelCase } from '../../utils/util';
 
 export const CONVICTION = {

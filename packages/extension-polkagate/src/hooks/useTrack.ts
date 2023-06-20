@@ -11,11 +11,12 @@ export default function useTrack(address: string | undefined, trackName: string 
   const { fellowshipTracks, tracks } = useTracks(address);
   const snakeCaseTrackName = trackName && toSnakeCase(trackName);
 
-  const track = useMemo(() => snakeCaseTrackName
-    ? tracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName) ||
-    fellowshipTracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName)
+  const track = useMemo((): string | undefined => snakeCaseTrackName
+    ? tracks?.find((t) =>
+      String(t?.[1].name) === snakeCaseTrackName) || fellowshipTracks?.find((t) => String(t?.[1].name) === snakeCaseTrackName
+      )
     : undefined
-    , [snakeCaseTrackName, tracks]);
+  , [fellowshipTracks, snakeCaseTrackName, tracks]);
 
   return track;
 }

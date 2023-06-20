@@ -9,15 +9,16 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { Infotip2, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
-import { Referendum } from '../utils/types';
+import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { Referendum, Track } from '../utils/types';
 
 interface Props {
   address: string | undefined;
   referendum: Referendum | undefined;
+  track: Track | undefined;
 }
 
-export default function Support({ address, referendum }: Props): React.ReactElement<Props> {
+export default function Support({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const decimal = useDecimal(address);
@@ -29,22 +30,20 @@ export default function Support({ address, referendum }: Props): React.ReactElem
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
   const [fellowshipCount, setFellowshipCount] = useState<number>();
 
-  const track = useTrack(address, referendum?.trackName);
   const isFellowship = referendum?.type === 'FellowshipReferendum';
   const threshold = useCurrentSupportThreshold(track?.[1], (currentBlock && referendum && referendum?.timelineSb?.[1]?.block) && currentBlock - referendum.timelineSb[1].block);
+  const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlockOC;
 
   const currentSupportThreshold = useMemo(() => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendum?.timelineSb?.[0].block) {
-      const blockSubmitted = referendum.timelineSb[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && blockSubmitted) {
+      if (currentBlock - blockSubmitted < track[1].preparePeriod.toNumber()) {
 
-      if (currentBlock - blockSubmitted < track[1].preparePeriod) {
-        // in prepare period
-        return 50;
+        return 50; // in prepare period
       }
 
       return threshold;
     }
-  }, [currentBlock, referendum, threshold, track]);
+  }, [blockSubmitted, currentBlock, threshold, track]);
 
   const supportPercent = useMemo(() => {
     if (totalIssuance && inactiveIssuance && referendum?.supportAmount) {
@@ -119,7 +118,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
           </Typography>
         </Infotip2>
       </Grid>
-      <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
+      <Grid container item justifyContent='space-around' sx={{ mt: '25px' }} xs={12}>
         <Tally
           amount={isFellowship ? referendum?.ayesCount : referendum?.supportAmount}
           color={`${theme.palette.support.contrastText}`}
