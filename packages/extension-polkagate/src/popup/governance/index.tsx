@@ -275,7 +275,7 @@ export default function Governance(): React.ReactElement {
         setMenuOpen={setMenuOpen}
         setSelectedSubMenu={setSelectedSubMenu}
       />
-      <Container disableGutters sx={{ maxWidth: 'inherit', position: 'relative' }}>
+      <Container disableGutters sx={{ maxWidth: 'inherit' }}>
         <Bread
           address={address}
           setSelectedSubMenu={setSelectedSubMenu}
