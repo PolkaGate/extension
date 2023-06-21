@@ -173,10 +173,12 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
               address={address}
               api={api}
               chain={chain}
+              direction='row'
               identiconSize={31}
               showShortAddress
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           {selectedProxyAddress &&
@@ -192,11 +194,13 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
             <Identity
               api={api}
               chain={chain}
+              direction='row'
               formatted={delegateeAddress}
               identiconSize={31}
               showShortAddress
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           {classicDelegateInformation &&
