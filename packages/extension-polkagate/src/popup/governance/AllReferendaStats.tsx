@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Divider, Grid, LinearProgress, makeStyles, SxProps, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Container, Divider, Grid, LinearProgress, SxProps, Typography, useMediaQuery } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
@@ -11,6 +11,7 @@ import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
 import { remainingTime } from '../../util/utils';
+import useStyles from './styles/styles';
 import { getReferendumStatistics, Statistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
 
@@ -47,6 +48,8 @@ interface TreasuryBalanceStatProps {
   rowDisplay?: boolean;
 }
 
+export const Seperator = ({ changeOrientation, m }: { changeOrientation: boolean, m?: number }) => (<Divider flexItem orientation={changeOrientation ? 'horizontal' : 'vertical'} sx={{ my: `${m}px`, width: changeOrientation ? '100%' : 'auto' }} />);
+
 const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, title, tokenPrice }: TreasuryBalanceStatProps) => {
   const api = useApi(address);
   const decimal = useDecimal(address);
@@ -73,16 +76,16 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
           </Grid>
         </Grid>
       </Grid>
-      {!noDivider && <Divider flexItem orientation={rowDisplay ? 'horizontal' : 'vertical'} sx={{ width: rowDisplay ? '100%' : 'auto' }} />}
+      {!noDivider && <Seperator changeOrientation={!!rowDisplay} />}
     </>
   );
 };
 
 export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
   const secondBreakpoint = !useMediaQuery('(min-width:700px)');
+  const styles = useStyles(firstBreakpoint, secondBreakpoint);
   const decidingCounts = useDecidingCount(address);
   const api = useApi(address);
   const chain = useChain(address);
@@ -93,31 +96,6 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
-
-  const styles = {
-    parent: {
-      alignItems: 'start',
-      bgcolor: 'background.paper',
-      border: 1,
-      borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main',
-      borderRadius: '10px',
-      boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)',
-      justifyContent: 'space-around',
-      p: '15px'
-    },
-    firstChild: {
-      boxSizing: 'content-box',
-      maxWidth: secondBreakpoint ? '100%' : firstBreakpoint ? '400px' : '292px',
-      minWidth: ' 225px',
-      width: secondBreakpoint ? '100%' : firstBreakpoint ? '40%' : 'auto'
-    },
-    secondChild: {
-      justifyContent: firstBreakpoint ? 'initial' : 'space-around',
-      maxWidth: secondBreakpoint ? '100%' : firstBreakpoint ? '500px' : '730px',
-      minWidth: secondBreakpoint ? '100%' : firstBreakpoint ? '365px' : '635px',
-      width: secondBreakpoint ? '100%' : firstBreakpoint ? '52%' : '65%'
-    }
-  };
 
   useEffect(() => {
     // reset all if chain changed
@@ -195,8 +173,8 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
 
   return (
     <Container disableGutters sx={{ px: '8px' }}>
-      <Grid container sx={styles.parent}>
-        <Grid container item sx={styles.firstChild}>
+      <Grid container sx={styles.allReferendaStatsContainer}>
+        <Grid container item sx={styles.referendaStats}>
           <Grid container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
             <Typography fontSize={20} fontWeight={500}>
               {t('Referenda stats')}
@@ -231,8 +209,8 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             />
           }
         </Grid>
-        <Divider flexItem orientation={secondBreakpoint ? 'horizontal' : 'vertical'} sx={{ my: '15px', width: secondBreakpoint ? '100%' : 'auto' }} />
-        <Grid container item sx={styles.secondChild}>
+        <Seperator changeOrientation={secondBreakpoint} m={15} />
+        <Grid container item sx={styles.treasuryStats}>
           <Grid container item sx={{ borderBottom: '2px solid gray', mb: firstBreakpoint ? 0 : '10px' }}>
             <Typography fontSize={20} fontWeight={500}>
               {t('Treasury stats')}
@@ -274,7 +252,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
               </Grid>
             </Grid>
           </Grid>
-          <Divider flexItem orientation={firstBreakpoint ? 'horizontal' : 'vertical'} sx={{ width: firstBreakpoint ? '100%' : 'auto' }} />
+          <Seperator changeOrientation={firstBreakpoint} />
           <TreasuryBalanceStat
             address={address}
             balance={treasuryStats?.nextBurn}
