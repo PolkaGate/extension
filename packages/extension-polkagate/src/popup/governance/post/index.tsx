@@ -33,6 +33,8 @@ export default function ReferendumPost(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
   const referendum = useReferendum(address, topMenu, postId && Number(postId), refresh);
 
+  // console.log('* referendum:', referendum);
+
   const history = useHistory();
   const { state } = useLocation();
   const chainName = useChainName(address);
@@ -190,10 +192,12 @@ export default function ReferendumPost(): React.ReactElement {
               <Voting
                 address={address}
                 referendum={referendum}
+                track={track}
               />
               <Support
                 address={address}
                 referendum={referendum}
+                track={track}
               />
             </Grid>
           </Grid>

@@ -218,7 +218,7 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
               </Typography>
             </Link>
             {showJson &&
-              <Grid item sx={{ maxWidth: 'inherit', overflowX: 'auto' }}>
+              <Grid container item sx={{ '& td, tr': { bgcolor: 'background.default' }, maxWidth: 'inherit', overflowX: 'auto' }}>
                 <JsonToTable json={referendum?.call} />
               </Grid>
             }

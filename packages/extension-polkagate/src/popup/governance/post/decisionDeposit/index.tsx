@@ -16,7 +16,6 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Identity, ShowBalance, Warning } from '../../../../components';
 import { useAccountName, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
-import { Track } from '../../../../hooks/useTrack';
 import { broadcast } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
@@ -24,6 +23,7 @@ import { DraggableModal } from '../../components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../../components/SelectProxyModal';
 import WaitScreen from '../../partials/WaitScreen';
+import { Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
 
@@ -193,9 +193,21 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                   #{refIndex}
                 </Typography>
               </DisplayValue>
-              <DisplayValue title={t<string>('Account')}>
-                <Identity address={address} api={api} chain={chain} direction='row' identiconSize={35} showSocial={false} withShortAddress />
-              </DisplayValue>
+              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                  {t<string>('Account')}
+                </Typography>
+                <Identity
+                  address={address}
+                  api={api}
+                  chain={chain}
+                  direction='row'
+                  identiconSize={35}
+                  showSocial={false}
+                  style={{ maxWidth: '100%', width: 'fit-content' }}
+                  withShortAddress
+                />
+              </Grid>
               <DisplayValue title={t<string>('Decision Deposit')}>
                 <Grid alignItems='center' container height={42} item>
                   <ShowBalance balance={amount} decimal={decimal} skeletonWidth={130} token={token} />

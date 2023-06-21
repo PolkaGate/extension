@@ -33,21 +33,19 @@ const COLLAPSIBLE_MENUS = {
 
 function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
-
-  const onAction = useContext(ActionContext);
-
-  const [data, setData] = useState<{ version: 'string' }>();
+  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);
 
   const fetchJson = () => {
     fetch('./manifest.json')
       .then((response) => {
         return response.json();
-      }).then((data) => {
-        setData(data);
+      }).then((data: chrome.runtime.Manifest) => {
+        setManifest(data);
       }).catch((e: Error) => {
         console.log(e.message);
       });
@@ -207,7 +205,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
         }
         <Grid container fontSize='11px' justifyContent='space-between' sx={{ bottom: '10px', position: 'absolute', pl: '10px', width: '85%' }}>
           <Grid item>
-            {`${t('Version')} ${data?.version || ''}`}
+            {`${t('Version')} ${manifest?.version || ''}`}
           </Grid>
           <Grid container width='fit-content'>
             <Grid item>

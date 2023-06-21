@@ -49,14 +49,9 @@ export default function MyVote({ address, notVoted, vote, isFinished }: Props): 
       </Grid>
       {notVoted
         ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
-          {isFinished
-            ? <Typography sx={{ fontSize: '22px', fontWeight: 500 }}>
-              {t('No voting participation.')}
-            </Typography>
-            : <Typography sx={{ fontSize: '24px', fontWeight: 700 }}>
-              {t('No votes cast yet.')}
-            </Typography>
-          }
+          <Typography sx={{ fontSize: '24px', fontWeight: 700 }}>
+            {isFinished ? t('No participation.') : t('No votes cast yet.')}
+          </Typography>
         </Grid>
         : !voteBalance
           ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>

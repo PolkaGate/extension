@@ -136,12 +136,14 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
             {t<string>('Delegatee')}
           </Typography>
           <Identity
-            formatted={filteredDelegation[delegateeIndex].delegatee}
             api={api}
             chain={chain}
+            direction='row'
+            formatted={filteredDelegation[delegateeIndex].delegatee}
             identiconSize={31}
             showSocial={false}
             style={{ maxWidth: '100%', width: 'fit-content' }}
+            withShortAddress
           />
         </Grid>
       </Grid>
@@ -181,9 +183,11 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
               address={address}
               api={api}
               chain={chain}
+              direction='row'
               identiconSize={31}
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
@@ -197,10 +201,12 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
                 <Identity
                   api={api}
                   chain={chain}
+                  direction='row'
                   formatted={filteredDelegation[0].delegatee}
                   identiconSize={31}
                   showSocial={false}
                   style={{ maxWidth: '100%', width: 'fit-content' }}
+                  withShortAddress
                 />
               </Grid>)
           }

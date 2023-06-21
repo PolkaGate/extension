@@ -97,6 +97,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const [proxyStep, setProxyStep] = useState<number>();
 
   const delegate = api && api.tx.convictionVoting.delegate;
+  const batch = api && api.tx.utility.batchAll;
 
   useEffect(() => {
     if (step === STEPS.PROXY) {
@@ -137,7 +138,9 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, []);
 
   useEffect(() => {
-    if (!formatted || !delegate) {
+    if (!delegateInformation || !delegate || !delegateInformation.delegateeAddress || !batch) {
+      setEstimatedFee(undefined);
+
       return;
     }
 
@@ -146,11 +149,33 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    const dummyAddress = 'Cgp9bcq1dGP1Z9B6F2ccTSTHNez9jq2iUX993ZbDVByPSU2';
-    const feeDummyParams = [BN_ZERO, dummyAddress, 1, BN_ONE];
+    if (delegateInformation.delegatedTracks.length > 1) {
+      const txList = delegateInformation.delegatedTracks.map((track) =>
+        delegate(...[
+          track,
+          delegateInformation.delegateeAddress,
+          delegateInformation.delegateConviction,
+          delegateInformation.delegateAmountBN
+        ]));
 
-    delegate(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, delegate]);
+      batch(txList)
+        .paymentInfo(delegateInformation.delegateeAddress)
+        .then((i) => setEstimatedFee(i?.partialFee))
+        .catch(console.error);
+    } else {
+      const tx = delegate(...[
+        delegateInformation.delegatedTracks[0],
+        delegateInformation.delegateeAddress,
+        delegateInformation.delegateConviction,
+        delegateInformation.delegateAmountBN
+      ]);
+
+      tx
+        .paymentInfo(delegateInformation.delegateeAddress)
+        .then((i) => setEstimatedFee(i?.partialFee))
+        .catch(console.error);
+    }
+  }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress]);
 
   const filterDelegation = useCallback((infos: DelegationInfo[]) => {
     const temp: AlreadyDelegateInformation[] = [];

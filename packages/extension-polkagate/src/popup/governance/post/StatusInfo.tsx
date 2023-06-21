@@ -8,9 +8,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { Infotip2, ShowValue } from '../../../components';
 import { useCurrentBlockNumber, useTranslation } from '../../../hooks';
-import { Track } from '../../../hooks/useTrack';
 import { remainingTime } from '../../../util/utils';
-import { Timeline } from '../utils/types';
+import { Timeline, Track } from '../utils/types';
 import { blockToUnit, blockToX, getPeriodScale } from '../utils/util';
 import PayDecisionDeposit from './decisionDeposit/PayDecisionDeposit';
 import DecisionDeposit from './decisionDeposit';
