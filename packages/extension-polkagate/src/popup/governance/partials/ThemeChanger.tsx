@@ -3,13 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { DarkMode as DarkModeIcon, WbSunny as WbSunnyIcon } from '@mui/icons-material';
+import { DarkModeOutlined as DarkModeOutlinedIcon, WbSunny as WbSunnyIcon } from '@mui/icons-material';
 import { Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { ColorContext } from '../../../components';
 
-function ThemeChanger (): React.ReactElement {
+function ThemeChanger(): React.ReactElement {
   const theme = useTheme();
   const colorMode = useContext(ColorContext);
 
@@ -63,7 +63,7 @@ function ThemeChanger (): React.ReactElement {
   return (
     <Grid container item onClick={toggleTheme} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: '42px', overflow: 'hidden', position: 'relative', width: '42px' }}>
       <WbSunnyIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? sunSlide.go : sunSlide.come}`, ...themeIconsStyle }} />
-      <DarkModeIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? moonSlide.come : moonSlide.go}`, ...themeIconsStyle }} />
+      <DarkModeOutlinedIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? moonSlide.come : moonSlide.go}`, ...themeIconsStyle }} />
     </Grid>
   );
 }
