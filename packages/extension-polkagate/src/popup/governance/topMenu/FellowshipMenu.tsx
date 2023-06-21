@@ -41,10 +41,25 @@ export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, s
     }, [item]);
 
     return (
-      <Grid alignItems='center' container item sx={{ borderBottom: top && `${borderWidth} solid`, color: clickable && 'secondary.main', cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' } }}>
+      <Grid alignItems='center' container item
+        sx={{
+          borderBottom: top && `${borderWidth} solid`,
+          color: clickable
+            ? (theme.palette.mode === 'light'
+              ? 'secondary.main'
+              : 'text.primary')
+            : (theme.palette.mode === 'light'
+              ? 'text.primary'
+              : 'action.focus'
+            ),
+          cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' }
+        }}>
         {icon}
         <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
-          {item}{decidingCount ? ` (${decidingCount})` : ''}
+          {item}
+        </Typography>
+        <Typography sx={{ color: 'action.focus', pl: '2px', display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>
+          {decidingCount ? ` (${decidingCount})` : ''}
         </Typography>
       </Grid>
     );
