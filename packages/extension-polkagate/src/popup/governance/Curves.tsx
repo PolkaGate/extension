@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { PalletReferendaCurve, PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 
 import { useTheme } from '@emotion/react';
@@ -8,7 +10,7 @@ import { Grid } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Pulse } from 'better-react-spinkit';
 import { Chart, registerables } from 'chart.js';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { BN, BN_BILLION, BN_ZERO, bnMax, bnMin } from '@polkadot/util';
 
@@ -65,10 +67,14 @@ export function curveThreshold(curve: PalletReferendaCurve, input: BN, div: BN):
 
 const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | undefined }) => {
   const chartRef = useRef(null);
+  const chartContainerRef = useRef(null);
   const theme = useTheme();
+  const [chartWidth, setChartWidth] = useState();
 
   // Register the required chart elements
   Chart.register(...registerables);
+
+  useEffect(() => setChartWidth(chartContainerRef?.current?.clientWidth), [chartContainerRef?.current?.clientWidth]);
 
   useEffect(() => {
     if (!trackInfo) {
@@ -212,9 +218,9 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
   }, [theme, trackInfo]);
 
   return (
-    <Grid alignItems='center' container justifyContent='center' sx={{ height: '190px', width: '100%' }}>
+    <Grid alignItems='center' container justifyContent='flex-start' ref={chartContainerRef} sx={{ height: '190px' }}>
       {trackInfo
-        ? <canvas id='chartCanvas' ref={chartRef} width='250' />
+        ? <canvas height='190px' id='chartCanvas' ref={chartRef} width={`${chartWidth}px`} />
         : <Grid alignItems='center' container height='100%' item justifyContent='center'>
           <Pulse color={grey[300]} size={80} />
         </Grid>
