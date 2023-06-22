@@ -67,7 +67,7 @@ export const polkadot: Record<string, TrackInfo[]> = {
     {
       compare: compareFellowshipRank(4),
       id: 4,
-      name: 'senior fellows',
+      name: 'senior_fellows',
       origin: { Origins: 'Fellowship4Dan' },
       text: 'Origin commanded by rank 4 of the Polkadot Fellowship and with a success of 4'
     },
@@ -84,7 +84,7 @@ export const polkadot: Record<string, TrackInfo[]> = {
     {
       compare: compareFellowshipRank(6),
       id: 6,
-      name: 'senior experts',
+      name: 'senior_experts',
       origin: { Origins: 'Fellowship6Dan' },
       text: 'Origin commanded by rank 6 of the Polkadot Fellowship and with a success of 6'
     },
@@ -101,14 +101,14 @@ export const polkadot: Record<string, TrackInfo[]> = {
     {
       compare: compareFellowshipRank(8),
       id: 8,
-      name: 'senior masters',
+      name: 'senior_masters',
       origin: { Origins: 'Fellowship8Dan' },
       text: 'Origin commanded by rank 8 of the Polkadot Fellowship and with a success of 8'
     },
     {
       compare: compareFellowshipRank(9),
       id: 9,
-      name: 'grand masters',
+      name: 'grand_masters',
       origin: { Origins: 'Fellowship9Dan' },
       text: 'Origin commanded by rank 9 of the Polkadot Fellowship and with a success of 9'
     }
