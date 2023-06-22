@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import useApi from './useApi';
+import useChain from './useChain';
 import useTracks from './useTracks';
 
 export type Count = [string, number];
@@ -12,6 +13,7 @@ export type DecidingCount = { referenda: Count[]; fellowship: Count[]; };
 
 export default function useDecidingCount(address: string | undefined): DecidingCount | undefined {
   const api = useApi(address);
+  const chain = useChain(address);
   const { fellowshipTracks, tracks } = useTracks(address);
 
   const [counts, setCounts] = useState<DecidingCount | undefined>(undefined);
@@ -66,8 +68,14 @@ export default function useDecidingCount(address: string | undefined): DecidingC
       }
     }
 
+    if (chain?.genesisHash !== api?.genesisHash?.toString()) {
+      setCounts(undefined);
+      
+      return;
+    }
+
     fetchDecidingCounts();
-  }, [api, fellowshipTrackIds, fellowshipTracks, trackIds]);
+  }, [api, chain?.genesisHash, fellowshipTrackIds, fellowshipTracks, trackIds]);
 
   return counts;
 }
