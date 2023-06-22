@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { BN } from '@polkadot/util';
@@ -65,47 +65,50 @@ export default function Support({ address, referendum, track }: Props): React.Re
     api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => setFellowshipCount(keys?.length));
   }, [api]);
 
-  const Tally = ({ amount, color, percent, text, total }: { text: string, percent: number | undefined, color: string, amount: string | undefined, total: BN | undefined }) => (
+  const Tally = ({ amount, color, percent, text, total }: { amount: string | number | undefined, text: string, percent: number | undefined, color: string, total: BN | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
-      <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '100%' }}>
+      <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '115px' }}>
         {text}
       </Typography>
-      <Grid container fontSize='22px' item>
-        <Grid fontWeight={700} item mt='15px' sx={{ height: '27px', textAlign: 'center' }} xs={12}>
-          <ShowValue value={percent !== undefined ? `${percent.toFixed(2)}%` : undefined} />
-        </Grid>
+      <Grid container item justifyContent='center' sx={{ fontSize: '22px', fontWeight: 700, height: '27px', mt: '15px' }}>
+        <ShowValue value={percent !== undefined ? `${percent.toFixed(2)}%` : undefined} width='115px' />
       </Grid>
-      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
+      <Grid container item justifyContent='center' sx={{ color: theme.palette.mode === 'light' ? 'text.disabled' : 'text.main', fontSize: '16px', fontWeight: 500, pt: '15px' }}>
         {isFellowship
           ? <ShowValue
             value={amount}
+            width='115px'
           />
           : <ShowBalance
             balance={amount !== undefined ? new BN(amount) : undefined}
             decimal={decimal}
             decimalPoint={2}
+            skeletonWidth={115}
             token={token}
           />
         }
       </Grid>
-      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} container fontSize='14px' fontWeight={400} item justifyContent='center'>
-        <Grid item pr='3px'>
-          {t('of')}
+      {total || fellowshipCount !== undefined
+        ? <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} container fontSize='14px' fontWeight={400} item justifyContent='center'>
+          <Grid item pr='3px'>
+            {t('of')}
+          </Grid>
+          <Grid item>
+            {isFellowship
+              ? <ShowValue
+                value={fellowshipCount}
+              />
+              : <ShowBalance
+                balance={total && new BN(total)}
+                decimal={decimal}
+                decimalPoint={2}
+                token={token}
+              />
+            }
+          </Grid>
         </Grid>
-        <Grid item>
-          {isFellowship
-            ? <ShowValue
-              value={fellowshipCount}
-            />
-            : <ShowBalance
-              balance={total && new BN(total)}
-              decimal={decimal}
-              decimalPoint={2}
-              token={token}
-            />
-          }
-        </Grid>
-      </Grid>
+        : <Skeleton height='20px' sx={{ display: 'inline-block', transform: 'none', width: '115px' }} />
+      }
     </Grid>
   );
 
