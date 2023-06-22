@@ -4,19 +4,27 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Track } from '../popup/governance/utils/types';
-import { useApi, useChainName } from '.';
+import { useApi, useChain, useChainName } from '.';
 
 export default function useTracks(address: string | undefined): { fellowshipTracks: Track[], tracks: Track[] } | undefined {
   const api = useApi(address);
+  const chain = useChain(address);
   const chainName = useChainName(address);
   const [savedTracks, setSavedTracks] = useState<string[]>([]);
 
   const tracks = useMemo(() => {
+    if (chain?.genesisHash !== api?.genesisHash?.toString()) {
+      return {
+        fellowshipTracks: undefined,
+        tracks: undefined
+      };
+    }
+
     return {
       fellowshipTracks: api?.consts?.fellowshipReferenda?.tracks as unknown as Track[],
       tracks: api?.consts?.referenda?.tracks as unknown as Track[]
     };
-  }, [api]);
+  }, [api, chain?.genesisHash]);
 
   // useEffect(() => {
   //   if (api && chainName && newTracks) {

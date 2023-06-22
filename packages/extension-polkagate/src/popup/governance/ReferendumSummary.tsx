@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-
 import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useMemo, useState } from 'react';
@@ -16,7 +15,7 @@ import { useApi, useChain, useFormatted, useReferendum, useTrack, useTranslation
 import DecisionDeposit from './post/decisionDeposit';
 import PayDecisionDeposit from './post/decisionDeposit/PayDecisionDeposit';
 import VoteChart from './post/VoteChart';
-import { STATUS_COLOR } from './utils/consts';
+import { ENDED_STATUSES, STATUS_COLOR } from './utils/consts';
 import { LatestReferenda } from './utils/types';
 import { capitalizeFirstLetter, formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from './utils/util';
 
@@ -31,7 +30,7 @@ interface Props {
 function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: string | undefined }>();
-  const newReferendum = useReferendum(address, topMenu, refSummary?.post_id);
+  const newReferendum = useReferendum(address, topMenu, refSummary?.post_id, undefined, true, ENDED_STATUSES.includes(refSummary.status));
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);

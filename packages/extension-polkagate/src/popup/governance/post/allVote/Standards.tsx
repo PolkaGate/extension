@@ -175,7 +175,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
       <Grid item>
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '15px', opacity: 0.3, width: '2px' }} />
       </Grid>
-      <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start' }} xs>
+      <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start', mr: '20px' }} xs>
         {isSearchBarOpen
           ? <InputFilter
             // autoFocus={false}

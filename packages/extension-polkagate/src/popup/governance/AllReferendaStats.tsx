@@ -164,9 +164,14 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   }, [api, api?.genesisHash, chain?.genesisHash]);
 
   useEffect(() => {
-    chainName && getReferendumStatistics(chainName, topMenu).then((stat) => {
-      setReferendumStats(stat);
-    }).catch(console.error);
+    if (chainName) {
+      setReferendumStats(undefined);
+
+      // eslint-disable-next-line no-void
+      void getReferendumStatistics(chainName, topMenu).then((stat) => {
+        setReferendumStats(stat);
+      });
+    }
   }, [chainName, setReferendumStats, topMenu]);
 
   const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);

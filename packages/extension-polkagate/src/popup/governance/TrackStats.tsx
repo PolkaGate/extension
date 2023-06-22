@@ -69,6 +69,9 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
   const secondBreakpoint = !useMediaQuery('(min-width:675px)');
   const styles = useStyles(firstBreakpoint, secondBreakpoint);
 
+  // TODO: needs to work on 'whitelisted caller' and 'fellowship admin' which are placed in fellowship menu
+  const snakeCaseTrackName = toSnakeCase(selectedSubMenu) || String(track?.[1]?.name);
+
   return (
     <Container disableGutters sx={{ px: '8px' }}>
       <Grid container sx={styles.allReferendaStatsContainer}>
@@ -76,7 +79,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
           <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
             <Grid container item>
               <Typography fontSize={32} fontWeight={500}>
-                {t('{{trackName}}', { replace: { trackName: selectedSubMenu || track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
+              {t('{{trackName}}', { replace: { trackName: toTitleCase(snakeCaseTrackName) } })}
               </Typography>
             </Grid>
             <Grid container item>
