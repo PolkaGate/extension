@@ -106,8 +106,9 @@ export default function Governance(): React.ReactElement {
   }, [address, api, tracks]);
 
   useEffect(() => {
-    referenda?.length && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
-  }, [referenda]);
+    // since the on chain referendaCount may have delay, we set the count for all case with the latest Id +1
+    referenda?.length && selectedSubMenu === 'All' && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
+  }, [referenda, selectedSubMenu]);
 
   useEffect(() => {
     if (!api) {
