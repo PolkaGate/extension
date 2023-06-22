@@ -96,9 +96,9 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
     // Then, look into the votes of the delegating target address.
     const { conviction, target } = voting.asDelegating;
     const proxyVoting = await api.query.convictionVoting.votingFor(target, trackId) as unknown as PalletConvictionVotingVoteVoting;
-    const vote = proxyVoting.isCasting && proxyVoting.asCasting.votes.find(([index]) => index.toNumber() === referendumIndex)?.[1];
+    const targetVote = proxyVoting.isCasting ? proxyVoting.asCasting.votes.find(([index]) => index.toNumber() === referendumIndex)?.[1] : undefined;
 
-    if (!vote?.isStandard && !vote?.isSplitAbstain) {
+    if (!targetVote?.isStandard && !targetVote?.isSplitAbstain) {
       return {
         delegating: {
           ...voting.asDelegating,
@@ -109,13 +109,14 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
     }
 
     // If the delegating target address has standard vote on this referendum,
-    // means this address has voted on this referendum.
-    const aye = vote.isStandard && isAye(vote.asStandard.vote.toString());
-    const abstain = vote.isSplitAbstain
+    // means this address has voted on this referendum as delegated.
+    const aye = targetVote.isStandard ? targetVote.asStandard.vote.isAye : undefined;
+    const nay = targetVote.isStandard ? targetVote.asStandard.vote.isNay : undefined;
+    const abstain = targetVote.isSplitAbstain
       ? (
-        vote.asSplitAbstain.abstain
-          ? vote.asSplitAbstain.abstain
-          : vote.asSplitAbstain.aye.add(vote.asSplitAbstain.nay)
+        targetVote.asSplitAbstain.abstain
+          ? targetVote.asSplitAbstain.abstain
+          : targetVote.asSplitAbstain.aye.add(targetVote.asSplitAbstain.nay)
       )
       : undefined;
 
@@ -126,6 +127,7 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
         balance: voting.asDelegating.balance,
         conviction: CONVICTION[conviction.type],
         delegations: voting.asDelegating.delegations,
+        nay,
         prior: voting.asDelegating.prior,
         target: voting.asDelegating.target,
         voted: true
