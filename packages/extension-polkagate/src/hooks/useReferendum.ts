@@ -20,11 +20,12 @@ type ReferendumData = {
 
 const isAlreadySaved = (list: Referendum[], referendum: Referendum) => list?.find((r) => r?.index === referendum?.index)
 
-export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh: boolean): Referendum | undefined {
+export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh?: boolean, getOnChain?: boolean, hasEnded?: boolean): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
 
   const [referendum, setReferendum] = useState<Referendum>();
+  const [savedReferendum, setSavedReferendum] = useState<Referendum>();
   const [referendumPA, setReferendumPA] = useState<ReferendumPA | null>();
   const [referendumSb, setReferendumSb] = useState<ReferendumSb | null>();
   const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
@@ -187,6 +188,10 @@ export default function useReferendum(address: AccountId | string | undefined, t
     //   return;
     // }
 
+    if (savedReferendum) {
+      return;
+    }
+
     setReferendum({
       ayesAmount,
       ayesCount,
@@ -230,35 +235,41 @@ export default function useReferendum(address: AccountId | string | undefined, t
       trackName: referendumSb?.origins || referendumPA?.origin || mayOriginOC,
       type: referendumPA?.type
     });
-  }, [ayesAmount, ayesCount, chainName, convertBlockNumberToDate, id, createdAtOC, mayOriginOC, naysAmount, naysCount, onChainStatus, onchainRefInfo, proposerOC, referendumPA, referendumSb, submissionAmountOC, trackId, statusOC]);
+  }, [ayesAmount, ayesCount, chainName, convertBlockNumberToDate, id, createdAtOC, mayOriginOC, naysAmount, naysCount, onChainStatus, onchainRefInfo, proposerOC, referendumPA, referendumSb, submissionAmountOC, trackId, statusOC, savedReferendum]);
 
   useEffect(() => {
     if (id === undefined || !chainName || !type || !notInLocalStorage) {
       return;
     }
 
-    getReferendumPA(chainName, type, id).then((res) => {
-      setReferendumPA(res);
-    }).catch(console.error);
-
-    getReferendumSb(chainName, type, id).then((res) => {
-      setReferendumSb(res);
-    }).catch(console.error);
-  }, [chainName, id, notInLocalStorage, type]);
-
-  useEffect(() => {
-    if (!referendum || !chainName || referendum.chainName !== chainName) {
+    if (getOnChain && !hasEnded) {
       return;
     }
 
-    if (!isFinished(referendum)) {
+    if (notInLocalStorage) {
+      getReferendumPA(chainName, type, id).then((res) => {
+        setReferendumPA(res);
+      }).catch(console.error);
+
+      getReferendumSb(chainName, type, id).then((res) => {
+        setReferendumSb(res);
+      }).catch(console.error);
+    }
+  }, [chainName, getOnChain, hasEnded, id, notInLocalStorage, type]);
+
+  useEffect(() => {
+    if (!referendum?.timelinePA || !chainName || referendum.chainName !== chainName) {
+      return;
+    }
+
+    if (!isFinished(referendum)) { // Do not save active referenda
       return;
     }
 
     /** to save the finished referendum in the local storage*/
-    chrome.storage.local.get('latestFinishedReferendums3', (res) => {
+    chrome.storage.local.get('latestFinishedReferendums8', (res) => {
       const k = `${chainName}`;
-      const last = (res?.latestFinishedReferendums3 as ReferendumData) ?? {};
+      const last = (res?.latestFinishedReferendums8 as ReferendumData) ?? {};
 
       if (!last[k]) {
         last[k] = [referendum];
@@ -277,17 +288,17 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
 
       // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ latestFinishedReferendums3: last });
+      void chrome.storage.local.set({ latestFinishedReferendums8: last });
     });
   }, [chainName, referendum]);
 
   useEffect(() => {
     /** look if the referendum id is already saved in local */
-    chainName && chrome.storage.local.get('latestFinishedReferendums3', (res) => {
+    chainName && chrome.storage.local.get('latestFinishedReferendums8', (res) => {
       const k = `${chainName}`;
-      const last = (res?.latestFinishedReferendums3 as ReferendumData) ?? {};
+      const last = (res?.latestFinishedReferendums8 as ReferendumData) ?? {};
 
-      // console.log('last[k]:', last[k]);
+      console.log('last[k]:', last[k]);
 
       if (!last[k]) {
         setNotInLocalStorage(true);
@@ -298,15 +309,15 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const arr = last[k];
       const found = arr.find((r) => r.index === id);
 
-      // if (found) {
-      //   // console.log(`retrieving ref ${found.index} FROM local`);
+      if (found) {
+        console.log(`retrieving ref ${found.index} FROM local`);
 
-      //   return setReferendum(found);
-      // }
+        return setSavedReferendum(found);
+      }
 
       setNotInLocalStorage(true);
     });
   }, [chainName, id]);
 
-  return referendum;
+  return savedReferendum || referendum;
 }
