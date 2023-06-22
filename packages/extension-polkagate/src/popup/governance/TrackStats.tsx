@@ -5,18 +5,18 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import { Container, Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import React from 'react';
 
 import { ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
-import { kusama } from './tracks/kusama';
-import { blockToX } from './utils/util';
-import ThresholdCurves from './Curves';
 import useStyles from './styles/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { kusama } from './tracks/kusama';
+import { blockToX, toSnakeCase, toTitleCase } from './utils/util';
 import { Seperator } from './AllReferendaStats';
+import ThresholdCurves from './Curves';
 
 interface Props {
   address: string;
@@ -79,7 +79,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
           <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
             <Grid container item>
               <Typography fontSize={32} fontWeight={500}>
-              {t('{{trackName}}', { replace: { trackName: toTitleCase(snakeCaseTrackName) } })}
+                {t('{{trackName}}', { replace: { trackName: toTitleCase(snakeCaseTrackName) } })}
               </Typography>
             </Grid>
             <Grid container item>
