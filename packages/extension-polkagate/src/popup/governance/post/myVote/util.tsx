@@ -138,65 +138,6 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
   return null;
 }
 
-// export async function getAddressVote(address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
-//   const voting = await api.query.convictionVoting.votingFor(address, trackId);
-//   const jsonVoting = voting?.toJSON() as unknown as Voting;
-
-//   if (!jsonVoting) {
-//     return null;
-//   }
-
-//   // For the direct vote, just return the vote.
-//   if (jsonVoting.casting) {
-//     const vote = jsonVoting.casting.votes?.find((vote) => vote[0] === referendumIndex)?.[1];
-
-//     return {
-//       ...vote,
-//       delegations: jsonVoting.casting.delegations
-//     };
-//   }
-
-//   // If the address has delegated to other.
-//   if (jsonVoting.delegating) {
-//     // Then, look into the votes of the delegating target address.
-//     const { target, conviction } = jsonVoting.delegating;
-//     const proxyVoting = await api.query.convictionVoting.votingFor(target, trackId);
-//     const jsonProxyVoting = proxyVoting?.toJSON() as Voting;
-//     const vote = jsonProxyVoting?.casting?.votes?.find(([index]) => index === referendumIndex)?.[1];
-
-//     if (!vote?.standard && !vote?.splitAbstain) {
-
-//       return {
-//         delegating: {
-//           ...jsonVoting.delegating,
-//           conviction: CONVICTION[conviction],
-//           voted: false
-//         }
-//       };
-//     }
-
-//     // If the delegating target address has standard vote on this referendum,
-//     // means this address has voted on this referendum.
-//     const aye = vote?.standard && isAye(vote.standard.vote);
-//     const abstain = vote?.splitAbstain && (
-//       vote.splitAbstain?.abstain
-//         ? new BN(vote.splitAbstain.abstain)
-//         : new BN(vote.splitAbstain.aye || 0).add(new BN(vote.splitAbstain.nay || 0)));
-
-//     return {
-//       delegating: {
-//         ...jsonVoting.delegating,
-//         abstain,
-//         aye,
-//         conviction: CONVICTION[conviction],
-//         voted: true,
-//       }
-//     };
-//   }
-
-//   return null;
-// }
-
 export async function getAllVotes(address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
   const queries = tracks.map((t) => api.query.convictionVoting.votingFor(address, t[0]));
   const voting = await Promise.all(queries);
