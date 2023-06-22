@@ -12,7 +12,7 @@ import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
 import { kusama } from './tracks/kusama';
-import { blockToX } from './utils/util';
+import { blockToX, toSnakeCase, toTitleCase } from './utils/util';
 import ThresholdCurves from './Curves';
 
 interface Props {
@@ -64,18 +64,21 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
   const decimal = useDecimal(address);
   const token = useToken(address);
 
+  // TODO: needs to work on 'whitelisted caller' and 'fellowship admin' which are placed in fellowship menu
+  const snakeCaseTrackName = toSnakeCase(selectedSubMenu) || String(track?.[1]?.name);
+
   return (
     <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '245px' }}>
       <Grid container item md={7} sx={{ mx: '3%', pt: '15px' }}>
         <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
           <Grid item xs={12}>
             <Typography fontSize={32} fontWeight={500}>
-              {t('{{trackName}}', { replace: { trackName: selectedSubMenu || track?.[1]?.name?.split('_')?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())?.join('  ') } })}
+              {t('{{trackName}}', { replace: { trackName: toTitleCase(snakeCaseTrackName) } })}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-              {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === String(track?.[1]?.name))?.text}
+              {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
             </Typography>
           </Grid>
         </Grid>
@@ -91,8 +94,8 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             />
             <LabelValue
               label={t('Decision Period')}
-              value={blockToX(track?.[1]?.decisionPeriod)}
               noBorder
+              value={blockToX(track?.[1]?.decisionPeriod)}
             />
           </Grid>
           <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />
@@ -107,8 +110,8 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             />
             <LabelValue
               label={t('Decision deposit')}
-              value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
               noBorder
+              value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
             />
           </Grid>
         </Grid>
