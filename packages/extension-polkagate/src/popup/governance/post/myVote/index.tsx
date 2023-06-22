@@ -19,7 +19,7 @@ interface Props {
   isFinished: boolean | undefined;
 }
 
-export default function MyVote({ address, notVoted, vote, isFinished }: Props): React.ReactElement {
+export default function MyVote({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
