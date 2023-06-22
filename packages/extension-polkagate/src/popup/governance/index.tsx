@@ -94,7 +94,7 @@ export default function Governance(): React.ReactElement {
 
     if (!chainChangeRef.current) {
       chainChangeRef.current = chainName;
-    } else if (chainChangeRef.current !== chainName) {
+    } else if (chainChangeRef.current !== chainName) { // if chain is changed
       chainChangeRef.current = chainName;
       setReferenda(undefined);
       setFilteredReferenda(undefined);
