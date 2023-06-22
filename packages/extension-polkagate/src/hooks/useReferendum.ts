@@ -298,7 +298,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const k = `${chainName}`;
       const last = (res?.latestFinishedReferendums8 as ReferendumData) ?? {};
 
-      console.log('last[k]:', last[k]);
+      // console.log('last[k]:', last[k]);
 
       if (!last[k]) {
         setNotInLocalStorage(true);
