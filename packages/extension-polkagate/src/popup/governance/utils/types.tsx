@@ -66,7 +66,7 @@ export interface ReferendumPA {
   deposit: any;
   description: any;
   enactment_after_block: number;
-  enactment_at_block: any;
+  enactment_at_block: number;
   end: any;
   ended_at: Date;
   fee: any;
@@ -229,6 +229,7 @@ export type Referendum = {
   decisionDepositAmount?: string | undefined,
   decisionDepositPayer?: string | undefined,
   enactAfter?: number | undefined,
+  enactAt?: number | undefined,
   hash?: string | undefined,
   index: number,
   method?: string | undefined,

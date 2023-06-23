@@ -165,13 +165,24 @@ export default function Metadata({ address, decisionDepositPayer, referendum }: 
               />
             </>
           }
-          <LabelValue
-            label={t('Enact After')}
-            labelStyle={{ minWidth: '20%' }}
-            style={{ justifyContent: 'flex-start' }}
-            value={t<string>('{{ enactAfter }} blocks', { replace: { enactAfter: referendum?.enactAfter } })}
-            valueStyle={{ fontSize: 16, fontWeight: 500 }}
-          />
+          {referendum?.enactAfter &&
+            <LabelValue
+              label={t('Enact After')}
+              labelStyle={{ minWidth: '20%' }}
+              style={{ justifyContent: 'flex-start' }}
+              value={t<string>('{{ enactAfter }} blocks', { replace: { enactAfter: referendum?.enactAfter } })}
+              valueStyle={{ fontSize: 16, fontWeight: 500 }}
+            />
+          }
+          {referendum?.enactAt &&
+            <LabelValue
+              label={t('Enact at')}
+              labelStyle={{ minWidth: '20%' }}
+              style={{ justifyContent: 'flex-start' }}
+              value={referendum?.enactAt}
+              valueStyle={{ fontSize: 16, fontWeight: 500 }}
+            />
+          }
           <LabelValue
             label={t('Method')}
             labelStyle={{ minWidth: '20%' }}
