@@ -118,7 +118,8 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
           data: supportY,
           fill: false,
           label: 'Support',
-          pointRadius: 0
+          pointRadius: 0,
+          type: 'bar'
         },
         {
           borderColor: `${theme.palette.approval.main}`,
@@ -145,12 +146,12 @@ const ThresholdCurves = ({ trackInfo }: { trackInfo: PalletReferendaTrackInfo | 
               weight: 400
             },
             padding: 10,
-            pointStyle: 'line',
+            pointStyle: 'rectRounded',
             usePointStyle: true
           },
           maxHeight: 50,
           maxWidth: '2px',
-          position: 'bottom',
+          position: 'bottom'
         },
         tooltip: {
           // backgroundColor: theme.palette.mode === 'dark' ? '#fff' : '#000',
