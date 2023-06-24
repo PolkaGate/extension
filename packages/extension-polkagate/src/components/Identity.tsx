@@ -50,7 +50,6 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
 
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
-  const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
     <Typography variant='body2'>
@@ -91,7 +90,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             />
           </Grid>
         }
-        <Grid direction='column' item maxWidth='fit-content' overflow='hidden' sx={{ fontSize: style?.fontSize as string ?? '28px', fontWeight: 400 }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+        <Grid direction='column' item maxWidth='fit-content' overflow='hidden' sx={{ fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
           {msData
             ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
               <Grid display='flex' item sx={{ width: '25px' }}>
@@ -137,6 +136,11 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             </Grid>
           }
         </Grid>
+        {withShortAddress && direction === 'row' &&
+          <Grid container item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
+            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+          </Grid>
+        }
         {_showSocial &&
           <Grid container id='socials' item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
             {_accountInfo?.identity?.email &&
@@ -167,11 +171,6 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
                 </Link>
               </Grid>
             }
-          </Grid>
-        }
-        {withShortAddress && direction === 'row' &&
-          <Grid container item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
-            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
           </Grid>
         }
       </Grid>
