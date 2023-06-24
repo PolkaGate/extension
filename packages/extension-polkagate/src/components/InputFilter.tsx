@@ -32,7 +32,7 @@ export default function InputFilter({ autoFocus = true, label, onChange, placeho
   }, [onChange]);
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <Label
         label={label}
       >
@@ -63,8 +63,8 @@ export default function InputFilter({ autoFocus = true, label, onChange, placeho
             style={{
               cursor: 'pointer',
               position: 'absolute',
-              right: '25px',
-              top: '32px'
+              right: '15px',
+              top: label ? '28px' : '7px'
             }}
           />
         )
