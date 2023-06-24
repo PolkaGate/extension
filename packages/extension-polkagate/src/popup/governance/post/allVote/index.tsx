@@ -67,7 +67,11 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const [standardPage, setStandardPage] = useState<number>(1);
 
   useEffect(() => {
-    chainName && refIndex && getAllVotesFromPA(chainName, refIndex, 100, isFellowship).then((res: AllVotesType | null) => {
+    if (!chainName || refIndex === undefined || isFellowship === undefined || setVoteCountsPA === undefined) {
+      return;
+    }
+
+    getAllVotesFromPA(chainName, refIndex, 100, isFellowship).then((res: AllVotesType | null) => {
       if (!res) {
         return setAllVotes(null);
       }
