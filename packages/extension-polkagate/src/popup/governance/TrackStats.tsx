@@ -4,15 +4,18 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Container, Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import React from 'react';
 
 import { ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
+import useStyles from './styles/styles';
 import { kusama } from './tracks/kusama';
 import { blockToX, toSnakeCase, toTitleCase } from './utils/util';
+import { Seperator } from './AllReferendaStats';
 import ThresholdCurves from './Curves';
 
 interface Props {
@@ -59,69 +62,74 @@ export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontS
 
 export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
+  const secondBreakpoint = !useMediaQuery('(min-width:675px)');
+  const styles = useStyles(firstBreakpoint, secondBreakpoint);
 
   // TODO: needs to work on 'whitelisted caller' and 'fellowship admin' which are placed in fellowship menu
   const snakeCaseTrackName = toSnakeCase(selectedSubMenu) || String(track?.[1]?.name);
 
   return (
-    <Grid alignItems='start' container justifyContent='space-between' sx={{ boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.1)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', height: '245px' }}>
-      <Grid container item md={7} sx={{ mx: '3%', pt: '15px' }}>
-        <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
-          <Grid item xs={12}>
-            <Typography fontSize={32} fontWeight={500}>
-              {t('{{trackName}}', { replace: { trackName: toTitleCase(snakeCaseTrackName) } })}
-            </Typography>
+    <Container disableGutters sx={{ px: '8px' }}>
+      <Grid container sx={styles.allReferendaStatsContainer}>
+        <Grid container item sx={styles.trackStatsContainer}>
+          <Grid alignItems='baseline' container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
+            <Grid container item>
+              <Typography fontSize={32} fontWeight={500}>
+                {t('{{trackName}}', { replace: { trackName: toTitleCase(snakeCaseTrackName) } })}
+              </Typography>
+            </Grid>
+            <Grid container item>
+              <Typography color='text.disableText' fontSize={16} fontWeight={400}>
+                {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-              {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
-            </Typography>
+          <Grid container item justifyContent='space-between'>
+            <Grid container item sx={styles.trackStatsChild}>
+              <LabelValue
+                label={t('Remaining Slots')}
+                value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding}`}
+              />
+              <LabelValue
+                label={t('Prepare Period')}
+                value={blockToX(track?.[1]?.preparePeriod)}
+              />
+              <LabelValue
+                label={t('Decision Period')}
+                noBorder={!secondBreakpoint}
+                value={blockToX(track?.[1]?.decisionPeriod)}
+              />
+            </Grid>
+            <Divider flexItem orientation='vertical' />
+            <Grid container item sx={styles.trackStatsChild}>
+              <LabelValue
+                label={t('Confirm Period')}
+                value={blockToX(track?.[1]?.confirmPeriod)}
+              />
+              <LabelValue
+                label={t('Min Enactment Period')}
+                value={blockToX(track?.[1]?.minEnactmentPeriod)}
+              />
+              <LabelValue
+                label={t('Decision deposit')}
+                noBorder
+                value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
+              />
+            </Grid>
           </Grid>
         </Grid>
-        <Grid container item justifyContent='space-between' sx={{ mr: '3%', mt: '12px' }}>
-          <Grid container item xs={5.5}>
-            <LabelValue
-              label={t('Remaining Slots')}
-              value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding}`}
-            />
-            <LabelValue
-              label={t('Prepare Period')}
-              value={blockToX(track?.[1]?.preparePeriod)}
-            />
-            <LabelValue
-              label={t('Decision Period')}
-              noBorder
-              value={blockToX(track?.[1]?.decisionPeriod)}
-            />
-          </Grid>
-          <Divider flexItem orientation='vertical' sx={{ mx: '3%' }} />
-          <Grid container item xs={5.5}>
-            <LabelValue
-              label={t('Confirm Period')}
-              value={blockToX(track?.[1]?.confirmPeriod)}
-            />
-            <LabelValue
-              label={t('Min Enactment Period')}
-              value={blockToX(track?.[1]?.minEnactmentPeriod)}
-            />
-            <LabelValue
-              label={t('Decision deposit')}
-              noBorder
-              value={<ShowBalance api={api} balance={track?.[1]?.decisionDeposit} decimal={decimal} decimalPoint={2} token={token} />}
-            />
-          </Grid>
+        <Seperator changeOrientation={secondBreakpoint} m={secondBreakpoint ? 20 : 0} />
+        <Grid container item sx={styles.curveContainer}>
+          <Typography align='left' fontSize={18} fontWeight={400}>
+            {t('Threshold Curves')}
+          </Typography>
+          <ThresholdCurves trackInfo={track?.[1]} />
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item md sx={{ ml: '2%', p: '25px' }}>
-        <Typography align='left' fontSize={18} fontWeight={400}>
-          {t('Threshold Curves')}
-        </Typography>
-        <ThresholdCurves trackInfo={track?.[1]} />
-      </Grid>
-    </Grid>
+    </Container>
   );
 }
