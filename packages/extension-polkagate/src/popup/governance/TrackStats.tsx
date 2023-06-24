@@ -84,7 +84,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             </Grid>
             <Grid container item>
               <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-                {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === String(track?.[1]?.name))?.text}
+                {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
               </Typography>
             </Grid>
           </Grid>
