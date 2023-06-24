@@ -15,7 +15,7 @@ import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTr
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST } from './utils/consts';
-import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
+import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA } from './utils/helpers';
 import { LatestReferenda } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
@@ -174,7 +174,7 @@ export default function Governance(): React.ReactElement {
         setIsLoadingMore(false);
 
         if (allReferenda === null) {
-          if (pageTrackRef.current.page === 1) { // there is no referendum !!
+          if (pageTrackRef.current.page === 1) { // there is no referendum or PA is down ... ⚠️ !!
             setReferenda(null);
 
             return;
