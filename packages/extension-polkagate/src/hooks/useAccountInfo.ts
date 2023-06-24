@@ -11,13 +11,15 @@ export default function useAccountInfo(api: ApiPromise, formatted: string, accou
   const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
 
   useEffect(() => {
-    if (accountInfo) {
+    if (accountInfo && accountInfo.accountId?.toString() === formatted) {
       return setInfo(accountInfo);
+    } else {
+      setInfo(undefined);
     }
 
     api && formatted && api.derive.accounts.info(formatted).then((i) => {
       setInfo(i);
-    });
+    }).catch(console.error);
   }, [accountInfo, api, formatted]);
 
   return info;
