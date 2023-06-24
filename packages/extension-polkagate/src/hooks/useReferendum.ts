@@ -84,7 +84,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome && onchainRefInfo.asOngoing.deciding.value.confirming ? onchainRefInfo.asOngoing.deciding.value.confirming.value.toNumber() : undefined
     ]
     : undefined
-    , [onchainRefInfo]);
+  , [onchainRefInfo]);
 
   const convertBlockNumberToDate = useCallback(async (blockNumber: u32 | number): Promise<number | undefined> => {
     if (!api) {
@@ -207,9 +207,13 @@ export default function useReferendum(address: AccountId | string | undefined, t
         (onchainRefInfo?.isOngoing
           ? onchainRefInfo.asOngoing.enactment.isAfter
             ? onchainRefInfo.asOngoing.enactment.asAfter.toNumber()
-            : onchainRefInfo.asOngoing.enactment.isAt
-              ? onchainRefInfo.asOngoing.enactment.asAt.toNumber()
-              : undefined
+            : undefined
+          : undefined),
+      enactAt: referendumPA?.enactment_at_block ||
+        (onchainRefInfo?.isOngoing
+          ? onchainRefInfo.asOngoing.enactment.isAt
+            ? onchainRefInfo.asOngoing.enactment.asAt.toNumber()
+            : undefined
           : undefined),
       hash: referendumPA?.hash || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.proposal.hash.toString() : undefined),
       index: Number(id),
@@ -298,7 +302,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const k = `${chainName}`;
       const last = (res?.latestFinishedReferendums8 as ReferendumData) ?? {};
 
-      console.log('last[k]:', last[k]);
+      // console.log('last[k]:', last[k]);
 
       if (!last[k]) {
         setNotInLocalStorage(true);
