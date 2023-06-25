@@ -75,6 +75,6 @@ const getRankedColor = (rank: number): string => {
     case 1:
       return '#DEBFBF';
     default:
-      return '';
+      return '#000000';
   }
 };
