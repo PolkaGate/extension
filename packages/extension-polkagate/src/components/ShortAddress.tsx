@@ -26,9 +26,9 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
   const pRef = useRef(null);
   const cRef = useRef(null);
 
-  const decreaseCharactersCount = useCallback(() => setCharactersCount(charactersCount - 1), [charactersCount]);
+  const decreaseCharactersCount = useCallback(() => clipped && setCharactersCount(charactersCount - 1), [charactersCount, clipped]);
 
-  ObserveResize(pRef?.current as unknown as Element, 24, decreaseCharactersCount);
+  ObserveResize(pRef?.current as unknown as Element, cRef?.current?.clientHeight + 3, decreaseCharactersCount);
 
   useEffect(() => {
     if (!clipped) {
