@@ -18,6 +18,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
+import { Lock } from '../hooks/useAccountLocks';
+
 export interface TransactionStatus {
   blockNumber: string | null;
   success: boolean | null;
@@ -614,6 +616,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   token: string;
   date: number;
   pooledBalance?: BN;
+  soloTotal?: BN;
   genesisHash: string;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {

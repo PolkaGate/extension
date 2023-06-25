@@ -22,7 +22,11 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('total balance'):
       return balances.freeBalance.add(balances.reservedBalance).add(balances?.pooledBalance ?? BN_ZERO);
     case ('pooled balance'):
+    case ('pool staked'):
       return balances?.pooledBalance ?? BN_ZERO;
+    case ('solo'):
+    case ('solo staked'):
+      return balances?.soloTotal ?? BN_ZERO;
     case ('available'):
     case ('transferrable'):
     case ('available balance'):
@@ -40,6 +44,7 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     // case ('frozen fee'):
     //   return balances.frozenFee;
     case ('locked balance'):
+    case ('locked in referenda'):
       return balances.lockedBalance;
     case ('vested balance'):
       return balances.vestedBalance;

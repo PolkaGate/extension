@@ -12,7 +12,7 @@ import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
-import { useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
 import getLogo from '../util/getLogo';
 
@@ -20,27 +20,27 @@ interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
   address: string;
-  isHardware: boolean | null | undefined
-  isExternal: boolean | null | undefined
+  noMargin?: boolean;
 }
 
-function AccMenu({ address, isExternal, isHardware, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu({ address, isMenuOpen, setShowMenu, noMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
   const chain = useChain(address);
   const formatted = useFormatted(address);
+  const account = useAccount(address);
   const api = useApi(address);
-  
+
   const [genesisHash, setGenesis] = useState<string | undefined>();
 
   const onAction = useContext(ActionContext);
   const containerRef = React.useRef(null);
-  const canDerive = !(isExternal || isHardware);
+  const canDerive = !(account?.isExternal || account?.isHardware);
 
   const _onForgetAccount = useCallback(() => {
-    onAction(`/forget/${address}/${isExternal}`);
-  }, [address, isExternal, onAction]);
+    account?.isExternal && onAction(`/forget/${address}/${account.isExternal}`);
+  }, [address, account, onAction]);
 
   const _goToDeriveAcc = useCallback(
     () => {
@@ -152,7 +152,7 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, setShowMenu }: P
   );
 
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ mixBlendMode: 'normal', ml: '-15px', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ mixBlendMode: 'normal', ml: !noMargin && '-15px', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
       <Slide
         container={containerRef.current}
         direction='up'
@@ -166,4 +166,5 @@ function AccMenu({ address, isExternal, isHardware, isMenuOpen, setShowMenu }: P
   );
 }
 
-export default React.memo(AccMenu);
+export default React.memo(AccountMenu);
+
