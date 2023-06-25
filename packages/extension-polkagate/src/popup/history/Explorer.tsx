@@ -15,8 +15,9 @@ interface Props {
 }
 
 export default function Explorer({ chainName, txHash }: Props): React.ReactElement {
-  const subscanLink = () => 'https://' + chainName + '.subscan.io/extrinsic/' + String(txHash);
-  const polkaholicLink = () => 'https://' + chainName + '.polkaholic.io/tx/' + String(txHash);
+  const mayBeTheFirstPartOfChain = chainName?.split(' ')?.[0];
+  const subscanLink = () => 'https://' + mayBeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(txHash);
+  const polkaholicLink = () => 'https://' + mayBeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(txHash);
 
   return (
     <>
