@@ -91,10 +91,17 @@ export default function Index(): React.ReactElement {
   const bondExtra = api && api.tx.staking.bondExtra;// (max_additional: Compact<u128>)
   const batchAll = api && api.tx.utility.batchAll;
   const nominated = api && api.tx.staking.nominate;
+  const isControllerDeprecated = bond ? bond.meta.args.length === 2 : undefined;
 
   const tx = isFirstTimeStaking ? bond : bondExtra;
   const amountAsBN = useMemo(() => amountToMachine(amount ?? '0', decimal), [amount, decimal]);
-  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero() ? [settings.stashId, amountAsBN, settings.payee] : [amountAsBN], [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total]);  
+  const params = useMemo(() => stakingAccount?.stakingLedger?.total?.isZero()
+    ? isControllerDeprecated
+      ? [amountAsBN, settings.payee]
+      : [settings.stashId, amountAsBN, settings.payee]
+    : [amountAsBN]
+    , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
+
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:
    * Staked - Pay into the stash account, increasing the amount at stake accordingly.
@@ -203,7 +210,7 @@ export default function Index(): React.ReactElement {
       </Warning>
     </Grid>
   );
-  
+
   return (
     <Motion>
       <HeaderBrand
