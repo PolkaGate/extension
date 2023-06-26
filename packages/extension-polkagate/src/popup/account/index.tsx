@@ -72,7 +72,6 @@ export default function AccountDetails(): React.ReactElement {
     chain?.genesisHash && onAction(`/account/${chain.genesisHash}/${address}/`);
   }, [address, chain, onAction]);
 
-  api && referendaLocks && console.log('sorted referendaLocks:', referendaLocks);
   unlockableAmount && console.log('unlockableAmount:', api.createType('Balance', unlockableAmount).toHuman());
   timeToUnlock && console.log('timeToUnlock:', timeToUnlock);
 
@@ -81,19 +80,20 @@ export default function AccountDetails(): React.ReactElement {
       return;
     }
 
-    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
-    console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
+    const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None').sort((a, b) => b.total.sub(a.total).toNumber());
+    console.log('endblock:', filteredLocks?.map(({ endBlock }) => endBlock.toNumber()));
+    console.log('filteredLocks:', filteredLocks);
 
-    const biggestVote = referendaLocks[0].total;
+    const biggestVote = filteredLocks[0].total;
 
     setTotalLockedInReferenda(biggestVote);
-    const index = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
+    const index = filteredLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
 
     console.log('index:', index)
 
     if (index === -1 || index === 0) {
       if (index === 0) {
-        const dateString = blockToDate(currentBlock, Number(referendaLocks[0].endBlock));
+        const dateString = blockToDate(currentBlock, Number(filteredLocks[0].endBlock));
 
         setTimeToUnlock(dateString);
       }
@@ -101,7 +101,7 @@ export default function AccountDetails(): React.ReactElement {
       return setUnlockableAmount(BN_ZERO);
     }
 
-    const biggestVoteStillLocked = referendaLocks[index].total;
+    const biggestVoteStillLocked = filteredLocks[index].total;
 
     setUnlockableAmount(biggestVote.sub(biggestVoteStillLocked));
   }, [api, currentBlock, referendaLocks]);
