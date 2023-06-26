@@ -10,33 +10,31 @@
 
 import LockClockIcon from '@mui/icons-material/LockClock';
 import { Divider, Grid, Skeleton } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
-import { BN, BN_ZERO } from '@polkadot/util';
+import React, { useMemo } from 'react';
 
-import { FormatBalance2, ShowBalance } from '../../components';
+import { BN } from '@polkadot/util';
+
+import { ShowBalance } from '../../components';
 import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
-import { BalancesInfo, Price } from '../../util/types';
-import { getValue } from './util';
 
 interface Props {
   label: string;
-  balances: BalancesInfo | null | undefined;
+  amount: BN | undefined;
   address: string | undefined;
   showLabel?: boolean;
   unlockableAmount?: BN | undefined;
 }
 
-export default function LabelBalancePrice({ address, balances, label, showLabel = true, unlockableAmount }: Props): React.ReactElement<Props> {
-  const value = getValue(label, balances);
+export default function LockedInReferenda({ address, amount, label, showLabel = true, unlockableAmount }: Props): React.ReactElement<Props> {
   const api = useApi(address);
   const price = usePrice(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
 
   const balanceInUSD = useMemo(() =>
-    price && value && balances?.decimal &&
-    Number(value) / (10 ** balances.decimal) * price.amount
-    , [balances?.decimal, price, value]);
+    price && decimal && amount &&
+    Number(amount) / (10 ** decimal) * price.amount
+    , [decimal, price, amount]);
 
   return (
     <>
@@ -49,7 +47,7 @@ export default function LabelBalancePrice({ address, balances, label, showLabel 
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance api={api} balance={amount} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined

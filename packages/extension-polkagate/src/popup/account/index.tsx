@@ -18,9 +18,11 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { BN, BN_ZERO } from '@polkadot/util';
+
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
-import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useFormatted, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
+import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
@@ -29,6 +31,8 @@ import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
+import LockedInReferenda from './LockedInReferenda';
+import blockToDate from '../crowdloans/partials/blockToDate';
 
 export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
@@ -42,12 +46,9 @@ export default function AccountDetails(): React.ReactElement {
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chain = useChain(address);
-
+  const chainName = useChainName(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
-
-  console.log('referendaLocks:', referendaLocks);
-  referendaLocks && console.log('referendaLocks:', JSON.parse(JSON.stringify(referendaLocks)));
-
+  const currentBlock = useCurrentBlockNumber(address);
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
@@ -55,7 +56,9 @@ export default function AccountDetails(): React.ReactElement {
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
-  const chainName = useChainName(address);
+  const [unlockableAmount, setUnlockableAmount] = useState<BN>();
+  const [totalLockedInReferenda, setTotalLockedInReferenda] = useState<BN>();
+  const [timeToUnlock, setTimeToUnlock] = useState<string>();
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -68,6 +71,40 @@ export default function AccountDetails(): React.ReactElement {
   const goToAccount = useCallback(() => {
     chain?.genesisHash && onAction(`/account/${chain.genesisHash}/${address}/`);
   }, [address, chain, onAction]);
+
+  api && referendaLocks && console.log('sorted referendaLocks:', referendaLocks);
+  unlockableAmount && console.log('unlockableAmount:', api.createType('Balance', unlockableAmount).toHuman());
+  timeToUnlock && console.log('timeToUnlock:', timeToUnlock);
+
+  useEffect(() => {
+    if (!referendaLocks?.length || !currentBlock) {
+      return;
+    }
+
+    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
+    console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
+
+    const biggestVote = referendaLocks[0].total;
+
+    setTotalLockedInReferenda(biggestVote);
+    const index = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
+
+    console.log('index:', index)
+
+    if (index === -1 || index === 0) {
+      if (index === 0) {
+        const dateString = blockToDate(currentBlock, Number(referendaLocks[0].endBlock));
+
+        setTimeToUnlock(dateString);
+      }
+
+      return setUnlockableAmount(BN_ZERO);
+    }
+
+    const biggestVoteStillLocked = referendaLocks[index].total;
+
+    setUnlockableAmount(biggestVote.sub(biggestVoteStillLocked));
+  }, [api, currentBlock, referendaLocks]);
 
   useEffect(() => {
     if (balances?.chainName === chainName) {
@@ -138,10 +175,10 @@ export default function AccountDetails(): React.ReactElement {
     setShowOthers(true);
   }, []);
 
-  const OthersRow = (
-    <Grid item py='5px'>
+  const OthersRow = () => (
+    <Grid item py='3px'>
       <Grid alignItems='center' container justifyContent='space-between'>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
+        <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={3}>
           {t('Others')}
         </Grid>
         <Grid item textAlign='right' xs={1.5}>
@@ -171,14 +208,14 @@ export default function AccountDetails(): React.ReactElement {
         <AccountBrief address={address} identity={identity} />
         {!showStakingOptions
           ? <>
-            <Grid item pt='10px' xs sx={{ height: '380px', overflowY: 'scroll' }}>
+            <Grid item pt='10px' sx={{ height: '380px', overflowY: 'scroll' }} xs>
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} />
-              <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked in Referenda'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Staked'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Staked'} />
+              <LockedInReferenda address={address} amount={totalLockedInReferenda} label={'Locked in Referenda'} unlockableAmount={unlockableAmount} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />
-              {OthersRow}
+              <OthersRow />
             </Grid>
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
