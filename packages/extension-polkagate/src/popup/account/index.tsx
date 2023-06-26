@@ -27,12 +27,12 @@ import { windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
+import blockToDate from '../crowdloans/partials/blockToDate';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
-import Others from './Others';
 import LockedInReferenda from './LockedInReferenda';
-import blockToDate from '../crowdloans/partials/blockToDate';
+import Others from './Others';
 
 export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
@@ -80,16 +80,20 @@ export default function AccountDetails(): React.ReactElement {
       return;
     }
 
-    const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None').sort((a, b) => b.total.sub(a.total).toNumber());
-    console.log('endblock:', filteredLocks?.map(({ endBlock }) => endBlock.toNumber()));
-    console.log('filteredLocks:', filteredLocks);
+    console.log('referendaLocks:', referendaLocks);
 
-    const biggestVote = filteredLocks[0].total;
-
+    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
+    const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
+    const biggestVote = filteredLocks.length ? filteredLocks[0].total : referendaLocks[0].total;
+    
     setTotalLockedInReferenda(biggestVote);
     const index = filteredLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
-
+    
     console.log('index:', index)
+    console.log('filteredLocks:', filteredLocks);
+    console.log('currentBlock:', currentBlock);
+    console.log('endblock:', filteredLocks?.map(({ endBlock }) => endBlock.toNumber()));
+    api && console.log('endblock:', filteredLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
 
     if (index === -1 || index === 0) {
       if (index === 0) {
