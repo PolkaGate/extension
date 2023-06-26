@@ -18,7 +18,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
@@ -77,37 +77,40 @@ export default function AccountDetails(): React.ReactElement {
 
   useEffect(() => {
     if (!referendaLocks?.length || !currentBlock) {
+      setTotalLockedInReferenda(undefined);
+      setTimeToUnlock(undefined);
+
       return;
     }
 
-    console.log('referendaLocks:', referendaLocks);
-
     referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
-    const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
-    const biggestVote = filteredLocks.length ? filteredLocks[0].total : referendaLocks[0].total;
-    
+    // const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
+    const biggestVote = referendaLocks[0].total;
+
     setTotalLockedInReferenda(biggestVote);
-    const index = filteredLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
-    
-    console.log('index:', index)
-    console.log('filteredLocks:', filteredLocks);
+    const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
+
+    console.log('indexOfBigestNotLockable:', indexOfBiggestNotLockable)
+    console.log('referendaLocks:', referendaLocks);
     console.log('currentBlock:', currentBlock);
-    console.log('endblock:', filteredLocks?.map(({ endBlock }) => endBlock.toNumber()));
-    api && console.log('endblock:', filteredLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
+    console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
+    api && console.log('totals:', referendaLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
 
-    if (index === -1 || index === 0) {
-      if (index === 0) {
-        const dateString = blockToDate(currentBlock, Number(filteredLocks[0].endBlock));
+    if (indexOfBiggestNotLockable === 0) { // noting is unlockable
+      const dateString = referendaLocks[0].endBlock.eq(BN_MAX_INTEGER) ? 'Locked in ongoing referenda.' : blockToDate(currentBlock, Number(referendaLocks[0].endBlock));
 
-        setTimeToUnlock(dateString);
-      }
+      setUnlockableAmount(BN_ZERO);
 
-      return setUnlockableAmount(BN_ZERO);
+      return setTimeToUnlock(dateString);
     }
 
-    const biggestVoteStillLocked = filteredLocks[index].total;
+    if (indexOfBiggestNotLockable === -1) { // all is unlockable
+      return setUnlockableAmount(biggestVote);
+    }
 
-    setUnlockableAmount(biggestVote.sub(biggestVoteStillLocked));
+    const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
+
+    setUnlockableAmount(biggestVote.sub(amountStillLocked));
   }, [api, currentBlock, referendaLocks]);
 
   useEffect(() => {
@@ -217,7 +220,7 @@ export default function AccountDetails(): React.ReactElement {
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Staked'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Staked'} />
-              <LockedInReferenda address={address} amount={totalLockedInReferenda} label={'Locked in Referenda'} unlockableAmount={unlockableAmount} />
+              <LockedInReferenda address={address} amount={totalLockedInReferenda} label={'Locked in Referenda'} unlockableAmount={unlockableAmount} timeToUnlock={timeToUnlock} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />
               <OthersRow />
             </Grid>

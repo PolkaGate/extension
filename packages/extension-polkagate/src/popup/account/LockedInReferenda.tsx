@@ -14,7 +14,7 @@ import React, { useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { ShowBalance } from '../../components';
+import { Infotip, ShowBalance } from '../../components';
 import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
 
 interface Props {
@@ -23,9 +23,10 @@ interface Props {
   address: string | undefined;
   showLabel?: boolean;
   unlockableAmount?: BN | undefined;
+  timeToUnlock: string;
 }
 
-export default function LockedInReferenda({ address, amount, label, showLabel = true, unlockableAmount }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address, amount, timeToUnlock, label, showLabel = true, unlockableAmount }: Props): React.ReactElement<Props> {
   const api = useApi(address);
   const price = usePrice(address);
   const decimal = useDecimal(address);
@@ -58,7 +59,9 @@ export default function LockedInReferenda({ address, amount, label, showLabel = 
           </Grid>
           {label === 'Locked in Referenda' &&
             <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2}>
-              <LockClockIcon sx={{ fontSize: '29px', color: !unlockableAmount || unlockableAmount.isZero() ? 'action.disabledBackground' : 'primary.main' }} />
+              <Infotip text={api && unlockableAmount && !unlockableAmount.isZero() ? api.createType('Balance', unlockableAmount).toHuman() : timeToUnlock}>
+                <LockClockIcon sx={{ fontSize: '29px', color: !unlockableAmount || unlockableAmount.isZero() ? 'action.disabledBackground' : 'primary.main' }} />
+              </Infotip>
             </Grid>
           }
         </Grid>
