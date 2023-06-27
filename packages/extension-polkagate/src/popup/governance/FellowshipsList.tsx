@@ -42,9 +42,9 @@ export default function FellowshipsList({ address, fellowships }: Props): React.
                 direction='row'
                 formatted={fellow}
                 identiconSize={31}
-                style={{ maxWidth: '100%', width: 'fit-content', fontSize: '16px', fontWeight: 400 }}
-                withShortAddress
                 showSocial
+                style={{ fontSize: '16px', fontWeight: 400 }}
+                withShortAddress
               />
             </Grid>
             <Grid item sx={{ border: 1, borderRadius: '5px', borderColor: 'text.disabled', px: '12px', my: '5px', bgcolor: getRankedColor(rank) }}>
