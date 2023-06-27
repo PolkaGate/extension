@@ -13,13 +13,13 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Identicon, Motion, Popup } from '../../components';
 import { useAccountName, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo } from '../../util/types';
 import LabelBalancePrice from './LabelBalancePrice';
 
@@ -29,7 +29,7 @@ interface Props {
   chain: Chain;
   balances: BalancesInfo;
   address: AccountId | string;
-  setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>
+  setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 export default function Others({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
@@ -77,8 +77,12 @@ export default function Others({ address, balances, chain, identity, setShow, sh
           </Grid>
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
-          <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} />
-          <LabelBalancePrice address={address} balances={balances} label={'Locked Balance'} />
+          {STAKING_CHAINS.includes(chain?.genesisHash) &&
+            <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} />
+          }
+          {GOVERNANCE_CHAINS.includes(chain?.genesisHash) &&
+            <LabelBalancePrice address={address} balances={balances} label={'Locked Balance'} />
+          }
           <LabelBalancePrice address={address} balances={balances} label={'Voting Balance'} />
         </Container>
       </Popup>

@@ -101,11 +101,11 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [api, chain?.genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.length, setRefresh]);
 
   useEffect(() => {
-    if (newBalances && stakingAccount && pooledBalance && api?.genesisHash?.toString() === chain?.genesisHash && api?.genesisHash?.toString() === newBalances?.genesisHash && api?.genesisHash?.toString() === pooledBalance.genesisHash) {
+    if (newBalances && pooledBalance && api?.genesisHash?.toString() === chain?.genesisHash && api?.genesisHash?.toString() === newBalances?.genesisHash && api?.genesisHash?.toString() === pooledBalance.genesisHash) {
       setOverall({
         ...newBalances,
         pooledBalance: pooledBalance.balance,
-        soloTotal: stakingAccount.stakingLedger.total
+        soloTotal: stakingAccount?.stakingLedger?.total
       });
     } else {
       setOverall(undefined);

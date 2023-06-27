@@ -35,6 +35,7 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances.reservedBalance;
     case ('others'):
       return balances.lockedBalance.add(balances.vestingTotal);
+    case ('free'):
     case ('free balance'):
       return balances.freeBalance;
     case ('reserved balance'):
@@ -43,8 +44,8 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     //   return balances.frozenMisc;
     // case ('frozen fee'):
     //   return balances.frozenFee;
+    case ('locked'):
     case ('locked balance'):
-    case ('locked in referenda'):
       return balances.lockedBalance;
     case ('vested balance'):
       return balances.vestedBalance;

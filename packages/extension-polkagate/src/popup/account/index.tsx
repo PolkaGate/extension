@@ -218,9 +218,17 @@ export default function AccountDetails(): React.ReactElement {
             <Grid item pt='10px' sx={{ height: '380px', overflowY: 'scroll' }} xs>
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} />
-              <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Staked'} />
-              <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Staked'} />
-              <LockedInReferenda address={address} amount={totalLockedInReferenda} label={'Locked in Referenda'} unlockableAmount={unlockableAmount} timeToUnlock={timeToUnlock} />
+              {STAKING_CHAINS.includes(genesisHash)
+                ? <>
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Staked'} />
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Staked'} />
+                </>
+                : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
+              }
+              {GOVERNANCE_CHAINS.includes(genesisHash)
+                ? <LockedInReferenda address={address} amount={totalLockedInReferenda} unlockableAmount={unlockableAmount} timeToUnlock={timeToUnlock} />
+                : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} />
+              }
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />
               <OthersRow />
             </Grid>

@@ -8,14 +8,12 @@
  * this component shows an account information in detail
  * */
 
-import LockClockIcon from '@mui/icons-material/LockClock';
 import { Divider, Grid, Skeleton } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
-import { BN, BN_ZERO } from '@polkadot/util';
+import React, { useMemo } from 'react';
 
-import { FormatBalance2, ShowBalance } from '../../components';
+import { ShowBalance } from '../../components';
 import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
-import { BalancesInfo, Price } from '../../util/types';
+import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
@@ -23,10 +21,9 @@ interface Props {
   balances: BalancesInfo | null | undefined;
   address: string | undefined;
   showLabel?: boolean;
-  unlockableAmount?: BN | undefined;
 }
 
-export default function LabelBalancePrice({ address, balances, label, showLabel = true, unlockableAmount }: Props): React.ReactElement<Props> {
+export default function LabelBalancePrice({ address, balances, label, showLabel = true }: Props): React.ReactElement<Props> {
   const value = getValue(label, balances);
   const api = useApi(address);
   const price = usePrice(address);
@@ -58,11 +55,6 @@ export default function LabelBalancePrice({ address, balances, label, showLabel 
               }
             </Grid>
           </Grid>
-          {label === 'Locked in Referenda' &&
-            <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2}>
-              <LockClockIcon sx={{ fontSize: '29px', color: !unlockableAmount || unlockableAmount.isZero() ? 'action.disabledBackground' : 'primary.main' }} />
-            </Grid>
-          }
         </Grid>
       </Grid>
       {showLabel &&

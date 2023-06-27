@@ -15,18 +15,17 @@ import React, { useMemo } from 'react';
 import { BN } from '@polkadot/util';
 
 import { Infotip, ShowBalance } from '../../components';
-import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
+import { useApi, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
 
 interface Props {
-  label: string;
   amount: BN | undefined;
   address: string | undefined;
-  showLabel?: boolean;
   unlockableAmount?: BN | undefined;
   timeToUnlock: string;
 }
 
-export default function LockedInReferenda({ address, amount, timeToUnlock, label, showLabel = true, unlockableAmount }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address, amount, timeToUnlock, unlockableAmount }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const api = useApi(address);
   const price = usePrice(address);
   const decimal = useDecimal(address);
@@ -41,11 +40,9 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, label
     <>
       <Grid item py='4px'>
         <Grid alignItems='center' container justifyContent='space-between'>
-          {showLabel &&
-            <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
-              {label}
-            </Grid>
-          }
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
+            {t('Locked in Referenda')}
+          </Grid>
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance api={api} balance={amount} decimal={decimal} decimalPoint={2} token={token} />
@@ -57,18 +54,14 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, label
               }
             </Grid>
           </Grid>
-          {label === 'Locked in Referenda' &&
-            <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2}>
-              <Infotip text={api && unlockableAmount && !unlockableAmount.isZero() ? api.createType('Balance', unlockableAmount).toHuman() : timeToUnlock}>
-                <LockClockIcon sx={{ fontSize: '29px', color: !unlockableAmount || unlockableAmount.isZero() ? 'action.disabledBackground' : 'primary.main' }} />
-              </Infotip>
-            </Grid>
-          }
+          <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2}>
+            <Infotip text={api && unlockableAmount && !unlockableAmount.isZero() ? api.createType('Balance', unlockableAmount).toHuman() : timeToUnlock}>
+              <LockClockIcon sx={{ fontSize: '29px', color: !unlockableAmount || unlockableAmount.isZero() ? 'action.disabledBackground' : 'primary.main' }} />
+            </Infotip>
+          </Grid>
         </Grid>
       </Grid>
-      {showLabel &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      }
+      <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
     </>
   );
 }
