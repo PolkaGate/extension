@@ -77,8 +77,8 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   }, [_accountInfo, returnIdentity]);
 
   return (
-    <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
-      <Grid alignItems='baseline' container item xs={showChainLogo ? 11 : 12}>
+    <Grid alignItems='center' container justifyContent='space-between' sx={{ maxWidth: '100%', width: 'fit-content', ...style }}>
+      <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
         {!noIdenticon &&
           <Grid item m='auto 0' pr='5px' width='fit-content'>
             <Identicon
@@ -124,7 +124,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress
-                  ? <ShortAddress address={formatted} style={{ fontSize: style?.fontSize as string || '11px' }} />
+                  ? <ShortAddress address={formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
                   : t('Unknown')
                 : ''
               }
@@ -137,12 +137,12 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
           }
         </Grid>
         {withShortAddress && direction === 'row' &&
-          <Grid container item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
-            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+          <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
+            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
           </Grid>
         }
         {_showSocial &&
-          <Grid container id='socials' item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
+          <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
               <Grid item>
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
@@ -167,7 +167,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             {_accountInfo?.identity?.riot &&
               <Grid item pl='5px'>
                 <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} rel='noreferrer' target='_blank'>
-                  <Box component='img' src={riot} sx={{ height: '12px', width: '12px' }} />
+                  <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
                 </Link>
               </Grid>
             }
@@ -176,7 +176,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
       </Grid>
       {
         showChainLogo &&
-        <Grid item>
+        <Grid item xs={1}>
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }
