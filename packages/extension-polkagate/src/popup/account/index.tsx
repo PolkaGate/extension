@@ -23,6 +23,7 @@ import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
 import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
+import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
@@ -75,6 +76,12 @@ export default function AccountDetails(): React.ReactElement {
   unlockableAmount && console.log('unlockableAmount:', api.createType('Balance', unlockableAmount).toHuman());
   timeToUnlock && console.log('timeToUnlock:', timeToUnlock);
 
+  const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
+    const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
+
+    return maybeFound ? maybeFound.total : BN_ZERO;
+  }, []);
+
   useEffect(() => {
     if (!referendaLocks?.length || !currentBlock) {
       setTotalLockedInReferenda(undefined);
@@ -96,22 +103,28 @@ export default function AccountDetails(): React.ReactElement {
     console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
     api && console.log('totals:', referendaLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
 
-    if (indexOfBiggestNotLockable === 0) { // noting is unlockable
-      const dateString = referendaLocks[0].endBlock.eq(BN_MAX_INTEGER) ? 'Locked in ongoing referenda.' : blockToDate(currentBlock, Number(referendaLocks[0].endBlock));
+    if (indexOfBiggestNotLockable === -1) { // all is unlockable
+      return setUnlockableAmount(biggestVote);
+    }
+
+    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing 
+      setUnlockableAmount(BN_ZERO);
+
+      return setTimeToUnlock('Locked in ongoing referenda.');
+    }
+
+    if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // noting is unlockable
+      const dateString = blockToDate(Number(referendaLocks[0].endBlock), currentBlock);
 
       setUnlockableAmount(BN_ZERO);
 
       return setTimeToUnlock(dateString);
     }
 
-    if (indexOfBiggestNotLockable === -1) { // all is unlockable
-      return setUnlockableAmount(biggestVote);
-    }
-
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
 
     setUnlockableAmount(biggestVote.sub(amountStillLocked));
-  }, [api, currentBlock, referendaLocks]);
+  }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
   useEffect(() => {
     if (balances?.chainName === chainName) {

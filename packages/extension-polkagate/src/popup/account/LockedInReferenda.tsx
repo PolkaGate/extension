@@ -8,8 +8,9 @@
  * this component shows an account information in detail
  * */
 
-import LockClockIcon from '@mui/icons-material/LockClock';
-import { Divider, Grid, Skeleton } from '@mui/material';
+import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Divider, Grid, Skeleton, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
@@ -30,6 +31,7 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, unloc
   const price = usePrice(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const theme = useTheme();
 
   const balanceInUSD = useMemo(() =>
     price && decimal && amount &&
@@ -54,9 +56,13 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, unloc
               }
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2}>
-            <Infotip text={api && unlockableAmount && !unlockableAmount.isZero() ? api.createType('Balance', unlockableAmount).toHuman() : timeToUnlock}>
-              <LockClockIcon sx={{ fontSize: '29px', color: !unlockableAmount || unlockableAmount.isZero() ? 'action.disabledBackground' : 'primary.main' }} />
+          <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2} sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer' }}>
+            <Infotip text={api && unlockableAmount && !unlockableAmount.isZero() ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked` : timeToUnlock}>
+              <FontAwesomeIcon
+                color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.primary.main}
+                icon={faUnlockAlt}
+                style={{ height: '25px' }}
+              />
             </Infotip>
           </Grid>
         </Grid>
