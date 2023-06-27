@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
-import { useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../../hooks';
+import { useApi, useChain, useDecimal, useFormatted, useToken, useTranslation } from '../../../../../hooks';
 import { SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import getPayee from './util';
@@ -29,6 +29,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
+  const api = useApi(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
@@ -38,6 +39,8 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
   const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | undefined>(getPayee(settings));
 
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s.payee === 'Staked' ? 'Staked' : 'Others', []);
+  const isControllerDeprecated = api ? api.tx.staking.setController.meta.args.length === 0 : undefined;
+  const needToSetControllerToStashID = isControllerDeprecated && formatted !== controllerId;
 
   const optionDefaultVal = useMemo(() => isSettingAtBonding
     ? getOptionLabel(settings)
@@ -120,14 +123,27 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
 
   return (
     <Grid container item>
-      {formatted === settings.stashId &&
-        <AccountInputWithIdentity
-          address={controllerId}
-          chain={chain}
-          label={t('Controller account')}
-          setAddress={setControllerId}
-          style={{ pt: '10px', px: '15px' }}
-        />
+      {!isSettingAtBonding && formatted === settings.stashId && formatted !== controllerId &&
+        <>
+          <AccountInputWithIdentity
+            address={controllerId}
+            chain={chain}
+            disabled={isControllerDeprecated}
+            label={isControllerDeprecated ? t('Controller account is deprecated') : t('Controller account')}
+            setAddress={isControllerDeprecated ? null : setControllerId}
+            style={{ pt: '10px', px: '15px' }}
+          />
+          {needToSetControllerToStashID &&
+            <Grid container item>
+              <Warning
+                fontWeight={300}
+                theme={theme}
+              >
+                {t('Continue to set your controller account to the same as your stash ID.')}
+              </Warning>
+            </Grid>
+          }
+        </>
       }
       {(isSettingAtBonding || formatted === settings?.controllerId) &&
         <>
@@ -158,8 +174,9 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
       }
       <PButton
         _onClick={onSet}
-        disabled={
-          isSettingAtBonding
+        disabled={needToSetControllerToStashID
+          ? false
+          : isSettingAtBonding
             ? !controllerId || (rewardDestinationValue === 'Others' && !rewardDestinationAccount)
             : settings.stashId === settings.controllerId
               ? (!controllerId || (controllerId === settings.controllerId && payeeNotChanged)) ||
