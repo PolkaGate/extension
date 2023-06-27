@@ -123,7 +123,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
 
   return (
     <Grid container item>
-      {!isSettingAtBonding && formatted === settings.stashId && (isControllerDeprecated ? formatted !== controllerId : true) &&
+      {!isSettingAtBonding && formatted === settings.stashId && formatted !== controllerId &&
         <>
           <AccountInputWithIdentity
             address={controllerId}
