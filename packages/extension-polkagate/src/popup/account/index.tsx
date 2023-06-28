@@ -22,14 +22,16 @@ import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector, SelectChain } from '../../components';
 import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
-import { HeaderBrand } from '../../partials';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { ChainSwitch, HeaderBrand } from '../../partials';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH, STAKING_CHAINS } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
+import { sanitizeChainName } from '../../util/utils';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
+import { WESTEND_GENESIS } from '@polkadot/apps-config';
 
 export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
@@ -52,9 +54,14 @@ export default function AccountDetails(): React.ReactElement {
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
+  const [recentChains, setRecentChains] = useState<string[]>();
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const chainName = useChainName(address);
 
   // const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , []);
 
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
@@ -143,6 +150,32 @@ export default function AccountDetails(): React.ReactElement {
     setShowOthers(true);
   }, []);
 
+  useEffect(() => {
+    if (!address || !account) {
+      return;
+    }
+
+    chrome.storage.local.get('RecentChains', (res) => {
+      const allRecentChains = res?.RecentChains;
+      const myRecentChains = allRecentChains?.[address] as string[];
+
+      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
+
+      myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
+    });
+  }, [account, account?.genesisHash, address]);
+
+  const chainNamesToShow = useMemo(() => {
+    if (!(genesisOptions.length) || !(recentChains?.length) || !account) {
+      return undefined;
+    }
+
+    const filteredChains = recentChains.map((r) => genesisOptions.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash).filter((chain) => !isTestnetEnabled ? chain?.value !== WESTEND_GENESIS : true);
+    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
+
+    return chainNames.slice(0, 2);
+  }, [account, genesisOptions, isTestnetEnabled, recentChains]);
+
   const OthersRow = (
     <Grid item py='5px'>
       <Grid alignItems='center' container justifyContent='space-between'>
@@ -164,7 +197,7 @@ export default function AccountDetails(): React.ReactElement {
   return (
     <Motion>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address} externalChainNamesToShow={chainNamesToShow}>{identicon}</ChainSwitch>}
         address={address}
         noBorder
         onBackClick={gotToHome}
