@@ -16,6 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Identity, ShowBalance, Warning } from '../../../../components';
 import { useAccountName, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { ThroughProxy } from '../../../../partials';
 import { broadcast } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
@@ -163,7 +164,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
 
   return (
     <DraggableModal onClose={handleClose} open={open} width={500}>
-      <Grid container item justifyContent='center' sx={{ height: '625px' }} >
+      <Grid container item justifyContent='center' sx={{ height: '625px' }}>
         <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
           <Grid item>
             <Typography fontSize='22px' fontWeight={HEIGHT}>
@@ -174,25 +175,21 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
           </Grid>
         </Grid>
-        {notEnoughBalance &&
-          <Grid container height='15px' item justifyContent='center' my='20px'>
-            <Warning
-              fontWeight={400}
-              isDanger
-              theme={theme}
-            >
-              {t<string>('You don\'t have sufficient funds available to complete this transaction.')}
-            </Warning>
-          </Grid>
-        }
         {step === STEPS.REVIEW &&
           <Grid container item sx={{ height: '550px' }}>
-            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '30px', width: '90%' }}>
-              <DisplayValue title={t<string>('Referendum')} topDivider={false}>
-                <Typography fontSize='28px' fontWeight={400}>
-                  #{refIndex}
-                </Typography>
-              </DisplayValue>
+            {notEnoughBalance &&
+              <Grid container height='42px' item justifyContent='center' mt='15px'>
+                <Warning
+                  fontWeight={400}
+                  isDanger
+                  marginTop={0}
+                  theme={theme}
+                >
+                  {t<string>('You don\'t have sufficient funds available to complete this transaction.')}
+                </Warning>
+              </Grid>
+            }
+            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Account')}
@@ -208,6 +205,16 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                   withShortAddress
                 />
               </Grid>
+              {selectedProxyAddress &&
+                <Grid container m='auto' maxWidth='92%'>
+                  <ThroughProxy address={selectedProxyAddress} chain={chain} />
+                </Grid>
+              }
+              <DisplayValue title={t<string>('Referendum')}>
+                <Typography fontSize='28px' fontWeight={400}>
+                  #{refIndex}
+                </Typography>
+              </DisplayValue>
               <DisplayValue title={t<string>('Decision Deposit')}>
                 <Grid alignItems='center' container height={42} item>
                   <ShowBalance balance={amount} decimal={decimal} skeletonWidth={130} token={token} />
@@ -245,6 +252,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
           <SelectProxyModal
             address={address}
             height={HEIGHT}
+            nextStep={STEPS.REVIEW}
             proxies={proxyItems}
             proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
             selectedProxy={selectedProxy}
