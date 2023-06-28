@@ -146,7 +146,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
           pendingBounties,
           pendingProposals,
           remainingSpendPeriod,
-          remainingSpendPeriodPercent: spendPeriod.sub(remainingSpendPeriod).muln(100).div(spendPeriod).toNumber(),
+          remainingSpendPeriodPercent: remainingSpendPeriod.muln(100).div(spendPeriod).toNumber(),
           remainingTimeToSpend: rt,
           spendPeriod: spendPeriod.divn(24 * 60 * 10),
           spendable,
