@@ -27,6 +27,7 @@ import WaitScreen from '../../partials/WaitScreen';
 import { Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -238,7 +239,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 primaryBtnText={t<string>('Confirm')}
                 proxiedAddress={formatted}
                 proxies={proxyItems}
-                proxyTypeFilter={['Any']}
+                proxyTypeFilter={GOVERNANCE_PROXY}
                 secondaryBtnText={t<string>('Reject')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
@@ -254,7 +255,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
             height={HEIGHT}
             nextStep={STEPS.REVIEW}
             proxies={proxyItems}
-            proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+            proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
             setStep={setStep}

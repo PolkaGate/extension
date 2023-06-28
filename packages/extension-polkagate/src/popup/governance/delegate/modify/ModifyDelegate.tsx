@@ -30,6 +30,7 @@ import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import TracksList from '../partial/tracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import Modify from './modify';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -362,7 +363,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
                   primaryBtnText={t<string>('Confirm')}
                   proxiedAddress={formatted}
                   proxies={proxyItems}
-                  proxyTypeFilter={['Any']}
+                  proxyTypeFilter={GOVERNANCE_PROXY}
                   selectedProxy={selectedProxy}
                   setIsPasswordError={setIsPasswordError}
                   setStep={setStep}

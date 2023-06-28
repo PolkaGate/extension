@@ -30,6 +30,7 @@ import DelegateVote from './delegate/Delegate';
 import DelegationDetails from './DelegationDetails';
 import Review from './Review';
 import { ModifyModes } from './modify/ModifyDelegate';
+import { GOVERNANCE_PROXY } from '../utils/consts';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -356,7 +357,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             height={modalHeight}
             nextStep={proxyStep}
             proxies={proxyItems}
-            proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+            proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
             setStep={setStep}

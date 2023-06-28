@@ -25,7 +25,7 @@ import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
-import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
+import { ENDED_STATUSES, GOVERNANCE_PROXY, STATUS_COLOR } from '../../utils/consts';
 import DisplayValue from './partial/DisplayValue';
 import { STEPS, VoteInformation } from '.';
 
@@ -230,7 +230,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
             primaryBtnText={t<string>('Confirm')}
             proxiedAddress={formatted}
             proxies={proxyItems}
-            proxyTypeFilter={['Any']}
+            proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
             setStep={setStep}
