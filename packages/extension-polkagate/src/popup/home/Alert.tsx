@@ -65,7 +65,8 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Controller accounts are deprecated. Please switch your solo staking Controller accounts to your stash account ID as soon as possible'),
+              t<string>('Controller accounts are deprecated. Please switch your solo staking controller accounts to your stash account ID as soon as possible'),
+              t<string>('There have been performance improvements in OpenGov.'),
               t<string>('The state toggler role in nomination pools has been renamed to bouncer.'),
               t<string>('Various known issues have been fixed.')
             ]}
