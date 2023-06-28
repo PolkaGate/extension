@@ -84,7 +84,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome && onchainRefInfo.asOngoing.deciding.value.confirming ? onchainRefInfo.asOngoing.deciding.value.confirming.value.toNumber() : undefined
     ]
     : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const convertBlockNumberToDate = useCallback(async (blockNumber: u32 | number): Promise<number | undefined> => {
     if (!api) {
@@ -216,7 +216,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
             : undefined
           : undefined),
       hash: referendumPA?.hash || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.proposal.hash.toString() : undefined),
-      index: Number(id),
+      index: referendumPA?.post_id || referendumSb?.referendum_index || Number(id),
       method: referendumPA?.method || referendumSb?.pre_image?.call_name,
       naysAmount,
       naysCount,
@@ -311,7 +311,8 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
 
       const arr = last[k];
-      const found = arr.find((r) => r.index === id);
+      const sanitizedType = type === 'fellowship' ? 'FellowshipReferendum' : 'ReferendumV2';
+      const found = arr.find((r) => r.index === id && r.type === sanitizedType);
 
       if (found) {
         console.log(`retrieving ref ${found.index} FROM local`);
@@ -321,7 +322,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
 
       setNotInLocalStorage(true);
     });
-  }, [chainName, id]);
+  }, [chainName, id, type]);
 
   return savedReferendum || referendum;
 }
