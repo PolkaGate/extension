@@ -148,7 +148,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
               uncheckedLabel={t<string>('Light')}
             />
           </Grid>
-          <Grid item>
+          {/* <Grid item>
             <Divider
               orientation='vertical'
               sx={{
@@ -172,7 +172,7 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
                 <DeleteOutlineIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
               </IconButton>
             </OnActionToolTip>
-          </Grid>
+          </Grid> */}
           {isPopup &&
             <>
               <Grid item>
