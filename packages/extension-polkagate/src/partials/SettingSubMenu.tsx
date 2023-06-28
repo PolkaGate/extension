@@ -74,11 +74,11 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
     windowOpen('/').catch(console.error);
   }, []);
 
-  const _onClearCache = useCallback((): void => {
-    chrome.storage.local.clear(function () {
-      setCacheCleared(true);
-    });
-  }, []);
+  // const _onClearCache = useCallback((): void => {
+  //   chrome.storage.local.clear(function () {
+  //     setCacheCleared(true); // TODO: use caution, this will clear the kyring as well
+  //   });
+  // }, []);
 
   const _onAuthManagement = useCallback(() => {
     onAction('/auth-list');
