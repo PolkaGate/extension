@@ -11,12 +11,13 @@
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Skeleton, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
 import { Infotip, ShowBalance } from '../../components';
 import { useApi, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import Review from './Review';
 
 interface Props {
   amount: BN | undefined;
@@ -32,11 +33,9 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, unloc
   const decimal = useDecimal(address);
   const token = useToken(address);
   const theme = useTheme();
+  const [showReview, setShowReview] = useState(false);
 
-  const balanceInUSD = useMemo(() =>
-    price && decimal && amount &&
-    Number(amount) / (10 ** decimal) * price.amount
-    , [decimal, price, amount]);
+  const balanceInUSD = useMemo(() => price && decimal && amount && Number(amount) / (10 ** decimal) * price.amount, [decimal, price, amount]);
 
   return (
     <>
@@ -62,12 +61,22 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, unloc
                 color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.primary.main}
                 icon={faUnlockAlt}
                 style={{ height: '25px' }}
+                onClick={(unlockableAmount && !unlockableAmount.isZero()) ? () => setShowReview(true) : () => null}
               />
             </Infotip>
           </Grid>
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
+      {showReview &&
+        <Review
+          address={address}
+          api={api}
+          setShow={setShowReview}
+          show={showReview}
+          value={unlockableAmount}
+        />
+      }
     </>
   );
 }
