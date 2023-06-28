@@ -12,9 +12,10 @@ interface Props {
   fontSize?: number;
   setIsHappened: (value: React.SetStateAction<boolean>) => void;
   title: string;
+  helperText?: string;
 }
 
-export default function OnActionToolTip({ actionHappened, children, fontSize = 14, setIsHappened, title }: Props): React.ReactElement<Props> {
+export default function OnActionToolTip({ actionHappened, children, fontSize = 14, helperText = '', setIsHappened, title }: Props): React.ReactElement<Props> {
   const handelCloseToolTip = useCallback(() => {
     setTimeout(() => setIsHappened(false), 200);
   }, [setIsHappened]);
@@ -32,7 +33,7 @@ export default function OnActionToolTip({ actionHappened, children, fontSize = 1
               mb: '3px',
               p: '3px 15px'
             },
-            visibility: actionHappened ? 'visible' : 'hidden'
+            // visibility: actionHappened ? 'visible' : 'hidden'
           }
         },
         tooltip: {
@@ -51,10 +52,9 @@ export default function OnActionToolTip({ actionHappened, children, fontSize = 1
       leaveDelay={700}
       onClose={handelCloseToolTip}
       placement='top'
-      title={title}
+      title={actionHappened ? title : helperText}
     >
       {children}
     </Tooltip>
   );
 }
-
