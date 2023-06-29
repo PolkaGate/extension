@@ -228,7 +228,7 @@ export default function AccountDetails(): React.ReactElement {
         <AccountBrief address={address} identity={identity} />
         {!showStakingOptions
           ? <>
-            <Grid item pt='10px' sx={{ height: '380px', overflowY: 'scroll' }} xs>
+            <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} />
               {STAKING_CHAINS.includes(genesisHash)
