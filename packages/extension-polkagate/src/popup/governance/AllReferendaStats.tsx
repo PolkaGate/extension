@@ -240,7 +240,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
           <Grid container item justifyContent={firstBreakpoint ? 'space-between' : 'flex-start'} maxWidth={firstBreakpoint ? '100%' : '250px'} width={firstBreakpoint ? '100%' : 'fit-content'}>
             <Grid alignItems='center' container item width='fit-content'>
               <Typography fontSize={18} fontWeight={400} lineHeight='25px'>
-                {t('Spend Period')}
+                {t('Next Spending')}
               </Typography>
             </Grid>
             <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'}>
