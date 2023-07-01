@@ -27,10 +27,10 @@ import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 import TracksList from '../partial/tracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import Modify from './modify';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;

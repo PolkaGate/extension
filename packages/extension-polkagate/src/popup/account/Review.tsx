@@ -5,19 +5,24 @@
 
 /**
  * @description
- * this component opens stake review page
+ * this component opens unlock review page
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { AnyTuple } from '@polkadot/types/types';
 
+import { useTheme } from '@emotion/react';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../components';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
+import { Lock } from '../../hooks/useAccountLocks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
@@ -27,14 +32,17 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../util/ut
 interface Props {
   address: string;
   api: ApiPromise;
+  refsToUnlock: Lock[]
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
-  value: BN | undefined;
+  unlockableAmount: BN;
+  totalLocked: BN;
 }
 
-export default function Review({ address, api, setShow, show, value }: Props): React.ReactElement {
+export default function Review({ address, api, refsToUnlock, setShow, show, unlockableAmount, totalLocked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
+  const theme = useTheme();
   const proxies = useProxies(api, formatted);
   const chain = useChain(address);
   const name = useAccountName(address);
@@ -50,10 +58,41 @@ export default function Review({ address, api, setShow, show, value }: Props): R
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [estimatedFee, setEstimatedFee] = useState<BN>();
+  const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
-  const amount = useMemo(() => amountToHuman(value, decimal), [decimal, value]);
+  const amount = useMemo(() => amountToHuman(unlockableAmount, decimal), [decimal, unlockableAmount]);
+  const remove = api.tx.convictionVoting.removeVote; // (class, index)
+  const unlockClass = api.tx.convictionVoting.unlock; // (class)
+  const batchAll = api.tx.utility.batchAll;
+
+  useEffect((): void => {
+    if (!formatted) {
+      return;
+    }
+
+    const removes = refsToUnlock.map((r) => remove(r.classId, r.refId));
+    const uniqueSet = new Set<string>();
+
+    refsToUnlock.forEach(({ classId }) => {
+      const id = classId.toString();
+
+      uniqueSet.add(id);
+    });
+
+    const unlocks = [...uniqueSet].map((id) => unlockClass(id, formatted));
+
+    const params = [...removes, ...unlocks];
+
+    setParams(params);
+
+    if (!api?.call?.transactionPaymentApi) {
+      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+    }
+
+    batchAll(params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [api, batchAll, formatted, refsToUnlock, remove, unlockClass]);
 
   const goToAccount = useCallback(() => {
     setShow(false);
@@ -73,9 +112,9 @@ export default function Review({ address, api, setShow, show, value }: Props): R
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  const stake = useCallback(async () => {
+  const unlockRef = useCallback(async () => {
     try {
-      if (!formatted || !tx) {
+      if (!formatted || !params) {
         return;
       }
 
@@ -85,9 +124,7 @@ export default function Review({ address, api, setShow, show, value }: Props): R
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      let batchCall;
-
-      const extrinsic = batchCall || tx(...params);
+      const extrinsic = batchAll(params);
       const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
 
       const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
@@ -115,7 +152,7 @@ export default function Review({ address, api, setShow, show, value }: Props): R
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain]);
+  }, [formatted, params, selectedProxyAddress, password, batchAll, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -129,7 +166,7 @@ export default function Review({ address, api, setShow, show, value }: Props): R
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Unlock Referenda')}
+          text={t<string>('Unlocking')}
         />
         {isPasswordError &&
           <WrongPasswordAlert />
@@ -148,11 +185,18 @@ export default function Review({ address, api, setShow, show, value }: Props): R
             address={address}
             amount={amount}
             fee={estimatedFee}
-            label={t('Amount')}
-            showDivider
+            label={t('Available to unlock')}
+            showDivider={!totalLocked.sub(unlockableAmount).isZero()}
             token={token}
             withFee
           />
+          {!totalLocked.sub(unlockableAmount).isZero() &&
+            <Warning
+              theme={theme}
+            >
+              {t<string>('The rest will be available when the corresponding locks have expired.')}
+            </Warning>
+          }
         </Container>
         <PasswordUseProxyConfirm
           api={api}
@@ -161,7 +205,7 @@ export default function Review({ address, api, setShow, show, value }: Props): R
           isPasswordError={isPasswordError}
           label={`${t<string>('Password')} for ${selectedProxyName || name}`}
           onChange={setPassword}
-          onConfirmClick={stake}
+          onConfirmClick={unlockRef}
           proxiedAddress={formatted}
           proxies={proxyItems}
           proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}

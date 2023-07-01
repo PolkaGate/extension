@@ -19,18 +19,15 @@ import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { WESTEND_GENESIS } from '@polkadot/apps-config';
-import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
-import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
-import { Lock } from '../../hooks/useAccountLocks';
+import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { ChainSwitch, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
-import blockToDate from '../crowdloans/partials/blockToDate';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
@@ -50,8 +47,7 @@ export default function AccountDetails(): React.ReactElement {
   const account = useAccount(address);
   const chain = useChain(address);
   const chainName = useChainName(address);
-  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
-  const currentBlock = useCurrentBlockNumber(address);
+
   const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
@@ -62,13 +58,8 @@ export default function AccountDetails(): React.ReactElement {
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
-  const [unlockableAmount, setUnlockableAmount] = useState<BN>();
-  const [totalLockedInReferenda, setTotalLockedInReferenda] = useState<BN>();
-  const [timeToUnlock, setTimeToUnlock] = useState<string>();
 
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , []);
+  useEffect(() => setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true'), []);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -81,59 +72,6 @@ export default function AccountDetails(): React.ReactElement {
   const goToAccount = useCallback(() => {
     chain?.genesisHash && onAction(`/account/${chain.genesisHash}/${address}/`);
   }, [address, chain, onAction]);
-
-  unlockableAmount && console.log('unlockableAmount:', api.createType('Balance', unlockableAmount).toHuman());
-  timeToUnlock && console.log('timeToUnlock:', timeToUnlock);
-
-  const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
-    const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
-
-    return maybeFound ? maybeFound.total : BN_ZERO;
-  }, []);
-
-  useEffect(() => {
-    if (!referendaLocks?.length || !currentBlock) {
-      setTotalLockedInReferenda(undefined);
-      setTimeToUnlock(undefined);
-
-      return;
-    }
-
-    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
-    // const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
-    const biggestVote = referendaLocks[0].total;
-
-    setTotalLockedInReferenda(biggestVote);
-    const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
-
-    console.log('indexOfBigestNotLockable:', indexOfBiggestNotLockable)
-    console.log('referendaLocks:', referendaLocks);
-    console.log('currentBlock:', currentBlock);
-    console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
-    api && console.log('totals:', referendaLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
-
-    if (indexOfBiggestNotLockable === -1) { // all is unlockable
-      return setUnlockableAmount(biggestVote);
-    }
-
-    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing 
-      setUnlockableAmount(BN_ZERO);
-
-      return setTimeToUnlock('Locked in ongoing referenda.');
-    }
-
-    if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // noting is unlockable
-      const dateString = blockToDate(Number(referendaLocks[0].endBlock), currentBlock);
-
-      setUnlockableAmount(BN_ZERO);
-
-      return setTimeToUnlock(dateString);
-    }
-
-    const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
-
-    setUnlockableAmount(biggestVote.sub(amountStillLocked));
-  }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
   useEffect(() => {
     if (balances?.chainName === chainName) {
@@ -274,7 +212,7 @@ export default function AccountDetails(): React.ReactElement {
                 : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
               }
               {GOVERNANCE_CHAINS.includes(genesisHash)
-                ? <LockedInReferenda address={address} amount={totalLockedInReferenda} unlockableAmount={unlockableAmount} timeToUnlock={timeToUnlock} />
+                ? <LockedInReferenda address={address} />
                 : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} />
               }
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />

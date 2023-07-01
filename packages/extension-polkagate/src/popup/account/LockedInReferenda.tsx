@@ -11,31 +11,90 @@
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Skeleton, useTheme } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { Infotip, ShowBalance } from '../../components';
-import { useApi, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import { useAccountLocks, useApi, useCurrentBlockNumber, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import { Lock } from '../../hooks/useAccountLocks';
+import blockToDate from '../crowdloans/partials/blockToDate';
 import Review from './Review';
 
 interface Props {
-  amount: BN | undefined;
   address: string | undefined;
-  unlockableAmount?: BN | undefined;
-  timeToUnlock: string;
 }
 
-export default function LockedInReferenda({ address, amount, timeToUnlock, unlockableAmount }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
   const price = usePrice(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const theme = useTheme();
-  const [showReview, setShowReview] = useState(false);
+  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
+  const currentBlock = useCurrentBlockNumber(address);
 
-  const balanceInUSD = useMemo(() => price && decimal && amount && Number(amount) / (10 ** decimal) * price.amount, [decimal, price, amount]);
+  const [showReview, setShowReview] = useState(false);
+  const [unlockableAmount, setUnlockableAmount] = useState<BN>();
+  const [totalLocked, setTotalLockedInReferenda] = useState<BN>();
+  const [timeToUnlock, setTimeToUnlock] = useState<string>();
+
+  const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
+  const refsToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock)) : undefined;
+
+  unlockableAmount && console.log('unlockableAmount:', api.createType('Balance', unlockableAmount).toHuman());
+  timeToUnlock && console.log('timeToUnlock:', timeToUnlock);
+
+  const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
+    const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
+
+    return maybeFound ? maybeFound.total : BN_ZERO;
+  }, []);
+
+  useEffect(() => {
+    if (!referendaLocks?.length || !currentBlock) {
+      setTotalLockedInReferenda(undefined);
+      setTimeToUnlock(undefined);
+
+      return;
+    }
+
+    referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
+    // const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
+    const biggestVote = referendaLocks[0].total;
+
+    setTotalLockedInReferenda(biggestVote);
+    const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
+
+    console.log('indexOfBigestNotLockable:', indexOfBiggestNotLockable)
+    console.log('referendaLocks:', referendaLocks);
+    console.log('currentBlock:', currentBlock);
+    console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
+    api && console.log('totals:', referendaLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
+
+    if (indexOfBiggestNotLockable === -1) { // all is unlockable
+      return setUnlockableAmount(biggestVote);
+    }
+
+    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing 
+      setUnlockableAmount(BN_ZERO);
+
+      return setTimeToUnlock('Locked in ongoing referenda.');
+    }
+
+    if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // noting is unlockable
+      const dateString = blockToDate(Number(referendaLocks[0].endBlock), currentBlock);
+
+      setUnlockableAmount(BN_ZERO);
+
+      return setTimeToUnlock(dateString);
+    }
+
+    const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
+
+    setUnlockableAmount(biggestVote.sub(amountStillLocked));
+  }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
   return (
     <>
@@ -46,7 +105,7 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, unloc
           </Grid>
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={amount} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               {balanceInUSD !== undefined
@@ -68,13 +127,15 @@ export default function LockedInReferenda({ address, amount, timeToUnlock, unloc
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      {showReview &&
+      {showReview && refsToUnlock?.length && api && totalLocked && unlockableAmount &&
         <Review
           address={address}
           api={api}
+          refsToUnlock={refsToUnlock}
           setShow={setShowReview}
           show={showReview}
-          value={unlockableAmount}
+          totalLocked={totalLocked}
+          unlockableAmount={unlockableAmount}
         />
       }
     </>
