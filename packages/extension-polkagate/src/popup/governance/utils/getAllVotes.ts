@@ -150,30 +150,30 @@ function extractSplitAbstainVote(account: string, vote: any) {
   const result = [
     objectSpread(
       { ...common }, {
-        balance: abstainBalance,
-        conviction: 0,
-        isAbstain: true
-      }
+      balance: abstainBalance,
+      conviction: 0,
+      isAbstain: true
+    }
     )
   ];
 
   if (splitAbstain.aye.toBigInt() > 0) {
     result.push(objectSpread(
       { ...common }, {
-        aye: true,
-        balance: ayeBalance,
-        conviction: 0
-      })
+      aye: true,
+      balance: ayeBalance,
+      conviction: 0
+    })
     );
   }
 
   if (splitAbstain.nay.toBigInt() > 0) {
     result.push(objectSpread(
       { ...common }, {
-        aye: false,
-        balance: nayBalance,
-        conviction: 0
-      }));
+      aye: false,
+      balance: nayBalance,
+      conviction: 0
+    }));
   }
 
   return result;
@@ -229,7 +229,9 @@ function extractDelegations(mapped, track, directVotes = []) {
   }, []);
 }
 
-export async function getReferendumVotes(api: ApiPromise, trackId: number, referendumIndex: number): Promise<{ ayes: VoterData[], nays: VoterData[], abstains: VoterData[] } | null> {
+export type OnchainVotes = { ayes: VoterData[], nays: VoterData[], abstains: VoterData[] }
+
+export async function getReferendumVotes(api: ApiPromise, trackId: number, referendumIndex: number): Promise<OnchainVotes | null> {
   console.log(`Getting ref ${referendumIndex} votes ... `);
 
   if (!referendumIndex || !api) {

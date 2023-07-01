@@ -12,7 +12,8 @@ import ReactMarkdown from 'react-markdown';
 import { BN } from '@polkadot/util';
 
 import { Identity, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { nFormatter } from '../../../components/FormatPrice';
+import { useApi, useChain, useDecimal, usePrice, useToken, useTranslation } from '../../../hooks';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, Referendum } from '../utils/types';
@@ -34,6 +35,9 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
   const chain = useChain(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const price = usePrice(address);
+
+  const requestedInUSD = useMemo(() => referendum?.requested && price?.amount && decimal && (Number(referendum.requested) / 10 ** decimal) * price.amount, [decimal, price, referendum]);
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -87,7 +91,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                 <Grid item sx={{ fontSize: '14px', fontWeight: 400, mr: '17px' }}>
                   {t('By')}:
                 </Grid>
-                <Grid item>
+                <Grid item maxWidth='30%'>
                   <Identity api={api} chain={chain} formatted={referendum?.proposer} identiconSize={25} showShortAddress={!!referendum?.proposer} showSocial={false} style={{ fontSize: '14px', fontWeight: 400, lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
                 </Grid>
                 <VDivider />
@@ -102,21 +106,28 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                 {referendum?.requested && Number(referendum.requested) > 0 &&
                   <>
                     <VDivider />
-                    <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-                      <LabelValue
-                        label={`${t('Requested')}: `}
-                        labelStyle={{ fontSize: 14 }}
-                        noBorder
-                        value={
-                          <ShowBalance
-                            balance={new BN(referendum?.requested)}
-                            decimal={decimal}
-                            decimalPoint={2}
-                            token={token}
-                          />
-                        }
-                        valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
-                      />
+                    <Grid alignItems='center' container item sx={{ maxWidth: 'fit-content' }}>
+                      <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+                        <LabelValue
+                          label={`${t('Requested')}: `}
+                          labelStyle={{ fontSize: 14 }}
+                          noBorder
+                          value={
+                            <ShowBalance
+                              balance={new BN(referendum?.requested)}
+                              decimal={decimal}
+                              decimalPoint={2}
+                              token={token}
+                            />
+                          }
+                          valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
+                        />
+                      </Grid>
+                      <Divider flexItem orientation='vertical' sx={{ mx: '7px', my: '8px', bgcolor: theme.palette.mode === 'light' ? 'inherit' : 'text.disabled' }} />
+                      <Grid item sx={{ color: theme.palette.mode === 'light' && 'text.disabled', opacity: theme.palette.mode === 'dark' && 0.6 }}>
+                        {`$${requestedInUSD ? nFormatter(requestedInUSD, 2) : '0'}`}
+                      </Grid>
+
                     </Grid>
                   </>
                 }

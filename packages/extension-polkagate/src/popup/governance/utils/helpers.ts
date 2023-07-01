@@ -7,8 +7,8 @@ import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
 import { postData } from '../../../util/api';
-import { TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
-import { LatestReferenda, Origins, ReferendumPA, ReferendumSb, TopMenu } from './types';
+import { FINISHED_REFERENDUM_STATUSES, TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
+import { LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, TopMenu } from './types';
 
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 export interface Statistics {
@@ -74,6 +74,8 @@ export type FilteredVotes = {
   no: VoteType[];
   yes: VoteType[];
 }
+
+export const isFinished = (referendum: Referendum | undefined) => referendum?.status ? FINISHED_REFERENDUM_STATUSES.includes(referendum.status) : undefined;
 
 export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
   // console.log('Getting ref stat from sb ... ');

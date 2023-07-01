@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { getReferendumPA, getReferendumSb } from '../popup/governance/utils/helpers';
-import { Referendum, ReferendumPolkassembly, ReferendumSubScan } from '../popup/governance/utils/types';
+import { Referendum, ReferendumPA, ReferendumSb } from '../popup/governance/utils/types';
 import { useApi, useChainName } from '.';
 
 export default function useReferenda(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number): Referendum | undefined {
@@ -16,8 +16,8 @@ export default function useReferenda(address: AccountId | string | undefined, ty
   const api = useApi(address);
 
   const [referendum, setReferendum] = useState<Referendum | null>();
-  const [referendumPA, setReferendumPA] = useState<ReferendumPolkassembly | null>();
-  const [referendumSb, setReferendumSb] = useState<ReferendumSubScan | null>();
+  const [referendumPA, setReferendumPA] = useState<ReferendumPA | null>();
+  const [referendumSb, setReferendumSb] = useState<ReferendumSb | null>();
   const [onChainTally, setOnChainTally] = useState<PalletRankedCollectiveTally>();
   const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();

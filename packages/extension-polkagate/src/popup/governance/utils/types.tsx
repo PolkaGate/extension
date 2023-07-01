@@ -66,7 +66,7 @@ export interface ReferendumPA {
   deposit: any;
   description: any;
   enactment_after_block: number;
-  enactment_at_block: any;
+  enactment_at_block: number;
   end: any;
   ended_at: Date;
   fee: any;
@@ -222,13 +222,14 @@ export type Referendum = {
     method: string,
     section: string
   } | undefined,
-  chainName?: 'Polkadot' | 'Kusama',
+  chainName?: 'Polkadot' | 'Kusama' | string,
   comments?: CommentType[] | undefined,
   content?: string | undefined,
   created_at?: number | undefined,
   decisionDepositAmount?: string | undefined,
   decisionDepositPayer?: string | undefined,
   enactAfter?: number | undefined,
+  enactAt?: number | undefined,
   hash?: string | undefined,
   index: number,
   method?: string | undefined,
@@ -239,6 +240,7 @@ export type Referendum = {
   requestedFor?: string | undefined,
   status?: string | undefined,
   statusHistory?: ReferendumHistory[] | undefined,
+  submissionBlockOC?: number;
   submissionAmount?: string | undefined,
   supportAmount?: string | undefined,
   title?: string | undefined,

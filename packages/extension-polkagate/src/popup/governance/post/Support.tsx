@@ -3,21 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
 import { Infotip2, ShowBalance, ShowValue } from '../../../components';
-import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
-import { Referendum } from '../utils/types';
+import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { Referendum, Track } from '../utils/types';
 
 interface Props {
   address: string | undefined;
   referendum: Referendum | undefined;
+  track: Track | undefined;
 }
 
-export default function Support({ address, referendum }: Props): React.ReactElement<Props> {
+export default function Support({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const decimal = useDecimal(address);
@@ -29,22 +30,20 @@ export default function Support({ address, referendum }: Props): React.ReactElem
   const [inactiveIssuance, setInactiveIssuance] = useState<BN>();
   const [fellowshipCount, setFellowshipCount] = useState<number>();
 
-  const track = useTrack(address, referendum?.trackName);
   const isFellowship = referendum?.type === 'FellowshipReferendum';
   const threshold = useCurrentSupportThreshold(track?.[1], (currentBlock && referendum && referendum?.timelineSb?.[1]?.block) && currentBlock - referendum.timelineSb[1].block);
+  const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlockOC;
 
   const currentSupportThreshold = useMemo(() => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendum?.timelineSb?.[0].block) {
-      const blockSubmitted = referendum.timelineSb[0].block;
+    if (track?.[1]?.preparePeriod && currentBlock && blockSubmitted) {
+      if (currentBlock - blockSubmitted < track[1].preparePeriod.toNumber()) {
 
-      if (currentBlock - blockSubmitted < track[1].preparePeriod) {
-        // in prepare period
-        return 50;
+        return 50; // in prepare period
       }
 
       return threshold;
     }
-  }, [currentBlock, referendum, threshold, track]);
+  }, [blockSubmitted, currentBlock, threshold, track]);
 
   const supportPercent = useMemo(() => {
     if (totalIssuance && inactiveIssuance && referendum?.supportAmount) {
@@ -66,47 +65,50 @@ export default function Support({ address, referendum }: Props): React.ReactElem
     api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => setFellowshipCount(keys?.length));
   }, [api]);
 
-  const Tally = ({ amount, color, percent, text, total }: { text: string, percent: number | undefined, color: string, amount: string | undefined, total: BN | undefined }) => (
+  const Tally = ({ amount, color, percent, text, total }: { amount: string | number | undefined, text: string, percent: number | undefined, color: string, total: BN | undefined }) => (
     <Grid container item justifyContent='center' sx={{ width: '45%' }}>
-      <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '100%' }}>
+      <Typography sx={{ borderBottom: `8px solid ${color}`, fontSize: '20px', fontWeight: 500, textAlign: 'center', width: '115px' }}>
         {text}
       </Typography>
-      <Grid container fontSize='22px' item>
-        <Grid fontWeight={700} item mt='15px' sx={{ height: '27px', textAlign: 'center' }} xs={12}>
-          <ShowValue value={percent !== undefined ? `${percent.toFixed(2)}%` : undefined} />
-        </Grid>
+      <Grid container item justifyContent='center' sx={{ fontSize: '22px', fontWeight: 700, height: '27px', mt: '15px' }}>
+        <ShowValue value={percent !== undefined ? `${percent.toFixed(2)}%` : undefined} width='115px' />
       </Grid>
-      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} fontSize='16px' fontWeight={500} item pt='15px' pl='12%'>
+      <Grid container item justifyContent='center' sx={{ color: theme.palette.mode === 'light' ? 'text.disabled' : 'text.main', fontSize: '16px', fontWeight: 500, pt: '15px' }}>
         {isFellowship
           ? <ShowValue
             value={amount}
+            width='115px'
           />
           : <ShowBalance
             balance={amount !== undefined ? new BN(amount) : undefined}
             decimal={decimal}
             decimalPoint={2}
+            skeletonWidth={115}
             token={token}
           />
         }
       </Grid>
-      <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} container fontSize='14px' fontWeight={400} item justifyContent='center'>
-        <Grid item pr='3px'>
-          {t('of')}
+      {total || fellowshipCount !== undefined
+        ? <Grid color={theme.palette.mode === 'light' ? 'text.disabled' : 'text.main'} container fontSize='14px' fontWeight={400} item justifyContent='center'>
+          <Grid item pr='3px'>
+            {t('of')}
+          </Grid>
+          <Grid item>
+            {isFellowship
+              ? <ShowValue
+                value={fellowshipCount}
+              />
+              : <ShowBalance
+                balance={total && new BN(total)}
+                decimal={decimal}
+                decimalPoint={2}
+                token={token}
+              />
+            }
+          </Grid>
         </Grid>
-        <Grid item>
-          {isFellowship
-            ? <ShowValue
-              value={fellowshipCount}
-            />
-            : <ShowBalance
-              balance={total && new BN(total)}
-              decimal={decimal}
-              decimalPoint={2}
-              token={token}
-            />
-          }
-        </Grid>
-      </Grid>
+        : <Skeleton height='20px' sx={{ display: 'inline-block', transform: 'none', width: '115px' }} />
+      }
     </Grid>
   );
 
@@ -119,7 +121,7 @@ export default function Support({ address, referendum }: Props): React.ReactElem
           </Typography>
         </Infotip2>
       </Grid>
-      <Grid container item justifyContent='space-around' xs={12} sx={{ mt: '25px' }}>
+      <Grid container item justifyContent='space-around' sx={{ mt: '25px' }} xs={12}>
         <Tally
           amount={isFellowship ? referendum?.ayesCount : referendum?.supportAmount}
           color={`${theme.palette.support.contrastText}`}

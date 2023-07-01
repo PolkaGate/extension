@@ -42,7 +42,8 @@ export default function FellowshipsList({ address, fellowships }: Props): React.
                 direction='row'
                 formatted={fellow}
                 identiconSize={31}
-                style={{ maxWidth: '100%', width: 'fit-content', fontSize: '16px', fontWeight: 400 }}
+                showSocial
+                style={{ fontSize: '16px', fontWeight: 400 }}
                 withShortAddress
               />
             </Grid>
@@ -74,6 +75,6 @@ const getRankedColor = (rank: number): string => {
     case 1:
       return '#DEBFBF';
     default:
-      return '';
+      return '#000000';
   }
 };

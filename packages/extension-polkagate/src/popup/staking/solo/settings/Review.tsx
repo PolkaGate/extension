@@ -92,12 +92,13 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const setController = api && api.tx.staking.setController; // sign by stash
   const setPayee = api && api.tx.staking.setPayee; // sign by Controller
   const batchAll = api && api.tx.utility.batchAll;
+  const isControllerDeprecated = setController ? setController.meta.args.length === 0 : undefined;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 
   useEffect(() => {
-    if (!setController || !setPayee || !api|| !batchAll || !formatted) {
+    if (!setController || !setPayee || !api || !batchAll || !formatted) {
       return;
     }
 
@@ -112,14 +113,18 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     }
 
     if (String(formatted) === String(settings.stashId) && newSettings?.controllerId && settings.controllerId !== newSettings?.controllerId) {
-      txs.push(setController(newSettings?.controllerId)); // Second, the order to execute
+      txs.push(setController(newSettings?.controllerId)); // Second, the order to execute, for non-deprecated case
+    }
+
+    if (String(formatted) === String(settings.stashId) && isControllerDeprecated && settings.controllerId !== formatted) {
+      txs.push(setController()); // Second, for deprecated case
     }
 
     const tx = txs.length === 2 ? batchAll(txs) : txs[0];
 
     setTx(tx);
     tx && tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
-  }, [api, batchAll, formatted, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
+  }, [api, batchAll, formatted, isControllerDeprecated, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -183,16 +188,19 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     setShow(false);
   }, [setShow]);
 
-  const Controller = useCallback(() => (
-    <Grid alignItems='center' container direction='column' justifyContent='center' my='5px'>
+  const Controller = useCallback(() => {
+    const controllerId = isControllerDeprecated && formatted !== settings.controllerId ? formatted : newSettings.controllerId;
+
+    return (<Grid alignItems='center' container direction='column' justifyContent='center' my='5px'>
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t<string>('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={newSettings.controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
-      <ShortAddress address={newSettings.controllerId} />
+      <Identity chain={chain} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <ShortAddress address={controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
-  ), [chain, newSettings?.controllerId, t]);
+    );
+  }, [chain, formatted, isControllerDeprecated, newSettings.controllerId, settings.controllerId, t]);
 
   return (
     <Motion>
@@ -210,7 +218,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
-          {newSettings?.controllerId &&
+          {(newSettings?.controllerId || (isControllerDeprecated && formatted !== settings.controllerId)) &&
             <Controller />
           }
           {newSettings?.payee &&

@@ -4,8 +4,6 @@
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
-import { faSync } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -30,7 +28,7 @@ function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignatu
   const { t } = useTranslation();
   const theme = useTheme();
   const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useLedger(genesisHash, accountIndex, addressOffset);
-  
+
   useEffect(() => {
     if (ledgerError) {
       setError(ledgerError);
@@ -60,7 +58,7 @@ function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignatu
     },
     [accountIndex, addressOffset, ledger, onSignature, payload, setError]
   );
-  
+
   return (
     <Grid container>
       {!!ledgerWarning && (

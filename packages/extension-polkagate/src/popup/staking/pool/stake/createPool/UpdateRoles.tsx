@@ -17,21 +17,21 @@ interface Props {
   chain?: Chain;
   formatted?: string;
   nominatorId: string | undefined;
-  stateTogglerId: string | undefined;
+  bouncerId: string | undefined;
   setNominatorId: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setStateTogglerId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setBouncerId: React.Dispatch<React.SetStateAction<string | undefined>>;
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function UpdateRoles({ address, chain, formatted, nominatorId, setNominatorId, setShow, setStateTogglerId, show, stateTogglerId }: Props): React.ReactElement {
+export default function UpdateRoles({ address, bouncerId, chain, nominatorId, setBouncerId, setNominatorId, setShow, show }: Props): React.ReactElement {
   const containerRef = useRef(null);
   const theme = useTheme();
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const [updateBtnDisable, setUpdateBtnDisable] = useState<boolean>(false);
   const [newNominatorId, setNewNominatorId] = useState<string | null | undefined>(nominatorId);
-  const [newStateTogglerId, setNewStateTogglerId] = useState<string | null | undefined>(stateTogglerId);
+  const [newBouncerId, setNewBouncerId] = useState<string | null | undefined>(bouncerId);
 
   const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, address);
 
@@ -40,18 +40,18 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
   }, [setShow, show]);
 
   const onUpdateRoles = useCallback(() => {
-    if (!newNominatorId || !newStateTogglerId) {
+    if (!newNominatorId || !newBouncerId) {
       return;
     }
 
     setNominatorId(newNominatorId);
-    setStateTogglerId(newStateTogglerId);
+    setBouncerId(newBouncerId);
     setShow(!show);
-  }, [newNominatorId, newStateTogglerId, setNominatorId, setShow, setStateTogglerId, show]);
+  }, [newNominatorId, newBouncerId, setNominatorId, setShow, setBouncerId, show]);
 
   useEffect(() => {
-    setUpdateBtnDisable(!newNominatorId || !newStateTogglerId || (newStateTogglerId === stateTogglerId && newNominatorId === nominatorId));
-  }, [newNominatorId, newStateTogglerId, nominatorId, stateTogglerId]);
+    setUpdateBtnDisable(!newNominatorId || !newBouncerId || (newBouncerId === bouncerId && newNominatorId === nominatorId));
+  }, [newNominatorId, newBouncerId, nominatorId, bouncerId]);
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='10px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -74,11 +74,11 @@ export default function UpdateRoles({ address, chain, formatted, nominatorId, se
         }}
       />
       <AddressInput
-        address={newStateTogglerId}
+        address={newBouncerId}
         allAddresses={allAddresses}
         chain={chain}
-        label={'State toggler'}
-        setAddress={setNewStateTogglerId}
+        label={'Bouncer'}
+        setAddress={setNewBouncerId}
         showIdenticon
         style={{
           m: '15px auto 0',

@@ -50,7 +50,6 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
 
   const _accountInfo = useAccountInfo(api, _formatted, accountInfo);
   const _judgement = useMemo(() => _accountInfo?.identity?.judgements && JSON.stringify(_accountInfo?.identity?.judgements).match(/reasonable|knownGood/gi), [_accountInfo?.identity?.judgements]);
-  const socialIcons = (_accountInfo?.identity?.twitter ? 1 : 0) + (_accountInfo?.identity?.web ? 1 : 0) + (_accountInfo?.identity?.email ? 1 : 0) + (_accountInfo?.identity?.riot ? 1 : 0);
 
   const merkleScienceTooltip = useMemo(() => (msData &&
     <Typography variant='body2'>
@@ -78,10 +77,10 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   }, [_accountInfo, returnIdentity]);
 
   return (
-    <Grid alignItems='center' container justifyContent='space-between' sx={{ ...style }}>
+    <Grid alignItems='center' container justifyContent='space-between' sx={{ maxWidth: '100%', width: 'fit-content', ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
         {!noIdenticon &&
-          <Grid item m='auto 0' pr='5px'>
+          <Grid item m='auto 0' pr='5px' width='fit-content'>
             <Identicon
               iconTheme={_chain?.icon ?? 'polkadot'}
               judgement={judgement || _judgement}
@@ -91,64 +90,59 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             />
           </Grid>
         }
-        <Grid container direction='column' item sx={{ fontSize: style?.fontSize ?? '28px', fontWeight: 400, maxWidth: `calc(100% - ${(_showSocial ? socialIcons * 20 : 0) + identiconSize + 5}px)`, width: 'max-content' }}>
-          <Grid container flexWrap='nowrap' item maxWidth='100%' overflow='hidden' whiteSpace='nowrap'>
-            {msData
-              ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
-                <Grid display='flex' item sx={{ width: '25px' }}>
-                  <Infotip text={merkleScienceTooltip}>
-                    <Box
-                      component='img'
-                      src={
-                        isMSgreen
-                          ? msGreen as string
-                          : isMSwarning
-                            ? msWarning as string
-                            : ms as string
-                      }
-                      sx={{ width: '20px' }}
-                    />
-                  </Infotip>
-                </Grid>
-                <Grid color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item sx={{ maxWidth: 'calc(100% - 25px)' }}>
-                  {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
-                </Grid>
-              </Grid>
-              : <>
-                {_accountInfo?.identity?.displayParent &&
-                  <Grid item>
-                    {_accountInfo?.identity.displayParent}/
-                  </Grid>
-                }
-                {(_accountInfo?.identity?.display || _accountInfo?.nickname) &&
-                  <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
-                    {_accountInfo?.identity?.display ?? _accountInfo?.nickname}
-                  </Grid>
-                }
-                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && (name || accountName) &&
-                  <Grid item sx={_accountInfo?.identity?.displayParent && { color: grey[500] }}>
-                    {name || accountName}
-                  </Grid>
-                }
-                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName) &&
-                  <Grid item sx={{ textAlign: 'left' }}>
-                    {showShortAddress
-                      ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize || '11px' }} />
-                      : t('Unknown')
+        <Grid direction='column' item maxWidth='fit-content' overflow='hidden' sx={{ fontSize: style?.fontSize as string ?? '28px', fontWeight: 400, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+          {msData
+            ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
+              <Grid display='flex' item sx={{ width: '25px' }}>
+                <Infotip text={merkleScienceTooltip}>
+                  <Box
+                    component='img'
+                    src={
+                      isMSgreen
+                        ? msGreen as string
+                        : isMSwarning
+                          ? msWarning as string
+                          : ms as string
                     }
-                  </Grid>
-                }
-              </>
-            }
-          </Grid>
+                    sx={{ width: '20px' }}
+                  />
+                </Infotip>
+              </Grid>
+              <Grid color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item sx={{ maxWidth: 'calc(100% - 25px)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
+              </Grid>
+            </Grid>
+            : <>
+              {_accountInfo?.identity.displayParent ? _accountInfo?.identity.displayParent + '/' : ''}
+              {_accountInfo?.identity?.display
+                ? _accountInfo?.identity.displayParent
+                  ? <span style={{ color: grey[500] }}>{_accountInfo?.identity?.display}</span>
+                  : _accountInfo?.identity?.display
+                : ''}
+              {_accountInfo?.nickname ? _accountInfo?.nickname : ''}
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name ? name : ''}
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
+              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
+                ? showShortAddress
+                  ? <ShortAddress address={formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
+                  : t('Unknown')
+                : ''
+              }
+            </>
+          }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
               <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
+        {withShortAddress && direction === 'row' &&
+          <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
+            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
+          </Grid>
+        }
         {_showSocial &&
-          <Grid container id='socials' item justifyContent='flex-end' pl='5px' width='fit-content'>
+          <Grid container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
               <Grid item>
                 <Link href={`mailto:${_accountInfo.identity.email}`}>
@@ -173,21 +167,16 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
             {_accountInfo?.identity?.riot &&
               <Grid item pl='5px'>
                 <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} rel='noreferrer' target='_blank'>
-                  <Box component='img' src={riot} sx={{ height: '12px', width: '12px' }} />
+                  <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
                 </Link>
               </Grid>
             }
           </Grid>
         }
-        {withShortAddress && direction === 'row' &&
-          <Grid container item justifyContent='flex-end' minWidth='fit-content' px='5px' width='fit-content'>
-            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
-          </Grid>
-        }
       </Grid>
       {
         showChainLogo &&
-        <Grid item>
+        <Grid item xs={1}>
           <ChainLogo genesisHash={_chain?.genesisHash} />
         </Grid>
       }

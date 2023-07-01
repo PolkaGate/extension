@@ -1,12 +1,15 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Grid, SxProps, Theme } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
+import ObserveResize from '../util/ObserveResize';
 import CopyAddressButton from './CopyAddressButton';
 
 interface Props {
@@ -22,6 +25,10 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
   const [charactersCount, setCharactersCount] = useState<number>(1);
   const pRef = useRef(null);
   const cRef = useRef(null);
+
+  const decreaseCharactersCount = useCallback(() => clipped && setCharactersCount(charactersCount - 1), [charactersCount, clipped]);
+
+  ObserveResize(pRef?.current as unknown as Element, cRef?.current?.clientHeight + 3, decreaseCharactersCount);
 
   useEffect(() => {
     if (!clipped) {

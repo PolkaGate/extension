@@ -25,6 +25,7 @@ import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButt
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import TracksList from './partial/tracksList';
 import { DelegateInformation, STEPS } from '.';
+import { GOVERNANCE_PROXY } from '../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -134,9 +135,11 @@ export default function Review({ address, delegateInformation, estimatedFee, for
               address={address}
               api={api}
               chain={chain}
+              direction='row'
               identiconSize={31}
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           {selectedProxyAddress &&
@@ -153,9 +156,11 @@ export default function Review({ address, delegateInformation, estimatedFee, for
               address={delegateInformation.delegateeAddress}
               api={api}
               chain={chain}
+              direction='row'
               identiconSize={31}
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           <DisplayValue title={t<string>('Delegated Value ({{token}})', { replace: { token } })}>
@@ -189,7 +194,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
             primaryBtnText={t<string>('Confirm')}
             proxiedAddress={formatted}
             proxies={proxyItems}
-            proxyTypeFilter={['Any']}
+            proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
             setStep={setStep}

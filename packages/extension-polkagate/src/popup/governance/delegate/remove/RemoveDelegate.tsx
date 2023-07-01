@@ -27,6 +27,7 @@ import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import ReferendaTable from '../partial/ReferendaTable';
 import TracksList from '../partial/tracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -173,10 +174,12 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
               address={address}
               api={api}
               chain={chain}
+              direction='row'
               identiconSize={31}
               showShortAddress
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           {selectedProxyAddress &&
@@ -192,11 +195,13 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
             <Identity
               api={api}
               chain={chain}
+              direction='row'
               formatted={delegateeAddress}
               identiconSize={31}
               showShortAddress
               showSocial={false}
               style={{ maxWidth: '100%', width: 'fit-content' }}
+              withShortAddress
             />
           </Grid>
           {classicDelegateInformation &&
@@ -248,7 +253,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
               primaryBtnText={t<string>('Confirm')}
               proxiedAddress={formatted}
               proxies={proxyItems}
-              proxyTypeFilter={['Any']}
+              proxyTypeFilter={GOVERNANCE_PROXY}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
               setStep={setStep}

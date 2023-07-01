@@ -8,10 +8,9 @@ import { TFunction } from '@polkadot/apps-config/types';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_MAX_INTEGER, bnMin, extractTime } from '@polkadot/util';
 
-import { Track } from '../../../hooks/useTrack';
 import { remainingTime } from '../../../util/utils';
 import { isAye, Vote } from '../post/myVote/util';
-import { DelegationInfo } from './types';
+import { DelegationInfo, Track } from './types';
 
 type Result = [blockInterval: number, timeStr: string, time: Time];
 
@@ -22,7 +21,7 @@ export function toSnakeCase(input: string | undefined): string | undefined {
     return undefined;
   }
 
-  let output = input.replace(/([a-z])([A-Z])/g, '$1_$2'); // Convert camelCase and PascalCase to snake_case
+  let output = input.trim().replace(/([a-z])([A-Z])/g, '$1_$2'); // Convert camelCase and PascalCase to snake_case
 
   output = output.replace(/\s+/g, '_'); // Replace whitespace with underscores
   output = output.toLowerCase(); // Convert all characters to lowercase
@@ -90,7 +89,7 @@ export function pascalCaseToTitleCase(str: string): string | undefined {
   return result;
 }
 
-export function formatRelativeTime(dateString: string | Date): string {
+export function formatRelativeTime(dateString: number | string | Date): string {
   const date = new Date(dateString);
   const now = new Date();
   const elapsedMs = now.getTime() - date.getTime();

@@ -11,8 +11,8 @@ import { useApi, useChainName } from '../../../../hooks';
 import { AbstainVoteType, AllVotesType, FilteredVotes, getAllVotesFromPA, VoteType } from '../../utils/helpers';
 import { getAddressVote } from '../myVote/util';
 import Delegators from './Delegators';
-import Standards from './Standards';
 import FellowshipVotes from './FellowshipVotes';
+import Standards from './Standards';
 
 interface Props {
   address: string | undefined;
@@ -21,10 +21,6 @@ interface Props {
   setOpen: (value: React.SetStateAction<boolean>) => void
   refIndex: number | undefined;
   trackId: number | undefined;
-  setOnChainVoteCounts: React.Dispatch<React.SetStateAction<{
-    ayes: number | undefined;
-    nays: number | undefined;
-  } | undefined>>;
   setVoteCountsPA: React.Dispatch<React.SetStateAction<{
     ayes: number | undefined;
     nays: number | undefined;
@@ -70,19 +66,12 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const [numberOfFetchedDelagatees, setNumberOfFetchedDelagatees] = useState<number>(0);
   const [standardPage, setStandardPage] = useState<number>(1);
 
-  // useEffect(() => {
-  //   api && refIndex && trackId !== undefined &&
-  //     getReferendumVotes(api, trackId, refIndex).then((votes) => {
-  //       setAllVotes(votes);
-  //       setAllVotes(votes);
-  //       setOnChainVoteCounts({ ayes: votes?.ayes?.length, nays: votes?.nays?.length });
-  //       setFilteredVotes(votes);
-  //       console.log('All votes from chain:', votes);
-  //     });
-  // }, [api, refIndex, setOnChainVoteCounts, trackId]);
-
   useEffect(() => {
-    chainName && refIndex && getAllVotesFromPA(chainName, refIndex, 100, isFellowship).then((res: AllVotesType | null) => {
+    if (!chainName || refIndex === undefined || isFellowship === undefined || setVoteCountsPA === undefined) {
+      return;
+    }
+
+    getAllVotesFromPA(chainName, refIndex, 100, isFellowship).then((res: AllVotesType | null) => {
       if (!res) {
         return setAllVotes(null);
       }

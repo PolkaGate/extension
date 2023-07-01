@@ -16,9 +16,10 @@ interface Props {
   address: string | undefined;
   vote: Vote | null | undefined;
   notVoted: boolean | undefined;
+  isFinished: boolean | undefined;
 }
 
-export default function MyVote({ address, notVoted, vote }: Props): React.ReactElement {
+export default function MyVote({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -49,7 +50,7 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
       {notVoted
         ? <Grid alignItems='center' container item sx={{ pt: '20px', px: '10%' }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 700 }}>
-            {t('No votes cast yet.')}
+            {isFinished ? t('No participation.') : t('No vote cast yet.')}
           </Typography>
         </Grid>
         : !voteBalance
@@ -71,19 +72,19 @@ export default function MyVote({ address, notVoted, vote }: Props): React.ReactE
                 <>
                   {voteType === 'Aye' &&
                     <>
-                      <CheckIcon sx={{ color: 'aye.main', fontSize: '15px' }} />
+                      <CheckIcon sx={{ color: 'aye.main', fontSize: '24px', stroke: theme.palette.aye.main, strokeWidth: 1.5 }} />
                       {t('Aye')}
                     </>
                   }
                   {voteType === 'Nay' &&
                     <>
-                      <CloseIcon sx={{ color: 'nay.main', fontSize: '15px' }} />
+                      <CloseIcon sx={{ color: 'nay.main', fontSize: '24px', stroke: theme.palette.nay.main, strokeWidth: 1.5 }} />
                       {t('Nay')}
                     </>
                   }
                   {voteType === 'Abstain' &&
                     <>
-                      <AbstainIcon sx={{ color: 'primary.light', fontSize: '15px' }} />
+                      <AbstainIcon sx={{ color: 'primary.light', fontSize: '22px', mr: '2px', stroke: theme.palette.primary.light, strokeWidth: 1.5 }} />
                       {t('Abstain')}
                     </>
                   }

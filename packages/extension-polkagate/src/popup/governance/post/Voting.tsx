@@ -11,56 +11,46 @@ import { BN } from '@polkadot/util';
 
 import { ShowBalance, ShowValue } from '../../../components';
 import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTrack, useTranslation } from '../../../hooks';
-import { Referendum } from '../utils/types';
-import { toTitleCase } from '../utils/util';
+import { useCurrentApprovalThreshold, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { Referendum, Track } from '../utils/types';
 import AllVotes from './allVote';
 import VoteChart from './VoteChart';
 
 interface Props {
   address: string | undefined;
   referendum: Referendum | undefined;
+  track: Track | undefined;
 }
 
-export default function Voting({ address, referendum }: Props): React.ReactElement<Props> {
+export default function Voting({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { state } = useLocation();
   const decimal = useDecimal(address);
   const token = useToken(address);
 
   const currentBlock = useCurrentBlockNumber(address);
   const [openAllVotes, setOpenAllVotes] = useState(false);
-  const [onChainVoteCounts, setOnChainVoteCounts] = useState<{ ayes: number | undefined, nays: number | undefined }>();
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
 
-  const isFellowship = referendum?.type === 'FellowshipReferendum';
-  const trackName = useMemo((): string | undefined => {
-    const name = ((state?.selectedSubMenu !== 'All' && state?.selectedSubMenu) || referendum?.trackName) as string | undefined;
-
-    return name && toTitleCase(name);
-  }, [referendum, state?.selectedSubMenu]);
-
-  const track = useTrack(address, trackName);
-
-  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && referendum?.timelineSb?.[1]?.block && (currentBlock - referendum.timelineSb[1].block));
+  const isFellowship = referendum?.type ? referendum.type === 'FellowshipReferendum' : undefined;
+  const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlockOC;
+  const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && blockSubmitted && (currentBlock - blockSubmitted));
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
-    if (track?.[1]?.preparePeriod && currentBlock && referendum?.timelineSb) {
-      const blockSubmitted = referendum.timelineSb[0].block;
-
-      if (track[1].preparePeriod.gtn(currentBlock - blockSubmitted)) {
+    if (track?.[1]?.preparePeriod && currentBlock && blockSubmitted) {
+      if (blockSubmitted && track[1].preparePeriod.gtn(currentBlock - blockSubmitted)) {
         // in prepare period
         return 100;
       }
 
       return threshold;
     }
-  }, [currentBlock, referendum, threshold, track]);
+  }, [blockSubmitted, currentBlock, threshold, track]);
 
-  const totalVoteAmount = (referendum?.ayesAmount !== undefined && referendum?.naysAmount !== undefined &&
-    Number(referendum.ayesAmount) + Number(referendum.naysAmount)
-  );
+  const totalVoteAmount = (referendum?.ayesAmount !== undefined && referendum?.naysAmount !== undefined)
+    ? Number(referendum.ayesAmount) + Number(referendum.naysAmount)
+    : undefined;
+
   const ayesPercent = useMemo(() => referendum && totalVoteAmount !== undefined
     ? Number(referendum.ayesAmount) !== 0
       ? Number(referendum.ayesAmount) / totalVoteAmount * 100
@@ -162,7 +152,6 @@ export default function Voting({ address, referendum }: Props): React.ReactEleme
         isFellowship={isFellowship}
         open={openAllVotes}
         refIndex={referendum?.index}
-        setOnChainVoteCounts={setOnChainVoteCounts}
         setOpen={setOpenAllVotes}
         setVoteCountsPA={setVoteCountsPA}
         trackId={referendum?.trackId}

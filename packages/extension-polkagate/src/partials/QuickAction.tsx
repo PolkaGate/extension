@@ -186,7 +186,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
                   : `${theme.palette.action.disabledBackground}`
               }
               icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
-              style={{ height: '23px' }}
+              style={{ height: '20px' }}
             />}
           onClick={goToGovernanceOrHistory}
           textDisabled={!account?.genesisHash}

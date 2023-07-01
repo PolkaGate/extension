@@ -86,7 +86,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     changes?.newPoolName !== undefined &&
       calls.push(setMetadata(pool.poolId, changes?.newPoolName));
     changes?.newRoles !== undefined &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newStateToggler)));
+      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newBouncer)));
 
     setTxCalls(calls);
 
@@ -96,12 +96,12 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
 
     calls.length && calls[0].paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
-    });
+    }).catch(console.error);
 
     calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
       setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
-    });
-  }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.metadata, pool.poolId, setMetadata, setTxCalls]);
+    }).catch(console.error);
+  }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.poolId, setMetadata]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -207,11 +207,11 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           showDivider
         />
       }
-      {changes?.newRoles?.newStateToggler !== undefined &&
+      {changes?.newRoles?.newBouncer !== undefined &&
         <ShowPoolRole
           chain={chain}
-          roleAddress={changes?.newRoles?.newStateToggler}
-          roleTitle={t<string>('State toggler')}
+          roleAddress={changes?.newRoles?.newBouncer}
+          roleTitle={t<string>('Bouncer')}
           showDivider
         />
       }

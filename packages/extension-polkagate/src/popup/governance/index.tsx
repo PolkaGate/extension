@@ -15,7 +15,7 @@ import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTr
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST } from './utils/consts';
-import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA, Statistics } from './utils/helpers';
+import { getLatestReferendums, getReferendumsListSb, getTrackOrFellowshipReferendumsPA } from './utils/helpers';
 import { LatestReferenda } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
@@ -46,7 +46,6 @@ export default function Governance(): React.ReactElement {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<{ referenda: number | undefined, fellowship: number | undefined }>({ fellowship: undefined, referenda: undefined });
-  const [referendumStats, setReferendumStats] = useState<Statistics | undefined>();
   const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
   const [getMore, setGetMore] = useState<number | undefined>();
@@ -54,6 +53,22 @@ export default function Governance(): React.ReactElement {
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
+  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
+
+  const fetchJson = () => {
+    fetch('./manifest.json')
+      .then((response) => {
+        return response.json();
+      }).then((data: chrome.runtime.Manifest) => {
+        setManifest(data);
+      }).catch((e: Error) => {
+        console.log(e.message);
+      });
+  };
+
+  useEffect(() => {
+    fetchJson();
+  }, []);
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -79,7 +94,7 @@ export default function Governance(): React.ReactElement {
 
     if (!chainChangeRef.current) {
       chainChangeRef.current = chainName;
-    } else if (chainChangeRef.current !== chainName) {
+    } else if (chainChangeRef.current !== chainName) { // if chain is changed
       chainChangeRef.current = chainName;
       setReferenda(undefined);
       setFilteredReferenda(undefined);
@@ -91,8 +106,9 @@ export default function Governance(): React.ReactElement {
   }, [address, api, tracks]);
 
   useEffect(() => {
-    referenda?.length && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
-  }, [referenda]);
+    // since the on chain referendaCount may have delay, we set the count for all case with the latest Id +1
+    referenda?.length && selectedSubMenu === 'All' && setReferendumCount({ fellowship: referenda[0].post_id + 1, referenda: referenda[0].post_id + 1 });
+  }, [referenda, selectedSubMenu]);
 
   useEffect(() => {
     if (!api) {
@@ -158,7 +174,7 @@ export default function Governance(): React.ReactElement {
         setIsLoadingMore(false);
 
         if (allReferenda === null) {
-          if (pageTrackRef.current.page === 1) { // there is no referendum !!
+          if (pageTrackRef.current.page === 1) { // there is no referendum or PA is down ... ⚠️ !!
             setReferenda(null);
 
             return;
@@ -174,6 +190,10 @@ export default function Governance(): React.ReactElement {
 
         setReferenda(onlyReferenda);
 
+        return;
+      }
+
+      if (referendaTrackId === undefined && topMenu === 'referenda') {
         return;
       }
 
@@ -267,8 +287,6 @@ export default function Governance(): React.ReactElement {
           {selectedSubMenu === 'All'
             ? <AllReferendaStats
               address={address}
-              referendumStats={referendumStats}
-              setReferendumStats={setReferendumStats}
               topMenu={topMenu}
             />
             : selectedSubMenu !== 'Fellowships' &&
@@ -341,6 +359,9 @@ export default function Governance(): React.ReactElement {
                     <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
                   </Grid>
               }
+              <Grid color={'text.disabled'} container fontSize='13px' item justifyContent='center'>
+                {`${t('Version')} ${manifest?.version || ''}`}
+              </Grid>
             </>
           }
         </Container>

@@ -32,7 +32,7 @@ export default function InputFilter({ autoFocus = true, label, onChange, placeho
   }, [onChange]);
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <Label
         label={label}
       >
@@ -61,10 +61,10 @@ export default function InputFilter({ autoFocus = true, label, onChange, placeho
             icon={faTimes}
             onClick={onResetFilter}
             style={{
+              bottom: '8px',
               cursor: 'pointer',
               position: 'absolute',
-              right: '25px',
-              top: '32px'
+              right: '15px'
             }}
           />
         )

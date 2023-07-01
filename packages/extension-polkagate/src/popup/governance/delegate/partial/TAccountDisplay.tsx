@@ -14,7 +14,7 @@ import { Identity } from '../../../../components';
 export default function TAccountsDisplay ({ address, api, chain, selectedTrustedAddress }: { chain: Chain | null | undefined, address: string, api: ApiPromise, selectedTrustedAddress: string | undefined }): React.ReactElement {
   return (
     <Grid container justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-      <Grid container maxWidth='390px' pl='8px' width='fit-content'>
+      <Grid container maxWidth='380px' pl='8px' width='fit-content'>
         <Identity
           address={address}
           api={api}

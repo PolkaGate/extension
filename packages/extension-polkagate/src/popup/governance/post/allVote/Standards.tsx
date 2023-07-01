@@ -57,6 +57,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const voteTypeStr = useMemo(() => tabIndex === VOTE_TYPE_MAP.ABSTAIN ? 'abstain' : tabIndex === VOTE_TYPE_MAP.AYE ? 'yes' : 'no', [tabIndex]);
+  const tabBorderColor = useMemo(() => theme.palette.mode === 'dark' ? theme.palette.text.disabled : 'rgba(0,0,0,0.2)', [theme.palette.mode, theme.palette.text.disabled]);
 
   const totalNumberOfDelegators = useMemo(() => {
     if (!allVotes) {
@@ -156,7 +157,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
       fontWeight: 500
     },
     borderBlock: '5px solid',
-    borderBlockColor: 'rgba(0,0,0,0.2)',
+    borderBlockColor: tabBorderColor,
     color: 'text.primary',
     fontSize: '18px',
     fontWeight: 400,
@@ -175,7 +176,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
       <Grid item>
         <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', mx: '15px', opacity: 0.3, width: '2px' }} />
       </Grid>
-      <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start' }} xs>
+      <Grid item onClick={openSearchBar} sx={{ cursor: 'pointer', textAlign: 'start', mr: '9px' }} xs>
         {isSearchBarOpen
           ? <InputFilter
             // autoFocus={false}
@@ -183,6 +184,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             placeholder={t<string>('🔍 Search by voter address')}
             theme={theme}
             value={searchKeyword ?? ''}
+            withReset
           />
           : <SearchIcon sx={{ color: 'secondary.contrastText', display: 'block', fontSize: '30px', width: 'fit-content' }} />
         }
@@ -206,7 +208,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               sx={{ ...tabStyle, width: '35%' }}
               value={1}
             />
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: tabBorderColor, height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: tabBorderColor, minWidth: '2px', p: '0', width: '2px' }} value={4} />
             <Tab
               icon={<CloseIcon sx={{ color: 'warning.main' }} />}
               iconPosition='start'
@@ -214,7 +216,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               sx={{ ...tabStyle, width: '34%' }}
               value={2}
             />
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: 'rgba(0,0,0,0.2)', minWidth: '2px', p: '0', width: '2px' }} value={4} />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: tabBorderColor, height: '25px', mx: '5px', my: 'auto', width: '2px' }} />} label='' sx={{ borderBlock: '5px solid', borderBlockColor: tabBorderColor, minWidth: '2px', p: '0', width: '2px' }} value={4} />
             <Tab
               icon={<AbstainIcon sx={{ color: 'primary.light' }} />}
               iconPosition='start'
@@ -284,7 +286,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
                 </Grid>
                 <Grid alignItems='center' container justifyContent='flex-end' width='7%'>
                   <Grid item sx={{ textAlign: 'right' }}>
-                    <Divider orientation='vertical' sx={{ backgroundColor: 'rgba(0,0,0,0.2)', height: '36px', mr: '3px', width: '1px' }} />
+                    <Divider orientation='vertical' sx={{ backgroundColor: tabBorderColor, height: '36px', mr: '3px', width: '1px' }} />
                   </Grid>
                   <Grid item onClick={hasDelegators ? () => openDelegations(vote) : noop} sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                     <ChevronRightIcon sx={{ color: `${hasDelegators ? theme.palette.primary.main : theme.palette.action.disabledBackground}`, fontSize: '37px' }} />

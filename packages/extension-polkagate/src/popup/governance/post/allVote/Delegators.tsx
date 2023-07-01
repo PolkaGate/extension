@@ -191,7 +191,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
               {t('Vote Details of')}
             </Typography>
           </Grid>
-          <Grid item sx={{ pl: '6px' }} xs>
+          <Grid item sx={{ pl: '6px' }} xs={7.7}>
             <Identity
               api={api}
               chain={chain}
@@ -213,7 +213,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
           </Grid>
         </Grid>
         <Grid container item sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.light', px: '8px', borderRadius: '5px' }}>
-          <Grid alignItems='flex-end' container item justifyContent='center' spacing={1}>
+          <Grid alignItems='center' container item justifyContent='center' spacing={1}>
             <Grid item>
               {standard.decision === 'yes'
                 ? <CheckIcon sx={{ color: 'success.main', fontSize: '40px', stroke: `${theme.palette.success.main}` }} />

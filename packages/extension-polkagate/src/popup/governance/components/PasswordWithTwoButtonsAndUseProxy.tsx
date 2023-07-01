@@ -27,7 +27,7 @@ interface Props {
   prevState?: Record<string, any>;
   proxiedAddress: string | AccountId | undefined;
   proxies: ProxyItem[] | undefined
-  proxyTypeFilter: ProxyTypes[];
+  proxyTypeFilter: ProxyTypes[] | string[];
   secondaryBtnText?: string
   selectedProxy: Proxy | undefined;
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
