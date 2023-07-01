@@ -18,16 +18,18 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { WESTEND_GENESIS } from '@polkadot/apps-config';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
-import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
+import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
-import { HeaderBrand } from '../../partials';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { ChainSwitch, HeaderBrand } from '../../partials';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
+import { sanitizeChainName } from '../../util/utils';
 import blockToDate from '../crowdloans/partials/blockToDate';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
@@ -50,6 +52,7 @@ export default function AccountDetails(): React.ReactElement {
   const chainName = useChainName(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const currentBlock = useCurrentBlockNumber(address);
+  const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
@@ -57,9 +60,15 @@ export default function AccountDetails(): React.ReactElement {
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
+  const [recentChains, setRecentChains] = useState<string[]>();
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [totalLockedInReferenda, setTotalLockedInReferenda] = useState<BN>();
   const [timeToUnlock, setTimeToUnlock] = useState<string>();
+
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , []);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -195,6 +204,32 @@ export default function AccountDetails(): React.ReactElement {
     setShowOthers(true);
   }, []);
 
+  useEffect(() => {
+    if (!address || !account) {
+      return;
+    }
+
+    chrome.storage.local.get('RecentChains', (res) => {
+      const allRecentChains = res?.RecentChains;
+      const myRecentChains = allRecentChains?.[address] as string[];
+
+      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
+
+      myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
+    });
+  }, [account, account?.genesisHash, address]);
+
+  const chainNamesToShow = useMemo(() => {
+    if (!(genesisOptions.length) || !(recentChains?.length) || !account) {
+      return undefined;
+    }
+
+    const filteredChains = recentChains.map((r) => genesisOptions.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash).filter((chain) => !isTestnetEnabled ? chain?.value !== WESTEND_GENESIS : true);
+    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
+
+    return chainNames.slice(0, 2);
+  }, [account, genesisOptions, isTestnetEnabled, recentChains]);
+
   const OthersRow = () => (
     <Grid item py='3px'>
       <Grid alignItems='center' container justifyContent='space-between'>
@@ -216,7 +251,7 @@ export default function AccountDetails(): React.ReactElement {
   return (
     <Motion>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address} externalChainNamesToShow={chainNamesToShow}>{identicon}</ChainSwitch>}
         address={address}
         noBorder
         onBackClick={gotToHome}

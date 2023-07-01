@@ -21,9 +21,10 @@ interface Props {
   address: string | undefined;
   children?: React.ReactNode;
   invert?: boolean;
+  externalChainNamesToShow?: (string | undefined)[] | undefined;
 }
 
-function ChainSwitch({ address, children, invert }: Props): React.ReactElement<Props> {
+function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const account = useAccount(address);
@@ -62,6 +63,10 @@ function ChainSwitch({ address, children, invert }: Props): React.ReactElement<P
   }, [account?.genesisHash, pathname]);
 
   const chainNamesToShow = useMemo(() => {
+    if (externalChainNamesToShow) {
+      return externalChainNamesToShow;
+    }
+
     if (!availableChains || !account?.genesisHash) {
       return undefined;
     }
@@ -70,7 +75,7 @@ function ChainSwitch({ address, children, invert }: Props): React.ReactElement<P
     const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
 
     return chainNames;
-  }, [account?.genesisHash, availableChains, genesisHashes]);
+  }, [account?.genesisHash, availableChains, externalChainNamesToShow, genesisHashes]);
 
   useEffect(() => {
     showOtherChains && setFirstTime(true);
