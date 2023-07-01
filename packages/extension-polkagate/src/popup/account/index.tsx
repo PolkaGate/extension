@@ -18,24 +18,24 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { WESTEND_GENESIS } from '@polkadot/apps-config';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
-import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
+import { useAccount, useAccountLocks, useApi, useBalances, useChain, useChainName, useCurrentBlockNumber, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import { windowOpen } from '../../messaging';
 import { ChainSwitch, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
-import blockToDate from '../crowdloans/partials/blockToDate';
 import { sanitizeChainName } from '../../util/utils';
+import blockToDate from '../crowdloans/partials/blockToDate';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import LockedInReferenda from './LockedInReferenda';
 import Others from './Others';
-import { WESTEND_GENESIS } from '@polkadot/apps-config';
 
 export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
@@ -52,6 +52,7 @@ export default function AccountDetails(): React.ReactElement {
   const chainName = useChainName(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const currentBlock = useCurrentBlockNumber(address);
+  const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
@@ -63,10 +64,11 @@ export default function AccountDetails(): React.ReactElement {
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [totalLockedInReferenda, setTotalLockedInReferenda] = useState<BN>();
+  const [timeToUnlock, setTimeToUnlock] = useState<string>();
+
   useEffect(() =>
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
     , []);
-  const [timeToUnlock, setTimeToUnlock] = useState<string>();
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
