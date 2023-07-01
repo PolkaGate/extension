@@ -48,7 +48,7 @@ interface TreasuryBalanceStatProps {
   rowDisplay?: boolean;
 }
 
-export const Seperator = ({ changeOrientation, m }: { changeOrientation: boolean, m?: number }) => (<Divider flexItem orientation={changeOrientation ? 'horizontal' : 'vertical'} sx={{ my: `${m}px`, width: changeOrientation ? '100%' : 'auto' }} />);
+export const Separator = ({ changeOrientation, m }: { changeOrientation: boolean, m?: number }) => (<Divider flexItem orientation={changeOrientation ? 'horizontal' : 'vertical'} sx={{ my: `${m}px`, width: changeOrientation ? '100%' : 'auto' }} />);
 
 const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, title, tokenPrice }: TreasuryBalanceStatProps) => {
   const api = useApi(address);
@@ -76,7 +76,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
           </Grid>
         </Grid>
       </Grid>
-      {!noDivider && <Seperator changeOrientation={!!rowDisplay} />}
+      {!noDivider && <Separator changeOrientation={!!rowDisplay} />}
     </>
   );
 };
@@ -214,7 +214,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             />
           }
         </Grid>
-        <Seperator changeOrientation={secondBreakpoint} m={15} />
+        <Separator changeOrientation={secondBreakpoint} m={15} />
         <Grid container item sx={styles.treasuryStats}>
           <Grid container item sx={{ borderBottom: '2px solid gray', mb: firstBreakpoint ? 0 : '10px' }}>
             <Typography fontSize={20} fontWeight={500}>
@@ -240,7 +240,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
           <Grid container item justifyContent={firstBreakpoint ? 'space-between' : 'flex-start'} maxWidth={firstBreakpoint ? '100%' : '250px'} width={firstBreakpoint ? '100%' : 'fit-content'}>
             <Grid alignItems='center' container item width='fit-content'>
               <Typography fontSize={18} fontWeight={400} lineHeight='25px'>
-                {t('Spend Period')}
+                {t('Next Spending')}
               </Typography>
             </Grid>
             <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'}>
@@ -257,7 +257,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
               </Grid>
             </Grid>
           </Grid>
-          <Seperator changeOrientation={firstBreakpoint} />
+          <Separator changeOrientation={firstBreakpoint} />
           <TreasuryBalanceStat
             address={address}
             balance={treasuryStats?.nextBurn}

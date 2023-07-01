@@ -13,6 +13,7 @@ import { CONVICTIONS } from '../popup/governance/utils/consts';
 import useApi from './useApi';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
+import { useChain } from '.';
 
 export interface Lock {
   classId: BN;
@@ -32,8 +33,8 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   for (let i = 0; i < votes.length; i++) {
     const [classId, , casting] = votes[i];
 
-    for (let i = 0; i < casting.votes.length; i++) {
-      const [refId, accountVote] = casting.votes[i];
+    for (let j = 0; j < casting.votes.length; j++) {
+      const [refId, accountVote] = casting.votes[j];
       const refInfo = referenda.find(([id]) => id.eq(refId));
 
       if (refInfo) {
@@ -97,14 +98,19 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
 export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined | null {
   const api = useApi(address);
   const formatted = useFormatted(address);
+  const chain = useChain(address);
   const currentBlock = useCurrentBlockNumber(address);
 
   const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null>();
   const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
 
   useEffect(() => {
-    getLockClass();
+    if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
+      return;
+    }
 
+    getLockClass();
+    
     async function getLockClass() {
       if (!api || !palletVote || !formatted) {
         return undefined;
@@ -165,10 +171,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
       setReferenda(referenda);
     }
-  }, [api, formatted, palletReferenda, palletVote]);
+  }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote]);
 
   return useMemo(() => {
-    if (api && votes && referenda && currentBlock) {
+    if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && votes && referenda && currentBlock) {
       const accountLocks = getLocks(api, palletVote, votes, referenda);
 
       if (notExpired) {
@@ -183,5 +189,5 @@ export default function useAccountLocks(address: string | undefined, palletRefer
     }
 
     return undefined;
-  }, [api, currentBlock, notExpired, palletVote, referenda, votes]);
+  }, [api, chain?.genesisHash, currentBlock, notExpired, palletVote, referenda, votes]);
 }

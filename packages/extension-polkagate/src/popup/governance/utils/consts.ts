@@ -9,6 +9,7 @@ export const LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST = 15;
 export const REFERENDA_LIMIT_SAVED_LOCAL = 30;
 
 export const FINISHED_REFERENDUM_STATUSES = ['Cancelled', 'Confirmed', 'Executed', 'Rejected', 'TimedOut'];
+export const GOVERNANCE_PROXY = ['Any', 'NonTransfer', 'Governance'];
 
 export const REFERENDA_STATUS = [
   ['All'],

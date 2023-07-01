@@ -27,6 +27,7 @@ import Cast from './Cast';
 import Confirmation from './Confirmation';
 import Preview from './Preview';
 import Review from './Review';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -268,7 +269,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             address={address}
             nextStep={alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW}
             proxies={proxyItems}
-            proxyTypeFilter={['Any', 'Governance', 'NonTransfer']}
+            proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
             setStep={setStep}
