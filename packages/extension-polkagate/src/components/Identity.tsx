@@ -35,9 +35,10 @@ interface Props {
   showShortAddress?: boolean;
   showSocial?: boolean;
   withShortAddress?: boolean;
+  subIdOnly?: boolean;
 }
 
-function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, subIdOnly = false, noIdenticon = false, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(formatted ? getSubstrateAddress(formatted) : address);
   const _chain = useChain(address, chain);
@@ -113,12 +114,15 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               </Grid>
             </Grid>
             : <>
-              {_accountInfo?.identity.displayParent ? _accountInfo?.identity.displayParent + '/' : ''}
-              {_accountInfo?.identity?.display
+              {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
+              {_accountInfo?.identity?.display && !subIdOnly
                 ? _accountInfo?.identity.displayParent
                   ? <span style={{ color: grey[500] }}>{_accountInfo?.identity?.display}</span>
                   : _accountInfo?.identity?.display
                 : ''}
+              {_accountInfo?.identity.displayParent && subIdOnly &&
+                _accountInfo?.identity?.display
+              }
               {_accountInfo?.nickname ? _accountInfo?.nickname : ''}
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name ? name : ''}
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
