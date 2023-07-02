@@ -120,7 +120,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
                   ? <span style={{ color: grey[500] }}>{_accountInfo?.identity?.display}</span>
                   : _accountInfo?.identity?.display
                 : ''}
-              {_accountInfo?.identity.displayParent && subIdOnly &&
+              {_accountInfo?.identity.display && subIdOnly &&
                 _accountInfo?.identity?.display
               }
               {_accountInfo?.nickname ? _accountInfo?.nickname : ''}
