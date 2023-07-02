@@ -110,7 +110,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
     }
 
     getLockClass();
-    
+
     async function getLockClass() {
       if (!api || !palletVote || !formatted) {
         return undefined;
@@ -125,9 +125,9 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         return setReferenda(null);
       }
 
-      const voteParams: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
+      const params: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
 
-      const votingFor = await api.query[palletVote]?.votingFor.multi(voteParams) as unknown as PalletConvictionVotingVoteVoting[];
+      const votingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
 
       const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
@@ -135,9 +135,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         }
 
         const casting = v.asCasting;
+        const classId = params[index][1];
 
         return [
-          voteParams[index][1],
+          classId,
           casting.votes.map(([refId]) => refId),
           casting
         ];

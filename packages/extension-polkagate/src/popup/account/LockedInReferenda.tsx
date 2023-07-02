@@ -16,7 +16,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { Infotip, ShowBalance } from '../../components';
-import { useAccountLocks, useApi, useCurrentBlockNumber, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import { useAccountLocks, useApi, useCurrentBlockNumber, useDecimal, useHasDelegated, usePrice, useToken, useTranslation } from '../../hooks';
 import { Lock } from '../../hooks/useAccountLocks';
 import blockToDate from '../crowdloans/partials/blockToDate';
 import Review from './Review';
@@ -32,12 +32,14 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const price = usePrice(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const delegatedBalance = useHasDelegated(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const currentBlock = useCurrentBlockNumber(address);
 
   const [showReview, setShowReview] = useState(false);
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
-  const [totalLocked, setTotalLockedInReferenda] = useState<BN>();
+  const [lockedInRef, setLockedInReferenda] = useState<BN>();
+  const [totalLocked, setTotalLocked] = useState<BN | null>();
   const [timeToUnlock, setTimeToUnlock] = useState<string>();
 
   const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
@@ -54,7 +56,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
 
   useEffect(() => {
     if (!referendaLocks?.length || !currentBlock) {
-      setTotalLockedInReferenda(undefined);
+      setLockedInReferenda(undefined);
       setTimeToUnlock(undefined);
 
       return;
@@ -64,7 +66,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
     // const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
     const biggestVote = referendaLocks[0].total;
 
-    setTotalLockedInReferenda(biggestVote);
+    setLockedInReferenda(biggestVote);
     const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
 
     console.log('indexOfBigestNotLockable:', indexOfBiggestNotLockable)
@@ -96,6 +98,14 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
     setUnlockableAmount(biggestVote.sub(amountStillLocked));
   }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
+  useEffect(() => {
+    if (!lockedInRef && !delegatedBalance) {
+      return;
+    }
+
+    setTotalLocked(lockedInRef || delegatedBalance);
+  }, [delegatedBalance, lockedInRef]);
+
   return (
     <>
       <Grid item py='4px'>
@@ -115,7 +125,13 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
             </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2} sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer' }}>
-            <Infotip text={api && unlockableAmount && !unlockableAmount.isZero() ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked` : timeToUnlock}>
+            <Infotip
+              text={api && unlockableAmount && !unlockableAmount.isZero()
+                ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
+                : delegatedBalance && !delegatedBalance.isZero()
+                  ? t('Locked as delegated')
+                  : timeToUnlock}
+            >
               <FontAwesomeIcon
                 color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.primary.main}
                 icon={faUnlockAlt}
@@ -127,14 +143,14 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      {showReview && refsToUnlock?.length && api && totalLocked && unlockableAmount &&
+      {showReview && refsToUnlock?.length && api && lockedInRef && unlockableAmount &&
         <Review
           address={address}
           api={api}
           refsToUnlock={refsToUnlock}
           setShow={setShowReview}
           show={showReview}
-          totalLocked={totalLocked}
+          totalLocked={lockedInRef}
           unlockableAmount={unlockableAmount}
         />
       }
