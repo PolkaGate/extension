@@ -120,6 +120,20 @@ export default function AccountDetails(): React.ReactElement {
       windowOpen(`/governance/${address}/referenda`).catch(console.error);
   }, [address, formatted, genesisHash]);
 
+  const goToPoolStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/pool/${address}/`,
+      state: { api, pathname }
+    });
+  }, [address, api, history, pathname]);
+
+  const goToSoloStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/solo/${address}/`,
+      state: { api, pathname }
+    });
+  }, [address, api, history, pathname]);
+
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
@@ -179,7 +193,7 @@ export default function AccountDetails(): React.ReactElement {
             onClick={goToOthers}
             sx={{ p: 0 }}
           >
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 2 }} />
+            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
           </IconButton>
         </Grid>
       </Grid>
@@ -203,11 +217,11 @@ export default function AccountDetails(): React.ReactElement {
           ? <>
             <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
-              <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} />
+              <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} onClick={goToSend} />
               {STAKING_CHAINS.includes(genesisHash)
                 ? <>
-                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Staked'} />
-                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Staked'} />
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Staked'} onClick={goToSoloStaking} />
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Staked'} onClick={goToPoolStaking} />
                 </>
                 : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
               }

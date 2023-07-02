@@ -45,9 +45,6 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
   const refsToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock)) : undefined;
 
-  unlockableAmount && console.log('unlockableAmount:', api.createType('Balance', unlockableAmount).toHuman());
-  timeToUnlock && console.log('timeToUnlock:', timeToUnlock);
-
   const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
     const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
 
@@ -63,13 +60,12 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
     }
 
     referendaLocks.sort((a, b) => b.total.sub(a.total).toNumber());
-    // const filteredLocks = referendaLocks.filter(({ locked }) => locked !== 'None');
     const biggestVote = referendaLocks[0].total;
 
     setLockedInReferenda(biggestVote);
     const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
 
-    console.log('indexOfBigestNotLockable:', indexOfBiggestNotLockable)
+    console.log('indexOfBiggestNotLockable:', referendaLocks[indexOfBiggestNotLockable].endBlock.toString());
     console.log('referendaLocks:', referendaLocks);
     console.log('currentBlock:', currentBlock);
     console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
@@ -85,12 +81,12 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
       return setTimeToUnlock('Locked in ongoing referenda.');
     }
 
-    if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // noting is unlockable
-      const dateString = blockToDate(Number(referendaLocks[0].endBlock), currentBlock);
+    if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
+      const dateString = blockToDate(Number(referendaLocks[indexOfBiggestNotLockable].endBlock), currentBlock);
 
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock(dateString);
+      return setTimeToUnlock(`Unlockable at ${dateString}`);
     }
 
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
@@ -133,7 +129,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
                   : timeToUnlock}
             >
               <FontAwesomeIcon
-                color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.primary.main}
+                color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
                 icon={faUnlockAlt}
                 style={{ height: '25px' }}
                 onClick={(unlockableAmount && !unlockableAmount.isZero()) ? () => setShowReview(true) : () => null}
