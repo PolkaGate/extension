@@ -8,7 +8,6 @@
  * this component shows an account information in detail
  * */
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -49,7 +48,7 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
             </Grid>
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
-            <Grid item sx={{ fontSize: label === 'Total' ? '21px' : '20px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
+            <Grid item sx={{ fontSize: label === 'Total' ? '21px' : '19px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>

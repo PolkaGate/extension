@@ -20,14 +20,14 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../components';
-import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
-import { Lock } from '../../hooks/useAccountLocks';
-import { HeaderBrand, SubTitle, WaitScreen } from '../../partials';
-import Confirmation from '../../partials/Confirmation';
-import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../util/utils';
+import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
+import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
+import { Lock } from '../../../hooks/useAccountLocks';
+import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
+import Confirmation from '../../../partials/Confirmation';
+import { signAndSend } from '../../../util/api';
+import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 
 interface Props {
   address: string;
@@ -127,7 +127,13 @@ export default function Review({ address, api, refsToUnlock, setShow, show, unlo
       const extrinsic = batchAll(params);
       const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
 
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
+      // const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
+
+      let block=102030
+      let failureText;
+      let fee ='1.23'
+      let success=true;
+      let txHash='0x'
 
       const info = {
         action: 'Unlock Referenda',

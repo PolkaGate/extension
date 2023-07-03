@@ -8,6 +8,8 @@
  * this component shows an account information in detail
  * */
 
+import type { PalletBalancesBalanceLock, PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
+
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Skeleton, useTheme } from '@mui/material';
@@ -15,10 +17,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { Infotip, ShowBalance } from '../../components';
-import { useAccountLocks, useApi, useCurrentBlockNumber, useDecimal, useHasDelegated, usePrice, useToken, useTranslation } from '../../hooks';
-import { Lock } from '../../hooks/useAccountLocks';
-import blockToDate from '../crowdloans/partials/blockToDate';
+import { Infotip, ShowBalance } from '../../../components';
+import { useAccountLocks, useApi, useBalances, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
+import { Lock } from '../../../hooks/useAccountLocks';
+import blockToDate from '../../crowdloans/partials/blockToDate';
 import Review from './Review';
 
 interface Props {
@@ -30,17 +32,20 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const theme = useTheme();
   const api = useApi(address);
   const price = usePrice(address);
+  const formatted = useFormatted(address);
   const decimal = useDecimal(address);
   const token = useToken(address);
   const delegatedBalance = useHasDelegated(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const currentBlock = useCurrentBlockNumber(address);
+  const balances = useBalances(address);
 
   const [showReview, setShowReview] = useState(false);
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [lockedInRef, setLockedInReferenda] = useState<BN>();
   const [totalLocked, setTotalLocked] = useState<BN | null>();
   const [timeToUnlock, setTimeToUnlock] = useState<string>();
+  const [miscRefLock, setMiscRefLock] = useState<BN>();
 
   const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
   const refsToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock)) : undefined;
@@ -65,7 +70,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
     setLockedInReferenda(biggestVote);
     const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
 
-    console.log('indexOfBiggestNotLockable:', referendaLocks[indexOfBiggestNotLockable].endBlock.toString());
+    console.log('indexOfBiggestNotLockable:', referendaLocks[indexOfBiggestNotLockable]?.endBlock?.toString());
     console.log('referendaLocks:', referendaLocks);
     console.log('currentBlock:', currentBlock);
     console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
@@ -95,12 +100,27 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
   useEffect(() => {
-    if (!lockedInRef && !delegatedBalance) {
+    if (!api?.query?.balances || !formatted) {
       return;
     }
 
-    setTotalLocked(lockedInRef || delegatedBalance);
-  }, [delegatedBalance, lockedInRef]);
+    // eslint-disable-next-line no-void
+    void api.query.balances.locks(formatted).then((locks: PalletBalancesBalanceLock[]) => {
+      if (locks?.length) {
+        const foundRefLock = locks.find((l) => l.id.toHuman() === 'pyconvot');
+
+        setMiscRefLock(foundRefLock?.amount);
+      }
+    });
+  }, [api, formatted]);
+
+  useEffect(() => {
+    if (!lockedInRef && !delegatedBalance && !miscRefLock) {
+      return;
+    }
+
+    setTotalLocked(lockedInRef || delegatedBalance || miscRefLock);
+  }, [delegatedBalance, lockedInRef, miscRefLock]);
 
   return (
     <>

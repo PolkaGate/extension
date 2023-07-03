@@ -31,7 +31,7 @@ import { sanitizeChainName } from '../../util/utils';
 import StakingOption from '../staking/Options';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
-import LockedInReferenda from './LockedInReferenda';
+import LockedInReferenda from './unlock/LockedInReferenda';
 import Others from './Others';
 
 export default function AccountDetails(): React.ReactElement {
