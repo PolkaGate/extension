@@ -124,7 +124,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress
-                  ? <ShortAddress address={formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
+                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
                   : t('Unknown')
                 : ''
               }
