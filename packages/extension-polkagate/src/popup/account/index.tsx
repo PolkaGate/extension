@@ -167,6 +167,8 @@ export default function AccountDetails(): React.ReactElement {
 
       const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
 
+      myRecentChains.length > 3 && myRecentChains.shift();
+
       myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
     });
   }, [account, account?.genesisHash, address]);
