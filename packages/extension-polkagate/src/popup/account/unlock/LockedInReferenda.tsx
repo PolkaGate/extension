@@ -119,7 +119,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
       return;
     }
 
-    setTotalLocked(lockedInRef || delegatedBalance || miscRefLock);
+    setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
   }, [delegatedBalance, lockedInRef, miscRefLock]);
 
   return (
