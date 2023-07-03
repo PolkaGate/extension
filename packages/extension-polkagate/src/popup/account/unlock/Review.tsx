@@ -143,7 +143,7 @@ export default function Review({ address, api, refsToUnlock, setShow, show, unlo
         failureText,
         fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
-        subAction: 'unlock',
+        subAction: 'Unlock',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
