@@ -216,10 +216,10 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           </Typography>)
           : (<>
             <Typography fontSize='14px' fontWeight={300} textAlign='center' sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Removing all mermbers from the pool')}
+              {t<string>('Removing all members from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('When you confirm you are able to unstake your tockens')}
+              {t<string>('When you confirm you are able to unstake your tokens')}
             </Typography>
           </>)
         }
