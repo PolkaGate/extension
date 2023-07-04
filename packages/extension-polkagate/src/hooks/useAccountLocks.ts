@@ -103,7 +103,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
   const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null>();
   const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
-  const [priors, setPriors] = useState<PalletConvictionVotingVotePriorLock[]>([]);
+  const [priors, setPriors] = useState<Lock[]>([]);
 
   useEffect(() => {
     if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
@@ -130,7 +130,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
       const votingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
 
-      const mayBePriors: PalletConvictionVotingVotePriorLock[] = [];
+      const mayBePriors: Lock[] = [];
 
       const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
@@ -141,7 +141,14 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         const classId = params[index][1];
 
         if (!casting.prior[0].eq(BN_ZERO)) {
-          mayBePriors.push(casting.prior);
+          // mayBePriors.push(casting.prior);
+          mayBePriors.push({
+            classId,
+            endBlock: casting.prior[0],
+            locked: 'None',
+            refId: 'N/A',
+            total: casting.prior[1]
+          });
         }
 
         return [
@@ -186,16 +193,8 @@ export default function useAccountLocks(address: string | undefined, palletRefer
     if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && ((votes && referenda) || priors?.length) && currentBlock) {
       const accountLocks = votes && referenda ? getLocks(api, palletVote, votes, referenda) : [];
 
-      /** add priors */
-      priors.forEach((p) => {
-        accountLocks.push({
-          classId: BN_MAX_INTEGER,
-          endBlock: p[0],
-          locked: 'None',
-          refId: 'N/A',
-          total: p[1]
-        });
-      });
+      // /** add priors */
+      accountLocks.push(...priors);
 
       if (notExpired) {
         return accountLocks.filter((l) => l.endBlock.gtn(currentBlock));
@@ -209,5 +208,5 @@ export default function useAccountLocks(address: string | undefined, palletRefer
     }
 
     return undefined;
-  }, [api, chain?.genesisHash, currentBlock, notExpired, palletVote, referenda, votes]);
+  }, [api, chain?.genesisHash, currentBlock, notExpired, palletVote, priors, referenda, votes]);
 }

@@ -18,7 +18,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, isBn } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
 import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
@@ -32,14 +32,14 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util
 interface Props {
   address: string;
   api: ApiPromise;
-  refsToUnlock: Lock[]
+  classToUnlock: Lock[]
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   unlockableAmount: BN;
   totalLocked: BN;
 }
 
-export default function Review({ address, api, refsToUnlock, setShow, show, unlockableAmount, totalLocked }: Props): React.ReactElement {
+export default function Review({ address, api, classToUnlock, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();
@@ -72,10 +72,10 @@ export default function Review({ address, api, refsToUnlock, setShow, show, unlo
       return;
     }
 
-    const removes = refsToUnlock.map((r) => remove(r.classId, r.refId));
+    const removes = classToUnlock.map((r) => isBn(r.refId) ? remove(r.classId, r.refId) : undefined).filter((i) => !!i);
     const uniqueSet = new Set<string>();
 
-    refsToUnlock.forEach(({ classId }) => {
+    classToUnlock.forEach(({ classId }) => {
       const id = classId.toString();
 
       uniqueSet.add(id);
@@ -92,7 +92,7 @@ export default function Review({ address, api, refsToUnlock, setShow, show, unlo
     }
 
     batchAll(params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, batchAll, formatted, refsToUnlock, remove, unlockClass]);
+  }, [api, batchAll, formatted, classToUnlock, remove, unlockClass]);
 
   const goToAccount = useCallback(() => {
     setShow(false);
@@ -129,11 +129,11 @@ export default function Review({ address, api, refsToUnlock, setShow, show, unlo
 
       // const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
-      let block=102030
+      let block = 102030
       let failureText;
-      let fee ='1.23'
-      let success=true;
-      let txHash='0x'
+      let fee = '1.23'
+      let success = true;
+      let txHash = '0x'
 
       const info = {
         action: 'Unlock Referenda',

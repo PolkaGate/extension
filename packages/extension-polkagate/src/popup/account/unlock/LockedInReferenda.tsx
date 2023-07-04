@@ -47,7 +47,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const [miscRefLock, setMiscRefLock] = useState<BN>();
 
   const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
-  const refsToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
+  const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
 
   const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
     const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
@@ -166,11 +166,11 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      {showReview && refsToUnlock?.length && api && lockedInRef && unlockableAmount &&
+      {showReview && classToUnlock?.length && api && lockedInRef && unlockableAmount &&
         <Review
           address={address}
           api={api}
-          refsToUnlock={refsToUnlock}
+          classToUnlock={classToUnlock}
           setShow={setShowReview}
           show={showReview}
           totalLocked={lockedInRef}
