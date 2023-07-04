@@ -38,7 +38,6 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const delegatedBalance = useHasDelegated(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const currentBlock = useCurrentBlockNumber(address);
-  const balances = useBalances(address);
 
   const [showReview, setShowReview] = useState(false);
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
@@ -48,7 +47,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const [miscRefLock, setMiscRefLock] = useState<BN>();
 
   const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
-  const refsToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock)) : undefined;
+  const refsToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
 
   const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
     const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
@@ -57,6 +56,8 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   }, []);
 
   useEffect(() => {
+    console.log('referendaLocks:', referendaLocks);
+
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
 

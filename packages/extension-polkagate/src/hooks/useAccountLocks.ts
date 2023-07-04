@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
+import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVotePriorLock, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { BN_MAX_INTEGER } from '@polkadot/util';
 
 import { CONVICTIONS } from '../popup/governance/utils/consts';
@@ -19,7 +19,7 @@ export interface Lock {
   classId: BN;
   endBlock: BN;
   locked: string;
-  refId: BN;
+  refId: BN | 'N/A';
   total: BN;
 }
 
@@ -103,6 +103,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
   const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null>();
   const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
+  const [priors, setPriors] = useState<PalletConvictionVotingVotePriorLock[]>([]);
 
   useEffect(() => {
     if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
@@ -129,6 +130,8 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
       const votingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
 
+      const mayBePriors: PalletConvictionVotingVotePriorLock[] = [];
+
       const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
           return null;
@@ -136,6 +139,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
 
         const casting = v.asCasting;
         const classId = params[index][1];
+
+        if (!casting.prior[0].eq(BN_ZERO)) {
+          mayBePriors.push(casting.prior);
+        }
 
         return [
           classId,
@@ -145,6 +152,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       }).filter((v): v is [BN, BN[], PalletConvictionVotingVoteCasting] => !!v);
 
       setVotes(votes);
+      setPriors([...mayBePriors]);
 
       let refIds: BN[] = [];
 
@@ -160,10 +168,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         return setReferenda(null);
       }
 
-      const optTally = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
+      const optTallies = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
 
-      const referenda = optTally
-        ? optTally.map((v, index) =>
+      const referenda = optTallies
+        ? optTallies.map((v, index) =>
           v.isSome
             ? [refIds[index], v.unwrap() as PalletReferendaReferendumInfoConvictionVotingTally]
             : null
@@ -175,8 +183,19 @@ export default function useAccountLocks(address: string | undefined, palletRefer
   }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote]);
 
   return useMemo(() => {
-    if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && votes && referenda && currentBlock) {
-      const accountLocks = getLocks(api, palletVote, votes, referenda);
+    if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && ((votes && referenda) || priors?.length) && currentBlock) {
+      const accountLocks = votes && referenda ? getLocks(api, palletVote, votes, referenda) : [];
+
+      /** add priors */
+      priors.forEach((p) => {
+        accountLocks.push({
+          classId: BN_MAX_INTEGER,
+          endBlock: p[0],
+          locked: 'None',
+          refId: 'N/A',
+          total: p[1]
+        });
+      });
 
       if (notExpired) {
         return accountLocks.filter((l) => l.endBlock.gtn(currentBlock));
