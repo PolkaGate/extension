@@ -57,6 +57,12 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   }, []);
 
   useEffect(() => {
+    if (referendaLocks === null) {
+      setLockedInReferenda(BN_ZERO);
+
+      return;
+    }
+
     if (!referendaLocks?.length || !currentBlock) {
       setLockedInReferenda(undefined);
       setTimeToUnlock(undefined);
