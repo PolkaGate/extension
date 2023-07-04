@@ -3,6 +3,7 @@
 
 export { default as useAccount } from './useAccount';
 export { default as useReferendum } from './useReferendum';
+export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useAccountLocks } from './useAccountLocks';
 export { default as useBlockInterval } from './useBlockInterval';
 export { default as useFullscreen } from './useFullscreen';

@@ -11,21 +11,21 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
+import { Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
+import { useAccountDisplay, useAccountInfo, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { signAndSend } from '../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
+import { GOVERNANCE_PROXY } from '../utils/consts';
 import TracksList from './partial/tracksList';
 import { DelegateInformation, STEPS } from '.';
-import { GOVERNANCE_PROXY } from '../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -45,19 +45,18 @@ export default function Review({ address, delegateInformation, estimatedFee, for
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const api = useApi(address);
   const chain = useChain(address);
   const ref = useRef(null);
   const { tracks } = useTracks(address);
   const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
-  const { accounts } = useContext(AccountContext);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const delegate = api && api.tx.convictionVoting.delegate;
   const batch = api && api.tx.utility.batchAll;

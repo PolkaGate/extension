@@ -17,7 +17,7 @@ export default function useMyAccountIdentity(address: AccountId | string | undef
   const formatted = useFormatted(address);
   const api = useApi(address);
   const account = useAccount(address);
-  const chainName = useChainName(formatted);
+  const chainName = useChainName(address);
 
   const [info, setInfo] = useState<DeriveAccountInfo | null | undefined>();
   const [oldIdentity, setOldIdentity] = useState<DeriveAccountRegistration | null | undefined>();
