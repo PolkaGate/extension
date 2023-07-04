@@ -16,7 +16,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
@@ -41,7 +41,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
   const formatted = useFormatted(address);
   const name = useAccountName(address);
   const proxies = useProxies(api, address);
-  const decimals = api.registry.chainDecimals[0];
+  const decimal = useDecimal(address);
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
@@ -83,7 +83,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
 
       const info = {
         action: 'Pool Staking',
-        amount: amountToHuman(bondAmount?.toString(), decimals),
+        amount: amountToHuman(bondAmount?.toString(), decimal),
         block,
         date: Date.now(),
         failureText,
@@ -103,7 +103,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [address, api, bondAmount, bondExtra, chain, decimals, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [address, api, bondAmount, bondExtra, chain, decimal, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

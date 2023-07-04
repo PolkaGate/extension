@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountName, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -62,8 +62,8 @@ export default function Review({ address, amount, api, chain, chilled, estimated
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const decimal = api?.registry?.chainDecimals[0] ?? 1;
-  const token = api?.registry?.chainTokens[0] ?? '';
+  const decimal = useDecimal(address);
+  const token = useToken(address);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
 

@@ -16,7 +16,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
@@ -42,7 +42,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   const formatted = useFormatted(address);
   const name = useAccountName(address);
   const proxies = useProxies(api, address);
-  const decimals = api.registry.chainDecimals[0];
+  const decimal = useDecimal(address);
 
   const joined = api.tx.nominationPools.join; // (amount, poolId)
 
@@ -83,7 +83,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
 
       const info = {
         action: 'Pool Staking',
-        amount: amountToHuman(joinAmount?.toString(), decimals),
+        amount: amountToHuman(joinAmount?.toString(), decimal),
         block,
         date: Date.now(),
         failureText,
@@ -103,7 +103,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, decimals, estimatedFee, formatted, joinAmount, joined, name, password, poolToJoin, selectedProxy, selectedProxyAddress, selectedProxyName]);
+  }, [api, chain, decimal, estimatedFee, formatted, joinAmount, joined, name, password, poolToJoin, selectedProxy, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

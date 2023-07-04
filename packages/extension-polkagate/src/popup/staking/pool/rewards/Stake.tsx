@@ -17,7 +17,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountName, useDecimal, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -56,7 +56,7 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
   const tx = api.tx.nominationPools.bondExtra;
   const params = useMemo(() => ['Rewards'], []);
-  const decimal = api.registry.chainDecimals[0];
+  const decimal = useDecimal(address);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
