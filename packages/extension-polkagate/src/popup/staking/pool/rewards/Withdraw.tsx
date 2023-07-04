@@ -9,15 +9,15 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Container } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -40,9 +40,8 @@ interface Props {
 export default function RewardsWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -53,7 +52,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const tx = api.tx.nominationPools.claimPayout;
   const params = [];
 
@@ -176,7 +175,7 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}

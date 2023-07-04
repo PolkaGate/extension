@@ -6,7 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -14,8 +14,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Infotip, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
+import { ActionContext, Infotip, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
+import { useAccountDisplay, useProxies, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
@@ -42,9 +42,8 @@ interface Props {
 export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -54,7 +53,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
@@ -228,7 +227,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         estimatedFee={estimatedFee}
         genesisHash={chain?.genesisHash}
         isPasswordError={isPasswordError}
-        label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+        label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
         onChange={setPassword}
         onConfirmClick={goEditPool}
         proxiedAddress={formatted}

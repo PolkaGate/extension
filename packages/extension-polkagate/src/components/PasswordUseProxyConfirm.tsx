@@ -37,7 +37,7 @@ interface Props {
   onConfirmClick: () => Promise<void>
 }
 
-export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
+export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const canPayFee = useCanPayFee(selectedProxy?.delegate || proxiedAddress, estimatedFee);
@@ -46,6 +46,8 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
   const [password, setPassword] = useState<string>();
   const [showSelectProxy, setShowSelectProxy] = useState<boolean>(false);
   const mustSelectProxy = useMemo(() => account?.isExternal && !selectedProxy, [account, selectedProxy]);
+
+  const proxiesToSelect = useMemo(() => proxies?.filter((proxy) => proxy.status !== 'new'), [proxies]);
 
   const _onChange = useCallback(
     (pass: string): void => {
@@ -93,7 +95,7 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
             </Grid>
             : <>
               <Grid alignItems='center' container sx={{ ...style }}>
-                <Grid item xs={proxies?.length ? 8 : 12}>
+                <Grid item xs={proxiesToSelect?.length ? 8 : 12}>
                   <Password
                     disabled={disabled}
                     isError={isPasswordError}
@@ -103,7 +105,7 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
                     onEnter={onConfirmClick}
                   />
                 </Grid>
-                {(!!proxies?.length || prevState?.selectedProxyAddress) &&
+                {(!!proxiesToSelect?.length || prevState?.selectedProxyAddress) &&
                   <Tooltip
                     arrow
                     componentsProps={{
@@ -138,9 +140,11 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
                       <>
                         {selectedProxy &&
                           <Identity
+                            api={api}
                             chain={chain}
                             formatted={selectedProxy?.delegate}
                             identiconSize={30}
+                            showSocial={false}
                             style={{ fontSize: '14px' }}
                           />
                         }
@@ -164,7 +168,7 @@ export default function PasswordUseProxyConfirm({ confirmDisabled, confirmText, 
       <SelectProxy
         genesisHash={genesisHash}
         proxiedAddress={proxiedAddress}
-        proxies={proxies}
+        proxies={proxiesToSelect}
         proxyTypeFilter={proxyTypeFilter}
         selectedProxy={selectedProxy}
         setSelectedProxy={setSelectedProxy}

@@ -12,14 +12,14 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Identity, Motion, ShortAddress, ShowBalance, ShowValue, Warning, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { Identity, Motion, ShowBalance, ShowValue, Warning, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
@@ -48,8 +48,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountName(address);
-  const { accounts } = useContext(AccountContext);
+  const name = useAccountDisplay(address);
   const theme = useTheme();
   const api = useApi(address);
   const chain = useChain(address);
@@ -60,7 +59,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
   const [modalHeight, setModalHeight] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const isOngoing = !ENDED_STATUSES.includes(status);
 
   const VoteStatus = ({ vote }: { vote: 'Aye' | 'Nay' | 'Abstain' }) => {

@@ -11,23 +11,23 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useAccountInfo, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { signAndSend } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
-import ReferendaTable from '../partial/ReferendaTable';
-import TracksList from '../partial/tracksList';
-import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
+import ReferendaTable from '../partial/ReferendaTable';
+import TracksList from '../partial/TracksList';
+import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
 
 interface Props {
   address: string | undefined;
@@ -47,8 +47,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountName(address);
-  const { accounts } = useContext(AccountContext);
+  const name = useAccountDisplay(address);
   const api = useApi(address);
   const chain = useChain(address);
   const { tracks } = useTracks(address);
@@ -65,7 +64,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const undelegate = api && api.tx.convictionVoting.undelegate;
   const batch = api && api.tx.utility.batchAll;

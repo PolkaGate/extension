@@ -11,15 +11,15 @@ import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -51,9 +51,8 @@ interface Props {
 export default function Review({ address, amount, api, chain, chilled, estimatedFee, formatted, hasNominator, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -65,7 +64,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
   const decimal = api?.registry?.chainDecimals[0] ?? 1;
   const token = api?.registry?.chainTokens[0] ?? '';
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -200,7 +199,7 @@ export default function Review({ address, amount, api, chain, chilled, estimated
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={unstake}
           proxiedAddress={formatted}

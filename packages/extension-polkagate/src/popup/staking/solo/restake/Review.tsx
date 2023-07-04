@@ -11,20 +11,20 @@ import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { AnyTuple } from '@polkadot/types/types';
 
 import { Container } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
-import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
+import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
@@ -44,11 +44,10 @@ interface Props {
 export default function Review({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
   const token = useToken(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -60,7 +59,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
   const amountInHuman = amountToHuman(amount, decimal);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -175,7 +174,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={unstake}
           proxiedAddress={formatted}

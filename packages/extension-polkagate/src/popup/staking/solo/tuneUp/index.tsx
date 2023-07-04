@@ -10,7 +10,7 @@
 
 import { Divider, Grid, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
@@ -19,8 +19,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Progress, ShortAddress, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
+import { ActionContext, Motion, PasswordUseProxyConfirm, Progress, ShortAddress, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useApi, useChain, useChainName, useFormatted, useNeedsPutInFrontOf, useNeedsRebag, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -28,7 +28,6 @@ import getLogo from '../../../../util/getLogo';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
-
 
 export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
@@ -46,9 +45,8 @@ export default function TuneUp(): React.ReactElement {
   const rebagInfo = useNeedsRebag(address);
 
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
 
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -59,7 +57,7 @@ export default function TuneUp(): React.ReactElement {
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const rebaged = api && api.tx.voterList.rebag;
   const putInFrontOf = api && api.tx.voterList.putInFrontOf;
 
@@ -214,7 +212,7 @@ export default function TuneUp(): React.ReactElement {
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={selectedProxyAddress}

@@ -7,15 +7,15 @@ import type { Balance } from '@polkadot/types/interfaces';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, Identity, ShowBalance, Warning } from '../../../../components';
-import { useAccountName, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { Identity, ShowBalance, Warning } from '../../../../components';
+import { useAccountDisplay, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { broadcast } from '../../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
@@ -24,10 +24,10 @@ import { DraggableModal } from '../../components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../../components/SelectProxyModal';
 import WaitScreen from '../../partials/WaitScreen';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 import { Track } from '../../utils/types';
 import DisplayValue from '../castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -53,9 +53,8 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
   const decimal = useDecimal(address);
   const token = useToken(address);
   const theme = useTheme();
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const balances = useBalances(address);
-  const { accounts } = useContext(AccountContext);
   const proxies = useProxies(api, formatted);
 
   const proxyItems = useMemo(() =>
@@ -72,7 +71,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
   const tx = api && api.tx.referenda.placeDecisionDeposit;
   const amount = track?.[1]?.decisionDeposit;
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   useEffect(() => {
     if (!formatted || !tx) {

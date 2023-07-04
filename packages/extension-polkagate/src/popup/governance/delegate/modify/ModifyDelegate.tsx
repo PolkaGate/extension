@@ -11,15 +11,15 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
-import { useAccountInfo, useAccountName, useApi, useChain, useCurrentBlockNumber, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
+import { Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useAccountInfo, useApi, useChain, useCurrentBlockNumber, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
 import { signAndSend } from '../../../../util/api';
@@ -28,9 +28,9 @@ import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } fr
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
-import TracksList from '../partial/tracksList';
+import TracksList from '../partial/TracksList';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
-import Modify from './modify';
+import Modify from './Modify';
 
 interface Props {
   address: string | undefined;
@@ -59,8 +59,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountName(address);
-  const { accounts } = useContext(AccountContext);
+  const name = useAccountDisplay(address);
   const api = useApi(address);
   const chain = useChain(address);
   const { tracks } = useTracks(address);
@@ -86,7 +85,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   const [newConviction, setNewConviction] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const undelegate = api && api.tx.convictionVoting.undelegate;
   const delegate = api && api.tx.convictionVoting.delegate;
