@@ -142,7 +142,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         subAction: 'Send',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        to: { address: recipientAddress, name: selectedProxyName || recipientName },
+        to: { address: recipientAddress, name: recipientName },
         txHash: txHash || ''
       };
 
