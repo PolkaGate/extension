@@ -157,7 +157,7 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
                   return (
                     <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, bgcolor: fade(proxyItem) ? 'primary.contrastText' : 'transparent', height: '41px', opacity: fade(proxyItem) ? 0.7 : 1, textAlign: 'center' }} xs={12}>
                       <Grid alignItems='center' container item justifyContent='left' pl='3px' xs={mode === 'None' ? 6.1 : 4.7}>
-                        <Identity api={api ?? api2} chain={chain} formatted={proxyItem.proxy.delegate} identiconSize={25} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} />
+                        <Identity api={api ?? api2} chain={chain} formatted={proxyItem.proxy.delegate} identiconSize={25} showShortAddress showSocial={false} style={{ 'div:nth-child(2)': { maxWidth: '85px' }, fontSize: '12px' }} subIdOnly />
                       </Grid>
                       <Grid alignItems='center' container height='100%' item justifyContent='center' xs={mode === 'None' ? 4.5 : 3.9}>
                         <Typography fontSize='12px' fontWeight={400}>
