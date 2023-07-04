@@ -193,7 +193,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           onConfirmClick={nominate}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', poolId ? 'NominationPools' : 'Staking']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
