@@ -108,7 +108,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
 
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock(`Unlockable at ${dateString}`);
+      return setTimeToUnlock(`Unlockable on ${dateString}`);
     }
 
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
