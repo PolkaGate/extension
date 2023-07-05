@@ -165,11 +165,7 @@ export default function AccountDetails(): React.ReactElement {
       const allRecentChains = res?.RecentChains;
       const myRecentChains = allRecentChains?.[address] as string[];
 
-      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => account.genesisHash !== chain);
-
-      myRecentChains.length > 3 && myRecentChains.shift();
-
-      myRecentChains ? setRecentChains(myRecentChains) : setRecentChains(suggestedRecent);
+      setRecentChains(myRecentChains);
     });
   }, [account, account?.genesisHash, address]);
 
@@ -181,8 +177,11 @@ export default function AccountDetails(): React.ReactElement {
     const filteredChains = recentChains.map((r) => genesisOptions.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash).filter((chain) => !isTestnetEnabled ? chain?.value !== WESTEND_GENESIS : true);
     const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
 
+    chainNames.length > 2 && chainNames.shift();
+
     return chainNames.slice(0, 2);
-  }, [account, genesisOptions, isTestnetEnabled, recentChains]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, genesisOptions, isTestnetEnabled, recentChains, account?.genesisHash]);
 
   const OthersRow = () => (
     <Grid item py='3px'>

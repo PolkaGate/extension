@@ -29,8 +29,13 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
+  useEffect(() => {
+    currentChainName && setCurrentSelectedChain(currentChainName);
+  }, [currentChainName]);
 
   useEffect(() =>
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
@@ -158,9 +163,13 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
 
     const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
+    setCurrentSelectedChain(newChainName);
     setFirstTime(false);
-    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
-  }, [address, genesisHashes, isTestnetEnabled]);
+    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((error) => {
+      setCurrentSelectedChain(currentChainName);
+      console.error(error);
+    });
+  }, [address, currentChainName, genesisHashes, isTestnetDisabled]);
 
   return (
     <>
@@ -184,8 +193,8 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           </ClickAwayListener>
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
-              src={getLogo(currentChainName)}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
+              src={getLogo(currentSelectedChain)}
+              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }
