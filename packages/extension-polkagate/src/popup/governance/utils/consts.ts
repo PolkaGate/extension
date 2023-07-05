@@ -4,9 +4,9 @@
 import { BN } from '@polkadot/util';
 
 export const MAX_WIDTH = '1280px';
-export const TRACK_LIMIT_TO_LOAD_PER_REQUEST = 15;
-export const LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST = 15;
-export const REFERENDA_LIMIT_SAVED_LOCAL = 30;
+export const LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST = 30;
+export const TRACK_LIMIT_TO_LOAD_PER_REQUEST = LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST;
+export const REFERENDA_LIMIT_SAVED_LOCAL = 2 * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST;
 
 export const FINISHED_REFERENDUM_STATUSES = ['Cancelled', 'Confirmed', 'Executed', 'Rejected', 'TimedOut'];
 export const GOVERNANCE_PROXY = ['Any', 'NonTransfer', 'Governance'];
