@@ -212,7 +212,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
               </DisplayValue>
               <DisplayValue title={t<string>('Vote Multiplier')}>
                 <Typography fontSize='28px' fontWeight={400}>
-                  {`${classicDelegateInformation.delegateConviction}x`}
+                  {`${classicDelegateInformation.delegateConviction ? classicDelegateInformation.delegateConviction : 0.1}x`}
                 </Typography>
               </DisplayValue>
               <DisplayValue title={t<string>('Number of Referenda Categories')}>
