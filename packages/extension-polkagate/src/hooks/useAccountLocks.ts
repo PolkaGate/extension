@@ -107,7 +107,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
   const chain = useChain(address);
   const currentBlock = useCurrentBlockNumber(address);
 
-  const [info, setInfo] = useState<Info|null>();
+  const [info, setInfo] = useState<Info | null>();
 
   useEffect(() => {
     if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
@@ -176,7 +176,11 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       }
 
       if (!refIds.length) {
-        return setInfo(null);
+        return setInfo({
+          priors: mayBePriors,
+          referenda: null,
+          votes: maybeVotes
+        });
       }
 
       const optTallies = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
