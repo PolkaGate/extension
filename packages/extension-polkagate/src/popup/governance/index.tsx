@@ -28,7 +28,7 @@ import { TrackStats } from './TrackStats';
 
 export type Fellowship = [string, number];
 
-export default function Governance(): React.ReactElement {
+export default function Governance (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { state } = useLocation();

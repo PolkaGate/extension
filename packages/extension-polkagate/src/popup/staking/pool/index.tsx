@@ -22,7 +22,7 @@ import { ActionContext, FormatBalance, FormatBalance2, HorizontalMenuItem, Ident
 import { useApi, useBalances, useChain, useDecimal, useFormatted, useMyAccountIdentity, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsStakeReview from './rewards/Stake';
@@ -83,7 +83,7 @@ export default function Index(): React.ReactElement {
   useEffect(() => {
     if (staked?.isZero() && pool === null) {
       setShake(true);
-      setTimeout(() => setShake(false), TIME_TO_SHAKE_STAKE_ICON);
+      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
     }
   }, [pool, pool?.bondedPool?.state, shake, staked]);
 

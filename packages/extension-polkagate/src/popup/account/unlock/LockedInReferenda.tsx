@@ -5,7 +5,7 @@
 
 /**
  * @description
- * this component shows an account information in detail
+ * this component shows an account locked tokens information
  * */
 
 import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
@@ -18,8 +18,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { Infotip, ShowBalance } from '../../../components';
-import { useAccountLocks, useApi, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
+import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
+import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import blockToDate from '../../crowdloans/partials/blockToDate';
 import Review from './Review';
 
@@ -34,6 +35,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const price = usePrice(address);
   const formatted = useFormatted(address);
   const decimal = useDecimal(address);
+  const chain = useChain(address);
   const token = useToken(address);
   const delegatedBalance = useHasDelegated(address);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
@@ -45,6 +47,14 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const [totalLocked, setTotalLocked] = useState<BN | null>();
   const [timeToUnlock, setTimeToUnlock] = useState<string>();
   const [miscRefLock, setMiscRefLock] = useState<BN>();
+  const [shake, setShake] = useState<boolean>();
+
+  useEffect(() => {
+    if (unlockableAmount && !unlockableAmount.isZero()) {
+      setShake(true);
+      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
+    }
+  }, [unlockableAmount]);
 
   const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
@@ -90,7 +100,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
     if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing 
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock('Locked in ongoing referenda.');
+      return setTimeToUnlock('Locked in ongoing referenda');
     }
 
     if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
@@ -107,8 +117,8 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
   useEffect(() => {
-    if (!api?.query?.balances || !formatted) {
-      return;
+    if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
+      return setMiscRefLock(undefined);
     }
 
     // eslint-disable-next-line no-void
@@ -119,11 +129,11 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
         setMiscRefLock(foundRefLock?.amount);
       }
     });
-  }, [api, formatted]);
+  }, [api, chain?.genesisHash, formatted]);
 
   useEffect(() => {
     if (!lockedInRef && !delegatedBalance && !miscRefLock) {
-      return;
+      return setTotalLocked(undefined);
     }
 
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
@@ -158,8 +168,9 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
               <FontAwesomeIcon
                 color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
                 icon={faUnlockAlt}
-                style={{ height: '25px' }}
                 onClick={(unlockableAmount && !unlockableAmount.isZero()) ? () => setShowReview(true) : () => null}
+                shake={shake}
+                style={{ height: '25px' }}
               />
             </Infotip>
           </Grid>
