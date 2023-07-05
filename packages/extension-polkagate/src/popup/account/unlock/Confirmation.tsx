@@ -6,9 +6,9 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress } from '../../../components';
+import { Motion, Popup, ShortAddress, TwoButtons } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
-import { ThroughProxy } from '../../../partials';
+import { HeaderBrand, SubTitle, ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
@@ -16,10 +16,14 @@ import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 interface Props {
   address: string | undefined;
   txInfo: TxInfo;
-  handleClose: () => void;
+  showConfirmation: boolean;
+  primaryBtnText: string;
+  onPrimaryBtnClick: () => void;
+  secondaryBtnText?: string;
+  onSecondaryBtnClick?: () => void;
 }
 
-export default function Confirmation({ address, handleClose, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 
@@ -43,68 +47,74 @@ export default function Confirmation({ address, handleClose, txInfo }: Props): R
 
   return (
     <Motion>
-      <FailSuccessIcon
-        showLabel={false}
-        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
-        success={txInfo.success}
-      />
-      {txInfo?.failureText &&
-        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'        >
-          {txInfo.failureText}
-        </Typography>
-      }
-      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Account holder')}:
-        </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {txInfo.from.name}
-        </Typography>
-        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
-        </Grid>
-      </Grid>
-      {txInfo.throughProxy &&
-        <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-        </Grid>
-      }
-      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
-      </Grid>
-      <DisplayInfo
-        caption={t<string>('Unlock value:')}
-        value={t<string>(`${txInfo.amount} {{token}}`, { replace: { token } })}
-      />
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
-      {txInfo?.txHash &&
-        <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
-          <Grid container item width='fit-content'>
-            <Typography pr='5px'>{t<string>('Hash')}:</Typography>
-          </Grid>
-          <Grid container item width='fit-content'>
-            <ShortAddress
-              address={txInfo.txHash}
-              charsCount={6}
-              showCopy
-              style={{ fontSize: '16px' }}
-            />
+      <Popup show={showConfirmation}>
+        <HeaderBrand
+          shortBorder
+          text={t<string>('Unlocking')}
+        />
+        <SubTitle label={txInfo.success ? t<string>('Completed') : t<string>('Failed')} />
+        <FailSuccessIcon
+          showLabel={false}
+          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          success={txInfo.success}
+        />
+        {txInfo?.failureText &&
+          <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'        >
+            {txInfo.failureText}
+          </Typography>
+        }
+        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+            {t<string>('Account holder')}:
+          </Typography>
+          <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+            {txInfo.from.name}
+          </Typography>
+          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+            <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
           </Grid>
         </Grid>
-      }
-      {
-        txInfo?.txHash &&
-        <Grid container justifyContent='center' pt='5px'>
-          <Explorer chainName={chainName} txHash={txInfo?.txHash} />
+        {txInfo.throughProxy &&
+          <Grid container m='auto' maxWidth='92%'>
+            <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
+          </Grid>
+        }
+        <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
-      }
-      <PButton
-        _ml={0}
-        _mt='30px'
-        _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
-      />
+        <DisplayInfo
+          caption={t<string>('Unlock value:')}
+          value={t<string>(`${txInfo.amount} {{token}}`, { replace: { token } })}
+        />
+        <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+        {txInfo?.txHash &&
+          <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
+            <Grid container item width='fit-content'>
+              <Typography pr='5px'>{t<string>('Hash')}:</Typography>
+            </Grid>
+            <Grid container item width='fit-content'>
+              <ShortAddress
+                address={txInfo.txHash}
+                charsCount={6}
+                showCopy
+                style={{ fontSize: '16px' }}
+              />
+            </Grid>
+          </Grid>
+        }
+        {
+          txInfo?.txHash &&
+          <Grid container justifyContent='center' pt='5px'>
+            <Explorer chainName={chainName} txHash={txInfo?.txHash} />
+          </Grid>
+        }
+        <TwoButtons
+          onPrimaryClick={onPrimaryBtnClick}
+          onSecondaryClick={onSecondaryBtnClick}
+          primaryBtnText={primaryBtnText}
+          secondaryBtnText={secondaryBtnText}
+        />
+      </Popup>
     </Motion>
   );
 }

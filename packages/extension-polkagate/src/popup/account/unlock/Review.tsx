@@ -9,25 +9,24 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { AnyTuple } from '@polkadot/types/types';
 
 import { useTheme } from '@emotion/react';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, isBn } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
-import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
+import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
-import Confirmation from '../../../partials/Confirmation';
 import { signAndSend } from '../../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
+import Confirmation from './Confirmation';
 
 interface Props {
   address: string;
@@ -45,11 +44,10 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
   const theme = useTheme();
   const proxies = useProxies(api, formatted);
   const chain = useChain(address);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -61,7 +59,8 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
   const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
+
   const amount = useMemo(() => amountToHuman(unlockableAmount, decimal), [decimal, unlockableAmount]);
   const remove = api.tx.convictionVoting.removeVote; // (class, index)
   const unlockClass = api.tx.convictionVoting.unlock; // (class)
@@ -96,9 +95,7 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
 
   const goToAccount = useCallback(() => {
     setShow(false);
-
-    onAction(`/solo/${address}`);
-  }, [address, onAction, setShow]);
+  }, [setShow]);
 
   const goToHome = useCallback(() => {
     setShow(false);
@@ -127,13 +124,7 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
       const extrinsic = batchAll(params);
       const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, extrinsic) : extrinsic;
 
-      // const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
-
-      let block = 102030
-      let failureText;
-      let fee = '1.23'
-      let success = true;
-      let txHash = '0x'
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
 
       const info = {
         action: 'Unlock Referenda',
@@ -209,7 +200,7 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={unlockRef}
           proxiedAddress={formatted}
@@ -225,24 +216,22 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
             width: '92%'
           }}
         />
-        <WaitScreen
-          show={showWaitScreen}
-          title={t('Staking')}
-        />
-        {txInfo && (
-          <Confirmation
-            headerTitle={t('Staking')}
-            onPrimaryBtnClick={goToAccount}
-            onSecondaryBtnClick={goToHome}
-            primaryBtnText={t('My Account')}
-            secondaryBtnText={t('Home')}
-            showConfirmation={showConfirmation}
-            txInfo={txInfo}
-          >
-            {/* <TxDetail settings={settings} txInfo={txInfo} /> */}
-          </Confirmation>)
-        }
       </Popup>
+      <WaitScreen
+        show={showWaitScreen}
+        title={t('Staking')}
+      />
+      {txInfo && (
+        <Confirmation
+          address={address}
+          onPrimaryBtnClick={goToAccount}
+          onSecondaryBtnClick={goToHome}
+          primaryBtnText={t('My Account')}
+          secondaryBtnText={t('Home')}
+          showConfirmation={showConfirmation}
+          txInfo={txInfo}
+        />)
+      }
     </Motion>
   );
 }
