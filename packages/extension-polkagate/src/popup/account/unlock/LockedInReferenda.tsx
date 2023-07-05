@@ -150,7 +150,6 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
 
   const onUnlock = useCallback(() => {
     setShowReview(true);
-    setRefresh(true);
   }, []);
 
   return (
