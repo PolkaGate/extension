@@ -95,19 +95,23 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   return locks;
 }
 
+type Info = {
+  referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null,
+  votes: [BN, BN[], PalletConvictionVotingVoteCasting][],
+  priors: Lock[]
+}
+
 export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined | null {
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const currentBlock = useCurrentBlockNumber(address);
 
-  const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null>();
-  const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
-  const [priors, setPriors] = useState<Lock[]>([]);
+  const [info, setInfo] = useState<Info|null>();
 
   useEffect(() => {
     if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
-      return;
+      return setInfo(undefined);
     }
 
     getLockClass();
@@ -123,16 +127,20 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         : null;
 
       if (!lockClasses) {
-        return setReferenda(null);
+        return setInfo(null);
       }
 
       const params: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
 
-      const votingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
+      const maybeVotingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
+
+      if (!maybeVotingFor) {
+        return; // has not voted!! or any issue
+      }
 
       const mayBePriors: Lock[] = [];
 
-      const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
+      const maybeVotes = maybeVotingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
           return null;
         }
@@ -141,7 +149,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         const classId = params[index][1];
 
         if (!casting.prior[0].eq(BN_ZERO)) {
-          // mayBePriors.push(casting.prior);
           mayBePriors.push({
             classId,
             endBlock: casting.prior[0],
@@ -158,13 +165,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         ];
       }).filter((v): v is [BN, BN[], PalletConvictionVotingVoteCasting] => !!v);
 
-      setVotes(votes);
-      setPriors([...mayBePriors]);
-
       let refIds: BN[] = [];
 
-      if (votes && votes.length) {
-        const ids = votes.reduce<BN[]>((all, [, ids]) => all.concat(ids), []);
+      if (maybeVotes && maybeVotes.length) {
+        const ids = maybeVotes.reduce<BN[]>((all, [, ids]) => all.concat(ids), []);
 
         if (ids.length) {
           refIds = ids;
@@ -172,12 +176,12 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       }
 
       if (!refIds.length) {
-        return setReferenda(null);
+        return setInfo(null);
       }
 
       const optTallies = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
 
-      const referenda = optTallies
+      const maybeReferenda = optTallies
         ? optTallies.map((v, index) =>
           v.isSome
             ? [refIds[index], v.unwrap() as PalletReferendaReferendumInfoConvictionVotingTally]
@@ -185,12 +189,17 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         ).filter((v): v is [BN, PalletReferendaReferendumInfoConvictionVotingTally] => !!v)
         : null;
 
-      setReferenda(referenda);
+      setInfo({
+        priors: mayBePriors,
+        referenda: maybeReferenda,
+        votes: maybeVotes
+      });
     }
   }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote]);
 
   return useMemo(() => {
-    if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && ((votes && referenda) || priors?.length) && currentBlock) {
+    if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && info && currentBlock) {
+      const { priors, referenda, votes } = info;
       const accountLocks = votes && referenda ? getLocks(api, palletVote, votes, referenda) : [];
 
       // /** add priors */
@@ -203,10 +212,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       return accountLocks;
     }
 
-    if (referenda === null) {
+    if (info === null) {
       return null;
     }
 
     return undefined;
-  }, [api, chain?.genesisHash, currentBlock, notExpired, palletVote, priors, referenda, votes]);
+  }, [api, chain?.genesisHash, info, currentBlock, palletVote, notExpired]);
 }
