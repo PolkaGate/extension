@@ -21,7 +21,7 @@ import CastVote from './castVote';
 import Chronology from './Chronology';
 import Comments from './Comments';
 import Description from './Description';
-import MetaData from './MetaData';
+import Metadata from './Metadata';
 import MyVote from './myVote';
 import StatusInfo from './StatusInfo';
 import Support from './Support';
@@ -152,7 +152,7 @@ export default function ReferendumPost(): React.ReactElement {
                 currentTreasuryApprovalList={currentTreasuryApprovalList}
                 referendum={referendum}
               />
-              <MetaData
+              <Metadata
                 address={address}
                 decisionDepositPayer={referendum?.decisionDepositPayer}
                 referendum={referendum}

@@ -22,7 +22,7 @@ import { useApi, useChain, useChainName, useCurrentBlockNumber, useTranslation }
 import { STATUS_COLOR, TREASURY_TRACKS } from '../utils/consts';
 import { Proposal, Referendum, ReferendumHistory } from '../utils/types';
 import { pascalCaseToTitleCase, toSnakeCase } from '../utils/util';
-import { hexAddressToFormatted } from './MetaData';
+import { hexAddressToFormatted } from './Metadata';
 
 const toFormattedDate = ((dateString: Date | undefined): string | undefined => {
   if (!dateString) {
