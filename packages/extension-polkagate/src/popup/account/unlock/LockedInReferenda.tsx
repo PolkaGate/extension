@@ -157,7 +157,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
               }
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' xs={1.2} sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer' }}>
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', width: '26px' }}>
             <Infotip
               text={api && unlockableAmount && !unlockableAmount.isZero()
                 ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
