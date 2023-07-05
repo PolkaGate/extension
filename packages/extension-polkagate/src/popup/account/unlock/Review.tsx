@@ -96,9 +96,10 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
 
   const goToAccount = useCallback(() => {
     setShow(false);
+    setRefresh(true);
 
     chain?.genesisHash && onAction(`/account/${chain.genesisHash}/${address}`);
-  }, [address, onAction, setShow, chain?.genesisHash]);
+  }, [address, onAction, setShow, chain?.genesisHash, setRefresh]);
 
   const goToHome = useCallback(() => {
     setShow(false);
@@ -148,12 +149,11 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
-      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, params, selectedProxyAddress, password, batchAll, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain, setRefresh]);
+  }, [formatted, params, selectedProxyAddress, password, batchAll, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
