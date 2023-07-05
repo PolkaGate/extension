@@ -19,7 +19,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { Identicon, Motion, Popup } from '../../components';
 import { useAccountName, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
-import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
+import { STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo } from '../../util/types';
 import LabelBalancePrice from './LabelBalancePrice';
 
@@ -77,12 +77,12 @@ export default function Others({ address, balances, chain, identity, setShow, sh
           </Grid>
         </Container>
         <Container disableGutters sx={{ maxHeight: `${parent.innerHeight - 150}px`, overflowY: 'auto', px: '15px' }}>
-          {STAKING_CHAINS.includes(chain?.genesisHash) &&
+          {chain?.genesisHash && STAKING_CHAINS.includes(chain.genesisHash) &&
             <LabelBalancePrice address={address} balances={balances} label={'Free Balance'} />
           }
-          {GOVERNANCE_CHAINS.includes(chain?.genesisHash) &&
+          {/* {chain?.genesisHash && !GOVERNANCE_CHAINS.includes(chain.genesisHash) &&
             <LabelBalancePrice address={address} balances={balances} label={'Locked Balance'} />
-          }
+          } */}
           <LabelBalancePrice address={address} balances={balances} label={'Voting Balance'} />
         </Container>
       </Popup>
