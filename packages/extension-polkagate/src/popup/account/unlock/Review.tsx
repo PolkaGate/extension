@@ -96,8 +96,8 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
   const goToAccount = useCallback(() => {
     setShow(false);
 
-    onAction(`/account/${address}`);
-  }, [address, onAction, setShow]);
+    chain?.genesisHash && onAction(`/account/${chain.genesisHash}/${address}`);
+  }, [address, onAction, setShow, chain?.genesisHash]);
 
   const goToHome = useCallback(() => {
     setShow(false);
