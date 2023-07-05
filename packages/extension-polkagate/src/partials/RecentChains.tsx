@@ -29,7 +29,7 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
-  const [currentSelectedChain, setCurrentSelectedChain] = useState<string>();
+  const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
 
