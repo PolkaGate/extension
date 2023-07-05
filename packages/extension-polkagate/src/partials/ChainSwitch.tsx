@@ -32,11 +32,14 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
   const genesisHashes = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
-  const [currentChainNameJustSelected, setCurrentChainNameJustSelected] = useState<string>();
-  const currentChainName = currentChainNameJustSelected || currentChainNameFromAccount;
+  const [currentChainName, setCurrentChainName] = useState<string | undefined>(currentChainNameFromAccount);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
+  useEffect(() => {
+    currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);
+  }, [currentChainNameFromAccount]);
 
   useEffect(() =>
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
@@ -150,10 +153,10 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
 
     const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
-    setCurrentChainNameJustSelected(newChainName);
+    setCurrentChainName(newChainName);
     setFirstTime(false);
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((err) => {
-      setCurrentChainNameJustSelected(currentChainNameFromAccount);
+      setCurrentChainName(currentChainNameFromAccount);
       console.error(err);
     });
   }, [address, currentChainNameFromAccount, genesisHashes, isTestnetDisabled]);
