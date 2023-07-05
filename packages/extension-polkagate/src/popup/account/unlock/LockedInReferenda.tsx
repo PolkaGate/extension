@@ -28,6 +28,8 @@ interface Props {
   address: string | undefined;
 }
 
+const noop = () => null;
+
 export default function LockedInReferenda({ address }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -37,8 +39,11 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const decimal = useDecimal(address);
   const chain = useChain(address);
   const token = useToken(address);
-  const delegatedBalance = useHasDelegated(address);
-  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
+
+  const [refresh, setRefresh] = useState<boolean>();
+
+  const delegatedBalance = useHasDelegated(address, refresh);
+  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refresh);
   const currentBlock = useCurrentBlockNumber(address);
 
   const [showReview, setShowReview] = useState(false);
@@ -66,7 +71,9 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   }, []);
 
   useEffect(() => {
-    console.log('referendaLocks:', referendaLocks);
+    if (refresh) {
+      setLockedInReferenda(undefined); // TODO: needs double check
+    }
 
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
@@ -86,12 +93,6 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
 
     setLockedInReferenda(biggestVote);
     const indexOfBiggestNotLockable = referendaLocks.findIndex((l) => l.endBlock.gtn(currentBlock));
-
-    console.log('indexOfBiggestNotLockable:', referendaLocks[indexOfBiggestNotLockable]?.endBlock?.toString());
-    console.log('referendaLocks:', referendaLocks);
-    console.log('currentBlock:', currentBlock);
-    console.log('endblock:', referendaLocks?.map(({ endBlock }) => endBlock.toNumber()));
-    api && console.log('totals:', referendaLocks?.map(({ total }) => api.createType('Balance', total).toHuman()));
 
     if (indexOfBiggestNotLockable === -1) { // all is unlockable
       return setUnlockableAmount(biggestVote);
@@ -114,11 +115,15 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
 
     setUnlockableAmount(biggestVote.sub(amountStillLocked));
-  }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
+  }, [api, biggestOngoingLock, currentBlock, referendaLocks, refresh]);
 
   useEffect(() => {
     if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return setMiscRefLock(undefined);
+    }
+
+    if (refresh) {
+      setMiscRefLock(undefined);
     }
 
     // eslint-disable-next-line no-void
@@ -129,15 +134,24 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
         setMiscRefLock(foundRefLock?.amount);
       }
     });
-  }, [api, chain?.genesisHash, formatted]);
+  }, [api, chain?.genesisHash, formatted, refresh]);
 
   useEffect(() => {
+    if (refresh) {
+      setTotalLocked(undefined);
+    }
+
     if (!lockedInRef && !delegatedBalance && !miscRefLock) {
       return setTotalLocked(undefined);
     }
 
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
-  }, [delegatedBalance, lockedInRef, miscRefLock]);
+  }, [delegatedBalance, lockedInRef, miscRefLock, refresh]);
+
+  const onUnlock = useCallback(() => {
+    setShowReview(true);
+    setRefresh(true);
+  }, []);
 
   return (
     <>
@@ -168,7 +182,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
               <FontAwesomeIcon
                 color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
                 icon={faUnlockAlt}
-                onClick={(unlockableAmount && !unlockableAmount.isZero()) ? () => setShowReview(true) : () => null}
+                onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
                 shake={shake}
                 style={{ height: '25px' }}
               />
@@ -182,6 +196,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
           address={address}
           api={api}
           classToUnlock={classToUnlock}
+          setRefresh={setRefresh}
           setShow={setShowReview}
           show={showReview}
           totalLocked={lockedInRef}

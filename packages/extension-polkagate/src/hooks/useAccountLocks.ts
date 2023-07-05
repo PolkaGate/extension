@@ -101,7 +101,7 @@ type Info = {
   priors: Lock[]
 }
 
-export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined | null {
+export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -112,6 +112,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
   useEffect(() => {
     if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
       return setInfo(undefined);
+    }
+
+    if (refresh) {
+      setInfo(undefined);
     }
 
     getLockClass();
@@ -199,7 +203,7 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         votes: maybeVotes
       });
     }
-  }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote]);
+  }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote, refresh]);
 
   return useMemo(() => {
     if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && info && currentBlock) {

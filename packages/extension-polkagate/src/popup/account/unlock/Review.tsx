@@ -36,9 +36,10 @@ interface Props {
   show: boolean;
   unlockableAmount: BN;
   totalLocked: BN;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function Review({ address, api, classToUnlock, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
+export default function Review({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const theme = useTheme();
@@ -147,11 +148,12 @@ export default function Review({ address, api, classToUnlock, setShow, show, tot
 
       setShowWaitScreen(false);
       setShowConfirmation(true);
+      setRefresh(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, params, selectedProxyAddress, password, batchAll, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain]);
+  }, [formatted, params, selectedProxyAddress, password, batchAll, selectedProxy, api, amount, estimatedFee, name, selectedProxyName, chain, setRefresh]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);

@@ -11,7 +11,7 @@ import useApi from './useApi';
 import useFormatted from './useFormatted';
 import { useChain, useTracks } from '.';
 
-export default function useHasDelegated(address: string | undefined): BN | null | undefined {
+export default function useHasDelegated(address: string | undefined, refresh?: boolean): BN | null | undefined {
   const api = useApi(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -20,6 +20,10 @@ export default function useHasDelegated(address: string | undefined): BN | null 
   const [hasDelegated, setHasDelegated] = useState<BN | null>();
 
   useEffect(() => {
+    if (refresh) {
+      setHasDelegated(undefined);
+    }
+
     if (!api || !formatted || !tracks || !tracks?.length || !api?.query?.convictionVoting) {
       return;
     }
@@ -42,7 +46,7 @@ export default function useHasDelegated(address: string | undefined): BN | null 
 
       maxDelegated.isZero() ? setHasDelegated(null) : setHasDelegated(maxDelegated);
     });
-  }, [api, chain?.genesisHash, formatted, tracks]);
+  }, [api, chain?.genesisHash, formatted, tracks, refresh]);
 
   return hasDelegated;
 }
