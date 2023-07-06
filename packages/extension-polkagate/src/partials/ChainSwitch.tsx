@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 import { twoItemCurveBackgroundBlack, twoItemCurveBackgroundWhite } from '../assets/icons';
 import { useAccount, useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { CHAINS_WITH_BLACK_LOGO, CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { sanitizeChainName } from '../util/utils';
 
@@ -192,7 +192,7 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
               : <Grid item onClick={toggleChainSwitch} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
                 <Avatar
                   src={getLogo(currentChainName)}
-                  sx={{ borderRadius: '50%', filter: (currentChainName === 'Kusama' && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '28px', width: '28px' }}
+                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '28px', width: '28px' }}
                 />
               </Grid>
             }
@@ -238,7 +238,7 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
                     border: 'none',
                     borderRadius: '50%',
                     boxShadow: `0px 0px 5px ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'}`,
-                    filter: (name === 'Kusama' && theme.palette.mode === 'dark') || invert ? 'invert(1)' : '',
+                    filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') || invert ? 'invert(1)' : '',
                     height: '30px',
                     width: '30px'
                   }}

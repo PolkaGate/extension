@@ -15,12 +15,14 @@ import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { Proxy, ProxyItem } from '../../../util/types';
+import { getSubstrateAddress } from '../../../util/utils';
 
 export default function AddProxy(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
   const [realAddress, setRealAddress] = useState<string | undefined>();
+  const [substratedAddress, setSubstrated] = useState<string | undefined>();
   const [chain, setChain] = useState<Chain>();
   const [name, setName] = useState<string | null | undefined>();
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
@@ -28,6 +30,10 @@ export default function AddProxy(): React.ReactElement {
   const genesisOptions = useGenesisHashOptions();
 
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
+
+  useEffect(() => {
+    realAddress && setSubstrated(getSubstrateAddress(realAddress));
+  }, [realAddress]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -95,7 +101,7 @@ export default function AddProxy(): React.ReactElement {
         onChange={_onNameChange}
       />
       <SelectChain
-        address={realAddress}
+        address={substratedAddress}
         defaultValue={chain?.genesisHash}
         disabledItems={disabledItems}
         icon={getLogo(chain ?? undefined)}
