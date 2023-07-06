@@ -29,9 +29,9 @@ import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import StakingOption from '../staking/Options';
-import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
+import LockedInReferenda from './unlock/LockedInReferenda';
 import Others from './Others';
 
 export default function AccountDetails(): React.ReactElement {
@@ -157,7 +157,7 @@ export default function AccountDetails(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!address || !genesisHash) {
+    if (!address || !account) {
       return;
     }
 
@@ -167,20 +167,21 @@ export default function AccountDetails(): React.ReactElement {
 
       setRecentChains(myRecentChains);
     });
-  }, [genesisHash, address]);
+  }, [account, account?.genesisHash, address]);
 
   const chainNamesToShow = useMemo(() => {
-    if (!(genesisOptions.length) || !(recentChains?.length) || !genesisHash) {
+    if (!(genesisOptions.length) || !(recentChains?.length) || !account) {
       return undefined;
     }
 
-    const filteredChains = recentChains.map((r) => genesisOptions.find((g) => g.value === r)).filter((chain) => chain?.value !== genesisHash).filter((chain) => !isTestnetEnabled ? chain?.value !== WESTEND_GENESIS : true);
+    const filteredChains = recentChains.map((r) => genesisOptions.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash).filter((chain) => !isTestnetEnabled ? chain?.value !== WESTEND_GENESIS : true);
     const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
 
-    chainNames.length > 2 && chainNames.pop();
+    chainNames.length > 2 && chainNames.shift();
 
     return chainNames.slice(0, 2);
-  }, [genesisHash, genesisOptions, isTestnetEnabled, recentChains]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, genesisOptions, isTestnetEnabled, recentChains, account?.genesisHash]);
 
   const OthersRow = () => (
     <Grid item py='3px'>
