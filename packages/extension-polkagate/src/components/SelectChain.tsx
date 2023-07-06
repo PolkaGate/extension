@@ -6,7 +6,7 @@
 import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useChainName } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccount, useChainName } from '@polkadot/extension-polkagate/src/hooks';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
@@ -32,6 +32,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const previousGenesisHash = useAccount(address)?.genesisHash;
   const _disabledItems = useMemo((): (string | number)[] | undefined => {
     if (disabledItems && !isTestnetEnabled) {
       return disabledItems.concat(TEST_NETS) as (string | number)[];
@@ -67,15 +68,22 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
             accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
           } else {
             INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
-            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
+            accountsAndChains[address] = [currentGenesisHash, ...INITIAL_RECENT_CHAINS_GENESISHASH];
           }
 
           // eslint-disable-next-line no-void
           void chrome.storage.local.set({ RecentChains: accountsAndChains });
         } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-          myRecentChains.unshift(currentGenesisHash);
           myRecentChains.pop();
+          myRecentChains.unshift(currentGenesisHash);
           accountsAndChains[address] = myRecentChains;
+
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ RecentChains: accountsAndChains });
+        } else if (myRecentChains && myRecentChains.includes(currentGenesisHash)) {
+          const newlist = myRecentChains.filter((chain) => previousGenesisHash ? chain !== previousGenesisHash : true).unshift(currentGenesisHash);
+
+          accountsAndChains[address] = newlist;
 
           // eslint-disable-next-line no-void
           void chrome.storage.local.set({ RecentChains: accountsAndChains });
