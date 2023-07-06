@@ -39,7 +39,7 @@ function AccountMenu({ address, isMenuOpen, setShowMenu, noMargin }: Props): Rea
   const canDerive = !(account?.isExternal || account?.isHardware);
 
   const _onForgetAccount = useCallback(() => {
-    account?.isExternal && onAction(`/forget/${address}/${account.isExternal}`);
+    onAction(`/forget/${address}/${account.isExternal}`);
   }, [address, account, onAction]);
 
   const _goToDeriveAcc = useCallback(
