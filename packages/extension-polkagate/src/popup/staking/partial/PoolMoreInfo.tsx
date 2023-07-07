@@ -28,15 +28,16 @@ interface Props {
   setShowPoolInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+type TabTitles = 'Ids' | 'Members' | 'Reward' | 'Roles' | 'None';
 interface CollapseProps {
-  mode: 'Roles' | 'Ids' | 'Members' | 'Reward';
+  mode: TabTitles;
   pool: MyPoolInfo;
   title: string;
   show: boolean;
   open: () => void;
 }
 
-export default function PoolMoreInfo ({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
@@ -50,14 +51,14 @@ export default function PoolMoreInfo ({ address, api, chain, pool, poolId, setSh
     return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
   }, [poolMembers]);
 
-  const [itemToShow, setShow] = useState<'Ids' | 'Members' | 'Reward' | 'Roles' | 'None'>('Roles');
+  const [itemToShow, setShow] = useState<TabTitles>('Roles');
 
   const _closeMenu = useCallback(
     () => setShowPoolInfo(false),
     [setShowPoolInfo]
   );
 
-  const openTab = useCallback((tab: 'Ids' | 'Members' | 'Reward' | 'Roles') => {
+  const openTab = useCallback((tab: TabTitles) => {
     setShow(tab === itemToShow ? 'None' : tab);
   }, [itemToShow]);
 

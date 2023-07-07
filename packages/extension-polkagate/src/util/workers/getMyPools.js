@@ -36,6 +36,7 @@ async function getMyPools(address, endpoint) {
 
       return {
         bondedPool: {
+          commission: bondedPool.commission,
           memberCounter: String(bondedPool.memberCounter),
           points: String(bondedPool.points),
           roles: bondedPool.roles,

@@ -49,14 +49,6 @@ export default function usePool(address?: AccountId | string, id?: number, refre
 
           // eslint-disable-next-line no-void
           void chrome.storage.local.set({ MyPools: mySavedPools });
-
-          // if (mySavedPools) {
-          //   if (mySavedPools[k]) {
-          //     delete mySavedPools[k];
-          //     // eslint-disable-next-line no-void
-          //     void chrome.storage.local.set({ MyPools: mySavedPools });
-          //   }
-          // }
         });
 
         getPoolWorker.terminate();
@@ -80,9 +72,11 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       currentToken === parsedInfo.token && setNewPool(parsedInfo);
 
       /** reset isFetching */
-      isFetching.fetching[String(stakerAddress)].getPool = false;
-      isFetching.set(isFetching.fetching);
-
+      if (isFetching.fetching[String(stakerAddress)]) {
+        isFetching.fetching[String(stakerAddress)].getPool = false;
+        isFetching.set(isFetching.fetching);
+      }
+      
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${stakerAddress}`;
