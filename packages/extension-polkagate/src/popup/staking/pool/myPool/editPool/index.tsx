@@ -6,14 +6,15 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../../util/types';
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountContext, AddressInput, AutoResizeTextarea, PButton, Popup } from '../../../../../components';
+import { AccountContext, AddressInput, AutoResizeTextarea, Input, PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
 import Review from './Review';
+import CollapseIt from './CollapseIt';
 
 interface Props {
   address: string;
@@ -35,6 +36,7 @@ export interface ChangesProps {
 
 export default function EditPool({ address, apiToUse, pool, setRefresh, setShowEdit, showEdit }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const api = useApi(address, apiToUse);
   const chain = useChain(address);
@@ -51,6 +53,14 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
   const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
+  const [collapsedName, setCollapsed] = useState<'Roles' | 'Commission' | undefined>();
+  const [newCommissionPayee, setNewCommissionPayee] = useState<string | null | undefined>();
+  const [currentCommission, setCurrentCommission] = useState<number | undefined>();
+  const [newCommissionPercent, setNewCommissionPercent] = useState<number | undefined>();
+
+  const open = useCallback((title: 'Roles' | 'Commission') => {
+    setCollapsed(title === collapsedName ? undefined : title);
+  }, [collapsedName]);
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
 
@@ -72,6 +82,11 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
     !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
     !newBouncerAddress && pool?.bondedPool?.roles && setNewBouncerAddress(pool?.bondedPool?.roles.bouncer?.toString());
+    !newCommissionPayee && setNewCommissionPayee(pool?.bondedPool?.commission?.current?.[1]?.toString());
+
+    const mayBeCommission = pool?.bondedPool?.commission?.current?.[0] || 0;
+    const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+    !newCommissionPayee && setCurrentCommission(commission);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);// needs to be run only once to initialize
 
@@ -119,57 +134,105 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
         <Grid container m='10px auto' width='92%'>
           <AutoResizeTextarea label={t<string>('Pool name')} onChange={_onPoolNameChange} value={newPoolName} />
         </Grid>
-        <Typography fontSize='16px' fontWeight={400} m='30px auto 15px' textAlign='center'>
-          {t<string>('Roles')}
-        </Typography>
-        <AddressInput
-          address={depositorAddress}
-          chain={chain}
-          disabled
-          label={'Depositor'}
-          setAddress={setDepositorAddress}
-          showIdenticon
-          style={{
-            m: '15px auto 0',
-            width: '92%'
-          }}
-        />
-        <AddressInput
-          address={newRootAddress}
-          allAddresses={allAddresses}
-          chain={chain}
-          label={'Root'}
-          setAddress={setNewRootAddress}
-          showIdenticon
-          style={{
-            m: '15px auto 0',
-            width: '92%'
-          }}
-        />
-        <AddressInput
-          address={newNominatorAddress}
-          allAddresses={allAddresses}
-          chain={chain}
-          label={'Nominator'}
-          setAddress={setNewNominatorAddress}
-          showIdenticon
-          style={{
-            m: '15px auto 0',
-            width: '92%'
-          }}
-        />
-        <AddressInput
-          address={newBouncerAddress}
-          allAddresses={allAddresses}
-          chain={chain}
-          label={t<string>('Bouncer')}
-          setAddress={setNewBouncerAddress}
-          showIdenticon
-          style={{
-            m: '15px auto 0',
-            width: '92%'
-          }}
-        />
+        <CollapseIt
+          open={open}
+          show={collapsedName === 'Roles'}
+          title={t('Roles')}
+        >
+          <>
+            <AddressInput
+              address={depositorAddress}
+              chain={chain}
+              disabled
+              label={'Depositor'}
+              setAddress={setDepositorAddress}
+              showIdenticon
+              style={{
+                m: '15px auto 0',
+                width: '98%'
+              }}
+            />
+            <AddressInput
+              address={newRootAddress}
+              allAddresses={allAddresses}
+              chain={chain}
+              label={'Root'}
+              setAddress={setNewRootAddress}
+              showIdenticon
+              style={{
+                m: '15px auto 0',
+                width: '98%'
+              }}
+            />
+            <AddressInput
+              address={newNominatorAddress}
+              allAddresses={allAddresses}
+              chain={chain}
+              label={'Nominator'}
+              setAddress={setNewNominatorAddress}
+              showIdenticon
+              style={{
+                m: '15px auto 0',
+                width: '98%'
+              }}
+            />
+            <AddressInput
+              address={newBouncerAddress}
+              allAddresses={allAddresses}
+              chain={chain}
+              label={t<string>('Bouncer')}
+              setAddress={setNewBouncerAddress}
+              showIdenticon
+              style={{
+                m: '15px auto 0',
+                width: '98%'
+              }}
+            />
+          </>
+        </CollapseIt>
+        <CollapseIt
+          open={open}
+          show={collapsedName === 'Commission'}
+          title={t('Commission')}
+        >
+          <>
+            <Grid container item>
+              <Grid container item>
+                <Typography fontSize='14px' fontWeight={400} lineHeight='25px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                  {t('Percent')}
+                </Typography>
+              </Grid>
+              <Input
+                autoCapitalize='off'
+                autoCorrect='off'
+                fontSize='18px'
+                height='32px'
+                margin='auto 0 0'
+                max={100}
+                onChange={(e) => setNewCommissionPercent(e)}
+                padding='0px'
+                placeholder={`${currentCommission}%`}
+                spellCheck={false}
+                textAlign='center'
+                theme={theme}
+                type='number'
+                width='30%'
+              />
+            </Grid>
+            <AddressInput
+              address={newCommissionPayee}
+              allAddresses={allAddresses}
+              chain={chain}
+              label={'Payee'}
+              setAddress={setNewCommissionPayee}
+              showIdenticon
+              style={{
+                m: '15px auto 0',
+                width: '98%'
+              }}
+            />
+          </>
+        </CollapseIt>
         <PButton
           _onClick={goToEdit}
           disabled={nextBtnDisable}
