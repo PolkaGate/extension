@@ -120,6 +120,18 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     changes?.newRoles?.newBouncer === undefined
     , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot]);
 
+  const onNewCommission = useCallback((e) => {
+    const value = Number(e.target.value);
+
+    if (value !== currentCommission) {
+      setNewCommissionPercent(value > 100 ? 100 : value);
+    } else {
+      setNewCommissionPercent(undefined);
+    }
+  }, [currentCommission]);
+
+  console.log('newCommissionPercent:', newCommissionPercent);
+
   return (
     <>
       <Popup show={showEdit}>
@@ -198,7 +210,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           <>
             <Grid container item>
               <Grid container item>
-                <Typography fontSize='14px' fontWeight={400} lineHeight='25px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+                <Typography fontSize='14px' fontWeight={400} lineHeight='25px' overflow='hidden' mt='10px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {t('Percent')}
                 </Typography>
               </Grid>
@@ -209,7 +221,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
                 height='32px'
                 margin='auto 0 0'
                 max={100}
-                onChange={(e) => setNewCommissionPercent(e)}
+                onChange={(e) => onNewCommission(e)}
                 padding='0px'
                 placeholder={`${currentCommission}%`}
                 spellCheck={false}
