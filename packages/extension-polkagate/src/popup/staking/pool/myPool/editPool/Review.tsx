@@ -44,6 +44,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -72,7 +73,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
 
     const calls = [];
 
-    const getRole = (role: string | undefined) => {
+    const getRole = (role: string | undefined | null) => {
       if (role === undefined) {
         return 'Noop';
       } else if (role === null) {
@@ -82,10 +83,16 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       }
     };
 
+    const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
+
     changes?.newPoolName !== undefined &&
       calls.push(setMetadata(pool.poolId, changes?.newPoolName));
-    changes?.newRoles !== undefined &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newBouncer)));
+
+    changes?.newRoles !== undefined && !Object.values(changes.newRoles).every((value) => value === undefined) &&
+      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
+
+    changes?.commission !== undefined && changes.commission.value !== undefined && (changes.commission.payee || maybeCurrentCommissionPayee) &&
+      calls.push(api.tx.nominationPools.setCommission(pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
 
     setTxCalls(calls);
 
@@ -100,7 +107,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
       setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
     }).catch(console.error);
-  }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.poolId, setMetadata]);
+  }, [api, changes, formatted, pool.poolId, setMetadata]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -211,6 +218,27 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           chain={chain}
           roleAddress={changes?.newRoles?.newBouncer}
           roleTitle={t<string>('Bouncer')}
+          showDivider
+        />
+      }
+      {changes?.commission?.value !== undefined &&
+        <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+          <Grid item>
+            <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+              {t('Commission value')}
+            </Typography>
+          </Grid>
+          <Grid fontSize='28px' fontWeight={400} item >
+            {changes.commission.value}%
+          </Grid>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+        </Grid>
+      }
+      {changes?.commission?.payee !== undefined &&
+        <ShowPoolRole
+          chain={chain}
+          roleAddress={changes.commission.payee}
+          roleTitle={t<string>('Commission payee')}
           showDivider
         />
       }

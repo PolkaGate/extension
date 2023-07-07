@@ -13,8 +13,8 @@ import { AccountContext, AddressInput, AutoResizeTextarea, Input, PButton, Popup
 import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
-import Review from './Review';
 import CollapseIt from './CollapseIt';
+import Review from './Review';
 
 interface Props {
   address: string;
@@ -26,6 +26,10 @@ interface Props {
 }
 
 export interface ChangesProps {
+  commission: {
+    payee: string | undefined | null;
+    value: number | undefined | null;
+  },
   newPoolName: string | undefined | null;
   newRoles: {
     newRoot: string | undefined | null;
@@ -45,18 +49,22 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
 
   const myPoolName = pool?.metadata;
   const myPoolRoles = pool?.bondedPool?.roles;
+  const depositorAddress = pool?.bondedPool?.roles?.depositor?.toString();
+
+  const maybeCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
+  const mayBeCommission = (pool?.bondedPool?.commission?.current?.[0] || 0) as number;
+  const commissionValue = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
-  const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
+  // const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
   const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
   const [collapsedName, setCollapsed] = useState<'Roles' | 'Commission' | undefined>();
   const [newCommissionPayee, setNewCommissionPayee] = useState<string | null | undefined>();
-  const [currentCommission, setCurrentCommission] = useState<number | undefined>();
-  const [newCommissionPercent, setNewCommissionPercent] = useState<number | undefined>();
+  const [newCommissionValue, setNewCommissionValue] = useState<number | undefined>();
 
   const open = useCallback((title: 'Roles' | 'Commission') => {
     setCollapsed(title === collapsedName ? undefined : title);
@@ -76,26 +84,25 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     setNewPoolName(name);
   }, []);
 
+  console.log('changes:', changes)
+
   useEffect(() => {
     !newPoolName && myPoolName && setNewPoolName(myPoolName);
-    !depositorAddress && pool?.bondedPool?.roles && setDepositorAddress(pool?.bondedPool?.roles.depositor.toString());
     !newRootAddress && pool?.bondedPool?.roles && setNewRootAddress(pool?.bondedPool?.roles.root?.toString());
     !newNominatorAddress && pool?.bondedPool?.roles && setNewNominatorAddress(pool?.bondedPool?.roles.nominator?.toString());
     !newBouncerAddress && pool?.bondedPool?.roles && setNewBouncerAddress(pool?.bondedPool?.roles.bouncer?.toString());
-    !newCommissionPayee && setNewCommissionPayee(pool?.bondedPool?.commission?.current?.[1]?.toString());
 
-    const mayBeCommission = pool?.bondedPool?.commission?.current?.[0] || 0;
-    const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
-    !newCommissionPayee && setCurrentCommission(commission);
+    !newCommissionPayee && maybeCommissionPayee && setNewCommissionPayee(maybeCommissionPayee);
+    !newCommissionPayee && commissionValue && setNewCommissionValue(commissionValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);// needs to be run only once to initialize
 
-  const getChangedValue = (newValue: string | null | undefined, oldValue: string | undefined): undefined | null | string => {
-    if (!newValue && oldValue) {
+  const getChangedValue = (newValue: string | number | null | undefined, oldValue: number | string | null | undefined): undefined | null | string => {
+    if ((newValue === null || newValue === undefined) && oldValue) {
       return null;
     }
 
-    if (newValue && newValue !== oldValue) {
+    if ((newValue !== null || newValue !== undefined) && newValue !== oldValue) {
       return newValue;
     }
 
@@ -104,33 +111,43 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
 
   useEffect(() => {
     setChanges({
+      commission: {
+        payee: getChangedValue(newCommissionPayee, maybeCommissionPayee),
+        value: (newCommissionPayee || maybeCommissionPayee) ? getChangedValue(newCommissionValue, commissionValue) : undefined
+      },
       newPoolName: getChangedValue(newPoolName, myPoolName),
       newRoles: {
+        newBouncer: getChangedValue(newBouncerAddress, myPoolRoles?.bouncer?.toString()),
         newNominator: getChangedValue(newNominatorAddress, myPoolRoles?.nominator?.toString()),
-        newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString()),
-        newBouncer: getChangedValue(newBouncerAddress, myPoolRoles?.bouncer?.toString())
+        newRoot: getChangedValue(newRootAddress, myPoolRoles?.root?.toString())
       }
     });
-  }, [myPoolName, myPoolRoles?.bouncer, myPoolRoles?.nominator, myPoolRoles?.root, newBouncerAddress, newNominatorAddress, newPoolName, newRootAddress]);
+  }, [commissionValue, maybeCommissionPayee, myPoolName, myPoolRoles, newBouncerAddress, newCommissionPayee, newCommissionValue, newNominatorAddress, newPoolName, newRootAddress]);
 
-  const nextBtnDisable = useMemo(() =>
-    changes?.newPoolName === undefined &&
-    changes?.newRoles?.newNominator === undefined &&
-    changes?.newRoles?.newRoot === undefined &&
-    changes?.newRoles?.newBouncer === undefined
-    , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot]);
+  // const nextBtnDisable = useMemo(() =>
+  // changes?.newPoolName === undefined &&
+  // changes?.newRoles?.newNominator === undefined &&
+  // changes?.newRoles?.newRoot === undefined &&
+  // changes?.newRoles?.newBouncer === undefined
+  // , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot]);
+
+  const nextBtnDisable = changes && Object.values(changes).every((value) => {
+    if (typeof value === 'object' && value !== null) {
+      return Object.values(value as { [s: string]: unknown }).every((nestedValue) => nestedValue === undefined);
+    }
+
+    return value === undefined;
+  });
 
   const onNewCommission = useCallback((e) => {
     const value = Number(e.target.value);
 
-    if (value !== currentCommission) {
-      setNewCommissionPercent(value > 100 ? 100 : value);
+    if (value !== commissionValue) {
+      setNewCommissionValue(value > 100 ? 100 : value);
     } else {
-      setNewCommissionPercent(undefined);
+      setNewCommissionValue(undefined);
     }
-  }, [currentCommission]);
-
-  console.log('newCommissionPercent:', newCommissionPercent);
+  }, [commissionValue]);
 
   return (
     <>
@@ -157,7 +174,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
               chain={chain}
               disabled
               label={'Depositor'}
-              setAddress={setDepositorAddress}
+              // setAddress={setDepositorAddress}
               showIdenticon
               style={{
                 m: '15px auto 0',
@@ -223,7 +240,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
                 max={100}
                 onChange={(e) => onNewCommission(e)}
                 padding='0px'
-                placeholder={`${currentCommission}%`}
+                placeholder={`${commissionValue}%`}
                 spellCheck={false}
                 textAlign='center'
                 theme={theme}
