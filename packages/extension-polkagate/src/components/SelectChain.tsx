@@ -84,7 +84,7 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
     } catch (error) {
       console.error(error);
     }
-  }, [address, onChange]);
+  }, [address, onChange, previousGenesisHash]);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' pt={1} sx={{ ...style }}>
