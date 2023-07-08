@@ -7,15 +7,16 @@ import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui
 import { Collapse, Grid, IconButton, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
+import { useParams } from 'react-router';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE } from '@polkadot/util';
-import { useParams } from 'react-router';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { Identity, Progress, ShowBalance, SlidePopUp } from '../../../components';
+import { Identity, PButton, Progress, ShowBalance, SlidePopUp } from '../../../components';
 import { useFormatted, usePool, usePoolMembers, useTranslation } from '../../../hooks';
 import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
+import ClaimCommission from '../pool/claimCommission';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
 
@@ -46,6 +47,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
   const poolPoints = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
   const [itemToShow, setShow] = useState<TabTitles>('Roles');
+  const [showClaimCommission, setShowClaimCommission] = useState<boolean>();
 
   const membersToShow = useMemo(() => {
     if (!poolMembers) {
@@ -54,7 +56,6 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
 
     return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
   }, [poolMembers]);
-
 
   const _closeMenu = useCallback(
     () => setShowPoolInfo(false),
@@ -74,6 +75,10 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   const percent = useCallback((memberPoints: BN) => {
     return (Number(memberPoints.muln(100)) / Number(poolPoints.isZero() ? BN_ONE : poolPoints)).toFixed(2);
   }, [poolPoints]);
+
+  const onClaimCommission = useCallback(() => {
+    setShowClaimCommission(true);
+  }, []);
 
   const ShowMembers = () => (
     <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: window.innerHeight - 450, minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
@@ -144,7 +149,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   );
 
   const ShowClaimableCommission = () => (
-    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px' }}>
+    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px', pb: '5px' }}>
       <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
           {t<string>('Claimable Commission')}
@@ -160,6 +165,14 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
           token={poolToShow?.token}
         />
       </Grid>
+      <PButton
+        // _isBusy={isBusy}
+        _mt={2}
+        _onClick={onClaimCommission}
+        _variant='contained'
+        disabled={poolToShow?.rewardPool?.totalCommissionPending === 0}
+        text={t('Claim')}
+      />
     </Grid>
   );
 
@@ -189,11 +202,6 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
       </Collapse>
     </Grid>
   );
-
-  console.log('poolToShow', poolToShow)
-  poolToShow?.bondedPool?.roles && console.log('formatted', formatted)
-  poolToShow?.bondedPool?.roles && console.log('Object.values(poolToShow.bondedPool.roles)', Object.values(poolToShow.bondedPool.roles))
-  poolToShow?.bondedPool?.roles && console.log('Object.values(poolToShow.bondedPool.roles).includes(formatted)', Object.values(poolToShow.bondedPool.roles).includes(formatted))
 
   const page = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -254,7 +262,19 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               title={t<string>('Commission')}
             />
           }
-
+          {showClaimCommission &&
+            <ClaimCommission
+              address={address}
+              amount={new BN(poolToShow?.rewardPool?.totalCommissionPending || BN_ZERO)}
+              api={api}
+              chain={chain}
+              formatted={formatted}
+              // setRefresh={setRefresh}
+              poolId={poolId}
+              setShow={setShowClaimCommission}
+              show={showClaimCommission}
+            />
+          }
         </>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
