@@ -58,7 +58,6 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [showReview, setShowReview] = useState<boolean>(false);
   const [changes, setChanges] = useState<ChangesProps | undefined>();
   const [newPoolName, setNewPoolName] = useState<string>();
-  // const [depositorAddress, setDepositorAddress] = useState<string | null | undefined>();
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
   const [newNominatorAddress, setNewNominatorAddress] = useState<string | null | undefined>();
   const [newBouncerAddress, setNewBouncerAddress] = useState<string | null | undefined>();
@@ -83,8 +82,6 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const _onPoolNameChange = useCallback((name: string) => {
     setNewPoolName(name);
   }, []);
-
-  console.log('changes:', changes)
 
   useEffect(() => {
     !newPoolName && myPoolName && setNewPoolName(myPoolName);
@@ -123,13 +120,6 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
       }
     });
   }, [commissionValue, maybeCommissionPayee, myPoolName, myPoolRoles, newBouncerAddress, newCommissionPayee, newCommissionValue, newNominatorAddress, newPoolName, newRootAddress]);
-
-  // const nextBtnDisable = useMemo(() =>
-  // changes?.newPoolName === undefined &&
-  // changes?.newRoles?.newNominator === undefined &&
-  // changes?.newRoles?.newRoot === undefined &&
-  // changes?.newRoles?.newBouncer === undefined
-  // , [changes?.newPoolName, changes?.newRoles?.newBouncer, changes?.newRoles?.newNominator, changes?.newRoles?.newRoot]);
 
   const nextBtnDisable = changes && Object.values(changes).every((value) => {
     if (typeof value === 'object' && value !== null) {
@@ -213,7 +203,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
               setAddress={setNewBouncerAddress}
               showIdenticon
               style={{
-                m: '15px auto 0',
+                m: '15px auto 10px 0',
                 width: '98%'
               }}
             />
@@ -236,7 +226,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
                 autoCorrect='off'
                 fontSize='18px'
                 height='32px'
-                margin='auto 0 0'
+                margin='auto 0 3px'
                 max={100}
                 onChange={(e) => onNewCommission(e)}
                 padding='0px'
@@ -274,7 +264,7 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
           api={api}
           chain={chain}
           changes={changes}
-          formatted={formatted}
+          formatted={String(formatted)}
           pool={pool}
           setRefresh={setRefresh}
           setShow={setShowReview}

@@ -15,17 +15,18 @@ import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
 
 interface Props {
-  showConfirmation: boolean;
-  headerTitle: string;
-  txInfo: TxInfo;
-  primaryBtnText: string;
-  onPrimaryBtnClick: () => void;
-  secondaryBtnText?: string;
-  onSecondaryBtnClick?: () => void;
   children: React.ReactNode;
+  headerTitle: string;
+  onPrimaryBtnClick: () => void;
+  onSecondaryBtnClick?: () => void;
+  primaryBtnText: string;
+  secondaryBtnText?: string;
+  showConfirmation: boolean;
+  subtitle?: string;
+  txInfo: TxInfo;
 }
 
-export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, subtitle, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
@@ -44,7 +45,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <SubTitle label={txInfo.success ? t<string>('Completed') : t<string>('Failed')} />
+        <SubTitle label={txInfo.success ? subtitle || t<string>('Completed') : t<string>('Failed')} />
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}

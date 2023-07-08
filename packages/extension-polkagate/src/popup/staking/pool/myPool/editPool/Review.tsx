@@ -91,7 +91,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     changes?.newRoles !== undefined && !Object.values(changes.newRoles).every((value) => value === undefined) &&
       calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
 
-    changes?.commission !== undefined && changes.commission.value !== undefined && (changes.commission.payee || maybeCurrentCommissionPayee) &&
+    changes?.commission !== undefined && (changes.commission.value !== undefined || changes.commission.payee) &&
       calls.push(api.tx.nominationPools.setCommission(pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
 
     setTxCalls(calls);
@@ -107,7 +107,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
       setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
     }).catch(console.error);
-  }, [api, changes, formatted, pool.poolId, setMetadata]);
+  }, [api, changes, formatted, pool?.bondedPool?.commission, pool.poolId, setMetadata]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -228,7 +228,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
               {t('Commission value')}
             </Typography>
           </Grid>
-          <Grid fontSize='28px' fontWeight={400} item >
+          <Grid fontSize='28px' fontWeight={400} item>
             {changes.commission.value}%
           </Grid>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
@@ -284,6 +284,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             primaryBtnText={t('Staking Home')}
             secondaryBtnText={t('My pool')}
             showConfirmation={showConfirmation}
+            subtitle={t('Edited')}
             txInfo={txInfo}
           >
             <TxDetail
