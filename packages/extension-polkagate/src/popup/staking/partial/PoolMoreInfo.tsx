@@ -11,10 +11,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ONE } from '@polkadot/util';
+import { useParams } from 'react-router';
 
 import { Identity, Progress, ShowBalance, SlidePopUp } from '../../../components';
-import { usePool, usePoolMembers, useTranslation } from '../../../hooks';
-import { MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
+import { useFormatted, usePool, usePoolMembers, useTranslation } from '../../../hooks';
+import { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 import ShowPool from './ShowPool';
 import ShowRoles from './ShowRoles';
 
@@ -28,7 +29,7 @@ interface Props {
   setShowPoolInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-type TabTitles = 'Ids' | 'Members' | 'Reward' | 'Roles' | 'None';
+type TabTitles = 'Commission' | 'Ids' | 'Members' | 'Reward' | 'Roles' | 'None';
 interface CollapseProps {
   mode: TabTitles;
   pool: MyPoolInfo;
@@ -37,11 +38,14 @@ interface CollapseProps {
   open: () => void;
 }
 
-export default function PoolMoreInfo({ address, api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const { address } = useParams<FormattedAddressState>();
+  const formatted = useFormatted(address);
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
   const poolPoints = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
+  const [itemToShow, setShow] = useState<TabTitles>('Roles');
 
   const membersToShow = useMemo(() => {
     if (!poolMembers) {
@@ -51,7 +55,6 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
     return poolMembers.map((m) => ({ accountId: m.accountId, points: m.member.points }) as MemberPoints);
   }, [poolMembers]);
 
-  const [itemToShow, setShow] = useState<TabTitles>('Roles');
 
   const _closeMenu = useCallback(
     () => setShowPoolInfo(false),
@@ -140,13 +143,33 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
     </Grid>
   );
 
+  const ShowClaimableCommission = () => (
+    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px' }}>
+      <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+        <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
+          {t<string>('Claimable Commission')}
+        </Typography>
+      </Grid>
+      <Grid alignItems='center' container height='37px' item justifyContent='center'>
+        <ShowBalance
+          api={api}
+          balance={poolToShow?.rewardPool?.totalCommissionPending?.toString()}
+          decimal={poolToShow?.decimal}
+          decimalPoint={4}
+          height={22}
+          token={poolToShow?.token}
+        />
+      </Grid>
+    </Grid>
+  );
+
   const CollapseData = ({ mode, open, pool, show, title }: CollapseProps) => (
-    <Grid container direction='column' m='auto' width='92%'>
+    <Grid container direction='column' sx={{ cursor: 'pointer', m: 'auto', width: '92%' }}>
       <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
         <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
           {title}
         </Typography>
-        <Grid alignItems='center' container item sx={{ cursor: 'pointer' }} xs={1}>
+        <Grid alignItems='center' container item xs={1}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: show ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
         </Grid>
       </Grid>
@@ -160,9 +183,17 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
         {mode === 'Reward' &&
           <ShowReward />
         }
+        {mode === 'Commission' &&
+          <ShowClaimableCommission />
+        }
       </Collapse>
     </Grid>
   );
+
+  console.log('poolToShow', poolToShow)
+  poolToShow?.bondedPool?.roles && console.log('formatted', formatted)
+  poolToShow?.bondedPool?.roles && console.log('Object.values(poolToShow.bondedPool.roles)', Object.values(poolToShow.bondedPool.roles))
+  poolToShow?.bondedPool?.roles && console.log('Object.values(poolToShow.bondedPool.roles).includes(formatted)', Object.values(poolToShow.bondedPool.roles).includes(formatted))
 
   const page = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -214,6 +245,16 @@ export default function PoolMoreInfo({ address, api, chain, pool, poolId, setSho
               title={t<string>('Rewards')}
             />
           }
+          {poolToShow.bondedPool?.roles && Object.values(poolToShow.bondedPool.roles).includes(formatted) &&
+            <CollapseData
+              mode={itemToShow}
+              open={() => openTab('Commission')}
+              pool={poolToShow}
+              show={itemToShow === 'Commission'}
+              title={t<string>('Commission')}
+            />
+          }
+
         </>
         : <Progress pt='95px' size={125} title={t('Loading pool information...')} />
       }
