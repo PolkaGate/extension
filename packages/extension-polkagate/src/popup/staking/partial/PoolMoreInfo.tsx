@@ -46,7 +46,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   const poolToShow = usePool(address, poolId, false, pool);
   const poolMembers = usePoolMembers(api, poolToShow?.poolId);
   const poolPoints = useMemo(() => (poolToShow?.bondedPool ? new BN(String(poolToShow.bondedPool.points)) : BN_ONE), [poolToShow]);
-  const [itemToShow, setShow] = useState<TabTitles>('Roles');
+  const [itemToShow, setShow] = useState<TabTitles>('None');
   const [showClaimCommission, setShowClaimCommission] = useState<boolean>();
 
   const membersToShow = useMemo(() => {
@@ -166,11 +166,10 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         />
       </Grid>
       <PButton
-        // _isBusy={isBusy}
         _mt={2}
         _onClick={onClaimCommission}
         _variant='contained'
-        disabled={poolToShow?.rewardPool?.totalCommissionPending === 0}
+        disabled={poolToShow?.rewardPool?.totalCommissionPending === 0 || poolToShow?.bondedPool?.roles?.root !== formatted}
         text={t('Claim')}
       />
     </Grid>
@@ -262,13 +261,12 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               title={t<string>('Commission')}
             />
           }
-          {showClaimCommission &&
+          {showClaimCommission && poolId &&
             <ClaimCommission
               address={address}
               amount={new BN(poolToShow?.rewardPool?.totalCommissionPending || BN_ZERO)}
               api={api}
               chain={chain}
-              formatted={formatted}
               // setRefresh={setRefresh}
               poolId={poolId}
               setShow={setShowClaimCommission}

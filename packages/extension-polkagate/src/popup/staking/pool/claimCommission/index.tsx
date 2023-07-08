@@ -16,8 +16,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useBalances, useProxies, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, FormatBalance2, Motion, PasswordUseProxyConfirm, Popup, ShowBalance, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useBalances, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -29,21 +29,23 @@ import TxDetail from '../rewards/partials/TxDetail';
 interface Props {
   address: string;
   show: boolean;
-  formatted: string;
   api: ApiPromise;
   amount: BN;
   chain: Chain;
   poolId: number;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function ClaimCommission({ address, amount, api, chain, formatted, poolId, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, amount, api, chain, poolId, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
   const balances = useBalances(address);
+  const decimal = useDecimal(address);
+  const token = useToken(address);
 
   const available = useMemo(() => getValue('available', balances), [balances]);
 
@@ -59,9 +61,7 @@ export default function ClaimCommission({ address, amount, api, chain, formatted
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const tx = api.tx.nominationPools.claimCommission;
-
-  const decimal = api.registry.chainDecimals[0];
+  const tx = api && api.tx.nominationPools.claimCommission;
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -77,7 +77,7 @@ export default function ClaimCommission({ address, amount, api, chain, formatted
   }, [proxies]);
 
   useEffect((): void => {
-    if (!api) {
+    if (!api || !formatted) {
       return;
     }
 
@@ -110,7 +110,7 @@ export default function ClaimCommission({ address, amount, api, chain, formatted
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: String(from), name },
         subAction: 'Claim',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -154,12 +154,7 @@ export default function ClaimCommission({ address, amount, api, chain, formatted
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount}
-              />
-            }
+            amount={<ShowBalance balance={amount} decimal={decimal} decimalPoint={2} token={token} />}
             fee={estimatedFee}
             label={t('Claimable amount')}
             showDivider
@@ -168,18 +163,14 @@ export default function ClaimCommission({ address, amount, api, chain, formatted
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={available && amount.add(available).sub(estimatedFee ?? BN_ZERO)}
-              />
-            }
+            amount={<ShowBalance balance={available && amount.add(available).sub(estimatedFee ?? BN_ZERO)} decimal={decimal} decimalPoint={2} token={token} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
         </Container>
         <PasswordUseProxyConfirm
           api={api}
+          confirmDisabled={!api}
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}

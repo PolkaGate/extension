@@ -62,6 +62,8 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const batchAll = api && api.tx.utility.batchAll;
   const setMetadata = api && api.tx.nominationPools.setMetadata;
 
+  const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
+
   const onBackClick = useCallback(() => {
     setShow(!show);
   }, [setShow, show]);
@@ -82,8 +84,6 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         return { set: role };
       }
     };
-
-    const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
     changes?.newPoolName !== undefined &&
       calls.push(setMetadata(pool.poolId, changes?.newPoolName));
@@ -107,7 +107,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
       setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
     }).catch(console.error);
-  }, [api, changes, formatted, pool?.bondedPool?.commission, pool.poolId, setMetadata]);
+  }, [api, changes, formatted, maybeCurrentCommissionPayee, pool?.bondedPool?.commission, pool?.poolId, setMetadata]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -237,7 +237,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
       {changes?.commission?.payee !== undefined &&
         <ShowPoolRole
           chain={chain}
-          roleAddress={changes.commission.payee}
+          roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
           roleTitle={t<string>('Commission payee')}
           showDivider
         />
