@@ -161,7 +161,11 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
     });
   }, [address, currentChainNameFromAccount, genesisHashes, isTestnetDisabled]);
 
-  const toggleChainSwitch = useCallback(() => chainNamesToShow && chainNamesToShow.length > 1 ? setShowOtherChains(!showOtherChains) : selectNetwork(chainNamesToShow[0]), [chainNamesToShow, selectNetwork, showOtherChains]);
+  const toggleChainSwitch = useCallback(() =>
+   chainNamesToShow && (chainNamesToShow.length > 1 
+  ? setShowOtherChains(!showOtherChains) 
+  : selectNetwork(chainNamesToShow[0]))
+  , [chainNamesToShow, selectNetwork, showOtherChains]);
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
 
   return (
