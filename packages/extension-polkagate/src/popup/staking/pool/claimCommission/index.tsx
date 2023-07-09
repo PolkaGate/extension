@@ -16,7 +16,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, FormatBalance2, Motion, PasswordUseProxyConfirm, Popup, ShowBalance, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, FormatBalance2, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useBalances, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -44,7 +44,6 @@ export default function ClaimCommission({ address, amount, api, chain, poolId, s
   const onAction = useContext(ActionContext);
   const balances = useBalances(address);
   const decimal = useDecimal(address);
-  const token = useToken(address);
 
   const available = useMemo(() => getValue('available', balances), [balances]);
 
@@ -152,7 +151,7 @@ export default function ClaimCommission({ address, amount, api, chain, poolId, s
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance balance={amount} decimal={decimal} decimalPoint={2} token={token} />}
+            amount={<ShowBalance2 address={address} balance={amount} />}
             fee={estimatedFee}
             label={t('Claimable amount')}
             showDivider
@@ -161,7 +160,7 @@ export default function ClaimCommission({ address, amount, api, chain, poolId, s
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance balance={available && amount.add(available).sub(estimatedFee ?? BN_ZERO)} decimal={decimal} decimalPoint={2} token={token} />}
+            amount={<ShowBalance2 address={address} balance={available && amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />

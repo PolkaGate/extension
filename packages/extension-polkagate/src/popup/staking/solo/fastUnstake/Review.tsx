@@ -17,7 +17,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, Warning } from '../../../../components';
 import { useAccountDisplay, useDecimal, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -157,12 +157,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount}
-              />
-            }
+            amount={<ShowBalance2 address={String(address)} balance={amount}/>}
             fee={estimatedFee}
             label={t('Unstake amount')}
             showDivider
@@ -171,12 +166,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount.add(available).sub(estimatedFee ?? BN_ZERO)}
-              />
-            }
+            amount={<ShowBalance2 address={String(address)} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
