@@ -14,14 +14,14 @@ interface Props {
   children?: React.ReactElement;
 }
 
-export default function CollapseIt ({ children, open, show, title }: Props): React.ReactElement {
+export default function CollapseIt({ children, open, show, title }: Props): React.ReactElement {
   return (
     <Grid container direction='column' m='auto' width='92%'>
-      <Grid container item justifyContent='space-between' onClick={() => open(title)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+      <Grid container item justifyContent='space-between' onClick={() => open(title)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>
         <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
           {title}
         </Typography>
-        <Grid alignItems='center' container item sx={{ cursor: 'pointer' }} xs={1}>
+        <Grid alignItems='center' container item xs={1}>
           <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: show ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
         </Grid>
       </Grid>

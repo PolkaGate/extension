@@ -3,13 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountContext, AddressInput, AutoResizeTextarea, Input, PButton, Popup } from '../../../../../components';
+import { Option } from '@polkadot/types';
+
+import { AccountContext, AddressInput, AutoResizeTextarea, Input, PButton, Popup, ShowValue } from '../../../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
 import { HeaderBrand } from '../../../../../partials';
 import getAllAddresses from '../../../../../util/getAllAddresses';
@@ -18,7 +19,6 @@ import Review from './Review';
 
 interface Props {
   address: string;
-  apiToUse: ApiPromise;
   pool: MyPoolInfo;
   showEdit: boolean;
   setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,11 +38,11 @@ export interface ChangesProps {
   } | undefined
 }
 
-export default function EditPool({ address, apiToUse, pool, setRefresh, setShowEdit, showEdit }: Props): React.ReactElement {
+export default function EditPool({ address, pool, setRefresh, setShowEdit, showEdit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const api = useApi(address, apiToUse);
+  const api = useApi(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const { hierarchy } = useContext(AccountContext);
@@ -64,24 +64,13 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
   const [collapsedName, setCollapsed] = useState<'Roles' | 'Commission' | undefined>();
   const [newCommissionPayee, setNewCommissionPayee] = useState<string | null | undefined>();
   const [newCommissionValue, setNewCommissionValue] = useState<number | undefined>();
+  const [maxCommission, setMaxCommission] = useState<number | undefined>();
 
   const open = useCallback((title: 'Roles' | 'Commission') => {
     setCollapsed(title === collapsedName ? undefined : title);
   }, [collapsedName]);
 
   const allAddresses = getAllAddresses(hierarchy, false, true, chain?.ss58Format);
-
-  const backToPool = useCallback(() => {
-    setShowEdit(!showEdit);
-  }, [setShowEdit, showEdit]);
-
-  const goToEdit = useCallback(() => {
-    setShowReview(!showReview);
-  }, [showReview]);
-
-  const _onPoolNameChange = useCallback((name: string) => {
-    setNewPoolName(name);
-  }, []);
 
   useEffect(() => {
     !newPoolName && myPoolName && setNewPoolName(myPoolName);
@@ -93,18 +82,6 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
     !newCommissionPayee && commissionValue && setNewCommissionValue(commissionValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);// needs to be run only once to initialize
-
-  const getChangedValue = (newValue: string | number | null | undefined, oldValue: number | string | null | undefined): undefined | null | string => {
-    if ((newValue === null || newValue === undefined) && oldValue) {
-      return null;
-    }
-
-    if ((newValue !== null || newValue !== undefined) && newValue !== oldValue) {
-      return newValue;
-    }
-
-    return undefined;
-  };
 
   useEffect(() => {
     setChanges({
@@ -120,6 +97,39 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
       }
     });
   }, [commissionValue, maybeCommissionPayee, myPoolName, myPoolRoles, newBouncerAddress, newCommissionPayee, newCommissionValue, newNominatorAddress, newPoolName, newRootAddress]);
+
+  useEffect(() => {
+    api && api.query.nominationPools.globalMaxCommission().then((res: Option) => {
+      if (res.isSome) {
+        setMaxCommission(res.unwrap());
+        console.log('res:', res.unwrap());
+      }
+    });
+  }, [api]);
+
+  const getChangedValue = (newValue: string | number | null | undefined, oldValue: number | string | null | undefined): undefined | null | string => {
+    if ((newValue === null || newValue === undefined) && oldValue) {
+      return null;
+    }
+
+    if ((newValue !== null || newValue !== undefined) && newValue !== oldValue) {
+      return newValue;
+    }
+
+    return undefined;
+  };
+
+  const backToPool = useCallback(() => {
+    setShowEdit(!showEdit);
+  }, [setShowEdit, showEdit]);
+
+  const goToEdit = useCallback(() => {
+    setShowReview(!showReview);
+  }, [showReview]);
+
+  const _onPoolNameChange = useCallback((name: string) => {
+    setNewPoolName(name);
+  }, []);
 
   const nextBtnDisable = changes && Object.values(changes).every((value) => {
     if (typeof value === 'object' && value !== null) {
@@ -237,6 +247,14 @@ export default function EditPool({ address, apiToUse, pool, setRefresh, setShowE
                 type='number'
                 width='30%'
               />
+              <Grid item container alignItems='center' width='60%' pl='10px' justifyContent='flex-start'>
+                <Grid item pr='5px'>
+                  {t('Max')}:
+                </Grid>
+                <Grid item>
+                  <ShowValue value={maxCommission?.toHuman()} />
+                </Grid>
+              </Grid>
             </Grid>
             <AddressInput
               address={newCommissionPayee}

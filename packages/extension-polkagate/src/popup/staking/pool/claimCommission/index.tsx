@@ -34,10 +34,9 @@ interface Props {
   chain: Chain;
   poolId: number;
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function ClaimCommission({ address, amount, api, chain, poolId, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, amount, api, chain, poolId, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
@@ -65,10 +64,9 @@ export default function ClaimCommission({ address, amount, api, chain, poolId, s
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
-    setRefresh(true);
 
     onAction(`/pool/${address}`);
-  }, [address, onAction, setRefresh, setShow]);
+  }, [address, onAction, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

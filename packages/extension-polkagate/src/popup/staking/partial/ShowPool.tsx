@@ -38,8 +38,8 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const [showRewardsChart, setShowRewardsChart] = useState<boolean>(false);
 
   const rewardDestinationAddress = pool?.accounts?.rewardId as string || (api && getPoolAccounts(api, pool.poolId).rewardId);
-  const token = pool?.token || (api && api.registry.chainTokens[0]);
-  const decimal = pool?.decimal || (api && api.registry.chainDecimals[0]);
+  const token = (pool?.token || (api && api.registry.chainTokens[0])) as string | undefined;
+  const decimal = (pool?.decimal || (api && api.registry.chainDecimals[0])) as number | undefined;
 
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
@@ -48,8 +48,8 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const chainName = chain?.name?.replace(' Relay Chain', '');
 
   const hasCommission = pool && 'commission' in pool.bondedPool;
-
-  const mayBeCommission = hasCommission && pool.bondedPool.commission.current ? pool.bondedPool.commission.current[0] : 0
+  const parsedPool = JSON.parse(JSON.stringify(pool));
+  const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
   const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
   const onRewardsChart = useCallback(() => {

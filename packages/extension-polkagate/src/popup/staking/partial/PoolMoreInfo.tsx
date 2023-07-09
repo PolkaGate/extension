@@ -267,7 +267,6 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               amount={new BN(poolToShow?.rewardPool?.totalCommissionPending || BN_ZERO)}
               api={api}
               chain={chain}
-              // setRefresh={setRefresh}
               poolId={poolId}
               setShow={setShowClaimCommission}
               show={showClaimCommission}

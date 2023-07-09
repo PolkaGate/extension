@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
+import type { Codec } from '@polkadot/types/types';
 import type { PoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -11,32 +12,33 @@ import { ApiPromise } from '@polkadot/api';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { useApi } from '.';
 
-const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBatchLenght: number) => info.map((i, index) => {
-  if (i[1].isSome) {
-    const bondedPool = i[1].unwrap();
+const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBatchLength: number) =>
+  info.map((i, index) => {
+    if (i[1].isSome) {
+      const bondedPool = i[1].unwrap();
 
-    return {
-      bondedPool,
-      metadata: i[0]?.length
-        ? i[0]?.isUtf8
-          ? i[0]?.toUtf8()
-          : i[0]?.toString()
-        : null,
-      poolId: index + lastBatchLenght + 1, // works because pools id is not reuseable for now
-      rewardPool: i[2]?.isSome ? i[2].unwrap() : null,
-      stashIdAccount: i[3]
-    };
-  } else {
-    return undefined;
-  }
-})?.filter((f) => f !== undefined);
+      return {
+        bondedPool,
+        metadata: i[0]?.length
+          ? i[0]?.isUtf8
+            ? i[0]?.toUtf8()
+            : i[0]?.toString()
+          : null,
+        poolId: index + lastBatchLength + 1, // works because pools id is not reuseable for now
+        rewardPool: i[2]?.isSome ? i[2].unwrap() : null,
+        stashIdAccount: i[3]
+      };
+    } else {
+      return undefined;
+    }
+  })?.filter((f) => f !== undefined);
 
 export default function usePools(address: string): PoolInfo[] | null | undefined {
   const [pools, setPools] = useState<PoolInfo[] | undefined | null>();
   const api = useApi(address);
 
   const getPools = useCallback(async (api: ApiPromise) => {
-    const lastPoolId = (await api.query.nominationPools.lastPoolId())?.toNumber() || 0;
+    const lastPoolId = ((await api.query.nominationPools.lastPoolId())?.toNumber() || 0) as number;
 
     console.log(`getPools: Getting ${lastPoolId} pools information.`);
 
@@ -70,7 +72,7 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
 
       const i = await Promise.all(queries);
 
-      let info = handleInfo(i, totalFetched);
+      const info = handleInfo(i, totalFetched);
 
       poolsInfo = poolsInfo.concat(info);
       totalFetched += page;
@@ -91,42 +93,6 @@ export default function usePools(address: string): PoolInfo[] | null | undefined
 
     setPools(poolsInfo);
   }, []);
-
-  // const getPools = useCallback((endpoint: string) => {
-  //   const getPoolsWorker: Worker = new Worker(new URL('../util/workers/getPools.js', import.meta.url));
-
-  //   getPoolsWorker.postMessage({ endpoint });
-
-  //   getPoolsWorker.onerror = (err) => {
-  //     console.log(err);
-  //   };
-
-  //   getPoolsWorker.onmessage = (e: MessageEvent<any>) => {
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  //     const poolsInfo: string = e.data;
-
-  //     if (!poolsInfo) {
-  //       setPools(null);// noo pools found, probably never happens
-
-  //       return;
-  //     }
-
-  //     const parsedPoolsInfo = JSON.parse(poolsInfo);
-
-  //     const info = parsedPoolsInfo.info as PoolInfo[];
-
-  //     info?.forEach((p: PoolInfo) => {
-  //       if (p?.bondedPool?.points) {
-  //         p.bondedPool.points = new BN(String(p.bondedPool.points));
-  //       }
-
-  //       p.poolId = new BN(p.poolId);
-  //     });
-
-  //     setPools(info);
-  //     getPoolsWorker.terminate();
-  //   };
-  // }, []);
 
   useEffect(() => {
     api && getPools(api);

@@ -15,7 +15,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
 import { ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useApi, useChain, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -37,9 +37,11 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState({ address, api, chain, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const api = useApi(address);
   const proxies = useProxies(api, formatted);
+  const chain = useChain(address);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
   const [password, setPassword] = useState<string | undefined>();
