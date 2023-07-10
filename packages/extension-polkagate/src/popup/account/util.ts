@@ -22,10 +22,10 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('total balance'):
       return balances.freeBalance.add(balances.reservedBalance).add(balances?.pooledBalance ?? BN_ZERO);
     case ('pooled balance'):
-    case ('pool staked'):
+    case ('pool stake'):
       return balances?.pooledBalance ?? BN_ZERO;
     case ('solo'):
-    case ('solo staked'):
+    case ('solo stake'):
       return balances?.soloTotal ?? BN_ZERO;
     case ('available'):
     case ('transferrable'):
