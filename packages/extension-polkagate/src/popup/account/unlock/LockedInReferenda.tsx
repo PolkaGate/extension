@@ -26,11 +26,13 @@ import Review from './Review';
 
 interface Props {
   address: string | undefined;
+  refresh: boolean | undefined
+  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
 const noop = () => null;
 
-export default function LockedInReferenda({ address }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -39,9 +41,6 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const decimal = useDecimal(address);
   const chain = useChain(address);
   const token = useToken(address);
-
-  const [refresh, setRefresh] = useState<boolean>();
-
   const delegatedBalance = useHasDelegated(address, refresh);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refresh);
   const currentBlock = useCurrentBlockNumber(address);
@@ -54,15 +53,15 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
   const [miscRefLock, setMiscRefLock] = useState<BN>();
   const [shake, setShake] = useState<boolean>();
 
+  const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
+  const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
+
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {
       setShake(true);
       setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
     }
   }, [unlockableAmount]);
-
-  const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
-  const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
 
   const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
     const maybeFound = sortedLocks.find(({ endBlock }) => endBlock.eq(BN_MAX_INTEGER));
@@ -170,7 +169,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
               }
             </Grid>
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', width: '26px' }}>
+          <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
             <Infotip
               text={api && unlockableAmount && !unlockableAmount.isZero()
                 ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
@@ -190,7 +189,7 @@ export default function LockedInReferenda({ address }: Props): React.ReactElemen
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      {showReview && classToUnlock?.length && api && lockedInRef && unlockableAmount &&
+      {showReview && classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
         <Review
           address={address}
           api={api}

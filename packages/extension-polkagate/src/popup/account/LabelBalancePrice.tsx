@@ -59,7 +59,7 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
             </Grid>
           </Grid>
           {onClick &&
-            <Grid item textAlign='right' sx={{ width: 'fit-content' }}>
+            <Grid item textAlign='right' sx={{ width: 'fit-content', ml: '8px' }}>
               <IconButton
                 onClick={onClick}
                 sx={{ p: 0 }}
