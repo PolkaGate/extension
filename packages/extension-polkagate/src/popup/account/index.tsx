@@ -29,9 +29,9 @@ import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import StakingOption from '../staking/Options';
+import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
-import LockedInReferenda from './unlock/LockedInReferenda';
 import Others from './Others';
 
 export default function AccountDetails(): React.ReactElement {
@@ -116,8 +116,7 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, formatted, genesisHash, history]);
 
   const goToGovernance = useCallback(() => {
-    formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
-      windowOpen(`/governance/${address}/referenda`).catch(console.error);
+    formatted && GOVERNANCE_CHAINS.includes(genesisHash) && windowOpen(`/governance/${address}/referenda`).catch(console.error);
   }, [address, formatted, genesisHash]);
 
   const goToPoolStaking = useCallback(() => {
@@ -150,7 +149,7 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -169,7 +168,7 @@ export default function AccountDetails(): React.ReactElement {
 
       setRecentChains(myRecentChains ?? suggestedRecent);
     });
-  }, [account, account?.genesisHash, address]);
+  }, [account, account?.genesisHash, address, genesisHash]);
 
   const chainNamesToShow = useMemo(() => {
     if (!(genesisOptions.length) || !(recentChains?.length) || !account) {
@@ -182,7 +181,7 @@ export default function AccountDetails(): React.ReactElement {
     chainNames.length > 2 && chainNames.shift();
 
     return chainNames.slice(0, 2);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, genesisOptions, isTestnetEnabled, recentChains, account?.genesisHash]);
 
   const OthersRow = () => (
@@ -229,7 +228,7 @@ export default function AccountDetails(): React.ReactElement {
                 : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
               }
               {GOVERNANCE_CHAINS.includes(genesisHash)
-                ? <LockedInReferenda address={address} />
+                ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
                 : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} />
               }
               <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />
