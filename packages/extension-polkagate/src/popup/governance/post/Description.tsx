@@ -19,7 +19,7 @@ import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, Referendum } from '../utils/types';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
-import { hexAddressToFormatted } from './MetaData';
+import { hexAddressToFormatted } from './Metadata';
 
 interface Props {
   address: string | undefined;
