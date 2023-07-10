@@ -245,14 +245,14 @@ export default function EditPool({ address, pool, setRefresh, setShowEdit, showE
                 textAlign='center'
                 theme={theme}
                 type='number'
-                width='30%'
+                width='62%'
               />
-              <Grid item container alignItems='center' width='60%' pl='10px' justifyContent='flex-start'>
+              <Grid alignItems='center' container item justifyContent='flex-start' sx={{ fontWeight: 500, pl: '10px', textDecorationLine: 'underLine', width: '35%' }}>
                 <Grid item pr='5px'>
                   {t('Max')}:
                 </Grid>
                 <Grid item>
-                  <ShowValue value={maxCommission?.toHuman()} />
+                  <ShowValue value={maxCommission?.toHuman()} width='58px' />
                 </Grid>
               </Grid>
             </Grid>
