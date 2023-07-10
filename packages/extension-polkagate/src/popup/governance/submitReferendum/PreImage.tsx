@@ -11,7 +11,7 @@ import { Button, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { getTypeDef } from '@polkadot/types';
-import { formatNumber, isUndefined, stringify } from '@polkadot/util';
+import { formatNumber, isUndefined } from '@polkadot/util';
 
 import { CopyAddressButton, ShowBalance, Warning } from '../../../components';
 import { useApi, useDecimal, useFormatted, usePreImage, useToken, useTranslation } from '../../../hooks';

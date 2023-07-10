@@ -37,13 +37,10 @@ export default function useMyPools(address: string): MyPoolInfo[] | null | undef
       parsedPoolsInfo?.forEach((p: MyPoolInfo) => {
         if (p?.bondedPool?.points) {
           p.bondedPool.points = isHexToBn(p.bondedPool.points);
-          // new BN(String(p.bondedPool.points));
         }
-
-        // p.poolId = new BN(p.poolId);
       });
 
-      console.log(': : :my other pools:', parsedPoolsInfo);
+      console.log('My other pools:', parsedPoolsInfo);
       setMyPools(parsedPoolsInfo.length ? parsedPoolsInfo : null);
 
       getMyPoolsWorker.terminate();

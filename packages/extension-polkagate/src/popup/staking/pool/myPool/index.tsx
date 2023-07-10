@@ -395,8 +395,6 @@ export default function Pool(): React.ReactElement {
       {goChange && changeState && poolsToShow?.length && formatted &&
         <SetState
           address={address}
-          api={api}
-          chain={chain}
           formatted={formatted}
           headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
           helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
@@ -410,7 +408,6 @@ export default function Pool(): React.ReactElement {
       {showEdit && poolsToShow?.length &&
         <EditPool
           address={address}
-          apiToUse={api}
           pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShowEdit={setShowEdit}
@@ -420,7 +417,6 @@ export default function Pool(): React.ReactElement {
       {showRemoveAll && poolsToShow?.length &&
         <RemoveAll
           address={address}
-          api={api}
           pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShowRemoveAll={setShowRemoveAll}

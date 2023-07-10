@@ -183,8 +183,8 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
           width: '92%'
         }}
       />
-      <Typography fontSize='16px' fontWeight={400} m='20px 0 0' textAlign='center'>
-        {t<string>('Your rewards will be automatically withdrawn.')}
+      <Typography fontSize='12px' fontWeight={400} m='20px 0 0' textAlign='center'>
+        {t<string>('Outstanding rewards automatically withdrawn after transaction')}
       </Typography>
       <PButton
         _onClick={toReview}
