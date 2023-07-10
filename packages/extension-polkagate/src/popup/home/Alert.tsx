@@ -65,8 +65,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Controller accounts have been removed from the Settings of solo staking.'),
-              t<string>('The "Nomination Pools" proxy type has been added to Polkadot.'),
+              t<string>('Users can now view pool commissions before joining a pool, and pool owners can set or claim pool commissions.'),
               t<string>('Various known issues have been fixed.')
             ]}
           />
