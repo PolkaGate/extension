@@ -36,16 +36,19 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
 
     if (mode === 'Roles') {
       return ([
-        { label: t<string>('Root'), address: pool.bondedPool?.roles?.root?.toString() ?? '' },
-        { label: t<string>('Depositor'), address: pool.bondedPool?.roles?.depositor.toString() ?? '' },
-        { label: t<string>('Nominator'), address: pool.bondedPool?.roles?.nominator?.toString() ?? '' },
-        { label: t<string>('Bouncer'), address: pool.bondedPool?.roles?.bouncer?.toString() ?? '' }
+        { address: pool.bondedPool?.roles?.root?.toString() ?? '', label: t<string>('Root') },
+        { address: pool.bondedPool?.roles?.depositor.toString() ?? '', label: t<string>('Depositor') },
+        { address: pool.bondedPool?.roles?.nominator?.toString() ?? '', label: t<string>('Nominator') },
+        { address: pool.bondedPool?.roles?.bouncer?.toString() ?? '', label: t<string>('Bouncer') }
       ]);
     }
 
+    const mayBeCommissionAddress = pool.bondedPool.commission.current?.[1];
+
     return ([
-      { label: t<string>('Stash id'), address: pool.accounts?.stashId?.toString() },
-      { label: t<string>('Reward id'), address: pool.accounts?.rewardId?.toString() ?? '' }
+      { address: pool.accounts?.stashId?.toString(), label: t<string>('Stash id') },
+      { address: pool.accounts?.rewardId?.toString() ?? '', label: t<string>('Reward id') },
+      ...(mayBeCommissionAddress ? [{ address: mayBeCommissionAddress?.toString() ?? 'N/A', label: t<string>('Com. id') }] : [])
     ]);
   }, [mode, pool, t]);
 
@@ -64,7 +67,7 @@ export default function ShowRoles({ api, chain, label, mode, pool, style }: Prop
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='65%'>
                   {acc.address
-                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} showSocial identiconSize={25} style={{ fontSize: '14px', pl: '5px' }} showShortAddress />
+                    ? <Identity address={acc.address} api={api} chain={chain} formatted={acc.address} identiconSize={25} showShortAddress showSocial style={{ fontSize: '14px', height: '37px', pl: '5px' }} />
                     : <Typography fontSize='16px' fontWeight={400} lineHeight='37px'>
                       {'—'}
                     </Typography>

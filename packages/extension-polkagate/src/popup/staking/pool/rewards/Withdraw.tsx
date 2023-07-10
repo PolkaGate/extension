@@ -16,7 +16,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -147,25 +147,16 @@ export default function RewardsWithdrawReview({ address, amount, api, available,
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount} />
-            }
+            amount={<ShowBalance2 address={address} balance={amount}/>}
             fee={estimatedFee}
             label={t('Withdraw amount')}
             showDivider
-            withFee
             style={{ pt: '5px' }}
+            withFee
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount.add(available).sub(estimatedFee ?? BN_ZERO)}
-              />
-            }
+            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)}/>}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />

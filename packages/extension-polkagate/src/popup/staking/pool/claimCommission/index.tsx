@@ -9,40 +9,43 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Container } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, FormatBalance2, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useBalances, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
-import TxDetail from '../partials/TxDetail';
+import { getValue } from '../../../account/util';
+import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
-  address: AccountId;
+  address: string;
   show: boolean;
-  formatted: string;
   api: ApiPromise;
   amount: BN;
   chain: Chain;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  available: BN;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
+  poolId: number;
+  setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, amount, api, chain, poolId, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
-  const name = useAccountDisplay(String(address));
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+  const balances = useBalances(address);
+  const decimal = useDecimal(address);
+
+  const available = useMemo(() => getValue('available', balances), [balances]);
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -55,16 +58,14 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-  const tx = api.tx.staking.withdrawUnbonded; // sign by controller
 
-  const decimal = api.registry.chainDecimals[0];
+  const tx = api && api.tx.nominationPools.claimCommission;
 
   const goToStakingHome = useCallback(() => {
-    setRefresh(true);
     setShow(false);
 
-    onAction(`/solo/${address}`);
-  }, [address, onAction, setRefresh, setShow]);
+    onAction(`/pool/${address}`);
+  }, [address, onAction, setShow]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -73,7 +74,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
   }, [proxies]);
 
   useEffect((): void => {
-    if (!api) {
+    if (!api || !formatted) {
       return;
     }
 
@@ -81,10 +82,8 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
     }
 
-    const params = [100];/** 100 is a dummy spanCount */
-
-    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, tx, formatted]);
+    tx(poolId).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+  }, [tx, formatted, api, poolId]);
 
   const submit = useCallback(async () => {
     try {
@@ -97,20 +96,19 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
       signer.unlock(password);
       setShowWaitScreen(true);
-      const optSpans = await api.query.staking.slashingSpans(formatted);
-      const spanCount = optSpans.isNone ? 0 : optSpans.unwrap().prior.length + 1;
-      const params = [spanCount];
+      const params = [poolId];
+
       const { block, failureText, fee, success, txHash } = await broadcast(api, tx, params, signer, formatted, selectedProxy);
 
       const info = {
-        action: 'Solo Staking',
+        action: 'Pool Claim Commission',
         amount: amountToHuman(amount, decimal),
         block,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        subAction: 'Redeem',
+        from: { address: String(from), name },
+        subAction: 'Claim',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash
@@ -118,14 +116,13 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
 
       setTxInfo({ ...info, api, chain });
       saveAsHistory(from, info);
-
       setShowWaitScreen(false);
       setShowConfirmation(true);
     } catch (e) {
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, selectedProxyAddress, password, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
+  }, [formatted, selectedProxyAddress, password, poolId, api, tx, selectedProxy, amount, decimal, estimatedFee, name, selectedProxyName, chain]);
 
   const _onBackClick = useCallback(() => {
     setShow(false);
@@ -139,7 +136,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Withdraw Redeemable')}
+          text={t<string>('Withdraw Commission')}
         />
         {isPasswordError &&
           <WrongPasswordAlert />
@@ -156,20 +153,21 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
             address={address}
             amount={<ShowBalance2 address={address} balance={amount} />}
             fee={estimatedFee}
-            label={t('Withdraw amount')}
+            label={t('Claimable amount')}
             showDivider
             style={{ pt: '5px' }}
             withFee
           />
           <AmountFee
             address={address}
-            amount={<ShowBalance2 address={address} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
+            amount={<ShowBalance2 address={address} balance={available && amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
         </Container>
         <PasswordUseProxyConfirm
           api={api}
+          confirmDisabled={!api}
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
@@ -178,7 +176,7 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
           onConfirmClick={submit}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer', 'Staking']}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}
@@ -191,11 +189,11 @@ export default function RedeemableWithdrawReview({ address, amount, api, availab
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t('Withdraw Redeemable')}
+          title={t('Withdraw Commission')}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t('Withdraw Redeemable')}
+            headerTitle={t('Withdraw Commission')}
             onPrimaryBtnClick={goToStakingHome}
             primaryBtnText={t('Staking Home')}
             showConfirmation={showConfirmation}

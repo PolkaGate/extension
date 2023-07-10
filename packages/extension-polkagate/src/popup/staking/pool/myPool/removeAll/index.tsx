@@ -14,14 +14,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PButton, Popup } from '../../../../../components';
-import { useChain, useFormatted, useTranslation } from '../../../../../hooks';
+import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
 import { usePoolMembers } from '../../../../../hooks/usePoolMembers';
 import { HeaderBrand } from '../../../../../partials';
 import Review from './Review';
 
 interface Props {
   address: string;
-  api: ApiPromise | undefined;
   pool: MyPoolInfo;
   showRemoveAll?: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -55,9 +54,9 @@ const remainingTime = (seconds: number) => {
   });
 };
 
-export default function RemoveAll({ address, api, pool, setRefresh, setShowRemoveAll, showRemoveAll }: Props): React.ReactElement {
+export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll, showRemoveAll }: Props): React.ReactElement {
   const { t } = useTranslation();
-
+  const api = useApi(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
 

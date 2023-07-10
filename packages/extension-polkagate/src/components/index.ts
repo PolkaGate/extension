@@ -60,6 +60,7 @@ export { default as ShowValue } from './ShowValue';
 export { default as SlidePopUp } from './SlidePopUp';
 export { default as Steps } from './Steps';
 export { default as ShowBalance } from './ShowBalance';
+export { default as ShowBalance2 } from './ShowBalance2';
 export { default as SelectChain } from './SelectChain';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { default as TwoButtons } from './TwoButtons';

@@ -17,7 +17,7 @@ import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../../components';
 import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
@@ -136,12 +136,7 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         />
         <AmountFee
           address={address}
-          amount={
-            <FormatBalance
-              api={api}
-              value={bondAmount}
-            />
-          }
+          amount={<ShowBalance2 address={address} balance={bondAmount} />}
           fee={estimatedFee}
           label={t('Amount')}
           showDivider
@@ -151,18 +146,13 @@ export default function Review({ address, api, bondAmount, estimatedFee, pool, s
         <Typography fontSize='16px' fontWeight={300} lineHeight='25px' textAlign='center'>
           {t<string>('Pool')}
         </Typography>
-        <Grid fontSize='18px' fontWeight={400} textAlign='center' maxWidth='90%' m='auto' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+        <Grid fontSize='18px' fontWeight={400} m='auto' maxWidth='90%' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap'>
           {pool?.metadata}
         </Grid>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
         <AmountFee
           address={address}
-          amount={
-            <FormatBalance
-              api={api}
-              value={bondAmount?.add(totalStaked)}
-            />
-          }
+          amount={<ShowBalance2 address={address} balance={bondAmount?.add(totalStaked)}/>}
           label={t('Total stake after')}
           style={{ pt: '2px' }}
         />

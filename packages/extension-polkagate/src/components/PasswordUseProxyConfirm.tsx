@@ -37,6 +37,10 @@ interface Props {
   onConfirmClick: () => Promise<void>
 }
 
+function noop() {
+  // This function does nothing.
+}
+
 export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmText, disabled, estimatedFee, genesisHash, isPasswordError, label = '', onChange, onConfirmClick, prevState, proxiedAddress, proxies, proxyTypeFilter, selectedProxy, setIsPasswordError, setSelectedProxy, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -102,7 +106,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                     isFocused={true}
                     label={label}
                     onChange={_onChange}
-                    onEnter={onConfirmClick}
+                    onEnter={confirmDisabled ? noop : onConfirmClick}
                   />
                 </Grid>
                 {(!!proxiesToSelect?.length || prevState?.selectedProxyAddress) &&
