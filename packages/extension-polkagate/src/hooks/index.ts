@@ -22,6 +22,7 @@ export { default as useBalances } from './useBalances';
 export { default as useDecidingCount } from './useDecidingCount';
 export { default as useTrack } from './useTrack';
 export { default as useTracks } from './useTracks';
+export { default as useHasDelegated } from './useHasDelegated';
 export { default as useChain } from './useChain';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';

@@ -21,7 +21,7 @@ import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalanc
 import { useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsDetail from './rewards/RewardsDetail';
@@ -107,7 +107,7 @@ export default function Index(): React.ReactElement {
   useEffect(() => {
     if (stakingAccount?.stakingLedger?.active?.isZero()) {
       setShake(true);
-      setTimeout(() => setShake(false), TIME_TO_SHAKE_STAKE_ICON);
+      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
     }
   }, [stakingAccount?.stakingLedger.active]);
 

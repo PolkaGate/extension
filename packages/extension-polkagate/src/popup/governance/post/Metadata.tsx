@@ -9,7 +9,6 @@ import React from 'react';
 import { JsonToTable } from "react-json-to-table";
 
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { subscan } from '../../../assets/icons';
@@ -35,7 +34,7 @@ interface Props {
   referendum: Referendum | undefined;
 }
 
-export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
+export default function Metadata ({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);

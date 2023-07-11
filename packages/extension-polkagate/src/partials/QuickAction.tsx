@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { faHistory, faVoteYea, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane,faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, IconButton, Slide, useTheme } from '@mui/material';
@@ -17,8 +17,8 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { poolStakingBlack, poolStakingDisabledDark, poolStakingDisabledLight, poolStakingWhite } from '../assets/icons';
 import { HorizontalMenuItem } from '../components';
 import { useAccount, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import { windowOpen } from '../messaging';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;

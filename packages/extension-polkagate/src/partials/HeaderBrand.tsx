@@ -15,8 +15,8 @@ import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, Steps } from '../components';
 import useOutsideClick from '../hooks/useOutsideClick';
 import { Step } from '../util/types';
-import AccMenuInside from './AccMenuInside';
 import Menu from './Menu';
+import { AccountMenu } from '.';
 
 interface Props {
   address?: string;
@@ -169,9 +169,10 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
         />
       }
       {isAccountMenuOpen && address &&
-        <AccMenuInside
+        <AccountMenu
           address={address}
           isMenuOpen={isAccountMenuOpen}
+          noMargin
           setShowMenu={setShowAccountMenu}
         />
       }

@@ -5,39 +5,41 @@
 
 import '@vaadin/icons';
 
-import { faCoins, faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useContext, useState } from 'react';
 
-import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
-import { ActionContext, Identity, MenuItem } from '../components';
-import { useAccount, useApi, useChain, useFormatted, useTranslation } from '../hooks';
+import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
+import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
+import { tieAccount } from '../messaging';
+import getLogo from '../util/getLogo';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuOpen: boolean;
-  address: string | null;
+  address: string;
+  noMargin?: boolean;
 }
 
-function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu({ address, isMenuOpen, setShowMenu, noMargin }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const history = useHistory();
-  const onAction = useContext(ActionContext);
-  const containerRef = React.useRef(null);
-
-  const account = useAccount(address);
+  const options = useGenesisHashOptions();
   const chain = useChain(address);
   const formatted = useFormatted(address);
+  const account = useAccount(address);
   const api = useApi(address);
 
+  const [genesisHash, setGenesis] = useState<string | undefined>();
+
+  const onAction = useContext(ActionContext);
+  const containerRef = React.useRef(null);
   const canDerive = !(account?.isExternal || account?.isHardware);
 
   const _onForgetAccount = useCallback(() => {
-    account && onAction(`/forget/${address}/${account?.isExternal}`);
+    onAction(`/forget/${address}/${account.isExternal}`);
   }, [address, account, onAction]);
 
   const _goToDeriveAcc = useCallback(
@@ -51,6 +53,13 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
     [setShowMenu]
   );
 
+  const _onChangeNetwork = useCallback((newGenesisHash: string) => {
+    const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
+
+    address && tieAccount(address, availableGenesisHash).catch(console.error);
+    setGenesis(availableGenesisHash ?? undefined);
+  }, [address]);
+
   const _onRenameAccount = useCallback(() => {
     address && onAction(`/rename/${address}`);
   }, [address, onAction]);
@@ -60,27 +69,17 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
   }, [address, onAction]);
 
   const _onManageProxies = useCallback(() => {
-    address && onAction(`/manageProxies/${address}`);
-  }, [address, onAction]);
-
-  const goToSoloStaking = useCallback(() => {
-    address && history.push({
-      pathname: `/solo/${address}/`
-    });
-  }, [address, history]);
-
-  const goToPoolStaking = useCallback(() => {
-    address && history.push({
-      pathname: `/pool/${address}/`
-    });
-  }, [address, history]);
+    address && chain && onAction(`/manageProxies/${address}`);
+  }, [address, chain, onAction]);
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-      <Grid container justifyContent='center' my='20px' pl='25px'>
+      <Grid container item justifyContent='center' my='20px' pl='8px'>
         <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} />
       </Grid>
+      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
+        disabled={!chain}
         iconComponent={
           <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
@@ -92,35 +91,8 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
         iconComponent={
           <FontAwesomeIcon
             color={theme.palette.text.primary}
-            icon={faCoins}
-            size='lg'
+            icon={faFileExport}
           />
-        }
-        text={t('Staking')}
-      />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px', ml: '20px' }} />
-      <MenuItem
-        iconComponent={
-          <img src={theme.palette.mode === 'dark' ? soloStakingWhite : soloStakingBlack} />
-        }
-        onClick={goToSoloStaking}
-        pl='20px'
-        text={t('Solo staking')}
-      />
-      <MenuItem
-        iconComponent={
-          <img src={theme.palette.mode === 'dark' ? poolStakingWhite : poolStakingBlack} />
-        }
-        onClick={goToPoolStaking}
-        pl='20px'
-        text={t('Pool staking')}
-      />
-      <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
-      <MenuItem
-        iconComponent={
-          <FontAwesomeIcon
-            color={theme.palette.text.primary}
-            icon={faFileExport} />
         }
         onClick={_onExportAccount}
         text={t('Export account')}
@@ -152,6 +124,19 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
         text={t('Forget account')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
+      <SelectChain
+        address={address}
+        defaultValue={chain?.genesisHash ?? options[0].text}
+        icon={getLogo(chain || undefined)}
+        label={t<string>('Chain')}
+        onChange={_onChangeNetwork}
+        options={options}
+        style={{ width: '100%' }}
+      />
+      <RemoteNodeSelector
+        address={address}
+        genesisHash={genesisHash}
+      />
       <IconButton
         onClick={_closeMenu}
         sx={{
@@ -167,7 +152,7 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
   );
 
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ mixBlendMode: 'normal', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' ref={containerRef} sx={[{ mixBlendMode: 'normal', ml: !noMargin && '-15px', overflowY: 'scroll', position: 'fixed', top: 0 }]} width='357px' zIndex={10}>
       <Slide
         container={containerRef.current}
         direction='up'
@@ -181,4 +166,5 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
   );
 }
 
-export default React.memo(AccMenuInside);
+export default React.memo(AccountMenu);
+

@@ -19,7 +19,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, Identicon, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../hooks';
 import { HeaderBrand, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -29,35 +29,28 @@ import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
-function To({ addr, chain, fontSize1 = 28, identiconSize = 31, label, mb = 10, name, pt1 = 0, pt2 = 5 }:
-{ chain: Chain | null, identiconSize?: number, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, name: string | undefined, addr: string | undefined }): React.ReactElement<Props> {
+function To({ chain, fontSize1 = 28, formatted, identiconSize = 31, label, mb = 10, name, pt1 = 0, pt2 = 5 }: { chain: Chain | null, identiconSize?: number, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, name: string | undefined, formatted: string | undefined }): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
         {label}
       </Grid>
-      <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: `${identiconSize}px`, pt: `${pt2}px` }}>
-        {chain &&
-            <Grid item mr='5px'>
-              <Identicon
-                iconTheme={chain?.icon || 'polkadot'}
-                prefix={chain?.ss58Format ?? 42}
-                size={identiconSize}
-                value={addr}
-              />
-            </Grid>
-        }
-        <Grid item sx={{ fontSize: `${fontSize1}px`, fontWeight: 400, maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {name}
-        </Grid>
+      <Grid alignItems='center' container item justifyContent='center' sx={{ maxWidth: '85%', lineHeight: `${identiconSize}px`, pt: `${pt2}px`, width: '90%' }}>
+        <Identity
+          chain={chain}
+          formatted={formatted}
+          identiconSize={identiconSize}
+          showSocial={false}
+          style={{ fontSize: `${fontSize1}px` }}
+        />
+        <ShortAddress address={formatted} />
       </Grid>
-      <ShortAddress address={addr} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
     </Grid>
   );
 }
 
-  type TransferType = 'All' | 'Max' | 'Normal';
+type TransferType = 'All' | 'Max' | 'Normal';
 
 interface Props {
   address: string;
@@ -175,7 +168,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
           }}
         />
         {isPasswordError &&
-            <WrongPasswordAlert />
+          <WrongPasswordAlert />
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
@@ -187,8 +180,8 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
             title={t('From')}
           />
           <To
-            addr={recipientAddress}
             chain={chain}
+            formatted={recipientAddress}
             label={t('To')}
             name={recipientName}
             pt1={0}
