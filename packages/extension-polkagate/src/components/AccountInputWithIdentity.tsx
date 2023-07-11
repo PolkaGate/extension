@@ -54,7 +54,7 @@ export default function AccountInputWithIdentity({ address, chain, disabled, hel
             formatted={address}
             identiconSize={31}
             name={name}
-            style={{ maxWidth: '100%', width: 'fit-content' }}
+            style={{ maxWidth: '100%', width: 'fit-content', height: '51px' }}
           />
         </Grid>
       }
