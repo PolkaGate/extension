@@ -5,7 +5,9 @@
 
 import '@vaadin/icons';
 
-import { faHistory, faVoteYea, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faHistory } from '@fortawesome/free-solid-svg-icons/faHistory';
+import { faVoteYea } from '@fortawesome/free-solid-svg-icons/faVoteYea';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, IconButton, Slide, useTheme } from '@mui/material';
@@ -17,8 +19,8 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { poolStakingBlack, poolStakingDisabledDark, poolStakingDisabledLight, poolStakingWhite } from '../assets/icons';
 import { HorizontalMenuItem } from '../components';
 import { useAccount, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 import { windowOpen } from '../messaging';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -69,9 +71,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
   }, [account?.genesisHash, address, formatted, history]);
 
   const goToGovernanceOrHistory = useCallback(() => {
-    GOVERNANCE_CHAINS.includes(account?.genesisHash)
-      ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
+account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
   }, [account?.genesisHash, address, history]);
 
   const movingParts = (
@@ -185,12 +185,12 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
                   ? `${theme.palette.text.primary}`
                   : `${theme.palette.action.disabledBackground}`
               }
-              icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
+              icon={faHistory}
               style={{ height: '20px' }}
             />}
           onClick={goToGovernanceOrHistory}
           textDisabled={!account?.genesisHash}
-          title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash) ? 'Governance' : 'History')}
+          title={t<string>('History')}
           titleFontSize={10}
         />
       </Grid>

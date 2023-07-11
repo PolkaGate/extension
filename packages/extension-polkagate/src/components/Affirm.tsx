@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons/faCircleCheck';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Theme } from '@mui/material';
 import React from 'react';

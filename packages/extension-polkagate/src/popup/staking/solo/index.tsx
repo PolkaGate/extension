@@ -6,7 +6,9 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { BalancesInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHand } from '@fortawesome/free-solid-svg-icons/faHand';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, useTheme } from '@mui/material';
@@ -21,7 +23,7 @@ import { ActionContext, FormatBalance, HorizontalMenuItem, Identicon, ShowBalanc
 import { useApi, useBalances, useChain, useChainName, useDecimal, useFormatted, useMinToReceiveRewardsInSolo, useMyAccountIdentity, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards, useToken, useTranslation } from '../../../hooks';
 import { ChainSwitch, HeaderBrand } from '../../../partials';
 import BouncingSubTitle from '../../../partials/BouncingSubTitle';
-import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_STAKE_ICON } from '../../../util/constants';
+import { BALANCES_VALIDITY_PERIOD, DATE_OPTIONS, TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import AccountBrief from '../../account/AccountBrief';
 import { getValue } from '../../account/util';
 import RewardsDetail from './rewards/RewardsDetail';
@@ -107,7 +109,7 @@ export default function Index(): React.ReactElement {
   useEffect(() => {
     if (stakingAccount?.stakingLedger?.active?.isZero()) {
       setShake(true);
-      setTimeout(() => setShake(false), TIME_TO_SHAKE_STAKE_ICON);
+      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
     }
   }, [stakingAccount?.stakingLedger.active]);
 

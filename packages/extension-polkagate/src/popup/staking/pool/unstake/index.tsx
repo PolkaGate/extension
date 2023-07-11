@@ -8,7 +8,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
-import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons/faPersonCircleXmark';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Button, Grid, Typography, useTheme } from '@mui/material';

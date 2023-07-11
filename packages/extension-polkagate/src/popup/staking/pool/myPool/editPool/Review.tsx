@@ -6,7 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -14,8 +14,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Infotip, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
+import { ActionContext, Infotip, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
+import { useAccountDisplay, useProxies, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
@@ -42,9 +42,9 @@ interface Props {
 export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setShow, setShowMyPool, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -54,13 +54,15 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
 
   const batchAll = api && api.tx.utility.batchAll;
   const setMetadata = api && api.tx.nominationPools.setMetadata;
+
+  const maybeCurrentCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
   const onBackClick = useCallback(() => {
     setShow(!show);
@@ -73,7 +75,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
 
     const calls = [];
 
-    const getRole = (role: string | undefined) => {
+    const getRole = (role: string | undefined | null) => {
       if (role === undefined) {
         return 'Noop';
       } else if (role === null) {
@@ -85,8 +87,12 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
 
     changes?.newPoolName !== undefined &&
       calls.push(setMetadata(pool.poolId, changes?.newPoolName));
-    changes?.newRoles !== undefined &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes?.newRoles.newRoot), getRole(changes?.newRoles.newNominator), getRole(changes?.newRoles.newBouncer)));
+
+    changes?.newRoles !== undefined && !Object.values(changes.newRoles).every((value) => value === undefined) &&
+      calls.push(api.tx.nominationPools.updateRoles(pool.poolId, getRole(changes.newRoles.newRoot), getRole(changes.newRoles.newNominator), getRole(changes.newRoles.newBouncer)));
+
+    changes?.commission !== undefined && (changes.commission.value !== undefined || changes.commission.payee) &&
+      calls.push(api.tx.nominationPools.setCommission(pool.poolId, [(changes.commission.value || 0) * 10 ** 7, changes.commission.payee || maybeCurrentCommissionPayee]));
 
     setTxCalls(calls);
 
@@ -101,7 +107,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
     calls.length > 1 && calls[1].paymentInfo(formatted).then((i) => {
       setEstimatedFee((prevEstimatedFee) => api.createType('Balance', (prevEstimatedFee ?? BN_ZERO).add(i?.partialFee)));
     }).catch(console.error);
-  }, [api, changes?.newPoolName, changes?.newRoles, formatted, pool.poolId, setMetadata]);
+  }, [api, changes, formatted, maybeCurrentCommissionPayee, pool?.bondedPool?.commission, pool?.poolId, setMetadata]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -215,6 +221,27 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
           showDivider
         />
       }
+      {changes?.commission?.value !== undefined &&
+        <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+          <Grid item>
+            <Typography fontSize='16px' fontWeight={300} lineHeight='23px'>
+              {t('Commission value')}
+            </Typography>
+          </Grid>
+          <Grid fontSize='28px' fontWeight={400} item>
+            {changes.commission.value}%
+          </Grid>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
+        </Grid>
+      }
+      {changes?.commission?.payee !== undefined &&
+        <ShowPoolRole
+          chain={chain}
+          roleAddress={changes.commission.payee || maybeCurrentCommissionPayee}
+          roleTitle={t<string>('Commission payee')}
+          showDivider
+        />
+      }
       <Grid alignItems='center' container item justifyContent='center' lineHeight='20px'>
         <Grid item>
           {t('Fee')}:
@@ -228,7 +255,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
         estimatedFee={estimatedFee}
         genesisHash={chain?.genesisHash}
         isPasswordError={isPasswordError}
-        label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+        label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
         onChange={setPassword}
         onConfirmClick={goEditPool}
         proxiedAddress={formatted}
@@ -257,6 +284,7 @@ export default function Review({ address, api, chain, changes, formatted, pool, 
             primaryBtnText={t('Staking Home')}
             secondaryBtnText={t('My pool')}
             showConfirmation={showConfirmation}
+            subtitle={t('Edited')}
             txInfo={txInfo}
           >
             <TxDetail

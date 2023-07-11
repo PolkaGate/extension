@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-export default function useAccountInfo(api: ApiPromise, formatted: string, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
+export default function useAccountInfo(api: ApiPromise | undefined, formatted: string, accountInfo?: DeriveAccountInfo): DeriveAccountInfo | undefined {
   const [info, setInfo] = useState<DeriveAccountInfo | undefined>();
 
   useEffect(() => {

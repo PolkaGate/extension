@@ -3,7 +3,8 @@
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
 
-import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { faShieldHalved } from '@fortawesome/free-solid-svg-icons/faShieldHalved';
+import { faSitemap } from '@fortawesome/free-solid-svg-icons/faSitemap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';

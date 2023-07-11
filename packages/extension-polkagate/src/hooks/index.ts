@@ -1,15 +1,11 @@
 // Copyright 2017-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export { default as useAccount } from './useAccount';
-export { default as useReferendum } from './useReferendum';
 export { default as useAccountLocks } from './useAccountLocks';
+export { default as useAccount } from './useAccount';
+export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useBlockInterval } from './useBlockInterval';
 export { default as useFullscreen } from './useFullscreen';
-export { default as useMyVote } from './useMyVote';
-export { default as useConvictionOptions } from './useConvictionOptions';
-export { default as useCurrentApprovalThreshold } from './useCurrentApprovalThreshold';
-export { default as useCurrentSupportThreshold } from './useCurrentSupportThreshold';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountInfo } from './useAccountInfo';
 export { default as useApi } from './useApi';
@@ -19,8 +15,8 @@ export { default as useApiWithChain } from './useApiWithChain';
 export { default as useMyPools } from './useMyPools';
 export { default as useBalances } from './useBalances';
 export { default as useDecidingCount } from './useDecidingCount';
-export { default as useTrack } from './useTrack';
 export { default as useTracks } from './useTracks';
+export { default as useHasDelegated } from './useHasDelegated';
 export { default as useChain } from './useChain';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';

@@ -42,6 +42,7 @@
     "@mui/icons-material": "latest",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
+    "@noble/curves": "^1.1.0",
     "@polkadot/api": "^10.3.2",
     "@polkadot/apps-config": "latest",
     "@polkadot/util": "latest",
@@ -58,6 +59,7 @@
     "react-markdown": "^8.0.7",
     "react-tooltip": "^4.2.21",
     "react-window": "^1.8.7",
+    "rehype-raw": "^6.1.1",
     "style-loader": "^3.3.2",
     "umi-request": "^1.4.0"
   },

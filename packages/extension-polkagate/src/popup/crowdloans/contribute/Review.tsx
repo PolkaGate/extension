@@ -10,7 +10,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { LinkOption } from '@polkadot/apps-config/endpoints/types';
@@ -18,8 +18,8 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../components';
-import { useAccountName, useChain, useProxies, useTranslation } from '../../../hooks';
+import { AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../components';
+import { useAccountDisplay, useChain, useProxies, useTranslation } from '../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../partials';
 import { broadcast } from '../../../util/api';
 import { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
@@ -48,8 +48,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   const address = getSubstrateAddress(formatted);
   const chain = useChain(formatted);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
-  const name = useAccountName(formatted);
+  const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
 
   const contribute = api && api.tx.crowdloan.contribute;
@@ -64,7 +63,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   const [showCrowdloanInfo, setShowCrowdloanInfo] = useState<boolean>(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const getName = useCallback((paraId: string): string | undefined => (crowdloansId?.find((e) => e?.paraId === Number(paraId))?.text as string), [crowdloansId]);
 
@@ -100,7 +99,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: String(from), name: selectedProxyName || name },
+        from: { address: String(from), name },
         subAction: 'Contribute',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -188,7 +187,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={goContribute}
           proxiedAddress={formatted}

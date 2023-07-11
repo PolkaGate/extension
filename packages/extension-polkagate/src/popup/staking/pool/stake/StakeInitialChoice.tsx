@@ -3,7 +3,8 @@
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 
-import { faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faRightToBracket } from '@fortawesome/free-solid-svg-icons/faRightToBracket';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons/faSquarePlus';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';

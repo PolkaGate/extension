@@ -14,7 +14,7 @@ import type { AnyTuple } from '@polkadot/types/types';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Container, Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
@@ -22,8 +22,8 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance2, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -53,11 +53,10 @@ interface Props {
 export default function Review({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const token = useToken(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -68,7 +67,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -216,12 +215,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             </Grid>
             : <AmountFee
               address={address}
-              amount={
-                <FormatBalance
-                  api={api}
-                  value={total}
-                />
-              }
+              amount={<ShowBalance2 address={address} balance={total} />}
               label={t('Total stake after')}
               style={{ pt: '5px' }}
             />
@@ -232,7 +226,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={stake}
           proxiedAddress={settings.stashId}

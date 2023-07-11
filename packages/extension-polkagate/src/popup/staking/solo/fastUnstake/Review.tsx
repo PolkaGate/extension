@@ -9,7 +9,7 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Container, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
@@ -17,8 +17,8 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, Warning } from '../../../../components';
-import { useAccountName, useDecimal, useProxies, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, Warning } from '../../../../components';
+import { useAccountDisplay, useDecimal, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
@@ -40,10 +40,9 @@ interface Props {
 export default function FastUnstakeReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(String(address));
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const decimal = useDecimal(address);
 
   const [password, setPassword] = useState<string | undefined>();
@@ -56,7 +55,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const tx = api.tx.fastUnstake.registerFastUnstake;
 
   const goToStakingHome = useCallback(() => {
@@ -158,12 +157,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount}
-              />
-            }
+            amount={<ShowBalance2 address={String(address)} balance={amount}/>}
             fee={estimatedFee}
             label={t('Unstake amount')}
             showDivider
@@ -172,12 +166,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={amount.add(available).sub(estimatedFee ?? BN_ZERO)}
-              />
-            }
+            amount={<ShowBalance2 address={String(address)} balance={amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
             label={t('Available balance after')}
             style={{ pt: '5px' }}
           />
@@ -187,7 +176,7 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}

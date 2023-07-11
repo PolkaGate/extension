@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { faCopy } from '@fortawesome/free-regular-svg-icons/faCopy';
 import React, { MouseEventHandler } from 'react';
 
 import { useTranslation } from '../hooks';

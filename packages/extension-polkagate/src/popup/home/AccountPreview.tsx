@@ -14,7 +14,7 @@ import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
 import { useApi, useChain, useFormatted, useMyAccountIdentity, useProxies } from '../../hooks';
 import { showAccount } from '../../messaging';
-import { AccMenu } from '../../partials';
+import { AccountMenu } from '../../partials';
 import QuickAction from '../../partials/QuickAction';
 import AccountDetail from './AccountDetail';
 
@@ -36,13 +36,13 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview({ address, genesisHash, hideNumbers, isExternal, isHardware, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const history = useHistory();
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
-  const [showActionsMenu, setShowActionsMenu] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const identity = useMyAccountIdentity(address);
 
@@ -52,7 +52,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
   }, [api, formatted]);
 
   useEffect((): void => {
-    setShowActionsMenu(false);
+    setShowAccountMenu(false);
   }, [toggleActions]);
 
   const identiconTheme = (
@@ -62,8 +62,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
   ) as IconTheme;
 
   const menuOnClick = useCallback(
-    () => setShowActionsMenu(!showActionsMenu),
-    [showActionsMenu]
+    () => setShowAccountMenu(!showAccountMenu),
+    [showAccountMenu]
   );
 
   const _toggleVisibility = useCallback((): void => {
@@ -92,25 +92,21 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
         address={address}
         chain={chain}
         formatted={formatted}
+        goToAccount={goToAccount}
         hideNumbers={hideNumbers}
         identity={identity}
         isHidden={isHidden}
         menuOnClick={menuOnClick}
         name={name}
         toggleVisibility={_toggleVisibility}
-        goToAccount={goToAccount}
       />
       <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
-        showActionsMenu &&
-        <AccMenu
+        showAccountMenu &&
+        <AccountMenu
           address={address}
-          chain={chain}
-          formatted={formatted}
-          isExternal={isExternal}
-          isHardware={isHardware}
-          isMenuOpen={showActionsMenu}
-          setShowMenu={setShowActionsMenu}
+          isMenuOpen={showAccountMenu}
+          setShowMenu={setShowAccountMenu}
         />
       }
       <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>

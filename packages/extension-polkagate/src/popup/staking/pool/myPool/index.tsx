@@ -6,10 +6,10 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../util/types';
 
-import { faPenToSquare, faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
+import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons/faPersonCircleXmark';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { AutoDelete as AutoDeleteIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
+import { ArrowForwardIos as ArrowForwardIosIcon , AutoDelete as AutoDeleteIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon, LockOpenRounded as UnblockIcon, LockPersonRounded as BlockIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -395,8 +395,6 @@ export default function Pool(): React.ReactElement {
       {goChange && changeState && poolsToShow?.length && formatted &&
         <SetState
           address={address}
-          api={api}
-          chain={chain}
           formatted={formatted}
           headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
           helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
@@ -410,7 +408,6 @@ export default function Pool(): React.ReactElement {
       {showEdit && poolsToShow?.length &&
         <EditPool
           address={address}
-          apiToUse={api}
           pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShowEdit={setShowEdit}
@@ -420,7 +417,6 @@ export default function Pool(): React.ReactElement {
       {showRemoveAll && poolsToShow?.length &&
         <RemoveAll
           address={address}
-          api={api}
           pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}
           setShowRemoveAll={setShowRemoveAll}

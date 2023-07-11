@@ -25,8 +25,6 @@ import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
-import Governance from '../../../extension-polkagate/src/popup/governance';
-import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
@@ -198,8 +196,6 @@ export default function Popup(): React.ReactElement {
                           <Switch>
                             <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
-                            <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
-                            <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                             <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>

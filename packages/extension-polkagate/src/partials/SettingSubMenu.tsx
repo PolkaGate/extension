@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faListCheck } from '@fortawesome/free-solid-svg-icons';
+import { faListCheck } from '@fortawesome/free-solid-svg-icons/faListCheck';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DeleteOutline as DeleteOutlineIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';

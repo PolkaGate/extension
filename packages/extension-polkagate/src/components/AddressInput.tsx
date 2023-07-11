@@ -6,7 +6,8 @@
 
 import '@vaadin/icons';
 
-import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPaste } from '@fortawesome/free-solid-svg-icons/faPaste';
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons/faXmarkCircle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Autocomplete, Grid, IconButton, InputAdornment, SxProps, TextField, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
