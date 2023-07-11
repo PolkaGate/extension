@@ -8,7 +8,7 @@ import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -62,11 +62,40 @@ export default function ManageIdentity(): React.ReactElement {
   const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
   const [subAccounts, setSubAccounts] = useState<SubAccounts | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
+  const [fetching, setFetching] = useState<boolean>(false);
   const [step, setStep] = useState<number>(0);
   const [mode, setMode] = useState<'Set' | 'Remove' | 'Modify'>();
 
   const basicDepositValue = useMemo(() => api && api.consts.identity.basicDeposit as unknown as BN, [api]);
   const fieldDepositValue = useMemo(() => api && api.consts.identity.fieldDeposit as unknown as BN, [api]);
+
+  const fetchIdentity = useCallback(() => {
+    setFetching(true);
+
+    api.query.identity.identityOf(address)
+      .then((id) => {
+        if (id.isSome) {
+          const { info } = id.unwrap();
+
+          const idToSet: DeriveAccountRegistration | null = {
+            display: getRawValue(info.display),
+            legal: getRawValue(info.legal),
+            email: getRawValue(info.email),
+            web: getRawValue(info.web),
+            twitter: getRawValue(info.twitter),
+            riot: getRawValue(info.riot),
+            other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined }
+          };
+
+          setIdentity(idToSet);
+        } else {
+          setIdentity(null);
+        }
+
+        setFetching(false);
+      })
+      .catch(console.error);
+  }, [address, api?.query?.identity]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -114,33 +143,8 @@ export default function ManageIdentity(): React.ReactElement {
       return;
     }
 
-    api.query.identity.identityOf(address)
-      .then((id) => {
-        if (id.isSome) {
-          const { info } = id.unwrap();
-
-          const idToSet: DeriveAccountRegistration | null = {
-            display: getRawValue(info.display),
-            legal: getRawValue(info.legal),
-            email: getRawValue(info.email),
-            web: getRawValue(info.web),
-            twitter: getRawValue(info.twitter),
-            riot: getRawValue(info.riot),
-            other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined }
-          };
-
-          setIdentity(idToSet);
-        } else {
-          setIdentity(null);
-        }
-      })
-      .catch(console.error);
-    // api.derive.accounts.info(address)
-    //   .then((id) => {
-    //     setIdentity(id.identity.display ? id.identity : null);
-    //   })
-    //   .catch(console.error);
-  }, [address, api]);
+    step === STEPS.CHECK_SCREEN && !fetching && fetchIdentity();
+  }, [address, api, fetchIdentity, fetching, step]);
 
   useEffect(() => {
     if (!address || !api || !identity) {
