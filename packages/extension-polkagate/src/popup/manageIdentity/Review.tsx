@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -15,19 +15,19 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, ShowBalance, WrongPasswordAlert } from '../../components';
+import { AccountHolderWithProxy, ActionContext, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
 import { useAccount, useAccountDisplay, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
-import IdentityTable from './partial/IdentityTable';
+import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
-import { STEPS } from '.';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../governance/components/SelectProxyModal';
+import IdentityTable from './partial/IdentityTable';
+import { STEPS } from '.';
 
 interface Props {
   address: string;
@@ -35,16 +35,15 @@ interface Props {
   chain: Chain;
   depositValue: BN;
   identityToSet: DeriveAccountRegistration | null;
+  infoParams: PalletIdentityIdentityInfo | null;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   mode: 'Set' | 'Remove' | 'Modify' | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, identityToSet, setStep, step, mode }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, mode, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
-  const account = useAccount(address);
-  const onAction = useContext(ActionContext);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
 
@@ -61,7 +60,6 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const setIdentity = api && api.tx.identity.setIdentity;
-  const batchAll = api && api.tx.utility.batchAll;
 
   const tx = useMemo(() => {
     if (!setIdentity) {
@@ -69,9 +67,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     }
 
     if (mode === 'Set') {
-      return setIdentity(identityToSet);
+      return setIdentity(infoParams);
     }
-  }, [identityToSet, mode, setIdentity]);
+  }, [infoParams, mode, setIdentity]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -89,8 +87,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     }
 
     // eslint-disable-next-line no-void
-    void setIdentity(setIdentity).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, identityToSet, setIdentity]);
+    void setIdentity(infoParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+  }, [api, formatted, infoParams, setIdentity]);
 
   const onNext = useCallback(async (): Promise<void> => {
     try {
