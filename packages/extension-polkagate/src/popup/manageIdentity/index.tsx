@@ -63,6 +63,7 @@ export default function ManageIdentity(): React.ReactElement {
   const [subAccounts, setSubAccounts] = useState<SubAccounts | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [fetching, setFetching] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const [step, setStep] = useState<number>(0);
   const [mode, setMode] = useState<'Set' | 'Remove' | 'Modify'>();
 
@@ -71,6 +72,7 @@ export default function ManageIdentity(): React.ReactElement {
 
   const fetchIdentity = useCallback(() => {
     setFetching(true);
+    setIdentity(undefined);
 
     api.query.identity.identityOf(address)
       .then((id) => {
@@ -92,6 +94,7 @@ export default function ManageIdentity(): React.ReactElement {
           setIdentity(null);
         }
 
+        setRefresh(false);
         setFetching(false);
       })
       .catch(console.error);
@@ -143,8 +146,16 @@ export default function ManageIdentity(): React.ReactElement {
       return;
     }
 
-    step === STEPS.CHECK_SCREEN && !fetching && fetchIdentity();
-  }, [address, api, fetchIdentity, fetching, step]);
+    fetchIdentity();
+  }, [address, api, fetchIdentity]);
+
+  useEffect(() => {
+    if (!address || !api || !(refresh && !fetching)) {
+      return;
+    }
+
+    fetchIdentity();
+  }, [address, api, fetchIdentity, fetching, identity, refresh]);
 
   useEffect(() => {
     if (!address || !api || !identity) {
@@ -203,6 +214,7 @@ export default function ManageIdentity(): React.ReactElement {
             identityToSet={identityToSet}
             infoParams={infoParams}
             mode={mode}
+            setRefresh={setRefresh}
             setStep={setStep}
             step={step}
           />

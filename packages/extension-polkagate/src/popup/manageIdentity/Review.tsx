@@ -40,9 +40,10 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   mode: 'Set' | 'Remove' | 'Modify' | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, mode, setStep, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, mode, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -134,8 +135,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   const handleClose = useCallback(() => setStep(mode === 'Set' || mode === 'Modify' ? STEPS.INDEX : STEPS.PREVIEW), [mode, setStep]);
   const closeConfirmation = useCallback(() => {
     setShowConfirmation(false);
+    setRefresh(true);
     setStep(0);
-  }, [setStep]);
+  }, [setRefresh, setStep]);
 
   return (
     <DraggableModal onClose={handleClose} open={step === STEPS.REVIEW || step === STEPS.PROXY}>
