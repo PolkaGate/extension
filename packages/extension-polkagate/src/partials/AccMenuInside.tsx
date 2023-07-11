@@ -5,6 +5,7 @@
 
 import '@vaadin/icons';
 
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { faCoins, faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -15,6 +16,7 @@ import { useHistory } from 'react-router-dom';
 import { poolStakingBlack, poolStakingWhite, soloStakingBlack, soloStakingWhite } from '../assets/icons';
 import { ActionContext, Identity, MenuItem } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useTranslation } from '../hooks';
+import { windowOpen } from '../messaging';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -63,6 +65,10 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
     address && onAction(`/manageProxies/${address}`);
   }, [address, onAction]);
 
+  const _onManageId = useCallback(() => {
+    address && windowOpen(`/identity/${address}`).catch(console.error);
+  }, [address]);
+
   const goToSoloStaking = useCallback(() => {
     address && history.push({
       pathname: `/solo/${address}/`
@@ -86,6 +92,17 @@ function AccMenuInside({ address, isMenuOpen, setShowMenu }: Props): React.React
         }
         onClick={_onManageProxies}
         text={t('Manage proxies')}
+      />
+      <MenuItem
+        iconComponent={
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            fontSize={19}
+            icon={faAddressCard}
+          />
+        }
+        onClick={_onManageId}
+        text={t('Manage identity')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
