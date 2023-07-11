@@ -261,13 +261,10 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
               title={t<string>('Commission')}
             />
           }
-          {showClaimCommission && poolId &&
+          {showClaimCommission && poolToShow &&
             <ClaimCommission
               address={address}
-              amount={new BN(poolToShow?.rewardPool?.totalCommissionPending || BN_ZERO)}
-              api={api}
-              chain={chain}
-              poolId={poolId}
+              pool= {poolToShow}
               setShow={setShowClaimCommission}
               show={showClaimCommission}
             />

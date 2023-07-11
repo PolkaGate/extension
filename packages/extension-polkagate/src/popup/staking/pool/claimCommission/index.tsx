@@ -1,51 +1,50 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens withdraw rewards review page
  * */
 
-import type { ApiPromise } from '@polkadot/api';
-
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, FormatBalance2, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useBalances, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useApi, useChain, useDecimal, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
-import { getValue } from '../../../account/util';
+import { To } from '../../../send/Review';
 import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
   address: string;
   show: boolean;
-  api: ApiPromise;
-  amount: BN;
-  chain: Chain;
-  poolId: number;
+  pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ClaimCommission({ address, amount, api, chain, poolId, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, pool, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
+  const api = useApi(address);
+  const chain = useChain(address);
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const balances = useBalances(address);
   const decimal = useDecimal(address);
 
-  const available = useMemo(() => getValue('available', balances), [balances]);
+  const poolId = pool.poolId;
+  const amount = useMemo(() => new BN(pool.rewardPool?.totalCommissionPending || 0), [pool.rewardPool?.totalCommissionPending]);
+  const payee = pool.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -158,11 +157,13 @@ export default function ClaimCommission({ address, amount, api, chain, poolId, s
             style={{ pt: '5px' }}
             withFee
           />
-          <AmountFee
-            address={address}
-            amount={<ShowBalance2 address={address} balance={available && amount.add(available).sub(estimatedFee ?? BN_ZERO)} />}
-            label={t('Available balance after')}
-            style={{ pt: '5px' }}
+         <To
+            chain={chain}
+            formatted={payee}
+            label={t('Payee')}
+            pt1={0}
+            pt2={0}
+            noDivider
           />
         </Container>
         <PasswordUseProxyConfirm

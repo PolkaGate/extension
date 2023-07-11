@@ -29,7 +29,8 @@ import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import SendTxDetail from './partial/SendTxDetail';
 
-function To({ chain, fontSize1 = 28, formatted, identiconSize = 31, label, mb = 10, name, pt1 = 0, pt2 = 5 }: { chain: Chain | null, identiconSize?: number, mb?: number, pt1?: number, pt2?: number, fontSize1?: number, label: string, name: string | undefined, formatted: string | undefined }): React.ReactElement<Props> {
+export function To({ chain, fontSize1 = 28, formatted, identiconSize = 31, label, mb = 10, noDivider, pt1 = 0, pt2 = 5 }:
+  { chain: Chain | null, identiconSize?: number, mb?: number, noDivider?: boolean, pt1?: number, pt2?: number, fontSize1?: number, label: string, formatted: string | undefined }): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em' }}>
       <Grid item sx={{ fontSize: '16px', pt: `${pt1}px` }}>
@@ -45,7 +46,9 @@ function To({ chain, fontSize1 = 28, formatted, identiconSize = 31, label, mb = 
         />
         <ShortAddress address={formatted} />
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
+      {!noDivider &&
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mb: `${mb}px`, mt: '5px', width: '240px' }} />
+      }
     </Grid>
   );
 }
@@ -183,7 +186,6 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
             chain={chain}
             formatted={recipientAddress}
             label={t('To')}
-            name={recipientName}
             pt1={0}
             pt2={0}
           />
