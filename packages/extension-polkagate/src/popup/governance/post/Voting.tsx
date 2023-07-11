@@ -5,7 +5,6 @@
 
 import { Button, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
@@ -112,14 +111,14 @@ export default function Voting({ address, referendum, track }: Props): React.Rea
         <Tally
           amount={referendum?.ayesAmount}
           color={`${theme.palette.aye.main}`}
-          count={referendum?.ayesCount}
+          count={referendum?.ayesCount || VoteCountsPA?.ayes}
           percent={ayesPercent}
           text={t('Ayes')}
         />
         <Tally
           amount={referendum?.naysAmount}
           color={`${theme.palette.nay.main}`}
-          count={referendum?.naysCount}
+          count={referendum?.naysCount || VoteCountsPA?.nays}
           percent={naysPercent}
           text={t('Nays')}
         />
