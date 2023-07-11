@@ -3,18 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Data } from '@polkadot/types';
 import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
+
 import { Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { AccountsStore } from '@polkadot/extension-base/stores';
+import keyring from '@polkadot/ui-keyring';
+import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useApi, useChain, useFullscreen, useTranslation } from '../../hooks';
 import { Header } from '../governance/Header';
-import DisplayIdentityInformation from './partial/DisplayIdentityInformation';
 import PreviewIdentity from './Preview';
 import Review from './Review';
 import SetIdentity from './SetIdentity';
@@ -33,6 +37,18 @@ export const STEPS = {
 
 type SubAccounts = [string, string[]];
 
+function getRawValue(value: Data) {
+  const text = u8aToString(value.asRaw.toU8a(true));
+
+  return text === '' ? undefined : text;
+}
+
+function setData(value: string | undefined): Data {
+  return value
+    ? { ['raw']: value }
+    : { ['none']: null };
+}
+
 export default function ManageIdentity(): React.ReactElement {
   useFullscreen();
   const { address } = useParams<{ address: string }>();
@@ -43,6 +59,7 @@ export default function ManageIdentity(): React.ReactElement {
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
+  const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
   const [subAccounts, setSubAccounts] = useState<SubAccounts | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [step, setStep] = useState<number>(0);
@@ -50,6 +67,32 @@ export default function ManageIdentity(): React.ReactElement {
 
   const basicDepositValue = useMemo(() => api && api.consts.identity.basicDeposit as unknown as BN, [api]);
   const fieldDepositValue = useMemo(() => api && api.consts.identity.fieldDeposit as unknown as BN, [api]);
+
+  useEffect(() => {
+    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    if (identityToSet === undefined) {
+      return;
+    }
+
+    if (identityToSet === null) {
+      setInfoParams(null);
+
+      return;
+    }
+
+    setInfoParams({
+      additional: identityToSet.other?.discord ? [[{ raw: 'Discord' }, { raw: identityToSet.other?.discord }]] : [],
+      display: { ['raw']: identityToSet.display },
+      email: setData(identityToSet?.email),
+      legal: setData(identityToSet?.legal),
+      riot: setData(identityToSet?.riot),
+      twitter: setData(identityToSet?.twitter),
+      web: setData(identityToSet?.web)
+    });
+  }, [identityToSet]);
 
   useEffect(() => {
     switch (identity) {
@@ -73,20 +116,23 @@ export default function ManageIdentity(): React.ReactElement {
 
     api.query.identity.identityOf(address)
       .then((id) => {
-        const rawIdentity = id.toHuman();
-        const idToSet: DeriveAccountRegistration | null = rawIdentity === null
-          ? null
-          : {
-            display: rawIdentity.info.display.Raw,
-            legal: rawIdentity.info.legal.Raw !== 'None' ? rawIdentity.info.legal.Raw : undefined,
-            email: rawIdentity.info.email.Raw !== 'None' ? rawIdentity.info.email.Raw : undefined,
-            web: rawIdentity.info.web.Raw !== 'None' ? rawIdentity.info.web.Raw : undefined,
-            twitter: rawIdentity.info.twitter.Raw !== 'None' ? rawIdentity.info.twitter.Raw : undefined,
-            riot: rawIdentity.info.riot.Raw !== 'None' ? rawIdentity.info.riot.Raw : undefined,
-            other: { discord: rawIdentity.info.additional.length > 0 ? rawIdentity.info.additional[0][1].Raw : undefined }
+        if (id.isSome) {
+          const { info } = id.unwrap();
+
+          const idToSet: DeriveAccountRegistration | null = {
+            display: getRawValue(info.display),
+            legal: getRawValue(info.legal),
+            email: getRawValue(info.email),
+            web: getRawValue(info.web),
+            twitter: getRawValue(info.twitter),
+            riot: getRawValue(info.riot),
+            other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined }
           };
 
-        setIdentity(idToSet);
+          setIdentity(idToSet);
+        } else {
+          setIdentity(null);
+        }
       })
       .catch(console.error);
     // api.derive.accounts.info(address)
@@ -151,6 +197,7 @@ export default function ManageIdentity(): React.ReactElement {
             chain={chain}
             depositValue={depositValue}
             identityToSet={identityToSet}
+            infoParams={infoParams}
             mode={mode}
             setStep={setStep}
             step={step}
