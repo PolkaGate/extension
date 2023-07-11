@@ -16,7 +16,7 @@ interface Props {
   maxHeight?: string;
 }
 
-export default function IdentityTable({ identity, maxHeight = '285px', style }: Props): React.ReactElement {
+export default function IdentityTable ({ identity, maxHeight = '285px', style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const IdItems = ({ noBorder = false, title, value }: { title: string, value: string | undefined, noBorder?: boolean }) => (
@@ -27,7 +27,7 @@ export default function IdentityTable({ identity, maxHeight = '285px', style }: 
         </Typography>
       </Grid>
       <Grid alignItems='center' container item xs={8}>
-        <Typography fontSize='16px' fontWeight={500} maxWidth='100%' whiteSpace='nowrap' overflow='hidden' pl='12px' textOverflow='ellipsis'>
+        <Typography fontSize='16px' fontWeight={500} maxWidth='100%' overflow='hidden' pl='12px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {value ?? t<string>('None')}
         </Typography>
       </Grid>
