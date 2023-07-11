@@ -25,7 +25,7 @@ interface Props {
   basicDeposit: BN | undefined;
   fieldDeposit: BN | undefined;
   totalDeposit: BN;
-  setMode: React.Dispatch<React.SetStateAction<"Set" | "Remove" | "Modify" | undefined>>;
+  setMode: React.Dispatch<React.SetStateAction<'Set' | 'Remove' | 'Modify' | undefined>>;
 }
 
 export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, identity, setDepositValue, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
@@ -44,10 +44,7 @@ export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, ident
       return;
     }
 
-    const filledItemsLength = [display, legal, email, website, twitter, riot, discord].filter(Boolean).length;
-
-    const totalFieldDepositValue = fieldDeposit.muln(filledItemsLength);
-    const totalDeposit = basicDeposit.add(totalFieldDepositValue);
+    const totalDeposit = basicDeposit.add(discord ? fieldDeposit : BN_ZERO);
 
     setDepositValue(totalDeposit);
   }, [basicDeposit, discord, display, email, fieldDeposit, legal, riot, setDepositValue, twitter, website]);
@@ -58,15 +55,15 @@ export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, ident
     }
 
     setIdentityToSet({
-      additional: [],
       display,
-      email: email ?? 'None',
-      legal: legal ?? 'None',
-      // other: discord ? [{ Discord: discord }] : 'None',
-      riot: riot ?? 'None',
-      twitter: twitter ?? 'None',
-      web: website ?? 'None',
-      image: 'None'
+      email,
+      image: undefined,
+      judgements: [],
+      legal,
+      other: discord ? { discord } : {},
+      riot,
+      twitter,
+      web: website
     });
   }, [discord, display, email, legal, riot, setIdentityToSet, twitter, website]);
 
