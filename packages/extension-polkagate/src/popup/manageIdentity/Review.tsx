@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -15,17 +15,18 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccount, useAccountDisplay, useFormatted, useProxies } from '../../hooks';
+import { AccountHolderWithProxy, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
+import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
-import { SubTitle, WaitScreen } from '../../partials';
-import Confirmation from '../../partials/Confirmation';
+import { SubTitle } from '../../partials';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../governance/components/SelectProxyModal';
+import WaitScreen from '../governance/partials/WaitScreen';
+import Confirmation from './partial/Confirmation';
 import IdentityTable from './partial/IdentityTable';
 import { STEPS } from '.';
 
@@ -131,11 +132,15 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   }, [api, chain, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
 
   const handleClose = useCallback(() => setStep(mode === 'Set' || mode === 'Modify' ? STEPS.INDEX : STEPS.PREVIEW), [mode, setStep]);
+  const closeConfirmation = useCallback(() => {
+    setShowConfirmation(false);
+    setStep(0);
+  }, [setStep]);
 
   return (
     <DraggableModal onClose={handleClose} open={step === STEPS.REVIEW || step === STEPS.PROXY}>
       <Motion style={{ height: '100%' }}>
-        {step === STEPS.REVIEW &&
+        {step === STEPS.REVIEW && !showWaitScreen && !showConfirmation &&
           <>
             {isPasswordError &&
               <WrongPasswordAlert />
@@ -219,29 +224,16 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             setStep={setStep}
           />
         }
-        {
-          <WaitScreen
-            show={showWaitScreen}
-            title={t('Setting Identity')}
-          />
+        {showWaitScreen &&
+          <WaitScreen />
         }
-        {txInfo &&
+        {txInfo && showConfirmation &&
           <Confirmation
-            headerTitle={t<string>('Manage Proxies')}
-            onPrimaryBtnClick={handleClose}
-            primaryBtnText={t<string>('My accounts')}
-            showConfirmation={showConfirmation}
+            handleClose={closeConfirmation}
+            identity={identityToSet}
+            status={'set'}
             txInfo={txInfo}
-          >
-            {/* <ManageProxiesTxDetail
-            address={selectedProxyAddress}
-            api={api}
-            chain={chain}
-            deposit={depositValue}
-            name={selectedProxyName}
-            proxies={proxiesToChange}
-          /> */}
-          </Confirmation>
+          />
         }
       </Motion>
     </DraggableModal>
