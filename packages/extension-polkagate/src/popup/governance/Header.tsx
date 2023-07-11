@@ -6,6 +6,7 @@
 import { Box, Container, Grid } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 import { useParams } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
@@ -17,15 +18,20 @@ import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
 export function Header(): React.ReactElement {
-  const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
+  const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
+  const { pathname } = useLocation();
 
   const api = useApi(address);
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
 
-  const onAccountChange = useCallback((address: string) =>
-    onAction(`/governance/${address}/${topMenu}/${postId || ''}`)
-    , [onAction, postId, topMenu]);
+  const onAccountChange = useCallback((address: string) => {
+    if (pathname.includes('governance')) {
+      onAction(`/governance/${address}/${topMenu}/${postId || ''}`);
+    } else if (pathname.includes('identity')) {
+      onAction(`/identity/${address}`);
+    }
+  }, [onAction, pathname, postId, topMenu]);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: 'black', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
