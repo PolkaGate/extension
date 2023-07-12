@@ -14,18 +14,18 @@ import { PButton, ShowBalance } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { isEmail, isUrl } from '../../util/utils';
 import SetIdentityForm from './partial/SetIdentityForm';
-import { STEPS } from '.';
+import { Mode, STEPS } from '.';
 
 interface Props {
   api: ApiPromise | null | undefined;
-  identity?: DeriveAccountRegistration;
+  identity?: DeriveAccountRegistration | null;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
   setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
   basicDeposit: BN | undefined;
   fieldDeposit: BN | undefined;
   totalDeposit: BN;
-  setMode: React.Dispatch<React.SetStateAction<'Set' | 'Remove' | 'Modify' | undefined>>;
+  setMode: React.Dispatch<React.SetStateAction<Mode>>;
 }
 
 export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, identity, setDepositValue, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
@@ -67,7 +67,7 @@ export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, ident
     });
   }, [discord, display, email, legal, riot, setIdentityToSet, twitter, website]);
 
-  const nextBtnDisable = useMemo(() => !display || (email && !isEmail(email)) || (website && !isUrl(website)), [display, email, website]);
+  const nextBtnDisable = useMemo(() => !!(!display || (email && !isEmail(email)) || (website && !isUrl(website))), [display, email, website]);
 
   const goReview = useCallback(() => {
     setMode('Set');
