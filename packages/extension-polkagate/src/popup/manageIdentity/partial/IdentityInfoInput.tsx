@@ -9,20 +9,33 @@ import React from 'react';
 import { InputWithLabel } from '../../../components';
 
 interface IdentityItemsProps {
-  icon?: any;
+  icon?: unknown;
   title: string;
   type?: string;
   value: string | undefined;
   setter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function IdentityInfoInput({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
+export default function IdentityInfoInput ({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
+  const setInput = React.useCallback((input: string): void => {
+    const encoder = new TextEncoder();
+    let byteLength = encoder.encode(input).length;
+    let inputVal = input;
+
+    while (byteLength > 32) {
+      inputVal = inputVal.substring(0, inputVal.length - 1);
+      byteLength = encoder.encode(inputVal).length;
+    }
+
+    setter(inputVal);
+  }, [setter]);
+
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-between' py='5px'>
       <Grid container item xs={icon ? 11 : 12}>
         <InputWithLabel
           label={title}
-          onChange={setter}
+          onChange={setInput}
           type={type}
           value={value}
         />
@@ -32,4 +45,4 @@ export default function IdentityInfoInput({ icon, setter, title, type, value }: 
       </Grid>
     </Grid>
   );
-};
+}
