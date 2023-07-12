@@ -36,6 +36,7 @@ export const STEPS = {
 };
 
 type SubAccounts = [string, string[]];
+export type Mode = 'Set' | 'Remove' | 'Modify' | undefined;
 
 function getRawValue(value: Data) {
   const text = u8aToString(value.asRaw.toU8a(true));
@@ -60,7 +61,7 @@ export default function ManageIdentity(): React.ReactElement {
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
   const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
-  const [subAccounts, setSubAccounts] = useState<SubAccounts | null | undefined>();
+  const [subAccounts, setSubAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [fetching, setFetching] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -73,6 +74,7 @@ export default function ManageIdentity(): React.ReactElement {
   const fetchIdentity = useCallback(() => {
     setFetching(true);
     setIdentity(undefined);
+    setSubAccounts(undefined);
 
     api.query.identity.identityOf(address)
       .then((id) => {
@@ -158,15 +160,36 @@ export default function ManageIdentity(): React.ReactElement {
   }, [address, api, fetchIdentity, fetching, identity, refresh]);
 
   useEffect(() => {
-    if (!address || !api || !identity) {
-      return;
-    }
+    const fetchSubAccounts = async () => {
+      if (!address || !api || !identity) {
+        return;
+      }
 
-    api.query.identity.subsOf(address)
-      .then((subs) => {
-        setSubAccounts(subs.toHuman() as unknown as SubAccounts);
-      })
-      .catch(console.error);
+      try {
+        const subs = await api.query.identity.subsOf(address);
+        const subAccs = subs.toHuman() as unknown as SubAccounts;
+
+        if (subAccs[1].length > 0) {
+          const subAccountsAndNames = await Promise.all(
+            subAccs[1].map(async (subAddr) => {
+              const subsNameFetched = await api.query.identity.superOf(subAddr);
+              const subsNameToHuman = subsNameFetched.toHuman();
+              const subName = subsNameToHuman[1].Raw as unknown as string;
+
+              return { address: subAddr, name: subName };
+            })
+          );
+
+          setSubAccounts(subAccountsAndNames);
+        } else {
+          setSubAccounts(null);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSubAccounts().catch(console.error);
   }, [address, api, identity]);
 
   const IdentityCheckProgress = () => {
@@ -203,9 +226,13 @@ export default function ManageIdentity(): React.ReactElement {
         {step === STEPS.PREVIEW && identity &&
           <PreviewIdentity
             identity={identity}
+            mode={mode}
+            setMode={setMode}
+            setStep={setStep}
+            step={step}
           />
         }
-        {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
+        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
           <Review
             address={address}
             api={api}
