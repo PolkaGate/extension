@@ -20,15 +20,15 @@ export default function IdentityTable ({ identity, maxHeight = '285px', style }:
   const { t } = useTranslation();
 
   const IdItems = ({ noBorder = false, title, value }: { title: string, value: string | undefined, noBorder?: boolean }) => (
-    <Grid alignItems='center' container height='35px' item sx={noBorder ? {} : { borderBottom: '1px solid', borderBottomColor: 'secondary,light' }}>
-      <Grid alignItems='center' container item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', height: '100%' }} xs={4}>
+    <Grid alignItems='center' container height='35px' item sx={noBorder ? {} : { borderBottom: '1px solid', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
+      <Grid alignItems='center' container item sx={{ borderRight: '1px solid', borderRightColor: 'rgba(0,0,0,0.2)', height: '100%' }} xs={4}>
         <Typography fontSize='16px' fontWeight={400} pl='12px'>
           {title}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item xs={8}>
-        <Typography fontSize='16px' fontWeight={500} maxWidth='100%' overflow='hidden' pl='12px' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {value ?? t<string>('None')}
+        <Typography fontSize='20px' fontWeight={400} maxWidth='100%' overflow='hidden' pl='12px' textOverflow='ellipsis' whiteSpace='nowrap'>
+          {value && value.length >= 1 ? value : t<string>('None')}
         </Typography>
       </Grid>
     </Grid>
