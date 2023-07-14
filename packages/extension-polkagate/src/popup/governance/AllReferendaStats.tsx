@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Divider, Grid, LinearProgress, SxProps, Typography, useMediaQuery } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -93,6 +93,10 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const decimal = useDecimal(address);
   const token = useToken(address);
   const price = usePrice(address);
+  const myRef = useRef();
+  const nextSpendingWidth = myRef.current && myRef.current.clientWidth;
+
+  console.log('nextSpendingWidth:', nextSpendingWidth);
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
@@ -244,16 +248,16 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
               </Typography>
             </Grid>
             <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'}>
-              <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
-                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='20px' /> {t('days')}
+              <Grid alignItems='center' ref={myRef} container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='30px' /> {t('days')}
               </Grid>
               <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
-                <Grid alignItems='center' container item pr='5px' width='fit-content'>
-                  <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: '185px' }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
-                </Grid>
-                <Grid fontSize={18} fontWeight={400} item>
+                {/* <Grid alignItems='center' container item pr='5px' width='fit-content'> */}
+                <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: `${nextSpendingWidth}px` }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
+                {/* </Grid> */}
+                {/* <Grid fontSize={18} fontWeight={400} item>
                   {treasuryStats?.remainingSpendPeriodPercent}%
-                </Grid>
+                </Grid> */}
               </Grid>
             </Grid>
           </Grid>
