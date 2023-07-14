@@ -94,12 +94,17 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const token = useToken(address);
   const price = usePrice(address);
   const myRef = useRef();
-  const nextSpendingWidth = myRef.current && myRef.current.clientWidth;
 
-  console.log('nextSpendingWidth:', nextSpendingWidth);
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
+  const [nextSpendingWidth, setNextSpendingWidth] = useState<number>(0);
+
+  useEffect(() => {
+    if (myRef.current) {
+      setNextSpendingWidth(myRef.current.clientWidth);
+    }
+  }, [treasuryStats]);
 
   useEffect(() => {
     // reset all if chain changed
