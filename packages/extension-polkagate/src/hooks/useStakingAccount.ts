@@ -93,7 +93,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
       return;
     }
 
-    console.log('stakingInfo in useStakingAccount, parsed:', JSON.parse(JSON.stringify(stakingInfo)));
+    // console.log('stakingInfo in useStakingAccount, parsed:', JSON.parse(JSON.stringify(stakingInfo)));
 
     const temp = {} as AccountStakingInfo;
     temp.accountId = stakingInfo.accountId;
