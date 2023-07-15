@@ -137,10 +137,11 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <FontAwesomeIcon
-                  color={theme.palette.text.primary}
-                  icon={faFileImport}
-                />
+                // <FontAwesomeIcon
+                //   color={theme.palette.text.primary}
+                //   icon={faFileImport}
+                // />
+                <vaadin-icon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
@@ -151,10 +152,11 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <FontAwesomeIcon
-                  color={theme.palette.text.primary}
-                  icon={faFileExport}
-                />
+                // <FontAwesomeIcon
+                //   color={theme.palette.text.primary}
+                //   icon={faFileExport}
+                // />
+                <vaadin-icon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={_goToExportAll}
               text={t('Export all accounts')}
