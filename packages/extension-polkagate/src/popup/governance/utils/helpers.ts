@@ -200,7 +200,7 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/listing/on-chain-posts?page=${page}&proposalType=${track ? 'referendums_v2' : 'fellowship_referendums'}&listingLimit=${TRACK_LIMIT_TO_LOAD_PER_REQUEST}&trackNo=${track}&trackStatus=All&sortBy=newest`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/listing/on-chain-posts?page=${page}&proposalType=${track !== undefined ? 'referendums_v2' : 'fellowship_referendums'}&listingLimit=${TRACK_LIMIT_TO_LOAD_PER_REQUEST}&trackNo=${track}&trackStatus=All&sortBy=newest`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
