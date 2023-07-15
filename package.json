@@ -42,8 +42,9 @@
     "@mui/icons-material": "latest",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
+    "@noble/curves": "^1.1.0",
     "@polkadot/api": "^10.9.1",
-    "@polkadot/apps-config": "latest",
+    "@polkadot/apps-config": "^0.132.1",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
     "better-react-spinkit": "^2.0.4",
@@ -69,7 +70,8 @@
     "i18next-scanner": "^3.1.0",
     "intersection-observer": "^0.12.0",
     "jsdom-worker-fix": "^0.1.8",
-    "sinon-chrome": "^3.0.1"
+    "sinon-chrome": "^3.0.1",
+    "webpack-bundle-analyzer": "^4.9.0"
   },
   "resolutions": {
     "@polkadot/api": "^10.9.1",
