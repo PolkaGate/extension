@@ -42,7 +42,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        console.log(`useBalances: can not find member for ${formatted}`);
+        // console.log(`useBalances: can not find member for ${formatted}`);
 
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
