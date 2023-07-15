@@ -88,11 +88,14 @@ function AccountMenu({ address, isMenuOpen, setShowMenu, noMargin }: Props): Rea
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
+        // iconComponent={
+        //   <FontAwesomeIcon
+        //     color={theme.palette.text.primary}
+        //     icon={faFileExport}
+        //   />
+        // }
         iconComponent={
-          <FontAwesomeIcon
-            color={theme.palette.text.primary}
-            icon={faFileExport}
-          />
+          <vaadin-icon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={_onExportAccount}
         text={t('Export account')}
@@ -107,11 +110,14 @@ function AccountMenu({ address, isMenuOpen, setShowMenu, noMargin }: Props): Rea
         />
       }
       <MenuItem
+        // iconComponent={
+        //   <FontAwesomeIcon
+        //     color={theme.palette.text.primary}
+        //     icon={faEdit}
+        //   />
+        // }
         iconComponent={
-          <FontAwesomeIcon
-            color={theme.palette.text.primary}
-            icon={faEdit}
-          />
+          <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
         onClick={_onRenameAccount}
         text={t('Rename')}
