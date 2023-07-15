@@ -6,6 +6,7 @@ import request from 'umi-request';
 import { Prices } from '../types';
 
 export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices> {
+  console.log('Getting price of:', chainNames);
   const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${chainNames}&vs_currencies=${currency}`, {});
 
   if (chainNames.includes('pendulum')) {
@@ -17,6 +18,7 @@ export default async function getPrices(chainNames: string[], currency = 'usd'):
   }
 
   prices.westend = { usd: 0 };
+  console.log('Prices:', prices);
 
   return { date: Date.now(), prices };
 }
