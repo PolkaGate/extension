@@ -36,7 +36,7 @@ export const STEPS = {
 };
 
 type SubAccounts = [string, string[]];
-export type Mode = 'Set' | 'Remove' | 'Modify' | undefined;
+export type Mode = 'Set' | 'Clear' | 'Modify' | undefined;
 
 function getRawValue(value: Data) {
   const text = u8aToString(value.asRaw.toU8a(true));
@@ -68,7 +68,7 @@ export default function ManageIdentity(): React.ReactElement {
   const [fetching, setFetching] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [step, setStep] = useState<number>(0);
-  const [mode, setMode] = useState<'Set' | 'Remove' | 'Modify'>();
+  const [mode, setMode] = useState<Mode>();
 
   const basicDepositValue = useMemo(() => api && api.consts.identity.basicDeposit as unknown as BN, [api]);
   const fieldDepositValue = useMemo(() => api && api.consts.identity.fieldDeposit as unknown as BN, [api]);
@@ -195,6 +195,23 @@ export default function ManageIdentity(): React.ReactElement {
     fetchSubAccounts().catch(console.error);
   }, [address, api, identity]);
 
+  useEffect(() => {
+    if (!basicDepositValue || !fieldDepositValue) {
+      return;
+    }
+
+    const totalDeposit = basicDepositValue.add(
+      mode !== 'Clear'
+        ? identityToSet?.other?.discord
+          ? fieldDepositValue
+          : BN_ZERO
+        : identity?.other?.discord
+          ? fieldDepositValue
+          : BN_ZERO);
+
+    setDepositValue(totalDeposit);
+  }, [basicDepositValue, fieldDepositValue, identity, identityToSet?.other?.discord, setDepositValue, mode]);
+
   const IdentityCheckProgress = () => {
     return (
       <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
@@ -216,12 +233,9 @@ export default function ManageIdentity(): React.ReactElement {
         {(step === STEPS.INDEX || (step === STEPS.MODIFY && mode === 'Modify')) &&
           <SetIdentity
             api={api}
-            basicDeposit={basicDepositValue}
-            fieldDeposit={fieldDepositValue}
             identity={identity}
             identityToSet={identityToSet}
             mode={mode}
-            setDepositValue={setDepositValue}
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
@@ -232,6 +246,7 @@ export default function ManageIdentity(): React.ReactElement {
           <PreviewIdentity
             identity={identity}
             mode={mode}
+            setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
             step={step}
