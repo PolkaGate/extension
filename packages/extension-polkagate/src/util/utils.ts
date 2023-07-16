@@ -9,7 +9,7 @@ import type { Compact, u128 } from '@polkadot/types-codec';
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { BLOCK_RATE, FLOATING_POINT_DIGIT, SHORT_ADDRESS_CHARACTERS } from './constants';
@@ -86,28 +86,27 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(_amount: string | undefined, _decimals: number | undefined): BN {
-  if (!_amount || !Number(_amount) || !_decimals) {
+export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
+  if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }
 
-  const dotIndex = _amount.indexOf('.');
+  const dotIndex = amount.indexOf('.');
+  let newAmount = amount;
 
   if (dotIndex >= 0) {
-    const wholePart = _amount.slice(0, dotIndex);
-    const fractionalPart = _amount.slice(dotIndex + 1, _amount.length);
+    const wholePart = amount.slice(0, dotIndex);
+    const fractionalPart = amount.slice(dotIndex + 1);
 
-    _amount = wholePart + fractionalPart;
-    _decimals -= fractionalPart.length;
+    newAmount = wholePart + fractionalPart;
+    decimal -= fractionalPart.length;
 
-    if (_decimals < 0) {
-      throw new Error("_decimals should be more than amount's decimals digits");
+    if (decimal < 0) {
+      throw new Error("decimal should be more than amount's decimals digits");
     }
   }
 
-  const x = 10 ** _decimals;
-
-  return new BN(_amount).mul(new BN(x));
+  return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
 }
 
 export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
