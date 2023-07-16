@@ -95,7 +95,6 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const price = usePrice(address);
   const myRef = useRef();
 
-
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
   const [nextSpendingWidth, setNextSpendingWidth] = useState<number>(0);
