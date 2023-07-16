@@ -41,7 +41,9 @@ export type Mode = 'Set' | 'Remove' | 'Modify' | undefined;
 function getRawValue(value: Data) {
   const text = u8aToString(value.asRaw.toU8a(true));
 
-  return text === '' ? undefined : text;
+  return text === ''
+    ? undefined
+    : text;
 }
 
 function setData(value: string | undefined): Data {
@@ -119,7 +121,7 @@ export default function ManageIdentity(): React.ReactElement {
 
     setInfoParams({
       additional: identityToSet.other?.discord ? [[{ raw: 'Discord' }, { raw: identityToSet.other?.discord }]] : [],
-      display: { ['raw']: identityToSet.display },
+      display: { ['raw']: identityToSet?.display },
       email: setData(identityToSet?.email),
       legal: setData(identityToSet?.legal),
       riot: setData(identityToSet?.riot),
@@ -134,6 +136,7 @@ export default function ManageIdentity(): React.ReactElement {
         setStep(0);
         break;
       case null:
+        setMode('Set');
         setStep(1);
         break;
 
@@ -210,12 +213,14 @@ export default function ManageIdentity(): React.ReactElement {
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }
-        {(step === STEPS.INDEX || (mode === 'Set' && (step === STEPS.REVIEW || step === STEPS.PROXY))) &&
+        {(step === STEPS.INDEX || (step === STEPS.MODIFY && mode === 'Modify')) &&
           <SetIdentity
             api={api}
             basicDeposit={basicDepositValue}
             fieldDeposit={fieldDepositValue}
             identity={identity}
+            identityToSet={identityToSet}
+            mode={mode}
             setDepositValue={setDepositValue}
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
