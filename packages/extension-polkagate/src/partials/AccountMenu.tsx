@@ -23,7 +23,7 @@ interface Props {
   noMargin?: boolean;
 }
 
-function AccountMenu({ address, isMenuOpen, setShowMenu, noMargin }: Props): React.ReactElement<Props> {
+function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useGenesisHashOptions();
