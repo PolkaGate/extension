@@ -19,7 +19,7 @@ interface Props {
   txInfo: TxInfo;
   handleClose: () => void;
   identity: DeriveAccountRegistration | null | undefined;
-  status: 'set' | 'Remove' | 'Modify';
+  status: 'Set' | 'Remove' | 'Modify';
 }
 
 export default function Confirmation({ handleClose, identity, txInfo, status }: Props): React.ReactElement {
