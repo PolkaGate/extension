@@ -6,8 +6,10 @@ import request from 'umi-request';
 import { Prices } from '../types';
 
 export default async function getPrices(chainNames: string[], currency = 'usd'): Promise<Prices> {
-  console.log('Getting price of:', chainNames);
-  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${chainNames}&vs_currencies=${currency}`, {});
+  const replaceAssetHubs = chainNames.map((item) => item.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot'));
+  const nonDuplicateChainNames = [...new Set(replaceAssetHubs)];
+
+  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${nonDuplicateChainNames}&vs_currencies=${currency}`, {});
 
   if (chainNames.includes('pendulum')) {
     const pendulumPrice = await getReq(`https://min-api.cryptocompare.com/data/price?fsym=PEN&tsyms=USD`, {});

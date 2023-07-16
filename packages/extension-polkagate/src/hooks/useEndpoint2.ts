@@ -24,7 +24,7 @@ export default function useEndpoint2(address: AccountId | string | undefined): s
     const allEndpoints = createWsEndpoints(t);
 
     const endpoints = allEndpoints?.filter((e) => e.value &&
-      (String(e.text)?.toLowerCase() === chainName?.toLowerCase() ||
+      (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
     );
 
