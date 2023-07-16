@@ -26,9 +26,11 @@ interface Props {
   fieldDeposit: BN | undefined;
   totalDeposit: BN;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
+  mode: Mode;
+  identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, identity, setDepositValue, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity({ api, basicDeposit, fieldDeposit, identity, mode, identityToSet, setDepositValue, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [display, setDisplay] = useState<string | undefined>();
@@ -38,6 +40,28 @@ export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, ident
   const [twitter, setTwitter] = useState<string | undefined>();
   const [riot, setRiot] = useState<string | undefined>();
   const [discord, setDiscord] = useState<string | undefined>();
+
+  const hasBeenSet = useCallback((value: string | null | undefined) => {
+    if (value === 'None' || value === null || value === undefined) {
+      return undefined;
+    } else {
+      return value;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!identity && mode === 'Set') {
+      return;
+    }
+
+    setDisplay(hasBeenSet(identity?.display));
+    setLegal(hasBeenSet(identity?.legal));
+    setEmail(hasBeenSet(identity?.email));
+    setWebsite(hasBeenSet(identity?.web));
+    setTwitter(hasBeenSet(identity?.twitter));
+    setRiot(hasBeenSet(identity?.riot));
+    setDiscord(hasBeenSet(identity?.other?.discord));
+  }, [hasBeenSet, identity, mode]);
 
   useEffect(() => {
     if (!basicDeposit || !fieldDeposit) {
@@ -55,46 +79,40 @@ export default function PreviewIdentity({ api, basicDeposit, fieldDeposit, ident
     }
 
     setIdentityToSet({
-      display,
-      email,
+      display: display || undefined,
+      email: email || undefined,
       image: undefined,
       judgements: [],
-      legal,
+      legal: legal || undefined,
       other: discord ? { discord } : {},
-      riot,
-      twitter,
-      web: website
+      riot: riot || undefined,
+      twitter: twitter || undefined,
+      web: website || undefined
     });
   }, [discord, display, email, legal, riot, setIdentityToSet, twitter, website]);
 
-  const nextBtnDisable = useMemo(() => !!(!display || (email && !isEmail(email)) || (website && !isUrl(website))), [display, email, website]);
+  const nextBtnDisable = useMemo(() => {
+    if (mode === 'Set') {
+      return !(display && (email ? isEmail(email) : true) && (website ? !isUrl(website) : true));
+    } else {
+      return !display ||
+        (identityToSet?.display === identity?.display &&
+          identityToSet?.legal === identity?.legal &&
+          identityToSet?.email === identity?.email &&
+          identityToSet?.web === identity?.web &&
+          identityToSet?.twitter === identity?.twitter &&
+          identityToSet?.riot === identity?.riot &&
+          identityToSet?.other?.discord === identity?.other?.discord
+        ) ||
+        (email && !isEmail(email)) ||
+        (website && !isUrl(website));
+    }
+  }, [display, email, identity?.display, identity?.email, identity?.legal, identity?.other?.discord, identity?.riot, identity?.twitter, identity?.web, identityToSet?.display, identityToSet?.email, identityToSet?.legal, identityToSet?.other?.discord, identityToSet?.riot, identityToSet?.twitter, identityToSet?.web, mode, website]);
 
   const goReview = useCallback(() => {
-    setMode('Set');
+    !mode && setMode('Set');
     setStep(STEPS.REVIEW);
-  }, [setStep, setMode]);
-
-  // const hasBeenSet = useCallback((value: string | null | undefined) => {
-  //   if (value === 'None' || value === null || value === undefined) {
-  //     return undefined;
-  //   } else {
-  //     return value;
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!identity) {
-  //     return;
-  //   }
-
-  //   setDisplay(hasBeenSet(identity.display));
-  //   setLegal(hasBeenSet(identity.legal));
-  //   setEmail(hasBeenSet(identity.email));
-  //   setWebsite(hasBeenSet(identity.web));
-  //   setTwitter(hasBeenSet(identity.twitter));
-  //   setRiot(hasBeenSet(identity.riot));
-  //   setDiscord(hasBeenSet(identity.other?.discord));
-  // }, [hasBeenSet, identity]);
+  }, [mode, setMode, setStep]);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
