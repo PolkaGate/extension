@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
+import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
@@ -63,16 +63,21 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const setIdentity = api && api.tx.identity.setIdentity;
+  const clearIdentity = api && api.tx.identity.clearIdentity;
 
   const tx = useMemo(() => {
-    if (!setIdentity) {
+    if (!setIdentity || !clearIdentity) {
       return undefined;
     }
 
     if (mode === 'Set' || mode === 'Modify') {
       return setIdentity(infoParams);
     }
-  }, [infoParams, mode, setIdentity]);
+
+    if (mode === 'Clear') {
+      return clearIdentity();
+    }
+  }, [clearIdentity, infoParams, mode, setIdentity]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -81,7 +86,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   }, [proxies]);
 
   useEffect(() => {
-    if (!formatted || !setIdentity) {
+    if (!formatted || !tx) {
       return;
     }
 
@@ -90,8 +95,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     }
 
     // eslint-disable-next-line no-void
-    void setIdentity(infoParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, infoParams, setIdentity]);
+    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+  }, [api, formatted, tx]);
 
   const onNext = useCallback(async (): Promise<void> => {
     try {
@@ -117,7 +122,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
         failureText,
         fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
-        subAction: `${mode === 'Remove' ? 'Clear' : mode} Identity`,
+        subAction: `${mode} Identity`,
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash: txHash || ''
@@ -149,14 +154,14 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 {step === STEPS.REVIEW && (
                   <>
                     {mode === 'Set' && t('Review Identity')}
-                    {mode === 'Remove' && t('Remove Identity')}
+                    {mode === 'Clear' && t('Clear Identity')}
                     {mode === 'Modify' && t('Modify Identity')}
                   </>
                 )}
                 {step === STEPS.WAIT_SCREEN && (
                   <>
                     {mode === 'Set' && t('Setting Identity')}
-                    {mode === 'Remove' && t('Removing Identity')}
+                    {mode === 'Clear' && t('Clearing Identity')}
                     {mode === 'Modify' && t('Modifying Identity')}
                   </>
                 )}
@@ -166,8 +171,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 {step === STEPS.CONFIRM && mode === 'Modify' && (
                   txInfo?.success ? t('Identity Modified') : t('Identity Modification Failed')
                 )}
-                {step === STEPS.CONFIRM && mode === 'Remove' && (
-                  txInfo?.success ? t('Identity Removed') : t('Identity Removal Failed')
+                {step === STEPS.CONFIRM && mode === 'Clear' && (
+                  txInfo?.success ? t('Identity Cleared') : t('Identity Clearing Failed')
                 )}
                 {step === STEPS.PROXY && t('Select Proxy')}
               </Typography>
@@ -212,7 +217,22 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   />
                 </>
               }
-              <DisplayValue title={t<string>('Total Deposit')}>
+              {mode === 'Clear' &&
+                <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '70px', py: '20px' }}>
+                  <Warning
+                    fontWeight={400}
+                    iconDanger
+                    isBelowInput
+                    theme={theme}
+                  >
+                    {t<string>('You are about to clear the on-chain identity for this account.')}
+                  </Warning>
+                </Grid>
+              }
+              <DisplayValue title={mode === 'Clear'
+                ? t<string>('Deposit that will be released')
+                : t<string>('Total Deposit')}
+              >
                 <ShowBalance
                   api={api}
                   balance={depositValue}
