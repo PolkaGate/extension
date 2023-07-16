@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { PButton, ShowBalance } from '../../components';
 import { useTranslation } from '../../components/translate';
@@ -21,16 +21,13 @@ interface Props {
   identity?: DeriveAccountRegistration | null;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
-  setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
-  basicDeposit: BN | undefined;
-  fieldDeposit: BN | undefined;
   totalDeposit: BN;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   mode: Mode;
   identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function SetIdentity({ api, basicDeposit, fieldDeposit, identity, mode, identityToSet, setDepositValue, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity ({ api, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [display, setDisplay] = useState<string | undefined>();
@@ -64,16 +61,6 @@ export default function SetIdentity({ api, basicDeposit, fieldDeposit, identity,
   }, [hasBeenSet, identity, mode]);
 
   useEffect(() => {
-    if (!basicDeposit || !fieldDeposit) {
-      return;
-    }
-
-    const totalDeposit = basicDeposit.add(discord ? fieldDeposit : BN_ZERO);
-
-    setDepositValue(totalDeposit);
-  }, [basicDeposit, discord, display, email, fieldDeposit, legal, riot, setDepositValue, twitter, website]);
-
-  useEffect(() => {
     if (!display) {
       return;
     }
@@ -93,7 +80,7 @@ export default function SetIdentity({ api, basicDeposit, fieldDeposit, identity,
 
   const nextBtnDisable = useMemo(() => {
     if (mode === 'Set') {
-      return !(display && (email ? isEmail(email) : true) && (website ? !isUrl(website) : true));
+      return !(display && (email ? isEmail(email) : true) && (website ? isUrl(website) : true));
     } else {
       return !display ||
         (identityToSet?.display === identity?.display &&
