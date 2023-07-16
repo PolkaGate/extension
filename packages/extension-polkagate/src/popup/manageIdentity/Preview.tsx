@@ -20,6 +20,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   mode: Mode;
+  setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
 }
 
 interface ManageButtonProps {
@@ -30,7 +31,7 @@ interface ManageButtonProps {
   noBorder?: boolean;
 }
 
-export default function PreviewIdentity({ identity, step, setStep, setMode, mode }: Props): React.ReactElement {
+export default function PreviewIdentity({ identity, mode, setMode, setStep, step, setIdentityToSet }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -63,9 +64,10 @@ export default function PreviewIdentity({ identity, step, setStep, setMode, mode
   }, [setMode, setStep]);
 
   const clearIdentity = useCallback(() => {
-    setMode('Remove');
+    setMode('Clear');
+    setIdentityToSet(null);
     setStep(STEPS.REVIEW);
-  }, [setMode, setStep]);
+  }, [setIdentityToSet, setMode, setStep]);
 
   const requestJudgment = useCallback(() => {
     setStep(STEPS.MODIFY);
