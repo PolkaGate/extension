@@ -69,7 +69,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
       return undefined;
     }
 
-    if (mode === 'Set') {
+    if (mode === 'Set' || mode === 'Modify') {
       return setIdentity(infoParams);
     }
   }, [infoParams, mode, setIdentity]);
