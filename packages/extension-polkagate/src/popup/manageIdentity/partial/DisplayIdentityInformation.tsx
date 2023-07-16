@@ -28,7 +28,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
   const { t } = useTranslation();
 
   const IdentityItems = ({ icon, noBorder = false, title, value }: IdentityItemsProps) => (
-    <Grid alignItems='center' bgcolor={!value ? '#F3EDF1' : ''} container height='55px' item justifyContent='space-between' sx={noBorder ? {} : { borderBottom: '2px solid', borderBottomColor: '#D5CCD0' }}>
+    <Grid alignItems='center' bgcolor={!value ? '#F3EDF1' : ''} container height='45px' item justifyContent='space-between' sx={noBorder ? {} : { borderBottom: '2px solid', borderBottomColor: '#D5CCD0' }}>
       <Grid container item width='fit-content'>
         {icon}
         <Typography fontSize='20px' fontWeight={400} pl={icon ? '8px' : 0}>
