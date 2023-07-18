@@ -101,7 +101,10 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
     }
   }, [currentTreasuryApprovalList, isAwardedBasedOnPA, isInTreasuryQueue, isTreasuryProposalBasedOnPA, referendum]);
 
-  useEffect(() => setExpanded(!!referendum?.statusHistory?.length), [referendum]);
+  useEffect(() => {
+    referendum?.statusHistory?.length && !expanded && setExpanded(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referendum?.statusHistory?.length]);
 
   const handleChange = useCallback((event, isExpanded: boolean) => {
     setExpanded(isExpanded);
