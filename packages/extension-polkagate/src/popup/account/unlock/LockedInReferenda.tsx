@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { Infotip, ShowBalance } from '../../../components';
+import { FormatPrice, Infotip, ShowBalance } from '../../../components';
 import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -53,7 +53,6 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   const [miscRefLock, setMiscRefLock] = useState<BN>();
   const [shake, setShake] = useState<boolean>();
 
-  const balanceInUSD = useMemo(() => price && decimal && totalLocked && Number(totalLocked) / (10 ** decimal) * price.amount, [decimal, price, totalLocked]);
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
 
   useEffect(() => {
@@ -153,7 +152,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
   return (
     <>
-      <Grid item py='4px'>
+      <Grid item pt='3px' pb='2px'>
         <Grid alignItems='center' container justifyContent='space-between'>
           <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
             {t('Locked in Referenda')}
@@ -162,12 +161,11 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
-            <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 400, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
-              {balanceInUSD !== undefined
-                ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
-              }
-            </Grid>
+            <FormatPrice
+              amount={totalLocked}
+              decimals={decimal}
+              price={price?.amount}
+            />
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
             <Infotip
