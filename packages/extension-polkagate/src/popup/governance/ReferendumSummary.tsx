@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { NorthEast as NorthEastIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
+import { OpenInNewRounded as OpenInNewIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -93,7 +93,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
           </Grid>
         }
         <Grid item sx={{}}>
-          <NorthEastIcon onClick={openInNewTab} sx={{ cursor: 'alias', fontSize: 23, opacity: 0.6, position: 'absolute', right: '1px', top: '1px' }} />
+          <OpenInNewIcon onClick={openInNewTab} sx={{ color: 'secondary.light', cursor: 'alias', fontSize: 23, position: 'absolute', right: '5px', top: '5px' }} />
         </Grid>
       </Grid>
       <Grid item sx={{ fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
