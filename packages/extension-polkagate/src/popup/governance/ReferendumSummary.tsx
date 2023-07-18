@@ -3,15 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { ScheduleRounded as ClockIcon } from '@mui/icons-material/';
+import { OpenInNewRounded as OpenInNewIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
 import { Divider, Grid, useTheme } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
 import { Identity } from '../../components';
 import { useApi, useChain, useFormatted, useReferendum, useTrack, useTranslation } from '../../hooks';
+import { windowOpen } from '../../messaging';
 import DecisionDeposit from './post/decisionDeposit';
 import PayDecisionDeposit from './post/decisionDeposit/PayDecisionDeposit';
 import VoteChart from './post/VoteChart';
@@ -22,13 +24,14 @@ import { capitalizeFirstLetter, formalizedStatus, formatRelativeTime, pascalCase
 interface Props {
   address: string;
   key: number;
-  onClick: () => void;
   refSummary: LatestReferenda;
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
-function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }: Props): React.ReactElement<Props> {
+function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const history = useHistory();
+
   const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: string | undefined }>();
   const newReferendum = useReferendum(address, topMenu, refSummary?.post_id, undefined, true, ENDED_STATUSES.includes(refSummary.status));
   const api = useApi(address);
@@ -59,6 +62,17 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
     }
   }, [newReferendum, t]);
 
+  const openReferendum = useCallback(() => {
+    address && history.push({
+      pathname: `/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`,
+    });
+  }, [address, history, refSummary.post_id, refSummary.type]);
+
+  const openInNewTab = useCallback((event) => {
+    event.stopPropagation();
+    address && windowOpen(`/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`).catch(console.error);
+  }, [address, refSummary.post_id, refSummary.type]);
+
   const VerticalBar = () => (
     <Grid item mx='1.5%'>
       <Divider flexItem orientation='vertical' sx={{ bgcolor: `${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : theme.palette.text.disabled}`, height: '34px' }} />
@@ -66,7 +80,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
   );
 
   return (
-    <Grid item key={key} onClick={!openDecisionDeposit ? onClick : () => null} sx={{ boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '0 20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : () => null} sx={{ position: 'relative', boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '0 20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
           <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
@@ -78,6 +92,9 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, onClick, refSummary }
             {t('Voted')}
           </Grid>
         }
+        <Grid item sx={{}}>
+          <OpenInNewIcon onClick={openInNewTab} sx={{ color: 'secondary.light', cursor: 'alias', fontSize: 23, position: 'absolute', right: '5px', top: '5px' }} />
+        </Grid>
       </Grid>
       <Grid item sx={{ fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {`#${refSummary.post_id}  ${refSummary.title || t('No title yet')} `}

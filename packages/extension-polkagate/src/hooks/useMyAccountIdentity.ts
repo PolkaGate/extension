@@ -31,17 +31,22 @@ export default function useMyAccountIdentity(address: AccountId | string | undef
   }, [api, formatted]);
 
   useEffect(() => {
-    if (!account || !chainName || !info || !address || info.accountId !== formatted) {
+    if (!account || !chainName || info === undefined || !address || (info && info.accountId !== formatted)) {
       return;
     }
 
     const savedIdentities = JSON.parse(account?.identities ?? '{}') as SavedIdentities;
 
-    savedIdentities[chainName] = info.identity;
+    if (info) {
+      savedIdentities[chainName] = info.identity;
+    } else {
+      delete savedIdentities[chainName];
+    }
+
     const metaData = JSON.stringify({ identities: JSON.stringify(savedIdentities) });
 
     updateMeta(address, metaData).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName, info, formatted]);
 
   useEffect(() => {
@@ -54,7 +59,7 @@ export default function useMyAccountIdentity(address: AccountId | string | undef
     if (savedIdentities[chainName]) {
       setOldIdentity(savedIdentities[chainName]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, chainName]);
 
   return info?.identity || oldIdentity;

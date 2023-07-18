@@ -7,6 +7,7 @@ import { ThumbDown as ThumbDownIcon, ThumbUp as ThumbUpIcon } from '@mui/icons-m
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 
 import { Identity, Infotip2 } from '../../../components';
 import { useApi, useChain } from '../../../hooks';
@@ -72,8 +73,10 @@ export default function Comment({ address, comment, noSource }: { address: strin
         {comment?.content &&
           <ReactMarkdown
             components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }} {...props} /> }}
-
-          >{comment?.content}</ReactMarkdown>
+            rehypePlugins={[rehypeRaw]}
+          >
+            {comment?.content}
+          </ReactMarkdown>
         }
       </Grid>
       {comment?.comment_reactions &&

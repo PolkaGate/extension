@@ -22,7 +22,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -215,12 +215,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
             </Grid>
             : <AmountFee
               address={address}
-              amount={
-                <FormatBalance
-                  api={api}
-                  value={total}
-                />
-              }
+              amount={<ShowBalance2 address={address} balance={total} />}
               label={t('Total stake after')}
               style={{ pt: '5px' }}
             />

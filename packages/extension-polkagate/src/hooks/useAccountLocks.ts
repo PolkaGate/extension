@@ -2,23 +2,24 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
+import type { PalletConvictionVotingVoteCasting, PalletConvictionVotingVotePriorLock, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally } from '@polkadot/types/lookup';
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { BN_MAX_INTEGER } from '@polkadot/util';
 
 import { CONVICTIONS } from '../popup/governance/utils/consts';
 import useApi from './useApi';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
+import { useChain } from '.';
 
 export interface Lock {
   classId: BN;
   endBlock: BN;
   locked: string;
-  refId: BN;
+  refId: BN | 'N/A';
   total: BN;
 }
 
@@ -32,8 +33,8 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   for (let i = 0; i < votes.length; i++) {
     const [classId, , casting] = votes[i];
 
-    for (let i = 0; i < casting.votes.length; i++) {
-      const [refId, accountVote] = casting.votes[i];
+    for (let j = 0; j < casting.votes.length; j++) {
+      const [refId, accountVote] = casting.votes[j];
       const refInfo = referenda.find(([id]) => id.eq(refId));
 
       if (refInfo) {
@@ -94,15 +95,29 @@ function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, 
   return locks;
 }
 
-export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean): Lock[] | undefined | null {
+type Info = {
+  referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null,
+  votes: [BN, BN[], PalletConvictionVotingVoteCasting][],
+  priors: Lock[]
+}
+
+export default function useAccountLocks(address: string | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
   const api = useApi(address);
   const formatted = useFormatted(address);
+  const chain = useChain(address);
   const currentBlock = useCurrentBlockNumber(address);
 
-  const [referenda, setReferenda] = useState<[BN, PalletReferendaReferendumInfoConvictionVotingTally][] | null>();
-  const [votes, setVotes] = useState<[BN, BN[], PalletConvictionVotingVoteCasting][]>();
+  const [info, setInfo] = useState<Info | null>();
 
   useEffect(() => {
+    if (chain?.genesisHash && api && api.genesisHash.toString() !== chain.genesisHash) {
+      return setInfo(undefined);
+    }
+
+    if (refresh) {
+      setInfo(undefined);
+    }
+
     getLockClass();
 
     async function getLockClass() {
@@ -116,33 +131,48 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         : null;
 
       if (!lockClasses) {
-        return setReferenda(null);
+        return setInfo(null);
       }
 
-      const voteParams: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
+      const params: [string, BN][] = lockClasses.map((classId) => [String(formatted), classId]);
 
-      const votingFor = await api.query[palletVote]?.votingFor.multi(voteParams) as unknown as PalletConvictionVotingVoteVoting[];
+      const maybeVotingFor = await api.query[palletVote]?.votingFor.multi(params) as unknown as PalletConvictionVotingVoteVoting[];
 
-      const votes = votingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
+      if (!maybeVotingFor) {
+        return; // has not voted!! or any issue
+      }
+
+      const mayBePriors: Lock[] = [];
+
+      const maybeVotes = maybeVotingFor.map((v, index): null | [BN, BN[], PalletConvictionVotingVoteCasting] => {
         if (!v.isCasting) {
           return null;
         }
 
         const casting = v.asCasting;
+        const classId = params[index][1];
+
+        if (!casting.prior[0].eq(BN_ZERO)) {
+          mayBePriors.push({
+            classId,
+            endBlock: casting.prior[0],
+            locked: 'None',
+            refId: 'N/A',
+            total: casting.prior[1]
+          });
+        }
 
         return [
-          voteParams[index][1],
+          classId,
           casting.votes.map(([refId]) => refId),
           casting
         ];
       }).filter((v): v is [BN, BN[], PalletConvictionVotingVoteCasting] => !!v);
 
-      setVotes(votes);
-
       let refIds: BN[] = [];
 
-      if (votes && votes.length) {
-        const ids = votes.reduce<BN[]>((all, [, ids]) => all.concat(ids), []);
+      if (maybeVotes && maybeVotes.length) {
+        const ids = maybeVotes.reduce<BN[]>((all, [, ids]) => all.concat(ids), []);
 
         if (ids.length) {
           refIds = ids;
@@ -150,26 +180,38 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       }
 
       if (!refIds.length) {
-        return setReferenda(null);
+        return setInfo({
+          priors: mayBePriors,
+          referenda: null,
+          votes: maybeVotes
+        });
       }
 
-      const optTally = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
+      const optTallies = await api.query[palletReferenda]?.referendumInfoFor.multi(refIds) as unknown as PalletReferendaReferendumInfoRankedCollectiveTally[] | undefined;
 
-      const referenda = optTally
-        ? optTally.map((v, index) =>
+      const maybeReferenda = optTallies
+        ? optTallies.map((v, index) =>
           v.isSome
             ? [refIds[index], v.unwrap() as PalletReferendaReferendumInfoConvictionVotingTally]
             : null
         ).filter((v): v is [BN, PalletReferendaReferendumInfoConvictionVotingTally] => !!v)
         : null;
 
-      setReferenda(referenda);
+      setInfo({
+        priors: mayBePriors,
+        referenda: maybeReferenda,
+        votes: maybeVotes
+      });
     }
-  }, [api, formatted, palletReferenda, palletVote]);
+  }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote, refresh]);
 
   return useMemo(() => {
-    if (api && votes && referenda && currentBlock) {
-      const accountLocks = getLocks(api, palletVote, votes, referenda);
+    if (api && chain?.genesisHash && api.genesisHash.toString() === chain.genesisHash && info && currentBlock) {
+      const { priors, referenda, votes } = info;
+      const accountLocks = votes && referenda ? getLocks(api, palletVote, votes, referenda) : [];
+
+      // /** add priors */
+      accountLocks.push(...priors);
 
       if (notExpired) {
         return accountLocks.filter((l) => l.endBlock.gtn(currentBlock));
@@ -178,10 +220,10 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       return accountLocks;
     }
 
-    if (referenda === null) {
+    if (info === null) {
       return null;
     }
 
     return undefined;
-  }, [api, currentBlock, notExpired, palletVote, referenda, votes]);
+  }, [api, chain?.genesisHash, info, currentBlock, palletVote, notExpired]);
 }

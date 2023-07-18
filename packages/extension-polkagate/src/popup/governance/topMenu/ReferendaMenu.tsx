@@ -8,8 +8,6 @@ import { Container, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Theme } from '@polkadot/extension-ui/types';
-
 import { Count } from '../../../hooks/useDecidingCount';
 import { MAX_WIDTH } from '../utils/consts';
 

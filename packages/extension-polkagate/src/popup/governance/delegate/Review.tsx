@@ -24,7 +24,7 @@ import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../utils/consts';
-import TracksList from './partial/tracksList';
+import TracksList from './partial/TracksList';
 import { DelegateInformation, STEPS } from '.';
 
 interface Props {

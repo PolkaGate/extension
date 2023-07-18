@@ -27,9 +27,11 @@ export default function usePrices(chainNames: string[] = []): Prices | undefined
     }
 
     if (chainNames.length) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       fetchPrices();
     }
-  }, [chainNames]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainNames.length]);
 
   useEffect(() => {
     if (newPrices) {

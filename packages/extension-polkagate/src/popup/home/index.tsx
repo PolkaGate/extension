@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -14,7 +14,6 @@ import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../.
 import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
-import getNetworkMap from '../../util/getNetworkMap';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import Alert from './Alert';
@@ -22,19 +21,16 @@ import YouHave from './YouHave';
 
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState('');
   const { accounts, hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
-  const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
+  
+  usePrices(chainNames); // get balances for all chains available in accounts
+  useMerkleScience(undefined, undefined, true);// to download the data file
+  
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
-
-  useMerkleScience(undefined, undefined, true);// to download the data file
-  usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
-
-  const networkMap = useMemo(() => getNetworkMap(), []);
 
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
@@ -63,18 +59,7 @@ export default function Home(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    setFilteredAccount(
-      filter
-        ? hierarchy.filter((account) =>
-          account.name?.toLowerCase().includes(filter) ||
-          (account.genesisHash && networkMap.get(account.genesisHash)?.toLowerCase().includes(filter))
-        )
-        : hierarchy
-    );
-  }, [filter, hierarchy, networkMap]);
-
-  useEffect(() => {
-    setSortedAccount(filteredAccount.sort((a, b) => {
+    setSortedAccount(hierarchy.sort((a, b) => {
       const x = a.name.toLowerCase();
       const y = b.name.toLowerCase();
 
@@ -88,13 +73,7 @@ export default function Home(): React.ReactElement {
 
       return 0;
     }));
-  }, [filteredAccount]);
-
-  const _onFilter = useCallback((event: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>) => {
-    const filter = event.target.value;
-
-    setFilter(filter.toLowerCase());
-  }, []);
+  }, [hierarchy]);
 
   return (
     <>

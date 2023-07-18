@@ -37,10 +37,6 @@ export const VOTE_TYPE_MAP = {
   ABSTAIN: 3
 };
 
-function noop() {
-  // This function does nothing.
-}
-
 export default function Standards({ address, allVotes, filteredVotes, handleClose, open, page, setFilteredVotes, setPage }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();

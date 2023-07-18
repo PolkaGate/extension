@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, isBn } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
@@ -270,7 +270,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
           {accountLocks.map((l, index) =>
             <React.Fragment key={index}>
               <Grid item xs={2.5}>
-                {l.refId.toNumber()}
+                {isBn(l.refId) ? l.refId.toNumber() : 'N/A'}
               </Grid>
               <Grid item xs={3.6}>
                 {amountToHuman(l.total, decimal)} {token}

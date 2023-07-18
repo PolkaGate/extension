@@ -38,14 +38,19 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
   const [showRewardsChart, setShowRewardsChart] = useState<boolean>(false);
 
   const rewardDestinationAddress = pool?.accounts?.rewardId as string || (api && getPoolAccounts(api, pool.poolId).rewardId);
-  const token = pool?.token || (api && api.registry.chainTokens[0]);
-  const decimal = pool?.decimal || (api && api.registry.chainDecimals[0]);
+  const token = (pool?.token || (api && api.registry.chainTokens[0])) as string | undefined;
+  const decimal = (pool?.decimal || (api && api.registry.chainDecimals[0])) as number | undefined;
 
   const openPoolInfo = useCallback(() => setOpenPoolInfo(!isOpenPoolInfo), [isOpenPoolInfo]);
 
   const poolStaked = pool?.stashIdAccount?.stakingLedger?.active || pool?.bondedPool?.points;
   const poolStatus = pool?.bondedPool?.state ? String(pool.bondedPool.state) : undefined;
   const chainName = chain?.name?.replace(' Relay Chain', '');
+
+  const hasCommission = pool && 'commission' in pool.bondedPool;
+  const parsedPool = JSON.parse(JSON.stringify(pool));
+  const mayBeCommission = hasCommission && parsedPool.bondedPool.commission.current ? parsedPool.bondedPool.commission.current[0] : 0
+  const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
 
   const onRewardsChart = useCallback(() => {
     setShowRewardsChart(true);
@@ -78,15 +83,22 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 }
               </Grid>
               <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', fontWeight: 400 }}>
-                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='13%'>
-                  {t<string>('Index')}
-                </Typography>
+                {!hasCommission &&
+                  <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='13%'>
+                    {t<string>('Index')}
+                  </Typography>
+                }
                 <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='30%'>
                   {t<string>('Staked')}
                 </Typography>
                 <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='18%'>
                   {t<string>('Members')}
                 </Typography>
+                {hasCommission &&
+                  <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='13%'>
+                    {t<string>('Com.')}
+                  </Typography>
+                }
                 <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='22%'>
                   {t<string>('Status')}
                 </Typography>
@@ -95,9 +107,11 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 </Typography>
               </Grid>
               <Grid container fontSize='14px' fontWeight={400} item lineHeight='37px' textAlign='center'>
-                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='13%'>
-                  {pool.poolId.toString()}
-                </Grid>
+                {!hasCommission &&
+                  <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='13%'>
+                    {pool.poolId.toString()}
+                  </Grid>
+                }
                 <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
                   <ShowBalance
                     api={api}
@@ -111,6 +125,11 @@ export default function ShowPool({ api, chain, label, labelPosition = 'left', mo
                 <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='18%'>
                   {pool.bondedPool?.memberCounter?.toString()}
                 </Grid>
+                {hasCommission &&
+                  <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='13%'>
+                    {commission}%
+                  </Grid>
+                }
                 <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='22%'>
                   {mode === 'Default' ? poolStatus : mode}
                 </Grid>

@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Paper, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 
 import { BN } from '@polkadot/util';
 
@@ -18,7 +19,7 @@ import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { Proposal, Referendum } from '../utils/types';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
-import { hexAddressToFormatted } from './MetaData';
+import { hexAddressToFormatted } from './Metadata';
 
 interface Props {
   address: string | undefined;
@@ -43,9 +44,11 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
 
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
   const mayBeTreasuryProposalId = useMemo(() => currentTreasuryApprovalList?.find((p) => p.beneficiary === mayBeBeneficiary)?.id, [currentTreasuryApprovalList, mayBeBeneficiary]);
-  const content = useMemo(() =>
-    referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content
-    , [referendum?.content, t]);
+  const content = useMemo(() => {
+    const res = referendum?.content?.includes('login and tell us more about your proposal') ? t(DEFAULT_CONTENT) : referendum?.content
+
+    return res || ''//?.replace(/<br\s*\/?>/gi, ' ') || '';
+  }, [referendum?.content, t]);
 
   useEffect(() =>
     setExpanded(!!referendum)
@@ -142,8 +145,9 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           <Grid container item sx={{ display: 'inline-block', overflowWrap: 'break-word', wordWrap: 'break-word', wordBreak: 'break-all' }} xs={12}>
             <ReactMarkdown
               components={{ img: ({ node, ...props }) => <img style={{ maxWidth: '100%' }}{...props} /> }}
+              rehypePlugins={[rehypeRaw]}
             >
-              {content?.replace(/<br\s*\/?>/gi, ' ') || ''}
+              {content}
             </ReactMarkdown>
           </Grid>
         </AccordionDetails>

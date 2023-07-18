@@ -18,7 +18,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, AmountFee, FormatBalance, Motion, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
@@ -159,12 +159,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, form
           />
           <AmountFee
             address={address}
-            amount={
-              <FormatBalance
-                api={api}
-                value={total}
-              />
-            }
+            amount={<ShowBalance2 address={address} balance={total} />}
             label={t('Total stake after')}
             style={{ pt: '5px' }}
           />

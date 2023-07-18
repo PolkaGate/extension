@@ -284,7 +284,7 @@ export function calcBlockTime(blockTime: BN, blocks: BN, t: TFunction): Result {
 }
 
 export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted: string | AccountId | undefined, tracks: Track[] | undefined): Promise<DelegationInfo[] | null | undefined> {
-  if (!api || !formatted || !tracks || !tracks.length) {
+  if (!api || !formatted || !tracks || !tracks.length || !api?.query?.convictionVoting) {
     return undefined;
   }
 
@@ -293,7 +293,7 @@ export async function getMyDelegationInfo(api: ApiPromise | undefined, formatted
   for (const track of tracks) {
     const votingFor = await api.query.convictionVoting.votingFor(String(formatted), track[0]) as unknown as PalletConvictionVotingVoteVoting | undefined;
 
-    votingFor && votingFor.isDelegating === true && delegatedTracks.push({
+    votingFor && votingFor.isDelegating && delegatedTracks.push({
       conviction: votingFor.asDelegating.conviction.toNumber(),
       delegatedBalance: votingFor.asDelegating.balance,
       delegatee: votingFor.asDelegating.target,

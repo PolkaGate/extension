@@ -1,10 +1,12 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -134,14 +136,16 @@ export default function JoinPool(): React.ReactElement {
       return setEstimatedFee(api.createType('Balance', BN_ONE));
     }
 
-    api && amountAsBN && api.tx.nominationPools.join(amountAsBN.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
+    const mayBeAmount = amountAsBN || poolStakingConsts?.minJoinBond;
+
+    api && mayBeAmount && api.tx.nominationPools.join(mayBeAmount.toString(), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedFee(api.createType('Balance', i?.partialFee));
     });
 
     api && api.tx.nominationPools.join(String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
     });
-  }, [formatted, api, availableBalance, selectedPool, amountAsBN]);
+  }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void

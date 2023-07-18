@@ -73,8 +73,8 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
           // eslint-disable-next-line no-void
           void chrome.storage.local.set({ RecentChains: accountsAndChains });
         } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-          myRecentChains.shift();
-          myRecentChains.push(currentGenesisHash);
+          myRecentChains.unshift(currentGenesisHash);
+          myRecentChains.pop();
           accountsAndChains[address] = myRecentChains;
 
           // eslint-disable-next-line no-void

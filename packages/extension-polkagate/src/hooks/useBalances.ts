@@ -12,35 +12,24 @@ import { FetchingContext } from '../components';
 import { updateMeta } from '../messaging';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
-import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useToken } from '.';
-
-const hexToStr = (hexString: string) => {
-  const trimmedHexString = hexString.substr(2); // Remove the "0x" prefix
-  let result = '';
-
-  for (let i = 0; i < trimmedHexString.length; i += 2) {
-    const hexValue = parseInt(trimmedHexString.substr(i, 2), 16);
-    const asciiChar = String.fromCharCode(hexValue);
-
-    result += asciiChar;
-  }
-
-  return result;
-}
+import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
 
 export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
+  const stakingAccount = useStakingAccount(address);
   const account = useAccount(address);
-  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
-  const [balances, setBalances] = useState<BalancesInfo | undefined>();
-  const [overall, setOverall] = useState<BalancesInfo | undefined>();
-  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
   const api = useApi(address);
-  const formatted = useFormatted(address);
   const chain = useChain(address);
+  const formatted = useFormatted(address);
   const isFetching = useContext(FetchingContext);
   const chainName = useChainName(address);
   const currentToken = useToken(address);
   const currentDecimal = useDecimal(address);
+
+  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
+  const [balances, setBalances] = useState<BalancesInfo | undefined>();
+  const [overall, setOverall] = useState<BalancesInfo | undefined>();
+  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
+
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
 
@@ -53,7 +42,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        console.log(`useBalances: can not find member for ${formatted}`);
+        // console.log(`useBalances: can not find member for ${formatted}`);
 
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
@@ -115,12 +104,13 @@ export default function useBalances(address: string | undefined, refresh?: boole
     if (newBalances && pooledBalance && api?.genesisHash?.toString() === chain?.genesisHash && api?.genesisHash?.toString() === newBalances?.genesisHash && api?.genesisHash?.toString() === pooledBalance.genesisHash) {
       setOverall({
         ...newBalances,
-        pooledBalance: pooledBalance.balance
+        pooledBalance: pooledBalance.balance,
+        soloTotal: stakingAccount?.stakingLedger?.total
       });
     } else {
       setOverall(undefined);
     }
-  }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash]);
+  }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash, stakingAccount]);
 
   useEffect(() => {
     if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
@@ -234,14 +224,14 @@ export default function useBalances(address: string | undefined, refresh?: boole
         votingBalance: new BN(sb.votingBalance)
       };
 
-      setBalances(lastBalances);
+      setBalances({ ...lastBalances, soloTotal: stakingAccount?.stakingLedger?.total });
 
       return;
     }
 
     setBalances(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, address, chainName]);
+  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   if (onlyNew) {
     return newBalances; //  returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance

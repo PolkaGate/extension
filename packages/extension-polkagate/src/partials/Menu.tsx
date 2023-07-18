@@ -121,7 +121,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
 `;
 
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, position: 'absolute', top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10}    >
+    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10} >
       <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px 24px' sx={{ height: 'parent.innerHeight', position: 'relative' }} width='86%'>
         {!showWarning
           ? <>
@@ -137,10 +137,11 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <FontAwesomeIcon
-                  color={theme.palette.text.primary}
-                  icon={faFileImport}
-                />
+                // <FontAwesomeIcon
+                //   color={theme.palette.text.primary}
+                //   icon={faFileImport}
+                // />
+                <vaadin-icon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
@@ -151,10 +152,11 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                <FontAwesomeIcon
-                  color={theme.palette.text.primary}
-                  icon={faFileExport}
-                />
+                // <FontAwesomeIcon
+                //   color={theme.palette.text.primary}
+                //   icon={faFileExport}
+                // />
+                <vaadin-icon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={_goToExportAll}
               text={t('Export all accounts')}

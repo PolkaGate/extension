@@ -315,7 +315,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       const found = arr.find((r) => r.index === id && r.type === sanitizedType);
 
       if (found) {
-        console.log(`retrieving ref ${found.index} FROM local`);
+        // console.log(`retrieving ref ${found.index} FROM local`);
 
         return setSavedReferendum(found);
       }

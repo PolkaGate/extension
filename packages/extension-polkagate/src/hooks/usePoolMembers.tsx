@@ -22,8 +22,7 @@ export function usePoolMembers(api: ApiPromise, poolId: string): MembersMapEntry
       return;
     }
 
-    // eslint-disable-next-line no-void
-    void api.query.nominationPools.poolMembers.entries().then((entries) => {
+    api.query?.nominationPools && api.query.nominationPools.poolMembers.entries().then((entries) => {
       const members = entries.reduce((all, [{ args: [accountId] }, optMember]) => {
         if (optMember.isSome) {
           const member = optMember.unwrap();

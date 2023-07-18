@@ -18,15 +18,18 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { WESTEND_GENESIS } from '@polkadot/apps-config';
+
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, HorizontalMenuItem, Identicon, Motion, RemoteNodeSelector, SelectChain } from '../../components';
-import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, usePrice, useProxies, useTranslation } from '../../hooks';
-import { tieAccount, windowOpen } from '../../messaging';
-import { HeaderBrand } from '../../partials';
-import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
-import getLogo from '../../util/getLogo';
+import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
+import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
+import { windowOpen } from '../../messaging';
+import { ChainSwitch, HeaderBrand } from '../../partials';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH, STAKING_CHAINS } from '../../util/constants';
 import { BalancesInfo, FormattedAddressState } from '../../util/types';
+import { sanitizeChainName } from '../../util/utils';
 import StakingOption from '../staking/Options';
+import LockedInReferenda from './unlock/LockedInReferenda';
 import AccountBrief from './AccountBrief';
 import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
@@ -34,17 +37,18 @@ import Others from './Others';
 export default function AccountDetails(): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
-  const genesisOptions = useGenesisHashOptions();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
   const { pathname, state } = useLocation();
   const { address, genesisHash } = useParams<FormattedAddressState>();
   const api = useApi(address, state?.api);
   const identity = useMyAccountIdentity(address);
-  const price = usePrice(address);
   const formatted = useFormatted(address);
   const account = useAccount(address);
   const chain = useChain(address);
+  const chainName = useChainName(address);
+
+  const genesisOptions = useGenesisHashOptions();
 
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
@@ -52,11 +56,10 @@ export default function AccountDetails(): React.ReactElement {
   const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
-  const chainName = useChainName(address);
+  const [recentChains, setRecentChains] = useState<string[]>();
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
-  // const onRefreshClick = useCallback(() => !refresh && setRefresh(true), [refresh]);
-
-  const disabledItems = useMemo(() => (['Allow use on any chain']), []);
+  useEffect(() => setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true'), []);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -82,10 +85,6 @@ export default function AccountDetails(): React.ReactElement {
     chain && goToAccount();
   }, [chain, goToAccount]);
 
-  const _onChangeGenesis = useCallback((genesisHash?: string | null): void => {
-    tieAccount(address, genesisHash || null).catch(console.error);
-  }, [address]);
-
   const goToSend = useCallback(() => {
     if (!availableProxiesForTransfer?.length && account?.isExternal) {
       return; // Account is external and does not have any available proxy for transfer funds
@@ -93,9 +92,9 @@ export default function AccountDetails(): React.ReactElement {
 
     history.push({
       pathname: `/send/${address}/`,
-      state: { api, balances, price: price?.amount }
+      state: { api, balances }
     });
-  }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api, price]);
+  }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api]);
 
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
@@ -117,9 +116,22 @@ export default function AccountDetails(): React.ReactElement {
   }, [address, formatted, genesisHash, history]);
 
   const goToGovernance = useCallback(() => {
-    formatted && GOVERNANCE_CHAINS.includes(genesisHash) &&
-      windowOpen(`/governance/${address}/referenda`).catch(console.error);
+    formatted && GOVERNANCE_CHAINS.includes(genesisHash) && windowOpen(`/governance/${address}/referenda`).catch(console.error);
   }, [address, formatted, genesisHash]);
+
+  const goToPoolStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/pool/${address}/`,
+      state: { api, pathname }
+    });
+  }, [address, api, history, pathname]);
+
+  const goToSoloStaking = useCallback(() => {
+    address && history.push({
+      pathname: `/solo/${address}/`,
+      state: { api, pathname }
+    });
+  }, [address, api, history, pathname]);
 
   const identicon = (
     <Identicon
@@ -137,16 +149,45 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
   }, []);
 
-  const OthersRow = (
-    <Grid item py='5px'>
+  useEffect(() => {
+    if (!address || !account) {
+      return;
+    }
+
+    chrome.storage.local.get('RecentChains', (res) => {
+      const allRecentChains = res?.RecentChains;
+      const myRecentChains = allRecentChains?.[address] as string[];
+
+      const suggestedRecent = INITIAL_RECENT_CHAINS_GENESISHASH.filter((chain) => genesisHash !== chain);
+
+      setRecentChains(myRecentChains ?? suggestedRecent);
+    });
+  }, [account, account?.genesisHash, address, genesisHash]);
+
+  const chainNamesToShow = useMemo(() => {
+    if (!(genesisOptions.length) || !(recentChains?.length) || !account) {
+      return undefined;
+    }
+
+    const filteredChains = recentChains.map((r) => genesisOptions.find((g) => g.value === r)).filter((chain) => chain?.value !== account.genesisHash).filter((chain) => !isTestnetEnabled ? chain?.value !== WESTEND_GENESIS : true);
+    const chainNames = filteredChains.map((chain) => chain && sanitizeChainName(chain.text));
+
+    chainNames.length > 2 && chainNames.shift();
+
+    return chainNames.slice(0, 2);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, genesisOptions, isTestnetEnabled, recentChains, account?.genesisHash]);
+
+  const OthersRow = () => (
+    <Grid item py='3px'>
       <Grid alignItems='center' container justifyContent='space-between'>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '36px' }} xs={3}>
+        <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={3}>
           {t('Others')}
         </Grid>
         <Grid item textAlign='right' xs={1.5}>
@@ -154,7 +195,7 @@ export default function AccountDetails(): React.ReactElement {
             onClick={goToOthers}
             sx={{ p: 0 }}
           >
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: '#BA2882', strokeWidth: 2 }} />
+            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
           </IconButton>
         </Grid>
       </Grid>
@@ -164,7 +205,7 @@ export default function AccountDetails(): React.ReactElement {
   return (
     <Motion>
       <HeaderBrand
-        _centerItem={identicon}
+        _centerItem={<ChainSwitch address={address} externalChainNamesToShow={chainNamesToShow}>{identicon}</ChainSwitch>}
         address={address}
         noBorder
         onBackClick={gotToHome}
@@ -176,29 +217,22 @@ export default function AccountDetails(): React.ReactElement {
         <AccountBrief address={address} identity={identity} />
         {!showStakingOptions
           ? <>
-            <Grid alignItems='flex-end' container pt='10px'>
-              <SelectChain
-                address={address}
-                defaultValue={genesisHash}
-                disabledItems={disabledItems}
-                icon={getLogo(chain)}
-                label={t<string>('Chain')}
-                onChange={_onChangeGenesis}
-                options={genesisOptions}
-                style={{ width: '100%' }}
-              />
-            </Grid>
-            <Grid height='20px' item mt='5px' xs>
-              <RemoteNodeSelector
-                address={address}
-                genesisHash={genesisHash}
-              />
-            </Grid>
-            <Grid item pt='50px' xs>
-              <LabelBalancePrice api={api} balances={balanceToShow} label={'Total'} price={price} />
-              <LabelBalancePrice api={api} balances={balanceToShow} label={'Transferrable'} price={price} />
-              <LabelBalancePrice api={api} balances={balanceToShow} label={'Reserved'} price={price} />
-              {OthersRow}
+            <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
+              <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
+              <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} onClick={goToSend} />
+              {STAKING_CHAINS.includes(genesisHash)
+                ? <>
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} />
+                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} />
+                </>
+                : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
+              }
+              {GOVERNANCE_CHAINS.includes(genesisHash)
+                ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
+                : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} />
+              }
+              <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />
+              <OthersRow />
             </Grid>
           </>
           : <StakingOption showStakingOptions={showStakingOptions} />
@@ -234,8 +268,8 @@ export default function AccountDetails(): React.ReactElement {
           <HorizontalMenuItem
             divider
             icon={
-              showStakingOptions ?
-                <Box component='img' src={stakingClose} width='30px' />
+              showStakingOptions
+                ? <Box component='img' src={stakingClose} width='30px' />
                 : <FontAwesomeIcon
                   color={stakingIconColor}
                   icon={faCoins}
@@ -250,9 +284,9 @@ export default function AccountDetails(): React.ReactElement {
             icon={
               <FontAwesomeIcon
                 color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                flip='horizontal'
                 icon={faPiggyBank}
                 size='lg'
-                flip='horizontal'
               />
             }
             onClick={goToCrowdLoans}
@@ -273,11 +307,9 @@ export default function AccountDetails(): React.ReactElement {
       {showOthers && balances && chain && formatted &&
         <Others
           address={address}
-          api={api}
           balances={balances}
           chain={chain}
           identity={identity}
-          price={price?.amount}
           setShow={setShowOthers}
           show={showOthers}
         />

@@ -177,13 +177,17 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
                     primary={
                       <>
                         {(!!trackVotes && !trackLockExpired) || filterTrack || (!!trackVotes && trackLockExpired)
-                          ? <Infotip2 showInfoMark={!trackLockExpired} showWarningMark={trackLockExpired} text={
-                            filterTrack
-                              ? t<string>('Already delegated to another account')
-                              : trackLockExpired
-                                ? t<string>('This category includes expired locks that can be unlocked and made available.')
-                                : t<string>('Has already {{trackVotes}} votes', { replace: { trackVotes } })
-                          }>
+                          ? <Infotip2
+                            showInfoMark={!trackLockExpired}
+                            showWarningMark={trackLockExpired}
+                            text={
+                              filterTrack
+                                ? t<string>('Already delegated to another account')
+                                : trackLockExpired
+                                  ? t<string>('This category includes expired locks that can be unlocked and made available.')
+                                  : t<string>('Has already {{trackVotes}} vote(s)/lock', { replace: { trackVotes } })
+                            }
+                          >
                             <Typography fontSize='16px' fontWeight={checked ? 500 : 400}>
                               {`${toTitleCase(value[1].name as unknown as string) as string}`}
                             </Typography>

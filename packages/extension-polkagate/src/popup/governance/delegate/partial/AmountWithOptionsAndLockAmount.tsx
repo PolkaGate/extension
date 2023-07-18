@@ -6,7 +6,7 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { BN } from '@polkadot/util';
+import { BN, isBn } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
@@ -50,7 +50,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
           {accountLocks.map((l, index) =>
             <React.Fragment key={index}>
               <Grid item xs={2.5}>
-                {l.refId.toNumber()}
+                {isBn(l.refId) ? l.refId.toNumber() : 'N/A'}
               </Grid>
               <Grid item xs={3.6}>
                 {amountToHuman(l.total, decimal)} {token}

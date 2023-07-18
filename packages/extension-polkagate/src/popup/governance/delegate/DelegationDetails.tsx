@@ -22,7 +22,7 @@ import { amountToHuman } from '../../../util/utils';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import ModifyDelegate, { ModifyModes } from './modify/ModifyDelegate';
 import ReferendaTable from './partial/ReferendaTable';
-import TracksList from './partial/tracksList';
+import TracksList from './partial/TracksList';
 import RemoveDelegate from './remove/RemoveDelegate';
 import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '.';
 

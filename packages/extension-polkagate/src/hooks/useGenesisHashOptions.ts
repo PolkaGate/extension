@@ -16,13 +16,13 @@ const RELAY_CHAIN = 'Relay Chain';
 
 export default function (): Option[] {
   const { t } = useTranslation();
-  const [metadataChains, setMetadatachains] = useState<Option[]>([]);
+  const [metadataChains, setMetadataChains] = useState<Option[]>([]);
 
   useEffect(() => {
     getAllMetadata().then((metadataDefs) => {
       const res = metadataDefs.map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
 
-      setMetadatachains(res);
+      setMetadataChains(res);
     }).catch(console.error);
   }, []);
 

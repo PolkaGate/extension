@@ -15,7 +15,7 @@ import { Track } from '../../hooks/useTracks';
 import useStyles from './styles/styles';
 import { kusama } from './tracks/kusama';
 import { blockToX, toSnakeCase, toTitleCase } from './utils/util';
-import { Seperator } from './AllReferendaStats';
+import { Separator } from './AllReferendaStats';
 import ThresholdCurves from './Curves';
 
 interface Props {
@@ -122,7 +122,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             </Grid>
           </Grid>
         </Grid>
-        <Seperator changeOrientation={secondBreakpoint} m={secondBreakpoint ? 20 : 0} />
+        <Separator changeOrientation={secondBreakpoint} m={secondBreakpoint ? 20 : 0} />
         <Grid container item sx={styles.curveContainer}>
           <Typography align='left' fontSize={18} fontWeight={400}>
             {t('Threshold Curves')}

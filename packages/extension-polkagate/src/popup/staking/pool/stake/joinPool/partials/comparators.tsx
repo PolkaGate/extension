@@ -26,6 +26,10 @@ function descendingComparator<T>(a: PoolInfo, b: PoolInfo, orderBy: keyof T) {
       A = a.bondedPool?.points;
       B = b.bondedPool?.points;
       break;
+    case ('Commissions'):
+      A = a.bondedPool?.commission?.current?.value?.[0]?.toString() || '0';
+      B = b.bondedPool?.commission?.current?.value?.[0]?.toString() || '0';
+      break;
     default:
       A = a.poolId;
       B = b.poolId;

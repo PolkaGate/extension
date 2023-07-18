@@ -199,7 +199,14 @@ function extractStandardVote(account, vote) {
   ];
 }
 
-function extractDelegations(mapped, track, directVotes = []) {
+function extractDelegations(
+  mapped: {
+    account: string;
+    trackId: number;
+    voting: any;
+  }[],
+  track: number,
+  directVotes = []) {
   const delegations = mapped
     .filter(({ trackId, voting }) => voting.isDelegating && trackId === track)
     .map(({ account, voting }) => {
@@ -243,7 +250,7 @@ export async function getReferendumVotes(api: ApiPromise, trackId: number, refer
   const voting = await api.query.convictionVoting.votingFor.entries();
   const mapped = voting.map((item) => normalizeVotingOfEntry(item, api));
 
-  const directVotes = extractVotes(mapped, referendumIndex, api);
+  const directVotes = extractVotes(mapped, referendumIndex);
   const delegationVotes = extractDelegations(mapped, trackId, directVotes);
   const sorted = sortVotesWithConviction([...directVotes, ...delegationVotes]);
 

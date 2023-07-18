@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Divider, Grid, LinearProgress, SxProps, Typography, useMediaQuery } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -48,7 +48,7 @@ interface TreasuryBalanceStatProps {
   rowDisplay?: boolean;
 }
 
-export const Seperator = ({ changeOrientation, m }: { changeOrientation: boolean, m?: number }) => (<Divider flexItem orientation={changeOrientation ? 'horizontal' : 'vertical'} sx={{ my: `${m}px`, width: changeOrientation ? '100%' : 'auto' }} />);
+export const Separator = ({ changeOrientation, m }: { changeOrientation: boolean, m?: number }) => (<Divider flexItem orientation={changeOrientation ? 'horizontal' : 'vertical'} sx={{ my: `${m}px`, width: changeOrientation ? '100%' : 'auto' }} />);
 
 const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, title, tokenPrice }: TreasuryBalanceStatProps) => {
   const api = useApi(address);
@@ -76,7 +76,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
           </Grid>
         </Grid>
       </Grid>
-      {!noDivider && <Seperator changeOrientation={!!rowDisplay} />}
+      {!noDivider && <Separator changeOrientation={!!rowDisplay} />}
     </>
   );
 };
@@ -93,9 +93,17 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const decimal = useDecimal(address);
   const token = useToken(address);
   const price = usePrice(address);
+  const myRef = useRef();
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
+  const [nextSpendingWidth, setNextSpendingWidth] = useState<number>(0);
+
+  useEffect(() => {
+    if (myRef.current) {
+      setNextSpendingWidth(myRef.current.clientWidth);
+    }
+  }, [treasuryStats]);
 
   useEffect(() => {
     // reset all if chain changed
@@ -214,7 +222,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
             />
           }
         </Grid>
-        <Seperator changeOrientation={secondBreakpoint} m={15} />
+        <Separator changeOrientation={secondBreakpoint} m={15} />
         <Grid container item sx={styles.treasuryStats}>
           <Grid container item sx={{ borderBottom: '2px solid gray', mb: firstBreakpoint ? 0 : '10px' }}>
             <Typography fontSize={20} fontWeight={500}>
@@ -244,20 +252,20 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
               </Typography>
             </Grid>
             <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'}>
-              <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
-                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='20px' /> {t('days')}
+              <Grid alignItems='center' ref={myRef} container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='30px' /> {t('days')}
               </Grid>
               <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
-                <Grid alignItems='center' container item pr='5px' width='fit-content'>
-                  <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: '185px' }} value={treasuryStats?.remainingSpendPeriodPercent || 0} variant='determinate' />
-                </Grid>
-                <Grid fontSize={18} fontWeight={400} item>
+                {/* <Grid alignItems='center' container item pr='5px' width='fit-content'> */}
+                <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: `${nextSpendingWidth}px` }} value={treasuryStats?.remainingSpendPeriodPercent ? 100 - treasuryStats.remainingSpendPeriodPercent : 0} variant='determinate' />
+                {/* </Grid> */}
+                {/* <Grid fontSize={18} fontWeight={400} item>
                   {treasuryStats?.remainingSpendPeriodPercent}%
-                </Grid>
+                </Grid> */}
               </Grid>
             </Grid>
           </Grid>
-          <Seperator changeOrientation={firstBreakpoint} />
+          <Separator changeOrientation={firstBreakpoint} />
           <TreasuryBalanceStat
             address={address}
             balance={treasuryStats?.nextBurn}
