@@ -9,10 +9,10 @@
  * */
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Skeleton, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Divider, Grid, IconButton, useTheme } from '@mui/material';
+import React from 'react';
 
-import { ShowBalance } from '../../components';
+import { FormatPrice, ShowBalance } from '../../components';
 import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
@@ -33,11 +33,6 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
   const decimal = useDecimal(address);
   const token = useToken(address);
 
-  const balanceInUSD = useMemo(() =>
-    price && value && balances?.decimal &&
-    Number(value) / (10 ** balances.decimal) * price.amount
-    , [balances?.decimal, price, value]);
-
   return (
     <>
       <Grid item py='3px'>
@@ -52,10 +47,11 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
               <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: label === 'Total' ? '20px' : '16px', fontWeight: label === 'Total' ? 400 : 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
-              {balanceInUSD !== undefined
-                ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
-              }
+              <FormatPrice
+                amount={value}
+                decimals={decimal}
+                price={price?.amount}
+              />
             </Grid>
           </Grid>
           {onClick &&

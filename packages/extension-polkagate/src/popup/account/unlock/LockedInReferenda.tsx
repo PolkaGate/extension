@@ -161,11 +161,13 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
-            <FormatPrice
-              amount={totalLocked}
-              decimals={decimal}
-              price={price?.amount}
-            />
+            <Grid item pt='6px' sx={{lineHeight: '15px'}}>
+              <FormatPrice
+                amount={totalLocked}
+                decimals={decimal}
+                price={price?.amount}
+              />
+            </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
             <Infotip

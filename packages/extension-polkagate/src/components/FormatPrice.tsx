@@ -9,13 +9,14 @@ import { BN } from '@polkadot/util';
 import { amountToHuman } from '../util/utils';
 
 interface Props {
-  amount?: BN;
+  amount?: BN | null;
   decimalPoint?: number;
   decimals?: number;
   num?: number;
   price?: number,
   textAlign?: 'left' | 'right';
   width?: string;
+  mt?: string;
 }
 
 export function nFormatter(num: number, decimalPoint: number) {
@@ -41,7 +42,7 @@ export function nFormatter(num: number, decimalPoint: number) {
   return item ? (num / item.value).toFixed(decimalPoint).replace(rx, '$1') + item.symbol : '0';
 }
 
-function FormatPrice({ amount, decimalPoint = 2, decimals, num, price, textAlign = 'left', width = '90px' }: Props): React.ReactElement<Props> {
+function FormatPrice({ amount, decimalPoint = 2, decimals, mt = '0px', num, price, textAlign = 'left', width = '90px' }: Props): React.ReactElement<Props> {
   const total = useMemo(() => {
     if (num) {
       return num;
@@ -55,10 +56,17 @@ function FormatPrice({ amount, decimalPoint = 2, decimals, num, price, textAlign
   }, [amount, decimals, num, price]);
 
   return (
-    <Grid item mt='1px' textAlign={textAlign}>
+    <Grid
+      item
+      mt={mt}
+      textAlign={textAlign}
+    >
       {total !== undefined
         ? `$${nFormatter(total, decimalPoint)}`
-        : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width }} />
+        : <Skeleton
+          height={15}
+          sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width }}
+        />
       }
     </Grid>
   );
