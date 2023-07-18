@@ -8,7 +8,7 @@ import { Container, Divider, Grid, SxProps, Theme, Typography, useTheme } from '
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React from 'react';
 
-import { ShowBalance, ShowValue } from '../../components';
+import { ShortAddress, ShowBalance, ShowValue } from '../../components';
 import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
 import { DecidingCount } from '../../hooks/useDecidingCount';
 import { Track } from '../../hooks/useTracks';
@@ -38,8 +38,8 @@ const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | u
   return filtered?.[1];
 };
 
-export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
-  : { label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => {
+export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
+  : { asShortAddress?: boolean, label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => {
   const theme = useTheme();
 
   return (
@@ -54,7 +54,10 @@ export const LabelValue = ({ label, value, noBorder, style, valueStyle = { fontS
         </Typography>
       </Grid>
       <Grid item sx={{ '> .MuiSkeleton-root': { display: 'block' }, ...valueStyle }}>
-        <ShowValue value={value} />
+        {asShortAddress
+          ? <ShortAddress address={value} showCopy charsCount={30} />
+          : <ShowValue value={value} />
+        }
       </Grid>
     </Grid>
   );
