@@ -10,7 +10,7 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
-import { PButton, ShowBalance } from '../../components';
+import { PButton, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { isEmail, isUrl } from '../../util/utils';
 import SetIdentityForm from './partial/SetIdentityForm';
@@ -27,7 +27,7 @@ interface Props {
   identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function SetIdentity ({ api, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity({ api, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [display, setDisplay] = useState<string | undefined>();
@@ -101,6 +101,11 @@ export default function SetIdentity ({ api, identity, identityToSet, mode, setId
     setStep(STEPS.REVIEW);
   }, [mode, setMode, setStep]);
 
+  const goBack = useCallback(() => {
+    setMode(undefined);
+    setStep(STEPS.PREVIEW);
+  }, [setMode, setStep]);
+
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='22px' fontWeight={700} pb='25px' pt='40px'>
@@ -140,13 +145,23 @@ export default function SetIdentity ({ api, identity, identityToSet, mode, setId
             />
           </Grid>
         </Grid>
-        <Grid container item width='40%'>
-          <PButton
-            _mt='1px'
-            _onClick={goReview}
-            disabled={nextBtnDisable}
-            text={t<string>('Next')}
-          />
+        <Grid container item width={mode === 'Set' ? '40%' : '70%'}>
+          {mode === 'Set'
+            ? <PButton
+              _mt='1px'
+              _onClick={goReview}
+              disabled={!!nextBtnDisable}
+              text={t<string>('Next')}
+            />
+            : <TwoButtons
+              disabled={!!nextBtnDisable}
+              mt={'1px'}
+              onPrimaryClick={goReview}
+              onSecondaryClick={goBack}
+              primaryBtnText={t<string>('Next')}
+              secondaryBtnText={t<string>('Back')}
+            />
+          }
         </Grid>
       </Grid>
     </Grid>
