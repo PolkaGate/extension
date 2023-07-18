@@ -226,7 +226,7 @@ export default function ManageIdentity(): React.ReactElement {
   return (
     <Grid bgcolor='#DFDFDF' container item justifyContent='center'>
       <Header />
-      <Grid container item justifyContent='center' sx={{ bgcolor: '#F1F1F1', height: 'calc(100vh - 70px)', maxWidth: '840px' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: '#F1F1F1', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }
@@ -250,6 +250,7 @@ export default function ManageIdentity(): React.ReactElement {
             setMode={setMode}
             setStep={setStep}
             step={step}
+            subIdAccounts={subAccounts}
           />
         }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&

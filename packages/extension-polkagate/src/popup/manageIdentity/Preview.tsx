@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 import { faEdit, faEraser, faHandshake, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
+// import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
@@ -12,6 +12,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { useTranslation } from '../../components/translate';
 import DisplayIdentityInformation from './partial/DisplayIdentityInformation';
+import SubIdsAccordion from './partial/SubIdsAccordion';
 import { Mode, STEPS } from '.';
 
 interface Props {
@@ -21,15 +22,16 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   mode: Mode;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
+  subIdAccounts: { address: string; name: string; }[] | null | undefined;
 }
 
-interface WideManageButtonProps {
-  icon: unknown;
-  title: string;
-  helperText: string;
-  onClick: () => void;
-  noBorder?: boolean;
-}
+// interface WideManageButtonProps {
+//   icon: unknown;
+//   title: string;
+//   helperText: string;
+//   onClick: () => void;
+//   noBorder?: boolean;
+// }
 
 interface ManageButtonProps {
   icon: unknown;
@@ -37,32 +39,32 @@ interface ManageButtonProps {
   onClick: () => void;
 }
 
-export default function PreviewIdentity({ identity, mode, setMode, setStep, step, setIdentityToSet }: Props): React.ReactElement {
+export default function PreviewIdentity({ identity, mode, setIdentityToSet, setMode, setStep, step, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const WideManageButton = ({ helperText, icon, noBorder, onClick, title }: WideManageButtonProps) => (
-    <Grid alignItems='center' container height='40px' item justifyContent='space-between' onClick={onClick} sx={noBorder ? { cursor: 'pointer' } : { borderBottom: '1px solid', borderBottomColor: '#D5CCD0', cursor: 'pointer' }}>
-      <Grid container item xs={11}>
-        <Grid container item justifyContent='center' xs={1}>
-          {icon}
-        </Grid>
-        <Grid container item xs={4}>
-          <Typography fontSize='18px' fontWeight={500}>
-            {title}
-          </Typography>
-        </Grid>
-        <Grid container item xs={7}>
-          <Typography fontSize='14px' fontWeight={300}>
-            {helperText}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container item xs={1}>
-        <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 22, m: 'auto', stroke: '#BA2882', strokeWidth: '2px' }} />
-      </Grid>
-    </Grid>
-  );
+  // const WideManageButton = ({ helperText, icon, noBorder, onClick, title }: WideManageButtonProps) => (
+  //   <Grid alignItems='center' container height='40px' item justifyContent='space-between' onClick={onClick} sx={noBorder ? { cursor: 'pointer' } : { borderBottom: '1px solid', borderBottomColor: '#D5CCD0', cursor: 'pointer' }}>
+  //     <Grid container item xs={11}>
+  //       <Grid container item justifyContent='center' xs={1}>
+  //         {icon}
+  //       </Grid>
+  //       <Grid container item xs={4}>
+  //         <Typography fontSize='18px' fontWeight={500}>
+  //           {title}
+  //         </Typography>
+  //       </Grid>
+  //       <Grid container item xs={7}>
+  //         <Typography fontSize='14px' fontWeight={300}>
+  //           {helperText}
+  //         </Typography>
+  //       </Grid>
+  //     </Grid>
+  //     <Grid container item xs={1}>
+  //       <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 22, m: 'auto', stroke: '#BA2882', strokeWidth: '2px' }} />
+  //     </Grid>
+  //   </Grid>
+  // );
 
   const ManageButton = ({ icon, onClick, title }: ManageButtonProps) => (
     <Grid alignItems='center' container item onClick={onClick} sx={{ cursor: 'pointer', width: 'fit-content' }}>
@@ -78,7 +80,7 @@ export default function PreviewIdentity({ identity, mode, setMode, setStep, step
   );
 
   const VDivider = () => (
-    <Divider flexItem orientation='vertical' sx={{ bgcolor: '#D5CCD0', mx: '2%', my: '10px' }} />
+    <Divider flexItem orientation='vertical' sx={{ bgcolor: '#D5CCD0', mx: '2%' }} />
   );
 
   const goModify = useCallback(() => {
@@ -108,6 +110,12 @@ export default function PreviewIdentity({ identity, mode, setMode, setStep, step
       <DisplayIdentityInformation
         identity={identity}
       />
+      {subIdAccounts && subIdAccounts.length > 0 && identity.display &&
+        <SubIdsAccordion
+          parentNameID={identity.display}
+          subIdAccounts={subIdAccounts}
+        />
+      }
       <Typography fontSize='22px' fontWeight={700} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', pb: '10px', pt: '20px' }}>
         {t<string>('Manage Identity')}
       </Typography>
