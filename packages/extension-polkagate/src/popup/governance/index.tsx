@@ -9,7 +9,7 @@ import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import HorizontalWaiting from './components/HorizontalWaiting';
@@ -32,7 +32,6 @@ export default function Governance (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { state } = useLocation();
-  const history = useHistory();
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
   const api = useApi(address);
@@ -138,13 +137,6 @@ export default function Governance (): React.ReactElement {
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chainName]);
-
-  const getReferendaById = useCallback((postId: number, type: 'ReferendumV2' | 'FellowshipReferendum') => {
-    history.push({
-      pathname: `/governance/${address}/${type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${postId}`,
-      state: { selectedSubMenu }
-    });
-  }, [address, history, selectedSubMenu]);
 
   useEffect(() => {
     chainName && selectedSubMenu && fetchRef().catch(console.error);
@@ -319,7 +311,6 @@ export default function Governance (): React.ReactElement {
                       address={address}
                       key={index}
                       myVotedReferendaIndexes={myVotedReferendaIndexes}
-                      onClick={() => getReferendaById(r.post_id, r.type)}
                       refSummary={r}
                     />
                   )
