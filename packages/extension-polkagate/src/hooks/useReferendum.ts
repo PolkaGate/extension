@@ -230,7 +230,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       supportAmount: referendumSb?.support_amount || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.tally?.support : undefined),
       timelinePA: referendumPA?.timeline,
       timelineSb: referendumSb?.timeline || statusOC,
-      title: referendumPA?.title,
+      title: referendumPA ? referendumPA.title ? referendumPA.title : null : undefined,
       trackId: ((referendumSb?.origins_id || referendumPA?.track_number) && Number(referendumSb?.origins_id || referendumPA?.track_number)) || trackId,
       trackName: referendumSb?.origins || referendumPA?.origin || mayOriginOC,
       type: referendumPA?.type

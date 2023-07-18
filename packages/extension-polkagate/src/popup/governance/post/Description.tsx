@@ -50,9 +50,10 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
     return res || ''//?.replace(/<br\s*\/?>/gi, ' ') || '';
   }, [referendum?.content, t]);
 
-  useEffect(() =>
-    setExpanded(!!referendum)
-    , [referendum]);
+  useEffect(() => {
+    referendum?.content && !expanded && setExpanded(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referendum?.content]);
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -86,7 +87,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
           <Grid container item>
             <Grid container item xs={12}>
               <Typography fontSize={24} fontWeight={500}>
-                <ShowValue value={referendum ? referendum.title || 'No Title' : undefined} width='500px' />
+                <ShowValue value={referendum?.title ? referendum?.title : referendum?.title === null ? 'No Title' : undefined} width='500px' />
               </Typography>
             </Grid>
             <Grid alignItems='center' container item justifyContent='space-between' xs={12}>
