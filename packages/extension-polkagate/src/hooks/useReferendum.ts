@@ -184,10 +184,6 @@ export default function useReferendum(address: AccountId | string | undefined, t
   }, [convertBlockNumberToDate, onchainRefInfo]);
 
   useEffect(() => {
-    // if (!referendumPA && !referendumSb) {
-    //   return;
-    // }
-
     if (savedReferendum) {
       return;
     }
