@@ -16,7 +16,7 @@ interface IdentityItemsProps {
   setter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function IdentityInfoInput ({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
+export default function IdentityInfoInput({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
   const setInput = React.useCallback((input: string): void => {
     const encoder = new TextEncoder();
     let byteLength = encoder.encode(input).length;
@@ -31,8 +31,8 @@ export default function IdentityInfoInput ({ icon, setter, title, type, value }:
   }, [setter]);
 
   return (
-    <Grid alignItems='flex-end' container item justifyContent='space-between' py='5px'>
-      <Grid container item xs={icon ? 11 : 12}>
+    <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto' py='5px' width='65%'>
+      <Grid container item xs={icon ? 10.5 : 12}>
         <InputWithLabel
           label={title}
           onChange={setInput}
@@ -40,9 +40,10 @@ export default function IdentityInfoInput ({ icon, setter, title, type, value }:
           value={value}
         />
       </Grid>
-      <Grid container item justifyContent='center' xs={1}>
-        {icon}
-      </Grid>
+      {icon &&
+        <Grid container item justifyContent='center' xs={1.5}>
+          {icon}
+        </Grid>}
     </Grid>
   );
 }
