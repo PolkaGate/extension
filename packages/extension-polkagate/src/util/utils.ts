@@ -340,4 +340,4 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(/\s/g, ''));
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(/\s/g, ''));
