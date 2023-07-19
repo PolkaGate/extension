@@ -106,7 +106,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           exceptionWidth={40}
           icon={
             <FontAwesomeIcon
-              color={sendDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+              color={sendDisabled ? theme.palette.action.disabled : theme.palette.text.primary}
               icon={faPaperPlane}
               style={{ height: '20px' }}
             />
@@ -149,7 +149,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
               sx={{
                 color: STAKING_CHAINS.includes(account?.genesisHash)
                   ? 'text.primary'
-                  : 'action.disabledBackground',
+                  : 'action.disabled',
                 fontSize: '30px'
               }}
             />
@@ -167,7 +167,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           icon={
             <vaadin-icon
               icon='vaadin:piggy-bank-coin'
-              style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}` }}
+              style={{ height: '23px', color: `${CROWDLOANS_CHAINS.includes(account?.genesisHash) ? theme.palette.text.primary : theme.palette.action.disabled}` }}
             />
           }
           onClick={goToCrowdLoans}
@@ -183,7 +183,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
               color={
                 account?.genesisHash
                   ? `${theme.palette.text.primary}`
-                  : `${theme.palette.action.disabledBackground}`
+                  : `${theme.palette.action.disabled}`
               }
               icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
               style={{ height: '20px' }}

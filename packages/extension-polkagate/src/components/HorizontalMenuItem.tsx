@@ -33,12 +33,12 @@ export default function HorizontalMenuItem({ divider = false, dividerHeight = 30
         </Grid>
         : <Grid container direction='column' item justifyContent='center' maxWidth={exceptionWidth !== 0 ? `${exceptionWidth}px` : 'fit-content'} onClick={!textDisabled && onClick} sx={{ cursor: 'pointer' }}>
           <Grid container item justifyContent='center'>
-            <IconButton sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content', opacity: textDisabled && 0.5 }}>
+            <IconButton sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content', opacity: textDisabled && 0.3 }}>
               {icon}
             </IconButton>
           </Grid>
           <Grid item textAlign='center'>
-            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight} sx={{ color: textDisabled ? 'action.disabledBackground' : textSelected && 'secondary.light', pt: '3px', mt: labelMarginTop }}>
+            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight} sx={{ color: textSelected && 'secondary.light', pt: '3px', mt: labelMarginTop, opacity: textDisabled && 0.4 }}>
               {title}
             </Typography>
           </Grid>
