@@ -83,6 +83,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
                 chain={chain}
                 formatted={referendum?.proposer}
                 identiconSize={25}
+                showShortAddress
                 showSocial
                 style={{ fontSize: '16px', fontWeight: 500 }}
               />
@@ -112,6 +113,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
                   chain={chain}
                   formatted={decisionDepositPayer}
                   identiconSize={25}
+                  showShortAddress={!!decisionDepositPayer}
                   showSocial
                   style={{ fontSize: '16px', fontWeight: 500 }}
                 />
@@ -190,6 +192,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
           <LabelValue
+            asShortAddress
             label={t('Proposal Hash')}
             labelStyle={{ minWidth: '20%' }}
             style={{ justifyContent: 'flex-start' }}

@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Divider, Grid, LinearProgress, SxProps, Typography, useMediaQuery } from '@mui/material';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useRef,useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -59,11 +59,11 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
     <>
       <Grid container item sx={{ ...style, justifyContent: rowDisplay ? 'space-between' : 'flex-start' }}>
         <Grid alignItems='center' container item width='fit-content'>
-          <Typography fontSize={18} fontWeight={400} lineHeight='25px'>
+          <Typography fontSize={18} fontWeight={400} lineHeight='25px' mt='6px'>
             {title}
           </Typography>
         </Grid>
-        <Grid alignItems='flex-start' container direction='column' item width={rowDisplay ? 'fit-content' : '100%'}>
+        <Grid alignItems='flex-start' container direction='column' item width={rowDisplay ? 'fit-content' : '100%'} mt='11px'>
           <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
             <ShowBalance api={api} balance={balance} decimal={decimal} decimalPoint={2} token={token} />
           </Grid>
