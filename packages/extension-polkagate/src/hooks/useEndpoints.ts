@@ -21,7 +21,6 @@ interface Option {
 export function useEndpoints(genesisHash: string | null | undefined): Option[] {
   const { t } = useTranslation();
   const genesisOptions = useGenesisHashOptions();
-
   const [allEndpoints, setAllEndpoints] = useState<LinkOption[] | undefined>();
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
     const chainName = sanitizeChainName(option?.text);
 
     const endpoints = allEndpoints?.filter((e) => e.value &&
-      (String(e.text)?.toLowerCase() === chainName?.toLowerCase() ||
+      (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
     );
 

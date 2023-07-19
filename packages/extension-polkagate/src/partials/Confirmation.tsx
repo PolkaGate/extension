@@ -107,7 +107,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
         }
         {txInfo?.txHash &&
           <Grid container justifyContent='center' pt='5px'>
-            <Explorer chainName={chainName} txHash={txInfo?.txHash} />
+            <Explorer chainName={chainName} formatted={txInfo?.from?.address} txHash={txInfo?.txHash} />
           </Grid>
         }
         <TwoButtons

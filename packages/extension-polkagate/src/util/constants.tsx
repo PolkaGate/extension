@@ -37,7 +37,7 @@ export const MAX_REWARDS_TO_SHOW = 100;
 export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
-export const CHAINS_WITH_BLACK_LOGO = ['Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain'];
+export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi'];
 export const RELAY_CHAINS = [
@@ -58,6 +58,16 @@ export const RELAY_CHAINS = [
 export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3';
 export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe';
 export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
+
+export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
+export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
+export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
+
+export const ASSET_HUBS = [
+  WESTMINT_GENESIS_HASH,
+  STATEMINE_GENESIS_HASH,
+  STATEMINT_GENESIS_HASH
+];
 
 export const TEST_NETS = [
   WESTEND_GENESIS_HASH

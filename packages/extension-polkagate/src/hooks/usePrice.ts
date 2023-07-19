@@ -20,9 +20,11 @@ export default function usePrice(address: string, currency = 'usd'): Price | und
     if (!chainName || !localSavedPrices) {
       return;
     }
+    
+    const sanitizeName = chainName.replace('westendassethub', 'westend').replace('kusamaassethub', 'kusama').replace('polkadotassethub', 'polkadot');
 
     const parsedPrices = JSON.parse(localSavedPrices) as Prices;
-    const priceInUsd = parsedPrices?.prices[chainName]?.[currency];
+    const priceInUsd = parsedPrices?.prices[sanitizeName]?.[currency];
 
     if (priceInUsd !== undefined && parsedPrices?.date) {
       setPrice({ amount: priceInUsd, chainName, date: parsedPrices.date });
