@@ -163,10 +163,12 @@ export default function Review({ address, api, chain, depositValue, identityToSe
         ? STEPS.MANAGESUBID
         : STEPS.PREVIEW);
   }, [mode, setStep]);
+
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
+
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    setStep(0);
+    setStep(STEPS.CHECK_SCREEN);
   }, [setRefresh, setStep]);
 
   return (
@@ -257,7 +259,10 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                     isBelowInput
                     theme={theme}
                   >
-                    {t<string>('You are about to clear the on-chain identity for this account.')}
+                    {mode === 'Clear'
+                      ? t<string>('You are about to clear the on-chain identity for this account.')
+                      : t<string>('You are about to clear the on-chain sub-identity(ies) for this account.')
+                    }
                   </Warning>
                 </Grid>
               }

@@ -27,7 +27,7 @@ interface Props {
   setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
 }
 
-export default function SetSubId({ parentAddress, api, mode, parentDisplay, setDepositValue, setMode, setStep, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
+export default function SetSubId({ api, mode, parentAddress, parentDisplay, setDepositValue, setMode, setStep, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const maxSubAccounts = api && api.consts.identity.maxSubAccounts.toString();
@@ -64,9 +64,6 @@ export default function SetSubId({ parentAddress, api, mode, parentDisplay, setD
 
     setDisableAddSubId(emptyElement);
   }, [subIdAccountsToSubmit]);
-
-  console.log('duplicateError:', duplicateError)
-  console.log('parentAddress:', parentAddress)
 
   useEffect(() => {
     if (!subIdAccountsToSubmit) {
@@ -107,7 +104,7 @@ export default function SetSubId({ parentAddress, api, mode, parentDisplay, setD
       return;
     }
 
-    setSubIdAccountsToSubmit([...(subIdAccountsToSubmit ?? []), { address: undefined, name: undefined, status: 'new' }]);
+    setSubIdAccountsToSubmit([{ address: undefined, name: undefined, status: 'new' }, ...(subIdAccountsToSubmit ?? [])]);
   }, [disableAddSubId, subIdAccountsToSubmit]);
 
   const AddSubIdButton = () => (
