@@ -15,6 +15,7 @@ import DisplaySubId from './partial/DisplaySubId';
 import { Mode, setData, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
 
 interface Props {
+  parentAddress: string;
   api: ApiPromise | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
@@ -26,13 +27,14 @@ interface Props {
   setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
 }
 
-export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, setDepositValue, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
+export default function SetSubId({ parentAddress, api, mode, parentDisplay, setDepositValue, setMode, setStep, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const maxSubAccounts = api && api.consts.identity.maxSubAccounts.toString();
   const subAccountDeposit = api ? api.consts.identity.subAccountDeposit as unknown as BN : BN_ZERO;
 
   const [disableAddSubId, setDisableAddSubId] = useState<boolean>(false);
+  const [duplicateError, setDuplicateError] = useState<Set<number> | boolean>(false);
   const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
 
   const subIdsLength = useMemo(() => subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove').length ?? 0, [subIdAccountsToSubmit]);
@@ -40,8 +42,8 @@ export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, s
   const nextButtonDisable = useMemo(() => {
     const noChanges = subIdAccountsToSubmit?.filter((subs) => subs.status !== 'current').length === 0;
 
-    return !subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || noChanges || disableAddSubId;
-  }, [disableAddSubId, subIdAccountsToSubmit]);
+    return !subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || noChanges || disableAddSubId || !!duplicateError;
+  }, [disableAddSubId, duplicateError, subIdAccountsToSubmit]);
 
   useEffect(() => {
     if (!subIdAccounts) {
@@ -58,12 +60,47 @@ export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, s
       return;
     }
 
-    const emptyElement = !!subIdAccountsToSubmit.find((idAccount) => idAccount.address === undefined || idAccount.name === undefined);
+    const emptyElement = !!subIdAccountsToSubmit.find((idAccount) => idAccount.address === undefined || idAccount.name === undefined || idAccount.address === '' || idAccount.name === '');
 
     setDisableAddSubId(emptyElement);
   }, [subIdAccountsToSubmit]);
 
+  console.log('duplicateError:', duplicateError)
+  console.log('parentAddress:', parentAddress)
+
+  useEffect(() => {
+    if (!subIdAccountsToSubmit) {
+      return;
+    }
+
+    const indexs = new Set<number>();
+
+    subIdAccountsToSubmit.forEach((sub, index) => {
+      subIdAccountsToSubmit.forEach((subId, i) => {
+        if (subId.address === sub.address && i !== index) {
+          indexs.add(i);
+        }
+      });
+
+      if (sub.address === parentAddress) {
+        indexs.add(index);
+      }
+    });
+
+    setDuplicateError(indexs.size > 0 ? indexs : false);
+  }, [subIdAccountsToSubmit, parentAddress]);
+
   const totalSubIdsDeposit = useMemo(() => subAccountDeposit.muln(subIdsLength), [subAccountDeposit, subIdsLength]);
+
+  const makeSubIdParams = useMemo(() => {
+    if (!subIdAccountsToSubmit) {
+      return undefined;
+    }
+
+    const params = subIdAccountsToSubmit.filter((subIds) => subIds.status !== 'remove').map((subs) => ([subs.address, setData(subs.name)]));
+
+    return params;
+  }, [subIdAccountsToSubmit]);
 
   const onAddNewSubId = useCallback(() => {
     if (disableAddSubId) {
@@ -123,29 +160,12 @@ export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, s
     }
   }, [subIdAccountsToSubmit]);
 
-  const makeSubIdParams = useMemo(() => {
-    if (!subIdAccountsToSubmit) {
-      return undefined;
-    }
-
-    const params = subIdAccountsToSubmit.filter((subIds) => subIds.status !== 'remove').map((subs) => ([subs.address, setData(subs.name)]));
-
-    return params;
-  }, [subIdAccountsToSubmit]);
-
-  useEffect(() => {
-    if (!subIdsParams || mode !== 'ManageSubId') {
-      return;
-    }
-
-    setStep(STEPS.REVIEW);
-  }, [mode, setStep, subIdsParams]);
-
   const goReview = useCallback(() => {
     setMode('ManageSubId');
     setDepositValue(totalSubIdsDeposit);
     setSubIdsParams(makeSubIdParams);
-  }, [setMode, setDepositValue, totalSubIdsDeposit, setSubIdsParams, makeSubIdParams]);
+    makeSubIdParams && setStep(STEPS.REVIEW);
+  }, [setMode, setDepositValue, totalSubIdsDeposit, setSubIdsParams, makeSubIdParams, setStep]);
 
   const goBack = useCallback(() => {
     setSubIdsParams(undefined);
@@ -155,15 +175,15 @@ export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, s
 
   return (
     <Grid container item sx={{ display: 'block', maxWidth: '840px', position: 'relative', px: '10%' }}>
-      <Typography fontSize='22px' fontWeight={700} pb={subIdsLength > 0 ? '10px' : '45px'} pt='30px'>
+      <Typography fontSize='22px' fontWeight={700} pb={subIdAccounts ? '10px' : '45px'} pt='30px'>
         {t<string>('Set on-chain Sub-identity')}
       </Typography>
-      {subIdAccounts?.length === 0 &&
+      {!subIdAccounts && subIdsLength === 0 &&
         <Typography fontSize='14px' fontWeight={400}>
           {t<string>('With Sub-Identities, you can create multiple identities for privacy, security, and control. Sub-identity accounts inherit features from their parent account, such as the name and parent\'s indicators. Separate personal and business transactions, manage diverse projects, and enjoy the benefits of compartmentalization with Sub-Identities.')}
         </Typography>
       }
-      {subIdAccounts?.length !== 0 &&
+      {(subIdAccounts || subIdsLength > 0) &&
         <Grid container item justifyContent='flex-end'>
           <Typography fontSize='20px' pb='10px'>
             {`${subIdsLength ?? 0} of ${maxSubAccounts ?? 1}`}
@@ -174,6 +194,7 @@ export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, s
         {subIdAccountsToSubmit && subIdAccountsToSubmit.length > 0 &&
           subIdAccountsToSubmit.map((idAccount, index) => (
             <DisplaySubId
+              error={typeof (duplicateError) !== 'boolean' && duplicateError.has(index)}
               index={index}
               key={index}
               onRemove={onRemoveNewSubIds}
@@ -183,12 +204,11 @@ export default function SetSubId({ api, parentDisplay, mode, setMode, setStep, s
               subIdInfo={idAccount}
               toModify={idAccount.status === 'new'}
             />
-          ))
-        }
+          ))}
       </Grid>
       <Grid alignItems='center' container item justifyContent='space-between' mb='80px' mt='25px'>
         <AddSubIdButton />
-        {subIdAccounts?.length !== 0 &&
+        {(subIdAccounts || subIdsLength > 0) &&
           <Grid container item sx={{ width: 'fit-content' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>('Deposit:')}

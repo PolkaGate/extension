@@ -263,6 +263,7 @@ export default function ManageIdentity(): React.ReactElement {
         }
         {step === STEPS.MANAGESUBID && identity?.display &&
           <SetSubId
+            parentAddress={address}
             api={api}
             mode={mode}
             parentDisplay={identity.display}
