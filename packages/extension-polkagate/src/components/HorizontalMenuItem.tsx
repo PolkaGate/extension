@@ -38,7 +38,7 @@ export default function HorizontalMenuItem({ divider = false, dividerHeight = 30
             </IconButton>
           </Grid>
           <Grid item textAlign='center'>
-            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight} sx={{ color: textSelected && 'secondary.light', pt: '3px', mt: labelMarginTop, opacity: textDisabled && 0.4 }}>
+            <Typography fontSize={`${titleFontSize}px`} fontWeight={theme.palette.mode === 'dark' ? 300 : 400} lineHeight={titleLineHeight} sx={{ color: textSelected && 'secondary.light', pt: '3px', mt: labelMarginTop, opacity: textDisabled && 0.7 }}>
               {title}
             </Typography>
           </Grid>
