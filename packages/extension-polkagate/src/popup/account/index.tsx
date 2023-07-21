@@ -145,11 +145,11 @@ export default function AccountDetails(): React.ReactElement {
 
   const stakingIconColor = useMemo(() =>
     !STAKING_CHAINS.includes(genesisHash)
-      ? theme.palette.action.disabled
+      ? theme.palette.action.disabledBackground
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabled, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -242,7 +242,7 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               <FontAwesomeIcon
-                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabled : theme.palette.text.primary}
+                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
                 icon={faPaperPlane}
                 size='lg'
               />
@@ -256,7 +256,7 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               <FontAwesomeIcon
-                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabled}`}
+                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
                 icon={faVoteYea}
                 size='lg'
               />
@@ -283,7 +283,7 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               <FontAwesomeIcon
-                color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabled}`}
+                color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
                 flip='horizontal'
                 icon={faPiggyBank}
                 size='lg'

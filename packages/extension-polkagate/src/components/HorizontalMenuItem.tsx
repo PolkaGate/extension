@@ -33,7 +33,7 @@ export default function HorizontalMenuItem({ divider = false, dividerHeight = 30
         </Grid>
         : <Grid container direction='column' item justifyContent='center' maxWidth={exceptionWidth !== 0 ? `${exceptionWidth}px` : 'fit-content'} onClick={!textDisabled && onClick} sx={{ cursor: 'pointer' }}>
           <Grid container item justifyContent='center'>
-            <IconButton sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content', opacity: textDisabled && 0.3 }}>
+            <IconButton sx={{ alignSelf: 'center', m: 'auto', p: 0, transform: 'scale(0.9)', width: 'fit-content', opacity: textDisabled && 0.7 }}>
               {icon}
             </IconButton>
           </Grid>
