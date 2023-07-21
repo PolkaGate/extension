@@ -82,6 +82,11 @@ export default function ManageIdentity(): React.ReactElement {
     setFetching(true);
     setIdentity(undefined);
     setSubAccounts(undefined);
+    setSubIdsParams(undefined);
+    setInfoParams(undefined);
+    setIdentityToSet(undefined);
+    setMode(undefined);
+    setDepositValue(BN_ZERO);
 
     api.query.identity.identityOf(address)
       .then((id) => {
