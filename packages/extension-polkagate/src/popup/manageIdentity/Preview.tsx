@@ -117,7 +117,7 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
       <Typography fontSize='22px' fontWeight={700} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', pb: '10px', pt: '20px' }}>
         {t<string>('Manage Identity')}
       </Typography>
-      <Grid container item justifyContent='space-between' p='15px 35px 0'>
+      <Grid container item justifyContent='space-between' p='15px 35px'>
         <ManageButton
           icon={
             <FontAwesomeIcon
