@@ -16,19 +16,21 @@ import getAllAddresses from '../../../util/getAllAddresses';
 interface Props {
   chain: Chain | null | undefined;
   address?: string | undefined;
+  ignoreAddress: string | undefined;
   name?: string | undefined;
   setSubAddress: ((address: string | null | undefined, index: number | undefined) => void) | undefined;
   setSubName: ((subName: string | null | undefined, index: number | undefined) => void) | undefined;
   onRemove: (index: number | undefined) => void;
   index?: number;
+  error?: boolean;
 }
 
-export default function SubIdForm({ address, chain, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
+export default function SubIdForm({ address, chain, error = false, ignoreAddress, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);
 
-  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format);
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, ignoreAddress);
 
   const onNameChange = useCallback((value: string | null) => {
     setSubName && setSubName(value, index);
@@ -42,10 +44,8 @@ export default function SubIdForm({ address, chain, index, name, onRemove, setSu
     onRemove(index);
   }, [index, onRemove]);
 
-  index === undefined && console.log('name:', name)
-
   return (
-    <Grid container gap='10px' item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px #0000001A', p: '12px', pt: 0 }}>
+    <Grid container gap='10px' item sx={{ border: '1px solid', borderColor: error ? 'warning.main' : 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px #0000001A', p: '12px', pt: 0 }}>
       <AddressInput
         address={address}
         allAddresses={allAddresses}

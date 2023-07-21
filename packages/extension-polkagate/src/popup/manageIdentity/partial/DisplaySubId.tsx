@@ -24,6 +24,7 @@ interface Props {
   setSubName?: (subName: string | null | undefined, index: number | undefined) => void;
   setSubAddress?: (address: string | null | undefined, index: number | undefined) => void;
   toModify?: boolean;
+  error?: boolean;
 }
 
 interface ManageButtonProps {
@@ -32,7 +33,7 @@ interface ManageButtonProps {
   onClick: () => void;
 }
 
-export default function DisplaySubId({ index, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
+export default function DisplaySubId({ error = false, index, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams<{ address: string }>();
@@ -142,6 +143,8 @@ export default function DisplaySubId({ index, noButtons = false, onRemove, paren
         : <SubIdForm
           address={subIdInfo.address}
           chain={chain}
+          error={error}
+          ignoreAddress={params.address}
           index={index}
           name={subIdInfo.name}
           onRemove={onRemoveItem}
