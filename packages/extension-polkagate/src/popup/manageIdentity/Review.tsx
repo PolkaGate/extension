@@ -156,7 +156,13 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     }
   }, [api, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, tx]);
 
-  const handleClose = useCallback(() => setStep(mode === 'Set' || mode === 'Modify' ? STEPS.INDEX : STEPS.PREVIEW), [mode, setStep]);
+  const handleClose = useCallback(() => {
+    setStep(mode === 'Set' || mode === 'Modify'
+      ? STEPS.INDEX
+      : mode === 'ManageSubId'
+        ? STEPS.MANAGESUBID
+        : STEPS.PREVIEW);
+  }, [mode, setStep]);
   const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
@@ -243,7 +249,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   />
                 </>
               }
-              {mode === 'Clear' &&
+              {(mode === 'Clear' || (subIdsToShow && subIdsToShow.length === 0)) &&
                 <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '70px', py: '20px' }}>
                   <Warning
                     fontWeight={400}
@@ -255,14 +261,20 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   </Warning>
                 </Grid>
               }
-              {mode === 'ManageSubId' && subIdsToShow && parentDisplay &&
-                <Grid container gap='10px' item>
-                  {subIdsToShow.map((subs, index) => (
-                    <DisplaySubId
-                      key={index}
-                      parentName={parentDisplay}
-                      subIdInfo={subs}
-                    />))}
+              {mode === 'ManageSubId' && subIdsToShow && subIdsToShow.length > 0 && parentDisplay &&
+                <Grid container item>
+                  <Typography fontSize='14px' fontWeight={400} textAlign='center' width='100%'>
+                    {t<string>('Sub-identity(ies)')}
+                  </Typography>
+                  <Grid container gap='10px' item sx={{ height: 'fit-content', maxHeight: '250px', overflow: 'hidden', overflowY: 'scroll' }}>
+                    {subIdsToShow.map((subs, index) => (
+                      <DisplaySubId
+                        key={index}
+                        noButtons
+                        parentName={parentDisplay}
+                        subIdInfo={subs}
+                      />))}
+                  </Grid>
                 </Grid>
               }
               <DisplayValue title={mode === 'Clear'
