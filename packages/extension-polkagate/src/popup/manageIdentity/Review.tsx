@@ -29,23 +29,26 @@ import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import Confirmation from './partial/Confirmation';
+import DisplaySubId from './partial/DisplaySubId';
 import IdentityTable from './partial/IdentityTable';
-import { Mode, STEPS } from '.';
+import { Mode, STEPS, SubIdsParams } from '.';
 
 interface Props {
   address: string;
   api: ApiPromise | undefined;
   chain: Chain;
   depositValue: BN;
-  identityToSet: DeriveAccountRegistration | null;
-  infoParams: PalletIdentityIdentityInfo | null;
+  identityToSet: DeriveAccountRegistration | null | undefined;
+  infoParams: PalletIdentityIdentityInfo | null | undefined;
+  subIdsParams: SubIdsParams | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   mode: Mode;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  parentDisplay: string | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, mode, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, mode, parentDisplay, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -64,9 +67,21 @@ export default function Review({ address, api, chain, depositValue, identityToSe
 
   const setIdentity = api && api.tx.identity.setIdentity;
   const clearIdentity = api && api.tx.identity.clearIdentity;
+  const setSubs = api && api.tx.identity.setSubs;
+
+  const subIdsToShow: { address: string, name: string }[] | undefined = useMemo(() => {
+    if (mode !== 'ManageSubId' || !subIdsParams) {
+      return undefined;
+    }
+
+    return subIdsParams.map((subs) => ({
+      address: subs[0],
+      name: subs[1].raw
+    })) as { address: string, name: string }[];
+  }, [mode, subIdsParams]);
 
   const tx = useMemo(() => {
-    if (!setIdentity || !clearIdentity) {
+    if (!setIdentity || !clearIdentity || !setSubs) {
       return undefined;
     }
 
@@ -77,7 +92,11 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     if (mode === 'Clear') {
       return clearIdentity();
     }
-  }, [clearIdentity, infoParams, mode, setIdentity]);
+
+    if (mode === 'ManageSubId' && subIdsParams) {
+      return setSubs(subIdsParams);
+    }
+  }, [clearIdentity, infoParams, mode, setIdentity, setSubs, subIdsParams]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -156,6 +175,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                     {mode === 'Set' && t('Review Identity')}
                     {mode === 'Clear' && t('Clear Identity')}
                     {mode === 'Modify' && t('Modify Identity')}
+                    {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
                   </>
                 )}
                 {step === STEPS.WAIT_SCREEN && (
@@ -163,6 +183,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                     {mode === 'Set' && t('Setting Identity')}
                     {mode === 'Clear' && t('Clearing Identity')}
                     {mode === 'Modify' && t('Modifying Identity')}
+                    {mode === 'ManageSubId' && t('Setting Sub-identity(ies)')}
                   </>
                 )}
                 {step === STEPS.CONFIRM && mode === 'Set' && (
@@ -173,6 +194,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 )}
                 {step === STEPS.CONFIRM && mode === 'Clear' && (
                   txInfo?.success ? t('Identity Cleared') : t('Identity Clearing Failed')
+                )}
+                {step === STEPS.CONFIRM && mode === 'ManageSubId' && (
+                  txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
                 )}
                 {step === STEPS.PROXY && t('Select Proxy')}
               </Typography>
@@ -188,7 +212,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               }
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account holder')}
+                  {mode === 'ManageSubId'
+                    ? t<string>('Parent account')
+                    : t<string>('Account holder')}
                 </Typography>
                 <Identity
                   address={address}
@@ -227,6 +253,16 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   >
                     {t<string>('You are about to clear the on-chain identity for this account.')}
                   </Warning>
+                </Grid>
+              }
+              {mode === 'ManageSubId' && subIdsToShow && parentDisplay &&
+                <Grid container gap='10px' item>
+                  {subIdsToShow.map((subs, index) => (
+                    <DisplaySubId
+                      key={index}
+                      parentName={parentDisplay}
+                      subIdInfo={subs}
+                    />))}
                 </Grid>
               }
               <DisplayValue title={mode === 'Clear'

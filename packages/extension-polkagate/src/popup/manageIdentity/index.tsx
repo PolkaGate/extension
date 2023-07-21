@@ -22,6 +22,7 @@ import { Header } from '../governance/Header';
 import PreviewIdentity from './Preview';
 import Review from './Review';
 import SetIdentity from './SetIdentity';
+import SetSubId from './SetSubId';
 
 export const STEPS = {
   CHECK_SCREEN: 0,
@@ -29,14 +30,17 @@ export const STEPS = {
   PREVIEW: 2,
   MODIFY: 3,
   REMOVE: 4,
-  REVIEW: 5,
-  WAIT_SCREEN: 6,
-  CONFIRM: 7,
+  MANAGESUBID: 5,
+  REVIEW: 6,
+  WAIT_SCREEN: 7,
+  CONFIRM: 8,
   PROXY: 100
 };
 
 type SubAccounts = [string, string[]];
-export type Mode = 'Set' | 'Clear' | 'Modify' | undefined;
+export type Mode = 'Set' | 'Clear' | 'Modify' | 'ManageSubId' | undefined;
+export type SubIdAccountsToSubmit = { address: string | undefined; name: string | undefined; status: 'current' | 'new' | 'remove' }[];
+export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 
 function getRawValue(value: Data) {
   const text = u8aToString(value.asRaw.toU8a(true));
@@ -46,7 +50,7 @@ function getRawValue(value: Data) {
     : text;
 }
 
-function setData(value: string | undefined): Data {
+export function setData(value: string | undefined): Data {
   return value
     ? { ['raw']: value }
     : { ['none']: null };
@@ -63,6 +67,7 @@ export default function ManageIdentity(): React.ReactElement {
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
   const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
+  const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
   const [subAccounts, setSubAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -141,10 +146,10 @@ export default function ManageIdentity(): React.ReactElement {
         break;
 
       default:
-        setStep(2);
+        subAccounts !== undefined && setStep(2);
         break;
     }
-  }, [identity]);
+  }, [identity, subAccounts]);
 
   useEffect(() => {
     if (!address || !api) {
@@ -196,7 +201,7 @@ export default function ManageIdentity(): React.ReactElement {
   }, [address, api, identity]);
 
   useEffect(() => {
-    if (!basicDepositValue || !fieldDepositValue) {
+    if (!basicDepositValue || !fieldDepositValue || mode === 'ManageSubId') {
       return;
     }
 
@@ -245,12 +250,23 @@ export default function ManageIdentity(): React.ReactElement {
         {step === STEPS.PREVIEW && identity &&
           <PreviewIdentity
             identity={identity}
-            mode={mode}
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
-            step={step}
             subIdAccounts={subAccounts}
+          />
+        }
+        {step === STEPS.MANAGESUBID && identity?.display &&
+          <SetSubId
+            api={api}
+            mode={mode}
+            parentDisplay={identity.display}
+            setDepositValue={setDepositValue}
+            setMode={setMode}
+            setStep={setStep}
+            setSubIdsParams={setSubIdsParams}
+            subIdAccounts={subAccounts}
+            subIdsParams={subIdsParams}
           />
         }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
@@ -262,9 +278,11 @@ export default function ManageIdentity(): React.ReactElement {
             identityToSet={identityToSet}
             infoParams={infoParams}
             mode={mode}
+            parentDisplay={identity?.display}
             setRefresh={setRefresh}
             setStep={setStep}
             step={step}
+            subIdsParams={subIdsParams}
           />
         }
       </Grid>

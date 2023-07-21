@@ -32,8 +32,7 @@ export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props):
                 key={index}
                 noButtons
                 parentName={parentNameID}
-                subIdFormatted={id.address}
-                subIdName={id.name}
+                subIdInfo={id}
               />
             ))}
           </Grid>

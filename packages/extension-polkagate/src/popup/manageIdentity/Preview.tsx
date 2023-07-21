@@ -17,10 +17,8 @@ import { Mode, STEPS } from '.';
 
 interface Props {
   identity: DeriveAccountRegistration;
-  step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
-  mode: Mode;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
   subIdAccounts: { address: string; name: string; }[] | null | undefined;
 }
@@ -39,7 +37,7 @@ interface ManageButtonProps {
   onClick: () => void;
 }
 
-export default function PreviewIdentity({ identity, mode, setIdentityToSet, setMode, setStep, step, subIdAccounts }: Props): React.ReactElement {
+export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, setStep, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -99,7 +97,7 @@ export default function PreviewIdentity({ identity, mode, setIdentityToSet, setM
   }, [setStep]);
 
   const manageSubId = useCallback(() => {
-    setStep(STEPS.MODIFY);
+    setStep(STEPS.MANAGESUBID);
   }, [setStep]);
 
   return (
@@ -165,7 +163,10 @@ export default function PreviewIdentity({ identity, mode, setIdentityToSet, setM
             />
           }
           onClick={manageSubId}
-          title={t<string>('Set Sub-identity')}
+          title={subIdAccounts && subIdAccounts.length > 0
+            ? t<string>('Manage Sub-identity')
+            : t<string>('Set Sub-identity')
+          }
         />
       </Grid>
     </Grid>
