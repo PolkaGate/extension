@@ -53,7 +53,7 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
       </Grid>
       <Grid alignItems='center' container item justifyContent='center'>
         <Grid item>
-          <ShortAddress address={formatted} charsCount={20} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+          <ShortAddress address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
         <Grid item>
           <Infotip placement='top' text={t('Receive')}>
