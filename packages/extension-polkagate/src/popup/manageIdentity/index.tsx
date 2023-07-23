@@ -263,9 +263,9 @@ export default function ManageIdentity(): React.ReactElement {
         }
         {step === STEPS.MANAGESUBID && identity?.display &&
           <SetSubId
-            parentAddress={address}
             api={api}
             mode={mode}
+            parentAddress={address}
             parentDisplay={identity.display}
             setDepositValue={setDepositValue}
             setMode={setMode}

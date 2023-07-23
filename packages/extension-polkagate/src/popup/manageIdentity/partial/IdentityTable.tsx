@@ -13,10 +13,9 @@ import { useTranslation } from '../../../hooks';
 interface Props {
   identity: DeriveAccountRegistration;
   style?: SxProps<Theme> | undefined;
-  maxHeight?: string;
 }
 
-export default function IdentityTable ({ identity, maxHeight = '285px', style }: Props): React.ReactElement {
+export default function IdentityTable ({ identity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const IdItems = ({ noBorder = false, title, value }: { title: string, value: string | undefined, noBorder?: boolean }) => (
@@ -35,7 +34,7 @@ export default function IdentityTable ({ identity, maxHeight = '285px', style }:
   );
 
   return (
-    <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', height: 'fit-content', maxHeight, ...style }}>
+    <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', height: 'fit-content', ...style }}>
       <IdItems
         title={t<string>('Display Name')}
         value={identity.display}

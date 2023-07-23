@@ -172,53 +172,48 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   }, [setRefresh, setStep]);
 
   return (
-    <DraggableModal onClose={handleClose} open={step === STEPS.REVIEW || step === STEPS.PROXY || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM}>
-      <Motion style={{ height: '100%' }}>
-        <>
-          <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-            <Grid item>
-              <Typography fontSize='22px' fontWeight={700}>
-                {step === STEPS.REVIEW && (
-                  <>
-                    {mode === 'Set' && t('Review Identity')}
-                    {mode === 'Clear' && t('Clear Identity')}
-                    {mode === 'Modify' && t('Modify Identity')}
-                    {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
-                  </>
-                )}
-                {step === STEPS.WAIT_SCREEN && (
-                  <>
-                    {mode === 'Set' && t('Setting Identity')}
-                    {mode === 'Clear' && t('Clearing Identity')}
-                    {mode === 'Modify' && t('Modifying Identity')}
-                    {mode === 'ManageSubId' && t('Setting Sub-identity(ies)')}
-                  </>
-                )}
-                {step === STEPS.CONFIRM && mode === 'Set' && (
-                  txInfo?.success ? t('Identity Set') : t('Identity Setup Failed')
-                )}
-                {step === STEPS.CONFIRM && mode === 'Modify' && (
-                  txInfo?.success ? t('Identity Modified') : t('Identity Modification Failed')
-                )}
-                {step === STEPS.CONFIRM && mode === 'Clear' && (
-                  txInfo?.success ? t('Identity Cleared') : t('Identity Clearing Failed')
-                )}
-                {step === STEPS.CONFIRM && mode === 'ManageSubId' && (
-                  txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
-                )}
-                {step === STEPS.PROXY && t('Select Proxy')}
-              </Typography>
-            </Grid>
-            <Grid item>
-              {step !== STEPS.WAIT_SCREEN && <CloseIcon onClick={step === STEPS.PROXY ? closeProxy : handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />}
-            </Grid>
-          </Grid>
-          {step === STEPS.REVIEW &&
-            <>
-              {isPasswordError &&
-                <WrongPasswordAlert />
-              }
-              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
+    <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
+      <>
+        <Grid container py='20px'>
+          <Typography fontSize='22px' fontWeight={700}>
+            {step === STEPS.REVIEW && (
+              <>
+                {mode === 'Set' && t('Review Identity')}
+                {mode === 'Clear' && t('Clear Identity')}
+                {mode === 'Modify' && t('Modify Identity')}
+                {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
+              </>
+            )}
+            {step === STEPS.WAIT_SCREEN && (
+              <>
+                {mode === 'Set' && t('Setting Identity')}
+                {mode === 'Clear' && t('Clearing Identity')}
+                {mode === 'Modify' && t('Modifying Identity')}
+                {mode === 'ManageSubId' && t('Setting Sub-identity(ies)')}
+              </>
+            )}
+            {step === STEPS.CONFIRM && mode === 'Set' && (
+              txInfo?.success ? t('Identity Set') : t('Identity Setup Failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'Modify' && (
+              txInfo?.success ? t('Identity Modified') : t('Identity Modification Failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'Clear' && (
+              txInfo?.success ? t('Identity Cleared') : t('Identity Clearing Failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'ManageSubId' && (
+              txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
+            )}
+            {step === STEPS.PROXY && t('Select Proxy')}
+          </Typography>
+        </Grid>
+        {step === STEPS.REVIEW &&
+          <>
+            {isPasswordError &&
+              <WrongPasswordAlert />
+            }
+            <Grid container item justifyContent='center' sx={{ border: '1px solid', borderColor: 'action.disabledBackground', borderRadius: '10px', mb: '20px', px: '3%' }}>
+              <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
                     ? t<string>('Parent account')
@@ -243,16 +238,17 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
               {identityToSet &&
                 <>
-                  <Typography sx={{ m: '10px auto' }}>
+                  <Typography sx={{ m: '10px auto', textAlign: 'center', width: '100%' }}>
                     {t<string>('Identity')}
                   </Typography>
                   <IdentityTable
                     identity={identityToSet}
+                    style={{ width: '75%' }}
                   />
                 </>
               }
               {(mode === 'Clear' || (subIdsToShow && subIdsToShow.length === 0)) &&
-                <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '70px', py: '20px' }}>
+                <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '70px', py: '20px' }}>
                   <Warning
                     fontWeight={400}
                     iconDanger
@@ -301,6 +297,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   height={22}
                 />
               </DisplayValue>
+            </Grid>
+            <Grid container item justifyContent='center' m='auto' width='75%'>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
                 isPasswordError={isPasswordError}
@@ -316,33 +314,33 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
               />
-            </>
-          }
-          {step === STEPS.PROXY &&
-            <SelectProxyModal
-              address={address}
-              height={500}
-              nextStep={STEPS.REVIEW}
-              proxies={proxyItems}
-              proxyTypeFilter={['Any', 'NonTransfer']}
-              selectedProxy={selectedProxy}
-              setSelectedProxy={setSelectedProxy}
-              setStep={setStep}
-            />
-          }
-          {step === STEPS.WAIT_SCREEN &&
-            <WaitScreen />
-          }
-          {txInfo && step === STEPS.CONFIRM &&
-            <Confirmation
-              handleClose={closeConfirmation}
-              identity={identityToSet}
-              status={'set'}
-              txInfo={txInfo}
-            />
-          }
-        </>
-      </Motion>
-    </DraggableModal>
+            </Grid>
+          </>
+        }
+        {step === STEPS.PROXY &&
+          <SelectProxyModal
+            address={address}
+            height={500}
+            nextStep={STEPS.REVIEW}
+            proxies={proxyItems}
+            proxyTypeFilter={['Any', 'NonTransfer']}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
+            setStep={setStep}
+          />
+        }
+        {step === STEPS.WAIT_SCREEN &&
+          <WaitScreen />
+        }
+        {txInfo && step === STEPS.CONFIRM &&
+          <Confirmation
+            handleClose={closeConfirmation}
+            identity={identityToSet}
+            status={'set'}
+            txInfo={txInfo}
+          />
+        }
+      </>
+    </Motion>
   );
 }
