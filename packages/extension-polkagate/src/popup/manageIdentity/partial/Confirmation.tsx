@@ -14,21 +14,29 @@ import { ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
+import { Mode, SubIdAccountsToSubmit } from '..';
 
 interface Props {
   txInfo: TxInfo;
   handleClose: () => void;
   identity: DeriveAccountRegistration | null | undefined;
-  status: 'Set' | 'Remove' | 'Modify';
+  status: Mode;
+  SubIdentityAccounts: SubIdAccountsToSubmit | undefined;
 }
 
-export default function Confirmation({ handleClose, identity, txInfo, status }: Props): React.ReactElement {
+interface DisplayInfoProps {
+  caption: string;
+  value: string | undefined;
+  showDivider?: boolean;
+}
+
+export default function Confirmation({ handleClose, identity, txInfo, status, SubIdentityAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
 
-  const DisplayInfo = ({ caption, showDivider = true, value }: { caption: string, value: string, showDivider?: boolean }) => {
+  const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
     return (
       <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
         <Grid container item width='fit-content'>
@@ -43,38 +51,8 @@ export default function Confirmation({ handleClose, identity, txInfo, status }: 
     );
   };
 
-  return (
-    <Motion>
-      <FailSuccessIcon
-        showLabel={false}
-        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
-        success={txInfo.success}
-      />
-      {txInfo?.failureText &&
-        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
-          {txInfo.failureText}
-        </Typography>
-      }
-      {/* <AccountHolderWithProxy address={address} chain={txInfo.chain} showDivider selectedProxyAddress={txInfo.throughProxy?.address} /> */}
-      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Account holder')}:
-        </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {txInfo.from.name}
-        </Typography>
-        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
-        </Grid>
-      </Grid>
-      {txInfo.throughProxy &&
-        <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-        </Grid>
-      }
-      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
-      </Grid>
+  const ManageIdentityDetail = () => (
+    <>
       <DisplayInfo
         caption={t<string>('Display Name:')}
         value={identity?.display}
@@ -101,9 +79,81 @@ export default function Confirmation({ handleClose, identity, txInfo, status }: 
       />
       <DisplayInfo
         caption={t<string>('Discord:')}
+        showDivider={false}
         value={identity?.other?.discord}
       />
-      <DisplayInfo caption={t<string>('Fee:')} value={fee?.toHuman() ?? '00.00'} />
+    </>
+  );
+
+  const ManageSubIdTxDetail = () => (
+    <Grid alignItems='center' container direction='column' item>
+      <Typography fontSize='20px' fontWeight={400}>
+        {t<string>('Sub-identity(ies)')}:
+      </Typography>
+      {SubIdentityAccounts?.map((sub, index) => (
+        <Typography fontSize='20px' fontWeight={400} key={index}>
+          {sub.name}
+        </Typography>
+      ))}
+    </Grid>
+  );
+
+  return (
+    <Motion>
+      <FailSuccessIcon
+        showLabel={false}
+        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+        success={txInfo.success}
+      />
+      {txInfo?.failureText &&
+        <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
+          {txInfo.failureText}
+        </Typography>
+      }
+      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+          {t<string>('Account holder')}:
+        </Typography>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+          {txInfo.from.name}
+        </Typography>
+        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+          <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
+        </Grid>
+      </Grid>
+      {txInfo.throughProxy &&
+        <Grid container m='auto' maxWidth='92%'>
+          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
+        </Grid>
+      }
+      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+      </Grid>
+      {(status === 'Modify' || status === 'Set') &&
+        <ManageIdentityDetail />
+      }
+      {status === 'Clear' &&
+        <Typography fontSize='22px' fontWeight={500} my='8px' textAlign='center' width='100%'>
+          {txInfo.success
+            ? t<string>('Identity clreared.')
+            : t<string>('Identity not cleared.')}
+        </Typography>
+      }
+      {status === 'ManageSubId' && SubIdentityAccounts && SubIdentityAccounts.length > 0 &&
+        <ManageSubIdTxDetail />
+      }
+      {status === 'ManageSubId' && SubIdentityAccounts?.length === 0 &&
+        <Typography fontSize='22px' fontWeight={500} my='8px' textAlign='center' width='100%'>
+          {txInfo.success
+            ? t<string>('Sub-Identity(ies) clreared.')
+            : t<string>('Sub-Identity(ies) not cleared.')}
+        </Typography>
+      }
+      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
+      <DisplayInfo
+        caption={t<string>('Fee:')}
+        value={fee?.toHuman() ?? '00.00'}
+      />
       {txInfo?.txHash &&
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
           <Grid container item width='fit-content'>

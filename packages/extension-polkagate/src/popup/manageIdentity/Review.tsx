@@ -31,7 +31,7 @@ import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import Confirmation from './partial/Confirmation';
 import DisplaySubId from './partial/DisplaySubId';
 import IdentityTable from './partial/IdentityTable';
-import { Mode, STEPS, SubIdsParams } from '.';
+import { Mode, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
 
 interface Props {
   address: string;
@@ -69,7 +69,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   const clearIdentity = api && api.tx.identity.clearIdentity;
   const setSubs = api && api.tx.identity.setSubs;
 
-  const subIdsToShow: { address: string, name: string }[] | undefined = useMemo(() => {
+  const subIdsToShow: SubIdAccountsToSubmit | undefined = useMemo(() => {
     if (mode !== 'ManageSubId' || !subIdsParams) {
       return undefined;
     }
@@ -77,7 +77,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     return subIdsParams.map((subs) => ({
       address: subs[0],
       name: subs[1].raw
-    })) as { address: string, name: string }[];
+    })) as SubIdAccountsToSubmit;
   }, [mode, subIdsParams]);
 
   const tx = useMemo(() => {
@@ -336,9 +336,10 @@ export default function Review({ address, api, chain, depositValue, identityToSe
         }
         {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
+            SubIdentityAccounts={subIdsToShow}
             handleClose={closeConfirmation}
             identity={identityToSet}
-            status={'set'}
+            status={mode}
             txInfo={txInfo}
           />
         }
