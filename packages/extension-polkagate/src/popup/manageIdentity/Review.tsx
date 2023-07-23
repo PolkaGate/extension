@@ -318,16 +318,18 @@ export default function Review({ address, api, chain, depositValue, identityToSe
           </>
         }
         {step === STEPS.PROXY &&
-          <SelectProxyModal
-            address={address}
-            height={500}
-            nextStep={STEPS.REVIEW}
-            proxies={proxyItems}
-            proxyTypeFilter={['Any', 'NonTransfer']}
-            selectedProxy={selectedProxy}
-            setSelectedProxy={setSelectedProxy}
-            setStep={setStep}
-          />
+          <Grid container item sx={{ '> div button': { width: '100%' }, position: 'relative' }}>
+            <SelectProxyModal
+              address={address}
+              height={500}
+              nextStep={STEPS.REVIEW}
+              proxies={proxyItems}
+              proxyTypeFilter={['Any', 'NonTransfer']}
+              selectedProxy={selectedProxy}
+              setSelectedProxy={setSelectedProxy}
+              setStep={setStep}
+            />
+          </Grid>
         }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />
