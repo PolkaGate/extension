@@ -104,7 +104,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
       return;
     }
 
-    setSubIdAccountsToSubmit([{ address: undefined, name: undefined, status: 'new' }, ...(subIdAccountsToSubmit ?? [])]);
+    setSubIdAccountsToSubmit([...(subIdAccountsToSubmit ?? []), { address: undefined, name: undefined, status: 'new' }]);
   }, [disableAddSubId, subIdAccountsToSubmit]);
 
   const AddSubIdButton = () => (
