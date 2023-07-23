@@ -357,7 +357,7 @@ export const isUrl = (input: string | undefined) => {
     return false;
   }
 
-  const urlRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const urlRegex = /^(https?:\/\/)?([\w\d]+\.)+[\w\d]{2,3}(\/[\w\d]+)*$/;
 
   return urlRegex.test(input);
 };
