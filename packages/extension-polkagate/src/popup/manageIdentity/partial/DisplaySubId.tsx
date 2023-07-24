@@ -4,8 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForward as ArrowForwardIcon, Undo as UndoIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
+import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -31,6 +31,7 @@ interface ManageButtonProps {
   icon: unknown;
   text: string;
   onClick: () => void;
+  style?: SxProps<Theme> | undefined
 }
 
 export default function DisplaySubId({ error = false, index, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
@@ -44,8 +45,8 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
   const [isModifing, setModify] = useState<boolean>(toModify);
   const toRemove = useMemo(() => subIdInfo.status === 'remove', [subIdInfo.status]);
 
-  const ManageButton = ({ icon, onClick, text }: ManageButtonProps) => (
-    <Grid alignItems='center' container item onClick={onClick} sx={{ cursor: toRemove ? 'context-menu' : 'pointer', width: 'fit-content' }}>
+  const ManageButton = ({ icon, onClick, style, text }: ManageButtonProps) => (
+    <Grid alignItems='center' container item onClick={onClick} sx={{ cursor: 'pointer', width: 'fit-content', ...style }}>
       <Grid container item pr='5px' width='fit-content'>
         {icon}
       </Grid>
@@ -66,8 +67,8 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
   return (
     <>
       {!isModifing || toRemove
-        ? <Grid container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px #0000001A', p: '15px', position: 'relative' }}>
-          <Grid alignItems='center' container item sx={{ opacity: toRemove ? 0.3 : 1 }}>
+        ? <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '15px', position: 'relative' }}>
+          <Grid alignItems='center' container item>
             <Grid alignItems='center' container item width='40%'>
               <Grid alignItems='center' container item xs={10}>
                 <Grid container item xs={2}>
@@ -106,13 +107,13 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
             </Grid>
           </Grid>
           {!noButtons &&
-            <Grid container item justifyContent='flex-end' sx={{ opacity: toRemove ? 0.3 : 1 }}>
+            <Grid container item justifyContent='flex-end'>
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '12px', width: '95%' }} />
               <Grid columnSpacing='20px' container item justifyContent='flex-end'>
                 <ManageButton
                   icon={
                     <FontAwesomeIcon
-                      color={theme.palette.text.primary}
+                      color={theme.palette.secondary.main}
                       fontSize='25px'
                       icon={faEdit}
                     />
@@ -121,24 +122,26 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
                   text={t<string>('Modify')}
                 />
                 <ManageButton
-                  icon={
-                    <FontAwesomeIcon
-                      color={theme.palette.text.primary}
+                  icon={toRemove
+                    ? <UndoIcon
+                      sx={{ color: theme.palette.secondary.main, fontSize: '28px' }}
+                    />
+                    : <FontAwesomeIcon
+                      color={theme.palette.secondary.main}
                       fontSize='25px'
                       icon={faTrash}
                     />
                   }
                   onClick={onRemoveItem}
-                  text={t<string>('Delete')}
+                  style={{ zIndex: toRemove ? 10 : 1 }}
+                  text={toRemove
+                    ? t<string>('Undo')
+                    : t<string>('Delete')}
                 />
               </Grid>
             </Grid>
           }
-          {toRemove &&
-            <UndoIcon
-              onClick={onRemoveItem}
-              sx={{ color: theme.palette.secondary.light, cursor: 'pointer', fontSize: '30px', position: 'absolute', right: '5px', top: '5px' }}
-            />}
+          {toRemove && <Grid container item style={{ backgroundColor: '#EEEEEE', bottom: 0, left: 0, opacity: 0.8, position: 'absolute', right: 0, top: 0, zIndex: 1 }}></Grid>}
         </Grid>
         : <SubIdForm
           address={subIdInfo.address}

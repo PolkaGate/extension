@@ -45,7 +45,7 @@ export default function SubIdForm({ address, chain, error = false, ignoreAddress
   }, [index, onRemove]);
 
   return (
-    <Grid container gap='10px' item sx={{ border: `${error ? 3 : 1}px solid`, borderColor: error ? 'warning.main' : 'secondary.light', borderRadius: '10px', boxShadow: '2px 3px 4px 0px #0000001A', p: '12px', pt: 0 }}>
+    <Grid container gap='10px' item sx={{ bgcolor: 'background.paper', border: `${error ? 3 : 1}px solid`, borderColor: error ? 'warning.main' : 'secondary.light', borderRadius: '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '12px', pt: 0 }}>
       <AddressInput
         address={address}
         allAddresses={allAddresses}

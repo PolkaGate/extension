@@ -6,7 +6,6 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
 
-import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -23,7 +22,6 @@ import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
-import { DraggableModal } from '../governance/components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
@@ -164,8 +162,6 @@ export default function Review({ address, api, chain, depositValue, identityToSe
         : STEPS.PREVIEW);
   }, [mode, setStep]);
 
-  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), [setStep]);
-
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
     setStep(STEPS.CHECK_SCREEN);
@@ -212,7 +208,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            <Grid container item justifyContent='center' sx={{ border: '1px solid', borderColor: 'action.disabledBackground', borderRadius: '10px', mb: '20px', px: '3%' }}>
+            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
