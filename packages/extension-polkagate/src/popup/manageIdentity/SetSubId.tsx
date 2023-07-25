@@ -44,6 +44,8 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
 
   const toRemoveSubs = useMemo(() => subIdAccountsToSubmit && subIdAccountsToSubmit.filter((subs) => subs.status === 'remove').length > 0, [subIdAccountsToSubmit]);
 
+  const totalSubIdsDeposit = useMemo(() => subAccountDeposit.muln(subIdsLength), [subAccountDeposit, subIdsLength]);
+
   const nextButtonDisable = useMemo(() =>
     (!subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || disableAddSubId || !!duplicateError || (noNewNoRemove && !subIdModified))
     , [disableAddSubId, duplicateError, noNewNoRemove, subIdAccountsToSubmit, subIdModified]);
@@ -58,47 +60,6 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
     setSubIdAccountsToSubmit(oldIds);
   }, [subIdAccounts]);
 
-  // useEffect(() => {
-  //   if (!subIdAccounts || !subIdAccountsToSubmit) {
-  //     return;
-  //   }
-
-  //   const modified = subIdAccounts.some((sub) => subIdAccountsToSubmit.find((subId) => subId.status === 'current' && subId.address !== sub.address));
-
-  //   setSubIdModified(modified);
-  // }, [subIdAccounts, subIdAccountsToSubmit]);
-
-  // useEffect(() => {
-  //   if (!subIdAccountsToSubmit) {
-  //     return;
-  //   }
-
-  //   const emptyElement = !!subIdAccountsToSubmit.find((idAccount) => idAccount.status !== 'remove' && (idAccount.address === undefined || idAccount.name === undefined || idAccount.address === '' || idAccount.name === ''));
-
-  //   setDisableAddSubId(emptyElement);
-  // }, [subIdAccountsToSubmit]);
-
-  // useEffect(() => {
-  //   if (!subIdAccountsToSubmit) {
-  //     return;
-  //   }
-
-  //   const indexs = new Set<number>();
-
-  //   subIdAccountsToSubmit.forEach((sub, index) => {
-  //     subIdAccountsToSubmit.forEach((subId, i) => {
-  //       if (subId.address === sub.address && i !== index) {
-  //         indexs.add(i);
-  //       }
-  //     });
-
-  //     if (sub.address === parentAddress) {
-  //       indexs.add(index);
-  //     }
-  //   });
-
-  //   setDuplicateError(indexs.size > 0 ? indexs : false);
-  // }, [subIdAccountsToSubmit, parentAddress]);
   useEffect(() => {
     if (!subIdAccountsToSubmit || !subIdAccounts) {
       return;
@@ -140,8 +101,6 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
 
     setNoChanges(noChanges);
   }, [subIdAccounts, subIdAccountsToSubmit, parentAddress]);
-
-  const totalSubIdsDeposit = useMemo(() => subAccountDeposit.muln(subIdsLength), [subAccountDeposit, subIdsLength]);
 
   const makeSubIdParams = useMemo(() => {
     if (!subIdAccountsToSubmit) {
