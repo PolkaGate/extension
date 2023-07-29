@@ -12,8 +12,8 @@ import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 
 import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Grid, Skeleton, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Divider, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
@@ -161,7 +161,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
             </Grid>
-            <Grid item pt='6px' sx={{lineHeight: '15px'}}>
+            <Grid item pt='6px' sx={{ lineHeight: '15px' }}>
               <FormatPrice
                 amount={totalLocked}
                 decimals={decimal}

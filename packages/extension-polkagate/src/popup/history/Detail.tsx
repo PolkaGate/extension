@@ -11,11 +11,11 @@ import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { NameAddress, TransactionDetail } from '../../util/types';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../util/utils';
-import Explorer from './Explorer';
 import Amount from './partials/Amount';
 import FailSuccessIcon from './partials/FailSuccessIcon';
 import Item from './partials/Item';
 import ToFrom from './partials/ToFrom';
+import Explorer from './Explorer';
 
 interface Props {
   chainName: string;
@@ -102,7 +102,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         />
         <Item item={`${t('Block')}: #${info?.block}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.txHash, 6)}`} noDivider toCopy={info?.txHash} />
-        <Grid item sx={{ mt: '12px' }}>
+        <Grid container item justifyContent='center' sx={{ mt: '12px' }}>
           <Explorer chainName={chainName} txHash={info?.txHash} />
         </Grid>
       </Grid>

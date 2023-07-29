@@ -143,7 +143,7 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
     <>
       <Grid container justifyContent='space-between' pt='15px'>
         <Grid item>
-          <Infotip2 iconTop={26} showQuestionMark text={t<string>('Please select the categories for which you would like to delegate your votes.')}>
+          <Infotip2 showQuestionMark text={t<string>('Please select the categories for which you would like to delegate your votes.')}>
             <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: 'left' }}>
               {t('Referenda Category')}
             </Typography>

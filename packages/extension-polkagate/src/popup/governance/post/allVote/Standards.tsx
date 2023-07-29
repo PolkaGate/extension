@@ -226,7 +226,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
             />
           </Tabs>
         </Box>
-        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ border: 1, borderColor: 'secondary.light', borderRadius: '10px', p: '0 8px 8px', position: 'relative', height: '555px' }}>
+        <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ p: '0 8px 8px', position: 'relative', height: '555px' }}>
           <Grid alignItems='center' container id='table header' justifyContent='flex-start' sx={{ borderBottom: 2, borderColor: 'primary.light', fontSize: '17px', fontWeight: 400 }}>
             <Grid item width='45%'>
               {t('Voter')}

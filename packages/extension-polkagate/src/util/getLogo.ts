@@ -14,14 +14,10 @@ function sanitize(value?: string): string {
 const endpoints = createWsEndpoints(() => '');
 
 export default function getLogo(info: string | undefined | Chain): string {
-  // TODO: using the new apps-config to fetch icons
-  // const systemName= await api.rpc.system.name();
-  // const specName= api.runtimeVersion.specName.toString();
-  // getSystemIcon(systemName, specName)
-
   let mayBeExternalLogo;
   const iconName = sanitizeChainName((info as Chain)?.name)?.toLowerCase() ?? (info as string)?.toLowerCase();
-  const endpoint = endpoints.find((o) => o.info === iconName);
+
+  const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 
   if (!endpoint) {
     mayBeExternalLogo = Object

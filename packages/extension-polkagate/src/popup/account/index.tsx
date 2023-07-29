@@ -149,7 +149,7 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -262,7 +262,7 @@ export default function AccountDetails(): React.ReactElement {
               />
             }
             onClick={goToGovernance}
-            // textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
+            textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
             title={t<string>('Governance')}
           />
           <HorizontalMenuItem
@@ -276,7 +276,7 @@ export default function AccountDetails(): React.ReactElement {
                   size='lg'
                 />
             } onClick={goToStaking}
-            // textDisabled={!STAKING_CHAINS.includes(genesisHash)}
+            textDisabled={!STAKING_CHAINS.includes(genesisHash)}
             title={t<string>('Stake')}
           />
           <HorizontalMenuItem
@@ -290,6 +290,7 @@ export default function AccountDetails(): React.ReactElement {
               />
             }
             onClick={goToCrowdLoans}
+            textDisabled={!CROWDLOANS_CHAINS.includes(genesisHash)}
             title={t<string>('Crowdloan')}
           />
           <HorizontalMenuItem

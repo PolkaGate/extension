@@ -20,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
+import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';

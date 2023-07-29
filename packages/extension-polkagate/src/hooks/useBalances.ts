@@ -173,14 +173,12 @@ export default function useBalances(address: string | undefined, refresh?: boole
       return;
     }
 
-    /** to save fetched balance in local storage, first load saved balances of different chaines if any */
+    /** to SAVE fetched balance in local storage, first load saved balances of different chaines if any */
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     const balances = {
       availableBalance: overall.availableBalance.toString(),
       freeBalance: overall.freeBalance.toString(),
-      // frozenFee: overall.frozenFee.toString(),
-      // frozenMisc: overall.frozenMisc.toString(),
       lockedBalance: overall.lockedBalance.toString(),
       pooledBalance: overall.pooledBalance.toString(),
       reservedBalance: overall.reservedBalance.toString(),
@@ -202,6 +200,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       return;
     }
 
+    // to LOAD saved balances
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     if (savedBalances[chainName]) {
@@ -213,8 +212,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
-        // frozenFee: new BN(sb.frozenFee),
-        // frozenMisc: new BN(sb.frozenMisc),
         lockedBalance: new BN(sb.lockedBalance),
         pooledBalance: new BN(sb.pooledBalance),
         reservedBalance: new BN(sb.reservedBalance),

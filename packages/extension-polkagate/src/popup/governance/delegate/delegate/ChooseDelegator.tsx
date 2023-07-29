@@ -108,7 +108,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
       <Grid container item>
         <Grid container justifyContent='space-between' pb='5px'>
           <Grid item>
-            <Infotip2 iconTop={26} showQuestionMark text={'These are the trusted accounts listed by Polkagate, and we will regularly update the list. Please contact us if you would like to be included.'}>
+            <Infotip2 showQuestionMark text={'These are the trusted accounts listed by Polkagate, and we will regularly update the list. Please contact us if you would like to be included.'}>
               <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: 'left' }}>
                 {t('Choose from Trusted Accounts')}
               </Typography>

@@ -340,7 +340,7 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', ''));
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(/\s/g, ''));
 
 export const isEmail = (input: string | undefined) => {
   if (!input) {
@@ -361,3 +361,4 @@ export const isUrl = (input: string | undefined) => {
 
   return urlRegex.test(input);
 };
+

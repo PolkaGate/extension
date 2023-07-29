@@ -16,12 +16,10 @@ interface Props {
   showQuestionMark?: boolean;
   showInfoMark?: boolean;
   showWarningMark?: boolean;
-  iconTop?: number;
-  iconLeft?: number;
   fontSize?: string;
 }
 
-function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, text, showWarningMark }: Props): React.ReactElement<Props> {
+function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
