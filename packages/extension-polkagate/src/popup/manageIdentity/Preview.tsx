@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import { faEdit, faEraser, faHandshake, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
@@ -21,15 +22,8 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
   subIdAccounts: { address: string; name: string; }[] | null | undefined;
+  judgement: string | null | undefined;
 }
-
-// interface WideManageButtonProps {
-//   icon: unknown;
-//   title: string;
-//   helperText: string;
-//   onClick: () => void;
-//   noBorder?: boolean;
-// }
 
 interface ManageButtonProps {
   icon: unknown;
@@ -37,35 +31,12 @@ interface ManageButtonProps {
   onClick: () => void;
 }
 
-export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, setStep, subIdAccounts }: Props): React.ReactElement {
+export default function PreviewIdentity({ identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  // const WideManageButton = ({ helperText, icon, noBorder, onClick, title }: WideManageButtonProps) => (
-  //   <Grid alignItems='center' container height='40px' item justifyContent='space-between' onClick={onClick} sx={noBorder ? { cursor: 'pointer' } : { borderBottom: '1px solid', borderBottomColor: '#D5CCD0', cursor: 'pointer' }}>
-  //     <Grid container item xs={11}>
-  //       <Grid container item justifyContent='center' xs={1}>
-  //         {icon}
-  //       </Grid>
-  //       <Grid container item xs={4}>
-  //         <Typography fontSize='18px' fontWeight={500}>
-  //           {title}
-  //         </Typography>
-  //       </Grid>
-  //       <Grid container item xs={7}>
-  //         <Typography fontSize='14px' fontWeight={300}>
-  //           {helperText}
-  //         </Typography>
-  //       </Grid>
-  //     </Grid>
-  //     <Grid container item xs={1}>
-  //       <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 22, m: 'auto', stroke: '#BA2882', strokeWidth: '2px' }} />
-  //     </Grid>
-  //   </Grid>
-  // );
-
   const ManageButton = ({ icon, onClick, title }: ManageButtonProps) => (
-    <Grid alignItems='center' container item onClick={onClick} sx={{ cursor: 'pointer', width: 'fit-content' }}>
+    <Grid alignItems='center' container item onClick={onClick} sx={{ bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', py: '17px', width: '24%' }}>
       <Grid container item justifyContent='center'>
         {icon}
       </Grid>
@@ -75,10 +46,6 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
         </Typography>
       </Grid>
     </Grid>
-  );
-
-  const VDivider = () => (
-    <Divider flexItem orientation='vertical' sx={{ bgcolor: '#D5CCD0', mx: '2%' }} />
   );
 
   const goModify = useCallback(() => {
@@ -93,7 +60,7 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
   }, [setIdentityToSet, setMode, setStep]);
 
   const requestJudgment = useCallback(() => {
-    setStep(STEPS.MODIFY);
+    setStep(STEPS.JUDGEMENT);
   }, [setStep]);
 
   const manageSubId = useCallback(() => {
@@ -117,7 +84,7 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
       <Typography fontSize='22px' fontWeight={700} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', pb: '10px', pt: '20px' }}>
         {t<string>('Manage Identity')}
       </Typography>
-      <Grid container item justifyContent='space-between' p='15px 35px'>
+      <Grid container item justifyContent='space-between' p='15px 0'>
         <ManageButton
           icon={
             <FontAwesomeIcon
@@ -129,7 +96,6 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
           onClick={goModify}
           title={t<string>('Modify')}
         />
-        <VDivider />
         <ManageButton
           icon={
             <FontAwesomeIcon
@@ -141,19 +107,28 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
           onClick={clearIdentity}
           title={t<string>('Clear')}
         />
-        <VDivider />
         <ManageButton
-          icon={
-            <FontAwesomeIcon
+          icon={judgement && judgement !== 'feePaid'
+            ? <CheckCircleOutlineIcon
+              sx={{
+                bgcolor: 'success.main',
+                borderRadius: '50%',
+                color: 'white',
+                // stroke: 'white',
+                fontSize: 35,
+              }}
+            />
+            : <FontAwesomeIcon
               color={theme.palette.text.primary}
               fontSize='25px'
               icon={faHandshake}
             />
           }
           onClick={requestJudgment}
-          title={t<string>('Request Judgment')}
+          title={judgement && judgement !== 'feePaid'
+            ? judgement
+            : t<string>('Request Judgment')}
         />
-        <VDivider />
         <ManageButton
           icon={
             <FontAwesomeIcon
@@ -164,8 +139,8 @@ export default function PreviewIdentity ({ identity, setIdentityToSet, setMode, 
           }
           onClick={manageSubId}
           title={subIdAccounts && subIdAccounts.length > 0
-            ? t<string>('Manage Sub-identity')
-            : t<string>('Set Sub-identity')
+            ? t<string>('Manage Sub-ID')
+            : t<string>('Set Sub-ID')
           }
         />
       </Grid>

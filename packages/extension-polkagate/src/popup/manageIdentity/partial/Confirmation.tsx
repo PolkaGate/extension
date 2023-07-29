@@ -21,6 +21,7 @@ interface Props {
   handleClose: () => void;
   identity: DeriveAccountRegistration | null | undefined;
   status: Mode;
+  selectedRegistrarName: string | undefined;
   SubIdentityAccounts: SubIdAccountsToSubmit | undefined;
 }
 
@@ -30,7 +31,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation({ handleClose, identity, txInfo, status, SubIdentityAccounts }: Props): React.ReactElement {
+export default function Confirmation({ SubIdentityAccounts, handleClose, identity, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -150,6 +151,11 @@ export default function Confirmation({ handleClose, identity, txInfo, status, Su
               : t<string>('Sub-Identity(ies) not cleared.')}
           </Typography>
         }
+        {(status === 'RequestJudgement' || status === 'CancelJudgement') &&
+          <DisplayInfo
+            caption={t<string>('Registrar:')}
+            value={selectedRegistrarName}
+          />}
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         <DisplayInfo
           caption={t<string>('Fee:')}

@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
-import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
+import type { PalletIdentityIdentityInfo, PalletIdentityJudgement } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
@@ -20,6 +20,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { useApi, useChain, useFullscreen, useTranslation } from '../../hooks';
 import { Header } from '../governance/Header';
 import PreviewIdentity from './Preview';
+import RequestJudgement from './RequestJudgement';
 import Review from './Review';
 import SetIdentity from './SetIdentity';
 import SetSubId from './SetSubId';
@@ -31,14 +32,15 @@ export const STEPS = {
   MODIFY: 3,
   REMOVE: 4,
   MANAGESUBID: 5,
-  REVIEW: 6,
-  WAIT_SCREEN: 7,
-  CONFIRM: 8,
+  JUDGEMENT: 6,
+  REVIEW: 7,
+  WAIT_SCREEN: 8,
+  CONFIRM: 9,
   PROXY: 100
 };
 
 type SubAccounts = [string, string[]];
-export type Mode = 'Set' | 'Clear' | 'Modify' | 'ManageSubId' | undefined;
+export type Mode = 'Set' | 'Clear' | 'Modify' | 'ManageSubId' | 'RequestJudgement' | 'CancelJudgement' | undefined;
 export type SubIdAccountsToSubmit = { address: string | undefined; name: string | undefined; status: 'current' | 'new' | 'remove' }[];
 export type SubIdsParams = (string | Data | undefined)[][] | undefined;
 
@@ -68,12 +70,16 @@ export default function ManageIdentity(): React.ReactElement {
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
   const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
+  const [idJudgement, setIdJudgement] = useState<string | null | undefined>();
   const [subAccounts, setSubAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
+  const [maxFeeValue, setMaxFeeValue] = useState<BN>();
   const [fetching, setFetching] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [step, setStep] = useState<number>(0);
   const [mode, setMode] = useState<Mode>();
+  const [selectedRegistrar, setSelectedRegistrar] = useState<number | string>();
+  const [selectedRegistrarName, setSelectedRegistrarName] = useState<string>();
 
   const basicDepositValue = useMemo(() => api && api.consts.identity.basicDeposit as unknown as BN, [api]);
   const fieldDepositValue = useMemo(() => api && api.consts.identity.fieldDeposit as unknown as BN, [api]);
@@ -85,13 +91,15 @@ export default function ManageIdentity(): React.ReactElement {
     setSubIdsParams(undefined);
     setInfoParams(undefined);
     setIdentityToSet(undefined);
+    setIdJudgement(undefined);
     setMode(undefined);
+    setSelectedRegistrar(undefined);
     setDepositValue(BN_ZERO);
 
-    api.query.identity.identityOf(address)
+    api?.query.identity.identityOf(address)
       .then((id) => {
-        if (id.isSome) {
-          const { info } = id.unwrap();
+        if (!id.isEmpty) {
+          const { info, judgements } = id.unwrap();
 
           const idToSet: DeriveAccountRegistration | null = {
             display: getRawValue(info.display),
@@ -102,6 +110,25 @@ export default function ManageIdentity(): React.ReactElement {
             riot: getRawValue(info.riot),
             other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined }
           };
+
+          if (judgements.isEmpty) {
+            setIdJudgement(null);
+          } else {
+            const judgementinHuman = judgements.toHuman()
+            const judgementType = judgementinHuman[0][1] as string;
+
+            console.log('judgements:', judgementinHuman)
+            // const identityLevel = judgementType.match(/reasonable|knownGood/gi) ? judgementType : null;
+
+            if (['Reasonable', 'KnownGood'].includes(judgementType)) {
+              setIdJudgement(judgementType);
+            } else {
+              const feePaidReg = judgementinHuman[0][0] as string;
+
+              setIdJudgement('feePaid');
+              setSelectedRegistrar(feePaidReg);
+            }
+          }
 
           setIdentity(idToSet);
         } else {
@@ -151,10 +178,10 @@ export default function ManageIdentity(): React.ReactElement {
         break;
 
       default:
-        subAccounts !== undefined && setStep(2);
+        subAccounts !== undefined && idJudgement !== undefined && setStep(2);
         break;
     }
-  }, [identity, subAccounts]);
+  }, [idJudgement, identity, subAccounts]);
 
   useEffect(() => {
     if (!address || !api) {
@@ -162,7 +189,7 @@ export default function ManageIdentity(): React.ReactElement {
     }
 
     fetchIdentity();
-  }, [address, api, fetchIdentity]);
+  }, [address, api, fetchIdentity, chain?.genesisHash]);
 
   useEffect(() => {
     if (!address || !api || !(refresh && !fetching)) {
@@ -170,7 +197,7 @@ export default function ManageIdentity(): React.ReactElement {
     }
 
     fetchIdentity();
-  }, [address, api, fetchIdentity, fetching, identity, refresh]);
+  }, [address, api, fetchIdentity, fetching, identity, refresh, chain?.genesisHash]);
 
   useEffect(() => {
     const fetchSubAccounts = async () => {
@@ -255,6 +282,7 @@ export default function ManageIdentity(): React.ReactElement {
         {step === STEPS.PREVIEW && identity &&
           <PreviewIdentity
             identity={identity}
+            judgement={idJudgement}
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
@@ -275,6 +303,21 @@ export default function ManageIdentity(): React.ReactElement {
             subIdsParams={subIdsParams}
           />
         }
+        {step === STEPS.JUDGEMENT && idJudgement !== undefined &&
+          <RequestJudgement
+            address={address}
+            api={api}
+            idJudgement={idJudgement}
+            maxFeeValue={maxFeeValue}
+            mode={mode}
+            selectedRegistrar={selectedRegistrar}
+            setMaxFeeValue={setMaxFeeValue}
+            setMode={setMode}
+            setSelectedRegistrar={setSelectedRegistrar}
+            setSelectedRegistrarName={setSelectedRegistrarName}
+            setStep={setStep}
+          />
+        }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
           <Review
             address={address}
@@ -283,8 +326,11 @@ export default function ManageIdentity(): React.ReactElement {
             depositValue={depositValue}
             identityToSet={identityToSet}
             infoParams={infoParams}
+            maxFeeValue={maxFeeValue}
             mode={mode}
             parentDisplay={identity?.display}
+            selectedRegistrar={selectedRegistrar}
+            selectedRegistrarName={selectedRegistrarName}
             setRefresh={setRefresh}
             setStep={setStep}
             step={step}

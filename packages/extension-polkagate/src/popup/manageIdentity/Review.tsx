@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_FOUR,BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
@@ -44,9 +44,12 @@ interface Props {
   mode: Mode;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   parentDisplay: string | undefined;
+  selectedRegistrar: string | number;
+  maxFeeValue: BN | undefined;
+  selectedRegistrarName: string | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, mode, parentDisplay, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, maxFeeValue, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -66,6 +69,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   const setIdentity = api && api.tx.identity.setIdentity;
   const clearIdentity = api && api.tx.identity.clearIdentity;
   const setSubs = api && api.tx.identity.setSubs;
+  const requestJudgement = api && api.tx.identity.requestJudgement;
+  const cancelRequest = api && api.tx.identity.cancelRequest;
 
   const subIdsToShow: SubIdAccountsToSubmit | undefined = useMemo(() => {
     if (mode !== 'ManageSubId' || !subIdsParams) {
@@ -78,8 +83,10 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     })) as SubIdAccountsToSubmit;
   }, [mode, subIdsParams]);
 
+  console.log('selectedRegistrar:', selectedRegistrar)
+
   const tx = useMemo(() => {
-    if (!setIdentity || !clearIdentity || !setSubs) {
+    if (!setIdentity || !clearIdentity || !setSubs || !requestJudgement || !cancelRequest) {
       return undefined;
     }
 
@@ -94,7 +101,27 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     if (mode === 'ManageSubId' && subIdsParams) {
       return setSubs(subIdsParams);
     }
-  }, [clearIdentity, infoParams, mode, setIdentity, setSubs, subIdsParams]);
+
+    if (mode === 'RequestJudgement') {
+      // const reg_index = String(selectedRegistrar) === '0'
+      //   ? BN_ZERO
+      //   : String(selectedRegistrar) === '1'
+      //     ? BN_ONE
+      //     : BN_FOUR;
+
+      return requestJudgement(selectedRegistrar, maxFeeValue);
+    }
+
+    if (mode === 'CancelJudgement') {
+      // const reg_index = String(selectedRegistrar) === '0'
+      //   ? BN_ZERO
+      //   : String(selectedRegistrar) === '1'
+      //     ? BN_ONE
+      //     : BN_FOUR;
+
+      return cancelRequest(selectedRegistrar);
+    }
+  }, [cancelRequest, clearIdentity, infoParams, maxFeeValue, mode, requestJudgement, selectedRegistrar, setIdentity, setSubs, subIdsParams]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -159,7 +186,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
       ? STEPS.INDEX
       : mode === 'ManageSubId'
         ? STEPS.MANAGESUBID
-        : STEPS.PREVIEW);
+        : mode === 'RequestJudgement' || mode === 'CancelJudgement'
+          ? STEPS.JUDGEMENT
+          : STEPS.PREVIEW);
   }, [mode, setStep]);
 
   const closeConfirmation = useCallback(() => {
@@ -274,17 +303,44 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   </Grid>
                 </Grid>
               }
-              <DisplayValue title={mode === 'Clear'
-                ? t<string>('Deposit that will be released')
-                : t<string>('Total Deposit')}
-              >
-                <ShowBalance
-                  api={api}
-                  balance={depositValue}
-                  decimalPoint={4}
-                  height={22}
-                />
-              </DisplayValue>
+              {mode === 'RequestJudgement' &&
+                <Grid container direction='column' item>
+                  <Typography fontSize='16px' fontWeight={400} textAlign='center' width='100%'>
+                    {t<string>('Registrar')}
+                  </Typography>
+                  <Typography fontSize='28px' fontWeight={400} textAlign='center' width='100%'>
+                    {selectedRegistrarName}
+                  </Typography>
+                </Grid>
+              }
+              {mode === 'CancelJudgement' &&
+                <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '70px', py: '20px' }}>
+                  <Warning
+                    fontWeight={400}
+                    iconDanger
+                    isBelowInput
+                    theme={theme}
+                  >
+                    {t<string>('You are about to cancel your judgement request for this account.')}
+                  </Warning>
+                </Grid>
+              }
+              {mode !== 'CancelJudgement' &&
+                <DisplayValue title={mode === 'Clear'
+                  ? t<string>('Deposit that will be released')
+                  : mode === 'RequestJudgement'
+                    ? t<string>('Registrar fee')
+                    : t<string>('Total Deposit')}
+                >
+                  <ShowBalance
+                    api={api}
+                    balance={mode === 'RequestJudgement'
+                      ? maxFeeValue
+                      : depositValue}
+                    decimalPoint={4}
+                    height={22}
+                  />
+                </DisplayValue>}
               <DisplayValue title={t<string>('Fee')}>
                 <ShowBalance
                   api={api}
@@ -335,6 +391,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             SubIdentityAccounts={subIdsToShow}
             handleClose={closeConfirmation}
             identity={identityToSet}
+            selectedRegistrarName={selectedRegistrarName}
             status={mode}
             txInfo={txInfo}
           />
