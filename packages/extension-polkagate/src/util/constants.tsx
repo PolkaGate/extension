@@ -157,3 +157,21 @@ export const DEFAULT_POOL_FILTERS = {
 
 export const TOTAL_STAKE_HELPER_TEXT = 'Your total amount of stake after completing this transaction.';
 export const SYSTEM_SUGGESTION_TEXT = 'Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.'// which not slashed before.' //TODO: add a disclaimer to the text too
+
+export const REGISTRARS_LIST = [
+  {
+    addresses: ['Fom9M5W6Kck1hNAiE2mDcZ67auUCiNTzLBUdQy4QnxHSxdn', '1Reg2TYv9rGfrQKpPREmrHRxrNsUDBQKzkYwP1UstD97wpJ', '5HREGY2fxewHiHRPBUQ6xpcCWRruvyq9igNvRYnxSr1vAWGE'],
+    index: 1,
+    name: 'Chevdor'
+  },
+  {
+    addresses: ['GhmpzxUyTVsFJhV7s2wNvD8v3Bgikb6WvYjj4QSuSScAUw6'],
+    index: 4,
+    name: 'Litentry'
+  },
+  {
+    addresses: ['H4XieK3r3dq3VEvRtqZR7wN7a1UEkXxf14orRsEfdFjmgkF', '12j3Cz8qskCGJxmSJpVL2z2t3Fpmw3KoBaBaRGPnuibFc7o8'],
+    index: 0,
+    name: 'Web3Foundation'
+  }
+];
