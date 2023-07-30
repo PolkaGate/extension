@@ -141,7 +141,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   useEffect(() => {
     setEstimatedFee(undefined);
 
-    if (!delegate || !batch) {
+    if (!delegate || !batch || !formatted) {
       return;
     }
 
@@ -154,13 +154,13 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
       const txList = tracksList?.tracks.map((track) =>
         delegate(...[
           track[0],
-          'Cgp9bcq1dGP1Z9B6F2ccTSTHNez9jq2iUX993ZbDVByPSU2',
+          formatted,
           1,
           BN_ONE
         ]));
 
       batch(txList)
-        .paymentInfo('Cgp9bcq1dGP1Z9B6F2ccTSTHNez9jq2iUX993ZbDVByPSU2')
+        .paymentInfo(formatted)
         .then((i) => setEstimatedFee(i?.partialFee))
         .catch(console.error);
 
@@ -193,7 +193,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         .then((i) => setEstimatedFee(i?.partialFee))
         .catch(console.error);
     }
-  }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress, tracksList?.tracks]);
+  }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress, formatted, tracksList?.tracks]);
 
   const filterDelegation = useCallback((infos: DelegationInfo[]) => {
     const temp: AlreadyDelegateInformation[] = [];
