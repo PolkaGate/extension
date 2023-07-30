@@ -62,21 +62,23 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
   }, [subIdAccounts]);
 
   useEffect(() => {
-    if (!subIdAccountsToSubmit || !subIdAccounts) {
+    if (!subIdAccountsToSubmit) {
       return;
     }
 
     // Check for modified subIdAccounts
-    const modified = subIdAccounts.some((sub) =>
+    const modified = subIdAccounts?.some((sub) =>
       subIdAccountsToSubmit.find((subId) => subId.status === 'current' && subId.address !== sub.address)
     );
 
-    setSubIdModified(modified);
+    setSubIdModified(!!modified);
 
     // Check for empty elements in subIdAccountsToSubmit
     const emptyElement = !!subIdAccountsToSubmit.find((idAccount) =>
       idAccount.status !== 'remove' && (idAccount.address === undefined || idAccount.name === undefined || idAccount.address === '' || idAccount.name === '')
     );
+
+    console.log('subIdAccountsToSubmit:', subIdAccountsToSubmit)
 
     setDisableAddSubId(emptyElement);
 
