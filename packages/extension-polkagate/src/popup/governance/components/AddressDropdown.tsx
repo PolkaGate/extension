@@ -27,9 +27,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
   const ref = useRef<HTMLDivElement>(null);
   const { hierarchy } = useContext(AccountContext);
 
-  const allAddresses = useMemo(() =>
-    hierarchy.map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-    , [hierarchy]);
+  const allAddresses = useMemo(() => hierarchy.map(({ address }) => address), [hierarchy]);
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _toggleDropdown = useCallback(() => setDropdownVisible(!isDropdownVisible), [isDropdownVisible]);
@@ -64,7 +62,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
         </Grid>
       </Grid>
       <Grid container sx={{ '> .tree:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '300px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '40px', transform: isDropdownVisible ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'top', transitionDuration: '0.3s', transitionProperty: 'transform', visibility: isDropdownVisible ? 'visible' : 'hidden', zIndex: 10 }}>
-        {allAddresses.map(([address,]) => (
+        {allAddresses.filter((address) => address !== selectedAddress).map((address) => (
           <Grid alignItems='center' container item key={address} onClick={_onSelect(address)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}>
             <Identity
               address={address}

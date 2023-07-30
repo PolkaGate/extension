@@ -32,7 +32,6 @@ export { default as useChainNames } from './useChainNames';
 export { default as useCurrentBlockNumber } from './useCurrentBlockNumber';
 export { default as useDecimal } from './useDecimal';
 export { default as useValidatorSuggestion } from './useValidatorSuggestion';
-export { useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useEndpoint2 } from './useEndpoint2';
 export { default as useFormatted } from './useFormatted';

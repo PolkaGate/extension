@@ -9,12 +9,17 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { SavedMetaData } from '../util/types';
 import { useAccount, useChainName, useTranslation } from '.';
 
-export default function useEndpoint2(address: AccountId | string | undefined): string | undefined {
+export default function useEndpoint2 (address: AccountId | string | undefined): string | undefined {
   const account = useAccount(address);
   const chainName = useChainName(address);
   const { t } = useTranslation();
 
   const endpoint = useMemo(() => {
+    if (!account || !chainName) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const endPointFromStore: SavedMetaData = account?.endpoint ? JSON.parse(account.endpoint) : null;
 
     if (endPointFromStore && endPointFromStore?.chainName === chainName) {
@@ -28,9 +33,8 @@ export default function useEndpoint2(address: AccountId | string | undefined): s
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
     );
 
-    // return endpoints?.length ? endpoints[endpoints.length > 2 ? 1 : 0].value : undefined;
     return endpoints?.length ? endpoints[0].value : undefined;
-  }, [account?.endpoint, chainName, t]);
+  }, [account, chainName, t]);
 
   return endpoint;
 }
