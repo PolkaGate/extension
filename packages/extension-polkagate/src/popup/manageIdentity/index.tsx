@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
-import type { PalletIdentityIdentityInfo, PalletIdentityJudgement } from '@polkadot/types/lookup';
+import type { PalletIdentityIdentityInfo, PalletIdentityJudgement, PalletIdentityRegistration } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
@@ -17,7 +17,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useApi, useChain, useFullscreen, useTranslation } from '../../hooks';
+import { useApi, useChain, useChainName, useFullscreen, useTranslation } from '../../hooks';
 import { Header } from '../governance/Header';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
@@ -43,6 +43,7 @@ type SubAccounts = [string, string[]];
 export type Mode = 'Set' | 'Clear' | 'Modify' | 'ManageSubId' | 'RequestJudgement' | 'CancelJudgement' | undefined;
 export type SubIdAccountsToSubmit = { address: string | undefined; name: string | undefined; status: 'current' | 'new' | 'remove' }[];
 export type SubIdsParams = (string | Data | undefined)[][] | undefined;
+export type IdJudgement = 'Reasonable' | 'KnownGood' | 'FeePaid' | null | undefined;
 
 function getRawValue(value: Data) {
   const text = u8aToString(value.asRaw.toU8a(true));
@@ -65,12 +66,13 @@ export default function ManageIdentity(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
+  const chainName = useChainName(address);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
   const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
-  const [idJudgement, setIdJudgement] = useState<string | null | undefined>();
+  const [idJudgement, setIdJudgement] = useState<IdJudgement>();
   const [subAccounts, setSubAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [maxFeeValue, setMaxFeeValue] = useState<BN>();
@@ -99,33 +101,30 @@ export default function ManageIdentity(): React.ReactElement {
     api?.query.identity.identityOf(address)
       .then((id) => {
         if (!id.isEmpty) {
-          const { info, judgements } = id.unwrap();
+          const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
 
           const idToSet: DeriveAccountRegistration | null = {
             display: getRawValue(info.display),
-            legal: getRawValue(info.legal),
             email: getRawValue(info.email),
-            web: getRawValue(info.web),
-            twitter: getRawValue(info.twitter),
+            legal: getRawValue(info.legal),
+            other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined },
             riot: getRawValue(info.riot),
-            other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined }
+            twitter: getRawValue(info.twitter),
+            web: getRawValue(info.web),
           };
 
           if (judgements.isEmpty) {
             setIdJudgement(null);
           } else {
-            const judgementinHuman = judgements.toHuman()
-            const judgementType = judgementinHuman[0][1] as string;
-
-            console.log('judgements:', judgementinHuman)
-            // const identityLevel = judgementType.match(/reasonable|knownGood/gi) ? judgementType : null;
+            const judgementInHuman = judgements.toHuman();
+            const judgementType = judgementInHuman[0][1] as string;
 
             if (['Reasonable', 'KnownGood'].includes(judgementType)) {
-              setIdJudgement(judgementType);
+              setIdJudgement(judgementType as 'Reasonable' | 'KnownGood');
             } else {
-              const feePaidReg = judgementinHuman[0][0] as string;
+              const feePaidReg = judgementInHuman[0][0] as string;
 
-              setIdJudgement('feePaid');
+              setIdJudgement('FeePaid');
               setSelectedRegistrar(feePaidReg);
             }
           }
@@ -270,6 +269,7 @@ export default function ManageIdentity(): React.ReactElement {
         {(step === STEPS.INDEX || (step === STEPS.MODIFY && mode === 'Modify')) &&
           <SetIdentity
             api={api}
+            chainName={chainName}
             identity={identity}
             identityToSet={identityToSet}
             mode={mode}
@@ -326,7 +326,7 @@ export default function ManageIdentity(): React.ReactElement {
             depositValue={depositValue}
             identityToSet={identityToSet}
             infoParams={infoParams}
-            maxFeeValue={maxFeeValue}
+            maxFeeAmount={maxFeeValue}
             mode={mode}
             parentDisplay={identity?.display}
             selectedRegistrar={selectedRegistrar}

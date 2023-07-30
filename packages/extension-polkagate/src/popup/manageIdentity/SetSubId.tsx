@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -27,7 +28,7 @@ interface Props {
   setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
 }
 
-export default function SetSubId({ api, mode, parentAddress, parentDisplay, setDepositValue, setMode, setStep, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
+export default function SetSubId ({ api, mode, parentAddress, parentDisplay, setDepositValue, setMode, setStep, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -46,9 +47,9 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
 
   const totalSubIdsDeposit = useMemo(() => subAccountDeposit.muln(subIdsLength), [subAccountDeposit, subIdsLength]);
 
-  const nextButtonDisable = useMemo(() =>
-    (!subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || disableAddSubId || !!duplicateError || (noNewNoRemove && !subIdModified))
-    , [disableAddSubId, duplicateError, noNewNoRemove, subIdAccountsToSubmit, subIdModified]);
+  const nextButtonDisable = useMemo(() => {
+    return (!subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || disableAddSubId || !!duplicateError || (noNewNoRemove && !subIdModified));
+  }, [disableAddSubId, duplicateError, noNewNoRemove, subIdAccountsToSubmit, subIdModified]);
 
   useEffect(() => {
     if (!subIdAccounts) {
@@ -80,21 +81,21 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
     setDisableAddSubId(emptyElement);
 
     // Check for duplicate addresses in subIdAccountsToSubmit
-    const indexs = new Set<number>();
+    const indexes = new Set<number>();
 
     subIdAccountsToSubmit.forEach((sub, index) => {
       subIdAccountsToSubmit.forEach((subId, i) => {
         if (subId.address === sub.address && i !== index) {
-          indexs.add(i);
+          indexes.add(i);
         }
       });
 
       if (sub.address === parentAddress) {
-        indexs.add(index);
+        indexes.add(index);
       }
     });
 
-    setDuplicateError(indexs.size > 0 ? indexs : false);
+    setDuplicateError(indexes.size > 0 ? indexes : false);
 
     // Check for no changes in subIdAccountsToSubmit
     const noChanges = subIdAccountsToSubmit?.filter((subs) => subs.status !== 'current').length === 0;
@@ -200,7 +201,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, setD
             <Grid container direction='column' item sx={{ width: 'fit-content' }}>
               <Grid container item justifyContent='flex-end'>
                 <Typography fontSize='20px'>
-                  {`${subIdsLength ?? 0} of ${maxSubAccounts ?? 1}`}
+                  {`${subIdsLength ?? 0} of ${maxSubAccounts ?? 0}`}
                 </Typography>
               </Grid>
               <Grid container item width='fit-content'>

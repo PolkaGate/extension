@@ -15,7 +15,7 @@ import { useTranslation } from '../../components/translate';
 import { useChain, useChainName } from '../../hooks';
 import { REGISTRARS_LIST } from '../../util/constants';
 import { DropdownOption } from '../../util/types';
-import { Mode, STEPS } from '.';
+import { IdJudgement, Mode, STEPS } from '.';
 
 interface Props {
   address: string;
@@ -28,7 +28,7 @@ interface Props {
   selectedRegistrar: string | number | undefined;
   setMaxFeeValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
   setSelectedRegistrarName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  idJudgement: string | null;
+  idJudgement: IdJudgement;
 }
 
 export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, mode, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
@@ -119,7 +119,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
   }, [isWestend, setSelectedRegistrar]);
 
   const goReview = useCallback(() => {
-    idJudgement !== 'feePaid'
+    idJudgement !== 'FeePaid'
       ? setMode('RequestJudgement')
       : setMode('CancelJudgement');
     setStep(STEPS.REVIEW);
@@ -144,8 +144,8 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
       <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative' }}>
         <Select
           defaultValue={selectedRegistrar ?? registrarsList?.at(0)?.value}
-          isDisabled={!registrarsList || idJudgement === 'feePaid' || (idJudgement !== null && idJudgement !== 'feePaid')}
-          label={t<string>('Registerar')}
+          isDisabled={!registrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
+          label={t<string>('Registrar')}
           onChange={selectRegistrar}
           options={registrarsList || []}
           value={selectedRegistrar ?? registrarsList?.at(0)?.value}
@@ -168,11 +168,11 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
         </Grid>
         <Grid container item sx={{ '> div': { bottom: '10px', width: '100%' } }} width={mode === 'Set' ? '40%' : '70%'}>
           <TwoButtons
-            disabled={!registrarsList || selectedRegistrar === undefined || (idJudgement !== null && idJudgement !== 'feePaid')}
+            disabled={!registrarsList || selectedRegistrar === undefined || (idJudgement !== null && idJudgement !== 'FeePaid')}
             mt={'1px'}
             onPrimaryClick={goReview}
             onSecondaryClick={goBack}
-            primaryBtnText={idJudgement !== 'feePaid'
+            primaryBtnText={idJudgement !== 'FeePaid'
               ? t<string>('Next')
               : t<string>('Cancel request')}
             secondaryBtnText={t<string>('Back')}

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
@@ -40,9 +41,9 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
   const params = useParams<{ address: string }>();
   const chain = useChain(params.address);
   const subIdAddress = getSubstrateAddress(subIdInfo.address);
-  const subIdExtentionName = useAccountName(subIdAddress);
+  const subIdExtensionName = useAccountName(subIdAddress);
 
-  const [isModifing, setModify] = useState<boolean>(toModify);
+  const [isModifying, setModify] = useState<boolean>(toModify);
   const toRemove = useMemo(() => subIdInfo.status === 'remove', [subIdInfo.status]);
 
   const ManageButton = ({ icon, onClick, style, text }: ManageButtonProps) => (
@@ -66,7 +67,7 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
 
   return (
     <>
-      {!isModifing || toRemove
+      {!isModifying || toRemove
         ? <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '15px', position: 'relative' }}>
           <Grid alignItems='center' container item>
             <Grid alignItems='center' container item width='40%'>
@@ -80,9 +81,9 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
                   />
                 </Grid>
                 <Grid container item pl='8px' sx={{ '> div': { justifyContent: 'flex-start' } }} xs={10}>
-                  {subIdExtentionName
+                  {subIdExtensionName
                     ? <Typography fontSize='20px' fontWeight={400} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='95%'>
-                      {subIdExtentionName}
+                      {subIdExtensionName}
                     </Typography>
                     : <ShortAddress address={subIdInfo.address} charsCount={6} />
                   }

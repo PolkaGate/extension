@@ -31,7 +31,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation({ SubIdentityAccounts, handleClose, identity, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ SubIdentityAccounts, handleClose, identity, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -137,7 +137,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
         {status === 'Clear' &&
           <Typography fontSize='22px' fontWeight={500} my='8px' textAlign='center' width='100%'>
             {txInfo.success
-              ? t<string>('Identity clreared.')
+              ? t<string>('Identity cleared.')
               : t<string>('Identity not cleared.')}
           </Typography>
         }
@@ -147,7 +147,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
         {status === 'ManageSubId' && SubIdentityAccounts?.length === 0 &&
           <Typography fontSize='22px' fontWeight={500} my='8px' textAlign='center' width='100%'>
             {txInfo.success
-              ? t<string>('Sub-Identity(ies) clreared.')
+              ? t<string>('Sub-Identity(ies) cleared.')
               : t<string>('Sub-Identity(ies) not cleared.')}
           </Typography>
         }

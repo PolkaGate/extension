@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, useTheme } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../../../components/translate';
@@ -14,7 +15,7 @@ interface Props {
   parentNameID: string;
 }
 
-export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props): React.ReactElement {
+export default function SubIdsAccordion ({ parentNameID, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

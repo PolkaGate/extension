@@ -15,7 +15,7 @@ import { useTranslation } from '../../../components/translate';
 import IdentityInfoInput from './IdentityInfoInput';
 
 interface Props {
-  identity?: DeriveAccountRegistration;
+  identity?: DeriveAccountRegistration | null;
   setDisplay: React.Dispatch<React.SetStateAction<string | undefined>>;
   setLegal: React.Dispatch<React.SetStateAction<string | undefined>>;
   setEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -32,7 +32,7 @@ interface Props {
   discord: string | undefined;
 }
 
-export default function SetIdentityForm({ discord, display, email, identity, legal, riot, setDiscord, setDisplay, setEmail, setLegal, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
+export default function SetIdentityForm ({ discord, display, email, identity, legal, riot, setDiscord, setDisplay, setEmail, setLegal, setRiot, setTwitter, setWeb, twitter, web }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

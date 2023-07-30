@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+
 import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +15,7 @@ import { riot } from '../../../assets/icons';
 import { useTranslation } from '../../../components/translate';
 
 interface IdentityItemsProps {
-  icon?: any;
+  icon?: unknown;
   title: string;
   value: string | null;
   noBorder?: boolean;
@@ -24,7 +25,7 @@ interface Props {
   identity: DeriveAccountRegistration;
 }
 
-export default function DisplayIdentityInformation({ identity }: Props): React.ReactElement {
+export default function DisplayIdentityInformation ({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const IdentityItems = ({ icon, noBorder = false, title, value }: IdentityItemsProps) => (

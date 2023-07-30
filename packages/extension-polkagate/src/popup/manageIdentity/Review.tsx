@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_FOUR,BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
@@ -44,12 +44,12 @@ interface Props {
   mode: Mode;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   parentDisplay: string | undefined;
-  selectedRegistrar: string | number;
-  maxFeeValue: BN | undefined;
+  selectedRegistrar: string | number | undefined;
+  maxFeeAmount: BN | undefined;
   selectedRegistrarName: string | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, maxFeeValue, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -79,11 +79,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
 
     return subIdsParams.map((subs) => ({
       address: subs[0],
-      name: subs[1].raw
+      name: subs[1]?.raw as string
     })) as SubIdAccountsToSubmit;
   }, [mode, subIdsParams]);
-
-  console.log('selectedRegistrar:', selectedRegistrar)
 
   const tx = useMemo(() => {
     if (!setIdentity || !clearIdentity || !setSubs || !requestJudgement || !cancelRequest) {
@@ -102,26 +100,16 @@ export default function Review({ address, api, chain, depositValue, identityToSe
       return setSubs(subIdsParams);
     }
 
-    if (mode === 'RequestJudgement') {
-      // const reg_index = String(selectedRegistrar) === '0'
-      //   ? BN_ZERO
-      //   : String(selectedRegistrar) === '1'
-      //     ? BN_ONE
-      //     : BN_FOUR;
-
-      return requestJudgement(selectedRegistrar, maxFeeValue);
+    if (mode === 'RequestJudgement' && selectedRegistrar !== undefined) {
+      return requestJudgement(selectedRegistrar, maxFeeAmount);
     }
 
-    if (mode === 'CancelJudgement') {
-      // const reg_index = String(selectedRegistrar) === '0'
-      //   ? BN_ZERO
-      //   : String(selectedRegistrar) === '1'
-      //     ? BN_ONE
-      //     : BN_FOUR;
-
+    if (mode === 'CancelJudgement' && selectedRegistrar !== undefined) {
       return cancelRequest(selectedRegistrar);
     }
-  }, [cancelRequest, clearIdentity, infoParams, maxFeeValue, mode, requestJudgement, selectedRegistrar, setIdentity, setSubs, subIdsParams]);
+
+    return undefined;
+  }, [cancelRequest, clearIdentity, infoParams, maxFeeAmount, mode, requestJudgement, selectedRegistrar, setIdentity, setSubs, subIdsParams]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -165,7 +153,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
+        from: { address: String(formatted), name },
         subAction: `${mode} Identity`,
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -173,7 +161,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
       };
 
       setTxInfo({ ...info, api, chain });
-      saveAsHistory(from, info);
+      saveAsHistory(String(from), info);
       setStep(STEPS.CONFIRM);
     } catch (e) {
       console.log('error:', e);
@@ -207,6 +195,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 {mode === 'Clear' && t('Clear Identity')}
                 {mode === 'Modify' && t('Modify Identity')}
                 {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
+                {mode === 'RequestJudgement' && t('Review Request Judgement')}
+                {mode === 'CancelJudgement' && t('Review Cancel Judgement')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
@@ -215,6 +205,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 {mode === 'Clear' && t('Clearing Identity')}
                 {mode === 'Modify' && t('Modifying Identity')}
                 {mode === 'ManageSubId' && t('Setting Sub-identity(ies)')}
+                {mode === 'RequestJudgement' && t('Requesting Request Judgement')}
+                {mode === 'CancelJudgement' && t('Canceling Judgement')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'Set' && (
@@ -228,6 +220,12 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             )}
             {step === STEPS.CONFIRM && mode === 'ManageSubId' && (
               txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'RequestJudgement' && (
+              txInfo?.success ? t('Request Judgement Sent') : t('Request Judgement failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'CancelJudgement' && (
+              txInfo?.success ? t('Judgement Canceled') : t('Cancel Judgement failed')
             )}
             {step === STEPS.PROXY && t('Select Proxy')}
           </Typography>
@@ -263,7 +261,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
               {identityToSet &&
                 <>
-                  <Typography sx={{ m: '10px auto', textAlign: 'center', width: '100%' }}>
+                  <Typography sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
                     {t<string>('Identity')}
                   </Typography>
                   <IdentityTable
@@ -335,7 +333,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   <ShowBalance
                     api={api}
                     balance={mode === 'RequestJudgement'
-                      ? maxFeeValue
+                      ? maxFeeAmount
                       : depositValue}
                     decimalPoint={4}
                     height={22}
@@ -354,7 +352,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
                 isPasswordError={isPasswordError}
-                label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+                label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
                 onChange={setPassword}
                 onPrimaryClick={onNext}
                 onSecondaryClick={handleClose}

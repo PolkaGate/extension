@@ -6,7 +6,7 @@
 import { faEdit, faEraser, faHandshake, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -14,7 +14,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { useTranslation } from '../../components/translate';
 import DisplayIdentityInformation from './partial/DisplayIdentityInformation';
 import SubIdsAccordion from './partial/SubIdsAccordion';
-import { Mode, STEPS } from '.';
+import { IdJudgement, Mode, STEPS } from '.';
 
 interface Props {
   identity: DeriveAccountRegistration;
@@ -22,7 +22,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
   subIdAccounts: { address: string; name: string; }[] | null | undefined;
-  judgement: string | null | undefined;
+  judgement: IdJudgement;
 }
 
 interface ManageButtonProps {
@@ -108,7 +108,7 @@ export default function PreviewIdentity({ identity, judgement, setIdentityToSet,
           title={t<string>('Clear')}
         />
         <ManageButton
-          icon={judgement && judgement !== 'feePaid'
+          icon={judgement && judgement !== 'FeePaid'
             ? <CheckCircleOutlineIcon
               sx={{
                 bgcolor: 'success.main',
@@ -125,7 +125,7 @@ export default function PreviewIdentity({ identity, judgement, setIdentityToSet,
             />
           }
           onClick={requestJudgment}
-          title={judgement && judgement !== 'feePaid'
+          title={judgement && judgement !== 'FeePaid'
             ? judgement
             : t<string>('Request Judgment')}
         />

@@ -16,7 +16,7 @@ interface IdentityItemsProps {
   setter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function IdentityInfoInput({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
+export default function IdentityInfoInput ({ icon, setter, title, type, value }: IdentityItemsProps): React.ReactElement {
   const setInput = React.useCallback((input: string): void => {
     const encoder = new TextEncoder();
     let byteLength = encoder.encode(input).length;

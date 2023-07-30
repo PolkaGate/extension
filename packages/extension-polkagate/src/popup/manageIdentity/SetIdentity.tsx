@@ -18,6 +18,7 @@ import { Mode, STEPS } from '.';
 
 interface Props {
   api: ApiPromise | null | undefined;
+  chainName: string | undefined;
   identity?: DeriveAccountRegistration | null;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
@@ -27,7 +28,7 @@ interface Props {
   identityToSet: DeriveAccountRegistration | null | undefined;
 }
 
-export default function SetIdentity({ api, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
+export default function SetIdentity({ api, chainName, identity, identityToSet, mode, setIdentityToSet, setMode, setStep, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [display, setDisplay] = useState<string | undefined>();
@@ -112,7 +113,7 @@ export default function SetIdentity({ api, identity, identityToSet, mode, setIde
         {t<string>('Set On-chain Identity')}
       </Typography>
       <Typography fontSize='14px' fontWeight={400}>
-        {t<string>('Polkadot provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.')}
+        {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
       </Typography>
       <SetIdentityForm
         discord={discord}
