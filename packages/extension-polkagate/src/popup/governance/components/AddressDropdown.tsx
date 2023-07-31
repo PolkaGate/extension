@@ -67,7 +67,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
           <Grid alignItems='center' container item key={address} onClick={_onSelect(address)} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', cursor: 'pointer' }}>
             <Identity
               address={address}
-              api={api}
+              // api={api}
               chain={chain}
               identiconSize={24}
               showSocial={false}
