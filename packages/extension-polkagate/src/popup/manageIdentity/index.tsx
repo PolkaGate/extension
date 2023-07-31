@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
-import type { PalletIdentityIdentityInfo, PalletIdentityJudgement, PalletIdentityRegistration } from '@polkadot/types/lookup';
+import type { PalletIdentityIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
@@ -73,7 +73,7 @@ export default function ManageIdentity(): React.ReactElement {
   const [infoParams, setInfoParams] = useState<PalletIdentityIdentityInfo | null | undefined>();
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
   const [idJudgement, setIdJudgement] = useState<IdJudgement>();
-  const [subAccounts, setSubAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
+  const [subIdAccounts, setSubIdAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
   const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [maxFeeValue, setMaxFeeValue] = useState<BN>();
   const [fetching, setFetching] = useState<boolean>(false);
@@ -82,6 +82,8 @@ export default function ManageIdentity(): React.ReactElement {
   const [mode, setMode] = useState<Mode>();
   const [selectedRegistrar, setSelectedRegistrar] = useState<number | string>();
   const [selectedRegistrarName, setSelectedRegistrarName] = useState<string>();
+  const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
+  const [resetSubId, setResetSubId] = useState<boolean>(false);
 
   const basicDepositValue = useMemo(() => api && api.consts.identity.basicDeposit as unknown as BN, [api]);
   const fieldDepositValue = useMemo(() => api && api.consts.identity.fieldDeposit as unknown as BN, [api]);
@@ -89,7 +91,7 @@ export default function ManageIdentity(): React.ReactElement {
   const fetchIdentity = useCallback(() => {
     setFetching(true);
     setIdentity(undefined);
-    setSubAccounts(undefined);
+    setSubIdAccounts(undefined);
     setSubIdsParams(undefined);
     setInfoParams(undefined);
     setIdentityToSet(undefined);
@@ -177,10 +179,10 @@ export default function ManageIdentity(): React.ReactElement {
         break;
 
       default:
-        subAccounts !== undefined && idJudgement !== undefined && setStep(2);
+        subIdAccounts !== undefined && idJudgement !== undefined && setStep(2);
         break;
     }
-  }, [idJudgement, identity, subAccounts]);
+  }, [idJudgement, identity, subIdAccounts]);
 
   useEffect(() => {
     if (!address || !api) {
@@ -219,9 +221,9 @@ export default function ManageIdentity(): React.ReactElement {
             })
           );
 
-          setSubAccounts(subAccountsAndNames);
+          setSubIdAccounts(subAccountsAndNames);
         } else {
-          setSubAccounts(null);
+          setSubIdAccounts(null);
         }
       } catch (error) {
         console.error(error);
@@ -230,6 +232,17 @@ export default function ManageIdentity(): React.ReactElement {
 
     fetchSubAccounts().catch(console.error);
   }, [address, api, identity]);
+
+  useEffect(() => {
+    if (!subIdAccounts) {
+      return;
+    }
+
+    const oldIds = subIdAccounts.map((idAccount) => ({ ...idAccount, status: 'current' })) as SubIdAccountsToSubmit;
+
+    setSubIdAccountsToSubmit(oldIds);
+    setResetSubId(false);
+  }, [subIdAccounts, resetSubId]);
 
   useEffect(() => {
     if (!basicDepositValue || !fieldDepositValue || mode === 'ManageSubId') {
@@ -247,6 +260,8 @@ export default function ManageIdentity(): React.ReactElement {
 
     setDepositValue(totalDeposit);
   }, [basicDepositValue, fieldDepositValue, identity, identityToSet?.other?.discord, setDepositValue, mode]);
+
+  const resetSubIds = useCallback(() => setResetSubId(true), []);
 
   const IdentityCheckProgress = () => {
     return (
@@ -286,7 +301,7 @@ export default function ManageIdentity(): React.ReactElement {
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
-            subIdAccounts={subAccounts}
+            subIdAccounts={subIdAccounts}
           />
         }
         {step === STEPS.MANAGESUBID && identity?.display &&
@@ -298,9 +313,12 @@ export default function ManageIdentity(): React.ReactElement {
             setDepositValue={setDepositValue}
             setMode={setMode}
             setStep={setStep}
+            setSubIdAccountsToSubmit={setSubIdAccountsToSubmit}
             setSubIdsParams={setSubIdsParams}
-            subIdAccounts={subAccounts}
+            subIdAccounts={subIdAccounts}
+            subIdAccountsToSubmit={subIdAccountsToSubmit}
             subIdsParams={subIdsParams}
+            resetSubIds={resetSubIds}
           />
         }
         {step === STEPS.JUDGEMENT && idJudgement !== undefined &&

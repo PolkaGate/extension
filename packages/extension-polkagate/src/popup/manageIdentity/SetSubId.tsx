@@ -14,6 +14,7 @@ import { ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import DisplaySubId from './partial/DisplaySubId';
 import { Mode, setData, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
+import { reset } from 'sinon-chrome';
 
 interface Props {
   parentAddress: string;
@@ -22,13 +23,16 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   parentDisplay: string;
   subIdAccounts: { address: string; name: string; }[] | null | undefined;
+  subIdAccountsToSubmit: SubIdAccountsToSubmit | undefined;
+  setSubIdAccountsToSubmit: React.Dispatch<React.SetStateAction<SubIdAccountsToSubmit | undefined>>;
   setSubIdsParams: React.Dispatch<React.SetStateAction<SubIdsParams>>;
   subIdsParams: SubIdsParams;
   mode: Mode;
   setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
+  resetSubIds: () => void;
 }
 
-export default function SetSubId ({ api, mode, parentAddress, parentDisplay, setDepositValue, setMode, setStep, setSubIdsParams, subIdAccounts, subIdsParams }: Props): React.ReactElement {
+export default function SetSubId({ api, mode, parentAddress, parentDisplay, resetSubIds, setDepositValue, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -37,7 +41,6 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
 
   const [disableAddSubId, setDisableAddSubId] = useState<boolean>(false);
   const [duplicateError, setDuplicateError] = useState<Set<number> | boolean>(false);
-  const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
   const [subIdModified, setSubIdModified] = useState<boolean>(false);
   const [noNewNoRemove, setNoChanges] = useState<boolean>(false);
 
@@ -52,33 +55,21 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
   }, [disableAddSubId, duplicateError, noNewNoRemove, subIdAccountsToSubmit, subIdModified]);
 
   useEffect(() => {
-    if (!subIdAccounts) {
-      return;
-    }
-
-    const oldIds = subIdAccounts.map((idAccount) => ({ ...idAccount, status: 'current' })) as SubIdAccountsToSubmit;
-
-    setSubIdAccountsToSubmit(oldIds);
-  }, [subIdAccounts]);
-
-  useEffect(() => {
     if (!subIdAccountsToSubmit) {
       return;
     }
 
     // Check for modified subIdAccounts
-    const modified = subIdAccounts?.some((sub) =>
-      subIdAccountsToSubmit.find((subId) => subId.status === 'current' && subId.address !== sub.address)
+    const modified = subIdAccounts?.every((sub) =>
+      subIdAccountsToSubmit.some((subId) => subId.status === 'current' && subId.address === sub.address && subId.name === sub.name)
     );
 
-    setSubIdModified(!!modified);
+    setSubIdModified(!modified);
 
     // Check for empty elements in subIdAccountsToSubmit
     const emptyElement = !!subIdAccountsToSubmit.find((idAccount) =>
       idAccount.status !== 'remove' && (idAccount.address === undefined || idAccount.name === undefined || idAccount.address === '' || idAccount.name === '')
     );
-
-    console.log('subIdAccountsToSubmit:', subIdAccountsToSubmit)
 
     setDisableAddSubId(emptyElement);
 
@@ -121,7 +112,7 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
     }
 
     setSubIdAccountsToSubmit([...(subIdAccountsToSubmit ?? []), { address: undefined, name: undefined, status: 'new' }]);
-  }, [disableAddSubId, subIdAccountsToSubmit]);
+  }, [disableAddSubId, setSubIdAccountsToSubmit, subIdAccountsToSubmit]);
 
   const AddSubIdButton = () => (
     <Grid container item onClick={onAddNewSubId} sx={{ cursor: disableAddSubId ? 'context-menu' : 'pointer', width: 'fit-content' }}>
@@ -155,7 +146,7 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
         setSubIdAccountsToSubmit(removeItem);
       }
     }
-  }, [subIdAccountsToSubmit]);
+  }, [setSubIdAccountsToSubmit, subIdAccountsToSubmit]);
 
   const changeNewSubIdAddress = useCallback((address: string | null | undefined, index: number | undefined) => {
     if (index !== undefined && subIdAccountsToSubmit) {
@@ -163,7 +154,7 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
 
       setSubIdAccountsToSubmit([...subIdAccountsToSubmit]);
     }
-  }, [subIdAccountsToSubmit]);
+  }, [setSubIdAccountsToSubmit, subIdAccountsToSubmit]);
 
   const changeNewSubIdName = useCallback((name: string | null | undefined, index: number | undefined) => {
     if (index !== undefined && subIdAccountsToSubmit) {
@@ -171,7 +162,7 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
 
       setSubIdAccountsToSubmit([...subIdAccountsToSubmit]);
     }
-  }, [subIdAccountsToSubmit]);
+  }, [setSubIdAccountsToSubmit, subIdAccountsToSubmit]);
 
   const goReview = useCallback(() => {
     setMode('ManageSubId');
@@ -181,10 +172,11 @@ export default function SetSubId ({ api, mode, parentAddress, parentDisplay, set
   }, [setMode, setDepositValue, totalSubIdsDeposit, setSubIdsParams, makeSubIdParams, setStep]);
 
   const goBack = useCallback(() => {
+    resetSubIds();
     setSubIdsParams(undefined);
     setStep(STEPS.PREVIEW);
     setMode(undefined);
-  }, [setMode, setStep, setSubIdsParams]);
+  }, [setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, resetSubIds]);
 
   return (
     <>
