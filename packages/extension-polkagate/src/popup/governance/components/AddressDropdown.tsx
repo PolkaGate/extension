@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useMemo, useRef, useState } from 'react
 import { ApiPromise } from '@polkadot/api';
 
 import { AccountContext, Identity } from '../../../components';
-import { useOutsideClick } from '../../../hooks';
+import { useChain, useOutsideClick } from '../../../hooks';
 import { tieAccount } from '../../../messaging';
 
 interface Props {
@@ -26,6 +26,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { hierarchy } = useContext(AccountContext);
+  const chain = useChain(selectedAddress);
 
   const allAddresses = useMemo(() => hierarchy.map(({ address }) => address), [hierarchy]);
 
@@ -67,6 +68,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
             <Identity
               address={address}
               api={api}
+              chain={chain}
               identiconSize={24}
               showSocial={false}
               style={{
