@@ -58,7 +58,9 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
         if (found) {
           registrar.push({
             text: found.name,
-            value: found.index.toString()
+            value: isWestend
+              ? '0'
+              : found.index.toString()
           });
 
           registrarsFee.push({
@@ -71,17 +73,15 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
       setRegistrarsMaxFee(registrarsFee);
       setRegistrarsList(registrar);
     }).catch(console.error);
-  }, [api]);
+  }, [api, isWestend]);
 
   useEffect(() => {
     if (!registrarsList || selectedRegistrar !== undefined) {
       return;
     }
 
-    isWestend
-      ? setSelectedRegistrar(0)
-      : setSelectedRegistrar(registrarsList[0].value);
-  }, [isWestend, registrarsList, selectedRegistrar, setSelectedRegistrar]);
+    setSelectedRegistrar(registrarsList[0].value);
+  }, [registrarsList, selectedRegistrar, setSelectedRegistrar]);
 
   useEffect(() => {
     if (!registrarsMaxFee || !registrarsList) {
@@ -113,10 +113,8 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
   );
 
   const selectRegistrar = useCallback((value: string | number) => {
-    isWestend
-      ? setSelectedRegistrar(0)
-      : setSelectedRegistrar(value);
-  }, [isWestend, setSelectedRegistrar]);
+    setSelectedRegistrar(value);
+  }, [setSelectedRegistrar]);
 
   const goReview = useCallback(() => {
     idJudgement !== 'FeePaid'
@@ -129,8 +127,6 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
     setMode(undefined);
     setStep(STEPS.PREVIEW);
   }, [setMode, setStep]);
-
-  console.log('selectedRegistrar:', selectedRegistrar)
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>

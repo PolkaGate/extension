@@ -168,7 +168,7 @@ export const DEFAULT_POOL_FILTERS = {
 export const TOTAL_STAKE_HELPER_TEXT = 'Your total amount of stake after completing this transaction.';
 export const SYSTEM_SUGGESTION_TEXT = 'Our system suggests trusted, high return, low commission validators. Polkagate assumes no responsibility or liability for any misconduct resulting from the future actions of the validators.'// which not slashed before.' //TODO: add a disclaimer to the text too
 
-export const REGISTRARS_LIST = [
+export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string }[] = [
   {
     addresses: ['Fom9M5W6Kck1hNAiE2mDcZ67auUCiNTzLBUdQy4QnxHSxdn', '1Reg2TYv9rGfrQKpPREmrHRxrNsUDBQKzkYwP1UstD97wpJ', '5HREGY2fxewHiHRPBUQ6xpcCWRruvyq9igNvRYnxSr1vAWGE'],
     index: 1,
