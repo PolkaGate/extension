@@ -31,7 +31,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation ({ SubIdentityAccounts, handleClose, identity, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ SubIdentityAccounts, handleClose, identity, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -101,7 +101,7 @@ export default function Confirmation ({ SubIdentityAccounts, handleClose, identi
 
   return (
     <Motion>
-      <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040' }}>
+      <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', pb: '8px' }}>
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
