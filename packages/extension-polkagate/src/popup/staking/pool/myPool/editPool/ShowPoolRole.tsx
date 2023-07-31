@@ -8,9 +8,8 @@ import React from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { Identicon, Identity, ShortAddress } from '../../../../../components';
-import { useAccountName, useTranslation } from '../../../../../hooks';
-import { getSubstrateAddress } from '../../../../../util/utils';
+import { Identity } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
 
 interface Props {
   roleTitle: string;
@@ -21,8 +20,6 @@ interface Props {
 
 export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivider }: Props) {
   const { t } = useTranslation();
-
-  const roleName = useAccountName(getSubstrateAddress(roleAddress)) ?? t<string>('Unknown');
 
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
