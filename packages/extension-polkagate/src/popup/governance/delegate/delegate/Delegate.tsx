@@ -10,10 +10,10 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Convictions, PButton } from '../../../../components';
-import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
 import { Lock } from '../../../../hooks/useAccountLocks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { BalancesInfo } from '../../../../util/types';
@@ -45,10 +45,15 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
   const decimal = useDecimal(address);
   const blockTime = useBlockInterval(address);
   const convictionOptions = useConvictionOptions(address, blockTime, t);
+  const formatted = useFormatted(address);
 
   const [delegateAmount, setDelegateAmount] = useState<string>('0');
   const [conviction, setConviction] = useState<number | undefined>();
   const [checked, setChecked] = useState<BN[]>([]);
+  const [maxFee, setMaxFee] = useState<Balance>();
+
+  const delegate = api && api.tx.convictionVoting.delegate;
+  const batch = api && api.tx.utility.batchAll;
 
   const delegateAmountBN = useMemo(() => (amountToMachine(delegateAmount, decimal)), [decimal, delegateAmount]);
   const delegatePower = useMemo(() => {
@@ -61,6 +66,30 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
     return Number(amountToHuman(bn, decimal));
   }, [conviction, decimal, delegateAmountBN]);
   const nextDisable = useMemo(() => (!delegateInformation || !checked.length || delegateAmountBN.isZero() || delegateAmountBN.gt(balances?.votingBalance || BN_ZERO)), [balances?.votingBalance, checked.length, delegateAmountBN, delegateInformation]);
+
+  useEffect(() => {
+    if (!delegate || !batch || !formatted || !tracks) {
+      return;
+    }
+
+    if (!api?.call?.transactionPaymentApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return setMaxFee(api?.createType('Balance', BN_ONE));
+    }
+
+    const txList = tracks.map((track) =>
+      delegate(...[
+        track[0],
+        formatted,
+        1,
+        BN_ONE
+      ]));
+
+    batch(txList)
+      .paymentInfo(formatted)
+      .then((i) => setMaxFee(i?.partialFee))
+      .catch(console.error);
+  }, [api, batch, delegate, formatted, tracks]);
 
   useEffect(() => {
     convictionOptions === undefined && setConviction(1);
@@ -109,16 +138,16 @@ export default function DelegateVote({ accountLocks, address, api, balances, del
   }, [decimal, lockedAmount]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !balances || !estimatedFee) {
+    if (!api || !balances || !maxFee) {
       return;
     }
 
     const ED = api.consts.balances.existentialDeposit as unknown as BN;
-    const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedFee));
+    const max = new BN(balances.votingBalance.toString()).sub(ED.muln(2)).sub(new BN(maxFee));
     const maxToHuman = balances.votingBalance?.isZero() ? BN_ZERO : amountToHuman(max.toString(), decimal);
 
     maxToHuman && setDelegateAmount(String(maxToHuman));
-  }, [api, balances, decimal, estimatedFee]);
+  }, [api, balances, decimal, maxFee]);
 
   const handleNext = useCallback(() => {
     setStep(STEPS.CHOOSE_DELEGATOR);
