@@ -15,7 +15,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { ms, msGreen, msWarning, riot } from '../assets/icons';
 import { useAccountInfo, useAccountName, useApiWithChain, useChain, useFormatted2, useMerkleScience, useTranslation } from '../hooks';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress, isValidAddress } from '../util/utils';
 import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {
@@ -44,7 +44,8 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
   const _chain = useChain(address, chain);
   const _formatted = useFormatted2(address, formatted, chain);
   const msData = useMerkleScience(_formatted, chain);
-  const _api = useApiWithChain(_chain, api);
+  const _api = api;
+  // const _api = useApiWithChain(_chain, api);
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose);
   const isMSwarning = ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose);
@@ -128,7 +129,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name ? name : ''}
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName ? accountName : ''}
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
-                ? showShortAddress
+                ? showShortAddress && isValidAddress(String(_formatted))
                   ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string || '11px', justifyContent: 'flex-start' }} />
                   : t('Unknown')
                 : ''
