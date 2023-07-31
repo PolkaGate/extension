@@ -20,10 +20,6 @@ export default function Comments({ address, referendum }: { address: string | un
 
   const type = referendum?.type === 'FellowshipReferendum' ? 'fellowship' : 'referenda';
 
-  useEffect(() =>
-    setExpanded(!!referendum?.comments?.length)
-    , [referendum]);
-
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
