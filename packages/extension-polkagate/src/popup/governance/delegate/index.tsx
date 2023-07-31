@@ -139,32 +139,13 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, []);
 
   useEffect(() => {
-    setEstimatedFee(undefined);
-
-    if (!delegate || !batch || !formatted) {
+    if (!delegate || !batch || !delegateInformation || !delegateInformation.delegateeAddress) {
       return;
     }
 
     if (!api?.call?.transactionPaymentApi) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    if (!delegateInformation || !delegateInformation.delegateeAddress) {
-      const txList = tracksList?.tracks.map((track) =>
-        delegate(...[
-          track[0],
-          formatted,
-          1,
-          BN_ONE
-        ]));
-
-      batch(txList)
-        .paymentInfo(formatted)
-        .then((i) => setEstimatedFee(i?.partialFee))
-        .catch(console.error);
-
-      return;
     }
 
     if (delegateInformation.delegatedTracks.length > 1) {
@@ -193,7 +174,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         .then((i) => setEstimatedFee(i?.partialFee))
         .catch(console.error);
     }
-  }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress, formatted, tracksList?.tracks]);
+  }, [api, batch, delegate, delegateInformation]);
 
   const filterDelegation = useCallback((infos: DelegationInfo[]) => {
     const temp: AlreadyDelegateInformation[] = [];
