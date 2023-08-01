@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -137,19 +137,18 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
         {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
       </Typography>
       <DisplayIdentity />
-      <Grid alignContent='flex-start' alignItems='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative' }}>
-        <Select
-          defaultValue={selectedRegistrar ?? registrarsList?.at(0)?.value}
-          isDisabled={!registrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
-          label={t<string>('Registrar')}
-          onChange={selectRegistrar}
-          options={registrarsList || []}
-          value={selectedRegistrar ?? registrarsList?.at(0)?.value}
-        />
-      </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '25px', opacity: 0.2, width: '100%' }} />
-      <Grid alignItems='center' container item justifyContent='space-between' m='auto' pt='15px'>
-        <Grid container item sx={{ width: 'fit-content' }}>
+      <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
+        <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>
+          <Select
+            defaultValue={selectedRegistrar ?? registrarsList?.at(0)?.value}
+            isDisabled={!registrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
+            label={t<string>('Registrar')}
+            onChange={selectRegistrar}
+            options={registrarsList || []}
+            value={selectedRegistrar ?? registrarsList?.at(0)?.value}
+          />
+        </Grid>
+        <Grid container item sx={{ pb: '4px', width: 'fit-content' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
             {t<string>('Registrar fee:')}
           </Typography>
@@ -162,18 +161,18 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
             />
           </Grid>
         </Grid>
-        <Grid container item sx={{ '> div': { bottom: '10px', width: '100%' } }} width={mode === 'Set' ? '40%' : '70%'}>
-          <TwoButtons
-            disabled={!registrarsList || selectedRegistrar === undefined || (idJudgement !== null && idJudgement !== 'FeePaid')}
-            mt={'1px'}
-            onPrimaryClick={goReview}
-            onSecondaryClick={goBack}
-            primaryBtnText={idJudgement !== 'FeePaid'
-              ? t<string>('Next')
-              : t<string>('Cancel request')}
-            secondaryBtnText={t<string>('Back')}
-          />
-        </Grid>
+      </Grid>
+      <Grid container item justifyContent='flex-end' pt='50px' sx={{ '> div': { bottom: '10px', m: 0, width: '420px' } }}>
+        <TwoButtons
+          disabled={!registrarsList || selectedRegistrar === undefined || (idJudgement !== null && idJudgement !== 'FeePaid')}
+          mt={'1px'}
+          onPrimaryClick={goReview}
+          onSecondaryClick={goBack}
+          primaryBtnText={idJudgement !== 'FeePaid'
+            ? t<string>('Next')
+            : t<string>('Cancel request')}
+          secondaryBtnText={t<string>('Back')}
+        />
       </Grid>
     </Grid>
   );
