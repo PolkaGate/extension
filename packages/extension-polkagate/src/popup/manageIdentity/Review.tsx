@@ -348,7 +348,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 />
               </DisplayValue>
             </Grid>
-            <Grid container item justifyContent='center' m='auto' width='75%'>
+            <Grid container item sx={{ '> div div:last-child': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
                 isPasswordError={isPasswordError}
@@ -360,6 +360,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 proxiedAddress={formatted}
                 proxies={proxyItems}
                 proxyTypeFilter={['Any', 'NonTransfer']}
+                secondaryBtnText={t<string>('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
