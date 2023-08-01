@@ -46,7 +46,7 @@ function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHA
     <Grid alignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
       <Grid item ref={cRef} width='fit-content'>
         {inParentheses ? '(' : ''}
-        {!charsCount || (charactersCount === address?.length / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
+        {!charsCount || (charactersCount >= (address?.length ?? 2) / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
         {inParentheses ? ')' : ''}
       </Grid>
       {showCopy &&
