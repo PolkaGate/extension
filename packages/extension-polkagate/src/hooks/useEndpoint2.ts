@@ -1,36 +1,64 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { createWsEndpoints } from '@polkadot/apps-config';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { SavedMetaData } from '../util/types';
-import { useAccount, useChainName, useTranslation } from '.';
+import { useChainName, useTranslation } from '.';
 
 export default function useEndpoint2(address: AccountId | string | undefined): string | undefined {
-  const account = useAccount(address);
   const chainName = useChainName(address);
   const { t } = useTranslation();
+  const [endpoint, setEndpoint] = useState<string | undefined>();
 
-  const endpoint = useMemo(() => {
-    const endPointFromStore: SavedMetaData = account?.endpoint ? JSON.parse(account.endpoint) : null;
+  useEffect(() => {
+    if (!address || !chainName) {
+      setEndpoint(undefined);
 
-    if (endPointFromStore && endPointFromStore?.chainName === chainName) {
-      return endPointFromStore.metaData as string;
+      return;
     }
 
-    const allEndpoints = createWsEndpoints(t);
+    chrome.storage.local.get('endpoints', (res) => {
+      const i = `${String(address)}`;
+      const j = `${chainName}`;
+      const savedEndpoint = res?.endpoints?.[i]?.[j] as string | undefined;
 
-    const endpoints = allEndpoints?.filter((e) => e.value &&
-      (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
-        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
-    );
+      if (savedEndpoint) {
+        setEndpoint(savedEndpoint);
+      } else {
+        const allEndpoints = createWsEndpoints(t);
 
-    // return endpoints?.length ? endpoints[endpoints.length > 2 ? 1 : 0].value : undefined;
-    return endpoints?.length ? endpoints[0].value : undefined;
-  }, [account?.endpoint, chainName, t]);
+        const endpoints = allEndpoints?.filter((e) =>
+          e.value &&
+          (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
+            String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
+        );
+
+        if (endpoints?.length) {
+          setEndpoint(endpoints[0].value);
+        } else {
+          // Endpoint not found, handle the error (e.g., set a default value)
+          setEndpoint(undefined);
+        }
+      }
+    });
+  }, [address, chainName, t]);
+
+  useEffect(() => {
+    address && chainName && chrome.storage.onChanged.addListener((changes, namespace) => {
+      for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+        if (key === 'endpoints' && namespace === 'local') {
+          const maybeNewEndpoint = newValue?.[String(address)]?.[chainName]
+
+          if (maybeNewEndpoint) {
+            setEndpoint(maybeNewEndpoint);
+          }
+        }
+      }
+    });
+  }, [address, chainName, t]);
 
   return endpoint;
 }

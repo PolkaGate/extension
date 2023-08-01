@@ -16,11 +16,11 @@ export default function useApiWithChain(chain: Chain | undefined, api?: ApiPromi
 
   const maybeEndpoint = useMemo(() => {
     const chainName = sanitizeChainName(chain?.name);
-    const allEndpoints = createWsEndpoints((key: string, value: string | undefined) => value || key);
+    const allEndpoints = createWsEndpoints(() => '');
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
-    return endpoints?.length ? endpoints[endpoints.length > 2 ? 1 : 0].value : undefined;
+    return endpoints?.length ? endpoints[0].value : undefined;
   }, [chain?.name]);
 
   useEffect(() => {

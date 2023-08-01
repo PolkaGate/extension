@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Divider, Grid, LinearProgress, SxProps, Typography, useMediaQuery } from '@mui/material';
-import React, { useEffect, useMemo, useRef,useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
@@ -169,7 +169,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
       // eslint-disable-next-line no-void
       void fetchData();
     }
-  }, [api, api?.genesisHash, chain?.genesisHash]);
+  }, [api, chain]);
 
   useEffect(() => {
     if (chainName) {

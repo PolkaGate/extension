@@ -17,7 +17,6 @@ export function useEndpoint(addressOrFormatted: string | null | undefined, chain
   const endpoint = useMemo(() => {
     const chainName = sanitizeChainName(chain?.name);
 
-    // const account = Array.isArray(accounts) ? accounts.find((account) => account.address === address) : accounts;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const endPointFromStore: SavedMetaData = account?.endpoint ? JSON.parse(account.endpoint) : null;
 

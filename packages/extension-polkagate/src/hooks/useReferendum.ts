@@ -155,7 +155,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
     api && id !== undefined && trackId !== undefined &&
       getReferendumVotes(api, trackId, id).then((votes) => {
         setOnchainVotes(votes);
-        console.log('All votes from chain:', votes);
+        console.log('All votes from chain for id:', id, votes);
       });
   }, [api, id, trackId]);
 
