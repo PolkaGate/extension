@@ -17,7 +17,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useApi, useChain, useChainName, useFullscreen, useTranslation } from '../../hooks';
+import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { Header } from '../governance/Header';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
@@ -67,6 +67,7 @@ export default function ManageIdentity(): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(address);
   const chainName = useChainName(address);
+  const formatted = useFormatted(address);
 
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null | undefined>();
   const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
@@ -304,12 +305,13 @@ export default function ManageIdentity(): React.ReactElement {
             subIdAccounts={subIdAccounts}
           />
         }
-        {step === STEPS.MANAGESUBID && identity?.display &&
+        {step === STEPS.MANAGESUBID && identity?.display && formatted &&
           <SetSubId
             api={api}
             mode={mode}
-            parentAddress={address}
+            parentAddress={String(formatted)}
             parentDisplay={identity.display}
+            resetSubIds={resetSubIds}
             setDepositValue={setDepositValue}
             setMode={setMode}
             setStep={setStep}
@@ -318,7 +320,6 @@ export default function ManageIdentity(): React.ReactElement {
             subIdAccounts={subIdAccounts}
             subIdAccountsToSubmit={subIdAccountsToSubmit}
             subIdsParams={subIdsParams}
-            resetSubIds={resetSubIds}
           />
         }
         {step === STEPS.JUDGEMENT && idJudgement !== undefined &&

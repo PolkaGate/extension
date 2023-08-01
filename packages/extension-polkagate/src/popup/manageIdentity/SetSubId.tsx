@@ -176,7 +176,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
     setSubIdsParams(undefined);
     setStep(STEPS.PREVIEW);
     setMode(undefined);
-  }, [setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, resetSubIds]);
+  }, [setMode, setStep, setSubIdsParams, resetSubIds]);
 
   return (
     <>
