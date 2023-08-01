@@ -13,6 +13,12 @@ interface Props {
   genesisHash: string | undefined;
 }
 
+type ChromeStorageGetResponse = {
+  [key: string]: {
+    [key: string]: string | undefined;
+  } | undefined;
+};
+
 export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = useChainName(address);
@@ -21,8 +27,18 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
   const endpoint = useEndpoint2(address);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
+    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+      const i = `${address}`;
+      const j = `${chainName}`;
+      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+
+      savedEndpoints[i] = savedEndpoints[i] || {};
+
+      savedEndpoints[i][j] = newEndpoint;
+
+      // eslint-disable-next-line no-void
+      void chrome.storage.local.set({ endpoints: savedEndpoints });
+    });
   }, [address, chainName]);
 
   return (

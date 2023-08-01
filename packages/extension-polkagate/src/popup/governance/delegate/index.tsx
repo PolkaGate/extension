@@ -20,17 +20,17 @@ import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal from '../components/SelectProxyModal';
 import WaitScreen from '../partials/WaitScreen';
+import { GOVERNANCE_PROXY } from '../utils/consts';
 import { DelegationInfo } from '../utils/types';
 import { getMyDelegationInfo } from '../utils/util';
-import About from './About';
-import { getAlreadyLockedValue } from './partial/AlreadyLockedTooltipText';
 import ChooseDelegator from './delegate/ChooseDelegator';
-import Confirmation from './partial/Confirmation';
 import DelegateVote from './delegate/Delegate';
+import { ModifyModes } from './modify/ModifyDelegate';
+import { getAlreadyLockedValue } from './partial/AlreadyLockedTooltipText';
+import Confirmation from './partial/Confirmation';
+import About from './About';
 import DelegationDetails from './DelegationDetails';
 import Review from './Review';
-import { ModifyModes } from './modify/ModifyDelegate';
-import { GOVERNANCE_PROXY } from '../utils/consts';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -76,7 +76,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
-  const { tracks } = useTracks(address);
+  const tracksList = useTracks(address);
   const formatted = useFormatted(address);
   const balances = useBalances(address, undefined, undefined, true);
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
@@ -117,10 +117,10 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
       return;
     }
 
-    getMyDelegationInfo(api, formatted, tracks).then((ids) => {
+    getMyDelegationInfo(api, formatted, tracksList?.tracks).then((ids) => {
       setAlreadyDelegationInfo(ids);
     }).catch(console.error);
-  }, [api, formatted, step, tracks]);
+  }, [api, formatted, step, tracksList?.tracks]);
 
   useEffect(() => {
     if (step === STEPS.ABOUT || step > STEPS.CHECK_SCREEN) {
@@ -139,9 +139,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   }, []);
 
   useEffect(() => {
-    if (!delegateInformation || !delegate || !delegateInformation.delegateeAddress || !batch) {
-      setEstimatedFee(undefined);
-
+    if (!delegate || !batch || !delegateInformation || !delegateInformation.delegateeAddress) {
       return;
     }
 
@@ -176,7 +174,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         .then((i) => setEstimatedFee(i?.partialFee))
         .catch(console.error);
     }
-  }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress]);
+  }, [api, batch, delegate, delegateInformation]);
 
   const filterDelegation = useCallback((infos: DelegationInfo[]) => {
     const temp: AlreadyDelegateInformation[] = [];
@@ -306,7 +304,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
             setDelegateInformation={setDelegateInformation}
             setStatus={setStatus}
             setStep={setStep}
-            tracks={tracks}
+            tracks={tracksList?.tracks}
           />
         }
         {step === STEPS.CHOOSE_DELEGATOR &&
@@ -369,7 +367,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         {step === STEPS.CONFIRM && txInfo && (status === 'Remove' ? true : delegateInformation) &&
           <Confirmation
             address={address}
-            allCategoriesLength={tracks?.length}
+            allCategoriesLength={tracksList?.tracks?.length}
             delegateInformation={delegateInformation}
             handleClose={handleClose}
             removedTracksLength={selectedTracksLength}
