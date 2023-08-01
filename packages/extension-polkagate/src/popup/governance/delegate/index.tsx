@@ -174,7 +174,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         .then((i) => setEstimatedFee(i?.partialFee))
         .catch(console.error);
     }
-  }, [api, batch, delegate, delegateInformation]);
+  }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress]);
 
   const filterDelegation = useCallback((infos: DelegationInfo[]) => {
     const temp: AlreadyDelegateInformation[] = [];

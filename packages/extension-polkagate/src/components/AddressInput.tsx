@@ -181,7 +181,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
                         <ShortAddress address={value.address} clipped />
                       </Grid>
                     </Grid>
-                    <Grid item justifyContent='center' xs={1.2}>
+                    <Grid container item justifyContent='center' width='fit-content'>
                       <Identicon
                         iconTheme={chain?.icon || 'polkadot'}
                         prefix={chain?.ss58Format ?? 42}
