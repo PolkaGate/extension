@@ -6,6 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
 
+import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -22,6 +23,7 @@ import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
+import { DraggableModal } from '../governance/components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
@@ -179,6 +181,10 @@ export default function Review({ address, api, chain, depositValue, identityToSe
           : STEPS.PREVIEW);
   }, [mode, setStep]);
 
+  const closeSelectProxy = useCallback(() => {
+    setStep(STEPS.REVIEW);
+  }, [setStep]);
+
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
     setStep(STEPS.CHECK_SCREEN);
@@ -189,7 +195,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
       <>
         <Grid container py='20px'>
           <Typography fontSize='22px' fontWeight={700}>
-            {step === STEPS.REVIEW && (
+            {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
                 {mode === 'Set' && t('Review Identity')}
                 {mode === 'Clear' && t('Clear Identity')}
@@ -227,10 +233,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             {step === STEPS.CONFIRM && mode === 'CancelJudgement' && (
               txInfo?.success ? t('Judgement Canceled') : t('Cancel Judgement failed')
             )}
-            {step === STEPS.PROXY && t('Select Proxy')}
           </Typography>
         </Grid>
-        {step === STEPS.REVIEW &&
+        {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
           <>
             {isPasswordError &&
               <WrongPasswordAlert />
@@ -369,18 +374,28 @@ export default function Review({ address, api, chain, depositValue, identityToSe
           </>
         }
         {step === STEPS.PROXY &&
-          <Grid container item sx={{ '> div button': { width: '100%' }, position: 'relative' }}>
-            <SelectProxyModal
-              address={address}
-              height={500}
-              nextStep={STEPS.REVIEW}
-              proxies={proxyItems}
-              proxyTypeFilter={['Any', 'NonTransfer']}
-              selectedProxy={selectedProxy}
-              setSelectedProxy={setSelectedProxy}
-              setStep={setStep}
-            />
-          </Grid>
+          <DraggableModal onClose={closeSelectProxy} open={step === STEPS.PROXY}>
+            <Grid container item>
+              <Grid alignItems='center' container item justifyContent='space-between'>
+                <Typography fontSize='22px' fontWeight={700}>
+                  {t<string>('Select Proxy')}
+                </Typography>
+                <Grid item>
+                  <CloseIcon onClick={closeSelectProxy} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
+                </Grid>
+              </Grid>
+              <SelectProxyModal
+                address={address}
+                height={500}
+                nextStep={STEPS.REVIEW}
+                proxies={proxyItems}
+                proxyTypeFilter={['Any', 'NonTransfer']}
+                selectedProxy={selectedProxy}
+                setSelectedProxy={setSelectedProxy}
+                setStep={setStep}
+              />
+            </Grid>
+          </DraggableModal>
         }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />
