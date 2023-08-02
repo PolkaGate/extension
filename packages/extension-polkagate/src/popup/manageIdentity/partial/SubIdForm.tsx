@@ -5,18 +5,20 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext, AddressInput, InputWithLabel } from '../../../components';
+import { InputWithLabel } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import getAllAddresses from '../../../util/getAllAddresses';
+import SubIdInput from '../component/SubIdInput';
 
 interface Props {
+  api: ApiPromise | undefined
   chain: Chain | null | undefined;
   address?: string | undefined;
-  ignoreAddress: string | undefined;
+  addressesToSelect: string[];
   name?: string | undefined;
   setSubAddress: ((address: string | null | undefined, index: number | undefined) => void) | undefined;
   setSubName: ((subName: string | null | undefined, index: number | undefined) => void) | undefined;
@@ -25,12 +27,9 @@ interface Props {
   error?: boolean;
 }
 
-export default function SubIdForm({ address, chain, error = false, ignoreAddress, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
+export default function SubIdForm({ address, addressesToSelect, api, chain, error = false, index, name, onRemove, setSubAddress, setSubName }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { hierarchy } = useContext(AccountContext);
-
-  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, ignoreAddress);
 
   const onNameChange = useCallback((value: string | null) => {
     setSubName && setSubName(value, index);
@@ -45,20 +44,20 @@ export default function SubIdForm({ address, chain, error = false, ignoreAddress
   }, [index, onRemove]);
 
   return (
-    <Grid container gap='10px' item sx={{ bgcolor: 'background.paper', border: `${error ? 3 : 1}px solid`, borderColor: error ? 'warning.main' : 'secondary.light', borderRadius: '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '12px', pt: 0 }}>
-      <AddressInput
+    <Grid container gap='10px' item sx={{ bgcolor: 'background.paper', border: `${error ? 3 : 1}px solid`, borderColor: error ? 'warning.main' : 'secondary.light', borderRadius: '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '12px' }}>
+      <SubIdInput
         address={address}
-        allAddresses={allAddresses}
+        api={api}
         chain={chain}
+        disabled={false}
         label={t<string>('Account')}
+        selectableAddresses={addressesToSelect}
         setAddress={onAddressChange}
-        showIdenticon={false}
-        style={{ m: '15px auto 0', width: '100%' }}
       />
       <InputWithLabel
         label={t<string>('Sub ID')}
         onChange={onNameChange}
-        value={name}
+        value={name ?? ''}
       />
       <Grid container item justifyContent='flex-end' spacing='20px'>
         <Grid alignItems='center' container item onClick={onRemoveItem} sx={{ cursor: 'pointer' }} width='fit-content'>

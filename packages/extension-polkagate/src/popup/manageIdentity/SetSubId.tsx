@@ -5,16 +5,17 @@
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useContext } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ShowBalance, TwoButtons, Warning } from '../../components';
+import { AccountContext, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import DisplaySubId from './partial/DisplaySubId';
 import { Mode, setData, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
-import { reset } from 'sinon-chrome';
+import { useChain } from '../../hooks';
+import getAllAddresses from '../../util/getAllAddresses';
 
 interface Props {
   parentAddress: string;
@@ -35,6 +36,10 @@ interface Props {
 export default function SetSubId({ api, mode, parentAddress, parentDisplay, resetSubIds, setDepositValue, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const chain = useChain(parentAddress);
+  const { hierarchy } = useContext(AccountContext);
+
+  const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, parentAddress);
 
   const maxSubAccounts = api && api.consts.identity.maxSubAccounts.toString();
   const subAccountDeposit = api ? api.consts.identity.subAccountDeposit as unknown as BN : BN_ZERO;
@@ -53,6 +58,16 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
   const nextButtonDisable = useMemo(() => {
     return (!subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || disableAddSubId || !!duplicateError || (noNewNoRemove && !subIdModified));
   }, [disableAddSubId, duplicateError, noNewNoRemove, subIdAccountsToSubmit, subIdModified]);
+
+  const addressesToSelect = useMemo(() => {
+    if (!allAddresses || !(allAddresses.length >= 1)) {
+      return [];
+    }
+
+    const canBeSelected = allAddresses.filter((address) => !subIdAccountsToSubmit?.find((subId) => subId.address === address[0])).map((addr) => addr[0]);
+
+    return canBeSelected;
+  }, [allAddresses, subIdAccountsToSubmit]);
 
   useEffect(() => {
     if (!subIdAccountsToSubmit) {
@@ -111,8 +126,8 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
       return;
     }
 
-    setSubIdAccountsToSubmit([...(subIdAccountsToSubmit ?? []), { address: undefined, name: undefined, status: 'new' }]);
-  }, [disableAddSubId, setSubIdAccountsToSubmit, subIdAccountsToSubmit]);
+    setSubIdAccountsToSubmit((prevSubIdAccountsToSubmit) => [{ address: undefined, name: undefined, status: 'new' }, ...(prevSubIdAccountsToSubmit ?? [])]);
+  }, [disableAddSubId, setSubIdAccountsToSubmit]);
 
   const AddSubIdButton = () => (
     <Grid container item onClick={onAddNewSubId} sx={{ cursor: disableAddSubId ? 'context-menu' : 'pointer', width: 'fit-content' }}>
@@ -228,6 +243,8 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
           {subIdAccountsToSubmit && subIdAccountsToSubmit.length > 0 &&
             subIdAccountsToSubmit.map((idAccount, index) => (
               <DisplaySubId
+                addressesToSelect={addressesToSelect}
+                api={api}
                 error={typeof (duplicateError) !== 'boolean' && duplicateError.has(index)}
                 index={index}
                 key={index}

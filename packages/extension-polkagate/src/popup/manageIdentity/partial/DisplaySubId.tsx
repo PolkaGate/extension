@@ -7,8 +7,10 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
 import { Divider, Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
+
+import { ApiPromise } from '@polkadot/api';
 
 import { Identicon, ShortAddress } from '../../../components';
 import { useTranslation } from '../../../components/translate';
@@ -17,6 +19,7 @@ import { getSubstrateAddress } from '../../../util/utils';
 import SubIdForm from './SubIdForm';
 
 interface Props {
+  api: ApiPromise | undefined;
   subIdInfo: { address: string | undefined; name: string | undefined; status?: 'current' | 'new' | 'remove' }
   parentName: string;
   noButtons?: boolean;
@@ -26,6 +29,7 @@ interface Props {
   setSubAddress?: (address: string | null | undefined, index: number | undefined) => void;
   toModify?: boolean;
   error?: boolean;
+  addressesToSelect: string[];
 }
 
 interface ManageButtonProps {
@@ -35,7 +39,7 @@ interface ManageButtonProps {
   style?: SxProps<Theme> | undefined
 }
 
-export default function DisplaySubId({ error = false, index, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
+export default function DisplaySubId({ addressesToSelect, api, error = false, index, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams<{ address: string }>();
@@ -43,8 +47,10 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
   const subIdAddress = getSubstrateAddress(subIdInfo.address);
   const subIdExtensionName = useAccountName(subIdAddress);
 
-  const [isModifying, setModify] = useState<boolean>(toModify);
+  const [isModifying, setModify] = useState<boolean>(false);
   const toRemove = useMemo(() => subIdInfo.status === 'remove', [subIdInfo.status]);
+
+  useEffect(() => setModify(toModify), [toModify]);
 
   const ManageButton = ({ icon, onClick, style, text }: ManageButtonProps) => (
     <Grid alignItems='center' container item onClick={onClick} sx={{ cursor: 'pointer', width: 'fit-content', ...style }}>
@@ -146,9 +152,10 @@ export default function DisplaySubId({ error = false, index, noButtons = false, 
         </Grid>
         : <SubIdForm
           address={subIdInfo.address}
+          addressesToSelect={addressesToSelect}
+          api={api}
           chain={chain}
           error={error}
-          ignoreAddress={params.address}
           index={index}
           name={subIdInfo.name}
           onRemove={onRemoveItem}

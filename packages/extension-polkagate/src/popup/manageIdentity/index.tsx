@@ -99,6 +99,7 @@ export default function ManageIdentity(): React.ReactElement {
     setIdJudgement(undefined);
     setMode(undefined);
     setSelectedRegistrar(undefined);
+    setSubIdAccountsToSubmit(undefined);
     setDepositValue(BN_ZERO);
 
     api?.query.identity.identityOf(address)
