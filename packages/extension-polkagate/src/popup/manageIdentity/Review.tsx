@@ -264,7 +264,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
-              {identityToSet &&
+              {identityToSet && (mode === 'Set' || mode === 'Modify') &&
                 <>
                   <Typography sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
                     {t<string>('Identity')}
@@ -332,7 +332,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 <DisplayValue title={mode === 'Clear'
                   ? t<string>('Deposit that will be released')
                   : mode === 'RequestJudgement'
-                    ? t<string>('Registrar fee')
+                    ? t<string>('Registration fee')
                     : t<string>('Total Deposit')}
                 >
                   <ShowBalance
@@ -405,6 +405,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             SubIdentityAccounts={subIdsToShow}
             handleClose={closeConfirmation}
             identity={identityToSet}
+            maxFeeAmount={maxFeeAmount}
             selectedRegistrarName={selectedRegistrarName}
             status={mode}
             txInfo={txInfo}

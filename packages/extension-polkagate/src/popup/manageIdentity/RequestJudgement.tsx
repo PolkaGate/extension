@@ -150,7 +150,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
         </Grid>
         <Grid container item sx={{ pb: '4px', width: 'fit-content' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Registrar fee:')}
+            {t<string>('Registration fee:')}
           </Typography>
           <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance

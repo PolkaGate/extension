@@ -19,7 +19,7 @@ import { getSubstrateAddress } from '../../../util/utils';
 import SubIdForm from './SubIdForm';
 
 interface Props {
-  api: ApiPromise | undefined;
+  api?: ApiPromise | undefined;
   subIdInfo: { address: string | undefined; name: string | undefined; status?: 'current' | 'new' | 'remove' }
   parentName: string;
   noButtons?: boolean;
@@ -29,7 +29,7 @@ interface Props {
   setSubAddress?: (address: string | null | undefined, index: number | undefined) => void;
   toModify?: boolean;
   error?: boolean;
-  addressesToSelect: string[];
+  addressesToSelect?: string[];
 }
 
 interface ManageButtonProps {

@@ -5,17 +5,17 @@
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState, useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountContext, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
-import DisplaySubId from './partial/DisplaySubId';
-import { Mode, setData, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
 import { useChain } from '../../hooks';
 import getAllAddresses from '../../util/getAllAddresses';
+import DisplaySubId from './partial/DisplaySubId';
+import { Mode, setData, STEPS, SubIdAccountsToSubmit, SubIdsParams } from '.';
 
 interface Props {
   parentAddress: string;
@@ -29,11 +29,11 @@ interface Props {
   setSubIdsParams: React.Dispatch<React.SetStateAction<SubIdsParams>>;
   subIdsParams: SubIdsParams;
   mode: Mode;
-  setDepositValue: React.Dispatch<React.SetStateAction<BN>>;
   resetSubIds: () => void;
+  totalSubIdsDeposit: BN;
 }
 
-export default function SetSubId({ api, mode, parentAddress, parentDisplay, resetSubIds, setDepositValue, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams }: Props): React.ReactElement {
+export default function SetSubId({ api, mode, parentAddress, parentDisplay, resetSubIds, setMode, setStep, setSubIdAccountsToSubmit, setSubIdsParams, subIdAccounts, subIdAccountsToSubmit, subIdsParams, totalSubIdsDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(parentAddress);
@@ -42,7 +42,6 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
   const allAddresses = getAllAddresses(hierarchy, true, true, chain?.ss58Format, parentAddress);
 
   const maxSubAccounts = api && api.consts.identity.maxSubAccounts.toString();
-  const subAccountDeposit = api ? api.consts.identity.subAccountDeposit as unknown as BN : BN_ZERO;
 
   const [disableAddSubId, setDisableAddSubId] = useState<boolean>(false);
   const [duplicateError, setDuplicateError] = useState<Set<number> | boolean>(false);
@@ -52,8 +51,6 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
   const subIdsLength = useMemo(() => subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove').length ?? 0, [subIdAccountsToSubmit]);
 
   const toRemoveSubs = useMemo(() => subIdAccountsToSubmit && subIdAccountsToSubmit.filter((subs) => subs.status === 'remove').length > 0, [subIdAccountsToSubmit]);
-
-  const totalSubIdsDeposit = useMemo(() => subAccountDeposit.muln(subIdsLength), [subAccountDeposit, subIdsLength]);
 
   const nextButtonDisable = useMemo(() => {
     return (!subIdAccountsToSubmit || subIdAccountsToSubmit.length === 0 || disableAddSubId || !!duplicateError || (noNewNoRemove && !subIdModified));
@@ -181,17 +178,17 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
 
   const goReview = useCallback(() => {
     setMode('ManageSubId');
-    setDepositValue(totalSubIdsDeposit);
     setSubIdsParams(makeSubIdParams);
     makeSubIdParams && setStep(STEPS.REVIEW);
-  }, [setMode, setDepositValue, totalSubIdsDeposit, setSubIdsParams, makeSubIdParams, setStep]);
+  }, [setMode, setSubIdsParams, makeSubIdParams, setStep]);
 
   const goBack = useCallback(() => {
     resetSubIds();
     setSubIdsParams(undefined);
+    setSubIdAccountsToSubmit(undefined);
     setStep(STEPS.PREVIEW);
     setMode(undefined);
-  }, [setMode, setStep, setSubIdsParams, resetSubIds]);
+  }, [resetSubIds, setSubIdsParams, setSubIdAccountsToSubmit, setStep, setMode]);
 
   return (
     <>

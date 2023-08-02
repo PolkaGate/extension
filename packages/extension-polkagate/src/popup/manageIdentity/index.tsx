@@ -75,7 +75,6 @@ export default function ManageIdentity(): React.ReactElement {
   const [subIdsParams, setSubIdsParams] = useState<SubIdsParams | undefined>();
   const [idJudgement, setIdJudgement] = useState<IdJudgement>();
   const [subIdAccounts, setSubIdAccounts] = useState<{ address: string, name: string }[] | null | undefined>();
-  const [depositValue, setDepositValue] = useState<BN>(BN_ZERO);
   const [maxFeeValue, setMaxFeeValue] = useState<BN>();
   const [fetching, setFetching] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -86,8 +85,31 @@ export default function ManageIdentity(): React.ReactElement {
   const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
   const [resetSubId, setResetSubId] = useState<boolean>(false);
 
-  const basicDepositValue = useMemo(() => api && api.consts.identity.basicDeposit as unknown as BN, [api]);
-  const fieldDepositValue = useMemo(() => api && api.consts.identity.fieldDeposit as unknown as BN, [api]);
+  const basicDepositValue = useMemo(() => api ? api.consts.identity.basicDeposit as unknown as BN : BN_ZERO, [api]);
+  const fieldDepositValue = useMemo(() => api ? api.consts.identity.fieldDeposit as unknown as BN : BN_ZERO, [api]);
+  const subAccountDeposit = useMemo(() => api ? api.consts.identity.subAccountDeposit as unknown as BN : BN_ZERO, [api]);
+
+  const totalDeposit = useMemo(() => {
+    if (mode === 'Set' || step === STEPS.INDEX) {
+      return basicDepositValue.add(identityToSet?.other?.discord ? fieldDepositValue : BN_ZERO);
+    }
+
+    if (mode === 'Modify' || step === STEPS.MODIFY) {
+      return basicDepositValue.add(identityToSet?.other?.discord ? fieldDepositValue : BN_ZERO);
+    }
+
+    if (mode === 'Clear' || step === STEPS.REMOVE || step === STEPS.PREVIEW) {
+      return basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
+    }
+
+    if (mode === 'ManageSubId' || step === STEPS.MANAGESUBID) {
+      const remainSubIds = subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove');
+
+      return subAccountDeposit.muln(remainSubIds?.length ?? 0);
+    }
+
+    return BN_ZERO;
+  }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, identityToSet?.other?.discord, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
 
   const fetchIdentity = useCallback(() => {
     setFetching(true);
@@ -100,7 +122,6 @@ export default function ManageIdentity(): React.ReactElement {
     setMode(undefined);
     setSelectedRegistrar(undefined);
     setSubIdAccountsToSubmit(undefined);
-    setDepositValue(BN_ZERO);
 
     api?.query.identity.identityOf(address)
       .then((id) => {
@@ -246,23 +267,6 @@ export default function ManageIdentity(): React.ReactElement {
     setResetSubId(false);
   }, [subIdAccounts, resetSubId]);
 
-  useEffect(() => {
-    if (!basicDepositValue || !fieldDepositValue || mode === 'ManageSubId') {
-      return;
-    }
-
-    const totalDeposit = basicDepositValue.add(
-      mode !== 'Clear'
-        ? identityToSet?.other?.discord
-          ? fieldDepositValue
-          : BN_ZERO
-        : identity?.other?.discord
-          ? fieldDepositValue
-          : BN_ZERO);
-
-    setDepositValue(totalDeposit);
-  }, [basicDepositValue, fieldDepositValue, identity, identityToSet?.other?.discord, setDepositValue, mode]);
-
   const resetSubIds = useCallback(() => setResetSubId(true), []);
 
   const IdentityCheckProgress = () => {
@@ -293,17 +297,19 @@ export default function ManageIdentity(): React.ReactElement {
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
-            totalDeposit={depositValue}
+            totalDeposit={totalDeposit}
           />
         }
         {step === STEPS.PREVIEW && identity &&
           <PreviewIdentity
+            api={api}
             identity={identity}
             judgement={idJudgement}
             setIdentityToSet={setIdentityToSet}
             setMode={setMode}
             setStep={setStep}
             subIdAccounts={subIdAccounts}
+            totalDeposit={totalDeposit}
           />
         }
         {step === STEPS.MANAGESUBID && identity?.display && formatted &&
@@ -313,7 +319,6 @@ export default function ManageIdentity(): React.ReactElement {
             parentAddress={String(formatted)}
             parentDisplay={identity.display}
             resetSubIds={resetSubIds}
-            setDepositValue={setDepositValue}
             setMode={setMode}
             setStep={setStep}
             setSubIdAccountsToSubmit={setSubIdAccountsToSubmit}
@@ -321,6 +326,7 @@ export default function ManageIdentity(): React.ReactElement {
             subIdAccounts={subIdAccounts}
             subIdAccountsToSubmit={subIdAccountsToSubmit}
             subIdsParams={subIdsParams}
+            totalSubIdsDeposit={totalDeposit}
           />
         }
         {step === STEPS.JUDGEMENT && idJudgement !== undefined &&
@@ -343,7 +349,7 @@ export default function ManageIdentity(): React.ReactElement {
             address={address}
             api={api}
             chain={chain}
-            depositValue={depositValue}
+            depositValue={totalDeposit}
             identityToSet={identityToSet}
             infoParams={infoParams}
             maxFeeAmount={maxFeeValue}

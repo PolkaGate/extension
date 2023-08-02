@@ -9,20 +9,25 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { BN } from '@polkadot/util';
 
+import { ShowBalance } from '../../components';
 import { useTranslation } from '../../components/translate';
 import DisplayIdentityInformation from './partial/DisplayIdentityInformation';
 import SubIdsAccordion from './partial/SubIdsAccordion';
 import { IdJudgement, Mode, STEPS } from '.';
 
 interface Props {
+  api: ApiPromise | undefined;
   identity: DeriveAccountRegistration;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   setIdentityToSet: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | null | undefined>>;
   subIdAccounts: { address: string; name: string; }[] | null | undefined;
   judgement: IdJudgement;
+  totalDeposit: BN;
 }
 
 interface ManageButtonProps {
@@ -31,7 +36,7 @@ interface ManageButtonProps {
   onClick: () => void;
 }
 
-export default function PreviewIdentity({ identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts }: Props): React.ReactElement {
+export default function PreviewIdentity({ api, identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -69,9 +74,24 @@ export default function PreviewIdentity({ identity, judgement, setIdentityToSet,
 
   return (
     <Grid container item sx={{ display: 'block', maxWidth: '840px', px: '10%' }}>
-      <Typography fontSize='22px' fontWeight={700} pb='20px' pt='30px'>
-        {t<string>('On-chain Identity')}
-      </Typography>
+      <Grid container item justifyContent='space-between' pb='20px' pt='30px'>
+        <Typography fontSize='22px' fontWeight={700}>
+          {t<string>('On-chain Identity')}
+        </Typography>
+        <Grid alignItems='center' container item width='fit-content'>
+          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+            {t<string>('Total deposit amount:')}
+          </Typography>
+          <Grid item lineHeight='22px' pl='5px'>
+            <ShowBalance
+              api={api}
+              balance={totalDeposit}
+              decimalPoint={4}
+              height={22}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
       <DisplayIdentityInformation
         identity={identity}
       />
