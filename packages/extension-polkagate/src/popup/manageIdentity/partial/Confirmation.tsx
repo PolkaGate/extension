@@ -7,16 +7,15 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { BN } from '@polkadot/util';
 
-import { Motion, PButton, ShortAddress } from '../../../components';
-import { useDecimal, useTranslation } from '../../../hooks';
+import { Motion, PButton, ShortAddress, ShowBalance } from '../../../components';
+import { useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 import { Mode, SubIdAccountsToSubmit } from '..';
-import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
-import { amountToHuman } from '../../../util/utils';
 
 interface Props {
   txInfo: TxInfo;
@@ -34,9 +33,8 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const decimal = useDecimal(identity?.parent);
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
@@ -162,10 +160,22 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
           />}
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         {status === 'RequestJudgement' && maxFeeAmount &&
-          <DisplayInfo
-            caption={t<string>('Registration fee:')}
-            value={amountToHuman(maxFeeAmount, decimal)}
-          />}
+          <Grid container item justifyContent='center' sx={{ pt: '10px' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>('Registration fee:')}
+            </Typography>
+            <Grid item lineHeight='22px' pl='5px'>
+              <ShowBalance
+                api={txInfo.api}
+                balance={maxFeeAmount}
+                decimalPoint={4}
+                height={22}
+              />
+            </Grid>
+            <Grid alignItems='center' container item justifyContent='center'>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '10px', width: '240px' }} />
+            </Grid>
+          </Grid>}
         <DisplayInfo
           caption={t<string>('Fee:')}
           value={fee?.toHuman() ?? '00.00'}
