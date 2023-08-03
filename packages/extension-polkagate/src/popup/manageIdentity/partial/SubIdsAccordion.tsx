@@ -20,7 +20,7 @@ export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props):
 
   return (
     <Grid container item sx={{ display: 'block', pt: '15px' }}>
-      <Accordion disableGutters sx={{ bgcolor: 'transparent', boxShadow: 'none' }}>
+      <Accordion disableGutters sx={{ bgcolor: 'transparent', backgroundImage: 'none', boxShadow: 'none' }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '40px' }} />} sx={{ '> .MuiAccordionSummary-content': { m: 0 }, borderBottom: '2px solid', borderBottomColor: '#D5CCD0', m: 0, p: 0 }}>
           <Typography fontSize='22px' fontWeight={700}>
             {t<string>('Sub Identities')}

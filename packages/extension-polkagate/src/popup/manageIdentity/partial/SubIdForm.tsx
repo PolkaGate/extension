@@ -63,7 +63,7 @@ export default function SubIdForm({ address, addressesToSelect, api, chain, erro
         <Grid alignItems='center' container item onClick={onRemoveItem} sx={{ cursor: 'pointer' }} width='fit-content'>
           <Grid container item pr='5px' width='fit-content'>
             <FontAwesomeIcon
-              color={theme.palette.text.primary}
+              color={theme.palette.secondary.main}
               fontSize='25px'
               icon={faTrash}
             />

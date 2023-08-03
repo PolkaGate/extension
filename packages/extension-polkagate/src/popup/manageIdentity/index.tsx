@@ -85,6 +85,9 @@ export default function ManageIdentity(): React.ReactElement {
   const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
   const [resetSubId, setResetSubId] = useState<boolean>(false);
 
+  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
+  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.paper, theme.palette.mode]);
+
   const basicDepositValue = useMemo(() => api ? api.consts.identity.basicDeposit as unknown as BN : BN_ZERO, [api]);
   const fieldDepositValue = useMemo(() => api ? api.consts.identity.fieldDeposit as unknown as BN : BN_ZERO, [api]);
   const subAccountDeposit = useMemo(() => api ? api.consts.identity.subAccountDeposit as unknown as BN : BN_ZERO, [api]);
@@ -281,9 +284,9 @@ export default function ManageIdentity(): React.ReactElement {
   };
 
   return (
-    <Grid bgcolor='#DFDFDF' container item justifyContent='center'>
+    <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <Header />
-      <Grid container item justifyContent='center' sx={{ bgcolor: '#F1F1F1', height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
         }

@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
-import React from 'react';
+import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import React, { useMemo } from 'react';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
@@ -15,12 +15,15 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function IdentityTable ({ identity, style }: Props): React.ReactElement {
+export default function IdentityTable({ identity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  const borderColor = useMemo(() => theme.palette.mode === 'light' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)', [theme.palette.mode]);
 
   const IdItems = ({ noBorder = false, title, value }: { title: string, value: string | undefined, noBorder?: boolean }) => (
-    <Grid alignItems='center' container height='35px' item sx={noBorder ? {} : { borderBottom: '1px solid', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
-      <Grid alignItems='center' container item sx={{ borderRight: '1px solid', borderRightColor: 'rgba(0,0,0,0.2)', height: '100%' }} xs={4}>
+    <Grid alignItems='center' container height='35px' item sx={noBorder ? {} : { borderBottom: '1px solid', borderBottomColor: borderColor }}>
+      <Grid alignItems='center' container item sx={{ borderRight: '1px solid', borderRightColor: borderColor, height: '100%' }} xs={4}>
         <Typography fontSize='16px' fontWeight={400} pl='12px'>
           {title}
         </Typography>

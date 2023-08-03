@@ -50,6 +50,8 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
   const [isModifying, setModify] = useState<boolean>(false);
   const toRemove = useMemo(() => subIdInfo.status === 'remove', [subIdInfo.status]);
 
+  const fadeColor = useMemo(() => theme.palette.mode === 'light' ? '#EEEEEE' : 'rgba(0,0,0,0.8)', [theme.palette.mode]);
+
   useEffect(() => setModify(toModify), [toModify]);
 
   const ManageButton = ({ icon, onClick, style, text }: ManageButtonProps) => (
@@ -88,7 +90,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                 </Grid>
                 <Grid container item pl='8px' sx={{ '> div': { justifyContent: 'flex-start' } }} xs={10}>
                   {subIdExtensionName
-                    ? <Typography fontSize='20px' fontWeight={400} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='95%'>
+                    ? <Typography fontSize='24px' fontWeight={400} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='95%'>
                       {subIdExtensionName}
                     </Typography>
                     : <ShortAddress address={subIdInfo.address} charsCount={6} />
@@ -107,7 +109,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                 />
               </Grid>
               <Grid container item pl='8px' xs={11}>
-                <Typography fontSize='20px' fontWeight={500} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='95%'>
+                <Typography fontSize='24px' fontWeight={500} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' width='95%'>
                   {`${parentName} / ${subIdInfo.name ?? ''}`}
                 </Typography>
               </Grid>
@@ -148,7 +150,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
               </Grid>
             </Grid>
           }
-          {toRemove && <Grid container item style={{ backgroundColor: '#EEEEEE', bottom: 0, left: 0, opacity: 0.8, position: 'absolute', right: 0, top: 0, zIndex: 1 }}></Grid>}
+          {toRemove && <Grid container item style={{ backgroundColor: fadeColor, bottom: 0, left: 0, opacity: 0.8, position: 'absolute', right: 0, top: 0, zIndex: 1 }}></Grid>}
         </Grid>
         : <SubIdForm
           address={subIdInfo.address}

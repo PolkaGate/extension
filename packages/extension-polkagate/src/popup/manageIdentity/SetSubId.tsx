@@ -8,7 +8,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { AccountContext, ShowBalance, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
@@ -48,8 +48,9 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
   const [subIdModified, setSubIdModified] = useState<boolean>(false);
   const [noNewNoRemove, setNoChanges] = useState<boolean>(false);
 
-  const subIdsLength = useMemo(() => subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove').length ?? 0, [subIdAccountsToSubmit]);
+  const buttonsBoxColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
 
+  const subIdsLength = useMemo(() => subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove').length ?? 0, [subIdAccountsToSubmit]);
   const toRemoveSubs = useMemo(() => subIdAccountsToSubmit && subIdAccountsToSubmit.filter((subs) => subs.status === 'remove').length > 0, [subIdAccountsToSubmit]);
 
   const nextButtonDisable = useMemo(() => {
@@ -255,7 +256,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
             ))}
         </Grid>
       </Grid>
-      <Grid container item justifyContent='flex-end' sx={{ '> div': { bottom: '10px', width: '400px' }, bgcolor: '#F1F1F1', bottom: '0', boxShadow: '0px -1px 4px 0px #00000040', height: '60px', left: 0, position: 'absolute', pr: '25%' }}>
+      <Grid container item justifyContent='flex-end' sx={{ '> div': { bottom: '10px', width: '400px' }, bgcolor: buttonsBoxColor, bottom: '0', boxShadow: '0px -1px 4px 0px #00000040', height: '60px', left: 0, position: 'absolute', pr: '25%' }}>
         <TwoButtons
           disabled={nextButtonDisable}
           isBusy={mode === 'ManageSubId' && !subIdsParams}
