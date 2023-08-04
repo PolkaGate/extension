@@ -15,6 +15,7 @@ import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } fr
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import getLogo from '../util/getLogo';
+import { STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -91,10 +92,10 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Manage proxies')}
       />
       <MenuItem
-        disabled={!chain}
+        disabled={!chain || !(STAKING_CHAINS.includes(chain.genesisHash ?? ''))}
         iconComponent={
           <FontAwesomeIcon
-            color={theme.palette.text.primary}
+            color={(!chain || !(STAKING_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={19}
             icon={faAddressCard}
           />
