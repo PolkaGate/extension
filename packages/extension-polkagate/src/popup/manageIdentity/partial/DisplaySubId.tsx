@@ -145,7 +145,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
                   style={{ zIndex: toRemove ? 10 : 1 }}
                   text={toRemove
                     ? t<string>('Undo')
-                    : t<string>('Delete')}
+                    : t<string>('Remove')}
                 />
               </Grid>
             </Grid>
