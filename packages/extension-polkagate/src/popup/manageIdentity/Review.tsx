@@ -353,7 +353,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 />
               </DisplayValue>
             </Grid>
-            <Grid container item sx={{ '> div div:last-child': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
+            <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
                 isPasswordError={isPasswordError}
