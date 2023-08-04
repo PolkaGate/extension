@@ -197,9 +197,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
           <Typography fontSize='32px' fontWeight={700}>
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
-                {mode === 'Set' && t('Review Identity')}
-                {mode === 'Clear' && t('Clear Identity')}
-                {mode === 'Modify' && t('Modify Identity')}
+                {mode === 'Set' && t('Review On-chain Identity')}
+                {mode === 'Clear' && t('Clear On-chain Identity')}
+                {mode === 'Modify' && t('Modify On-chain Identity')}
                 {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
                 {mode === 'RequestJudgement' && t('Review Request Judgement')}
                 {mode === 'CancelJudgement' && t('Review Cancel Judgement')}
@@ -207,22 +207,22 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             )}
             {step === STEPS.WAIT_SCREEN && (
               <>
-                {mode === 'Set' && t('Setting Identity')}
-                {mode === 'Clear' && t('Clearing Identity')}
-                {mode === 'Modify' && t('Modifying Identity')}
+                {mode === 'Set' && t('Setting On-chain Identity')}
+                {mode === 'Clear' && t('Clearing On-chain Identity')}
+                {mode === 'Modify' && t('Modifying On-chain Identity')}
                 {mode === 'ManageSubId' && t('Setting Sub-identity(ies)')}
-                {mode === 'RequestJudgement' && t('Requesting Request Judgement')}
+                {mode === 'RequestJudgement' && t('Requesting Judgement')}
                 {mode === 'CancelJudgement' && t('Canceling Judgement')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'Set' && (
-              txInfo?.success ? t('Identity Set') : t('Identity Setup Failed')
+              txInfo?.success ? t('On-chain Identity Set') : t('On-chain Identity Setup Failed')
             )}
             {step === STEPS.CONFIRM && mode === 'Modify' && (
-              txInfo?.success ? t('Identity Modified') : t('Identity Modification Failed')
+              txInfo?.success ? t('On-chain Identity Modified') : t('On-chain Identity Modification Failed')
             )}
             {step === STEPS.CONFIRM && mode === 'Clear' && (
-              txInfo?.success ? t('Identity Cleared') : t('Identity Clearing Failed')
+              txInfo?.success ? t('On-chain Identity Cleared') : t('On-Chain Identity Clearing Failed')
             )}
             {step === STEPS.CONFIRM && mode === 'ManageSubId' && (
               txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
@@ -231,7 +231,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               txInfo?.success ? t('Request Judgement Sent') : t('Request Judgement failed')
             )}
             {step === STEPS.CONFIRM && mode === 'CancelJudgement' && (
-              txInfo?.success ? t('Judgement Canceled') : t('Cancel Judgement failed')
+              txInfo?.success ? t('Judgement Canceled') : t('Canceling Judgement failed')
             )}
           </Typography>
         </Grid>
@@ -349,7 +349,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   api={api}
                   balance={estimatedFee}
                   decimalPoint={4}
-                  height={22}
+                  height={42}
                 />
               </DisplayValue>
             </Grid>

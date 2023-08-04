@@ -136,13 +136,13 @@ export default function Confirmation ({ SubIdentityAccounts, handleClose, identi
         {(status === 'Modify' || status === 'Set') &&
           <ManageIdentityDetail />
         }
-        {status === 'Clear' &&
+        {/* {status === 'Clear' &&
           <Typography fontSize='22px' fontWeight={400} my='8px' textAlign='center' width='100%'>
             {txInfo.success
               ? t<string>('Identity cleared.')
               : t<string>('Identity not cleared.')}
           </Typography>
-        }
+        } */}
         {status === 'ManageSubId' && SubIdentityAccounts && SubIdentityAccounts.length > 0 &&
           <ManageSubIdTxDetail />
         }
