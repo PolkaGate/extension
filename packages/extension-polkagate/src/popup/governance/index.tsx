@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
-import { useApi, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST } from './utils/consts';
@@ -28,13 +28,14 @@ import { TrackStats } from './TrackStats';
 
 export type Fellowship = [string, number];
 
-export default function Governance (): React.ReactElement {
+export default function Governance(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const { state } = useLocation();
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
   const api = useApi(address);
+  const chain = useChain(address);
   const chainName = useChainName(address);
   const decidingCounts = useDecidingCount(address);
   const chainChangeRef = useRef('');
@@ -101,8 +102,17 @@ export default function Governance (): React.ReactElement {
   }, [address, chainName]);
 
   useEffect(() => {
-    address && api && tracks && getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
-  }, [address, api, tracks]);
+    if (String(api?.genesisHash) !== chain?.genesisHash) {
+      setMyVotedReferendaIndexes(undefined);
+    }
+
+    if (!api || !address || !tracks) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getAllVotes(address, api, tracks).then(setMyVotedReferendaIndexes);
+  }, [address, api, chain?.genesisHash, tracks]);
 
   useEffect(() => {
     // since the on chain referendaCount may have delay, we set the count for all case with the latest Id +1
