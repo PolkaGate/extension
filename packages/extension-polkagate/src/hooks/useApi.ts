@@ -17,7 +17,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
   useEffect(() => {
-    if (api?.isConnected) {
+    if (api?.isConnected && String(api?.genesisHash) === chain?.genesisHash) {
       return;
     }
 
