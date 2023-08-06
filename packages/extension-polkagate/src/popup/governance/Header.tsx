@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
-import { ChainSwitch } from '../../partials';
+import { ChainSwitch, NodeSwitch } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
@@ -54,6 +54,12 @@ export function Header(): React.ReactElement {
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
               <ChainSwitch address={address} invert />
+            </Grid>
+            <Grid container item justifyContent='flex-end' width='50px'>
+              <NodeSwitch
+                address={address}
+                api={api}
+              />
             </Grid>
           </Grid>
         </Grid>
