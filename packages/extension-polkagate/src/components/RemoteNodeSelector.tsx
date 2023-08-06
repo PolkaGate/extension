@@ -13,7 +13,7 @@ interface Props {
   genesisHash: string | undefined;
 }
 
-type ChromeStorageGetResponse = {
+export type ChromeStorageGetResponse = {
   [key: string]: {
     [key: string]: string | undefined;
   } | undefined;
