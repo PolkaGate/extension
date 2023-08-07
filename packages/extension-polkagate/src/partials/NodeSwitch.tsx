@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
+import { SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon, Api } from '@mui/icons-material';
 import { Grid, Popover, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -47,13 +47,13 @@ function NodeSwitch({ address, api, genesisHash }: Props): React.ReactElement {
     setEndpointsDelay((prevEndpoints) => {
       return prevEndpoints?.map((endpoint) => {
         if (endpoint.name === sanitizedCurrentEndpointName) {
-          return { ...endpoint, delay: currentDelay };
+          return { ...endpoint, delay: api?._options?.provider?.endpoint === endpointUrl ? currentDelay : undefined };
         }
 
         return endpoint;
       });
     });
-  }, [currentDelay, sanitizedCurrentEndpointName]);
+  }, [api?._options?.provider?.endpoint, currentDelay, endpointUrl, sanitizedCurrentEndpointName]);
 
   useEffect(() => {
     if (!sanitizedCurrentEndpointName || !currentDelay) {
@@ -160,7 +160,7 @@ function NodeSwitch({ address, api, genesisHash }: Props): React.ReactElement {
         />
         <NodeStatusIcon ms={endpointDelay} />
       </Grid>
-    </Grid >
+    </Grid>
   );
 
   const NodesList = () => (
