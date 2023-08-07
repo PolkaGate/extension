@@ -70,7 +70,8 @@ export const ASSET_HUBS = [
 ];
 
 export const TEST_NETS = [
-  WESTEND_GENESIS_HASH
+  WESTEND_GENESIS_HASH,
+  WESTMINT_GENESIS_HASH
 ];
 
 export const CROWDLOANS_CHAINS = [
