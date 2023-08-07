@@ -17,12 +17,14 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
   useEffect(() => {
-    if (api?.isConnected) {
+    if (api?.isConnected && api._options?.provider?.endpoint === endpoint) {
       return;
     }
 
     if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const savedApi = apisContext.apis[chain.genesisHash].api;
+      const savedApis = apisContext.apis[chain.genesisHash];
+
+      const savedApi = savedApis.find((SApi) => SApi.endpoint === endpoint)?.api;
 
       if (savedApi?.isConnected) {
         console.log(`♻ using the saved api for ${chain.name}`);
@@ -40,7 +42,14 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     ApiPromise.create({ provider: wsProvider }).then((api) => {
       setApi(api);
 
-      apisContext.apis[String(api.genesisHash.toHex())] = { api, endpoint };
+      const prevApis = apisContext.apis[String(api.genesisHash.toHex())];
+
+      if (prevApis && prevApis.length > 0) {
+        apisContext.apis[String(api.genesisHash.toHex())] = [{ api, endpoint }, ...prevApis];
+      } else {
+        apisContext.apis[String(api.genesisHash.toHex())] = [{ api, endpoint }];
+      }
+
       apisContext.setIt(apisContext.apis);
     }).catch(console.error);
   }, [apisContext, endpoint, stateApi, chain, api]);
