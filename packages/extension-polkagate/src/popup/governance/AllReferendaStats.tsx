@@ -106,9 +106,13 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   }, [treasuryStats]);
 
   useEffect(() => {
-    // reset all if chain changed
-    setTreasuryStats(undefined);
+    if (chain?.genesisHash !== String(api?.genesisHash)) {
+      // reset all if chain changed
+      setTreasuryStats(undefined);
+    }
+  }, [api?.genesisHash, chain?.genesisHash]);
 
+  useEffect(() => {
     /** To fetch treasury info */
     async function fetchData() {
       try {

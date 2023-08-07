@@ -71,8 +71,13 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   useEffect(() => {
     if (refresh) {
       setLockedInReferenda(undefined); // TODO: needs double check
+      setUnlockableAmount(undefined);
+      setTotalLocked(undefined);
+      setMiscRefLock(undefined);
     }
+  }, [refresh]);
 
+  useEffect(() => {
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
 
@@ -96,7 +101,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
       return setUnlockableAmount(biggestVote);
     }
 
-    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing 
+    if (biggestVote.eq(biggestOngoingLock(referendaLocks))) { // The biggest vote is already ongoing
       setUnlockableAmount(BN_ZERO);
 
       return setTimeToUnlock('Locked in ongoing referenda');
@@ -113,15 +118,11 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
 
     setUnlockableAmount(biggestVote.sub(amountStillLocked));
-  }, [api, biggestOngoingLock, currentBlock, referendaLocks, refresh]);
+  }, [api, biggestOngoingLock, currentBlock, referendaLocks]);
 
   useEffect(() => {
     if (!api?.query?.balances || !formatted || api?.genesisHash?.toString() !== chain?.genesisHash) {
       return setMiscRefLock(undefined);
-    }
-
-    if (refresh) {
-      setMiscRefLock(undefined);
     }
 
     // eslint-disable-next-line no-void
@@ -135,16 +136,12 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   }, [api, chain?.genesisHash, formatted, refresh]);
 
   useEffect(() => {
-    if (refresh) {
-      setTotalLocked(undefined);
-    }
-
     if (!lockedInRef && !delegatedBalance && !miscRefLock) {
       return setTotalLocked(undefined);
     }
-
+    
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
-  }, [delegatedBalance, lockedInRef, miscRefLock, refresh]);
+  }, [delegatedBalance, lockedInRef, miscRefLock]);
 
   const onUnlock = useCallback(() => {
     setShowReview(true);
@@ -189,7 +186,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
         </Grid>
       </Grid>
       <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
-      {showReview && classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
+      {showReview && !!classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
         <Review
           address={address}
           api={api}
