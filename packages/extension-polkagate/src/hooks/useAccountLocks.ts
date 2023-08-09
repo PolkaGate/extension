@@ -118,8 +118,6 @@ export default function useAccountLocks(address: string | undefined, palletRefer
       setInfo(undefined);
     }
 
-    getLockClass();
-
     async function getLockClass() {
       if (!api || !palletVote || !formatted) {
         return undefined;
@@ -203,6 +201,9 @@ export default function useAccountLocks(address: string | undefined, palletRefer
         votes: maybeVotes
       });
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getLockClass();
   }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote, refresh]);
 
   return useMemo(() => {

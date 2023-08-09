@@ -5,7 +5,7 @@
 import { BN } from '@polkadot/util';
 
 export const EXTENSION_NAME = 'Polkagate';
-export const NEW_VERSION_ALERT = 'alert_v0.1.6';
+export const NEW_VERSION_ALERT = 'alert_v0.1.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const DEFAULT_CHAIN_INDEX = 1;
 export const DEFAULT_MAX_COMMISSION = 10;
@@ -70,7 +70,8 @@ export const ASSET_HUBS = [
 ];
 
 export const TEST_NETS = [
-  WESTEND_GENESIS_HASH
+  WESTEND_GENESIS_HASH,
+  WESTMINT_GENESIS_HASH
 ];
 
 export const CROWDLOANS_CHAINS = [
