@@ -215,7 +215,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Deposit:')}
                 </Typography>
-                <Grid item lineHeight='22px' pl='5px'>
+                <Grid item lineHeight='22px' pl='5px' fontSize='20px' fontWeight={500}>
                   <ShowBalance
                     api={api}
                     balance={totalSubIdsDeposit}
