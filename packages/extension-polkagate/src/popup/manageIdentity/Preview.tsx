@@ -75,7 +75,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
   return (
     <Grid container item sx={{ display: 'block', maxWidth: '840px', px: '10%' }}>
       <Grid container item justifyContent='space-between' pb='15px' pt='25px'>
-        <Typography fontSize='32px' fontWeight={700}>
+        <Typography fontSize='30px' fontWeight={700}>
           {t<string>('On-chain Identity')}
         </Typography>
         <Grid alignItems='center' container item width='fit-content'>

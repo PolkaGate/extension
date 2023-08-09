@@ -194,7 +194,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
       <>
         <Grid container py='20px'>
-          <Typography fontSize='32px' fontWeight={700}>
+          <Typography fontSize='30px' fontWeight={700}>
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
                 {mode === 'Set' && t('Review On-chain Identity')}
