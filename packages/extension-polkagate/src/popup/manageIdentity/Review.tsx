@@ -345,12 +345,13 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   />
                 </DisplayValue>}
               <DisplayValue title={t<string>('Fee')}>
-                <ShowBalance
-                  api={api}
-                  balance={estimatedFee}
-                  decimalPoint={4}
-                  height={42}
-                />
+                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                  <ShowBalance
+                    api={api}
+                    balance={estimatedFee}
+                    decimalPoint={4}
+                  />
+                </Grid>
               </DisplayValue>
             </Grid>
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
