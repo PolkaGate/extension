@@ -33,7 +33,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation ({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -41,16 +41,18 @@ export default function Confirmation ({ SubIdentityAccounts, handleClose, identi
 
   const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
     return (
-      <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-        <Grid container item width='fit-content'>
-          <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
-          <Typography lineHeight='40px'>{value ?? t<string>('Not set yet')}</Typography>
+      <>{value &&
+        <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
+          <Grid container item width='fit-content'>
+            <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
+            <Typography lineHeight='40px'>{value}</Typography>
+          </Grid>
+          {showDivider &&
+            <Grid alignItems='center' container item justifyContent='center'>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
+            </Grid>}
         </Grid>
-        {showDivider &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-          </Grid>}
-      </Grid>
+      }</>
     );
   };
 
