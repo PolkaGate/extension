@@ -80,9 +80,9 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         </Typography>
         <Grid alignItems='center' container item width='fit-content'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Total deposit amount:')}
+            {t<string>('Total deposit:')}
           </Typography>
-          <Grid item lineHeight='22px' pl='5px'>
+          <Grid item lineHeight='22px' pl='5px' fontSize='18px' fontWeight={500}>
             <ShowBalance
               api={api}
               balance={totalDeposit}
