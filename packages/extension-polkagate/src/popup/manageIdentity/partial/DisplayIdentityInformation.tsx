@@ -27,7 +27,7 @@ interface Props {
 
 export default function DisplayIdentityInformation({ identity }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme()
+  const theme = useTheme();
 
   const emptyFieldColor = useMemo(() => theme.palette.mode === 'light' ? '#F3EDF1' : '#212121', [theme.palette.mode]);
 
@@ -35,11 +35,11 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
     <Grid alignItems='center' bgcolor={!value ? emptyFieldColor : ''} container height='45px' item justifyContent='space-between' px='7px' sx={noBorder ? {} : { borderBottom: '2px solid', borderBottomColor: '#D5CCD0' }}>
       <Grid container item width='fit-content'>
         {icon}
-        <Typography fontSize='20px' fontWeight={400} pl={icon ? '8px' : 0}>
+        <Typography fontSize='18px' fontWeight={400} pl={icon ? '8px' : 0}>
           {title}
         </Typography>
       </Grid>
-      <Typography fontSize='20px' fontWeight={value ? 700 : 400} maxWidth='70%' overflow='hidden' textOverflow='ellipsis'>
+      <Typography fontSize='18px' fontWeight={value ? 700 : 400} maxWidth='70%' overflow='hidden' textOverflow='ellipsis'>
         {value ?? t<string>('Not set yet.')}
       </Typography>
     </Grid>
