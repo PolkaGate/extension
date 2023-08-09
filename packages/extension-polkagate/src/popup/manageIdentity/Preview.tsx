@@ -46,7 +46,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         {icon}
       </Grid>
       <Grid container item justifyContent='center' pt='8px'>
-        <Typography fontSize='18px' fontWeight={500}>
+        <Typography fontSize='18px' fontWeight={500} color={theme.palette.mode === 'dark' && 'secondary.main'}>
           {title}
         </Typography>
       </Grid>
@@ -108,7 +108,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.text.primary}
+              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
               fontSize='44px'
               icon={faEdit}
             />
@@ -119,7 +119,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.text.primary}
+              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
               fontSize='44px'
               icon={faEraser}
             />
@@ -138,7 +138,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
               }}
             />
             : <FontAwesomeIcon
-              color={theme.palette.text.primary}
+              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
               fontSize='44px'
               icon={faTasks}
             />
@@ -151,7 +151,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.text.primary}
+              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
               fontSize='44px'
               icon={faNetworkWired}
             />
