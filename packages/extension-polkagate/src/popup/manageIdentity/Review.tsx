@@ -201,7 +201,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 {mode === 'Clear' && t('Clear On-chain Identity')}
                 {mode === 'Modify' && t('Modify On-chain Identity')}
                 {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
-                {mode === 'RequestJudgement' && t('Review Request Judgement')}
+                {mode === 'RequestJudgement' && t('Review Request Judgment')}
                 {mode === 'CancelJudgement' && t('Review Cancel Judgement')}
               </>
             )}
@@ -228,7 +228,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
             )}
             {step === STEPS.CONFIRM && mode === 'RequestJudgement' && (
-              txInfo?.success ? t('Request Judgement Sent') : t('Request Judgement failed')
+              txInfo?.success ? t('Request Judgment Sent') : t('Request Judgment failed')
             )}
             {step === STEPS.CONFIRM && mode === 'CancelJudgement' && (
               txInfo?.success ? t('Judgement Canceled') : t('Canceling Judgement failed')

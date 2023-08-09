@@ -131,7 +131,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='22px' fontWeight={700} pb='25px' pt='40px'>
-        {t<string>('Request Judgement')}
+        {t<string>('Request Judgment')}
       </Typography>
       <Typography fontSize='14px' fontWeight={400}>
         {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
