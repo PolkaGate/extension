@@ -7,7 +7,7 @@ import { SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as Si
 import { Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 import { useAccount, useChainName, useEndpoint2, useEndpoints } from '../hooks';
@@ -15,22 +15,28 @@ import CalculateNodeDelay from '../util/calculateNodeDelay';
 
 interface Props {
   address: string | undefined;
-  api: ApiPromise | undefined;
-  genesisHash?: string | undefined;
 }
 
 type EndpointsDelay = { name: string, delay: number | undefined, value: string }[];
 
-function NodeSwitch({ address, api, genesisHash }: Props): React.ReactElement {
+function NodeSwitch({ address }: Props): React.ReactElement {
   const theme = useTheme();
   const account = useAccount(address);
-  const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
+  const genesisHash = account?.genesisHash;
+  const endpointOptions = useEndpoints(genesisHash);
   const endpointUrl = useEndpoint2(address);
   const chainName = useChainName(address);
 
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
+  const [api, setApi] = useState<ApiPromise | undefined>();
+
+  const connect = useCallback(() => {
+    const wsProvider = new WsProvider(endpointUrl);
+
+    ApiPromise.create({ provider: wsProvider }).then(setApi).catch(console.error);
+  }, [endpointUrl]);
 
   const colors = {
     green: '#1F7720',
@@ -100,6 +106,16 @@ function NodeSwitch({ address, api, genesisHash }: Props): React.ReactElement {
     });
   }, [address, chainName]);
 
+  useEffect(() => {
+    if (api) {
+      api.disconnect().then(() => {
+        connect();
+      }).catch(console.error);
+    } else {
+      connect();
+    }
+  }, [endpointUrl]);
+
   // useEffect(() => {
   //   endpointsDelay?.sort((a, b) => {
   //     if (a.name === sanitizedCurrentEndpointName) return -1;
@@ -125,7 +141,7 @@ function NodeSwitch({ address, api, genesisHash }: Props): React.ReactElement {
 
   // Set up the interval when the component mounts
   useEffect(() => {
-    const intervalId = setInterval(calculateAndSetDelay, 120000);
+    const intervalId = setInterval(calculateAndSetDelay, 60000);
 
     // Clean up the interval when the component unmounts
     return () => {
@@ -195,8 +211,6 @@ function NodeSwitch({ address, api, genesisHash }: Props): React.ReactElement {
     calculateAndSetDelay();
     setAnchorEl(event.currentTarget);
   }, [calculateAndSetDelay]);
-
-  console.log('delay:', currentDelay)
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);

@@ -58,7 +58,6 @@ export function Header(): React.ReactElement {
             <Grid container item justifyContent='flex-end' width='50px'>
               <NodeSwitch
                 address={address}
-                api={api}
               />
             </Grid>
           </Grid>
