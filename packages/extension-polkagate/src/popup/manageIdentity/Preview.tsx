@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faEdit, faEraser, faHandshake, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEraser, faTasks, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -82,7 +82,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
             {t<string>('Total deposit:')}
           </Typography>
-          <Grid item lineHeight='22px' pl='5px' fontSize='18px' fontWeight={500}>
+          <Grid fontSize='18px' fontWeight={500} item lineHeight='22px' pl='5px'>
             <ShowBalance
               api={api}
               balance={totalDeposit}
@@ -109,7 +109,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
           icon={
             <FontAwesomeIcon
               color={theme.palette.text.primary}
-              fontSize='25px'
+              fontSize='44px'
               icon={faEdit}
             />
           }
@@ -120,7 +120,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
           icon={
             <FontAwesomeIcon
               color={theme.palette.text.primary}
-              fontSize='25px'
+              fontSize='44px'
               icon={faEraser}
             />
           }
@@ -134,14 +134,13 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
                 bgcolor: 'success.main',
                 borderRadius: '50%',
                 color: 'white',
-                // stroke: 'white',
-                fontSize: 35,
+                fontSize: 44
               }}
             />
             : <FontAwesomeIcon
               color={theme.palette.text.primary}
-              fontSize='25px'
-              icon={faHandshake}
+              fontSize='44px'
+              icon={faTasks}
             />
           }
           onClick={requestJudgment}
@@ -153,7 +152,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
           icon={
             <FontAwesomeIcon
               color={theme.palette.text.primary}
-              fontSize='25px'
+              fontSize='44px'
               icon={faNetworkWired}
             />
           }
