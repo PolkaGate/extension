@@ -11,12 +11,14 @@ import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
+import { Warning } from '../../components';
 import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { Header } from '../governance/Header';
 import PreviewIdentity from './Preview';
@@ -36,6 +38,7 @@ export const STEPS = {
   REVIEW: 7,
   WAIT_SCREEN: 8,
   CONFIRM: 9,
+  UNSUPPORTED: 10,
   PROXY: 100
 };
 
@@ -88,9 +91,31 @@ export default function ManageIdentity(): React.ReactElement {
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.paper, theme.palette.mode]);
 
-  const basicDepositValue = useMemo(() => api ? api.consts.identity.basicDeposit as unknown as BN : BN_ZERO, [api]);
-  const fieldDepositValue = useMemo(() => api ? api.consts.identity.fieldDeposit as unknown as BN : BN_ZERO, [api]);
-  const subAccountDeposit = useMemo(() => api ? api.consts.identity.subAccountDeposit as unknown as BN : BN_ZERO, [api]);
+  const clear = useCallback(() => {
+    setIdentity(undefined);
+    setSubIdAccounts(undefined);
+    setSubIdsParams(undefined);
+    setInfoParams(undefined);
+    setIdentityToSet(undefined);
+    setIdJudgement(undefined);
+    setMode(undefined);
+    setSelectedRegistrar(undefined);
+    setSubIdAccountsToSubmit(undefined);
+  }, []);
+
+  const getConstantValue = (api: ApiPromise, constantName: string) => {
+    try {
+      return api ? api.consts.identity[constantName] as unknown as BN : BN_ZERO;
+    } catch (error) {
+      setStep(STEPS.UNSUPPORTED);
+
+      return BN_ZERO;
+    }
+  };
+
+  const basicDepositValue = useMemo(() => api ? getConstantValue(api, 'basicDeposit') : BN_ZERO, [api]);
+  const fieldDepositValue = useMemo(() => api ? getConstantValue(api, 'fieldDeposit') : BN_ZERO, [api]);
+  const subAccountDeposit = useMemo(() => api ? getConstantValue(api, 'subAccountDeposit') : BN_ZERO, [api]);
 
   const totalDeposit = useMemo(() => {
     if (mode === 'Set' || step === STEPS.INDEX) {
@@ -115,58 +140,55 @@ export default function ManageIdentity(): React.ReactElement {
   }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, identityToSet?.other?.discord, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
 
   const fetchIdentity = useCallback(() => {
+    setStep(STEPS.CHECK_SCREEN);
     setFetching(true);
-    setIdentity(undefined);
-    setSubIdAccounts(undefined);
-    setSubIdsParams(undefined);
-    setInfoParams(undefined);
-    setIdentityToSet(undefined);
-    setIdJudgement(undefined);
-    setMode(undefined);
-    setSelectedRegistrar(undefined);
-    setSubIdAccountsToSubmit(undefined);
+    clear();
 
-    api?.query.identity.identityOf(address)
-      .then((id) => {
-        if (!id.isEmpty) {
-          const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
+    try {
+      api?.query.identity.identityOf(address)
+        .then((id) => {
+          if (!id.isEmpty) {
+            const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
 
-          const idToSet: DeriveAccountRegistration | null = {
-            display: getRawValue(info.display),
-            email: getRawValue(info.email),
-            legal: getRawValue(info.legal),
-            other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined },
-            riot: getRawValue(info.riot),
-            twitter: getRawValue(info.twitter),
-            web: getRawValue(info.web),
-          };
+            const idToSet: DeriveAccountRegistration | null = {
+              display: getRawValue(info.display),
+              email: getRawValue(info.email),
+              legal: getRawValue(info.legal),
+              other: { discord: info.additional.length > 0 ? getRawValue(info.additional[0][1]) : undefined },
+              riot: getRawValue(info.riot),
+              twitter: getRawValue(info.twitter),
+              web: getRawValue(info.web),
+            };
 
-          if (judgements.isEmpty) {
-            setIdJudgement(null);
-          } else {
-            const judgementInHuman = judgements.toHuman();
-            const judgementType = judgementInHuman[0][1] as string;
-
-            if (['Reasonable', 'KnownGood'].includes(judgementType)) {
-              setIdJudgement(judgementType as 'Reasonable' | 'KnownGood');
+            if (judgements.isEmpty) {
+              setIdJudgement(null);
             } else {
-              const feePaidReg = judgementInHuman[0][0] as string;
+              const judgementInHuman = judgements.toHuman();
+              const judgementType = judgementInHuman[0][1] as string;
 
-              setIdJudgement('FeePaid');
-              setSelectedRegistrar(feePaidReg);
+              if (['Reasonable', 'KnownGood'].includes(judgementType)) {
+                setIdJudgement(judgementType as 'Reasonable' | 'KnownGood');
+              } else {
+                const feePaidReg = judgementInHuman[0][0] as string;
+
+                setIdJudgement('FeePaid');
+                setSelectedRegistrar(feePaidReg);
+              }
             }
+
+            setIdentity(idToSet);
+          } else {
+            setIdentity(null);
           }
 
-          setIdentity(idToSet);
-        } else {
-          setIdentity(null);
-        }
-
-        setRefresh(false);
-        setFetching(false);
-      })
-      .catch(console.error);
-  }, [address, api?.query?.identity]);
+          setRefresh(false);
+          setFetching(false);
+        })
+        .catch(console.error);
+    } catch (error) {
+      setStep(STEPS.UNSUPPORTED);
+    }
+  }, [address, api?.query.identity, clear]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -216,7 +238,7 @@ export default function ManageIdentity(): React.ReactElement {
     }
 
     fetchIdentity();
-  }, [address, api, fetchIdentity, chain?.genesisHash]);
+  }, [address, api, fetchIdentity]);
 
   useEffect(() => {
     if (!address || !api || !(refresh && !fetching)) {
@@ -224,7 +246,11 @@ export default function ManageIdentity(): React.ReactElement {
     }
 
     fetchIdentity();
-  }, [address, api, fetchIdentity, fetching, identity, refresh, chain?.genesisHash]);
+  }, [address, api, fetchIdentity, fetching, refresh]);
+
+  useEffect(() => {
+    clear();
+  }, [chain?.genesisHash, chainName, clear]);
 
   useEffect(() => {
     const fetchSubAccounts = async () => {
@@ -253,6 +279,7 @@ export default function ManageIdentity(): React.ReactElement {
         }
       } catch (error) {
         console.error(error);
+        setStep(STEPS.UNSUPPORTED);
       }
     };
 
@@ -289,6 +316,22 @@ export default function ManageIdentity(): React.ReactElement {
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
+        }
+        {step === STEPS.UNSUPPORTED &&
+          <Grid alignItems='center' container direction='column' display='block' item>
+            <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
+              {t<string>('Set On-chain Identity')}
+            </Typography>
+            <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '400px' }}>
+              <Warning
+                fontWeight={500}
+                isBelowInput
+                theme={theme}
+              >
+                {t<string>('On-chain identity is not supported by selected chain.')}
+              </Warning>
+            </Grid>
+          </Grid>
         }
         {(step === STEPS.INDEX || (step === STEPS.MODIFY && mode === 'Modify')) &&
           <SetIdentity
