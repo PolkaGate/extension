@@ -74,7 +74,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   }, [address, chain, onAction]);
 
   const _onManageId = useCallback(() => {
-    address && windowOpen(`/identity/${address}`).catch(console.error);
+    address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
   }, [address]);
 
   const movingParts = (

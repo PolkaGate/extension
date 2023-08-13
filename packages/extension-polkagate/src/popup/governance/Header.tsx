@@ -33,7 +33,7 @@ export function Header({ page }: { page: 'governance' | 'manageIdentity' }): Rea
   }, [page]);
 
   const onAccountChange = useCallback((address: string) =>
-    onAction(`/${page}/${address}/${topMenu ?? ''}/${postId || ''}`)
+    onAction(`/${page}/${address}${topMenu ? `/${topMenu}` : ''}${postId ? `/${postId}` : ''}`)
     , [onAction, page, postId, topMenu]);
 
   return (
