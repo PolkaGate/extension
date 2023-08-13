@@ -4,34 +4,37 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
 
 import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
-import { ChainSwitch } from '../../partials';
-import { EXTENSION_NAME } from '../../util/constants';
+import { ChangeNetwork } from '../../partials';
+import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
-export function Header(): React.ReactElement {
+export function Header({ page }: { page: 'governance' | 'manageIdentity' }): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
-  const { pathname } = useLocation();
 
   const api = useApi(address);
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
 
-  const onAccountChange = useCallback((address: string) => {
-    if (pathname.includes('governance')) {
-      onAction(`/governance/${address}/${topMenu}/${postId || ''}`);
-    } else if (pathname.includes('identity')) {
-      onAction(`/identity/${address}`);
+  const filteredChains = useMemo(() => {
+    switch (page) {
+      case 'governance':
+        return GOVERNANCE_CHAINS;
+      case 'manageIdentity':
+        return IDENTITY_CHAINS;
     }
-  }, [onAction, pathname, postId, topMenu]);
+  }, [page]);
+
+  const onAccountChange = useCallback((address: string) =>
+    onAction(`/${page}/${address}/${topMenu ?? ''}/${postId || ''}`)
+    , [onAction, page, postId, topMenu]);
 
   return (
     <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#180710', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
@@ -59,7 +62,7 @@ export function Header(): React.ReactElement {
               />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
-              <ChainSwitch address={address} invert />
+              <ChangeNetwork address={address} chains={filteredChains} />
             </Grid>
           </Grid>
         </Grid>
