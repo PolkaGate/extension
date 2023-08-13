@@ -98,7 +98,8 @@ export const STAKING_CHAINS = [
 
 export const IDENTITY_CHAINS = [
   ...STAKING_CHAINS,
-  '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6' // astar
+  '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6', // Astar
+  '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b' // Bifrost
 ];
 
 export const INITIAL_RECENT_CHAINS_GENESISHASH = [
