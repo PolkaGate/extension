@@ -10,15 +10,16 @@ import { useLocation } from 'react-router-dom';
 
 import { useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { CHAINS_WITH_BLACK_LOGO, GOVERNANCE_CHAINS } from '../util/constants';
+import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { sanitizeChainName, upperCaseFirstChar } from '../util/utils';
 
 interface Props {
   address: string | undefined;
+  chains: string[];
 }
 
-function ChangeNetwork ({ address }: Props): React.ReactElement<Props> {
+function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const genesisHashes = useGenesisHashOptions();
@@ -30,11 +31,11 @@ function ChangeNetwork ({ address }: Props): React.ReactElement<Props> {
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
   const selectableNetworks = useMemo(() => {
     if (pathname.includes('governance')) {
-      return genesisHashes.filter((genesisHash) => GOVERNANCE_CHAINS.includes(genesisHash.value));
+      return genesisHashes.filter((genesisHash) => chains.includes(genesisHash.value));
     }
 
     return genesisHashes;
-  }, [genesisHashes, pathname]);
+  }, [chains, genesisHashes, pathname]);
 
   useEffect(() => {
     currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);
