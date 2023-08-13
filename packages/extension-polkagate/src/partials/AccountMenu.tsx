@@ -15,7 +15,7 @@ import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } fr
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import getLogo from '../util/getLogo';
-import { STAKING_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -92,10 +92,10 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Manage proxies')}
       />
       <MenuItem
-        disabled={!chain || !(STAKING_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
         iconComponent={
           <FontAwesomeIcon
-            color={(!chain || !(STAKING_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
             fontSize={19}
             icon={faAddressCard}
           />
@@ -105,12 +105,6 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        // iconComponent={
-        //   <FontAwesomeIcon
-        //     color={theme.palette.text.primary}
-        //     icon={faFileExport}
-        //   />
-        // }
         iconComponent={
           <vaadin-icon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
@@ -127,12 +121,6 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         />
       }
       <MenuItem
-        // iconComponent={
-        //   <FontAwesomeIcon
-        //     color={theme.palette.text.primary}
-        //     icon={faEdit}
-        //   />
-        // }
         iconComponent={
           <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
