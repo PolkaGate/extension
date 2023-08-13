@@ -12,3 +12,4 @@ export { default as WaitScreen } from './WaitScreen';
 export { default as SubTitle } from './SubTitle';
 export { default as ThroughProxy } from './ThroughProxy';
 export { default as Confirmation } from './Confirmation';
+export { default as ChangeNetwork } from './ChangeNetwork';
