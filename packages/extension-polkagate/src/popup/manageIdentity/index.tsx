@@ -312,7 +312,7 @@ export default function ManageIdentity(): React.ReactElement {
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
-      <Header />
+      <Header page='manageIdentity' />
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
