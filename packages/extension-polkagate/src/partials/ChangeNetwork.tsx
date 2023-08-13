@@ -29,13 +29,7 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
-  const selectableNetworks = useMemo(() => {
-    if (pathname.includes('governance')) {
-      return genesisHashes.filter((genesisHash) => chains.includes(genesisHash.value));
-    }
-
-    return genesisHashes;
-  }, [chains, genesisHashes, pathname]);
+  const selectableNetworks = useMemo(() => genesisHashes.filter((genesisHash) => chains.includes(genesisHash.value)), [chains, genesisHashes]);
 
   useEffect(() => {
     currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);

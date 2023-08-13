@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { isEmail, isUrl } from '../util/utils';
 import Label from './Label';
 import { Input } from './TextInputs';
 
@@ -31,6 +32,23 @@ interface Props {
 function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
+
+  const badInput = useMemo(() => {
+    if (!type || !value) {
+      return false;
+    }
+
+    if (type === 'email') {
+      return !isEmail(value);
+    }
+
+    if (type === 'url') {
+      return !isUrl(value);
+    }
+
+    return false;
+  }, [type, value]);
+
   const _checkKey = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>): void => {
       onEnter && event.key === 'Enter' && onEnter();
@@ -69,8 +87,8 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
         readOnly={isReadOnly}
         spellCheck={false}
         style={{
-          borderColor: isError ? theme.palette.warning.main : theme.palette.secondary.light,
-          borderWidth: isError ? '3px' : '1px',
+          borderColor: (isError || badInput) ? theme.palette.warning.main : theme.palette.secondary.light,
+          borderWidth: (isError || badInput) ? '3px' : '1px',
           fontSize: `${fontSize}px`,
           fontWeight: { fontWeight },
           height: `${height}px`,
@@ -80,7 +98,7 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
         theme={theme}
         type={type}
         value={value}
-        withError={offFocus && isError}
+        withError={offFocus && (isError || badInput)}
       />
     </Label>
   );
