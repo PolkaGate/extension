@@ -10,21 +10,21 @@ import { useParams } from 'react-router';
 import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
-import { ChainSwitch } from '../../partials';
+import { ChangeNetwork } from '../../partials';
 import { EXTENSION_NAME } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
-export function Header(): React.ReactElement {
-  const { address, postId, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
+export function Header (): React.ReactElement {
+  const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
 
   const onAccountChange = useCallback((address: string) =>
-    onAction(`/governance/${address}/${topMenu}/${postId || ''}`)
+    onAction(`/governance/${address}/${topMenu ?? ''}/${postId || ''}`)
     , [onAction, postId, topMenu]);
 
   return (
@@ -53,7 +53,7 @@ export function Header(): React.ReactElement {
               />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
-              <ChainSwitch address={address} invert />
+              <ChangeNetwork address={address} />
             </Grid>
           </Grid>
         </Grid>
