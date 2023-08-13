@@ -260,12 +260,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
                 <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='30px' /> {t('days')}
               </Grid>
               <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
-                {/* <Grid alignItems='center' container item pr='5px' width='fit-content'> */}
-                <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: `${nextSpendingWidth}px` }} value={treasuryStats?.remainingSpendPeriodPercent ? 100 - treasuryStats.remainingSpendPeriodPercent : 0} variant='determinate' />
-                {/* </Grid> */}
-                {/* <Grid fontSize={18} fontWeight={400} item>
-                  {treasuryStats?.remainingSpendPeriodPercent}%
-                </Grid> */}
+                <LinearProgress sx={{ bgcolor: 'primary.contrastText', transform: 'rotate(180deg)', borderRadius: '5px', height: '6px', mt: '5px', width: `${nextSpendingWidth}px` }} value={treasuryStats?.remainingSpendPeriodPercent ? treasuryStats.remainingSpendPeriodPercent : 100} variant='determinate' />
               </Grid>
             </Grid>
           </Grid>
