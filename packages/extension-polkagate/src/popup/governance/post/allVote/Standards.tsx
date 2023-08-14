@@ -166,7 +166,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
     width: '33%'
   };
 
-  const Header = () => (
+  const AllVoteHeader = () => (
     <Grid alignItems='center' container>
       <Grid item>
         <Typography fontSize='22px' fontWeight={700}>
@@ -198,7 +198,7 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
   return (
     <DraggableModal onClose={handleClose} open={open} width={762}>
       <>
-        <Header />
+        <AllVoteHeader />
         <Box>
           <Tabs centered onChange={handleTabChange} sx={{ pt: '15px', 'span.MuiTabs-indicator': { bgcolor: 'secondary.light', height: '5px', width: '100%' } }} value={tabIndex}>
             <Tab

@@ -139,7 +139,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     }
 
     setOpen(false);
-  }, [setOpen, step]);
+  }, [alterType, setOpen, step]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -151,7 +151,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     }
   }, [notVoted, step]);
 
-  const Header = () => (
+  const CastVoteHeader = () => (
     <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
       <Grid item>
         <Typography fontSize='22px' fontWeight={700}>
@@ -208,7 +208,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
   return (
     <DraggableModal onClose={handleClose} open={open}>
       <>
-        <Header />
+        <CastVoteHeader />
         {step === STEPS.ABOUT &&
           <About
             nextStep={

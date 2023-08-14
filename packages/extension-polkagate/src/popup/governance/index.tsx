@@ -20,7 +20,7 @@ import { LatestReferenda } from './utils/types';
 import { AllReferendaStats } from './AllReferendaStats';
 import Bread from './Bread';
 import FellowshipsList from './FellowshipsList';
-import { Header } from './Header';
+import { FullScreenHeader } from './FullScreenHeader';
 import ReferendumSummary from './ReferendumSummary';
 import SearchBox from './SearchBox';
 import Toolbar from './Toolbar';
@@ -271,7 +271,7 @@ export default function Governance(): React.ReactElement {
 
   return (
     <>
-      <Header page='governance'/>
+      <FullScreenHeader page='governance'/>
       <Toolbar
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
