@@ -1,7 +1,7 @@
 // Copyright 2019-2023 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApiPromise } from '@polkadot/api';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 
 const sleep = (time: number) => {
   return new Promise((resolve) => {
@@ -34,10 +34,15 @@ const fetchApiTime = async (api: ApiPromise | undefined) => {
   return endTime - startTime;
 };
 
-async function CalculateNodeDelay(api: ApiPromise | undefined) {
+async function CalculateNodeDelay(endpoint: string | undefined) {
   const TIMEOUT = 10000;
 
-  return await Promise.race([fetchApiTime(api), timeout(TIMEOUT)]);
+  const wsProvider = new WsProvider(endpoint);
+
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const delay = await Promise.race([fetchApiTime(api), timeout(TIMEOUT)]);
+
+  return { api, delay };
 }
 
 export default CalculateNodeDelay;

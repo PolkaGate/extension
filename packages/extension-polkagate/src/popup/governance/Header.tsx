@@ -69,11 +69,6 @@ export function Header({ page }: { page: 'governance' | 'manageIdentity' }): Rea
                 address={address}
               />
             </Grid>
-            <Grid container item justifyContent='flex-end' width='50px'>
-              <NodeSwitch
-                address={address}
-              />
-            </Grid>
           </Grid>
         </Grid>
       </Container>

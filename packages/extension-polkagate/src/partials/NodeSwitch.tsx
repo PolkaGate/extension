@@ -7,7 +7,7 @@ import { SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as Si
 import { Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api';
 
 import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
 import { useAccount, useChainName, useEndpoint2, useEndpoints } from '../hooks';
@@ -30,19 +30,13 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
-  const [api, setApi] = useState<ApiPromise | undefined>();
-
-  const connect = useCallback(() => {
-    const wsProvider = new WsProvider(endpointUrl);
-
-    ApiPromise.create({ provider: wsProvider }).then(setApi).catch(console.error);
-  }, [endpointUrl]);
+  const [api, setApi] = useState<ApiPromise | null | undefined>(null);
 
   const colors = {
+    gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#4B4B4B',
     green: '#1F7720',
     orange: '#FF5722',
-    red: '#C70000',
-    gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#4B4B4B'
+    red: '#C70000'
   };
 
   const sanitizedCurrentEndpointName = useMemo(() => {
@@ -56,7 +50,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
       ? colors.green
       : ms <= 300
         ? colors.orange
-        : colors.red, []);
+        : colors.red, [colors.green, colors.orange, colors.red]);
 
   const updateNodesList = useCallback(() => {
     setEndpointsDelay((prevEndpoints) => {
@@ -106,16 +100,6 @@ function NodeSwitch({ address }: Props): React.ReactElement {
     });
   }, [address, chainName]);
 
-  useEffect(() => {
-    if (api) {
-      api.disconnect().then(() => {
-        connect();
-      }).catch(console.error);
-    } else {
-      connect();
-    }
-  }, [endpointUrl]);
-
   // useEffect(() => {
   //   endpointsDelay?.sort((a, b) => {
   //     if (a.name === sanitizedCurrentEndpointName) return -1;
@@ -127,14 +111,17 @@ function NodeSwitch({ address }: Props): React.ReactElement {
 
   // Function to calculate node delay and update state
   const calculateAndSetDelay = useCallback(() => {
-    CalculateNodeDelay(api)
-      .then(setCurrentDelay)
+    CalculateNodeDelay(endpointUrl)
+      .then((response) => {
+        setApi(response.api);
+        setCurrentDelay(response.delay);
+      })
       .catch(console.error);
-  }, [api]);
+  }, [endpointUrl]);
 
   // Calculate initial delay when the component mounts
   useEffect(() => {
-    if (api && currentDelay === undefined) {
+    if ((api && currentDelay === undefined) || api === null) {
       calculateAndSetDelay();
     }
   }, [api, calculateAndSetDelay, currentDelay]);
@@ -197,7 +184,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', borderRadius: '5px', cursor: 'pointer', my: '3px', px: '5px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400}>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 400 : 300}>
                 {endpoint.name}
               </Typography>
               <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
