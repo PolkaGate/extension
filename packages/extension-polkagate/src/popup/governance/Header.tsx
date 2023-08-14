@@ -29,6 +29,8 @@ export function Header({ page }: { page: 'governance' | 'manageIdentity' }): Rea
         return GOVERNANCE_CHAINS;
       case 'manageIdentity':
         return IDENTITY_CHAINS;
+      default:
+        return [];
     }
   }, [page]);
 

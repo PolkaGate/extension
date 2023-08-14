@@ -48,7 +48,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
   const [subIdModified, setSubIdModified] = useState<boolean>(false);
   const [noNewNoRemove, setNoChanges] = useState<boolean>(false);
 
-  const buttonsBoxColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
+  const buttonsBoxColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : '#272727', [theme.palette.mode]);
 
   const subIdsLength = useMemo(() => subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove').length ?? 0, [subIdAccountsToSubmit]);
   const toRemoveSubs = useMemo(() => subIdAccountsToSubmit && subIdAccountsToSubmit.filter((subs) => subs.status === 'remove').length > 0, [subIdAccountsToSubmit]);
