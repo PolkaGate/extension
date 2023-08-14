@@ -6,7 +6,6 @@
 
 import { Avatar, Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
@@ -21,7 +20,6 @@ interface Props {
 
 function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const { pathname } = useLocation();
   const genesisHashes = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
   const [currentChainName, setCurrentChainName] = useState<string | undefined>(currentChainNameFromAccount);

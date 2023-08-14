@@ -57,7 +57,6 @@ function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, s
                   bgcolor: 'success.main',
                   borderRadius: '50%',
                   color: 'white',
-                  // stroke: 'white',
                   fontSize: 0.4 * size,
                   left: `${size * 0.6}px`,
                   position: 'absolute',

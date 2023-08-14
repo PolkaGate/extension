@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { BalancesInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
