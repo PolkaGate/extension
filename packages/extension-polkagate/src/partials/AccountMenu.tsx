@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { faEdit, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
@@ -13,8 +13,9 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
-import { tieAccount } from '../messaging';
+import { tieAccount, windowOpen } from '../messaging';
 import getLogo from '../util/getLogo';
+import { IDENTITY_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -72,6 +73,10 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     address && chain && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
+  const _onManageId = useCallback(() => {
+    address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
+  }, [address]);
+
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container item justifyContent='center' my='20px' pl='8px'>
@@ -86,14 +91,20 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         onClick={_onManageProxies}
         text={t('Manage proxies')}
       />
+      <MenuItem
+        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        iconComponent={
+          <FontAwesomeIcon
+            color={(!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))) ? theme.palette.text.disabled : theme.palette.text.primary}
+            fontSize={19}
+            icon={faAddressCard}
+          />
+        }
+        onClick={_onManageId}
+        text={t('Manage identity')}
+      />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
-        // iconComponent={
-        //   <FontAwesomeIcon
-        //     color={theme.palette.text.primary}
-        //     icon={faFileExport}
-        //   />
-        // }
         iconComponent={
           <vaadin-icon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }
@@ -110,12 +121,6 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         />
       }
       <MenuItem
-        // iconComponent={
-        //   <FontAwesomeIcon
-        //     color={theme.palette.text.primary}
-        //     icon={faEdit}
-        //   />
-        // }
         iconComponent={
           <vaadin-icon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
         }

@@ -34,6 +34,7 @@ import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
+import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
@@ -218,6 +219,7 @@ export default function Popup(): React.ReactElement {
                             <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                             <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
                             <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
+                            <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
                             <Route exact path='/send/:address/'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
                             <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>

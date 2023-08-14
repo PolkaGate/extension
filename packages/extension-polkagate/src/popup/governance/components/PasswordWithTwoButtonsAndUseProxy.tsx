@@ -149,7 +149,7 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
               </Tooltip>
             }
           </Grid>
-          <Grid alignItems='center' container item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
+          <Grid alignItems='center' id='TwoButtons' container item sx={{ '> div': { m: 0, width: '100%' }, pt: '15px' }}>
             <TwoButtons
               disabled={!password || isPasswordError || primaryBtn || disabled}
               mt='8px'

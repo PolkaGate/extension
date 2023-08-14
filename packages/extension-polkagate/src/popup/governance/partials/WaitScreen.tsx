@@ -14,7 +14,7 @@ interface Props {
   showCube?: boolean;
 }
 
-function WaitScreen ({ defaultText, showCube = false }: Props): React.ReactElement {
+function WaitScreen({ defaultText, showCube = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [text, setText] = useState<string>(defaultText || t<string>('We are working on your transaction.'));
@@ -46,15 +46,15 @@ function WaitScreen ({ defaultText, showCube = false }: Props): React.ReactEleme
   }, [handleTxEvent]);
 
   return (
-    <Grid container justifyContent='center' py='50px'>
+    <Grid container direction='column' justifyContent='center' py='50px'>
       <Grid container height='50px' item pb='90px' pt='40px'>
         <Typography align='center' fontSize='22px' fontWeight={300} m='auto'>
           {text}
         </Typography>
       </Grid>
       {showCube
-        ? <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={135} style={{ opacity: '0.4' }} />
-        : <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} />
+        ? <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={135} style={{ opacity: '0.4', margin: 'auto' }} />
+        : <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} style={{ margin: 'auto' }} />
       }
       <Typography sx={{ fontSize: '18px', fontWeight: 300, m: 'auto', pt: '70px', px: '20px', textAlign: 'center', width: 'fit-content' }}>
         {t<string>('Please wait a few seconds and don’t close the window.')}

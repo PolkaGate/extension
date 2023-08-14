@@ -271,7 +271,7 @@ export default function Governance(): React.ReactElement {
 
   return (
     <>
-      <Header />
+      <Header page='governance'/>
       <Toolbar
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}

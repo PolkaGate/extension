@@ -17,42 +17,77 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
   useEffect(() => {
-    if (api?.isConnected && api._options?.provider?.endpoint === endpoint) {
+    if (!chain?.genesisHash || (api && api.isConnected && api._options.provider.endpoint === endpoint)) {
       return;
     }
 
-    if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const savedApis = apisContext.apis[chain.genesisHash];
+    const savedApi = apisContext?.apis[chain.genesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
-      const savedApi = savedApis.find((SApi) => SApi.endpoint === endpoint)?.api;
+    if (savedApi && savedApi.api && savedApi.api.isConnected) {
+      console.log(`♻ Using the saved API for ${chain.name} through this endpoint ${savedApi.api._options.provider.endpoint as string ?? ''}`);
+      setApi(savedApi.api);
 
-      if (savedApi?.isConnected) {
-        console.log(`♻ using the saved api for ${chain.name}`);
-
-        return setApi(savedApi);
-      }
-    }
-
-    if (!endpoint) {
       return;
     }
+
+    if (!endpoint || savedApi?.isRequested === true) {
+      console.log('API is already requested, waiting...');
+
+      return;
+    }
+
+    console.log('Initializing API connection...');
 
     const wsProvider = new WsProvider(endpoint);
 
-    ApiPromise.create({ provider: wsProvider }).then((api) => {
-      setApi(api);
+    ApiPromise.create({ provider: wsProvider })
+      .then((newApi) => {
+        console.log('API connection established successfully.');
+        setApi(newApi);
 
-      const prevApis = apisContext.apis[String(api.genesisHash.toHex())];
+        const toSaveApi = apisContext.apis[String(newApi.genesisHash.toHex())] ?? [];
 
-      if (prevApis && prevApis.length > 0) {
-        apisContext.apis[String(api.genesisHash.toHex())] = [{ api, endpoint }, ...prevApis];
-      } else {
-        apisContext.apis[String(api.genesisHash.toHex())] = [{ api, endpoint }];
+        const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
+
+        if (indexToDelete !== -1) {
+          toSaveApi.splice(indexToDelete, 1);
+        }
+
+        toSaveApi.push({
+          api: newApi,
+          endpoint,
+          isRequested: false
+        });
+
+        apisContext.apis[String(newApi.genesisHash.toHex())] = toSaveApi;
+        apisContext.setIt(apisContext.apis);
+      })
+      .catch((error) => {
+        console.error('API connection failed:', error);
+      });
+
+    const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
+
+    toSaveApi.push({ endpoint, isRequested: true });
+
+    apisContext.apis[chain.genesisHash] = toSaveApi;
+    apisContext.setIt(apisContext.apis);
+  }, [apisContext, endpoint, stateApi, chain, api?.isConnected, api]);
+
+  useEffect(() => {
+    const pollingInterval = setInterval(() => {
+      const savedApi = apisContext?.apis[chain?.genesisHash ?? '']?.find((sApi) => sApi.endpoint === endpoint);
+
+      if (savedApi?.api?.isConnected) {
+        console.log('API connection is ready, updating state.');
+
+        setApi(savedApi.api);
+        clearInterval(pollingInterval);
       }
+    }, 1000);
 
-      apisContext.setIt(apisContext.apis);
-    }).catch(console.error);
-  }, [apisContext, endpoint, stateApi, chain, api]);
+    return () => clearInterval(pollingInterval);
+  }, [apisContext, chain, endpoint]);
 
   return api;
 }
