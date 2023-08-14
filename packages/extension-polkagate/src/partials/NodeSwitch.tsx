@@ -17,7 +17,7 @@ interface Props {
   address: string | undefined;
 }
 
-type EndpointsDelay = { name: string, delay: number | undefined, value: string }[];
+type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
 function NodeSwitch({ address }: Props): React.ReactElement {
   const theme = useTheme();
@@ -31,6 +31,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
   const [api, setApi] = useState<ApiPromise | null | undefined>(null);
+  const [fetchedApiAndDelay, setFetchedApiAndDelay] = useState<{ fetchedApi: ApiPromise | null | undefined, fetchedDelay: number | undefined }>();
 
   const colors = {
     gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#4B4B4B',
@@ -65,26 +66,27 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   }, [api?._options?.provider?.endpoint, currentDelay, endpointUrl, sanitizedCurrentEndpointName]);
 
   useEffect(() => {
-    if (!sanitizedCurrentEndpointName || !currentDelay) {
-      return;
-    }
-
-    updateNodesList();
-  }, [currentDelay, sanitizedCurrentEndpointName, updateNodesList]);
-
-  useEffect(() => {
     if (!endpointOptions || endpointOptions.length === 0 || endpointsDelay) {
       return;
     }
 
-    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: undefined, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
+    const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
 
     setEndpointsDelay(mappedEndpoints);
-    updateNodesList();
   }, [endpointOptions, endpointsDelay, updateNodesList]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     setCurrentDelay(undefined);
+
+    setEndpointsDelay((prevEndpoints) => {
+      return prevEndpoints?.map((endpoint) => {
+        if (endpoint.value === newEndpoint) {
+          return { ...endpoint, delay: undefined };
+        }
+
+        return endpoint;
+      });
+    });
 
     chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
       const i = `${address}`;
@@ -100,6 +102,13 @@ function NodeSwitch({ address }: Props): React.ReactElement {
     });
   }, [address, chainName]);
 
+  useEffect(() => {
+    if (fetchedApiAndDelay?.fetchedApi._options.provider.endpoint === endpointUrl) {
+      setApi(fetchedApiAndDelay?.fetchedApi);
+      setCurrentDelay(fetchedApiAndDelay?.fetchedDelay);
+    }
+  }, [endpointUrl, fetchedApiAndDelay]);
+
   // useEffect(() => {
   //   endpointsDelay?.sort((a, b) => {
   //     if (a.name === sanitizedCurrentEndpointName) return -1;
@@ -113,8 +122,16 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   const calculateAndSetDelay = useCallback(() => {
     CalculateNodeDelay(endpointUrl)
       .then((response) => {
-        setApi(response.api);
-        setCurrentDelay(response.delay);
+        setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
+        setEndpointsDelay((prevEndpoints) => {
+          return prevEndpoints?.map((endpoint) => {
+            if (endpoint.value === response.api?._options?.provider?.endpoint) {
+              return { ...endpoint, delay: response.delay };
+            }
+
+            return endpoint;
+          });
+        });
       })
       .catch(console.error);
   }, [endpointUrl]);
@@ -136,10 +153,10 @@ function NodeSwitch({ address }: Props): React.ReactElement {
     };
   }, [api, calculateAndSetDelay]);
 
-  const NodeStatusIcon = ({ ms }: { ms: number | undefined }) => {
+  const NodeStatusIcon = ({ ms }: { ms: number | null | undefined }) => {
     return (
       <>
-        {ms !== undefined &&
+        {ms !== undefined && ms !== null &&
           (ms <= 100
             ? (
               <SignalCellularAltIcon
@@ -161,10 +178,10 @@ function NodeSwitch({ address }: Props): React.ReactElement {
     );
   };
 
-  const NodeStatusAndDelay = ({ endpointDelay, isSelected = false }: { endpointDelay: number | undefined, isSelected?: boolean }) => (
+  const NodeStatusAndDelay = ({ endpointDelay, isSelected = false }: { endpointDelay: number | null | undefined, isSelected?: boolean }) => (
     <Grid alignItems='center' container item sx={{ width: 'fit-content' }}>
       {<Typography color={endpointDelay ? statusColor(endpointDelay) : 'inherit'} fontSize='16px' fontWeight={isSelected ? 500 : 400} pr='10px'>
-        {endpointDelay ? `${endpointDelay} ms` : isSelected ? '- - - ms' : ''}
+        {endpointDelay ? `${endpointDelay} ms` : (endpointDelay === undefined || isSelected) ? '- - - ms' : ''}
       </Typography>}
       <Grid container height='35px' item position='relative' width='40px'>
         <SignalCellularAltIcon
@@ -176,7 +193,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   );
 
   const NodesList = () => (
-    <Grid container direction='column' item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '4px', display: 'block', minWidth: '275px', p: '6px 8px', width: 'fit-content' }}>
+    <Grid container direction='column' item sx={{ display: 'block', minWidth: '275px', p: '6px 8px', width: 'fit-content' }}>
       {endpointsDelay && endpointsDelay.length > 0 &&
         endpointsDelay.map((endpoint, index) => {
           const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
@@ -215,6 +232,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
         <NodeStatusIcon ms={currentDelay} />
       </Grid>
       <Popover
+        PaperProps={{ sx: { border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', py: '5px' } }}
         anchorEl={anchorEl}
         anchorOrigin={{
           horizontal: 'right',
