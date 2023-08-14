@@ -80,7 +80,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
 
     setEndpointsDelay((prevEndpoints) => {
       return prevEndpoints?.map((endpoint) => {
-        if (endpoint.value === newEndpoint) {
+        if (endpoint.value === newEndpoint && !endpoint.delay) {
           return { ...endpoint, delay: undefined };
         }
 
@@ -103,9 +103,9 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   }, [address, chainName]);
 
   useEffect(() => {
-    if (fetchedApiAndDelay?.fetchedApi._options.provider.endpoint === endpointUrl) {
-      setApi(fetchedApiAndDelay?.fetchedApi);
-      setCurrentDelay(fetchedApiAndDelay?.fetchedDelay);
+    if (fetchedApiAndDelay && fetchedApiAndDelay.fetchedApi && fetchedApiAndDelay.fetchedApi?._options?.provider?.endpoint === endpointUrl) {
+      setApi(fetchedApiAndDelay.fetchedApi);
+      setCurrentDelay(fetchedApiAndDelay.fetchedDelay);
     }
   }, [endpointUrl, fetchedApiAndDelay]);
 
@@ -132,6 +132,8 @@ function NodeSwitch({ address }: Props): React.ReactElement {
             return endpoint;
           });
         });
+
+        response.api.disconnect().catch(console.error);
       })
       .catch(console.error);
   }, [endpointUrl]);
