@@ -76,7 +76,7 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
   return (
     <>
       {!isModifying || toRemove
-        ? <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '10px 15px', position: 'relative' }}>
+        ? <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: noButtons ? '10px' : '2px', boxShadow: '2px 3px 4px 0px #0000001A', p: '10px 15px', position: 'relative' }}>
           <Grid alignItems='center' container item>
             <Grid alignItems='center' container item width='40%'>
               <Grid alignItems='center' container item xs={10}>
