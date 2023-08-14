@@ -104,7 +104,7 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
           sx={{
             bgcolor: 'transparent',
             borderRadius: '50%',
-            filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+            filter: CHAINS_WITH_BLACK_LOGO.includes(currentChainName ?? '') ? 'invert(1)' : '',
             height: '34px',
             m: 'auto',
             width: '34px'
