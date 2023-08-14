@@ -141,7 +141,6 @@ function Address({ address, className, genesisHash, isHardware, margin = '20px a
           <Identicon
             className='identityIcon'
             iconTheme={theme}
-            // onCopy={_onCopy}
             prefix={prefix}
             size={40}
             value={formatted || address}
