@@ -273,6 +273,7 @@ export default function Index(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
+      isSubId={!!identity?.displayParent}
       judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}

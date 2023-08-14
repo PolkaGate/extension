@@ -86,6 +86,7 @@ function Identity({ accountInfo, address, api, chain, direction = 'column', form
           <Grid item m='auto 0' pr='5px' width='fit-content'>
             <Identicon
               iconTheme={_chain?.icon ?? 'polkadot'}
+              isSubId={!!_accountInfo?.identity?.displayParent}
               judgement={judgement || _judgement}
               prefix={_chain?.ss58Format ?? 42}
               size={identiconSize}

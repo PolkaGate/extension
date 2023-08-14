@@ -158,6 +158,7 @@ export default function ManageIdentity(): React.ReactElement {
               riot: getRawValue(info.riot),
               twitter: getRawValue(info.twitter),
               web: getRawValue(info.web),
+              judgements
             };
 
             if (judgements.isEmpty) {

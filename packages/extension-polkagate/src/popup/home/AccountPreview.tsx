@@ -83,7 +83,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
         chain={chain}
         formatted={formatted || address}
         identiconTheme={identiconTheme}
-        judgements={identity?.judgements} // TODO: to fix the type issue
+        isSubId={!!identity?.displayParent}
+        judgements={identity?.judgements}
         prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}

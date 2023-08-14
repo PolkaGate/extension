@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -11,11 +13,12 @@ import { useTranslation } from '../../../components/translate';
 import DisplaySubId from './DisplaySubId';
 
 interface Props {
-  subIdAccounts: { address: string; name: string; }[];
+  judgements: RegistrationJudgement[];
   parentNameID: string;
+  subIdAccounts: { address: string; name: string; }[];
 }
 
-export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props): React.ReactElement {
+export default function SubIdsAccordion({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -30,6 +33,7 @@ export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props):
           <Grid container item rowGap='18px'>
             {subIdAccounts.map((id, index) => (
               <DisplaySubId
+                judgements={judgements}
                 key={index}
                 noButtons
                 parentName={parentNameID}

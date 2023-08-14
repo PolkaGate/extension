@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,13 +22,14 @@ interface Props {
   chain: Chain | null | undefined;
   formatted: string | undefined;
   identiconTheme: IconTheme;
-  judgements?: RegExpMatchArray | null | undefined
+  isSubId: boolean;
+  judgements?: RegistrationJudgement[] | undefined;
   prefix?: number;
   proxies: Proxy[] | undefined;
   recoverable?: boolean;
 }
 
-export default function AccountIcons({ chain, formatted, identiconTheme, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons({ chain, formatted, identiconTheme, isSubId, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -43,6 +45,7 @@ export default function AccountIcons({ chain, formatted, identiconTheme, judgeme
       <Grid item m='auto' width='fit-content'>
         <Identicon
           iconTheme={identiconTheme}
+          isSubId={isSubId}
           judgement={judgements}
           prefix={prefix}
           size={40}

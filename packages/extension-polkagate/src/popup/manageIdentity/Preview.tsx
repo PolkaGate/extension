@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faEdit, faEraser, faTasks, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEraser, faNetworkWired, faTasks } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -97,6 +97,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
       />
       {subIdAccounts && subIdAccounts.length > 0 && identity.display &&
         <SubIdsAccordion
+          judgements={identity.judgements}
           parentNameID={identity.display}
           subIdAccounts={subIdAccounts}
         />

@@ -23,10 +23,10 @@ export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
-  
+
   usePrices(chainNames); // get balances for all chains available in accounts
-  useMerkleScience(undefined, undefined, true);// to download the data file
-  
+  useMerkleScience(undefined, undefined, true);  // to download the data file
+
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
@@ -99,11 +99,6 @@ export default function Home(): React.ReactElement {
             <Container
               disableGutters
               sx={[{
-                // '> .tree:first-child': { border: 'none' },
-                // backgroundColor: 'background.paper',
-                // border: '0.5px solid',
-                // borderColor: 'secondary.light',
-                // borderRadius: '5px',
                 m: 'auto',
                 maxHeight: `${self.innerHeight - 165}px`,
                 mt: '10px',

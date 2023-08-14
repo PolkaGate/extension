@@ -136,6 +136,7 @@ export default function AccountDetails(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
+      isSubId={!!identity?.display}
       judgement={identity?.judgements}
       prefix={chain?.ss58Format ?? 42}
       size={40}
