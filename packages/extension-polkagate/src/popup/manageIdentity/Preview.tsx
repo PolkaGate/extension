@@ -109,7 +109,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faEdit}
             />
@@ -120,7 +120,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faEraser}
             />
@@ -139,7 +139,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
               }}
             />
             : <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faTasks}
             />
@@ -152,7 +152,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faNetworkWired}
             />
