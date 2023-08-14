@@ -15,7 +15,7 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
+import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
@@ -269,7 +269,7 @@ export default function ManageIdentity(): React.ReactElement {
               const subsNameToHuman = subsNameFetched.toHuman();
               const subName = subsNameToHuman[1].Raw as unknown as string;
 
-              return { address: subAddr, name: subName };
+              return { address: subAddr, name: isHex(subName) ? hexToString(subName) : subName };
             })
           );
 
