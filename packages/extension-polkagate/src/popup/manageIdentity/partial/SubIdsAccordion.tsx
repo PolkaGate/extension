@@ -26,8 +26,8 @@ export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props):
             {t<string>('Sub Identities')}
           </Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <Grid container item rowGap='15px'>
+        <AccordionDetails sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)' }}>
+          <Grid container item rowGap='18px'>
             {subIdAccounts.map((id, index) => (
               <DisplaySubId
                 key={index}
