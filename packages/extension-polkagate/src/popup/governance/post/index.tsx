@@ -124,7 +124,7 @@ export default function ReferendumPost(): React.ReactElement {
 
   return (
     <>
-      <Header />
+      <Header page='governance' />
       <Toolbar
         decidingCounts={decidingCounts}
         menuOpen={menuOpen}
