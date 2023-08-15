@@ -109,15 +109,6 @@ function NodeSwitch({ address }: Props): React.ReactElement {
     }
   }, [endpointUrl, fetchedApiAndDelay]);
 
-  // useEffect(() => {
-  //   endpointsDelay?.sort((a, b) => {
-  //     if (a.name === sanitizedCurrentEndpointName) return -1;
-  //     if (b.name === sanitizedCurrentEndpointName) return 1;
-
-  //     return 0;
-  //   });
-  // }, [endpointsDelay, sanitizedCurrentEndpointName]);
-
   // Function to calculate node delay and update state
   const calculateAndSetDelay = useCallback(() => {
     CalculateNodeDelay(endpointUrl)
@@ -195,14 +186,14 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   );
 
   const NodesList = () => (
-    <Grid container direction='column' item sx={{ display: 'block', minWidth: '275px', p: '6px 8px', width: 'fit-content' }}>
+    <Grid container direction='column' item sx={{ display: 'block', minWidth: '275px', py: '6px', width: 'fit-content' }}>
       {endpointsDelay && endpointsDelay.length > 0 &&
         endpointsDelay.map((endpoint, index) => {
           const selectedEndpoint = endpoint.name === sanitizedCurrentEndpointName;
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
-            <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', borderRadius: '5px', cursor: 'pointer', my: '3px', px: '5px', width: '100%' }}>
+            <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
               <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400}>
                 {endpoint.name}
               </Typography>
