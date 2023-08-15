@@ -39,7 +39,7 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
     , [onAction, page, postId, topMenu]);
 
   return (
-    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#180710', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
+    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px' }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
         <Grid alignItems='center' container justifyContent='space-between'>
           <Grid alignItems='center' container item justifyContent='flex-start' sx={{ color: 'white', fontFamily: 'Eras' }} xs={6}>
