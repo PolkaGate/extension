@@ -5,7 +5,7 @@
 
 import { Groups as FellowshipIcon, HowToVote as ReferendaIcon } from '@mui/icons-material/';
 import { Button, ClickAwayListener, Container, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { useApi, useTranslation } from '../../hooks';
