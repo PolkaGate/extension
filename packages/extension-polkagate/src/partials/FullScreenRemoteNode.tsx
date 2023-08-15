@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
-import { Grid, Popover, Typography, useTheme } from '@mui/material';
+import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -174,7 +174,14 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const NodeStatusAndDelay = ({ endpointDelay, isSelected = false }: { endpointDelay: number | null | undefined, isSelected?: boolean }) => (
     <Grid alignItems='center' container item sx={{ width: 'fit-content' }}>
       {<Typography color={endpointDelay ? statusColor(endpointDelay) : 'inherit'} fontSize='16px' fontWeight={isSelected ? 500 : 400} pr='10px'>
-        {endpointDelay ? `${endpointDelay} ms` : (endpointDelay === undefined || isSelected) ? '- - - ms' : ''}
+        {endpointDelay
+          ? `${endpointDelay} ms`
+          : (endpointDelay === undefined || isSelected)
+            ? <Skeleton
+              height='20px'
+              sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '55px', mt: '5px' }}
+            />
+            : ''}
       </Typography>}
       <Grid container height='35px' item position='relative' width='40px'>
         <SignalCellularAltIcon
