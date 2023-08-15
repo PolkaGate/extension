@@ -19,6 +19,17 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   useEffect(() => {
     if (!chain?.genesisHash || (api && api.isConnected && api._options.provider.endpoint === endpoint)) {
       return;
+    } else if (api && api._options.provider.endpoint !== endpoint) {
+      const toSaveApi = apisContext.apis[String(api.genesisHash.toHex())] ?? [];
+
+      const index = toSaveApi.findIndex((sApi) => sApi.endpoint === api._options.provider.endpoint);
+
+      if (index !== -1) {
+        toSaveApi[index].inUse = false;
+
+        apisContext.apis[String(api.genesisHash.toHex())] = toSaveApi;
+        apisContext.setIt(apisContext.apis);
+      }
     }
 
     const savedApi = apisContext?.apis[chain.genesisHash]?.find((sApi) => sApi.endpoint === endpoint);
@@ -30,7 +41,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    if (!endpoint || savedApi?.isRequested === true) {
+    if (!endpoint || (savedApi && !savedApi.api)) {
       console.log('API is already requested, waiting...');
 
       return;
@@ -56,7 +67,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
         toSaveApi.push({
           api: newApi,
           endpoint,
-          isRequested: false
+          inUse: true
         });
 
         apisContext.apis[String(newApi.genesisHash.toHex())] = toSaveApi;
@@ -68,7 +79,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
 
-    toSaveApi.push({ endpoint, isRequested: true });
+    toSaveApi.push({ endpoint });
 
     apisContext.apis[chain.genesisHash] = toSaveApi;
     apisContext.setIt(apisContext.apis);
