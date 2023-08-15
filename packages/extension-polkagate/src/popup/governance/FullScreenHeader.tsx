@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
-import { ChangeNetwork, NodeSwitch } from '../../partials';
+import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
 import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
@@ -64,10 +64,10 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
               />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
-              <ChangeNetwork address={address} chains={filteredChains} />
+              <FullScreenChainSwitch address={address} chains={filteredChains} />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
-              <NodeSwitch
+              <FullScreenRemoteNode
                 address={address}
               />
             </Grid>

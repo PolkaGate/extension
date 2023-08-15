@@ -19,7 +19,7 @@ interface Props {
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function NodeSwitch({ address }: Props): React.ReactElement {
+function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const theme = useTheme();
   const account = useAccount(address);
   const genesisHash = account?.genesisHash;
@@ -34,7 +34,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   const [fetchedApiAndDelay, setFetchedApiAndDelay] = useState<{ fetchedApi: ApiPromise | null | undefined, fetchedDelay: number | undefined }>();
 
   const colors = {
-    gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#4B4B4B',
+    gray: theme.palette.mode === 'main' ? '#E8E0E5' : '#4B4B4B',
     green: '#1F7720',
     orange: '#FF5722',
     red: '#C70000'
@@ -218,14 +218,16 @@ function NodeSwitch({ address }: Props): React.ReactElement {
 
   return (
     <>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: '42px', position: 'relative', width: '42px', zIndex: 10 }}>
+      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', height: '42px', position: 'relative', width: '42px', zIndex: 10 }}>
         <SignalCellularAltIcon
           sx={{ bottom: '2px', color: colors.gray, fontSize: '35px', left: '2px', position: 'absolute' }}
         />
         <NodeStatusIcon ms={currentDelay} />
       </Grid>
       <Popover
-        PaperProps={{ sx: { border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', py: '5px' } }}
+        PaperProps={{
+          sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '7px', boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', py: '5px' }
+        }}
         anchorEl={anchorEl}
         anchorOrigin={{
           horizontal: 'right',
@@ -246,4 +248,4 @@ function NodeSwitch({ address }: Props): React.ReactElement {
   );
 }
 
-export default React.memo(NodeSwitch);
+export default React.memo(FullScreenRemoteNode);

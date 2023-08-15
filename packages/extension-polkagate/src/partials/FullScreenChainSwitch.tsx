@@ -18,7 +18,7 @@ interface Props {
   chains: string[];
 }
 
-function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
+function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const genesisHashes = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
@@ -98,7 +98,7 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
 
   return (
     <Grid container item>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
+      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
         <Avatar
           src={getLogo(currentChainName)}
           sx={{
@@ -112,7 +112,9 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
         />
       </Grid>
       <Popover
-        PaperProps={{ sx: { border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', py: '5px' } }}
+        PaperProps={{
+          sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '7px', boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', py: '5px' }
+        }}
         anchorEl={anchorEl}
         anchorOrigin={{
           horizontal: 'right',
@@ -133,4 +135,4 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
   );
 }
 
-export default React.memo(ChangeNetwork);
+export default React.memo(FullScreenChainSwitch);

@@ -12,5 +12,5 @@ export { default as WaitScreen } from './WaitScreen';
 export { default as SubTitle } from './SubTitle';
 export { default as ThroughProxy } from './ThroughProxy';
 export { default as Confirmation } from './Confirmation';
-export { default as ChangeNetwork } from './ChangeNetwork';
-export { default as NodeSwitch } from './NodeSwitch';
+export { default as FullScreenChainSwitch } from './FullScreenChainSwitch';
+export { default as FullScreenRemoteNode } from './FullScreenRemoteNode';
