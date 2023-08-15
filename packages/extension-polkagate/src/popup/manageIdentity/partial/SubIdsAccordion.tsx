@@ -13,7 +13,7 @@ import { useTranslation } from '../../../components/translate';
 import DisplaySubId from './DisplaySubId';
 
 interface Props {
-  judgements: RegistrationJudgement[];
+  judgements: RegExpMatchArray | null;
   parentNameID: string;
   subIdAccounts: { address: string; name: string; }[];
 }

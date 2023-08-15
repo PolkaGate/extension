@@ -59,10 +59,9 @@ export default function Index(): React.ReactElement {
   const balances = useBalances(address, refresh, setRefresh);
   const identity = useMyAccountIdentity(address);
 
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
   const token = useToken(address);
   const decimal = useDecimal(address);
-
-  // const staked = useMemo(() => !pool?.member?.points ? undefined : pool.member.points === 0 ? BN_ZERO : (new BN(String(pool.member.points)).mul(new BN(String(pool.stashIdAccount.stakingLedger.active)))).div(new BN(String(pool.bondedPool.points ?? BN_ONE))), [pool]);
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
@@ -274,7 +273,7 @@ export default function Index(): React.ReactElement {
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
       isSubId={!!identity?.displayParent}
-      judgement={identity?.judgements}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}

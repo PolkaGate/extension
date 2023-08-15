@@ -63,6 +63,7 @@ export default function Index(): React.ReactElement {
   const identity = useMyAccountIdentity(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   const role = useCallback((): string =>
     String(stakingAccount?.controllerId) === String(stakingAccount?.stashId)
@@ -281,7 +282,7 @@ export default function Index(): React.ReactElement {
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
       isSubId={!!identity?.displayParent}
-      judgement={identity?.judgements}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={String(formatted)}

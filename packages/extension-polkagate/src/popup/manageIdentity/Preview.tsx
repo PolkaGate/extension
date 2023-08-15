@@ -39,6 +39,7 @@ interface ManageButtonProps {
 export default function PreviewIdentity({ api, identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   const ManageButton = ({ icon, onClick, title }: ManageButtonProps) => (
     <Grid alignItems='center' container item onClick={onClick} sx={{ bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', py: '17px', width: '24%' }}>
@@ -97,7 +98,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
       />
       {subIdAccounts && subIdAccounts.length > 0 && identity.display &&
         <SubIdsAccordion
-          judgements={identity.judgements}
+          judgements={_judgement}
           parentNameID={identity.display}
           subIdAccounts={subIdAccounts}
         />

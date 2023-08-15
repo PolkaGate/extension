@@ -16,7 +16,7 @@ interface Props {
   className?: string;
   iconTheme?: IconTheme | string;
   isSubId?: boolean;
-  judgement?: RegistrationJudgement[] | null;
+  judgement?: RegExpMatchArray | null | undefined;
   onCopy?: () => void;
   prefix?: number;
   size: number;

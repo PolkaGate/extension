@@ -25,7 +25,7 @@ interface Props {
   api?: ApiPromise | undefined;
   error?: boolean;
   index?: number;
-  judgements?: RegistrationJudgement[];
+  judgements?: RegExpMatchArray | null;
   noButtons?: boolean;
   onRemove?: (index: number | undefined) => void;
   parentName: string;

@@ -70,6 +70,7 @@ export default function CrowdLoans(): React.ReactElement {
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
   const [itemShow, setItemShow] = useState<number>(0);
 
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
   const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
   const sortingCrowdloansReverse = (a: Crowdloan, b: Crowdloan) => Number(b.fund.paraId) - Number(a.fund.paraId);// newest first
   const activeCrowdloans = useMemo(() => {
@@ -231,7 +232,7 @@ export default function CrowdLoans(): React.ReactElement {
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
       isSubId={!!identity?.displayParent}
-      judgement={identity?.judgements}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}

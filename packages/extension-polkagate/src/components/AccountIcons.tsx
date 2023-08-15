@@ -23,7 +23,7 @@ interface Props {
   formatted: string | undefined;
   identiconTheme: IconTheme;
   isSubId: boolean;
-  judgements?: RegistrationJudgement[] | undefined;
+  judgements?: RegExpMatchArray | null | undefined;
   prefix?: number;
   proxies: Proxy[] | undefined;
   recoverable?: boolean;

@@ -37,11 +37,13 @@ export default function Others({ address, balances, chain, identity, setShow, sh
   const formatted = useFormatted(address);
   const accountName = useAccountName(address);
 
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
+
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
       isSubId={!!identity?.displayParent}
-      judgement={identity?.judgements}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}
