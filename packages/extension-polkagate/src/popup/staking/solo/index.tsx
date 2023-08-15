@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { BalancesInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -63,6 +63,7 @@ export default function Index(): React.ReactElement {
   const identity = useMyAccountIdentity(address);
   const token = useToken(address);
   const decimal = useDecimal(address);
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   const role = useCallback((): string =>
     String(stakingAccount?.controllerId) === String(stakingAccount?.stashId)
@@ -280,7 +281,8 @@ export default function Index(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
-      judgement={identity?.judgements}
+      isSubId={!!identity?.displayParent}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={String(formatted)}

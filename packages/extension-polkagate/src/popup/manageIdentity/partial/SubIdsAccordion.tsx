@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -11,16 +13,17 @@ import { useTranslation } from '../../../components/translate';
 import DisplaySubId from './DisplaySubId';
 
 interface Props {
-  subIdAccounts: { address: string; name: string; }[];
+  judgements: RegExpMatchArray | null;
   parentNameID: string;
+  subIdAccounts: { address: string; name: string; }[];
 }
 
-export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props): React.ReactElement {
+export default function SubIdsAccordion({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
     <Grid container item sx={{ display: 'block', pt: '15px' }}>
-      <Accordion disableGutters sx={{ bgcolor: 'transparent', backgroundImage: 'none', boxShadow: 'none' }}>
+      <Accordion disableGutters sx={{ backgroundImage: 'none', bgcolor: 'transparent', boxShadow: 'none' }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.light', fontSize: '40px' }} />} sx={{ '> .MuiAccordionSummary-content': { m: 0 }, borderBottom: '2px solid', borderBottomColor: '#D5CCD0', m: 0, p: 0 }}>
           <Typography fontSize='22px' fontWeight={700}>
             {t<string>('Sub Identities')}
@@ -30,6 +33,7 @@ export default function SubIdsAccordion({ parentNameID, subIdAccounts }: Props):
           <Grid container item rowGap='18px'>
             {subIdAccounts.map((id, index) => (
               <DisplaySubId
+                judgements={judgements}
                 key={index}
                 noButtons
                 parentName={parentNameID}

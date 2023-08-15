@@ -45,6 +45,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const identity = useMyAccountIdentity(address);
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -83,7 +84,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isHi
         chain={chain}
         formatted={formatted || address}
         identiconTheme={identiconTheme}
-        judgements={identity?.judgements} // TODO: to fix the type issue
+        isSubId={!!identity?.displayParent}
+        judgements={_judgement}
         prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}

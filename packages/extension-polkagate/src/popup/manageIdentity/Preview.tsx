@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faEdit, faEraser, faTasks, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEraser, faNetworkWired, faTasks } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -39,6 +39,7 @@ interface ManageButtonProps {
 export default function PreviewIdentity({ api, identity, judgement, setIdentityToSet, setMode, setStep, subIdAccounts, totalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   const ManageButton = ({ icon, onClick, title }: ManageButtonProps) => (
     <Grid alignItems='center' container item onClick={onClick} sx={{ bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', py: '17px', width: '24%' }}>
@@ -46,7 +47,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         {icon}
       </Grid>
       <Grid container item justifyContent='center' pt='8px'>
-        <Typography fontSize='18px' fontWeight={500} color={theme.palette.mode === 'dark' && 'secondary.main'}>
+        <Typography color={theme.palette.mode === 'dark' && 'secondary.main'} fontSize='18px' fontWeight={500}>
           {title}
         </Typography>
       </Grid>
@@ -97,6 +98,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
       />
       {subIdAccounts && subIdAccounts.length > 0 && identity.display &&
         <SubIdsAccordion
+          judgements={_judgement}
           parentNameID={identity.display}
           subIdAccounts={subIdAccounts}
         />
@@ -108,7 +110,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faEdit}
             />
@@ -119,7 +121,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faEraser}
             />
@@ -138,7 +140,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
               }}
             />
             : <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faTasks}
             />
@@ -151,7 +153,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.text.primary}
+              color={ theme.palette.secondary.main }
               fontSize='44px'
               icon={faNetworkWired}
             />

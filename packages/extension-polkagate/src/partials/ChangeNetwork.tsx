@@ -6,7 +6,6 @@
 
 import { Avatar, Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
@@ -21,7 +20,6 @@ interface Props {
 
 function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const { pathname } = useLocation();
   const genesisHashes = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
   const [currentChainName, setCurrentChainName] = useState<string | undefined>(currentChainNameFromAccount);
@@ -74,7 +72,7 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
-            <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(sanitizeChainName)} sx={{ ':hover': { bgcolor: 'rgba(24, 7, 16, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', px: '15px' }}>
+            <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(sanitizeChainName)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', px: '15px' }}>
               <Grid alignItems='center' container item width='fit-content'>
                 <Typography fontSize='16px' fontWeight={selectedNetwork ? 400 : 300}>
                   {genesisHash.text}
@@ -106,7 +104,7 @@ function ChangeNetwork({ address, chains }: Props): React.ReactElement<Props> {
           sx={{
             bgcolor: 'transparent',
             borderRadius: '50%',
-            filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '',
+            filter: CHAINS_WITH_BLACK_LOGO.includes(currentChainName ?? '') ? 'invert(1)' : '',
             height: '34px',
             m: 'auto',
             width: '34px'

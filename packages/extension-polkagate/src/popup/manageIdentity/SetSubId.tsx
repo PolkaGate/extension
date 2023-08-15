@@ -195,22 +195,17 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
     <>
       <Grid container item sx={{ display: 'block', maxWidth: '840px', position: 'relative', px: '10%' }}>
         <Typography fontSize='22px' fontWeight={700} pb={(subIdAccounts || subIdsLength > 0) ? '10px' : '45px'} pt='30px'>
-          {t<string>('Set on-chain Sub-identity')}
+          {t<string>('Set on-chain Sub-identity(ies)')}
         </Typography>
         {!subIdAccounts && subIdsLength === 0 &&
           <Typography fontSize='14px' fontWeight={400}>
-            {t<string>('With Sub-Identities, you can create multiple identities for privacy, security, and control. Sub-identity accounts inherit features from their parent account, such as the name and parent\'s indicators. Separate personal and business transactions, manage diverse projects, and enjoy the benefits of compartmentalization with Sub-Identities.')}
+            {t<string>('With Sub-Identities, you can create multiple identities for privacy, security, and control. Sub-identity accounts inherit features from their parent account, such as the name and parent\'s indicators. Separate personal and business transactions, manage diverse projects, and enjoy the benefits of compartmentalization with Sub-Identities (up to {{maxSubAccounts}} per account).', { replace: { maxSubAccounts } })}
           </Typography>
         }
         <Grid container item justifyContent='space-between' mb={toRemoveSubs ? 0 : '15px'} mt='15px'>
           <AddSubIdButton />
           {(subIdAccounts || subIdsLength > 0) &&
             <Grid container direction='column' item sx={{ width: 'fit-content' }}>
-              <Grid container item justifyContent='flex-end'>
-                <Typography fontSize='20px'>
-                  {`${subIdsLength ?? 0} of ${maxSubAccounts ?? 0}`}
-                </Typography>
-              </Grid>
               <Grid container item width='fit-content'>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('Deposit:')}

@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForward as ArrowForwardIcon, Replay as UndoIcon } from '@mui/icons-material';
@@ -19,17 +21,18 @@ import { getSubstrateAddress } from '../../../util/utils';
 import SubIdForm from './SubIdForm';
 
 interface Props {
+  addressesToSelect?: string[];
   api?: ApiPromise | undefined;
-  subIdInfo: { address: string | undefined; name: string | undefined; status?: 'current' | 'new' | 'remove' }
-  parentName: string;
+  error?: boolean;
+  index?: number;
+  judgements?: RegExpMatchArray | null;
   noButtons?: boolean;
   onRemove?: (index: number | undefined) => void;
-  index?: number;
+  parentName: string;
+  subIdInfo: { address: string | undefined; name: string | undefined; status?: 'current' | 'new' | 'remove' }
   setSubName?: (subName: string | null | undefined, index: number | undefined) => void;
   setSubAddress?: (address: string | null | undefined, index: number | undefined) => void;
   toModify?: boolean;
-  error?: boolean;
-  addressesToSelect?: string[];
 }
 
 interface ManageButtonProps {
@@ -39,7 +42,7 @@ interface ManageButtonProps {
   style?: SxProps<Theme> | undefined
 }
 
-export default function DisplaySubId({ addressesToSelect, api, error = false, index, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
+export default function DisplaySubId({ addressesToSelect, api, error = false, index, judgements, noButtons = false, onRemove, parentName, setSubAddress, setSubName, subIdInfo, toModify = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams<{ address: string }>();
@@ -103,6 +106,8 @@ export default function DisplaySubId({ addressesToSelect, api, error = false, in
               <Grid container item xs={1}>
                 <Identicon
                   iconTheme={chain?.icon ?? 'polkadot'}
+                  isSubId={!!parentName}
+                  judgement={judgements}
                   prefix={chain?.ss58Format ?? 42}
                   size={31}
                   value={subIdInfo.address}

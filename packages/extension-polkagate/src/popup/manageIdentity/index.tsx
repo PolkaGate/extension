@@ -15,12 +15,12 @@ import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
+import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Warning } from '../../components';
 import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
-import { Header } from '../governance/Header';
+import { FullScreenHeader } from '../governance/FullScreenHeader';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
 import Review from './Review';
@@ -158,6 +158,7 @@ export default function ManageIdentity(): React.ReactElement {
               riot: getRawValue(info.riot),
               twitter: getRawValue(info.twitter),
               web: getRawValue(info.web),
+              judgements
             };
 
             if (judgements.isEmpty) {
@@ -269,7 +270,7 @@ export default function ManageIdentity(): React.ReactElement {
               const subsNameToHuman = subsNameFetched.toHuman();
               const subName = subsNameToHuman[1].Raw as unknown as string;
 
-              return { address: subAddr, name: subName };
+              return { address: subAddr, name: isHex(subName) ? hexToString(subName) : subName };
             })
           );
 
@@ -312,7 +313,7 @@ export default function ManageIdentity(): React.ReactElement {
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
-      <Header page='manageIdentity' />
+      <FullScreenHeader page='manageIdentity' />
       <Grid container item justifyContent='center' sx={{ bgcolor: contentBgColor, height: 'calc(100vh - 70px)', maxWidth: '840px', overflow: 'scroll' }}>
         {step === STEPS.CHECK_SCREEN &&
           <IdentityCheckProgress />
