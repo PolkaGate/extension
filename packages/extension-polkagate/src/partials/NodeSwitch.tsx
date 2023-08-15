@@ -203,7 +203,7 @@ function NodeSwitch({ address }: Props): React.ReactElement {
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', borderRadius: '5px', cursor: 'pointer', my: '3px', px: '5px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 400 : 300}>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400}>
                 {endpoint.name}
               </Typography>
               <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
