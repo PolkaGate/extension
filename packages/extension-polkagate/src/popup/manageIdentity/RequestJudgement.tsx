@@ -16,6 +16,7 @@ import { useChain, useChainName } from '../../hooks';
 import { REGISTRARS_LIST } from '../../util/constants';
 import { DropdownOption } from '../../util/types';
 import { IdJudgement, Mode, STEPS } from '.';
+import DisplayIdentity from './component/DisplayIdentity';
 
 interface Props {
   address: string;
@@ -94,24 +95,6 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
     setMaxFeeValue(registrar?.fee);
   }, [registrarsList, registrarsMaxFee, selectedRegistrar, setMaxFeeValue, setSelectedRegistrarName]);
 
-  const DisplayIdentity = () => (
-    <Grid container item py='15px'>
-      <Typography fontSize='16px' fontWeight={400}>
-        {t<string>('Identity')}
-      </Typography>
-      <Grid container item sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', p: '8px 12px' }}>
-        <Identity
-          address={address}
-          api={api}
-          chain={chain}
-          identiconSize={25}
-          showSocial
-          style={{ fontSize: '16px' }}
-        />
-      </Grid>
-    </Grid>
-  );
-
   const selectRegistrar = useCallback((value: string | number) => {
     setSelectedRegistrar(value);
   }, [setSelectedRegistrar]);
@@ -136,7 +119,11 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
       <Typography fontSize='14px' fontWeight={400}>
         {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
       </Typography>
-      <DisplayIdentity />
+      <DisplayIdentity
+        address={address}
+        api={api}
+        chain={chain}
+      />
       <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
         <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>
           <Select
