@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router';
 
+import { ApiPromise } from '@polkadot/api';
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
@@ -92,6 +93,8 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
   };
 }
 
+export type APIContextType = { [key: string]: { api?: ApiPromise | undefined; endpoint?: string | undefined; inUse?: boolean; }[]; };
+
 export default function Popup(): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
@@ -102,8 +105,9 @@ export default function Popup(): React.ReactElement {
   const [signRequests, setSignRequests] = useState<null | SigningRequest[]>(null);
   const [isWelcomeDone, setWelcomeDone] = useState(false);
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
-  const [apis, setApis] = useState<APIs>({});
+  const [apis, setApis] = useState<APIContextType>({});
   const [fetching, setFetching] = useState<Fetching>({});
+  const [disconnectApi, setDisconnectApi] = useState<boolean>(false);
 
   /** To save current page url */
   // if (window.location.hash !== '#/') {
@@ -128,7 +132,7 @@ export default function Popup(): React.ReactElement {
     setFetching(change);
   }, []);
 
-  const setIt = useCallback((change: APIs) => {
+  const setIt = useCallback((change: APIContextType) => {
     setApis(change);
   }, []);
 
@@ -142,6 +146,46 @@ export default function Popup(): React.ReactElement {
     },
     []
   );
+
+  useEffect(() => {
+    if (disconnectApi) {
+      return;
+    }
+
+    setDisconnectApi(true);
+
+    setTimeout(() => {
+      if (!apis) {
+        return undefined;
+      }
+
+      console.log('apis beeefooooore:', apis);
+
+      for (const key in apis) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (apis.hasOwnProperty(key)) {
+          const value = apis[key];
+          const unusedAPIs = value.filter((api) => api.inUse === false);
+
+          unusedAPIs.forEach((unusedAPI, index) => {
+            unusedAPI.api?.disconnect().catch(console.error);
+            const toSaveApi = apis[String(unusedAPI.api?.genesisHash?.toHex())] ?? [];
+
+            toSaveApi.splice(index, 1);
+
+            apis[String(unusedAPI.api?.genesisHash.toHex())] = toSaveApi;
+            setIt(apis);
+          });
+        }
+      }
+
+      console.log('apis afteeeerrr:', apis);
+
+      setDisconnectApi(false);
+    }, 30000);
+
+    console.log('outside:', disconnectApi);
+  }, [apis, disconnectApi, setIt]);
 
   useEffect((): void => {
     Promise.all([
