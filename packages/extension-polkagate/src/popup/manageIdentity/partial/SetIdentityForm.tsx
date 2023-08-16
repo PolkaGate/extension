@@ -87,7 +87,7 @@ export default function SetIdentityForm ({ discord, display, email, identity, le
       />
       <IdentityInfoInput
         icon={
-          <Box component='img' src={riotIcon as string} sx={{ height: '25px', mb: '2px', width: '25px' }} />
+          <Box component='img' src={riotIcon as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
         setter={setRiot}
         title={t<string>('Element')}

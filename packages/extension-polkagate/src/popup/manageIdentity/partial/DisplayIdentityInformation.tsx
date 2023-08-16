@@ -90,7 +90,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
       />
       <IdentityItems
         icon={
-          <Box component='img' src={riot as string} sx={{ height: '25px', mb: '2px', width: '25px' }} />
+          <Box component='img' src={riot as string} sx={{ height: '30px', mb: '2px', width: '30px' }} />
         }
         title={t<string>('Element')}
         value={identity.riot ?? null}

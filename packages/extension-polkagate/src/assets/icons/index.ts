@@ -3,7 +3,7 @@
 
 export { default as checkBox } from './checkBox.svg';
 export { default as checkedBox } from './checkedBox.svg';
-export { default as riot } from './riot.png';
+export { default as riot } from './riot.svg';
 export { default as upload } from './upload.png';
 export { default as subscan } from './subscan.svg';
 export { default as twoItemCurveBackgroundBlack } from './twoItemCurveBackgroundBlack.svg';
