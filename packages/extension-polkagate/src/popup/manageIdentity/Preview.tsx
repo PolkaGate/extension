@@ -133,7 +133,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
           icon={judgement && judgement !== 'FeePaid'
             ? <CheckCircleOutlineIcon
               sx={{
-                bgcolor: 'success.main',
+                bgcolor: 'secondary.main',
                 borderRadius: '50%',
                 color: 'white',
                 fontSize: 44
