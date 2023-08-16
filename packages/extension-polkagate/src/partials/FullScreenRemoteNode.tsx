@@ -24,6 +24,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const account = useAccount(address);
   const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
+
   const endpointUrl = useEndpoint2(address);
   const chainName = useChainName(address);
 
@@ -34,7 +35,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const [fetchedApiAndDelay, setFetchedApiAndDelay] = useState<{ fetchedApi: ApiPromise | null | undefined, fetchedDelay: number | undefined }>();
 
   const colors = {
-    gray: theme.palette.mode === 'main' ? '#E8E0E5' : '#4B4B4B',
+    gray: theme.palette.mode === 'light' ? '#E8E0E5' : '#747474',
     green: '#1F7720',
     orange: '#FF5722',
     red: '#C70000'
@@ -51,7 +52,8 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
       ? colors.green
       : ms <= 300
         ? colors.orange
-        : colors.red, [colors.green, colors.orange, colors.red]);
+        : colors.red,
+    [colors.green, colors.orange, colors.red]);
 
   const updateNodesList = useCallback(() => {
     setEndpointsDelay((prevEndpoints) => {
