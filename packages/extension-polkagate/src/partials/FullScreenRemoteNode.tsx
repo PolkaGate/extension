@@ -47,35 +47,23 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
     return currentEndpointName?.replace(/^via\s/, '');
   }, [endpointOptions, endpointUrl]);
 
-  const statusColor = useCallback((ms: number) =>
+  const statusColor = useCallback((ms: number) => (
     ms <= 100
       ? colors.green
       : ms <= 300
         ? colors.orange
-        : colors.red,
-    [colors.green, colors.orange, colors.red]);
-
-  const updateNodesList = useCallback(() => {
-    setEndpointsDelay((prevEndpoints) => {
-      return prevEndpoints?.map((endpoint) => {
-        if (endpoint.name === sanitizedCurrentEndpointName) {
-          return { ...endpoint, delay: api?._options?.provider?.endpoint === endpointUrl ? currentDelay : undefined };
-        }
-
-        return endpoint;
-      });
-    });
-  }, [api?._options?.provider?.endpoint, currentDelay, endpointUrl, sanitizedCurrentEndpointName]);
+        : colors.red
+  ), [colors.green, colors.orange, colors.red]);
 
   useEffect(() => {
-    if (!endpointOptions || endpointOptions.length === 0 || endpointsDelay) {
+    if (!endpointOptions || endpointOptions.length === 0) {
       return;
     }
 
     const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
 
     setEndpointsDelay(mappedEndpoints);
-  }, [endpointOptions, endpointsDelay, updateNodesList]);
+  }, [endpointOptions]);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     setCurrentDelay(undefined);
@@ -181,7 +169,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
           : (endpointDelay === undefined || isSelected)
             ? <Skeleton
               height='20px'
-              sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '55px', mt: '5px' }}
+              sx={{ display: 'inline-block', fontWeight: 'bold', mt: '5px', transform: 'none', width: '55px' }}
             />
             : ''}
       </Typography>}
@@ -203,7 +191,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
           return (
             // eslint-disable-next-line react/jsx-no-bind
             <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => _onChangeEndpoint(endpoint.value)} py='5px' sx={{ ':hover': { bgcolor: 'rgba(186, 40, 130, 0.1)' }, bgcolor: selectedEndpoint ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', my: '3px', px: '15px', width: '100%' }}>
-              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400}>
+              <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} pr='10px'>
                 {endpoint.name}
               </Typography>
               <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
