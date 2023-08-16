@@ -11,7 +11,7 @@ Polkagate extension not only has all the abilities of the original Polkadot exte
 ## New functionalities
 
 Currently, the following features are available:
-  - Add address only account ( to be used as a watch only and proxied address) 
+  - Add watch-only account ( can be used as a proxied address) 
   - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
   - Staking (Solo and Pool Staking)
   - Proxy management

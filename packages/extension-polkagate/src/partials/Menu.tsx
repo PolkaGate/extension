@@ -5,8 +5,6 @@
 
 import '@vaadin/icons';
 
-import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon, Email as EmailIcon, Language as LanguageIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Link, Typography } from '@mui/material';
 import { keyframes, Theme } from '@mui/material/styles';
@@ -137,10 +135,6 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                // <FontAwesomeIcon
-                //   color={theme.palette.text.primary}
-                //   icon={faFileImport}
-                // />
                 <vaadin-icon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
@@ -152,10 +146,6 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
             <MenuItem
               iconComponent={
-                // <FontAwesomeIcon
-                //   color={theme.palette.text.primary}
-                //   icon={faFileExport}
-                // />
                 <vaadin-icon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={_goToExportAll}

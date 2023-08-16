@@ -160,8 +160,8 @@ export default function RestoreJson(): React.ReactElement {
         </Grid>
       }
       {stepOne &&
-        <Typography fontSize='14px' fontWeight={300} m='20px auto' textAlign='left' width='88%'>
-          {t<string>('Upload a JSON file containing your account(s) previously exported from this extension.')}
+        <Typography fontSize='14px' fontWeight={400} m='20px auto' textAlign='left' width='88%'>
+          {t<string>('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
         </Typography>
       }
       <InputFileWithLabel

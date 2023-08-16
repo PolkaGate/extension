@@ -66,7 +66,7 @@ export default function PasswordWithTwoButtonsAndUseProxy({ chain, disabled, isP
               fontWeight={300}
               theme={theme}
             >
-              {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
+              {t('This is a watch-only account. To complete this transaction, you must use a proxy.')}
             </Warning>
           </Grid>
           {showBackButtonWithUseProxy

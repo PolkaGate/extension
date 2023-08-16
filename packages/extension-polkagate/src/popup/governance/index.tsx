@@ -336,7 +336,7 @@ export default function Governance(): React.ReactElement {
                               </Typography>
                               : referenda?.length < referendumCount[topMenu] ?
                                 <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                                  {t('{{count}} out of {{referendumCount}} referenda loaded. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
+                                  {t('Loaded {{count}} out of {{referendumCount}} referenda. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                                 </Typography>
                                 : <Typography color='text.disabled' fontSize='15px'>
                                   {t('No more referenda to load.')}

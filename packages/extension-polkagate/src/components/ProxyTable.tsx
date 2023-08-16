@@ -42,8 +42,8 @@ export default function ProxyTable({ proxyTypeFilter, notFoundText = '', selecte
 
   useEffect(() => {
     const text = notFoundText || (mode === 'Availability'
-      ? t('No proxies found for the above address on {{chainName}}. You can use it as a Watch Only Account.', { replace: { chainName: chain?.name } })
-      : t('No proxies found for the account’s address on {{chainName}}.', { replace: { chainName: chain?.name } }));
+      ? t('No proxies found for the provided address on {{chainName}}. You can use it as a watch-only account.', { replace: { chainName: chain?.name } })
+      : t('No proxies were found for the account on {{chainName}}.', { replace: { chainName: chain?.name } }));
 
     setWarningTest(text);
   }, [chain?.name, mode, notFoundText, t]);

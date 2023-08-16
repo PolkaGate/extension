@@ -80,7 +80,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                 fontWeight={300}
                 theme={theme}
               >
-                {t('This is an Address Only account. You must use a proxy to complete this transaction.')}
+                {t('This is a watch-only account. To complete this transaction, you must use a proxy.')}
               </Warning>
             </Grid>
             <PButton
@@ -94,7 +94,7 @@ export default function PasswordUseProxyConfirm({ api, confirmDisabled, confirmT
                 fontWeight={300}
                 theme={theme}
               >
-                {t('This account doesn\'t have enough available balance to pay the transaction fee.')}
+                {t('This account lacks the required available balance to cover the transaction fee.')}
               </Warning>
             </Grid>
             : <>
