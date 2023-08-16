@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { faHistory, faPaperPlane,faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, IconButton, Slide, useTheme } from '@mui/material';
@@ -34,18 +34,16 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
 
   const account = useAccount(address);
   const api = useApi(address);
-  const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
-  const sendDisabled = !account?.genesisHash || (!availableProxiesForTransfer?.length && account?.isExternal);
   const goToSend = useCallback(() => {
-    !sendDisabled && history.push({
+    history.push({
       pathname: `/send/${String(address)}`,
       state: { api }
     });
-  }, [sendDisabled, history, address, api]);
+  }, [history, address, api]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
@@ -106,14 +104,12 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           exceptionWidth={40}
           icon={
             <FontAwesomeIcon
-              color={sendDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+              color={theme.palette.text.primary}
               icon={faPaperPlane}
               style={{ height: '20px' }}
             />
           }
-          isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
           onClick={goToSend}
-          textDisabled={sendDisabled}
           title={t<string>('Send')}
           titleFontSize={10}
         />

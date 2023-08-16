@@ -54,7 +54,6 @@ export default function AccountDetails(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean | undefined>(false);
   const balances = useBalances(address, refresh, setRefresh);
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
-  const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const [recentChains, setRecentChains] = useState<string[]>();
@@ -87,15 +86,11 @@ export default function AccountDetails(): React.ReactElement {
   }, [chain, goToAccount]);
 
   const goToSend = useCallback(() => {
-    if (!availableProxiesForTransfer?.length && account?.isExternal) {
-      return; // Account is external and does not have any available proxy for transfer funds
-    }
-
     history.push({
       pathname: `/send/${address}/`,
       state: { api, balances }
     });
-  }, [availableProxiesForTransfer?.length, account?.isExternal, history, address, balances, api]);
+  }, [history, address, balances, api]);
 
   const goToStaking = useCallback(() => {
     STAKING_CHAINS.includes(genesisHash) && setShowStakingOptions(!showStakingOptions);
@@ -244,14 +239,12 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               <FontAwesomeIcon
-                color={(!availableProxiesForTransfer?.length && account?.isExternal) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+                color={theme.palette.text.primary}
                 icon={faPaperPlane}
                 size='lg'
               />
             }
-            isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
             onClick={goToSend}
-            textDisabled={(!availableProxiesForTransfer?.length && account?.isExternal)}
             title={t<string>('Send')}
           />
           <HorizontalMenuItem
