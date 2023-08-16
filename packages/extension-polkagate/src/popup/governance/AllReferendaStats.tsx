@@ -14,6 +14,7 @@ import { remainingTime } from '../../util/utils';
 import useStyles from './styles/styles';
 import { getReferendumStatistics, Statistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
+import blockToDate from '../crowdloans/partials/blockToDate';
 
 interface Props {
   address: string;
@@ -148,7 +149,10 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
 
         const approved = pendingBounties.add(pendingProposals);
         const spendable = treasuryBalance.sub(approved);
-        const rt = remainingTime(remainingSpendPeriod.toNumber(), true);
+        // const rt = remainingTime(remainingSpendPeriod.toNumber(), true);
+        const dateFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short', hour12: true };
+
+        const rt = blockToDate(remainingSpendPeriod.add(bestNumber).toNumber(), bestNumber.toNumber(), dateFormat);
         const nextBurn = api.consts.treasury.burn.mul(treasuryBalance).div(BN_MILLION) as BN;
 
         setTreasuryStats({
@@ -255,17 +259,12 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
                 {t('Next Spending')}
               </Typography>
             </Grid>
-            <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'}>
+            <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'} pt='10px'>
               <Grid alignItems='center' ref={myRef} container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
-                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='131px' /> / <ShowValue value={treasuryStats?.spendPeriod?.toString()} width='30px' /> {t('days')}
+                <ShowValue value={treasuryStats?.remainingTimeToSpend} width='150px' />
               </Grid>
               <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
-                {/* <Grid alignItems='center' container item pr='5px' width='fit-content'> */}
-                <LinearProgress sx={{ bgcolor: 'primary.contrastText', borderRadius: '5px', height: '6px', mt: '5px', width: `${nextSpendingWidth}px` }} value={treasuryStats?.remainingSpendPeriodPercent ? 100 - treasuryStats.remainingSpendPeriodPercent : 0} variant='determinate' />
-                {/* </Grid> */}
-                {/* <Grid fontSize={18} fontWeight={400} item>
-                  {treasuryStats?.remainingSpendPeriodPercent}%
-                </Grid> */}
+                <ShowValue value={treasuryStats?.spendPeriod && `${t('Each spending period is {{sp}} days', { replace: { sp: treasuryStats?.spendPeriod?.toString() } })}`} width='220px' />
               </Grid>
             </Grid>
           </Grid>
