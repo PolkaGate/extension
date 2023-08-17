@@ -62,6 +62,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
 
     const mappedEndpoints = endpointOptions.map((endpoint) => ({ delay: null, name: endpoint.text.replace(/^via\s/, ''), value: endpoint.value }));
 
+    setCurrentDelay(undefined);
     setEndpointsDelay(mappedEndpoints);
   }, [endpointOptions]);
 
