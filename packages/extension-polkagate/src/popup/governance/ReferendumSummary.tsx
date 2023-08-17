@@ -68,7 +68,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
     });
   }, [address, history, refSummary.post_id, refSummary.type]);
 
-  const openInNewTab = useCallback((event) => {
+  const openInNewTab = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     address && windowOpen(`/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`).catch(console.error);
   }, [address, refSummary.post_id, refSummary.type]);
@@ -80,7 +80,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
   );
 
   return (
-    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : () => null} sx={{ position: 'relative', boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', bgcolor: 'background.paper', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', p: '0 20px', my: '13px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' } }}>
+    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : () => null} sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, position: 'relative' }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
           <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
@@ -92,8 +92,8 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
             {t('Voted')}
           </Grid>
         }
-        <Grid item sx={{}}>
-          <OpenInNewIcon onClick={openInNewTab} sx={{ color: 'secondary.light', cursor: 'alias', fontSize: 23, position: 'absolute', right: '5px', top: '5px' }} />
+        <Grid item onClick={openInNewTab}>
+          <OpenInNewIcon sx={{ color: 'secondary.light', cursor: 'alias', fontSize: 23, position: 'absolute', right: '5px', top: '5px' }} />
         </Grid>
       </Grid>
       <Grid item sx={{ fontSize: 20, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -155,7 +155,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
             </>
           }
         </Grid>
-        <Grid item sx={{ textAlign: 'center', mb: '10px', color: 'white', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[refSummary.status], px: '10px', height: '27px', minWidth: '119px', width: 'fit-content' }}>
+        <Grid item sx={{ color: 'white', textAlign: 'center', mb: '10px', fontSize: '17px', fontWeight: 400, border: '1px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[refSummary.status], px: '10px', height: '27px', minWidth: '119px', width: 'fit-content' }}>
           {pascalCaseToTitleCase(formalizedStatus(refSummary.status))}
         </Grid>
       </Grid>

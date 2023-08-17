@@ -11,7 +11,7 @@ import { capitalizeFirstLetter } from './utils/util';
 
 interface Props {
   address: string | undefined;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>
   topMenu: 'referenda' | 'fellowship';
   subMenu: string;
   postId?: string | undefined;

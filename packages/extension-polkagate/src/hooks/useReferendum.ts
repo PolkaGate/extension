@@ -148,14 +148,13 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
     };
 
-    makeStatus();
+    makeStatus().catch(console.error);
   }, [convertBlockNumberToDate, timeLineOC]);
 
   useEffect(() => {
     api && id !== undefined && trackId !== undefined &&
       getReferendumVotes(api, trackId, id).then((votes) => {
         setOnchainVotes(votes);
-        console.log('All votes from chain for id:', id, votes);
       });
   }, [api, id, trackId]);
 

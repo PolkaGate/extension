@@ -46,7 +46,7 @@ export default function Governance(): React.ReactElement {
 
   const pageTrackRef = useRef({ listFinished: false, page: 1, subMenu: 'All', topMenu });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu as string || 'All');
   const [referendumCount, setReferendumCount] = useState<{ referenda: number | undefined, fellowship: number | undefined }>({ fellowship: undefined, referenda: undefined });
   const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
@@ -349,13 +349,13 @@ export default function Governance(): React.ReactElement {
                         <>
                           {
                             !isLoadingMore
-                              ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
+                              ? <Grid container item justifyContent='center' sx={{ '&:hover': { cursor: 'pointer' }, pb: '15px' }}>
                                 {notSupportedChain
                                   ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda} pt='50px'>
                                     {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
                                   </Typography>
-                                  : referenda?.length < referendumCount[topMenu] ?
-                                    <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                                  : !!referenda?.length && referendumCount[topMenu] && referenda.length < (referendumCount[topMenu] || 0)
+                                    ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
                                       {t('Loaded {{count}} out of {{referendumCount}} referenda. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                                     </Typography>
                                     : <Typography color='text.disabled' fontSize='15px'>

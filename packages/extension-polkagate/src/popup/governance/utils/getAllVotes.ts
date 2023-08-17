@@ -239,24 +239,25 @@ function extractDelegations(
 export type OnchainVotes = { ayes: VoterData[], nays: VoterData[], abstains: VoterData[] }
 
 export async function getReferendumVotes(api: ApiPromise, trackId: number, referendumIndex: number): Promise<OnchainVotes | null> {
-  console.log(`Getting ref ${referendumIndex} votes ... `);
+  return new Promise((resolve) => {
+    if (!referendumIndex || !api) {
+      console.log('referendumIndex is undefined getting Referendum Votes ');
 
-  if (!referendumIndex || !api) {
-    console.log('referendumIndex is undefined getting Referendum Votes ');
+      resolve(null);
+    }
 
-    return null;
-  }
+    api.query.convictionVoting.votingFor.entries().then((voting) => {
+      const mapped = voting.map((item) => normalizeVotingOfEntry(item, api));
 
-  const voting = await api.query.convictionVoting.votingFor.entries();
-  const mapped = voting.map((item) => normalizeVotingOfEntry(item, api));
+      const directVotes = extractVotes(mapped, referendumIndex);
+      const delegationVotes = extractDelegations(mapped, trackId, directVotes);
+      const sorted = sortVotesWithConviction([...directVotes, ...delegationVotes]);
 
-  const directVotes = extractVotes(mapped, referendumIndex);
-  const delegationVotes = extractDelegations(mapped, trackId, directVotes);
-  const sorted = sortVotesWithConviction([...directVotes, ...delegationVotes]);
+      const ayes = sorted.filter((v) => !v.isAbstain && v.aye);
+      const nays = sorted.filter((v) => !v.isAbstain && !v.aye);
+      const abstains = sorted.filter((v) => v.isAbstain);
 
-  const ayes = sorted.filter((v) => !v.isAbstain && v.aye);
-  const nays = sorted.filter((v) => !v.isAbstain && !v.aye);
-  const abstains = sorted.filter((v) => v.isAbstain);
-
-  return { abstains, ayes, nays };
+      resolve({ abstains, ayes, nays });
+    }).catch(console.error);
+  });
 }
