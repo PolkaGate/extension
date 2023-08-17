@@ -48,8 +48,8 @@ export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valu
         borderBottom: !noBorder ? '0.5px solid' : 'none',
         borderBottomColor: `${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : theme.palette.text.disabled}`, ...style
       }}>
-      <Grid item >
-        <Typography sx={{ ...labelStyle }}>
+      <Grid item sx={{ ...labelStyle }}>
+        <Typography >
           {label}
         </Typography>
       </Grid>
