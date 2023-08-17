@@ -5,8 +5,8 @@
 
 import { faEdit, faEraser, faNetworkWired, faTasks } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { Grid, Typography, useTheme } from '@mui/material';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -18,6 +18,7 @@ import { useTranslation } from '../../components/translate';
 import DisplayIdentityInformation from './partial/DisplayIdentityInformation';
 import SubIdsAccordion from './partial/SubIdsAccordion';
 import { IdJudgement, Mode, STEPS } from '.';
+import { subId } from '@polkadot/extension-polkagate/src/assets/icons';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -110,7 +111,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={ theme.palette.secondary.main }
+              color={theme.palette.primary.main}
               fontSize='44px'
               icon={faEdit}
             />
@@ -121,7 +122,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={ theme.palette.secondary.main }
+              color={theme.palette.primary.main}
               fontSize='44px'
               icon={faEraser}
             />
@@ -131,32 +132,27 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         />
         <ManageButton
           icon={judgement && judgement !== 'FeePaid'
-            ? <CheckCircleOutlineIcon
+            ? <CheckCircleRoundedIcon
               sx={{
-                bgcolor: 'secondary.main',
+                color: 'primary.main',
                 borderRadius: '50%',
-                color: 'white',
                 fontSize: 44
               }}
             />
             : <FontAwesomeIcon
-              color={ theme.palette.secondary.main }
+              color={theme.palette.primary.main}
               fontSize='44px'
               icon={faTasks}
             />
           }
           onClick={requestJudgment}
           title={judgement && judgement !== 'FeePaid'
-            ? judgement
+            ? t<string>('Judgment')
             : t<string>('Request Judgment')}
         />
         <ManageButton
           icon={
-            <FontAwesomeIcon
-              color={ theme.palette.secondary.main }
-              fontSize='44px'
-              icon={faNetworkWired}
-            />
+            <Box component='img' src={subId as string} sx={{ height: '43px', mb: '2px', width: '43px' }} />
           }
           onClick={manageSubId}
           title={subIdAccounts && subIdAccounts.length > 0
