@@ -62,7 +62,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
           </Typography>
         </Grid>
         <Grid alignItems='flex-start' container direction='column' item width={rowDisplay ? 'fit-content' : '100%'} mt='11px'>
-          <Grid alignItems='center' container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+          <Grid alignItems='center' container item sx={{ fontSize: '18px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
             <ShowBalance api={api} balance={balance} decimal={decimal} decimalPoint={2} token={token} />
           </Grid>
           <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
@@ -251,7 +251,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
               </Typography>
             </Grid>
             <Grid alignItems='flex-start' container direction='column' item width={firstBreakpoint ? 'fit-content' : '100%'} pt='10px'>
-              <Grid alignItems='center' ref={myRef} container item sx={{ fontSize: '20px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
+              <Grid alignItems='center' ref={myRef} container item sx={{ fontSize: '18px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
                 <ShowValue value={treasuryStats?.remainingTimeToSpend} width='150px' />
               </Grid>
               <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>

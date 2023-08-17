@@ -38,7 +38,7 @@ const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | u
   return filtered?.[1];
 };
 
-export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: 16, fontWeight: 400 } }
+export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: '16px', fontWeight: 400 } }
   : { asShortAddress?: boolean, label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => {
   const theme = useTheme();
 
@@ -48,8 +48,8 @@ export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valu
         borderBottom: !noBorder ? '0.5px solid' : 'none',
         borderBottomColor: `${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : theme.palette.text.disabled}`, ...style
       }}>
-      <Grid item sx={{ ...labelStyle }}>
-        <Typography>
+      <Grid item >
+        <Typography sx={{ ...labelStyle }}>
           {label}
         </Typography>
       </Grid>
