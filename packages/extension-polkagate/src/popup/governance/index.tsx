@@ -11,7 +11,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
+import { Warning } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { GOVERNANCE_CHAINS } from '../../util/constants';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
 import { LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST } from './utils/consts';
@@ -54,6 +56,8 @@ export default function Governance(): React.ReactElement {
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
   const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
+
+  const notSupported = useMemo(() => !(GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '')), [chain?.genesisHash]);
 
   const fetchJson = () => {
     fetch('./manifest.json')
@@ -271,102 +275,119 @@ export default function Governance(): React.ReactElement {
 
   return (
     <>
-      <FullScreenHeader page='governance'/>
-      <Toolbar
-        decidingCounts={decidingCounts}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        setSelectedSubMenu={setSelectedSubMenu}
-      />
-      <Container disableGutters sx={{ maxWidth: 'inherit' }}>
-        <Bread
-          address={address}
-          setSelectedSubMenu={setSelectedSubMenu}
-          subMenu={selectedSubMenu}
-          topMenu={topMenu}
-        />
-        <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
-          {selectedSubMenu === 'All'
-            ? <AllReferendaStats
+      <FullScreenHeader page='governance' />
+      {notSupported
+        ? <Grid container item sx={{ display: 'block', m: 'auto', maxWidth: '80%' }}>
+          <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
+            {t<string>('Governance')}
+          </Typography>
+          <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '400px' }}>
+            <Warning
+              fontWeight={500}
+              isBelowInput
+              theme={theme}
+            >
+              {t<string>('The chosen blockchain does not support governance.')}
+            </Warning>
+          </Grid>
+        </Grid>
+        : <>
+          <Toolbar
+            decidingCounts={decidingCounts}
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
+            setSelectedSubMenu={setSelectedSubMenu}
+          />
+          <Container disableGutters sx={{ maxWidth: 'inherit' }}>
+            <Bread
               address={address}
+              setSelectedSubMenu={setSelectedSubMenu}
+              subMenu={selectedSubMenu}
               topMenu={topMenu}
             />
-            : selectedSubMenu !== 'Fellowships' &&
-            <TrackStats
-              address={address}
-              decidingCounts={decidingCounts}
-              selectedSubMenu={selectedSubMenu}
-              topMenu={topMenu}
-              track={currentTrack}
-            />
-          }
-          {selectedSubMenu !== 'Fellowships' &&
-            <SearchBox
-              address={address}
-              myVotedReferendaIndexes={myVotedReferendaIndexes}
-              referenda={referenda}
-              setFilteredReferenda={setFilteredReferenda}
-            />
-          }
-          {selectedSubMenu === 'Fellowships'
-            ? <FellowshipsList
-              address={address}
-              fellowships={fellowships}
-            />
-            : <>
-              {filteredReferenda
-                ? <>
-                  {filteredReferenda.map((r, index) => (
-                    <ReferendumSummary
-                      address={address}
-                      key={index}
-                      myVotedReferendaIndexes={myVotedReferendaIndexes}
-                      refSummary={r}
-                    />
-                  )
-                  )}
-                  {!pageTrackRef.current.listFinished &&
-                    <>
-                      {
-                        !isLoadingMore
-                          ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
-                            {notSupportedChain
-                              ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda} pt='50px'>
-                                {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
-                              </Typography>
-                              : referenda?.length < referendumCount[topMenu] ?
-                                <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
-                                  {t('Loaded {{count}} out of {{referendumCount}} referenda. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
-                                </Typography>
-                                : <Typography color='text.disabled' fontSize='15px'>
-                                  {t('No more referenda to load.')}
-                                </Typography>
-                            }
-                          </Grid>
-                          : isLoadingMore && <Grid container justifyContent='center'>
-                            <HorizontalWaiting color={theme.palette.primary.main} />
-                          </Grid>
+            <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', position: 'fixed', top: 160 }}>
+              {selectedSubMenu === 'All'
+                ? <AllReferendaStats
+                  address={address}
+                  topMenu={topMenu}
+                />
+                : selectedSubMenu !== 'Fellowships' &&
+                <TrackStats
+                  address={address}
+                  decidingCounts={decidingCounts}
+                  selectedSubMenu={selectedSubMenu}
+                  topMenu={topMenu}
+                  track={currentTrack}
+                />
+              }
+              {selectedSubMenu !== 'Fellowships' &&
+                <SearchBox
+                  address={address}
+                  myVotedReferendaIndexes={myVotedReferendaIndexes}
+                  referenda={referenda}
+                  setFilteredReferenda={setFilteredReferenda}
+                />
+              }
+              {selectedSubMenu === 'Fellowships'
+                ? <FellowshipsList
+                  address={address}
+                  fellowships={fellowships}
+                />
+                : <>
+                  {filteredReferenda
+                    ? <>
+                      {filteredReferenda.map((r, index) => (
+                        <ReferendumSummary
+                          address={address}
+                          key={index}
+                          myVotedReferendaIndexes={myVotedReferendaIndexes}
+                          refSummary={r}
+                        />
+                      )
+                      )}
+                      {!pageTrackRef.current.listFinished &&
+                        <>
+                          {
+                            !isLoadingMore
+                              ? <Grid container item justifyContent='center' sx={{ pb: '15px', '&:hover': { cursor: 'pointer' } }}>
+                                {notSupportedChain
+                                  ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda} pt='50px'>
+                                    {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
+                                  </Typography>
+                                  : referenda?.length < referendumCount[topMenu] ?
+                                    <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                                      {t('Loaded {{count}} out of {{referendumCount}} referenda. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
+                                    </Typography>
+                                    : <Typography color='text.disabled' fontSize='15px'>
+                                      {t('No more referenda to load.')}
+                                    </Typography>
+                                }
+                              </Grid>
+                              : isLoadingMore && <Grid container justifyContent='center'>
+                                <HorizontalWaiting color={theme.palette.primary.main} />
+                              </Grid>
+                          }
+                        </>
                       }
                     </>
+                    : filteredReferenda === null
+                      ? <Grid container justifyContent='center' pt='10%'>
+                        <Typography color={'text.disabled'} fontSize={20} fontWeight={500}>
+                          {t('No referenda in this track to display')}
+                        </Typography>
+                      </Grid>
+                      : <Grid container justifyContent='center' pt='10%'>
+                        <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
+                      </Grid>
                   }
+                  <Grid color={'text.disabled'} container fontSize='13px' item justifyContent='center'>
+                    {`${t('Version')} ${manifest?.version || ''}`}
+                  </Grid>
                 </>
-                : filteredReferenda === null
-                  ? <Grid container justifyContent='center' pt='10%'>
-                    <Typography color={'text.disabled'} fontSize={20} fontWeight={500}>
-                      {t('No referenda in this track to display')}
-                    </Typography>
-                  </Grid>
-                  : <Grid container justifyContent='center' pt='10%'>
-                    <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
-                  </Grid>
               }
-              <Grid color={'text.disabled'} container fontSize='13px' item justifyContent='center'>
-                {`${t('Version')} ${manifest?.version || ''}`}
-              </Grid>
-            </>
-          }
-        </Container>
-      </Container>
+            </Container>
+          </Container>
+        </>}
     </>
   );
 }
