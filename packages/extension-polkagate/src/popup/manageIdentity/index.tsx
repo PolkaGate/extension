@@ -329,7 +329,7 @@ export default function ManageIdentity(): React.ReactElement {
                 isBelowInput
                 theme={theme}
               >
-                {t<string>('On-chain identity is not supported by selected chain.')}
+                {t<string>('The chosen blockchain does not support on-chain identity.')}
               </Warning>
             </Grid>
           </Grid>
