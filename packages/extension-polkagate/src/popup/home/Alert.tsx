@@ -65,9 +65,11 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              t<string>('Added more chains to the chain list.'),
-              t<string>('Included additional remote nodes for improved functionality.'),
-              t<string>('Various known issues have been fixed.')
+
+              'Introducing complete on-chain identity management support.',
+              'Experience enhanced background performance for smoother operation.',
+              'Stay informed by viewing RPC signal power directly during fullscreen mode.',
+              'Enjoy a seamless experience with the resolution of various known issues.',
             ]}
           />
         </Grid>
