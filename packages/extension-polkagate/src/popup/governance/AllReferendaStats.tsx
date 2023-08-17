@@ -3,18 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Divider, Grid, LinearProgress, SxProps, Typography, useMediaQuery } from '@mui/material';
+import { Container, Divider, Grid, SxProps, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
-import { remainingTime } from '../../util/utils';
+import blockToDate from '../crowdloans/partials/blockToDate';
 import useStyles from './styles/styles';
 import { getReferendumStatistics, Statistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
-import blockToDate from '../crowdloans/partials/blockToDate';
 
 interface Props {
   address: string;
@@ -22,13 +21,11 @@ interface Props {
 }
 
 export interface TreasuryStats {
-  // activeProposalCount: number;
   availableTreasuryBalance: BN;
   approved: BN;
   nextBurn: BN;
   pendingBounties: BN;
   pendingProposals: BN;
-  // proposals: DeriveTreasuryProposals;
   remainingSpendPeriod: BN;
   remainingTimeToSpend: string;
   remainingSpendPeriodPercent: number;
@@ -60,7 +57,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
     <>
       <Grid container item sx={{ ...style, justifyContent: rowDisplay ? 'space-between' : 'flex-start' }}>
         <Grid alignItems='center' container item width='fit-content'>
-          <Typography fontSize={18} fontWeight={400} lineHeight='25px' mt='6px'>
+          <Typography fontSize={16} fontWeight={400} lineHeight='25px' mt='6px'>
             {title}
           </Typography>
         </Grid>
@@ -84,6 +81,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
 
 export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
   const secondBreakpoint = !useMediaQuery('(min-width:700px)');
   const styles = useStyles(firstBreakpoint, secondBreakpoint);
@@ -98,13 +96,6 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
 
   const [referendumStats, setReferendumStats] = useState<Statistics | undefined | null>();
   const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | undefined>();
-  const [nextSpendingWidth, setNextSpendingWidth] = useState<number>(0);
-
-  useEffect(() => {
-    if (myRef.current) {
-      setNextSpendingWidth(myRef.current.clientWidth);
-    }
-  }, [treasuryStats]);
 
   useEffect(() => {
     if (chain?.genesisHash !== String(api?.genesisHash)) {
@@ -193,7 +184,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);
 
   return (
-    <Container disableGutters sx={{ px: '8px' }}>
+    <Container disableGutters sx={{  boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)' }}>
       <Grid container sx={styles.allReferendaStatsContainer}>
         <Grid container item sx={styles.referendaStats}>
           <Grid container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
@@ -255,7 +246,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
           />
           <Grid container item justifyContent={firstBreakpoint ? 'space-between' : 'flex-start'} maxWidth={firstBreakpoint ? '100%' : '250px'} width={firstBreakpoint ? '100%' : 'fit-content'}>
             <Grid alignItems='center' container item width='fit-content'>
-              <Typography fontSize={18} fontWeight={400} lineHeight='25px'>
+              <Typography fontSize={16} fontWeight={400} lineHeight='25px'>
                 {t('Next Spending')}
               </Typography>
             </Grid>

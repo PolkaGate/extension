@@ -345,17 +345,11 @@ export async function getReferendumsListSb(chainName: string, type: TopMenu, lis
 
 export async function getTreasuryProposalNumber(referendumIndex: number, api: ApiPromise): Promise<number> {
   // Get the referendum information
-  // const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
-  // Get the referendum information
   const referendumInfo = await api.query.democracy.referendumInfoOf(referendumIndex);
   console.log('referendumInfo.unwrap():', referendumInfo.unwrap().toString())
 
   // Get the proposal index from the referendum information
   const proposalIndex = referendumInfo.unwrap().index.toNumber();
-
-  // console.log('referendumInfo.toHuman():',referendumInfo.toHuman())
-  // Get the proposal index from the referendum
-  // const proposalIndex = referendumInfo.toHuman().index as number;
 
   // Get the treasury proposal information
   const proposal = await api.query.treasury.proposals(proposalIndex);

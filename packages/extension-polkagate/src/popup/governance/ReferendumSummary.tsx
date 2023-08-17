@@ -80,7 +80,7 @@ function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props):
   );
 
   return (
-    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : () => null} sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px rgba(255, 255, 255, 0.25)', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, position: 'relative' }}>
+    <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : () => null} sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)', border: 1, borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main', borderRadius: '10px', cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, position: 'relative' }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
           <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
