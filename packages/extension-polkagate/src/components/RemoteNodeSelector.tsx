@@ -4,8 +4,6 @@
 import React, { useCallback } from 'react';
 
 import { useAccount, useChainName, useEndpoint2, useEndpoints, useTranslation } from '../hooks';
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
 import { Select } from '.';
 
 interface Props {

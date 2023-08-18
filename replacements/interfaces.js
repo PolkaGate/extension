@@ -59,7 +59,7 @@ const assetHubs = [{
     "standardAccount": "*25519",
     "website": "https://polkadot.network"
 }, {
-    "prefix": 42,
+    "prefix": 2,
     "network": "statemine",
     "displayName": "Kusama Asset Hub",
     "symbols": ["KSM"],
@@ -67,7 +67,7 @@ const assetHubs = [{
     "standardAccount": "*25519",
     "website": "https://kusama.network"
 }, {
-    "prefix": 42,
+    "prefix": 0,
     "network": "statemint",
     "displayName": "Polkadot Asset Hub",
     "symbols": ["DOT"],
