@@ -122,7 +122,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
         block: block || 0,
         date: Date.now(),
         failureText,
-        fee: fee || estimatedFee,
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
         subAction: 'Pay Decision Deposit',
         success,

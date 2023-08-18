@@ -136,7 +136,7 @@ export default function Review({ address, estimatedFee, formatted, proxyItems, s
         block: block || 0,
         date: Date.now(),
         failureText,
-        fee: estimatedFee || fee,
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
         subAction: step === STEPS.REMOVE ? 'Remove vote' : 'Vote',
         success,

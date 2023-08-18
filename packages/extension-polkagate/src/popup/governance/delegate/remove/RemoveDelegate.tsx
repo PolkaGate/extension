@@ -133,13 +133,13 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
       const info = {
         action: 'Governance',
-        amount: 'delegateInformation.delegateAmount',
+        amount: '0',
         block: block || 0,
         date: Date.now(),
         failureText,
-        fee: estimatedFee || fee,
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
-        subAction: 'RemoveDelegate',
+        subAction: 'Remove Delegate',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         to: { address: delegateeAddress, name: delegateeName },

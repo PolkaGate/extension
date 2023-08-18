@@ -98,7 +98,7 @@ export default function Review({ address, delegateInformation, estimatedFee, for
         block: block || 0,
         date: Date.now(),
         failureText,
-        fee: estimatedFee || fee,
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
         subAction: 'Delegate',
         success,

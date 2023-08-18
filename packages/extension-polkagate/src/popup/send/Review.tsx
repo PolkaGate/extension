@@ -132,7 +132,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, reci
         block: block || 0,
         date: Date.now(),
         failureText,
-        fee: estimatedFee || fee,
+        fee: fee || String(estimatedFee || 0),
         from: { address: formatted, name },
         subAction: 'Send',
         success,
