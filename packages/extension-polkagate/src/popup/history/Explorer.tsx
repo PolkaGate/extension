@@ -20,7 +20,7 @@ export default function Explorer({ chainName, formatted, txHash }: Props): React
   const [explorer, setExplorer] = useState<{ name: string, link: string }>();
 
   const mayBeTheFirstPartOfChain = chainName?.split(' ')?.[0];
-  const isWestmint = chainName === 'Westend Asset Hub';
+  const isWestmint = chainName?.replace(/\s/g, '') === 'WestendAssetHub';
 
   const subscanLink = 'https://' + mayBeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(txHash);
   const polkaholicLink = 'https://' + mayBeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(txHash);
