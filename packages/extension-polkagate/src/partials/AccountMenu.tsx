@@ -8,14 +8,15 @@ import '@vaadin/icons';
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
+import { socialRecoveryDark } from '../assets/icons'
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import getLogo from '../util/getLogo';
 import { IDENTITY_CHAINS, STAKING_CHAINS } from '../util/constants';
+import getLogo from '../util/getLogo';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -77,6 +78,10 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
   }, [address]);
 
+  const _onSocialRecovery = useCallback(() => {
+    address && windowOpen(`/socialRecovery/${address}`).catch(console.error);
+  }, [address]);
+
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container item justifyContent='center' my='20px' pl='8px'>
@@ -102,6 +107,18 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         }
         onClick={_onManageId}
         text={t('Manage identity')}
+      />
+      <MenuItem
+        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        iconComponent={
+          <Box
+            component='img'
+            src={socialRecoveryDark as string}
+            sx={{ height: '21px', width: '22px' }}
+          />
+        }
+        onClick={_onSocialRecovery}
+        text={t('Social Recovery')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem
