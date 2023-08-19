@@ -1,1 +1,1 @@
-replace the @polkadot/networks/interfaces.js with interfaces.js 
+replace:  @polkadot/networks/interfaces.js with ./interfaces/interfaces.js 
