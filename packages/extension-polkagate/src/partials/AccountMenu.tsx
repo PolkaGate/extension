@@ -11,11 +11,11 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { socialRecoveryDark } from '../assets/icons'
+import { socialRecoveryDark, socialRecoveryDisabled, socialRecoveryLight } from '../assets/icons';
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import { IDENTITY_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -109,12 +109,16 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Manage identity')}
       />
       <MenuItem
-        disabled={!chain || !(IDENTITY_CHAINS.includes(chain.genesisHash ?? ''))}
+        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
         iconComponent={
           <Box
             component='img'
-            src={socialRecoveryDark as string}
-            sx={{ height: '21px', width: '22px' }}
+            src={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+              ? socialRecoveryDisabled as string
+              : theme.palette.mode === 'dark'
+                ? socialRecoveryDark as string
+                : socialRecoveryLight as string}
+            sx={{ height: '22px', width: '22px' }}
           />
         }
         onClick={_onSocialRecovery}
