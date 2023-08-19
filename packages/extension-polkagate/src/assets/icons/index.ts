@@ -43,3 +43,7 @@ export { default as ms } from './ms.svg';
 export { default as msGreen } from './msGreen.svg';
 export { default as msWarning } from './msWarning.svg';
 export { default as socialRecoveryDark } from './socialRecoveryDark.svg';
+export { default as socialRecoveryLight } from './socialRecoveryLight.svg';
+export { default as rescueRecovery } from './rescueRecovery.svg';
+export { default as checkRecovery } from './checkRecovery.svg';
+export { default as vouchRecovery } from './vouchRecovery.svg';
