@@ -42,3 +42,4 @@ export { default as stars5Black } from './stars5Black.svg';
 export { default as ms } from './ms.svg';
 export { default as msGreen } from './msGreen.svg';
 export { default as msWarning } from './msWarning.svg';
+export { default as socialRecoveryDark } from './socialRecoveryDark.svg';
