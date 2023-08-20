@@ -112,10 +112,15 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
       <Typography fontSize='30px' fontWeight={700} pb='20px' pt='30px'>
         {mode === 'Set'
           ? t<string>('Set On-chain Identity')
-          : t<string>('Modify On-chain Identity')}
+          : t<string>('Modify On-chain Identity')
+        }
       </Typography>
       <Typography fontSize='14px' fontWeight={400}>
-        {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
+        {mode === 'Set'
+          ? t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })
+          : t<string>('Update your on-chain identity with new values, noting that accounts with judgments will need a fresh request for any modifications.')
+        }
+
       </Typography>
       <SetIdentityForm
         discord={discord}
