@@ -22,7 +22,7 @@ import { WESTEND_GENESIS } from '@polkadot/apps-config';
 
 import { stakingClose } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Motion } from '../../components';
-import { useAccount, useApi, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
+import { useAccount, useApi, useAssetIds, useBalances, useChain, useChainName, useFormatted, useGenesisHashOptions, useMyAccountIdentity, useProxies, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { ChainSwitch, HeaderBrand } from '../../partials';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, INITIAL_RECENT_CHAINS_GENESISHASH, STAKING_CHAINS } from '../../util/constants';
@@ -47,6 +47,19 @@ export default function AccountDetails(): React.ReactElement {
   const account = useAccount(address);
   const chain = useChain(address);
   const chainName = useChainName(address);
+  const assetIds = useAssetIds(address);
+
+  useEffect(() => {
+    assetIds && api && api.query.assets && api.query.assets.asset.multi(assetIds).then((details: Option<PalletAssetsAssetDetails>[]) => {
+      console.log('assetIds:', assetIds);
+
+      console.log('details:', JSON.parse(JSON.stringify(details)));
+    });
+
+    assetIds && api && api.query.assets && api.query.assets.metadata.multi(assetIds).then((metadata: Option<PalletAssetsAssetDetails>[]) => {
+      console.log('metadata:', metadata.map(({ symbol }) => symbol.toHuman()));
+    });
+  }, [api, assetIds]);
 
   const genesisOptions = useGenesisHashOptions();
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
@@ -58,6 +71,7 @@ export default function AccountDetails(): React.ReactElement {
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
   const [recentChains, setRecentChains] = useState<string[]>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+
 
   useEffect(() => setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true'), []);
 

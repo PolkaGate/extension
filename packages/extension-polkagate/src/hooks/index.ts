@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
+export { default as useAssetIds } from './useAssetIds';
 export { default as useReferendum } from './useReferendum';
 export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useAccountLocks } from './useAccountLocks';
