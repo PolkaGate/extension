@@ -10,13 +10,13 @@ import { ApiPromise } from '@polkadot/api';
 import { PalletIdentityRegistrarInfo } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 
-import { Identity, Select, ShowBalance, TwoButtons } from '../../components';
+import { Select, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useChain, useChainName } from '../../hooks';
 import { REGISTRARS_LIST } from '../../util/constants';
 import { DropdownOption } from '../../util/types';
-import { IdJudgement, Mode, STEPS } from '.';
 import DisplayIdentity from './component/DisplayIdentity';
+import { IdJudgement, Mode, STEPS } from '.';
 
 interface Props {
   address: string;
@@ -24,7 +24,6 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   maxFeeValue: BN | undefined;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
-  mode: Mode;
   setSelectedRegistrar: React.Dispatch<React.SetStateAction<string | number | undefined>>;
   selectedRegistrar: string | number | undefined;
   setMaxFeeValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
@@ -32,7 +31,7 @@ interface Props {
   idJudgement: IdJudgement;
 }
 
-export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, mode, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
+export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = useChainName(address);
   const chain = useChain(address);
@@ -53,6 +52,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
       const registrar: DropdownOption[] = [];
       const registrarsFee: { text: string, fee: BN }[] = [];
 
+      console.log('registrarsInfo:',registrarsInfo)
       registrarsInfo.forEach((regInfo) => {
         const found = REGISTRARS_LIST.find((reg) => reg.addresses.includes(String(regInfo.account)));
 
