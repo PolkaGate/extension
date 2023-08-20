@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Grid, Link, useTheme } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import { Avatar, Link, useTheme } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
 import { CHAINS_ON_POLKAHOLIC, CHAINS_WITH_BLACK_LOGO } from '../../util/constants';
 import getLogo from '../../util/getLogo';
