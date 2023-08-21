@@ -10,22 +10,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
+import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { checkRecovery, rescueRecovery, socialRecoveryDark, socialRecoveryLight, vouchRecovery } from '../../assets/icons';
 import { Warning } from '../../components';
 import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import RecoveryDetail from './RecoveryDetail';
+import Review from './Review';
 
 export const STEPS = {
   CHECK_SCREEN: 0,
   INDEX: 1,
-  PREVIEW: 2,
+  RECOVERYDETAIL: 2,
   MODIFY: 3,
   REMOVE: 4,
   MANAGESUBID: 5,
@@ -44,6 +48,8 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
+export type SocialRecoveryModes = 'RemoveRecovery' | undefined;
+
 export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
 
@@ -60,6 +66,13 @@ export default function SocialRecovery(): React.ReactElement {
 
   const [step, setStep] = useState<number>(0);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
+  const [mode, setMode] = useState<SocialRecoveryModes>();
+  const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  useEffect(() => {
+    chain?.genesisHash && !SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash) && setStep(STEPS.UNSUPPORTED);
+  }, [chain?.genesisHash]);
 
   useEffect(() => {
     if (!api || !address) {
@@ -77,7 +90,17 @@ export default function SocialRecovery(): React.ReactElement {
   }, [address, api, chain?.genesisHash]);
 
   useEffect(() => {
+    if (recoveryInfo) {
+      setTotalDeposit(recoveryInfo.deposit);
+    }
+  }, [recoveryInfo]);
+
+  useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
+  }, []);
+
+  const goToRecoveryDetail = useCallback(() => {
+    setStep(STEPS.RECOVERYDETAIL);
   }, []);
 
   const RecoveryCheckProgress = () => {
@@ -187,10 +210,12 @@ export default function SocialRecovery(): React.ReactElement {
                     sx={{ height: '60px', width: '66px' }}
                   />
                 }
-                onClickFunction={() => null}
+                onClickFunction={recoveryInfo
+                  ? goToRecoveryDetail
+                  : () => null}
                 title={recoveryInfo
-                  ? t<string>('Make Account Recoverable')
-                  : t<string>('Check Recoverability Details')}
+                  ? t<string>('Check Recoverability Details')
+                  : t<string>('Make Account Recoverable')}
               />
               <RecoveryOptionButton
                 description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
@@ -218,6 +243,28 @@ export default function SocialRecovery(): React.ReactElement {
               />
             </Grid>
           </Grid>
+        }
+        {step === STEPS.RECOVERYDETAIL && recoveryInfo &&
+          <RecoveryDetail
+            api={api}
+            chain={chain}
+            recoveryInformation={recoveryInfo}
+            setMode={setMode}
+            setStep={setStep}
+          />
+        }
+        {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
+          <Review
+            address={address}
+            api={api}
+            chain={chain}
+            depositValue={totalDeposit}
+            mode={mode}
+            recoveryInfo={recoveryInfo}
+            setRefresh={setRefresh}
+            setStep={setStep}
+            step={step}
+          />
         }
       </Grid>
     </Grid>
