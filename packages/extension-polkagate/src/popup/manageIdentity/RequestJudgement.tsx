@@ -65,7 +65,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
           });
 
           registrarsFee.push({
-            fee: regInfo.fee,
+            fee: new BN(regInfo.fee.toString()),
             text: found.name
           });
         }
