@@ -30,11 +30,11 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   const selectableNetworks = useMemo(() => genesisHashes.filter((genesisHash) => chains.includes(genesisHash.value)), [chains, genesisHashes]);
 
   useEffect(() => {
-    currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);
-  }, [currentChainNameFromAccount]);
+    !currentChainName && currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);
+  }, [currentChainName, currentChainNameFromAccount]);
 
   useEffect(() => {
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
   }, []);
 
   const selectNetwork = useCallback((newChainName: string) => {
