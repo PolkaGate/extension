@@ -6,7 +6,8 @@
 import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Grid, Typography } from '@mui/material';
+import { AddRounded as AddRoundedIcon, RemoveCircle as RemoveCircleIcon } from '@mui/icons-material';
+import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -17,15 +18,19 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { riot } from '../../../assets/icons';
 import { Identicon, ShortAddress } from '../../../components';
 import { useAccountInfo, useAccountName } from '../../../hooks';
+import { FriendWithId } from './SelectTrustedFriend';
 
 interface Props {
   api: ApiPromise | undefined;
   formatted?: string | AccountId;
   chain: Chain | null | undefined;
   accountInfo?: DeriveAccountInfo | undefined;
+  style?: SxProps<Theme> | undefined;
+  onSelect?: (addr: FriendWithId) => void;
+  iconType?: 'plus' | 'minus';
 }
 
-export default function TrustedFriendAccount({ accountInfo, api, chain, formatted }: Props): React.ReactElement {
+export default function TrustedFriendAccount({ accountInfo, api, chain, formatted, onSelect, style, iconType }: Props): React.ReactElement {
   const identity = useAccountInfo(api, String(formatted), accountInfo)?.identity;
   const accountNameInExtension = useAccountName(formatted);
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
@@ -38,7 +43,7 @@ export default function TrustedFriendAccount({ accountInfo, api, chain, formatte
         {value &&
           <Grid alignItems='center' container item width={'calc(100% / 4)'}>
             {icon}
-            <Typography fontSize='9px' fontWeight={400} maxWidth='calc(100% - 30px)' overflow='hidden' pl='8px' textOverflow='ellipsis'>
+            <Typography fontSize='9px' fontWeight={400} maxWidth='calc(100% - 30px)' overflow='hidden' pl='8px' textOverflow='ellipsis' whiteSpace='nowrap'>
               {value}
             </Typography>
           </Grid>
@@ -48,7 +53,7 @@ export default function TrustedFriendAccount({ accountInfo, api, chain, formatte
   };
 
   return (
-    <Grid alignItems='center' container item py='8px'>
+    <Grid alignItems='center' container item py='8px' sx={style}>
       <Grid container item m='auto' pr='10px' width='fit-content'>
         <Identicon
           iconTheme={chain?.icon || 'polkadot'}
@@ -115,6 +120,28 @@ export default function TrustedFriendAccount({ accountInfo, api, chain, formatte
           />
         </Grid>
       </Grid>
+      {onSelect &&
+        // eslint-disable-next-line react/jsx-no-bind
+        <Grid container item onClick={() => onSelect({ accountIdentity: accountInfo, address: String(formatted) })} sx={{ cursor: 'pointer', width: 'fit-content' }}>
+          {iconType === 'plus'
+            ? <AddRoundedIcon
+              sx={{
+                bgcolor: 'primary.main',
+                borderRadius: '50px',
+                color: '#fff',
+                fontSize: '24px'
+              }}
+            />
+            : <RemoveCircleIcon
+              sx={{
+                bgcolor: '#fff',
+                borderRadius: '50px',
+                color: 'primary.main',
+                fontSize: '24px'
+              }}
+            />}
+        </Grid>
+      }
     </Grid>
   );
 }
