@@ -25,13 +25,14 @@ import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import RecoveryDetail from './RecoveryDetail';
 import Review from './Review';
+import RecoveryConfig from './SetRecoverable';
 
 export const STEPS = {
   CHECK_SCREEN: 0,
   INDEX: 1,
-  RECOVERYDETAIL: 2,
+  MAKERECOVERABLE: 2,
   MODIFY: 3,
-  REMOVE: 4,
+  RECOVERYDETAIL: 4,
   MANAGESUBID: 5,
   JUDGEMENT: 6,
   REVIEW: 7,
@@ -48,7 +49,7 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
-export type SocialRecoveryModes = 'RemoveRecovery' | undefined;
+export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | undefined;
 
 export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
@@ -103,6 +104,10 @@ export default function SocialRecovery(): React.ReactElement {
     setStep(STEPS.RECOVERYDETAIL);
   }, []);
 
+  const goToMakeRecoverable = useCallback(() => {
+    setStep(STEPS.MAKERECOVERABLE);
+  }, []);
+
   const RecoveryCheckProgress = () => {
     return (
       <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
@@ -142,7 +147,7 @@ export default function SocialRecovery(): React.ReactElement {
         {step === STEPS.UNSUPPORTED &&
           <Grid alignItems='center' container direction='column' display='block' item>
             <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 80px'>
-              {t<string>('Manage  Identity')}
+              {t<string>('Social Recovery')}
             </Typography>
             <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '400px' }}>
               <Warning
@@ -212,7 +217,7 @@ export default function SocialRecovery(): React.ReactElement {
                 }
                 onClickFunction={recoveryInfo
                   ? goToRecoveryDetail
-                  : () => null}
+                  : goToMakeRecoverable}
                 title={recoveryInfo
                   ? t<string>('Check Recoverability Details')
                   : t<string>('Make Account Recoverable')}
@@ -249,6 +254,15 @@ export default function SocialRecovery(): React.ReactElement {
             api={api}
             chain={chain}
             recoveryInformation={recoveryInfo}
+            setMode={setMode}
+            setStep={setStep}
+          />
+        }
+        {step === STEPS.MAKERECOVERABLE &&
+          <RecoveryConfig
+            address={address}
+            api={api}
+            mode={mode}
             setMode={setMode}
             setStep={setStep}
           />

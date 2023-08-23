@@ -24,6 +24,7 @@ import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTransla
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import TrustedFriendAccount from './components/TrustedFriendAccount';
 import { SocialRecoveryModes, STEPS } from '.';
+import TrustedFriendsList from './partial/TrustedFriendsList';
 
 
 interface Props {
@@ -65,22 +66,6 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
     setMode('RemoveRecovery');
     setStep(STEPS.REVIEW);
   }, [setMode, setStep]);
-
-  const TrustedFriendsList = () => (
-    <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px' }}>
-      <Typography fontSize='20px' fontWeight={500} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', p: '3px', width: '100%' }}>
-        {t<string>('Trusted friends')}
-      </Typography>
-      {recoveryInformation.friends.map((friend, index) => (
-        <TrustedFriendAccount
-          api={api}
-          chain={chain}
-          formatted={friend.toString()}
-          key={index}
-        />
-      ))}
-    </Grid>
-  );
 
   const RecoveryInformationDisplay = () => (
     <Grid container direction='column' gap='10px' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px' }}>
@@ -130,7 +115,12 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
           {t<string>('Your account is recoverable.')}
         </Typography>
       </Grid>
-      <TrustedFriendsList />
+      <TrustedFriendsList
+        api={api}
+        chain={chain}
+        friendsList={recoveryInformation.friends.map((friend) => String(friend))}
+        title={t<string>('Trusted friends')}
+      />
       <RecoveryInformationDisplay />
       <Grid container item sx={{ '> div.belowInput': { m: 0 }, '> div.belowInput .warningImage': { fontSize: '25px' }, height: '55px', pt: '15px' }}>
         <Warning
