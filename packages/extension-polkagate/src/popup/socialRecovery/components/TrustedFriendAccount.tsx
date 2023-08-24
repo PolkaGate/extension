@@ -43,7 +43,7 @@ export default function TrustedFriendAccount({ accountInfo, api, chain, formatte
         {value &&
           <Grid alignItems='center' container item width={'calc(100% / 4)'}>
             {icon}
-            <Typography fontSize='9px' fontWeight={400} maxWidth='calc(100% - 30px)' overflow='hidden' pl='8px' textOverflow='ellipsis' whiteSpace='nowrap'>
+            <Typography fontSize='10px' fontWeight={400} maxWidth='calc(100% - 30px)' overflow='hidden' pl='8px' textOverflow='ellipsis' whiteSpace='nowrap'>
               {value}
             </Typography>
           </Grid>

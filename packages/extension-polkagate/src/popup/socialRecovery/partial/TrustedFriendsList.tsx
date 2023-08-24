@@ -9,6 +9,7 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
+import { useTranslation } from '../../../hooks';
 import { FriendWithId } from '../components/SelectTrustedFriend';
 import TrustedFriendAccount from '../components/TrustedFriendAccount';
 
@@ -22,11 +23,18 @@ interface Props {
 }
 
 export default function TrustedFriendsList({ api, chain, friendsList, onRemoveFriend, style, title }: Props): React.ReactElement {
+  const { t } = useTranslation();
+
   return (
     <Grid container direction='column' item sx={{ '> :not(:last-child)': { borderBottom: '1px solid', borderBottomColor: '#D5CCD0' }, bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px', ...style }}>
       {title &&
         <Typography fontSize='20px' fontWeight={500} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', p: '3px', width: '100%' }}>
           {title}
+        </Typography>
+      }
+      {friendsList.length === 0 &&
+        <Typography fontSize='14px' fontWeight={400} pt='30px' textAlign='center' width='100%'>
+          {t<string>('No trusted friend added yet.')}
         </Typography>
       }
       {friendsList.map((friend, index) => (

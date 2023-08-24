@@ -23,8 +23,8 @@ import { ChainLogo, PButton, ShowBalance2, TwoButtons, Warning } from '../../com
 import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import TrustedFriendAccount from './components/TrustedFriendAccount';
-import { SocialRecoveryModes, STEPS } from '.';
 import TrustedFriendsList from './partial/TrustedFriendsList';
+import { SocialRecoveryModes, STEPS } from '.';
 
 
 interface Props {

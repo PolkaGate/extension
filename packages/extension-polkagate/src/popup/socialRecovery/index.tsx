@@ -18,7 +18,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { checkRecovery, rescueRecovery, socialRecoveryDark, socialRecoveryLight, vouchRecovery } from '../../assets/icons';
+import { checkRecovery, checkRecoveryDark, rescueRecovery, rescueRecoveryDark, socialRecoveryDark, socialRecoveryLight, vouchRecovery, vouchRecoveryDark } from '../../assets/icons';
 import { Warning } from '../../components';
 import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
@@ -64,6 +64,7 @@ export default function SocialRecovery(): React.ReactElement {
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
+  const darkModeButtonColor = useMemo(() => theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.secondary.light, [theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.light]);
 
   const [step, setStep] = useState<number>(0);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
@@ -125,7 +126,7 @@ export default function SocialRecovery(): React.ReactElement {
         {icon}
       </Grid>
       <Grid alignItems='flex-start' container direction='column' gap='10px' item xs={9}>
-        <Typography color='primary.main' fontSize='18px' fontWeight={500}>
+        <Typography color={darkModeButtonColor} fontSize='18px' fontWeight={500}>
           {t<string>(title)}
         </Typography>
         <Typography fontSize='12px' fontWeight={400}>
@@ -134,7 +135,7 @@ export default function SocialRecovery(): React.ReactElement {
       </Grid>
       <Grid alignItems='center' container item width='50px'>
         <ArrowForwardIosIcon
-          sx={{ color: 'primary.main', fontSize: '40px', m: 'auto', stroke: '#99004F', strokeWidth: '2px' }}
+          sx={{ color: darkModeButtonColor, fontSize: '40px', m: 'auto', stroke: darkModeButtonColor, strokeWidth: '2px' }}
         />
       </Grid>
     </Grid>
@@ -211,7 +212,9 @@ export default function SocialRecovery(): React.ReactElement {
                 icon={
                   <Box
                     component='img'
-                    src={checkRecovery as string}
+                    src={theme.palette.mode === 'light'
+                      ? checkRecovery as string
+                      : checkRecoveryDark as string}
                     sx={{ height: '60px', width: '66px' }}
                   />
                 }
@@ -227,7 +230,9 @@ export default function SocialRecovery(): React.ReactElement {
                 icon={
                   <Box
                     component='img'
-                    src={rescueRecovery as string}
+                    src={theme.palette.mode === 'light'
+                      ? rescueRecovery as string
+                      : rescueRecoveryDark as string}
                     sx={{ height: '60px', width: '66px' }}
                   />
                 }
@@ -239,7 +244,9 @@ export default function SocialRecovery(): React.ReactElement {
                 icon={
                   <Box
                     component='img'
-                    src={vouchRecovery as string}
+                    src={theme.palette.mode === 'light'
+                      ? vouchRecovery as string
+                      : vouchRecoveryDark as string}
                     sx={{ height: '60px', width: '66px' }}
                   />
                 }
