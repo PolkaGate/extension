@@ -46,5 +46,8 @@ export { default as socialRecoveryDark } from './socialRecoveryDark.svg';
 export { default as socialRecoveryLight } from './socialRecoveryLight.svg';
 export { default as socialRecoveryDisabled } from './socialRecoveryDisabled.svg';
 export { default as rescueRecovery } from './rescueRecovery.svg';
+export { default as rescueRecoveryDark } from './rescueRecoveryDark.svg';
 export { default as checkRecovery } from './checkRecovery.svg';
+export { default as checkRecoveryDark } from './checkRecoveryDark.svg';
 export { default as vouchRecovery } from './vouchRecovery.svg';
+export { default as vouchRecoveryDark } from './vouchRecoveryDark.svg';
