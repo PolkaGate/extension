@@ -16,7 +16,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
+import { useAccountDisplay, useDecimal, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
@@ -29,7 +29,8 @@ import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
-import { SocialRecoveryModes, STEPS } from '.';
+import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
+import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 
 interface Props {
   address: string;
@@ -41,14 +42,16 @@ interface Props {
   mode: SocialRecoveryModes;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   recoveryInfo: PalletRecoveryRecoveryConfig | null;
+  recoveryConfig: RecoveryConfigType | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, mode, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
+  const decimal = useDecimal(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -61,14 +64,19 @@ export default function Review({ address, api, chain, depositValue, mode, recove
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const removeRecovery = api && api.tx.recovery.removeRecovery;
+  const createRecovery = api && api.tx.recovery.createRecovery;
 
   const tx = useMemo(() => {
-    if (!removeRecovery) {
+    if (!removeRecovery || !createRecovery) {
       return undefined;
     }
 
     if (mode === 'RemoveRecovery') {
       return removeRecovery();
+    }
+
+    if (mode === 'SetRecovery' && recoveryConfig) {
+      return createRecovery(recoveryConfig.friends.addresses, recoveryConfig.threshold, recoveryConfig.delayPeriod);
     }
 
     // if (mode === 'Clear') {
@@ -88,7 +96,7 @@ export default function Review({ address, api, chain, depositValue, mode, recove
     // }
 
     return undefined;
-  }, [mode, removeRecovery]);
+  }, [createRecovery, mode, recoveryConfig, removeRecovery]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -149,7 +157,11 @@ export default function Review({ address, api, chain, depositValue, mode, recove
   }, [api, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, tx]);
 
   const handleClose = useCallback(() => {
-    setStep(mode === 'RemoveRecovery' ? STEPS.RECOVERYDETAIL : STEPS.INDEX);
+    setStep(mode === 'RemoveRecovery'
+      ? STEPS.RECOVERYDETAIL
+      : mode === 'SetRecovery'
+        ? STEPS.MAKERECOVERABLE
+        : STEPS.INDEX);
   }, [mode, setStep]);
 
   const closeSelectProxy = useCallback(() => {
@@ -169,15 +181,20 @@ export default function Review({ address, api, chain, depositValue, mode, recove
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
+                {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
+                {mode === 'SetRecovery' && t('Making account recoverable')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
               txInfo?.success ? t('Your account is not recoverable anymore.') : t('Making account unrecoverable failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'SetRecovery' && (
+              txInfo?.success ? t('Your account is recoverable.') : t('Making account recoverable failed')
             )}
           </Typography>
         </Grid>
@@ -208,6 +225,29 @@ export default function Review({ address, api, chain, depositValue, mode, recove
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+              {mode === 'SetRecovery' && recoveryConfig &&
+                <>
+                  <Typography fontSize='16px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                    {t<string>('trusted friends')}
+                  </Typography>
+                  <TrustedFriendsDisplay
+                    accountsInfo={recoveryConfig.friends.infos}
+                    api={api}
+                    chain={chain}
+                    friends={recoveryConfig.friends.addresses}
+                  />
+                  <DisplayValue title={t<string>('Recovery Threshold')}>
+                    <Typography fontSize='28px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                      {`${recoveryConfig.threshold} of ${recoveryConfig.friends.addresses.length}`}
+                    </Typography>
+                  </DisplayValue>
+                  <DisplayValue title={t<string>('Recovery Delay')}>
+                    <Typography fontSize='28px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                      {recoveryDelayPeriod(recoveryConfig.delayPeriod)}
+                    </Typography>
+                  </DisplayValue>
+                </>
+              }
               {mode === 'RemoveRecovery' && recoveryInfo &&
                 <>
                   <Typography fontSize='16px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
@@ -290,12 +330,11 @@ export default function Review({ address, api, chain, depositValue, mode, recove
         }
         {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
-            SubIdentityAccounts={subIdsToShow}
+            decimal={decimal}
+            depositValue={depositValue}
             handleClose={closeConfirmation}
-            identity={identityToSet}
-            maxFeeAmount={maxFeeAmount}
-            selectedRegistrarName={selectedRegistrarName}
-            status={mode}
+            mode={mode}
+            recoveryConfig={recoveryConfig}
             txInfo={txInfo}
           />
         }

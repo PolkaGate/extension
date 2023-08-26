@@ -6,21 +6,25 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
-import { Motion, PButton, ShortAddress, ShowBalance } from '../../../components';
+import { Motion, PButton, ShortAddress } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
+import { amountToHuman } from '../../../util/utils';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
-import { SocialRecoveryModes } from '..';
+import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
+import { RecoveryConfigType, SocialRecoveryModes } from '..';
 
 interface Props {
   txInfo: TxInfo;
   handleClose: () => void;
-  status: SocialRecoveryModes;
+  mode: SocialRecoveryModes;
+  recoveryConfig: RecoveryConfigType | undefined;
+  depositValue: BN;
+  decimal: number | undefined;
 }
 
 interface DisplayInfoProps {
@@ -29,7 +33,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation({ handleClose, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ decimal, depositValue, handleClose, mode, recoveryConfig, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -51,6 +55,41 @@ export default function Confirmation({ handleClose, status, txInfo }: Props): Re
       }</>
     );
   };
+
+  const MakeRecoverableDetail = () => (
+    <>
+      {mode === 'SetRecovery' && recoveryConfig &&
+        recoveryConfig.friends.addresses.map((friend, index) => (
+          <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>(`Trusted friend ${index + 1}`)}:
+            </Typography>
+            {recoveryConfig.friends.infos && recoveryConfig.friends.infos[index].identity.display &&
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                {recoveryConfig.friends.infos[index].identity.display}
+              </Typography>}
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+              <ShortAddress address={friend} inParentheses style={{ fontSize: '16px' }} />
+            </Grid>
+          </Grid>
+        ))}
+      <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+      </Grid>
+      {mode === 'SetRecovery' && recoveryConfig &&
+        <>
+          <DisplayInfo
+            caption={t<string>('Recovery Threshold:')}
+            value={`${recoveryConfig.threshold} of ${recoveryConfig.friends.addresses.length}`}
+          />
+          <DisplayInfo
+            caption={t<string>('Recovery Delay:')}
+            value={recoveryDelayPeriod(recoveryConfig.delayPeriod)}
+          />
+        </>
+      }
+    </>
+  );
 
   return (
     <Motion>
@@ -84,6 +123,15 @@ export default function Confirmation({ handleClose, status, txInfo }: Props): Re
         <Grid alignItems='center' container item justifyContent='center' pt='8px'>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
+        {mode === 'SetRecovery' && recoveryConfig &&
+          <MakeRecoverableDetail />
+        }
+        {mode === 'RemoveRecovery' &&
+          <DisplayInfo
+            caption={t<string>('Released deposit:')}
+            value={amountToHuman(depositValue, decimal) ?? '00.00'}
+          />
+        }
         <DisplayInfo
           caption={t<string>('Fee:')}
           value={fee?.toHuman() ?? '00.00'}

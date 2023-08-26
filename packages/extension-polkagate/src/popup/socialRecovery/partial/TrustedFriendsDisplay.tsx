@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { Grid } from '@mui/material';
 import React from 'react';
@@ -15,19 +16,22 @@ interface Props {
   api: ApiPromise | undefined;
   friends: string[];
   chain: Chain | undefined;
+  accountsInfo?: DeriveAccountInfo[] | undefined;
 }
 
-export default function TrustedFriendsDisplay({ api, chain, friends }: Props): React.ReactElement {
+export default function TrustedFriendsDisplay ({ accountsInfo, api, chain, friends }: Props): React.ReactElement {
   return (
-    <Grid alignItems='center' container direction='column' gap='15px' item sx={{ maxHeight: '150px', overflow: 'hidden', overflowY: 'scroll' }}>
+    <Grid alignItems='center' container direction='column' item sx={{ display: 'block', maxHeight: '150px', overflow: 'hidden', overflowY: 'scroll' }}>
       {friends.map((friend, index) => (
         <Identity
+          accountInfo={accountsInfo ? accountsInfo[index] : undefined}
           api={api}
           chain={chain}
           direction='row'
           formatted={friend}
           key={index}
           showSocial={false}
+          style={{ m: '0 auto 15px' }}
           withShortAddress
         />
       ))}

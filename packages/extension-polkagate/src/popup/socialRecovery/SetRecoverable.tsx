@@ -3,17 +3,17 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ShowBalance, TwoButtons } from '../../components';
+import { Input, Select, ShowBalance, TwoButtons } from '../../components';
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import { SocialRecoveryModes, STEPS } from '.';
+import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
 
 interface Props {
   address: string | undefined;
@@ -21,6 +21,9 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   mode: SocialRecoveryModes;
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>;
+  setRecoveryConfig: React.Dispatch<React.SetStateAction<RecoveryConfigType | null>>;
+  recoveryConfig: RecoveryConfigType | null;
+  setTotalDeposit: React.Dispatch<React.SetStateAction<BN>>;
 }
 
 const CONFIGSTEPS = {
@@ -28,20 +31,97 @@ const CONFIGSTEPS = {
   SET_DETAILS: 2
 };
 
-export default function RecoveryConfig({ address, api, mode, setMode, setStep }: Props): React.ReactElement {
+const blocksInHour = 600;
+
+export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const chain = useChain(address);
   const accountsInfo = useAccountsInfo(api, chain);
+
+  const recoveryDelayLengthOptions = useMemo(() => ([
+    { text: 'Blocks', value: '0' },
+    { text: 'Hours', value: '1' },
+    { text: 'Days', value: '2' },
+    { text: 'Weeks', value: '3' },
+    { text: 'Months', value: '4' }
+  ]), []);
 
   const [configStep, setConfigStep] = useState<number>(!mode ? CONFIGSTEPS.SELECT_TRUSTED_FRIENDS : CONFIGSTEPS.SET_DETAILS);
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [selectedFriendsToShow, setSelectedFriendsToShow] = useState<FriendWithId[]>([]);
+  const [recoveryThreshold, setRecoveryThreshold] = useState<number>();
+  const [recoveryDelayNumber, setRecoveryDelayNumber] = useState<number>();
+  const [recoveryDelayLength, setRecoveryDelayLength] = useState<string>(recoveryDelayLengthOptions[2].value);
+  const [recoveryDelayTotal, setRecoveryDelayTotal] = useState<number>();
+  const [focusInputs, setFocus] = useState<number>(1);
 
   const stepTitle = useMemo(() => configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS ? 'Step 1/3: Choose trusted friends' : 'Step 2/3: Set details', [configStep]);
   const configDepositBase = useMemo(() => api ? api.consts.recovery.configDepositBase as unknown as BN : BN_ZERO, [api]);
   const friendDepositFactor = useMemo(() => api ? api.consts.recovery.friendDepositFactor as unknown as BN : BN_ZERO, [api]);
   const totalDeposit = useMemo(() => configDepositBase.add(friendDepositFactor.muln(selectedFriends.length)), [configDepositBase, friendDepositFactor, selectedFriends.length]);
   const maxFriends = useMemo(() => api ? Number(api.consts.recovery.maxFriends.toString()) : 0, [api]);
+
+  const nextBtnDisable = useMemo(() => (configStep === 1
+    ? selectedFriends.length === 0
+    : (recoveryDelayTotal === undefined || recoveryThreshold === undefined || !recoveryConfig)
+  ), [configStep, recoveryConfig, recoveryDelayTotal, recoveryThreshold, selectedFriends.length]);
+
+  useEffect(() => {
+    if (recoveryConfig && selectedFriends.length === 0 && selectedFriendsToShow.length === 0 && recoveryDelayTotal === undefined && recoveryThreshold === undefined) {
+      setSelectedFriends(recoveryConfig.friends.addresses);
+      setSelectedFriendsToShow(recoveryConfig.friends.addresses.map((friend, index) => ({
+        accountIdentity: recoveryConfig.friends.infos ? recoveryConfig.friends.infos[index] : undefined,
+        address: friend
+      })));
+      setRecoveryThreshold(recoveryConfig.threshold);
+    }
+  }, [recoveryConfig, recoveryDelayTotal, recoveryThreshold, selectedFriends, selectedFriendsToShow]);
+
+  useEffect(() => {
+    if (!selectedFriends || selectedFriends.length === 0 || recoveryThreshold === undefined || recoveryDelayTotal === undefined || totalDeposit.isZero()) {
+      return;
+    }
+
+    setTotalDeposit(totalDeposit);
+
+    setRecoveryConfig({
+      delayPeriod: recoveryDelayTotal,
+      friends: {
+        addresses: selectedFriendsToShow.map((friend) => friend.address),
+        infos: selectedFriendsToShow.map((friend) => friend.accountIdentity)
+      },
+      threshold: recoveryThreshold
+    });
+  }, [recoveryDelayTotal, recoveryThreshold, selectedFriends, selectedFriendsToShow, setRecoveryConfig, setTotalDeposit, totalDeposit]);
+
+  useEffect(() => {
+    if (recoveryDelayLength === undefined || recoveryDelayNumber === undefined) {
+      return;
+    }
+
+    switch (recoveryDelayLength) {
+      case '0':
+        setRecoveryDelayTotal(recoveryDelayNumber);
+        break;
+      case '1':
+        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour);
+        break;
+      case '2':
+        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour * 24);
+        break;
+      case '3':
+        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour * 24 * 7);
+        break;
+      case '4':
+        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour * 24 * 7 * 30);
+        break;
+
+      default:
+        setRecoveryDelayTotal(0);
+        break;
+    }
+  }, [recoveryDelayLength, recoveryDelayNumber]);
 
   const addNewFriend = useCallback((addr: FriendWithId) => {
     const alreadyAdded = selectedFriends.find((selectedFriend) => selectedFriend === addr.address);
@@ -68,6 +148,32 @@ export default function RecoveryConfig({ address, api, mode, setMode, setStep }:
     });
   }, []);
 
+  const onChangeThreshold = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const enteredValue = event.target.value;
+    const integerValue = parseInt(enteredValue, 10);
+
+    if (!isNaN(integerValue)) {
+      setRecoveryThreshold(integerValue > selectedFriends.length ? selectedFriends.length : integerValue);
+    } else {
+      setRecoveryThreshold(undefined);
+    }
+  }, [selectedFriends.length]);
+
+  const onChangeDelayNumber = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const enteredValue = event.target.value;
+    const integerValue = parseInt(enteredValue, 10);
+
+    if (!isNaN(integerValue)) {
+      setRecoveryDelayNumber(integerValue);
+    } else {
+      setRecoveryDelayNumber(undefined);
+    }
+  }, []);
+
+  const onChangeDelayLength = useCallback((type: string | number): void => {
+    setRecoveryDelayLength(type as string);
+  }, []);
+
   const goBack = useCallback(() => {
     if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
       setStep(STEPS.INDEX);
@@ -79,10 +185,10 @@ export default function RecoveryConfig({ address, api, mode, setMode, setStep }:
 
   const goNext = useCallback(() => {
     if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
-      setStep(STEPS.INDEX);
-      setMode(undefined);
+      setConfigStep(CONFIGSTEPS.SET_DETAILS);
+      setMode('SetRecovery');
     } else if (configStep === CONFIGSTEPS.SET_DETAILS) {
-      setConfigStep(CONFIGSTEPS.SELECT_TRUSTED_FRIENDS);
+      setStep(STEPS.REVIEW);
     }
   }, [configStep, setMode, setStep]);
 
@@ -128,6 +234,91 @@ export default function RecoveryConfig({ address, api, mode, setMode, setStep }:
     </>
   );
 
+  const thresholdFocus = useCallback(() => setFocus(1), []);
+  const delayFocus = useCallback(() => setFocus(2), []);
+
+  const RecoveryThreshold = () => (
+    <Grid container item pt='20px'>
+      <Typography fontSize='16px' fontWeight={400} width='100%'>
+        {t<string>('Recovery Threshold')}
+      </Typography>
+      <Grid alignItems='center' container item>
+        <Grid container item width='55px'>
+          <Input
+            autoCapitalize='off'
+            autoCorrect='off'
+            autoFocus={focusInputs === 1}
+            onChange={onChangeThreshold}
+            onFocus={thresholdFocus}
+            spellCheck={false}
+            style={{
+              fontSize: '18px',
+              fontWeight: 300,
+              padding: 0,
+              paddingLeft: '10px'
+            }}
+            theme={theme}
+            type='number'
+            value={recoveryThreshold}
+          />
+        </Grid>
+        <Typography fontSize='14px' fontWeight={400} px='8px'>
+          {t<string>('of')}
+        </Typography>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='30px' sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '31px', width: '55px' }} textAlign='center'>
+          {selectedFriends.length}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+
+  const RecoveryDelay = () => (
+    <Grid container item pt='20px'>
+      <Typography fontSize='16px' fontWeight={400} width='100%'>
+        {t<string>('Recovery Delay')}
+      </Typography>
+      <Grid alignItems='center' container item>
+        <Grid container item width='55px'>
+          <Input
+            autoCapitalize='off'
+            autoCorrect='off'
+            autoFocus={focusInputs === 2}
+            onChange={onChangeDelayNumber}
+            onFocus={delayFocus}
+            spellCheck={false}
+            style={{
+              fontSize: '18px',
+              fontWeight: 300,
+              padding: 0,
+              paddingLeft: '10px'
+            }}
+            theme={theme}
+            type='number'
+            value={recoveryDelayNumber}
+          />
+        </Grid>
+        <Grid container item ml='10px' width='125px'>
+          <Select
+            defaultValue={recoveryDelayLengthOptions[2].value}
+            onChange={onChangeDelayLength}
+            options={recoveryDelayLengthOptions}
+            value={recoveryDelayLength || recoveryDelayLengthOptions[2].value}
+          />
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+
+  const RecoveryDetailsConfiguration = () => (
+    <>
+      <Typography fontSize='14px' fontWeight={400} width='100%'>
+        {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
+      </Typography>
+      <RecoveryThreshold />
+      <RecoveryDelay />
+    </>
+  );
+
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
@@ -142,13 +333,13 @@ export default function RecoveryConfig({ address, api, mode, setMode, setStep }:
       {configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS &&
         <TrustedFriendsConfiguration />
       }
-      {/* {configStep === CONFIGSTEPS.SET_DETAILS &&
+      {configStep === CONFIGSTEPS.SET_DETAILS &&
         <RecoveryDetailsConfiguration />
-      } */}
+      }
       <Grid container item justifyContent='flex-end'>
         <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
           <TwoButtons
-            disabled={selectedFriends.length === 0}
+            disabled={nextBtnDisable}
             mt={'1px'}
             onPrimaryClick={goNext}
             onSecondaryClick={goBack}

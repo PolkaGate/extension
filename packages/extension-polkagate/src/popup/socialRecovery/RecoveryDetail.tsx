@@ -25,6 +25,7 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import TrustedFriendAccount from './components/TrustedFriendAccount';
 import TrustedFriendsList from './partial/TrustedFriendsList';
 import { SocialRecoveryModes, STEPS } from '.';
+import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 
 
 interface Props {
@@ -38,25 +39,6 @@ interface Props {
 export default function RecoveryDetail({ api, chain, recoveryInformation, setMode, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
-  const recoveryDelayPeriod = useCallback((blocks: number): string => {
-    const units = ['Year', 'Week', 'Day', 'Hour', 'Minute', 'Second'];
-    const secondsPerUnit = [31536000, 604800, 86400, 3600, 60, 1];
-
-    const parts = units.reduce((acc, unit, index) => {
-      const count = Math.floor(blocks * 6 / secondsPerUnit[index]);
-
-      blocks -= count * secondsPerUnit[index] / 6;
-
-      if (count > 0) {
-        acc.push(`${count} ${unit}${count !== 1 ? 's' : ''}`);
-      }
-
-      return acc;
-    }, []);
-
-    return parts.length > 0 ? parts.join(', ') : '0 Seconds';
-  }, []);
 
   const goBack = useCallback(() => {
     setStep(STEPS.INDEX);

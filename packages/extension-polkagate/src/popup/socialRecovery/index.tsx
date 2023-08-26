@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
@@ -50,6 +51,11 @@ interface RecoveryOptionButtonType {
 }
 
 export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | undefined;
+export type RecoveryConfigType = {
+  friends: { addresses: string[], infos?: (DeriveAccountInfo | undefined)[] | undefined };
+  threshold: number;
+  delayPeriod: number;
+} | undefined;
 
 export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
@@ -68,6 +74,7 @@ export default function SocialRecovery(): React.ReactElement {
 
   const [step, setStep] = useState<number>(0);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
+  const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
   const [mode, setMode] = useState<SocialRecoveryModes>();
   const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -141,6 +148,99 @@ export default function SocialRecovery(): React.ReactElement {
     </Grid>
   );
 
+  const RecoveryHomePage = () => (
+    <Grid container item sx={{ display: 'block', px: '10%' }}>
+      <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
+        <Grid alignItems='center' container item width='fit-content'>
+          <Box
+            component='img'
+            src={theme.palette.mode === 'dark'
+              ? socialRecoveryDark as string
+              : socialRecoveryLight as string}
+            sx={{ height: '66px', width: '66px' }}
+          />
+          <Typography fontSize='30px' fontWeight={700} pl='15px'>
+            {t<string>('Social Recovery')}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' container item width='fit-content'>
+          {recoveryInfo
+            ? <>
+              <FontAwesomeIcon
+                color={theme.palette.success.main}
+                fontSize='30px'
+                icon={faShieldHalved}
+              />
+              <Typography fontSize='14px' fontWeight={400} pl='8px'>
+                {t<string>('Your account is recoverable.')}
+              </Typography>
+            </>
+            : <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '240px' }}>
+              <Warning
+                fontWeight={400}
+                isBelowInput
+                theme={theme}
+              >
+                {t<string>('Your account is not recoverable.')}
+              </Warning>
+            </Grid>
+          }
+        </Grid>
+      </Grid>
+      <Typography fontSize='12px' fontWeight={400} py='25px'>
+        {t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase. Social recovery means relying on friends and family to access your crypto.')}
+      </Typography>
+      <Grid container direction='column' gap='25px' item>
+        <RecoveryOptionButton
+          description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
+          icon={
+            <Box
+              component='img'
+              src={theme.palette.mode === 'light'
+                ? checkRecovery as string
+                : checkRecoveryDark as string}
+              sx={{ height: '60px', width: '66px' }}
+            />
+          }
+          onClickFunction={recoveryInfo
+            ? goToRecoveryDetail
+            : goToMakeRecoverable}
+          title={recoveryInfo
+            ? t<string>('Check Recoverability Details')
+            : t<string>('Make Account Recoverable')}
+        />
+        <RecoveryOptionButton
+          description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
+          icon={
+            <Box
+              component='img'
+              src={theme.palette.mode === 'light'
+                ? rescueRecovery as string
+                : rescueRecoveryDark as string}
+              sx={{ height: '60px', width: '66px' }}
+            />
+          }
+          onClickFunction={() => null}
+          title={t<string>('Rescue Lost Account')}
+        />
+        <RecoveryOptionButton
+          description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
+          icon={
+            <Box
+              component='img'
+              src={theme.palette.mode === 'light'
+                ? vouchRecovery as string
+                : vouchRecoveryDark as string}
+              sx={{ height: '60px', width: '66px' }}
+            />
+          }
+          onClickFunction={() => null}
+          title={t<string>('Vouch Recovery For Friend')}
+        />
+      </Grid>
+    </Grid>
+  );
+
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
@@ -165,96 +265,7 @@ export default function SocialRecovery(): React.ReactElement {
           <RecoveryCheckProgress />
         }
         {step === STEPS.INDEX &&
-          <Grid container item sx={{ display: 'block', px: '10%' }}>
-            <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
-              <Grid alignItems='center' container item width='fit-content'>
-                <Box
-                  component='img'
-                  src={theme.palette.mode === 'dark'
-                    ? socialRecoveryDark as string
-                    : socialRecoveryLight as string}
-                  sx={{ height: '66px', width: '66px' }}
-                />
-                <Typography fontSize='30px' fontWeight={700} pl='15px'>
-                  {t<string>('Social Recovery')}
-                </Typography>
-              </Grid>
-              <Grid alignItems='center' container item width='fit-content'>
-                {recoveryInfo
-                  ? <>
-                    <FontAwesomeIcon
-                      color={theme.palette.success.main}
-                      fontSize='30px'
-                      icon={faShieldHalved}
-                    />
-                    <Typography fontSize='14px' fontWeight={400} pl='8px'>
-                      {t<string>('Your account is recoverable.')}
-                    </Typography>
-                  </>
-                  : <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '240px' }}>
-                    <Warning
-                      fontWeight={400}
-                      isBelowInput
-                      theme={theme}
-                    >
-                      {t<string>('Your account is not recoverable.')}
-                    </Warning>
-                  </Grid>
-                }
-              </Grid>
-            </Grid>
-            <Typography fontSize='12px' fontWeight={400} py='25px'>
-              {t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase. Social recovery means relying on friends and family to access your crypto.')}
-            </Typography>
-            <Grid container direction='column' gap='25px' item>
-              <RecoveryOptionButton
-                description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
-                icon={
-                  <Box
-                    component='img'
-                    src={theme.palette.mode === 'light'
-                      ? checkRecovery as string
-                      : checkRecoveryDark as string}
-                    sx={{ height: '60px', width: '66px' }}
-                  />
-                }
-                onClickFunction={recoveryInfo
-                  ? goToRecoveryDetail
-                  : goToMakeRecoverable}
-                title={recoveryInfo
-                  ? t<string>('Check Recoverability Details')
-                  : t<string>('Make Account Recoverable')}
-              />
-              <RecoveryOptionButton
-                description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
-                icon={
-                  <Box
-                    component='img'
-                    src={theme.palette.mode === 'light'
-                      ? rescueRecovery as string
-                      : rescueRecoveryDark as string}
-                    sx={{ height: '60px', width: '66px' }}
-                  />
-                }
-                onClickFunction={() => null}
-                title={t<string>('Rescue Lost Account')}
-              />
-              <RecoveryOptionButton
-                description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
-                icon={
-                  <Box
-                    component='img'
-                    src={theme.palette.mode === 'light'
-                      ? vouchRecovery as string
-                      : vouchRecoveryDark as string}
-                    sx={{ height: '60px', width: '66px' }}
-                  />
-                }
-                onClickFunction={() => null}
-                title={t<string>('Vouch Recovery For Friend')}
-              />
-            </Grid>
-          </Grid>
+          <RecoveryHomePage />
         }
         {step === STEPS.RECOVERYDETAIL && recoveryInfo &&
           <RecoveryDetail
@@ -270,8 +281,11 @@ export default function SocialRecovery(): React.ReactElement {
             address={address}
             api={api}
             mode={mode}
+            recoveryConfig={recoveryConfig}
             setMode={setMode}
+            setRecoveryConfig={setRecoveryConfig}
             setStep={setStep}
+            setTotalDeposit={setTotalDeposit}
           />
         }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
@@ -281,6 +295,7 @@ export default function SocialRecovery(): React.ReactElement {
             chain={chain}
             depositValue={totalDeposit}
             mode={mode}
+            recoveryConfig={recoveryConfig}
             recoveryInfo={recoveryInfo}
             setRefresh={setRefresh}
             setStep={setStep}
