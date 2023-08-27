@@ -382,7 +382,6 @@ export default function ManageIdentity(): React.ReactElement {
             api={api}
             idJudgement={idJudgement}
             maxFeeValue={maxFeeValue}
-            mode={mode}
             selectedRegistrar={selectedRegistrar}
             setMaxFeeValue={setMaxFeeValue}
             setMode={setMode}
