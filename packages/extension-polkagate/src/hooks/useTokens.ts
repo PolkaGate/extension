@@ -8,7 +8,7 @@ import { DropdownOption } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import useAccount from './useAccount';
 
-export default function useToken(address: AccountId | string | undefined): DropdownOption[] | undefined {
+export default function useTokens(address: AccountId | string | undefined): DropdownOption[] | undefined {
   /** address can be a formatted address hence needs to find its substrate format first */
   const sAddr = getSubstrateAddress(address);
   const account = useAccount(sAddr);

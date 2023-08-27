@@ -39,11 +39,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    history.push({
-      pathname: `/send/${String(address)}/undefined`,
-      state: { api }
-    });
-  }, [history, address, api]);
+    address && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
+  }, [address]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
