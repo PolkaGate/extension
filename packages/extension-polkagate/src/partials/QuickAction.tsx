@@ -40,7 +40,7 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
 
   const goToSend = useCallback(() => {
     history.push({
-      pathname: `/send/${String(address)}`,
+      pathname: `/send/${String(address)}/undefined`,
       state: { api }
     });
   }, [history, address, api]);
