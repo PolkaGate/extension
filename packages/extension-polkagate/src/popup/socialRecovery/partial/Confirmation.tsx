@@ -123,7 +123,7 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
         <Grid alignItems='center' container item justifyContent='center' pt='8px'>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
-        {mode === 'SetRecovery' && recoveryConfig &&
+        {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
           <MakeRecoverableDetail />
         }
         {mode === 'RemoveRecovery' &&

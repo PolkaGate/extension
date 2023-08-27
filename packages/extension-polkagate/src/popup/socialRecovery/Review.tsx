@@ -63,11 +63,12 @@ export default function Review({ address, api, chain, depositValue, mode, recove
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
+  const batchAll = api && api.tx.utility.batchAll;
   const removeRecovery = api && api.tx.recovery.removeRecovery;
   const createRecovery = api && api.tx.recovery.createRecovery;
 
   const tx = useMemo(() => {
-    if (!removeRecovery || !createRecovery) {
+    if (!removeRecovery || !createRecovery || !batchAll) {
       return undefined;
     }
 
@@ -77,6 +78,10 @@ export default function Review({ address, api, chain, depositValue, mode, recove
 
     if (mode === 'SetRecovery' && recoveryConfig) {
       return createRecovery(recoveryConfig.friends.addresses, recoveryConfig.threshold, recoveryConfig.delayPeriod);
+    }
+
+    if (mode === 'ModifyRecovery' && recoveryConfig) {
+      return batchAll([removeRecovery(), createRecovery(recoveryConfig.friends.addresses, recoveryConfig.threshold, recoveryConfig.delayPeriod)]);
     }
 
     // if (mode === 'Clear') {
@@ -96,7 +101,7 @@ export default function Review({ address, api, chain, depositValue, mode, recove
     // }
 
     return undefined;
-  }, [createRecovery, mode, recoveryConfig, removeRecovery]);
+  }, [batchAll, createRecovery, mode, recoveryConfig, removeRecovery]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
