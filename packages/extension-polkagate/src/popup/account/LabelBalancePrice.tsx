@@ -30,8 +30,6 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
   const value = getValue(label, balances);
   const api = useApi(address);
   const price = usePrice(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
 
   return (
     <>
@@ -44,12 +42,12 @@ export default function LabelBalancePrice({ address, balances, label, onClick, s
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: label === 'Total' ? '28px' : '20px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={value} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance api={api} balance={value} decimal={balances?.decimal} decimalPoint={2} token={balances?.token} />
             </Grid>
             <Grid item pt='6px' sx={{ fontSize: label === 'Total' ? '20px' : '16px', fontWeight: label === 'Total' ? 400 : 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
               <FormatPrice
                 amount={value}
-                decimals={decimal}
+                decimals={balances?.decimal}
                 price={price?.amount}
               />
             </Grid>
