@@ -8,7 +8,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useChainName, useTranslation } from '.';
 
-export default function useEndpoint2(address: AccountId | string | undefined): string | undefined {
+export default function useEndpoint(address: AccountId | string | undefined): string | undefined {
   const chainName = useChainName(address);
   const { t } = useTranslation();
   const [endpoint, setEndpoint] = useState<string | undefined>();
