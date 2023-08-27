@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
-export { default as useAssetIds } from './useAssetIds';
+export { default as useAssets } from './useAssets';
 export { default as useReferendum } from './useReferendum';
 export { default as useAccountDisplay } from './useAccountDisplay';
 export { default as useAccountLocks } from './useAccountLocks';
@@ -34,12 +34,15 @@ export { default as useCurrentBlockNumber } from './useCurrentBlockNumber';
 export { default as useDecimal } from './useDecimal';
 export { default as useValidatorSuggestion } from './useValidatorSuggestion';
 export { useEndpoints } from './useEndpoints';
-export { default as useEndpoint2 } from './useEndpoint2';
+export { default as useEndpoint } from './useEndpoint';
 export { default as useFormatted } from './useFormatted';
 export { default as useFormatted2 } from './useFormatted2';
+export { default as useGenesisHash } from './useGenesisHash';
 export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { usePoolMembers } from './usePoolMembers';
+export { default as useTeleport } from './useTeleport';
 export { default as useToken } from './useToken';
+export { default as useTokens } from './useTokens';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';
 export { default as useIsExposed } from './useIsExposed';
 export { default as useIsPopup } from './useIsPopup';

@@ -29,6 +29,15 @@ export function toSnakeCase(input: string | undefined): string | undefined {
   return output;
 }
 
+export function convertToCamelCase(input: string): string {
+  const parts = input.split(';');
+  const camelCased = parts.map((part, index) =>
+    index === 0 ? part : part.replace(/(?:^|-)(.)/g, (_, c) => c.toUpperCase())
+  );
+
+  return camelCased.join('');
+}
+
 export function toCamelCase(str: string): string {
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
     return index === 0 ? match.toLowerCase() : match.toUpperCase();

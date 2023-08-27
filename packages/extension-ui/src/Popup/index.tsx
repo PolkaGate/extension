@@ -40,8 +40,8 @@ import Metadata from '../../../extension-polkagate/src/popup/metadata';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
-import Send from '../../../extension-polkagate/src/popup/send';
-import Review from '../../../extension-polkagate/src/popup/send/Review';
+import Send from '../../../extension-polkagate/src/popup/sendFund';
+// import Review from '../../../extension-polkagate/src/popup/sendFund/Review';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/myPool';
@@ -221,8 +221,9 @@ export default function Popup(): React.ReactElement {
                             <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
                             <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
-                            <Route exact path='/send/:address/'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                            <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
+                            <Route exact path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            <Route exact path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            {/* <Route exact path='/send/review/:genesisHash/:address/:formatted/:assetId'>{wrapWithErrorBoundary(<Review />, 'review')}</Route> */}
                             <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                             <Route path='/import/add-address-only'>{wrapWithErrorBoundary(<AddAddressOnly />, 'import-add-address-only')}</Route>
                             <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>

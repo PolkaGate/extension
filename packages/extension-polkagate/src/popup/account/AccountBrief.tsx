@@ -24,10 +24,11 @@ import { useAccount, useChainName, useFormatted, useTranslation } from '../../ho
 interface Props {
   address: string;
   identity: DeriveAccountRegistration | null | undefined
-
+  showName?: boolean;
+  showDivider?: boolean;
 }
 
-function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
+function AccountBrief({ address, identity, showName = true, showDivider = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const account = useAccount(address);
@@ -46,11 +47,13 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
 
   return (
     < >
-      <Grid alignItems='center' container justifyContent='center' xs={12}>
-        <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', mt: '5px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {identity?.display || account?.name}
-        </Typography>
-      </Grid>
+      {showName &&
+        <Grid alignItems='center' container justifyContent='center' xs={12}>
+          <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', mt: '5px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {identity?.display || account?.name}
+          </Typography>
+        </Grid>
+      }
       <Grid alignItems='center' container item justifyContent='center'>
         <Grid item>
           <ShortAddress address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
@@ -73,7 +76,9 @@ function AccountBrief({ address, identity }: Props): React.ReactElement<Props> {
           </Infotip>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
+      {showDivider &&
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
+      }
     </>
   );
 }
