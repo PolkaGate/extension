@@ -47,7 +47,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
     { text: 'Months', value: '4' }
   ]), []);
 
-  const [configStep, setConfigStep] = useState<number>(!mode ? CONFIGSTEPS.SELECT_TRUSTED_FRIENDS : CONFIGSTEPS.SET_DETAILS);
+  const [configStep, setConfigStep] = useState<number>((!mode || mode === 'ModifyRecovery') ? CONFIGSTEPS.SELECT_TRUSTED_FRIENDS : CONFIGSTEPS.SET_DETAILS);
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [selectedFriendsToShow, setSelectedFriendsToShow] = useState<FriendWithId[]>([]);
   const [recoveryThreshold, setRecoveryThreshold] = useState<number>();
@@ -64,8 +64,8 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
 
   const nextBtnDisable = useMemo(() => (configStep === 1
     ? selectedFriends.length === 0
-    : (recoveryDelayTotal === undefined || recoveryThreshold === undefined || !recoveryConfig)
-  ), [configStep, recoveryConfig, recoveryDelayTotal, recoveryThreshold, selectedFriends.length]);
+    : (recoveryDelayNumber === undefined || recoveryDelayTotal === undefined || recoveryThreshold === undefined || !recoveryConfig)
+  ), [configStep, recoveryConfig, recoveryDelayNumber, recoveryDelayTotal, recoveryThreshold, selectedFriends.length]);
 
   useEffect(() => {
     if (recoveryConfig && selectedFriends.length === 0 && selectedFriendsToShow.length === 0 && recoveryDelayTotal === undefined && recoveryThreshold === undefined) {
@@ -175,22 +175,26 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   }, []);
 
   const goBack = useCallback(() => {
-    if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
+    if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
+      setStep(STEPS.RECOVERYDETAIL);
+    } else if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
       setStep(STEPS.INDEX);
       setMode(undefined);
     } else if (configStep === CONFIGSTEPS.SET_DETAILS) {
       setConfigStep(CONFIGSTEPS.SELECT_TRUSTED_FRIENDS);
     }
-  }, [configStep, setMode, setStep]);
+  }, [configStep, mode, setMode, setStep]);
 
   const goNext = useCallback(() => {
-    if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
+    if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && !mode) {
       setConfigStep(CONFIGSTEPS.SET_DETAILS);
       setMode('SetRecovery');
+    } else if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
+      setConfigStep(CONFIGSTEPS.SET_DETAILS);
     } else if (configStep === CONFIGSTEPS.SET_DETAILS) {
       setStep(STEPS.REVIEW);
     }
-  }, [configStep, setMode, setStep]);
+  }, [configStep, mode, setMode, setStep]);
 
   const TrustedFriendsConfiguration = () => (
     <>
@@ -322,7 +326,9 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-        {t<string>('Make your account recoverable')}
+        {mode === 'SetRecovery'
+          ? t<string>('Make your account recoverable')
+          : t<string>('Modify your account recoverability')}
       </Typography>
       <Typography fontSize='14px' fontWeight={400} width='100%'>
         {t<string>('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.')}

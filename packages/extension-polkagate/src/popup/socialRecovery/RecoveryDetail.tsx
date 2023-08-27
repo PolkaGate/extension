@@ -24,7 +24,7 @@ import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTransla
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import TrustedFriendAccount from './components/TrustedFriendAccount';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import { SocialRecoveryModes, STEPS } from '.';
+import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 
 
@@ -34,9 +34,10 @@ interface Props {
   chain: Chain | null | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>;
+  setRecoveryConfig: React.Dispatch<React.SetStateAction<RecoveryConfigType>>;
 }
 
-export default function RecoveryDetail({ api, chain, recoveryInformation, setMode, setStep }: Props): React.ReactElement {
+export default function RecoveryDetail({ api, chain, recoveryInformation, setMode, setStep, setRecoveryConfig }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -48,6 +49,16 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
     setMode('RemoveRecovery');
     setStep(STEPS.REVIEW);
   }, [setMode, setStep]);
+
+  const goModify = useCallback(() => {
+    setRecoveryConfig({
+      delayPeriod: recoveryInformation.delayPeriod.toNumber(),
+      friends: { addresses: recoveryInformation.friends.map((friend) => String(friend)) },
+      threshold: recoveryInformation.threshold.toNumber()
+    });
+    setMode('ModifyRecovery');
+    setStep(STEPS.MAKERECOVERABLE);
+  }, [recoveryInformation.delayPeriod, recoveryInformation.friends, recoveryInformation.threshold, setMode, setRecoveryConfig, setStep]);
 
   const RecoveryInformationDisplay = () => (
     <Grid container direction='column' gap='10px' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px' }}>
@@ -125,9 +136,9 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
         </Grid>
         <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={8}>
           <TwoButtons
-            disabled={true}
+            disabled={false}
             mt={'1px'}
-            onPrimaryClick={() => null}
+            onPrimaryClick={goModify}
             onSecondaryClick={goRemoveRecovery}
             primaryBtnText={t<string>('Modify')}
             secondaryBtnText={t<string>('Unrecoverable account')}

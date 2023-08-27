@@ -6,7 +6,7 @@ export default function recoveryDelayPeriod(blocks: number): string {
   const secondsPerUnit = [31536000, 604800, 86400, 3600, 60, 1];
 
   const parts = units.reduce((acc, unit, index) => {
-    if (index >= 2) {
+    if (acc.length >= 2) {
       return acc;
     }
 

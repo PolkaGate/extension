@@ -64,7 +64,7 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
               {t<string>(`Trusted friend ${index + 1}`)}:
             </Typography>
-            {recoveryConfig.friends.infos && recoveryConfig.friends.infos[index].identity.display &&
+            {recoveryConfig.friends.infos && recoveryConfig.friends.infos[index]?.identity?.display &&
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                 {recoveryConfig.friends.infos[index].identity.display}
               </Typography>}
@@ -76,7 +76,7 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
-      {mode === 'SetRecovery' && recoveryConfig &&
+      {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
         <>
           <DisplayInfo
             caption={t<string>('Recovery Threshold:')}

@@ -157,7 +157,7 @@ export default function Review({ address, api, chain, depositValue, mode, recove
   }, [api, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, tx]);
 
   const handleClose = useCallback(() => {
-    setStep(mode === 'RemoveRecovery'
+    setStep(mode === 'RemoveRecovery' || mode === 'ModifyRecovery'
       ? STEPS.RECOVERYDETAIL
       : mode === 'SetRecovery'
         ? STEPS.MAKERECOVERABLE
@@ -182,6 +182,7 @@ export default function Review({ address, api, chain, depositValue, mode, recove
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
                 {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
+                {mode === 'ModifyRecovery' && t('Step 3 of 3: Modify account recoverability review')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
@@ -225,7 +226,7 @@ export default function Review({ address, api, chain, depositValue, mode, recove
                 </Grid>
               }
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
-              {mode === 'SetRecovery' && recoveryConfig &&
+              {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
                 <>
                   <Typography fontSize='16px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
                     {t<string>('trusted friends')}

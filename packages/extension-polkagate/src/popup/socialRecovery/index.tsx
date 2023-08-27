@@ -50,7 +50,7 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
-export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | undefined;
+export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | undefined;
 export type RecoveryConfigType = {
   friends: { addresses: string[], infos?: (DeriveAccountInfo | undefined)[] | undefined };
   threshold: number;
@@ -274,6 +274,7 @@ export default function SocialRecovery(): React.ReactElement {
             recoveryInformation={recoveryInfo}
             setMode={setMode}
             setStep={setStep}
+            setRecoveryConfig={setRecoveryConfig}
           />
         }
         {step === STEPS.MAKERECOVERABLE &&
