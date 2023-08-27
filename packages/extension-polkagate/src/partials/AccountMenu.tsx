@@ -14,8 +14,8 @@ import React, { useCallback, useContext, useState } from 'react';
 import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
+import { IDENTITY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
-import { IDENTITY_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
