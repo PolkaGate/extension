@@ -14,7 +14,7 @@ import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
 import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
 
-export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
+export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address);
   const account = useAccount(address);
   const api = useApi(address);
@@ -29,6 +29,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
   const [overall, setOverall] = useState<BalancesInfo | undefined>();
   const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
+  const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
 
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
@@ -42,8 +43,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        // console.log(`useBalances: can not find member for ${formatted}`);
-
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
 
@@ -229,6 +228,35 @@ export default function useBalances(address: string | undefined, refresh?: boole
     setBalances(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
+
+  useEffect(() => {
+    api && assetId && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
+      console.log('assetAccount:', assetAccount.toHuman());
+
+      if (assetAccount.isNone) {
+        return;
+      }
+
+      // eslint-disable-next-line no-void
+      void api.query.assets.metadata(assetId).then((metadata) => {
+        const assetBalances = {
+          freeBalance: assetAccount.unwrap().balance,
+          reservedBalance: BN_ZERO,
+          chainName,
+          decimal: metadata.decimals.toNumber(),
+          token: metadata.symbol.toHuman(),
+          genesisHash: api.genesisHash.toHex()
+        };
+
+        console.log('assetBalances:', assetBalances);
+        setAssetBalance(assetBalances);
+      });
+    });
+  }, [api, assetId, chainName, formatted]);
+
+  if (assetId) {
+    return assetBalance;
+  }
 
   if (onlyNew) {
     return newBalances; //  returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance
