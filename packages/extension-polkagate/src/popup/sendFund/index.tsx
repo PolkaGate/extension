@@ -3,9 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-
 import { Grid, useTheme } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -13,10 +12,11 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useApi, useBalances, useChainName, useFullscreen, useTranslation } from '../../hooks';
+import { useApi, useBalances, useChain, useFullscreen, useTranslation } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import Review from '../manageIdentity/Review';
 import SetValues from './SetValues';
+import { useHistory } from 'react-router-dom';
 
 export const STEPS = {
   INDEX: 0,
@@ -30,17 +30,17 @@ export type Mode = 'Set' | 'Clear' | undefined;
 
 export default function SendFund(): React.ReactElement {
   useFullscreen();
-  const { address, assetId } = useParams<{ address: string }>();
-  const api = useApi(address);
   const { t } = useTranslation();
-  const parsedAssetId = assetId === undefined || assetId === 'undefined' ? undefined : parseInt(assetId);
+  const { address, assetId } = useParams<{ address: string }>();
+  const chain = useChain(address);
+  const ref = useRef(chain);
+  const history = useHistory();
 
+  const parsedAssetId = assetId === undefined || assetId === 'undefined' ? undefined : parseInt(assetId);
   const balances = useBalances(address, undefined, undefined, undefined, parsedAssetId);
   const theme = useTheme();
 
-  const [identityToSet, setIdentityToSet] = useState<DeriveAccountRegistration | null | undefined>();
   const [step, setStep] = useState<number>(0);
-  const [mode, setMode] = useState<Mode>();
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.paper, theme.palette.mode]);
@@ -50,8 +50,19 @@ export default function SendFund(): React.ReactElement {
   }, []);
 
   useEffect(() => {
+    /** To remove assetId from the url when chain has changed */
+    if (!chain) {
+      return;
+    }
 
-  }, []);
+    if (ref.current && ref.current !== chain) {
+      history.push({
+        pathname: `/send/${address}`
+      });
+    }
+
+    ref.current = chain;
+  }, [address, chain, history]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>

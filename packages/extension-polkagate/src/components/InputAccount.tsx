@@ -17,6 +17,7 @@ interface Props {
   address: string | null | undefined;
   chain: Chain | null;
   label: string;
+  labelFontSize?: string;
   style?: SxProps<Theme>;
   setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   ignoreAddress?: string
@@ -25,7 +26,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export default function InputAccount({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function InputAccount({ address, chain, disabled, helperText, ignoreAddress, label, labelFontSize = '14px', name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
@@ -42,6 +43,7 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
         disabled={disabled}
         helperText={helperText}
         label={label}
+        labelFontSize={labelFontSize}
         placeHolder={t<string>('Paste the address here')}
         setAddress={setAddress}
         showIdenticon={false}
@@ -50,8 +52,8 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
         <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: theme.palette.secondary.light, borderTop: 0, fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em', maxWidth: '100%', mt: '-4px' }} xs={12}>
           <Divider
             sx={{
-              bgcolor: 'transparent', // Set bgcolor to 'transparent' to remove the solid line
-              border: '0.5px dotted #E8E0E5', // Add border style and color for a dotted line
+              bgcolor: 'transparent',
+              border: '0.5px dotted #E8E0E5',
               m: '4px auto',
               width: '90%'
             }}
@@ -62,7 +64,7 @@ export default function InputAccount({ address, chain, disabled, helperText, ign
             formatted={address}
             identiconSize={31}
             name={name}
-            style={{ maxWidth: '100%', width: 'fit-content', height: '44px', ml: '7px' }}
+            style={{ height: '44px', maxWidth: '100%', ml: '7px', width: 'fit-content' }}
           />
         </Grid>
       }

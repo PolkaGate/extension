@@ -18,7 +18,6 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
   }
 
   switch (type.toLocaleLowerCase()) {
-    case ('balance'):
     case ('total'):
     case ('total balance'):
       return balances.freeBalance.add(balances.reservedBalance).add(balances?.pooledBalance ?? BN_ZERO);
@@ -28,6 +27,7 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('solo'):
     case ('solo stake'):
       return balances?.soloTotal ?? BN_ZERO;
+    case ('balance'):
     case ('available'):
     case ('transferrable'):
     case ('available balance'):

@@ -17,25 +17,30 @@ import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
-import Label from './Label';
 import StyledIcon from './Icon';
+import Label from './Label';
 
 interface Props {
   address: string | null | undefined;
   defaultValue?: string | undefined;
-  onChange: (value: string) => void;
+  onChange: (value: string | undefined) => void;
   label: string;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
   helperText?: string;
   options?: DropdownOption[];
-
+  labelFontSize?: string;
 }
 
-function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, onChange, options, style }: Props) {
+function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
-  const _options = useMemo(() => options || _allOptions, [_allOptions, options]);
+
+  const _options = useMemo(() => {
+    _allOptions.filter(({ text }) => text === 'Allow use on any chain');
+
+    return options || _allOptions;
+  }, [_allOptions, options]);
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
@@ -53,9 +58,10 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     return disabledItems;
   }, [disabledItems, isTestnetEnabled]);
 
-  useEffect(() =>
-    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-    , []);
+  useEffect(() => {
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
+    onChange(defaultValue);
+  }, [defaultValue, onChange]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -111,14 +117,14 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
       border: `1px solid ${theme.palette.primary.main}`,
       borderRadius: 0,
       fontSize: '14px',
-      fontWeight: '300',
+      fontWeight: '400',
       letterSpacing: '-0.015em',
       padding: '5px 5px 0px',
       transition: theme.transitions.create(['border-color', 'box-shadow'])
     },
     'label + &': {
       fontSize: '10px',
-      fontWeight: '300',
+      fontWeight: '400',
       letterSpacing: '-0.015em'
     }
   }));
@@ -131,10 +137,36 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
 
   const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
 
+  const Item = ({ height = '20px', logoSize = 19.8, text }: { height?: string, logoSize?: number, text: string }) => {
+    const logo = getLogo(chainName(text));
+
+    return (
+      <Grid container height={height} justifyContent='flex-start'>
+        {text !== 'Allow use on any chain' && logo &&
+          <Grid alignItems='center' container item pr='6px' width='fit-content'>
+            {logo.startsWith('data:')
+              ? <Avatar src={getLogo(chainName(text))} sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: logoSize, width: logoSize }} variant='square' />
+              : <FontAwesomeIcon
+                color={'#333'}
+                fontSize='15px'
+                icon={fas[convertToCamelCase(logo)]}
+              />
+            }
+          </Grid>
+        }
+        <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
+          <Typography fontSize='14px' fontWeight={400}>
+            {text}
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+  };
+
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <FormControl disabled={!address} sx={{ width: '100%' }} variant='standard'>
-        <Label helperText={helperText} label={label} style={{ fontSize: '14px' }}>
+        <Label helperText={helperText} label={label} style={{ fontSize: labelFontSize }}>
           <Select
             MenuProps={{
               MenuListProps: {
@@ -172,21 +204,10 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
             open={showMenu}
             // eslint-disable-next-line react/jsx-no-bind
             renderValue={(value) => {
-              const textToShow = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
+              const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
 
               return (
-                <Grid container height={'50px'} justifyContent='flex-start'>
-                  {textToShow && textToShow !== 'Allow use on any chain' &&
-                    <Grid alignItems='center' container item width='fit-content'>
-                      {<Avatar src={getLogo(chainName(textToShow))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(textToShow) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 29, width: 29 }} variant='square' />}
-                    </Grid>
-                  }
-                  <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
-                    <Typography fontSize='14px' fontWeight={300}>
-                      {textToShow}
-                    </Typography>
-                  </Grid>
-                </Grid>
+                <Item height='50px' text={text} logoSize={29} />
               );
             }}
             sx={{
@@ -195,7 +216,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
                 borderColor: 'secondary.light',
                 borderRadius: '5px',
                 fontSize: '14px',
-                height: '46px',
+                height: '48px',
                 lineHeight: '30px',
                 p: 0,
                 pl: '5px',
@@ -218,34 +239,14 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
             value={selectedValue} // Assuming selectedValue is a state variable
           >
             {_options.map(({ text, value }): React.ReactNode => {
-              const logo = getLogo(chainName(text));
-
               return (
                 <MenuItem
                   disabled={_disabledItems?.includes(value) || _disabledItems?.includes(text)}
                   key={value}
-                  sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
+                  sx={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.015em' }}
                   value={value || text}
                 >
-                  <Grid container height={'30px'} justifyContent='flex-start'>
-                    {text !== 'Allow use on any chain' &&
-                      <Grid alignItems='center' container item pr='6px' width='fit-content'>
-                        {logo.startsWith('data:')
-                          ? <Avatar src={getLogo(chainName(text))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 19.8, width: 19.8 }} variant='square' />
-                          : <FontAwesomeIcon
-                            color={'#333'}
-                            fontSize='15px'
-                            icon={fas[convertToCamelCase(logo)]}
-                          />
-                        }
-                      </Grid>
-                    }
-                    <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
-                      <Typography fontSize='14px' fontWeight={300}>
-                        {text}
-                      </Typography>
-                    </Grid>
-                  </Grid>
+                  <Item text={text} />
                 </MenuItem>
               );
             })}

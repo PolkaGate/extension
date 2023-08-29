@@ -26,7 +26,7 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const isTestnetDisabled = useCallback((genesisHash: string) => !isTestnetEnabled && TEST_NETS.includes(genesisHash), [isTestnetEnabled]);
-  const selectableNetworks = useMemo(() => !chains.length ? options : options.filter((o) => chains.includes(o.value)), [chains, options]);
+  const selectableNetworks = useMemo(() => !chains.length ? options.filter(({ text }) => text !== 'Allow use on any chain') : options.filter((o) => chains.includes(o.value)), [chains, options]);
 
   useEffect(() => {
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
