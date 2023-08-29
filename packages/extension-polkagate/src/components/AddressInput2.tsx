@@ -25,6 +25,7 @@ import Warning from './Warning';
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];
   label: string;
+  labelFontSize?: string;
   style?: SxProps<Theme>;
   chain?: Chain;
   address: string | undefined;
@@ -36,7 +37,7 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput2({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, labelFontSize = '14px', showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
@@ -116,7 +117,7 @@ export default function AddressInput({ addWithQr = false, allAddresses = [], cha
           <Label
             helperText={helperText}
             label={label}
-            style={{ position: 'relative' }}
+            style={{ fontSize: labelFontSize, position: 'relative' }}
           >
             <Autocomplete
               componentsProps={{ paper: { sx: { '> ul': { m: 0, p: 0 }, border: '2px solid', borderColor: 'secondary.light', maxHeight: window.innerHeight / 2, ml: '-1px', my: '5px', p: 0, width: dropdownWidth } } }}
