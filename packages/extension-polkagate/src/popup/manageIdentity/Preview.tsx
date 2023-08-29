@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faEdit, faEraser, faNetworkWired, faTasks } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEraser, faTasks } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { Box, Grid, Typography, useTheme } from '@mui/material';
@@ -11,6 +11,7 @@ import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { subId } from '@polkadot/extension-polkagate/src/assets/icons';
 import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../components';
@@ -18,7 +19,6 @@ import { useTranslation } from '../../components/translate';
 import DisplayIdentityInformation from './partial/DisplayIdentityInformation';
 import SubIdsAccordion from './partial/SubIdsAccordion';
 import { IdJudgement, Mode, STEPS } from '.';
-import { subId } from '@polkadot/extension-polkagate/src/assets/icons';
 
 interface Props {
   api: ApiPromise | undefined;

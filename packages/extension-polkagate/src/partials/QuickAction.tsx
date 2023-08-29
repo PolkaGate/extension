@@ -16,7 +16,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { poolStakingBlack, poolStakingDisabledDark, poolStakingDisabledLight, poolStakingWhite } from '../assets/icons';
 import { HorizontalMenuItem } from '../components';
-import { useAccount, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
+import { useAccount, useApi, useFormatted, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 

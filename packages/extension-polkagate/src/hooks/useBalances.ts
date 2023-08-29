@@ -240,12 +240,13 @@ export default function useBalances(address: string | undefined, refresh?: boole
       // eslint-disable-next-line no-void
       void api.query.assets.metadata(assetId).then((metadata) => {
         const assetBalances = {
-          freeBalance: assetAccount.unwrap().balance,
-          reservedBalance: BN_ZERO,
+          availableBalance: assetAccount.unwrap().balance,
           chainName,
           decimal: metadata.decimals.toNumber(),
-          token: metadata.symbol.toHuman(),
-          genesisHash: api.genesisHash.toHex()
+          genesisHash: api.genesisHash.toHex(),
+          isAsset: true,
+          reservedBalance: BN_ZERO,
+          token: metadata.symbol.toHuman()
         };
 
         console.log('assetBalances:', assetBalances);

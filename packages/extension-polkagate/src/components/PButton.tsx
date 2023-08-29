@@ -23,7 +23,10 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
   return (
     <>
       {_isBusy
-        ? <Grid container justifyContent='center' alignItems='center'
+        ? <Grid
+          alignItems='center'
+          container
+          justifyContent='center'
           sx={{
             border: '1px solid',
             borderColor: 'secondary.main',
@@ -66,7 +69,6 @@ function PButton({ _fontSize = '16px', _isBusy, _ml = 6, _mt, _onClick, _variant
       }
     </>
   );
-
 }
 
 export default (PButton);
