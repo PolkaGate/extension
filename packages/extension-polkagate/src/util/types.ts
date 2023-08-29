@@ -712,3 +712,5 @@ export interface DropdownOption {
   text: string;
   value: string | number;
 }
+
+export type TransferType = 'All' | 'Max' | 'Normal';
