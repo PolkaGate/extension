@@ -8,15 +8,18 @@ import React from 'react';
 
 interface Props {
   children: React.ReactNode;
+  dividerHeight?: string;
   topDivider?: boolean;
   title: string;
 }
 
-export default function DisplayValue({ children, title, topDivider = true }: Props): React.ReactElement<Props> {
+export default function DisplayValue({ children, dividerHeight = '2px', title, topDivider = true }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center'>
       <Grid item>
-        {topDivider && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '5px', width: '170px' }} />}
+        {topDivider &&
+          <Divider sx={{ bgcolor: 'secondary.main', height: dividerHeight, my: '5px', width: '170px' }} />
+        }
       </Grid>
       <Grid item>
         <Typography fontSize='16px' fontWeight={400}>
