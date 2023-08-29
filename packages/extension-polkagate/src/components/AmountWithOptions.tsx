@@ -6,25 +6,26 @@
 import { Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { MAX_AMOUNT_LENGTH } from '../util/constants';
 import { fixFloatingPoint } from '../util/utils';
 import InputWithLabel from './InputWithLabel';
-import { MAX_AMOUNT_LENGTH } from '../util/constants';
 
 interface Props {
   disabled?: boolean;
-  value?: string;
-  secondaryBtnText?: string;
-  primaryBtnText: string;
-  onChangeAmount: (value: string) => void;
-  onSecondary?: () => void;
-  onPrimary: () => void;
+  inputWidth?: number;
   label: string;
   labelFontSize?: string;
+  onChangeAmount: (value: string) => void;
+  onPrimary: () => void;
+  onSecondary?: () => void;
+  primaryBtnText: string;
+  secondaryBtnText?: string;
   style?: SxProps<Theme> | undefined;
-  inputWidth?: number;
+  textSpace?: string;
+  value?: string;
 }
 
-export default function AmountWithOptions({ disabled, inputWidth = 8, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
+export default function AmountWithOptions({ disabled, inputWidth = 8, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, textSpace = '10px', value }: Props): React.ReactElement {
   const theme = useTheme();
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
@@ -48,7 +49,7 @@ export default function AmountWithOptions({ disabled, inputWidth = 8, label, lab
           value={value?.slice(0, MAX_AMOUNT_LENGTH)}
         />
       </Grid>
-      <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs>
+      <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: textSpace, pt: '20px' }} xs>
         <Grid aria-label='primaryBtn' item onClick={!disabled ? onPrimary : disabledFunction} role='button' sx={{ color: disabled ? 'text.disabled' : theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: disabled ? 'default' : 'pointer', fontWeight: 400, textDecorationLine: 'underline' }}>
           {primaryBtnText}
         </Grid>
