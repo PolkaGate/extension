@@ -8,6 +8,7 @@ import React, { useCallback } from 'react';
 
 import { fixFloatingPoint } from '../util/utils';
 import InputWithLabel from './InputWithLabel';
+import { MAX_AMOUNT_LENGTH } from '../util/constants';
 
 interface Props {
   disabled?: boolean;
@@ -18,11 +19,12 @@ interface Props {
   onSecondary?: () => void;
   onPrimary: () => void;
   label: string;
+  labelFontSize?: string;
   style?: SxProps<Theme> | undefined;
   inputWidth?: number;
 }
 
-export default function AmountWithOptions({ disabled, inputWidth = 8, label, onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
+export default function AmountWithOptions({ disabled, inputWidth = 8, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, value }: Props): React.ReactElement {
   const theme = useTheme();
   const _onChange = useCallback((value: string) => {
     onChangeAmount(fixFloatingPoint(value));
@@ -39,10 +41,11 @@ export default function AmountWithOptions({ disabled, inputWidth = 8, label, onC
           fontWeight={400}
           height={50}
           label={label}
+          labelFontSize={labelFontSize}
           onChange={_onChange}
           placeholder={'00.00'}
           type='number'
-          value={value}
+          value={value?.slice(0, MAX_AMOUNT_LENGTH)}
         />
       </Grid>
       <Grid alignItems='flex-start' container direction='column' item justifyContent='center' sx={{ pl: '10px', pt: '20px' }} xs>
