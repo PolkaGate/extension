@@ -174,6 +174,10 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
   console.log('inputs:', inputs)
   useEffect(() => {
+    if (!amount || !recipientChainGenesisHash || !recipientAddress || !recipientChainName) {
+      return;
+    }
+
     const amountAsBN = amountToMachine(amount, decimal);
 
     setInputs({
@@ -210,6 +214,12 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [amount, api, calculateFee, decimal]);
 
   useEffect(() => {
+    /** To reset inputs on chain change */
+    setAmount('0');
+    setRecipientAddress(undefined);
+  }, [chain]);
+
+  useEffect(() => {
     if (!call || !crossChainParams || !formatted) {
       return;
     }
@@ -229,8 +239,6 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
     setAmount(type === 'All' ? allAmount : maxAmount);
   }, [api, balances?.availableBalance, decimal, maxFee]);
-
-  console.log('crossChainParams:', crossChainParams);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
