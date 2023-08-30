@@ -74,6 +74,7 @@ export default function SendFund(): React.ReactElement {
       history.push({
         pathname: `/send/${address}`
       });
+      setInputs(undefined);
     }
 
     ref.current = chain;
@@ -88,9 +89,9 @@ export default function SendFund(): React.ReactElement {
             address={address}
             assetId={parsedAssetId}
             balances={balances}
+            inputs={inputs}
             setInputs={setInputs}
             setStep={setStep}
-            inputs={inputs}
           />
         }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&

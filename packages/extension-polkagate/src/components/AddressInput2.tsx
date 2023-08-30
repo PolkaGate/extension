@@ -23,28 +23,29 @@ import ShortAddress from './ShortAddress';
 import Warning from './Warning';
 
 interface Props {
+  address: string | undefined;
+  addWithQr?: boolean;
   allAddresses?: [string, string | null, string | undefined][];
+  chain?: Chain;
+  disabled?: boolean;
+  helperText?: string;
   label: string;
   labelFontSize?: string;
   style?: SxProps<Theme>;
-  chain?: Chain;
-  address: string | undefined;
   setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   showIdenticon?: boolean;
-  helperText?: string;
   placeHolder?: string;
-  disabled?: boolean;
-  addWithQr?: boolean;
 }
 
 export default function AddressInput2({ addWithQr = false, allAddresses = [], chain = undefined, disabled = false, placeHolder = '', setAddress, address, helperText = '', label, labelFontSize = '14px', showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [inValidAddress, setInValidAddress] = useState<boolean>(false);
-  const theme = useTheme();
-  const containerRef = useRef<HTMLDivElement>(null);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
   const [dropdownWidth, setDropdownWidth] = useState<string>('0');
 
