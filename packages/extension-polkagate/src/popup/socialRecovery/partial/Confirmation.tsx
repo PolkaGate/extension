@@ -17,6 +17,7 @@ import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from '..';
+import { FriendWithId } from '../components/SelectTrustedFriend';
 
 interface Props {
   txInfo: TxInfo;
@@ -25,36 +26,39 @@ interface Props {
   recoveryConfig: RecoveryConfigType | undefined;
   depositValue: BN;
   decimal: number | undefined;
+  lostAccountAddress: FriendWithId | undefined;
 }
 
 interface DisplayInfoProps {
   caption: string;
   value: string | undefined;
   showDivider?: boolean;
+  fontSize?: string;
+  fontWeight?: number;
 }
 
-export default function Confirmation({ decimal, depositValue, handleClose, mode, recoveryConfig, txInfo }: Props): React.ReactElement {
+export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true, value, lostAccountAddress }: DisplayInfoProps): React.ReactElement => {
+  return (
+    <>{value &&
+      <Grid alignItems='center' container direction='column' justifyContent='center'>
+        <Grid container item width='fit-content'>
+          <Typography fontSize={fontSize ?? '16px'} fontWeight={fontWeight ?? 400} lineHeight='40px' pr='5px'>{caption}</Typography>
+          <Typography fontSize={fontSize ?? '16px'} fontWeight={fontWeight ?? 400} lineHeight='40px'>{value}</Typography>
+        </Grid>
+        {showDivider &&
+          <Grid alignItems='center' container item justifyContent='center'>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
+          </Grid>}
+      </Grid>
+    }</>
+  );
+};
+
+export default function Confirmation({ decimal, depositValue, handleClose, mode, recoveryConfig, txInfo, lostAccountAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
-
-  const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
-    return (
-      <>{value &&
-        <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-          <Grid container item width='fit-content'>
-            <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
-            <Typography lineHeight='40px'>{value}</Typography>
-          </Grid>
-          {showDivider &&
-            <Grid alignItems='center' container item justifyContent='center'>
-              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-            </Grid>}
-        </Grid>
-      }</>
-    );
-  };
 
   const MakeRecoverableDetail = () => (
     <>
@@ -106,7 +110,9 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
         }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Account holder')}:
+            {mode !== 'InitiateRecovery'
+              ? t<string>('Rescuer account')
+              : t<string>('Account holder')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
             {txInfo.from.name}
@@ -123,12 +129,32 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
         <Grid alignItems='center' container item justifyContent='center' pt='8px'>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
+        {mode === 'InitiateRecovery' &&
+          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>('Lost account')}:
+            </Typography>
+            {lostAccountAddress?.accountIdentity?.identity.display &&
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                {lostAccountAddress?.accountIdentity?.identity.display}
+              </Typography>}
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+              <ShortAddress address={lostAccountAddress?.address} inParentheses style={{ fontSize: '16px' }} />
+            </Grid>
+          </Grid>
+        }
         {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
           <MakeRecoverableDetail />
         }
         {mode === 'RemoveRecovery' &&
           <DisplayInfo
             caption={t<string>('Released deposit:')}
+            value={amountToHuman(depositValue, decimal) ?? '00.00'}
+          />
+        }
+        {mode === 'InitiateRecovery' &&
+          <DisplayInfo
+            caption={t<string>('Initiation Deposit:')}
             value={amountToHuman(depositValue, decimal) ?? '00.00'}
           />
         }

@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
+import { Identity, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useDecimal, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
@@ -27,10 +27,11 @@ import PasswordWithTwoButtonsAndUseProxy from '../governance/components/Password
 import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
+import { FriendWithId } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
-import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
+import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
 
 interface Props {
   address: string;
@@ -43,9 +44,10 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   recoveryInfo: PalletRecoveryRecoveryConfig | null;
   recoveryConfig: RecoveryConfigType | undefined;
+  lostAccountAddress: FriendWithId | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -66,9 +68,10 @@ export default function Review({ address, api, chain, depositValue, mode, recove
   const batchAll = api && api.tx.utility.batchAll;
   const removeRecovery = api && api.tx.recovery.removeRecovery;
   const createRecovery = api && api.tx.recovery.createRecovery;
+  const initiateRecovery = api && api.tx.recovery.initiateRecovery;
 
   const tx = useMemo(() => {
-    if (!removeRecovery || !createRecovery || !batchAll) {
+    if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll) {
       return undefined;
     }
 
@@ -84,24 +87,12 @@ export default function Review({ address, api, chain, depositValue, mode, recove
       return batchAll([removeRecovery(), createRecovery(recoveryConfig.friends.addresses, recoveryConfig.threshold, recoveryConfig.delayPeriod)]);
     }
 
-    // if (mode === 'Clear') {
-    //   return clearIdentity();
-    // }
-
-    // if (mode === 'ManageSubId' && subIdsParams) {
-    //   return setSubs(subIdsParams);
-    // }
-
-    // if (mode === 'RequestJudgement' && selectedRegistrar !== undefined) {
-    //   return requestJudgement(selectedRegistrar, maxFeeAmount);
-    // }
-
-    // if (mode === 'CancelJudgement' && selectedRegistrar !== undefined) {
-    //   return cancelRequest(selectedRegistrar);
-    // }
+    if (mode === 'InitiateRecovery' && lostAccountAddress) {
+      return initiateRecovery(lostAccountAddress.address);
+    }
 
     return undefined;
-  }, [batchAll, createRecovery, mode, recoveryConfig, removeRecovery]);
+  }, [batchAll, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -186,14 +177,17 @@ export default function Review({ address, api, chain, depositValue, mode, recove
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
-                {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
+                {mode === 'SetRecovery' && t('Step 3 of 3: Making account recoverable review')}
                 {mode === 'ModifyRecovery' && t('Step 3 of 3: Modify account recoverability review')}
+                {mode === 'InitiateRecovery' && t('Step 2 of 2: Initiate Recovery review')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
                 {mode === 'SetRecovery' && t('Making account recoverable')}
+                {mode === 'ModifyRecovery' && t('Modifying account recoverability')}
+                {mode === 'InitiateRecovery' && t('Initiating Recovery')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
@@ -201,6 +195,12 @@ export default function Review({ address, api, chain, depositValue, mode, recove
             )}
             {step === STEPS.CONFIRM && mode === 'SetRecovery' && (
               txInfo?.success ? t('Your account is recoverable.') : t('Making account recoverable failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'ModifyRecovery' && (
+              txInfo?.success ? t('Account recoverability modified.') : t('Modifying account recoverability failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
+              txInfo?.success ? t('Recovery Initiated') : t('Initiating Recovery failed')
             )}
           </Typography>
         </Grid>
@@ -212,7 +212,9 @@ export default function Review({ address, api, chain, depositValue, mode, recove
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account holder')}
+                  {mode === 'InitiateRecovery'
+                    ? t<string>('Rescuer account')
+                    : t<string>('Account holder')}
                 </Typography>
                 <Identity
                   address={address}
@@ -266,9 +268,29 @@ export default function Review({ address, api, chain, depositValue, mode, recove
                   />
                 </>
               }
+              {mode === 'InitiateRecovery' &&
+                <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+                  <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                    {t<string>('Lost account')}
+                  </Typography>
+                  <Identity
+                    accountInfo={lostAccountAddress?.accountIdentity}
+                    api={api}
+                    chain={chain}
+                    direction='row'
+                    formatted={lostAccountAddress?.address}
+                    identiconSize={31}
+                    showSocial={false}
+                    style={{ maxWidth: '100%', width: 'fit-content' }}
+                    withShortAddress
+                  />
+                </Grid>
+              }
               <DisplayValue title={mode === 'RemoveRecovery'
                 ? t<string>('Releasing deposit')
-                : t<string>('Total Deposit')}
+                : mode === 'InitiateRecovery'
+                  ? t<string>('Initiation Deposit')
+                  : t<string>('Total Deposit')}
               >
                 <ShowBalance
                   api={api}
@@ -339,6 +361,7 @@ export default function Review({ address, api, chain, depositValue, mode, recove
             decimal={decimal}
             depositValue={depositValue}
             handleClose={closeConfirmation}
+            lostAccountAddress={lostAccountAddress}
             mode={mode}
             recoveryConfig={recoveryConfig}
             txInfo={txInfo}

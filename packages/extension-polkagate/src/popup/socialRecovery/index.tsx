@@ -21,12 +21,14 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { checkRecovery, checkRecoveryDark, rescueRecovery, rescueRecoveryDark, socialRecoveryDark, socialRecoveryLight, vouchRecovery, vouchRecoveryDark } from '../../assets/icons';
 import { Warning } from '../../components';
-import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { useActiveRecoveries, useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';
 import Review from './Review';
 import RecoveryConfig from './SetRecoverable';
+import { FriendWithId } from './components/SelectTrustedFriend';
 
 export const STEPS = {
   CHECK_SCREEN: 0,
@@ -34,11 +36,10 @@ export const STEPS = {
   MAKERECOVERABLE: 2,
   MODIFY: 3,
   RECOVERYDETAIL: 4,
-  MANAGESUBID: 5,
-  JUDGEMENT: 6,
-  REVIEW: 7,
-  WAIT_SCREEN: 8,
-  CONFIRM: 9,
+  INITIATERECOVERY: 5,
+  REVIEW: 6,
+  WAIT_SCREEN: 7,
+  CONFIRM: 8,
   UNSUPPORTED: 10,
   PROXY: 100
 };
@@ -50,7 +51,7 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
-export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | undefined;
+export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | undefined;
 export type RecoveryConfigType = {
   friends: { addresses: string[], infos?: (DeriveAccountInfo | undefined)[] | undefined };
   threshold: number;
@@ -67,6 +68,7 @@ export default function SocialRecovery(): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
+  const initiatedRecovery = useActiveRecoveries(api, formatted);
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
@@ -75,6 +77,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [step, setStep] = useState<number>(0);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
   const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
+  const [lostAccountAddress, setLostAccountAddress] = useState<FriendWithId | undefined>();
   const [mode, setMode] = useState<SocialRecoveryModes>();
   const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -94,9 +97,20 @@ export default function SocialRecovery(): React.ReactElement {
     api.query.recovery.recoverable(address).then((r) => {
       setRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
       console.log('is recoverable:', r.isSome ? JSON.parse(JSON.stringify(r.unwrap())) : 'nope');
-      setStep(STEPS.INDEX);
     }).catch(console.error);
   }, [address, api, chain?.genesisHash]);
+
+  useEffect(() => {
+    if (!api || !address) {
+      setStep(STEPS.CHECK_SCREEN);
+
+      return;
+    }
+
+    if (recoveryInfo !== undefined && initiatedRecovery !== undefined) {
+      setStep(STEPS.INDEX);
+    }
+  }, [address, api, initiatedRecovery, recoveryInfo]);
 
   useEffect(() => {
     if (recoveryInfo) {
@@ -114,6 +128,10 @@ export default function SocialRecovery(): React.ReactElement {
 
   const goToMakeRecoverable = useCallback(() => {
     setStep(STEPS.MAKERECOVERABLE);
+  }, []);
+
+  const goToInitiateRecovery = useCallback(() => {
+    setStep(STEPS.INITIATERECOVERY);
   }, []);
 
   const RecoveryCheckProgress = () => {
@@ -220,8 +238,10 @@ export default function SocialRecovery(): React.ReactElement {
               sx={{ height: '60px', width: '66px' }}
             />
           }
-          onClickFunction={() => null}
-          title={t<string>('Rescue Lost Account')}
+          onClickFunction={goToInitiateRecovery}
+          title={initiatedRecovery
+            ? t<string>('You Initiated a Recovery, Check Status.')
+            : t<string>('Rescue a Lost Account')}
         />
         <RecoveryOptionButton
           description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
@@ -273,8 +293,8 @@ export default function SocialRecovery(): React.ReactElement {
             chain={chain}
             recoveryInformation={recoveryInfo}
             setMode={setMode}
-            setStep={setStep}
             setRecoveryConfig={setRecoveryConfig}
+            setStep={setStep}
           />
         }
         {step === STEPS.MAKERECOVERABLE &&
@@ -289,12 +309,25 @@ export default function SocialRecovery(): React.ReactElement {
             setTotalDeposit={setTotalDeposit}
           />
         }
+        {step === STEPS.INITIATERECOVERY &&
+          <InitiateRecovery
+            address={address}
+            api={api}
+            initiatedRecovery={initiatedRecovery}
+            mode={mode}
+            setLostAccountAddress={setLostAccountAddress}
+            setMode={setMode}
+            setStep={setStep}
+            setTotalDeposit={setTotalDeposit}
+          />
+        }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
           <Review
             address={address}
             api={api}
             chain={chain}
             depositValue={totalDeposit}
+            lostAccountAddress={lostAccountAddress}
             mode={mode}
             recoveryConfig={recoveryConfig}
             recoveryInfo={recoveryInfo}

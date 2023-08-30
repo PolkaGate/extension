@@ -206,7 +206,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
         api={api}
         chain={chain}
         disabled={false}
-        helperText='To-Do'
+        helperText='ToDo'
         label={t<string>('Find trusted friends accounts')}
         onSelectFriend={addNewFriend}
         placeHolder={t<string>('Enter account ID or address')}
