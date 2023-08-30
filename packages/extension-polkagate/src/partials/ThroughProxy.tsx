@@ -23,7 +23,7 @@ function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement
 
   return (
     <Grid alignItems='center' container justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', ...style }}>
-      <Grid item sx={{ fontSize: '12px' }} xs={2}>
+      <Grid item sx={{ fontSize: '12px', mr: '5px' }}>
         {t('Through')}
       </Grid>
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
@@ -38,7 +38,7 @@ function ThroughProxy({ address, chain, style = {} }: Props): React.ReactElement
         withShortAddress
       />
       <Divider orientation='vertical' sx={{ bgcolor: 'secondary.main', height: '27px', mb: '1px', mt: '4px', width: '1px' }} />
-      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center' }} xs={2}>
+      <Grid item sx={{ fontSize: '12px', fontWeight: 300, textAlign: 'center', ml: '5px' }} >
         {t('as proxy')}
       </Grid>
     </Grid>
