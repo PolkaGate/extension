@@ -26,11 +26,11 @@ interface Props {
   chain: Chain | null | undefined;
   accountInfo?: DeriveAccountInfo | undefined;
   style?: SxProps<Theme> | undefined;
-  onSelect?: (addr: FriendWithId) => void;
-  iconType?: 'plus' | 'minus';
+  onSelect?: (addr: FriendWithId | undefined) => void;
+  iconType?: 'plus' | 'minus' | 'none';
 }
 
-export default function TrustedFriendAccount({ accountInfo, api, chain, formatted, onSelect, style, iconType }: Props): React.ReactElement {
+export default function TrustedFriendAccount({ accountInfo, api, chain, formatted, iconType, onSelect, style }: Props): React.ReactElement {
   const identity = useAccountInfo(api, String(formatted), accountInfo)?.identity;
   const accountNameInExtension = useAccountName(formatted);
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
@@ -53,7 +53,8 @@ export default function TrustedFriendAccount({ accountInfo, api, chain, formatte
   };
 
   return (
-    <Grid alignItems='center' container item py='8px' sx={style}>
+    // eslint-disable-next-line react/jsx-no-bind
+    <Grid alignItems='center' container item onClick={iconType === 'none' && onSelect ? () => onSelect({ accountIdentity: accountInfo, address: String(formatted) }) : () => null} py='8px' sx={{ cursor: iconType === 'none' ? 'pointer' : 'default', ...style }}>
       <Grid container item m='auto' pr='10px' width='fit-content'>
         <Identicon
           iconTheme={chain?.icon || 'polkadot'}
@@ -120,7 +121,7 @@ export default function TrustedFriendAccount({ accountInfo, api, chain, formatte
           />
         </Grid>
       </Grid>
-      {onSelect &&
+      {onSelect && iconType !== 'none' &&
         // eslint-disable-next-line react/jsx-no-bind
         <Grid container item onClick={() => onSelect({ accountIdentity: accountInfo, address: String(formatted) })} sx={{ cursor: 'pointer', width: 'fit-content' }}>
           {iconType === 'plus'
