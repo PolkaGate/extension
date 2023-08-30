@@ -29,18 +29,20 @@ interface Props {
   accountsInfo?: DeriveAccountInfo[];
   label: string;
   style?: SxProps<Theme>;
-  onSelectFriend: (addr: FriendWithId) => void;
+  onSelectFriend: (addr: FriendWithId | undefined) => void;
   helperText?: string;
   placeHolder?: string;
   disabled?: boolean;
+  iconType?: 'plus' | 'minus' | 'none';
 }
 
-export default function SelectTrustedFriend({ accountsInfo = [], api, chain, disabled = false, placeHolder = '', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriend({ accountsInfo = [], api, chain, disabled = false, placeHolder = '', iconType = 'plus', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
   const [friendsList, setFriendsList] = useState<FriendWithId[] | undefined>();
+  const [addressSelected, setAddressSelected] = useState<boolean>(false);
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const _showDropdown = useCallback(() => setDropdownVisible(true), []);
@@ -48,12 +50,14 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
   useOutsideClick([ref], _hideDropdown);
 
   useEffect(() => {
-    enteredAddress ? _showDropdown() : _hideDropdown();
-  }, [_hideDropdown, enteredAddress, _showDropdown]);
+    !addressSelected && enteredAddress ? _showDropdown() : _hideDropdown();
+  }, [addressSelected, _hideDropdown, enteredAddress, _showDropdown]);
 
   const findFriend = useCallback((value: string): void => {
     if (isValidAddress(value)) {
       const addressId = accountsInfo.find((accountID) => String(accountID.accountId) === value);
+
+      onSelectFriend({ accountIdentity: addressId, address: value });
 
       setFriendsList([{ accountIdentity: addressId, address: value }]);
     } else {
@@ -76,24 +80,38 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
     if (!value) {
       setEnteredAddress(undefined);
       setFriendsList(undefined);
+      addressSelected && setAddressSelected(false);
 
       return;
     }
 
     setEnteredAddress(value);
     findFriend(value);
-  }, [findFriend]);
+  }, [addressSelected, findFriend]);
 
   const pasteAddress = useCallback(() => {
     if (enteredAddress) {
       setEnteredAddress(undefined);
+      setFriendsList(undefined);
+      addressSelected && setAddressSelected(false);
+      onSelectFriend(undefined);
     } else {
       navigator.clipboard.readText().then((clipText) => {
         findFriend(clipText);
         setEnteredAddress(clipText);
       }).catch(console.error);
     }
-  }, [enteredAddress, findFriend]);
+  }, [addressSelected, enteredAddress, findFriend, onSelectFriend]);
+
+  const selectFriend = useCallback((addr: FriendWithId | undefined) => {
+    onSelectFriend(addr);
+    setAddressSelected(true);
+
+    if (iconType === 'none') {
+      setEnteredAddress(addr?.address);
+      _hideDropdown();
+    }
+  }, [_hideDropdown, iconType, onSelectFriend]);
 
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-between' sx={{ position: 'relative', ...style }} ref={ref}>
@@ -170,9 +188,9 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
               api={api}
               chain={chain}
               formatted={friend.address}
-              iconType='plus'
+              iconType={iconType}
               key={index}
-              onSelect={onSelectFriend}
+              onSelect={selectFriend}
               style={{ px: '10px' }}
             />
           ))}
