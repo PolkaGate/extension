@@ -51,3 +51,4 @@ export { default as checkRecovery } from './checkRecovery.svg';
 export { default as checkRecoveryDark } from './checkRecoveryDark.svg';
 export { default as vouchRecovery } from './vouchRecovery.svg';
 export { default as vouchRecoveryDark } from './vouchRecoveryDark.svg';
+export { default as rescueRecoveryGreen } from './rescueRecoveryGreen.svg';
