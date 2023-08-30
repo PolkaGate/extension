@@ -67,3 +67,4 @@ export { default as useTranslation } from './useTranslation';
 export { default as useValidators } from './useValidators';
 export { default as useValidatorsIdentities } from './useValidatorsIdentities';
 export { default as useAccountsInfo } from './useAccountsInfo';
+export { default as useActiveRecoveries } from './useActiveRecoveries';
