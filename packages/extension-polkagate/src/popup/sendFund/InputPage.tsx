@@ -5,59 +5,85 @@
 
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 
-import { AmountWithOptions, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
+import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useApi, useChain, useDecimal, useFormatted, useTeleport } from '../../hooks';
-import { CHAINS_WITH_BLACK_LOGO } from '../../util/constants';
-import getLogo from '../../util/getLogo';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
+import { Inputs, STEPS } from '.';
 
 interface Props {
   address: string
   balances: BalancesInfo | undefined;
-  assetId: number | undefined
+  assetId: number | undefined;
+  inputs: Inputs | undefined;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setInputs: React.Dispatch<React.SetStateAction<Inputs>>
 }
 
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export default function SetValues({ address, assetId, balances }: Props): React.ReactElement {
-  const { t } = useTranslation();
+function isNumber(variable: any) {
+  return typeof variable === 'number';
+}
+
+export const Title = ({ padding = '30px 0px 20px', text }: { text: string, padding?: string }) => {
   const theme = useTheme();
+
+  return (
+    <Grid alignItems='baseline' container item spacing={1} p={padding}>
+      <Grid item>
+        <FontAwesomeIcon
+          color={theme.palette.text.primary}
+          icon={faPaperPlane}
+          size='xl'
+          style={{ paddingBottom: '5px' }}
+        />
+      </Grid>
+      <Grid item>
+        <Typography fontSize='30px' fontWeight={700} >
+          {text}
+        </Typography>
+      </Grid>
+    </Grid>
+  )
+};
+
+export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+  const { t } = useTranslation();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const teleportState = useTeleport(address);
 
+  const [amount, setAmount] = useState<string>(inputs?.amount || '0');
+  const [estimatedFee, setEstimatedFee] = useState<Balance>();
+  const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
+  const [recipientAddress, setRecipientAddress] = useState<string>(inputs?.recipientAddress);
+  const [recipientChainGenesisHash, setRecipientChainGenesisHash] = useState<string | undefined>(inputs?.recipientGenesisHashOrParaId);
+  const [recipientParaId, setParaId] = useState(INVALID_PARA_ID);
+  const [recipientChainName, setRecipientChainName] = useState<string>();
+  const [transferType, setTransferType] = useState<TransferType>('Normal');
+  const [maxFee, setMaxFee] = useState<Balance>();
+
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
-    const mayBeTeleportDestinations = teleportState?.destinations?.map(({ paraId, info }) => {
+    const mayBeTeleportDestinations = teleportState?.destinations?.map(({ info, paraId }) => {
       return { text: toTitleCase(info), value: paraId };
     });
 
     return currentChainOption.concat(mayBeTeleportDestinations || []);
   }, [chain, teleportState?.destinations]);
-
-  const [display, setDisplay] = useState<string | undefined>();
-  const [amount, setAmount] = useState<string>('0');
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
-  const [recipientAddress, setRecipientAddress] = useState<string>();
-  const [recipientChainGenesisHash, setRecipientChainGenesisHash] = useState<string>();
-  const [recipientParaId, setParaId] = useState(INVALID_PARA_ID);
-
-  const [transferType, setTransferType] = useState<TransferType>('Normal');
-  const [maxFee, setMaxFee] = useState<Balance>();
 
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
@@ -98,7 +124,7 @@ export default function SetValues({ address, assetId, balances }: Props): React.
     onChainCall(..._params).paymentInfo(formatted).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
   }, [api, formatted, balances, onChainCall, assetId]);
 
-  const params = useMemo(() => {
+  const crossChainParams = useMemo(() => {
     if (!api || !teleportState || isCrossChain === false || recipientParaId === INVALID_PARA_ID || Number(amount) === 0) {
       return;
     }
@@ -138,15 +164,32 @@ export default function SetValues({ address, assetId, balances }: Props): React.
     ];
   }, [api, teleportState, isCrossChain, recipientParaId, recipientAddress, amount, decimal]);
 
-  console.log('recipientParaId:', recipientParaId);
-  console.log('paramsparams:', params);
-  console.log('recipientChainGenesisHash:', recipientChainGenesisHash);
-
   useEffect(() => {
-    if (recipientChainGenesisHash && isCrossChain) {
+    if (isNumber(recipientChainGenesisHash) && isCrossChain) {
       setParaId(parseInt(recipientChainGenesisHash));
     }
-  }, [isCrossChain, recipientChainGenesisHash]);
+
+    setRecipientChainName(destinationGenesisHashes?.find(({ value }) => value === recipientChainGenesisHash)?.text);
+  }, [destinationGenesisHashes, isCrossChain, recipientChainGenesisHash]);
+
+  console.log('inputs:', inputs)
+  useEffect(() => {
+    const amountAsBN = amountToMachine(amount, decimal);
+
+    setInputs({
+      amount,
+      call,
+      params: isCrossChain
+        ? crossChainParams
+        : assetId !== undefined
+          ? [assetId, formatted, amountAsBN]
+          : [formatted, amountAsBN],
+      recipientAddress,
+      recipientChainName,
+      recipientGenesisHashOrParaId: recipientChainGenesisHash,
+      totalFee: (estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO)
+    });
+  }, [estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, decimal, recipientChainName, recipientChainGenesisHash]);
 
   useEffect(() => {
     if (!api || !balances) {
@@ -167,12 +210,12 @@ export default function SetValues({ address, assetId, balances }: Props): React.
   }, [amount, api, calculateFee, decimal]);
 
   useEffect(() => {
-    if (!call || !params || !formatted) {
+    if (!call || !crossChainParams || !formatted) {
       return;
     }
 
-    isCrossChain && call(...params).paymentInfo(formatted).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
-  }, [call, formatted, isCrossChain, params]);
+    isCrossChain && call(...crossChainParams).paymentInfo(formatted).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
+  }, [call, formatted, isCrossChain, crossChainParams]);
 
   const setWholeAmount = useCallback((type: TransferType) => {
     if (!api || !balances?.availableBalance || !maxFee || !decimal) {
@@ -187,27 +230,15 @@ export default function SetValues({ address, assetId, balances }: Props): React.
     setAmount(type === 'All' ? allAmount : maxAmount);
   }, [api, balances?.availableBalance, decimal, maxFee]);
 
+  console.log('crossChainParams:', crossChainParams);
+
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Grid alignItems='baseline' container item spacing={1}>
-        <Grid item>
-          <FontAwesomeIcon
-            color={theme.palette.text.primary}
-            icon={faPaperPlane}
-            size='xl'
-            style={{ paddingBottom: '5px' }}
-          />
-        </Grid>
-        <Grid item>
-          <Typography fontSize='30px' fontWeight={700} pb='20px' pt='30px'>
-            {t<string>('Send Fund')}
-          </Typography>
-        </Grid>
-      </Grid>
+      <Title text={t<string>('Send Fund')} />
       <Typography fontSize='14px' fontWeight={400}>
-        {t<string>('Please enter the amount you wish to transfer. For cross-chain transfers, if available, adjust the recipient chain and take into account the applicable cross-chain fee.')}
+        {t<string>('Input transfer amount and destination account. For cross-chain transfers, adjust recipient chain and consider associated fees.')}
       </Typography>
-      <Grid alignItems='center' borderBottom='1px rgba(99, 54, 77, 0.2) solid' container item justifyContent='space-between' m='auto' pb='15px' pt='18px'>
+      <Grid alignItems='center' borderBottom='1px rgba(99, 54, 77, 0.2) solid' container item justifyContent='space-between' m='auto' pb='15px' pt='25px'>
         <Grid container item justifyContent='space-between'>
           <Grid item md={6.9} xs={12}>
             <Typography fontSize='16px'>
@@ -217,13 +248,13 @@ export default function SetValues({ address, assetId, balances }: Props): React.
               <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} token={balances?.token} />
             </Grid>
           </Grid>
-          <Grid item md={4.7} xs={12}>
+          <Grid item md={4.8} xs={12}>
             <Typography fontSize='16px'>
               {t<string>('Chain')}
             </Typography>
-            <Grid alignItems='center' container item sx={{ border: 1, height: '48px', p: '0 5px', fontSize: '18px', borderColor: 'rgba(75, 75, 75, 0.3)' }}>
-              <Avatar src={getLogo(chain)} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(chain?.name) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 29, width: 29 }} variant='square' />
-              <Typography fontSize='14px' pl='5px'>
+            <Grid alignItems='center' container item sx={{ border: 1, height: '48px', p: '0 15px', fontSize: '18px', borderColor: 'rgba(75, 75, 75, 0.3)' }}>
+              <ChainLogo genesisHash={chain?.genesisHash} size={29} />
+              <Typography fontSize='14px' pl='10px'>
                 {chain?.name}
               </Typography>
             </Grid>
@@ -245,7 +276,8 @@ export default function SetValues({ address, assetId, balances }: Props): React.
             mt: '25px',
             width: '82%'
           }}
-          value={amount}
+          textSpace='15px'
+          value={inputs?.amount || amount}
         />
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: '57.5%', height: '38px' }}>
           <Typography fontSize='16px' fontWeight={400}>
@@ -260,7 +292,7 @@ export default function SetValues({ address, assetId, balances }: Props): React.
       <Grid container item justifyContent='space-between' >
         <Grid item md={6.9} xs={12} sx={{ pt: '10px' }} >
           <InputAccount
-            address={recipientAddress}
+            address={inputs?.recipientAddress || recipientAddress}
             chain={chain}
             label={t('Account')}
             labelFontSize='16px'
@@ -268,10 +300,10 @@ export default function SetValues({ address, assetId, balances }: Props): React.
             style={{ display: 'contents' }}
           />
         </Grid>
-        <Grid item md={4.7} xs={12}>
+        <Grid item md={4.8} xs={12}>
           <FullscreenChain
             address={address}
-            defaultValue={chain?.genesisHash}
+            defaultValue={inputs?.recipientGenesisHashOrParaId || chain?.genesisHash}
             label={t<string>('Chain')}
             labelFontSize='16px'
             onChange={setRecipientChainGenesisHash}
@@ -300,10 +332,11 @@ export default function SetValues({ address, assetId, balances }: Props): React.
         <Grid container justifyContent='flex-end'>
           <PButton
             _mt='15px'
-            _width={30}
-            disabled={!address || !recipientChainGenesisHash || !recipientAddress || Number(amount) <= 0}
+            // eslint-disable-next-line react/jsx-no-bind
+            _onClick={() => setStep(STEPS.REVIEW)}
+            _width={32}
+            disabled={!address || !recipientChainGenesisHash || !(recipientAddress && inputs?.recipientAddress) || Number(amount) <= 0}
             text={t<string>('Next')}
-          // _onClick={goReview}
           />
         </Grid>
       </Grid>

@@ -3,21 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
+import { FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useGenesisHashOptions } from '@polkadot/extension-polkagate/src/hooks';
-import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { convertToCamelCase } from '../popup/governance/utils/util';
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
-import StyledIcon from './Icon';
+import ChainLogo from './ChainLogo';
 import Label from './Label';
 
 interface Props {
@@ -143,18 +140,11 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     return (
       <Grid container height={height} justifyContent='flex-start'>
         {text !== 'Allow use on any chain' && logo &&
-          <Grid alignItems='center' container item pr='6px' width='fit-content'>
-            {logo.startsWith('data:')
-              ? <Avatar src={getLogo(chainName(text))} sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: logoSize, width: logoSize }} variant='square' />
-              : <FontAwesomeIcon
-                color={'#333'}
-                fontSize='15px'
-                icon={fas[convertToCamelCase(logo)]}
-              />
-            }
+          <Grid alignItems='center' container item pr='10px' width='fit-content'>
+            <ChainLogo chainName={text} size={logoSize} />
           </Grid>
         }
-        <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
+        <Grid alignItems='center' container item justifyContent='flex-start' width='fit-content'>
           <Typography fontSize='14px' fontWeight={400}>
             {text}
           </Typography>
@@ -219,7 +209,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
                 height: '48px',
                 lineHeight: '30px',
                 p: 0,
-                pl: '5px',
+                pl: '15px',
                 textAlign: 'left'
               },
               '> .MuiSvgIcon-root': {
