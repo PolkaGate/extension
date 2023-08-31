@@ -49,21 +49,19 @@ function AccountBrief({ address, identity, showName = true, showDivider = true }
     < >
       {showName &&
         <Grid alignItems='center' container justifyContent='center' xs={12}>
-          <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', mt: '5px', maxWidth: '92%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', maxWidth: '92%', mt: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {identity?.display || account?.name}
           </Typography>
         </Grid>
       }
-      <Grid alignItems='center' container item justifyContent='center'>
+      <Grid alignItems='center' container item justifyContent='space-between' px='10px'>
         <Grid item>
           <ShortAddress address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
-        <Grid item>
+        <Grid alignItems='center' container item justifyContent='space-around' width='50px'>
           <Infotip placement='top' text={t('Receive')}>
             <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '9px', mr: '4px', cursor: 'pointer' }} />
           </Infotip>
-        </Grid>
-        <Grid item>
           <Infotip placement='top' text={t('Subscan')}>
             <Link
               href={`${subscanLink(formatted)}`}
