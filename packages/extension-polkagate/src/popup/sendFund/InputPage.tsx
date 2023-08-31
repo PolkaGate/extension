@@ -225,7 +225,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     }
 
     const publicKey = decodeAddress(recipientAddress);
-    const newFormattedAddress = encodeAddress(publicKey, chain.ss58Format)
+    const newFormattedAddress = encodeAddress(publicKey, chain.ss58Format);
 
     setRecipientAddress(newFormattedAddress);
   }, [chain?.ss58Format, recipientAddress]);
