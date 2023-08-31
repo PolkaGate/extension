@@ -59,6 +59,7 @@ export { default as PButton } from './PButton';
 export { default as RemoveAuth } from './RemoveAuth';
 export { default as RemoteNodeSelector } from './RemoteNodeSelector';
 export { default as ShortAddress } from './ShortAddress';
+export { default as ShortAddress2 } from './ShortAddress2';
 export { default as Select } from './Select';
 export { default as Select2 } from './Select2';
 export { default as Switch } from './Switch';
