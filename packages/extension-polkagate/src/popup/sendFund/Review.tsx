@@ -12,11 +12,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 
 import { ChainLogo, Identity, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useAccountInfo, useApi, useChain, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { useAccountDisplay, useApi, useChain, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { broadcast, signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { signAndSend } from '../../util/api';
+import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
@@ -29,23 +29,23 @@ import { Inputs, STEPS } from './';
 
 interface Props {
   address: string;
+  balances: BalancesInfo | undefined;
+  inputs: Inputs | undefined;
   infoParams: PalletIdentityIdentityInfo | null | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  inputs: Inputs | undefined
 }
 
-export default function Review({ address, inputs, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review({ address, balances, inputs, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const name = useAccountDisplay(address);
+  const senderName = useAccountDisplay(address);
   const formatted = useFormatted(address);
   const api = useApi(address);
-  const decimal = useDecimal(address);
   const chain = useChain(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
-  const recipientAccountInfo = useAccountInfo(api, inputs?.recipientAddress);
+  const recipientName = useAccountDisplay(inputs?.recipientAddress);
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>();
@@ -85,14 +85,16 @@ export default function Review({ address, inputs, setRefresh, setStep, step }: P
         block: block || 0,
         chain,
         date: Date.now(),
+        decimal: balances?.decimal,
         failureText,
         fee: fee || String(inputs?.totalFee || 0),
-        from: { address: String(formatted), name },
-        to: { address: String(inputs.recipientAddress), name: recipientAccountInfo?.identity?.display },
+        from: { address: String(formatted), name: senderName },
         recipientChainName: inputs?.recipientChainName,
         subAction: 'send',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
+        to: { address: String(inputs.recipientAddress), name: recipientName },
+        token: balances?.token,
         txHash: txHash || ''
       };
 
@@ -103,7 +105,7 @@ export default function Review({ address, inputs, setRefresh, setStep, step }: P
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [formatted, inputs, api, selectedProxy, password, setStep, chain, name, recipientAccountInfo?.identity?.display, selectedProxyAddress, selectedProxyName]);
+  }, [formatted, inputs, api, selectedProxy, password, setStep, chain, balances, senderName, recipientName, selectedProxyAddress, selectedProxyName]);
 
   const handleClose = useCallback(() => {
     setStep(STEPS.INDEX);
@@ -162,9 +164,10 @@ export default function Review({ address, inputs, setRefresh, setStep, step }: P
               <DisplayValue dividerHeight='1px' title={t<string>('Amount')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
-                    api={api}
-                    balance={inputs?.amount && decimal && amountToMachine(inputs.amount, decimal)}
+                    balance={inputs?.amount && balances?.decimal && amountToMachine(inputs.amount, balances?.decimal)}
+                    decimal={balances?.decimal}
                     decimalPoint={4}
+                    token={balances?.token}
                   />
                 </Grid>
               </DisplayValue>
@@ -213,7 +216,7 @@ export default function Review({ address, inputs, setRefresh, setStep, step }: P
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
                 isPasswordError={isPasswordError}
-                label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+                label={`${t<string>('Password')} for ${selectedProxyName || senderName || ''}`}
                 onChange={setPassword}
                 onPrimaryClick={onConfirm}
                 onSecondaryClick={handleClose}

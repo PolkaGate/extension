@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
 import { useTranslation } from '../../components/translate';
@@ -78,14 +79,22 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
-    const mayBeTeleportDestinations = teleportState?.destinations?.map(({ info, paraId }) => {
-      return { text: toTitleCase(info), value: paraId };
-    });
+    const mayBeTeleportDestinations = assetId === undefined
+      ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info), value: genesisHash || paraId }))
+      : [];
 
-    return currentChainOption.concat(mayBeTeleportDestinations || []);
-  }, [chain, teleportState?.destinations]);
+    return currentChainOption.concat(mayBeTeleportDestinations);
+  }, [assetId, chain, teleportState?.destinations]);
 
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
+
+  const amountAsBN = useMemo(() => {
+    if (!isCrossChain && assetId !== undefined) {
+      return balances?.decimal && amountToMachine(amount, balances.decimal);
+    }
+
+    return amountToMachine(amount, decimal);
+  }, [amount, assetId, balances, decimal, isCrossChain]);
 
   const onChainCall = useMemo(() => {
     const module = assetId !== undefined ? 'assets' : 'balances';
@@ -125,7 +134,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [api, formatted, balances, onChainCall, assetId]);
 
   const crossChainParams = useMemo(() => {
-    if (!api || !teleportState || isCrossChain === false || recipientParaId === INVALID_PARA_ID || Number(amount) === 0) {
+    if (!api || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || Number(amount) === 0) {
       return;
     }
 
@@ -172,13 +181,10 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     setRecipientChainName(destinationGenesisHashes?.find(({ value }) => value === recipientChainGenesisHash)?.text);
   }, [destinationGenesisHashes, isCrossChain, recipientChainGenesisHash]);
 
-  console.log('inputs:', inputs)
   useEffect(() => {
-    if (!amount || !recipientChainGenesisHash || !recipientAddress || !recipientChainName) {
+    if (!recipientChainGenesisHash || recipientAddress === undefined || !recipientChainName) {
       return;
     }
-
-    const amountAsBN = amountToMachine(amount, decimal);
 
     setInputs({
       amount,
@@ -186,14 +192,14 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       params: isCrossChain
         ? crossChainParams
         : assetId !== undefined
-          ? [assetId, formatted, amountAsBN]
+          ? [assetId, recipientAddress, amountAsBN]
           : [formatted, amountAsBN],
       recipientAddress,
       recipientChainName,
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
       totalFee: (estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO)
     });
-  }, [estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, decimal, recipientChainName, recipientChainGenesisHash]);
+  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, decimal, recipientChainName, recipientChainGenesisHash]);
 
   useEffect(() => {
     if (!api || !balances) {
@@ -213,11 +219,20 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     calculateFee(value, setEstimatedFee);
   }, [amount, api, calculateFee, decimal]);
 
+  const reformatRecipientAddress = useCallback(() => {
+    if (!recipientAddress || chain?.ss58Format === undefined) {
+      return;
+    }
+
+    const publicKey = decodeAddress(recipientAddress);
+    const newFormattedAddress = encodeAddress(publicKey, chain.ss58Format)
+
+    setRecipientAddress(newFormattedAddress);
+  }, [chain?.ss58Format, recipientAddress]);
+
   useEffect(() => {
-    /** To reset inputs on chain change */
-    setAmount('0');
-    setRecipientAddress(undefined);
-  }, [chain]);
+    chain && reformatRecipientAddress();
+  }, [chain, reformatRecipientAddress]);
 
   useEffect(() => {
     if (!call || !crossChainParams || !formatted) {
@@ -285,7 +300,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             width: '82%'
           }}
           textSpace='15px'
-          value={inputs?.amount || amount}
+          value={amount || inputs?.amount}
         />
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: '57.5%', height: '38px' }}>
           <Typography fontSize='16px' fontWeight={400}>
@@ -300,7 +315,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       <Grid container item justifyContent='space-between' >
         <Grid item md={6.9} xs={12} sx={{ pt: '10px' }} >
           <InputAccount
-            address={inputs?.recipientAddress || recipientAddress}
+            address={recipientAddress || inputs?.recipientAddress}
             chain={chain}
             label={t('Account')}
             labelFontSize='16px'
@@ -311,7 +326,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
         <Grid item md={4.8} xs={12}>
           <FullscreenChain
             address={address}
-            defaultValue={inputs?.recipientGenesisHashOrParaId || chain?.genesisHash}
+            defaultValue={chain?.genesisHash || inputs?.recipientGenesisHashOrParaId}
             label={t<string>('Chain')}
             labelFontSize='16px'
             onChange={setRecipientChainGenesisHash}
@@ -343,7 +358,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             // eslint-disable-next-line react/jsx-no-bind
             _onClick={() => setStep(STEPS.REVIEW)}
             _width={32}
-            disabled={!address || !recipientChainGenesisHash || !(recipientAddress && inputs?.recipientAddress) || Number(amount) <= 0}
+            disabled={!address || !recipientChainGenesisHash || !(recipientAddress && inputs?.recipientAddress) || Number(amount) <= 0 || amountAsBN.gt(new BN(balances?.availableBalance || BN_ZERO))}
             text={t<string>('Next')}
           />
         </Grid>

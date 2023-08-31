@@ -31,7 +31,6 @@ export default function Confirmation({ handleClose, txInfo }: Props): React.Reac
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
-  const amount = txInfo.api.createType('Balance', amountToMachine(txInfo.amount, decimal));
 
   const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
     return (
@@ -86,7 +85,7 @@ export default function Confirmation({ handleClose, txInfo }: Props): React.Reac
         <Divider sx={{ bgcolor: 'secondary.main', height: '1px', m: 'auto', width: '240px' }} />
         <DisplayInfo
           caption={t<string>('Amount:')}
-          value={amount?.toHuman() ?? '00.00'}
+          value={txInfo.amount ? `${txInfo.amount} ${txInfo?.token}` : '00.00'}
         />
         <DisplayInfo
           caption={t<string>('Chain:')}
@@ -125,7 +124,7 @@ export default function Confirmation({ handleClose, txInfo }: Props): React.Reac
         }
         {txInfo?.txHash &&
           <Grid container justifyContent='center' pt='5px'>
-            <Explorer chainName={chainName} txHash={txInfo?.txHash} />
+            <Explorer chainName={chainName} formatted={txInfo.from?.address} txHash={txInfo?.txHash} />
           </Grid>
         }
       </Grid>

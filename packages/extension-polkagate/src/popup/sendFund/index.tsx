@@ -39,11 +39,9 @@ export interface Inputs {
   recipientChainName: string | undefined;
 }
 type StepsType = typeof STEPS[keyof typeof STEPS];
-export type Mode = 'Set' | 'Clear' | undefined;
 
 export default function SendFund(): React.ReactElement {
   useFullscreen();
-  const { t } = useTranslation();
   const theme = useTheme();
   const { address, assetId } = useParams<{ address: string }>();
   const chain = useChain(address);
@@ -75,6 +73,7 @@ export default function SendFund(): React.ReactElement {
         pathname: `/send/${address}`
       });
       setInputs(undefined);
+      setStep(STEPS.INDEX); // to return back to index when change is changed on review of confirm page!
     }
 
     ref.current = chain;
@@ -101,6 +100,7 @@ export default function SendFund(): React.ReactElement {
             setRefresh={setRefresh}
             setStep={setStep}
             step={step}
+            balances={balances}
           />
         }
       </Grid>
