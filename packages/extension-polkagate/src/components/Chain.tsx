@@ -21,8 +21,10 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function SelectChain({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
-  const options = useGenesisHashOptions();
+function Chain({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
+  let options = useGenesisHashOptions();
+
+  options = options.filter(({ text }) => text !== 'Allow use on any chain');
 
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
   const _disabledItems = useMemo((): (string | number)[] | undefined => {
@@ -94,4 +96,4 @@ function SelectChain({ address, defaultValue, disabledItems, label, onChange, st
   );
 }
 
-export default React.memo(SelectChain);
+export default React.memo(Chain);
