@@ -52,7 +52,7 @@ export default function AddressInput2({ addWithQr = false, allAddresses = [], ch
   const autocompleteOptions = useMemo(() => allAddresses.map((a) => ({ address: a[0], name: a[2] })), [allAddresses]);
 
   useEffect(() => {
-    address && setEnteredAddress(address);
+    setEnteredAddress(address);
   }, [address]);
 
   useEffect(() => {
@@ -95,14 +95,14 @@ export default function AddressInput2({ addWithQr = false, allAddresses = [], ch
     _selectAddress(addr);
   }, [_selectAddress]);
 
-  const pasteAddress = useCallback(() => {
+  const pasteClearAddress = useCallback(() => {
     setTogglePopper(false);
 
-    if (enteredAddress || address) {
+    if (enteredAddress || address) { // clear is clicked
       setAddress(null);
       setEnteredAddress(undefined);
       setInValidAddress(false);
-    } else {
+    } else { // past is clicked
       navigator.clipboard.readText().then((clipText) => {
         isValidAddress(clipText) ? setAddress(clipText) : setAddress(undefined);
         setEnteredAddress(clipText);
@@ -143,7 +143,7 @@ export default function AddressInput2({ addWithQr = false, allAddresses = [], ch
                         {!disabled &&
                           <IconButton
                             aria-label={`${enteredAddress || address ? 'clear' : 'paste'}`}
-                            onClick={pasteAddress}
+                            onClick={pasteClearAddress}
                             sx={{ p: '3px' }}
                           >
                             <FontAwesomeIcon
