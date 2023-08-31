@@ -13,7 +13,7 @@ import { Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
 import { FormatPrice, ShowBalance } from '../../components';
-import { useApi, useDecimal, usePrice, useToken } from '../../hooks';
+import { useApi, usePrice } from '../../hooks';
 import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
