@@ -18,7 +18,7 @@ import React, { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
-import { Infotip, ShortAddress } from '../../components';
+import { Infotip, ShortAddress2 } from '../../components';
 import { useAccount, useChainName, useFormatted, useTranslation } from '../../hooks';
 
 interface Props {
@@ -55,10 +55,10 @@ function AccountBrief({ address, identity, showName = true, showDivider = true }
         </Grid>
       }
       <Grid alignItems='center' container item justifyContent='space-between' px='10px'>
-        <Grid item>
-          <ShortAddress address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
+        <Grid item sx={{ width: '84%' }}>
+          <ShortAddress2 address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='space-around' width='50px'>
+        <Grid alignItems='center' container item justifyContent='space-around' width='16%'>
           <Infotip placement='top' text={t('Receive')}>
             <QrCode2 onClick={goToReceive} sx={{ color: 'secondary.light', mt: '9px', mr: '4px', cursor: 'pointer' }} />
           </Infotip>
