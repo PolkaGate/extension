@@ -233,14 +233,10 @@ export default function useBalances(address: string | undefined, refresh?: boole
     api && assetId && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
       console.log('assetAccount:', assetAccount.toHuman());
 
-      if (assetAccount.isNone) {
-        return;
-      }
-
       // eslint-disable-next-line no-void
       void api.query.assets.metadata(assetId).then((metadata) => {
         const assetBalances = {
-          availableBalance: assetAccount.unwrap().balance,
+          availableBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
           chainName,
           decimal: metadata.decimals.toNumber(),
           genesisHash: api.genesisHash.toHex(),
