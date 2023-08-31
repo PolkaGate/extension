@@ -31,12 +31,12 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     }
 
     if (!endpoint || savedApi?.isRequested === true) {
-      console.log('API is already requested, waiting...');
+      // console.log('API is already requested, waiting...');
 
       return;
     }
 
-    console.log('Initializing API connection...');
+    // console.log('Initializing API connection...');
 
     const wsProvider = new WsProvider(endpoint);
 
@@ -79,7 +79,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       const savedApi = apisContext?.apis[chain?.genesisHash ?? '']?.find((sApi) => sApi.endpoint === endpoint);
 
       if (savedApi?.api?.isConnected) {
-        console.log('API connection is ready, updating state.');
+        // console.log('API connection is ready, updating state.');
 
         setApi(savedApi.api);
         clearInterval(pollingInterval);
