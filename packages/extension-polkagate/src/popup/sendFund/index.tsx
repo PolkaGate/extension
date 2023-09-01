@@ -13,10 +13,10 @@ import { useHistory } from 'react-router-dom';
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useBalances, useChain, useFullscreen, useTranslation } from '../../hooks';
+import { useBalances, useChain, useFullscreen } from '../../hooks';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import InputPage from './InputPage';
 import Review from './Review';
@@ -49,9 +49,9 @@ export default function SendFund(): React.ReactElement {
   const history = useHistory();
 
   const parsedAssetId = assetId === undefined || assetId === 'undefined' ? undefined : parseInt(assetId);
-  const balances = useBalances(address, undefined, undefined, undefined, parsedAssetId);
-
   const [refresh, setRefresh] = useState<boolean>(false);
+  const balances = useBalances(address, refresh, setRefresh, undefined, parsedAssetId);
+
   const [step, setStep] = useState<StepsType>(STEPS.INDEX);
   const [inputs, setInputs] = useState<Inputs>();
 
@@ -96,11 +96,11 @@ export default function SendFund(): React.ReactElement {
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) &&
           <Review
             address={address}
+            balances={balances}
             inputs={inputs}
             setRefresh={setRefresh}
             setStep={setStep}
             step={step}
-            balances={balances}
           />
         }
       </Grid>
