@@ -193,7 +193,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
         ? crossChainParams
         : assetId !== undefined
           ? [assetId, recipientAddress, amountAsBN]
-          : [formatted, amountAsBN],
+          : [recipientAddress, amountAsBN],
       recipientAddress,
       recipientChainName,
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
