@@ -31,7 +31,6 @@ interface Props {
   address: string;
   balances: BalancesInfo | undefined;
   inputs: Inputs | undefined;
-  infoParams: PalletIdentityIdentityInfo | null | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
