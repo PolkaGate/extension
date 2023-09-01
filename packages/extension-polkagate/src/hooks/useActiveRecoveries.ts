@@ -4,7 +4,6 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { AccountContext } from '../components/contexts';
@@ -18,11 +17,10 @@ export type ActiveRecoveryFor = {
   vouchedFriends: string[];
 }
 
-export default function useActiveRecoveries(api: ApiPromise | undefined, rescuer?: string): ActiveRecoveryFor | ActiveRecoveryFor[] | null | undefined {
+export default function useActiveRecoveries(api: ApiPromise | undefined, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
   const { accounts } = useContext(AccountContext);
 
-  const [activeRecoveryFor, setActiveRecoveryFor] = useState<ActiveRecoveryFor | null>();
-  const [activeRecoveriesInExtension, setActiveRecoveryExtension] = useState<ActiveRecoveryFor[]>([]);
+  const [activeRecoveries, setActiveRecoveries] = useState<ActiveRecoveryFor[] | null>();
 
   useEffect(() => {
     api && api.query.recovery.activeRecoveries.entries().then((actives) => {
@@ -35,8 +33,8 @@ export default function useActiveRecoveries(api: ApiPromise | undefined, rescuer
         const createdBlockBN = activeRecoveryInfo.created;
         const depositedValue = activeRecoveryInfo.deposit;
 
-        if (rescuer) {
-          rescuerAddress === rescuer &&
+        if (searchFor) {
+          (searchFor === rescuerAddress || searchFor === lostAddress) &&
             myActiveRecovery.push({
               createdBlock: createdBlockBN.toNumber(),
               deposit: depositedValue,
@@ -49,7 +47,7 @@ export default function useActiveRecoveries(api: ApiPromise | undefined, rescuer
             const formatted = getFormattedAddress(account.address, undefined, api.registry.chainSS58 ?? 42);
 
             if ([lostAddress, rescuerAddress].includes(formatted)) {
-              setActiveRecoveryExtension((pervActives) => [...pervActives, {
+              setActiveRecoveries((pervActives) => [...(pervActives ?? []), {
                 createdBlock: createdBlockBN.toNumber(),
                 deposit: depositedValue,
                 lost: lostAddress,
@@ -61,13 +59,11 @@ export default function useActiveRecoveries(api: ApiPromise | undefined, rescuer
         }
       });
 
-      rescuer && myActiveRecovery.length > 0
-        ? setActiveRecoveryFor(myActiveRecovery[myActiveRecovery.length - 1])
-        : setActiveRecoveryFor(null);
+      searchFor && myActiveRecovery.length > 0
+        ? setActiveRecoveries(myActiveRecovery)
+        : setActiveRecoveries(null);
     }).catch(console.error);
-  }, [accounts, api, rescuer]);
+  }, [accounts, api, searchFor]);
 
-  return rescuer
-    ? activeRecoveryFor
-    : activeRecoveriesInExtension;
+  return activeRecoveries;
 }
