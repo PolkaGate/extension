@@ -11,6 +11,7 @@ import { useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
+import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 
 interface Props {
@@ -23,6 +24,7 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   const options = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [currentSelectedChainName, setCurrentSelectedChainName] = useState<string>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const isTestnetDisabled = useCallback((genesisHash: string) => !isTestnetEnabled && TEST_NETS.includes(genesisHash), [isTestnetEnabled]);
@@ -32,14 +34,25 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
   }, []);
 
-  const selectNetwork = useCallback((genesisHash: string) => {
+  useEffect(() => {
+    if (!currentSelectedChainName && currentChainNameFromAccount) {
+      setCurrentSelectedChainName(currentChainNameFromAccount);
+    }
+  }, [currentChainNameFromAccount, currentSelectedChainName]);
+
+  const selectNetwork = useCallback((net: DropdownOption) => {
     setAnchorEl(null);
 
-    if (isTestnetDisabled(genesisHash)) {
+    if (!address || !net?.value) {
       return;
     }
 
-    address && genesisHash && tieAccount(address, genesisHash).catch(console.error);
+    if (isTestnetDisabled(net.value)) {
+      return;
+    }
+
+    tieAccount(address, net.value).catch(console.error);
+    setCurrentSelectedChainName(net.text);
   }, [address, isTestnetDisabled]);
 
   const handleClose = useCallback(() => {
@@ -56,11 +69,11 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', width: '250px' }}>
       {selectableNetworks && selectableNetworks.length > 0 &&
         selectableNetworks.map((network, index) => {
-          const selectedNetwork = chainName(network.text) === currentChainNameFromAccount?.toLocaleLowerCase();
+          const selectedNetwork = chainName(network.text) === currentSelectedChainName?.toLocaleLowerCase();
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
-            <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(network.value)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', px: '15px' }}>
+            <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(network)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', px: '15px' }}>
               <Grid alignItems='center' container item width='fit-content'>
                 <Typography fontSize='16px' fontWeight={selectedNetwork ? 500 : 400}>
                   {network.text}
@@ -88,11 +101,11 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     <Grid container item>
       <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
         <Avatar
-          src={getLogo(currentChainNameFromAccount)}
+          src={getLogo(currentSelectedChainName)}
           sx={{
             bgcolor: 'transparent',
             borderRadius: '50%',
-            filter: CHAINS_WITH_BLACK_LOGO.includes(currentChainNameFromAccount ?? '') ? 'invert(1)' : '',
+            filter: CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChainName ?? '') ? 'invert(1)' : '',
             height: '34px',
             m: 'auto',
             width: '34px'
