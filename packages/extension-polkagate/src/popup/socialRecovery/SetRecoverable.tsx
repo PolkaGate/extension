@@ -123,7 +123,11 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
     }
   }, [recoveryDelayLength, recoveryDelayNumber]);
 
-  const addNewFriend = useCallback((addr: FriendWithId) => {
+  const addNewFriend = useCallback((addr: FriendWithId | undefined) => {
+    if (!addr) {
+      return;
+    }
+
     const alreadyAdded = selectedFriends.find((selectedFriend) => selectedFriend === addr.address);
 
     if (alreadyAdded || selectedFriends.length === maxFriends) {
@@ -182,6 +186,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       setMode(undefined);
     } else if (configStep === CONFIGSTEPS.SET_DETAILS) {
       setConfigStep(CONFIGSTEPS.SELECT_TRUSTED_FRIENDS);
+      setMode(undefined);
     }
   }, [configStep, mode, setMode, setStep]);
 
@@ -196,132 +201,8 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
     }
   }, [configStep, mode, setMode, setStep]);
 
-  const TrustedFriendsConfiguration = () => (
-    <>
-      <Typography fontSize='14px' fontWeight={400} width='100%'>
-        {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
-      </Typography>
-      <SelectTrustedFriend
-        accountsInfo={accountsInfo}
-        api={api}
-        chain={chain}
-        disabled={false}
-        helperText='ToDo'
-        label={t<string>('Find trusted friends accounts')}
-        onSelectFriend={addNewFriend}
-        placeHolder={t<string>('Enter account ID or address')}
-        style={{ py: '15px', width: '50%' }}
-      />
-      <Typography fontSize='16px' fontWeight={400} width='100%'>
-        {t<string>('Trusted friends accounts')}
-      </Typography>
-      <TrustedFriendsList
-        api={api}
-        chain={chain}
-        friendsList={selectedFriendsToShow}
-        onRemoveFriend={removeNewFriend}
-        style={{ '> div': { px: '10px' }, m: '5px', minHeight: '230px', p: 0 }}
-      />
-      <Grid container item pb='15px' pt='10px'>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('Total deposit:')}
-        </Typography>
-        <Grid fontSize='20px' fontWeight={500} item lineHeight='22px' pl='5px'>
-          <ShowBalance
-            api={api}
-            balance={totalDeposit}
-            decimalPoint={4}
-            height={22}
-          />
-        </Grid>
-      </Grid>
-    </>
-  );
-
   const thresholdFocus = useCallback(() => setFocus(1), []);
   const delayFocus = useCallback(() => setFocus(2), []);
-
-  const RecoveryThreshold = () => (
-    <Grid container item pt='20px'>
-      <Typography fontSize='16px' fontWeight={400} width='100%'>
-        {t<string>('Recovery Threshold')}
-      </Typography>
-      <Grid alignItems='center' container item>
-        <Grid container item width='55px'>
-          <Input
-            autoCapitalize='off'
-            autoCorrect='off'
-            autoFocus={focusInputs === 1}
-            onChange={onChangeThreshold}
-            onFocus={thresholdFocus}
-            spellCheck={false}
-            style={{
-              fontSize: '18px',
-              fontWeight: 300,
-              padding: 0,
-              paddingLeft: '10px'
-            }}
-            theme={theme}
-            type='number'
-            value={recoveryThreshold}
-          />
-        </Grid>
-        <Typography fontSize='14px' fontWeight={400} px='8px'>
-          {t<string>('of')}
-        </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='30px' sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '31px', width: '55px' }} textAlign='center'>
-          {selectedFriends.length}
-        </Typography>
-      </Grid>
-    </Grid>
-  );
-
-  const RecoveryDelay = () => (
-    <Grid container item pt='20px'>
-      <Typography fontSize='16px' fontWeight={400} width='100%'>
-        {t<string>('Recovery Delay')}
-      </Typography>
-      <Grid alignItems='center' container item>
-        <Grid container item width='55px'>
-          <Input
-            autoCapitalize='off'
-            autoCorrect='off'
-            autoFocus={focusInputs === 2}
-            onChange={onChangeDelayNumber}
-            onFocus={delayFocus}
-            spellCheck={false}
-            style={{
-              fontSize: '18px',
-              fontWeight: 300,
-              padding: 0,
-              paddingLeft: '10px'
-            }}
-            theme={theme}
-            type='number'
-            value={recoveryDelayNumber}
-          />
-        </Grid>
-        <Grid container item ml='10px' width='125px'>
-          <Select
-            defaultValue={recoveryDelayLengthOptions[2].value}
-            onChange={onChangeDelayLength}
-            options={recoveryDelayLengthOptions}
-            value={recoveryDelayLength || recoveryDelayLengthOptions[2].value}
-          />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-
-  const RecoveryDetailsConfiguration = () => (
-    <>
-      <Typography fontSize='14px' fontWeight={400} width='100%'>
-        {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
-      </Typography>
-      <RecoveryThreshold />
-      <RecoveryDelay />
-    </>
-  );
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
@@ -337,10 +218,118 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
         {t<string>(stepTitle)}
       </Typography>
       {configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS &&
-        <TrustedFriendsConfiguration />
+        <>
+          <Typography fontSize='14px' fontWeight={400} width='100%'>
+            {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
+          </Typography>
+          <SelectTrustedFriend
+            accountsInfo={accountsInfo}
+            api={api}
+            chain={chain}
+            disabled={false}
+            helperText='ToDo'
+            label={t<string>('Find trusted friends accounts')}
+            onSelectFriend={addNewFriend}
+            placeHolder={t<string>('Enter account ID or address')}
+            style={{ py: '15px', width: '50%' }}
+          />
+          <Typography fontSize='16px' fontWeight={400} width='100%'>
+            {t<string>('Trusted friends accounts')}
+          </Typography>
+          <TrustedFriendsList
+            api={api}
+            chain={chain}
+            friendsList={selectedFriendsToShow}
+            onRemoveFriend={removeNewFriend}
+            style={{ '> div': { px: '10px' }, m: '5px', minHeight: '230px', p: 0 }}
+          />
+          <Grid container item pb='15px' pt='10px'>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>('Total deposit:')}
+            </Typography>
+            <Grid fontSize='20px' fontWeight={500} item lineHeight='22px' pl='5px'>
+              <ShowBalance
+                api={api}
+                balance={totalDeposit}
+                decimalPoint={4}
+                height={22}
+              />
+            </Grid>
+          </Grid>
+        </>
       }
       {configStep === CONFIGSTEPS.SET_DETAILS &&
-        <RecoveryDetailsConfiguration />
+        <>
+          <Typography fontSize='14px' fontWeight={400} width='100%'>
+            {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
+          </Typography>
+          <Grid container item pt='20px'>
+            <Typography fontSize='16px' fontWeight={400} width='100%'>
+              {t<string>('Recovery Threshold')}
+            </Typography>
+            <Grid alignItems='center' container item>
+              <Grid container item width='55px'>
+                <Input
+                  autoCapitalize='off'
+                  autoCorrect='off'
+                  autoFocus={focusInputs === 1}
+                  onChange={onChangeThreshold}
+                  onFocus={thresholdFocus}
+                  spellCheck={false}
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 300,
+                    padding: 0,
+                    paddingLeft: '10px'
+                  }}
+                  theme={theme}
+                  type='number'
+                  value={recoveryThreshold}
+                />
+              </Grid>
+              <Typography fontSize='14px' fontWeight={400} px='8px'>
+                {t<string>('of')}
+              </Typography>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='30px' sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', height: '31px', width: '55px' }} textAlign='center'>
+                {selectedFriends.length}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container item pt='20px'>
+            <Typography fontSize='16px' fontWeight={400} width='100%'>
+              {t<string>('Recovery Delay')}
+            </Typography>
+            <Grid alignItems='center' container item>
+              <Grid container item width='55px'>
+                <Input
+                  autoCapitalize='off'
+                  autoCorrect='off'
+                  autoFocus={focusInputs === 2}
+                  onChange={onChangeDelayNumber}
+                  onFocus={delayFocus}
+                  spellCheck={false}
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 300,
+                    padding: 0,
+                    paddingLeft: '10px'
+                  }}
+                  theme={theme}
+                  type='number'
+                  value={recoveryDelayNumber}
+                />
+              </Grid>
+              <Grid container item ml='10px' width='125px'>
+                <Select
+                  defaultValue={recoveryDelayLengthOptions[2].value}
+                  onChange={onChangeDelayLength}
+                  options={recoveryDelayLengthOptions}
+                  value={recoveryDelayLength || recoveryDelayLengthOptions[2].value}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </>
       }
       <Grid container item justifyContent='flex-end'>
         <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
