@@ -74,7 +74,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
 
       setFriendsList(possibleFriends);
     }
-  }, [accountsInfo]);
+  }, [accountsInfo, onSelectFriend]);
 
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
@@ -114,7 +114,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
   }, [_hideDropdown, iconType, onSelectFriend]);
 
   return (
-    <Grid alignItems='flex-end' container item justifyContent='space-between' sx={{ position: 'relative', ...style }} ref={ref}>
+    <Grid alignItems='flex-end' container item justifyContent='space-between' ref={ref} sx={{ position: 'relative', ...style }}>
       <Grid container item onClick={_showDropdown}>
         <Label
           helperText={helperText}
