@@ -16,7 +16,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { useAccountDisplay, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
@@ -32,6 +32,8 @@ import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
+import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
+import blockToDate from '../crowdloans/partials/blockToDate';
 
 interface Props {
   address: string;
@@ -45,15 +47,17 @@ interface Props {
   recoveryInfo: PalletRecoveryRecoveryConfig | null;
   recoveryConfig: RecoveryConfigType | undefined;
   lostAccountAddress: FriendWithId | undefined;
+  activeLost: ActiveRecoveryFor | null;
 }
 
-export default function Review({ address, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review({ activeLost, address, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
   const decimal = useDecimal(address);
+  const currentBlockNumber = useCurrentBlockNumber(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -69,9 +73,10 @@ export default function Review({ address, api, chain, depositValue, lostAccountA
   const removeRecovery = api && api.tx.recovery.removeRecovery;
   const createRecovery = api && api.tx.recovery.createRecovery;
   const initiateRecovery = api && api.tx.recovery.initiateRecovery;
+  const closeRecovery = api && api.tx.recovery.closeRecovery;
 
   const tx = useMemo(() => {
-    if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll) {
+    if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery) {
       return undefined;
     }
 
@@ -80,19 +85,23 @@ export default function Review({ address, api, chain, depositValue, lostAccountA
     }
 
     if (mode === 'SetRecovery' && recoveryConfig) {
-      return createRecovery(recoveryConfig.friends.addresses, recoveryConfig.threshold, recoveryConfig.delayPeriod);
+      return createRecovery(recoveryConfig.friends.addresses.sort(), recoveryConfig.threshold, recoveryConfig.delayPeriod);
     }
 
     if (mode === 'ModifyRecovery' && recoveryConfig) {
-      return batchAll([removeRecovery(), createRecovery(recoveryConfig.friends.addresses, recoveryConfig.threshold, recoveryConfig.delayPeriod)]);
+      return batchAll([removeRecovery(), createRecovery(recoveryConfig.friends.addresses.sort(), recoveryConfig.threshold, recoveryConfig.delayPeriod)]);
     }
 
     if (mode === 'InitiateRecovery' && lostAccountAddress) {
       return initiateRecovery(lostAccountAddress.address);
     }
 
+    if (mode === 'CloseRecovery' && activeLost) {
+      return closeRecovery(activeLost.rescuer);
+    }
+
     return undefined;
-  }, [batchAll, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery]);
+  }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -180,6 +189,7 @@ export default function Review({ address, api, chain, depositValue, lostAccountA
                 {mode === 'SetRecovery' && t('Step 3 of 3: Making account recoverable review')}
                 {mode === 'ModifyRecovery' && t('Step 3 of 3: Modify account recoverability review')}
                 {mode === 'InitiateRecovery' && t('Step 2 of 2: Initiate Recovery review')}
+                {mode === 'CloseRecovery' && t('Close the recovery process and claim the deposit from possible malicious account')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
@@ -188,6 +198,7 @@ export default function Review({ address, api, chain, depositValue, lostAccountA
                 {mode === 'SetRecovery' && t('Making account recoverable')}
                 {mode === 'ModifyRecovery' && t('Modifying account recoverability')}
                 {mode === 'InitiateRecovery' && t('Initiating Recovery')}
+                {mode === 'CloseRecovery' && t('Closing the recovery process')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
@@ -201,6 +212,9 @@ export default function Review({ address, api, chain, depositValue, lostAccountA
             )}
             {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
               txInfo?.success ? t('Recovery Initiated') : t('Initiating Recovery failed')
+            )}
+            {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
+              txInfo?.success ? t('Initiated recovery has been closed.') : t('Closing Recovery failed')
             )}
           </Typography>
         </Grid>
@@ -286,15 +300,41 @@ export default function Review({ address, api, chain, depositValue, lostAccountA
                   />
                 </Grid>
               }
+              {mode === 'CloseRecovery' && activeLost &&
+                <>
+                  <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+                    <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                      {t<string>('Account that initiated the recovery')}
+                    </Typography>
+                    <Identity
+                      api={api}
+                      chain={chain}
+                      direction='row'
+                      formatted={activeLost.rescuer}
+                      identiconSize={31}
+                      showSocial={false}
+                      style={{ maxWidth: '100%', width: 'fit-content' }}
+                      withShortAddress
+                    />
+                  </Grid>
+                  <DisplayValue title={t<string>('Date of initiation')}>
+                    <Typography fontSize='28px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                      {currentBlockNumber ? blockToDate(activeLost.createdBlock, currentBlockNumber) : '- - - -'}
+                    </Typography>
+                  </DisplayValue>
+                </>
+              }
               <DisplayValue title={mode === 'RemoveRecovery'
                 ? t<string>('Releasing deposit')
                 : mode === 'InitiateRecovery'
                   ? t<string>('Initiation Deposit')
-                  : t<string>('Total Deposit')}
+                  : mode === 'CloseRecovery'
+                    ? t<string>('Deposit they made')
+                    : t<string>('Total Deposit')}
               >
                 <ShowBalance
                   api={api}
-                  balance={depositValue}
+                  balance={mode === 'CloseRecovery' ? activeLost?.deposit : depositValue}
                   decimalPoint={4}
                   height={22}
                 />

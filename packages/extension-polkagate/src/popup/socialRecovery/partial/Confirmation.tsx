@@ -54,7 +54,7 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
   );
 };
 
-export default function Confirmation({ decimal, depositValue, handleClose, mode, recoveryConfig, txInfo, lostAccountAddress }: Props): React.ReactElement {
+export default function Confirmation({ decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -62,7 +62,7 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
 
   const MakeRecoverableDetail = () => (
     <>
-      {mode === 'SetRecovery' && recoveryConfig &&
+      {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
         recoveryConfig.friends.addresses.map((friend, index) => (
           <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
@@ -110,8 +110,10 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
         }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {mode !== 'InitiateRecovery'
-              ? t<string>('Rescuer account')
+            {mode !== 'InitiateRecovery' || mode !== 'ModifyRecovery'
+              ? mode === 'CloseRecovery'
+                ? t<string>('Account that initiated the recovery')
+                : t<string>('Rescuer account')
               : t<string>('Account holder')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
@@ -130,31 +132,34 @@ export default function Confirmation({ decimal, depositValue, handleClose, mode,
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
         {mode === 'InitiateRecovery' &&
-          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Lost account')}:
-            </Typography>
-            {lostAccountAddress?.accountIdentity?.identity.display &&
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                {lostAccountAddress?.accountIdentity?.identity.display}
-              </Typography>}
-            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-              <ShortAddress address={lostAccountAddress?.address} inParentheses style={{ fontSize: '16px' }} />
+          <>
+            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t<string>('Lost account')}:
+              </Typography>
+              {lostAccountAddress?.accountIdentity?.identity.display &&
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                  {lostAccountAddress?.accountIdentity?.identity.display}
+                </Typography>}
+              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                <ShortAddress address={lostAccountAddress?.address} inParentheses style={{ fontSize: '16px' }} />
+              </Grid>
             </Grid>
-          </Grid>
+            <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+            </Grid>
+            <DisplayInfo
+              caption={t<string>('Initiation Deposit:')}
+              value={amountToHuman(depositValue, decimal) ?? '00.00'}
+            />
+          </>
         }
         {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
           <MakeRecoverableDetail />
         }
-        {mode === 'RemoveRecovery' &&
+        {(mode === 'RemoveRecovery' || mode === 'CloseRecovery') &&
           <DisplayInfo
-            caption={t<string>('Released deposit:')}
-            value={amountToHuman(depositValue, decimal) ?? '00.00'}
-          />
-        }
-        {mode === 'InitiateRecovery' &&
-          <DisplayInfo
-            caption={t<string>('Initiation Deposit:')}
+            caption={mode === 'CloseRecovery' ? t<string>('Deposit they made:') : t<string>('Released deposit:')}
             value={amountToHuman(depositValue, decimal) ?? '00.00'}
           />
         }

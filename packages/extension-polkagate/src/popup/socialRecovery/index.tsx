@@ -20,15 +20,15 @@ import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { checkRecovery, checkRecoveryDark, rescueRecovery, rescueRecoveryDark, socialRecoveryDark, socialRecoveryLight, vouchRecovery, vouchRecoveryDark } from '../../assets/icons';
-import { Warning } from '../../components';
+import { PButton, Warning } from '../../components';
 import { useActiveRecoveries, useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
+import { FriendWithId } from './components/SelectTrustedFriend';
 import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';
 import Review from './Review';
 import RecoveryConfig from './SetRecoverable';
-import { FriendWithId } from './components/SelectTrustedFriend';
 
 export const STEPS = {
   CHECK_SCREEN: 0,
@@ -40,7 +40,7 @@ export const STEPS = {
   REVIEW: 6,
   WAIT_SCREEN: 7,
   CONFIRM: 8,
-  UNSUPPORTED: 10,
+  UNSUPPORTED: 9,
   PROXY: 100
 };
 
@@ -51,7 +51,7 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
-export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | undefined;
+export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | undefined;
 export type RecoveryConfigType = {
   friends: { addresses: string[], infos?: (DeriveAccountInfo | undefined)[] | undefined };
   threshold: number;
@@ -68,11 +68,20 @@ export default function SocialRecovery(): React.ReactElement {
   const chain = useChain(address);
   const chainName = useChainName(address);
   const formatted = useFormatted(address);
-  const initiatedRecovery = useActiveRecoveries(api, formatted);
+  const activeRecoveries = useActiveRecoveries(api, String(formatted));
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
   const darkModeButtonColor = useMemo(() => theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.secondary.light, [theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.light]);
+
+  const activeRescue = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.rescuer === String(formatted)).at(-1) ?? null : null, [activeRecoveries, formatted]);
+  const activeLost = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null : null, [activeRecoveries, formatted]);
+  const DisableButtonBgcolor = useMemo(() => (
+    activeLost
+      ? theme.palette.mode === 'light'
+        ? 'rgba(23, 23, 23, 0.3)'
+        : 'rgba(241, 241, 241, 0.1)'
+      : 'background.paper'), [activeLost, theme.palette.mode]);
 
   const [step, setStep] = useState<number>(0);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
@@ -107,10 +116,10 @@ export default function SocialRecovery(): React.ReactElement {
       return;
     }
 
-    if (recoveryInfo !== undefined && initiatedRecovery !== undefined) {
+    if (recoveryInfo !== undefined && activeRecoveries !== undefined && step === STEPS.CHECK_SCREEN) {
       setStep(STEPS.INDEX);
     }
-  }, [address, api, initiatedRecovery, recoveryInfo]);
+  }, [address, api, activeRecoveries, recoveryInfo, step]);
 
   useEffect(() => {
     if (recoveryInfo) {
@@ -134,6 +143,11 @@ export default function SocialRecovery(): React.ReactElement {
     setStep(STEPS.INITIATERECOVERY);
   }, []);
 
+  const goCloseRecovery = useCallback(() => {
+    setMode('CloseRecovery');
+    setStep(STEPS.REVIEW);
+  }, []);
+
   const RecoveryCheckProgress = () => {
     return (
       <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
@@ -146,7 +160,7 @@ export default function SocialRecovery(): React.ReactElement {
   };
 
   const RecoveryOptionButton = ({ description, icon, onClickFunction, title }: RecoveryOptionButtonType) => (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onClickFunction} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: 'pointer', p: '25px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={activeLost ? () => null : onClickFunction} sx={{ bgcolor: DisableButtonBgcolor, border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: activeLost ? 'default' : 'pointer', p: '25px' }}>
       <Grid alignItems='center' container item width='75px'>
         {icon}
       </Grid>
@@ -205,9 +219,31 @@ export default function SocialRecovery(): React.ReactElement {
           }
         </Grid>
       </Grid>
-      <Typography fontSize='12px' fontWeight={400} py='25px'>
+      <Typography fontSize='12px' fontWeight={400} py={activeLost ? '10px' : '25px'}>
         {t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase. Social recovery means relying on friends and family to access your crypto.')}
       </Typography>
+      {activeLost &&
+        <Grid alignItems='center' container item justifyContent='space-between' pb='15px' pt='10px'>
+          <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', width: '330px' }}>
+            <Warning
+              fontWeight={500}
+              isBelowInput
+              isDanger
+              theme={theme}
+            >
+              {t<string>('Suspicious recovery detected on your account.')}
+            </Warning>
+          </Grid>
+          <Grid container item justifyContent='flex-end' sx={{ '> button': { width: '280px' }, '> div': { width: '280px' }, width: 'fit-content' }}>
+            <PButton
+              _ml={0}
+              _mt='0'
+              _onClick={goCloseRecovery}
+              text={t<string>('Close Recovery')}
+            />
+          </Grid>
+        </Grid>
+      }
       <Grid container direction='column' gap='25px' item>
         <RecoveryOptionButton
           description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
@@ -239,7 +275,7 @@ export default function SocialRecovery(): React.ReactElement {
             />
           }
           onClickFunction={goToInitiateRecovery}
-          title={initiatedRecovery
+          title={activeRescue
             ? t<string>('You Initiated a Recovery, Check Status.')
             : t<string>('Rescue a Lost Account')}
         />
@@ -313,7 +349,7 @@ export default function SocialRecovery(): React.ReactElement {
           <InitiateRecovery
             address={address}
             api={api}
-            initiatedRecovery={initiatedRecovery}
+            initiatedRecovery={activeRescue}
             mode={mode}
             setLostAccountAddress={setLostAccountAddress}
             setMode={setMode}
@@ -323,6 +359,7 @@ export default function SocialRecovery(): React.ReactElement {
         }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
           <Review
+            activeLost={activeLost}
             address={address}
             api={api}
             chain={chain}
