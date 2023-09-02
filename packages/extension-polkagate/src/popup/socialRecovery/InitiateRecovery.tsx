@@ -11,14 +11,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { checkRecovery, checkRecoveryDark, rescueRecovery, rescueRecoveryDark, socialRecoveryDark, socialRecoveryLight, vouchRecovery, vouchRecoveryDark } from '../../assets/icons';
+import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
 import { PButton, TwoButtons } from '../../components';
 import { useAccountsInfo, useChain, useDecimal, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
+import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import { SocialRecoveryModes, STEPS } from '.';
-import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 
 interface Props {
   address: string | undefined;
@@ -31,14 +31,13 @@ interface Props {
   initiatedRecovery: ActiveRecoveryFor | null;
 }
 
-export default function InitiateRecovery({ address, api, initiatedRecovery, mode, setLostAccountAddress, setMode, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function InitiateRecovery ({ address, api, initiatedRecovery, mode, setLostAccountAddress, setMode, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
   const accountsInfo = useAccountsInfo(api, chain);
   const decimal = useDecimal(address);
   const token = useToken(address);
-
 
   const [lostAccount, setLostAccount] = useState<FriendWithId>();
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
@@ -90,97 +89,97 @@ export default function InitiateRecovery({ address, api, initiatedRecovery, mode
     setStep(STEPS.REVIEW);
   }, [lostAccount, recoveryDeposit, setLostAccountAddress, setMode, setStep, setTotalDeposit]);
 
-  const InitiateRecoveryPage = () => (
-    <>
-      <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-        {t<string>('Initiate Recovery')}
-      </Typography>
-      <Typography fontSize='14px' fontWeight={400} width='100%'>
-        {t<string>('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.')}
-      </Typography>
-      <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
-        {t<string>('Step 1/2: Confirm lost account ')}
-      </Typography>
-      <SelectTrustedFriend
-        accountsInfo={accountsInfo}
-        api={api}
-        chain={chain}
-        disabled={false}
-        helperText='ToDo'
-        iconType='none'
-        label={t<string>('Lost accounts')}
-        onSelectFriend={selectLostAccount}
-        placeHolder={t<string>('Enter account ID or address')}
-        style={{ py: '15px', width: '100%' }}
-      />
-      {lostAccountRecoveryInfo !== false &&
-        <Grid container item justifyContent='flex-end' pt='15px' sx={{ '> button': { width: '190px' }, '> div': { width: '190px' } }}>
-          <PButton
-            _isBusy={lostAccountRecoveryInfo === undefined}
-            _ml={0}
-            _mt='0'
-            _onClick={checkAccountRecoverability}
-            disabled={!lostAccount}
-            text={t<string>('Verify status')}
-          />
-        </Grid>
-      }
-      {lostAccountRecoveryInfo !== false &&
-        <LostAccountRecoveryInfo
-          accountsInfo={accountsInfo}
-          decimal={decimal}
-          lostAccountRecoveryInfo={lostAccountRecoveryInfo}
-          token={token}
-        />
-      }
-      <Grid container item justifyContent='flex-end' pt='15px'>
-        <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
-          <TwoButtons
-            disabled={lostAccountRecoveryInfo === undefined || lostAccountRecoveryInfo === null || !lostAccount?.address}
-            isBusy={false}
-            mt={'1px'}
-            onPrimaryClick={lostAccountRecoveryInfo === false
-              ? checkAccountRecoverability
-              : rescueLostAccount}
-            onSecondaryClick={goBack}
-            primaryBtnText={lostAccountRecoveryInfo === false
-              ? t<string>('Verify status')
-              : t<string>('Proceed')}
-            secondaryBtnText={t<string>('Back')}
-          />
-        </Grid>
-      </Grid>
-    </>
-  );
-
-  const CheckRecoveryStatus = () => (
-    <>
-      <Grid alignItems='center' container item pt='20px' width='fit-content'>
-        <Box
-          component='img'
-          src={theme.palette.mode === 'dark'
-            ? socialRecoveryDark as string
-            : socialRecoveryLight as string}
-          sx={{ height: '66px', width: '66px' }}
-        />
-        <Typography fontSize='30px' fontWeight={700} pl='15px'>
-          {t<string>('Social Recovery')}
-        </Typography>
-      </Grid>
-      <InitiatedRecoveryStatus
-        api={api}
-        chain={chain}
-        initiatedRecovery={initiatedRecovery}
-        lostAccountRecoveryInfo={lostAccountRecoveryInfo}
-      />
-    </>
-  );
-
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       {initiatedRecovery
-        ? <CheckRecoveryStatus />
-        : <InitiateRecoveryPage />
+        ? <>
+          <Grid alignItems='center' container item pt='20px' width='fit-content'>
+            <Box
+              component='img'
+              src={theme.palette.mode === 'dark'
+                ? socialRecoveryDark as string
+                : socialRecoveryLight as string}
+              sx={{ height: '66px', width: '66px' }}
+            />
+            <Typography fontSize='30px' fontWeight={700} pl='15px'>
+              {t<string>('Social Recovery')}
+            </Typography>
+          </Grid>
+          <InitiatedRecoveryStatus
+            api={api}
+            chain={chain}
+            initiatedRecovery={initiatedRecovery}
+            lostAccountRecoveryInfo={lostAccountRecoveryInfo}
+          />
+          <Grid container item justifyContent='flex-end' pt='15px' sx={{ '> button': { width: '190px' }, '> div': { width: '190px' } }}>
+            <PButton
+              _ml={0}
+              _mt='0'
+              _onClick={goBack}
+              text={t<string>('Back')}
+            />
+          </Grid>
+        </>
+        : <>
+          <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
+            {t<string>('Initiate Recovery')}
+          </Typography>
+          <Typography fontSize='14px' fontWeight={400} width='100%'>
+            {t<string>('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.')}
+          </Typography>
+          <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
+            {t<string>('Step 1/2: Confirm lost account ')}
+          </Typography>
+          <SelectTrustedFriend
+            accountsInfo={accountsInfo}
+            api={api}
+            chain={chain}
+            disabled={false}
+            helperText='ToDo'
+            iconType='none'
+            label={t<string>('Lost accounts')}
+            onSelectFriend={selectLostAccount}
+            placeHolder={t<string>('Enter account ID or address')}
+            style={{ py: '15px', width: '100%' }}
+          />
+          {lostAccountRecoveryInfo !== false &&
+            <Grid container item justifyContent='flex-end' pt='15px' sx={{ '> button': { width: '190px' }, '> div': { width: '190px' } }}>
+              <PButton
+                _isBusy={lostAccountRecoveryInfo === undefined}
+                _ml={0}
+                _mt='0'
+                _onClick={checkAccountRecoverability}
+                disabled={!lostAccount}
+                text={t<string>('Verify status')}
+              />
+            </Grid>
+          }
+          {lostAccountRecoveryInfo !== false &&
+            <LostAccountRecoveryInfo
+              accountsInfo={accountsInfo}
+              decimal={decimal}
+              lostAccountRecoveryInfo={lostAccountRecoveryInfo}
+              token={token}
+            />
+          }
+          <Grid container item justifyContent='flex-end' pt='15px'>
+            <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
+              <TwoButtons
+                disabled={lostAccountRecoveryInfo === undefined || lostAccountRecoveryInfo === null || !lostAccount?.address}
+                isBusy={false}
+                mt={'1px'}
+                onPrimaryClick={lostAccountRecoveryInfo === false
+                  ? checkAccountRecoverability
+                  : rescueLostAccount}
+                onSecondaryClick={goBack}
+                primaryBtnText={lostAccountRecoveryInfo === false
+                  ? t<string>('Verify status')
+                  : t<string>('Proceed')}
+                secondaryBtnText={t<string>('Back')}
+              />
+            </Grid>
+          </Grid>
+        </>
       }
     </Grid>
   );
