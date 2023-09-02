@@ -112,6 +112,7 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
         api={api}
         chain={chain}
         friendsList={recoveryInformation.friends.map((friend) => String(friend))}
+        style={{ maxHeight: '205px' }}
         title={t<string>('Trusted friends')}
       />
       <RecoveryInformationDisplay />
