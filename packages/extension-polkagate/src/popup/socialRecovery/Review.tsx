@@ -48,9 +48,10 @@ interface Props {
   recoveryConfig: RecoveryConfigType | undefined;
   lostAccountAddress: FriendWithId | undefined;
   activeLost: ActiveRecoveryFor | null;
+  vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
 }
 
-export default function Review({ activeLost, address, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step }: Props): React.ReactElement {
+export default function Review({ activeLost, address, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step, vouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -74,9 +75,10 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
   const createRecovery = api && api.tx.recovery.createRecovery;
   const initiateRecovery = api && api.tx.recovery.initiateRecovery;
   const closeRecovery = api && api.tx.recovery.closeRecovery;
+  const vouchRecovery = api && api.tx.recovery.vouchRecovery;
 
   const tx = useMemo(() => {
-    if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery) {
+    if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery || !vouchRecovery) {
       return undefined;
     }
 
@@ -100,8 +102,12 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
       return closeRecovery(activeLost.rescuer);
     }
 
+    if (mode === 'VouchRecovery' && vouchRecoveryInfo) {
+      return vouchRecovery(vouchRecoveryInfo.lost.address, vouchRecoveryInfo.rescuer.address);
+    }
+
     return undefined;
-  }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery]);
+  }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery, vouchRecovery, vouchRecoveryInfo]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -190,15 +196,17 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                 {mode === 'ModifyRecovery' && t('Step 3 of 3: Modify account recoverability review')}
                 {mode === 'InitiateRecovery' && t('Step 2 of 2: Initiate Recovery review')}
                 {mode === 'CloseRecovery' && t('Close the recovery process and claim the deposit from possible malicious account')}
+                {mode === 'VouchRecovery' && t('Step 2 of 2: Vouch Recovery review')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
                 {mode === 'SetRecovery' && t('Making account recoverable')}
-                {mode === 'ModifyRecovery' && t('Modifying account recoverability')}
+                {mode === 'ModifyRecovery' && t('Modifying account recoverability configuration')}
                 {mode === 'InitiateRecovery' && t('Initiating Recovery')}
                 {mode === 'CloseRecovery' && t('Closing the recovery process')}
+                {mode === 'VouchRecovery' && t('Vouching')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
@@ -216,6 +224,9 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
             {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
               txInfo?.success ? t('Initiated recovery has been closed.') : t('Closing Recovery failed')
             )}
+            {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
+              txInfo?.success ? t('Recovery vouched') : t('Vouching Recovery failed')
+            )}
           </Typography>
         </Grid>
         {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
@@ -226,7 +237,7 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {mode === 'InitiateRecovery'
+                  {mode === 'InitiateRecovery' || mode === 'VouchRecovery'
                     ? t<string>('Rescuer account')
                     : t<string>('Account holder')}
                 </Typography>
@@ -282,17 +293,21 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                   />
                 </>
               }
-              {mode === 'InitiateRecovery' &&
+              {(mode === 'InitiateRecovery' || mode === 'VouchRecovery') &&
                 <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                   <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                     {t<string>('Lost account')}
                   </Typography>
                   <Identity
-                    accountInfo={lostAccountAddress?.accountIdentity}
+                    accountInfo={mode === 'InitiateRecovery'
+                      ? lostAccountAddress?.accountIdentity
+                      : vouchRecoveryInfo?.lost.accountIdentity}
                     api={api}
                     chain={chain}
                     direction='row'
-                    formatted={lostAccountAddress?.address}
+                    formatted={mode === 'InitiateRecovery'
+                      ? lostAccountAddress?.address
+                      : vouchRecoveryInfo?.lost.address}
                     identiconSize={31}
                     showSocial={false}
                     style={{ maxWidth: '100%', width: 'fit-content' }}
@@ -324,21 +339,22 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                   </DisplayValue>
                 </>
               }
-              <DisplayValue title={mode === 'RemoveRecovery'
-                ? t<string>('Releasing deposit')
-                : mode === 'InitiateRecovery'
-                  ? t<string>('Initiation Deposit')
-                  : mode === 'CloseRecovery'
-                    ? t<string>('Deposit they made')
-                    : t<string>('Total Deposit')}
-              >
-                <ShowBalance
-                  api={api}
-                  balance={mode === 'CloseRecovery' ? activeLost?.deposit : depositValue}
-                  decimalPoint={4}
-                  height={22}
-                />
-              </DisplayValue>
+              {mode !== 'VouchRecovery' &&
+                <DisplayValue title={mode === 'RemoveRecovery'
+                  ? t<string>('Releasing deposit')
+                  : mode === 'InitiateRecovery'
+                    ? t<string>('Initiation Deposit')
+                    : mode === 'CloseRecovery'
+                      ? t<string>('Deposit they made')
+                      : t<string>('Total Deposit')}
+                >
+                  <ShowBalance
+                    api={api}
+                    balance={mode === 'CloseRecovery' ? activeLost?.deposit : depositValue}
+                    decimalPoint={4}
+                    height={22}
+                  />
+                </DisplayValue>}
               <DisplayValue title={t<string>('Fee')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance

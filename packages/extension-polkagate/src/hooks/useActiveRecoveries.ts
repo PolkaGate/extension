@@ -23,7 +23,13 @@ export default function useActiveRecoveries(api: ApiPromise | undefined, searchF
   const [activeRecoveries, setActiveRecoveries] = useState<ActiveRecoveryFor[] | null>();
 
   useEffect(() => {
-    api && api.query.recovery.activeRecoveries.entries().then((actives) => {
+    if (!api) {
+      setActiveRecoveries(undefined);
+
+      return;
+    }
+
+    api.query.recovery.activeRecoveries.entries().then((actives) => {
       const myActiveRecovery: ActiveRecoveryFor[] = [];
 
       actives.forEach((activeRecovery) => {

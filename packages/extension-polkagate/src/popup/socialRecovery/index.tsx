@@ -29,6 +29,7 @@ import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';
 import Review from './Review';
 import RecoveryConfig from './SetRecoverable';
+import Vouch from './VouchRecovery';
 
 export const STEPS = {
   CHECK_SCREEN: 0,
@@ -37,10 +38,11 @@ export const STEPS = {
   MODIFY: 3,
   RECOVERYDETAIL: 4,
   INITIATERECOVERY: 5,
-  REVIEW: 6,
-  WAIT_SCREEN: 7,
-  CONFIRM: 8,
-  UNSUPPORTED: 9,
+  VOUCH: 6,
+  REVIEW: 7,
+  WAIT_SCREEN: 8,
+  CONFIRM: 9,
+  UNSUPPORTED: 10,
   PROXY: 100
 };
 
@@ -51,7 +53,7 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
-export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | undefined;
+export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | 'VouchRecovery' | undefined;
 export type RecoveryConfigType = {
   friends: { addresses: string[], infos?: (DeriveAccountInfo | undefined)[] | undefined };
   threshold: number;
@@ -87,6 +89,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
   const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
   const [lostAccountAddress, setLostAccountAddress] = useState<FriendWithId | undefined>();
+  const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>();
   const [mode, setMode] = useState<SocialRecoveryModes>();
   const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -143,6 +146,10 @@ export default function SocialRecovery(): React.ReactElement {
     setStep(STEPS.INITIATERECOVERY);
   }, []);
 
+  const goToVouchRecovery = useCallback(() => {
+    setStep(STEPS.VOUCH);
+  }, []);
+
   const goCloseRecovery = useCallback(() => {
     setMode('CloseRecovery');
     setStep(STEPS.REVIEW);
@@ -160,7 +167,7 @@ export default function SocialRecovery(): React.ReactElement {
   };
 
   const RecoveryOptionButton = ({ description, icon, onClickFunction, title }: RecoveryOptionButtonType) => (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={activeLost ? () => null : onClickFunction} sx={{ bgcolor: DisableButtonBgcolor, border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: activeLost ? 'default' : 'pointer', p: '25px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onClickFunction} sx={{ bgcolor: DisableButtonBgcolor, border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: activeLost ? 'default' : 'pointer', p: '25px' }}>
       <Grid alignItems='center' container item width='75px'>
         {icon}
       </Grid>
@@ -290,8 +297,8 @@ export default function SocialRecovery(): React.ReactElement {
               sx={{ height: '60px', width: '66px' }}
             />
           }
-          onClickFunction={() => null}
-          title={t<string>('Vouch Recovery For Friend')}
+          onClickFunction={goToVouchRecovery}
+          title={t<string>('Vouch Recovery for a Friend')}
         />
       </Grid>
     </Grid>
@@ -357,6 +364,15 @@ export default function SocialRecovery(): React.ReactElement {
             setTotalDeposit={setTotalDeposit}
           />
         }
+        {step === STEPS.VOUCH &&
+          <Vouch
+            address={address}
+            api={api}
+            setMode={setMode}
+            setStep={setStep}
+            setVouchRecoveryInfo={setVouchRecoveryInfo}
+          />
+        }
         {(step === STEPS.REVIEW || step === STEPS.WAIT_SCREEN || step === STEPS.CONFIRM || step === STEPS.PROXY) && chain && recoveryInfo !== undefined &&
           <Review
             activeLost={activeLost}
@@ -371,6 +387,7 @@ export default function SocialRecovery(): React.ReactElement {
             setRefresh={setRefresh}
             setStep={setStep}
             step={step}
+            vouchRecoveryInfo={vouchRecoveryInfo}
           />
         }
       </Grid>

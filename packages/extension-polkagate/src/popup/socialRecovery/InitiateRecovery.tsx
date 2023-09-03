@@ -13,7 +13,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
 import { PButton, TwoButtons } from '../../components';
-import { useAccountsInfo, useChain, useDecimal, useToken, useTranslation } from '../../hooks';
+import { useAccountsInfo, useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
@@ -31,18 +31,40 @@ interface Props {
   initiatedRecovery: ActiveRecoveryFor | null;
 }
 
-export default function InitiateRecovery ({ address, api, initiatedRecovery, mode, setLostAccountAddress, setMode, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function InitiateRecovery({ address, api, initiatedRecovery, mode, setLostAccountAddress, setMode, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
   const accountsInfo = useAccountsInfo(api, chain);
   const decimal = useDecimal(address);
   const token = useToken(address);
+  const currentBlockNumber = useCurrentBlockNumber(address);
 
   const [lostAccount, setLostAccount] = useState<FriendWithId>();
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
 
   const recoveryDeposit = useMemo(() => api ? new BN(api.consts.recovery.recoveryDeposit.toString()) : BN_ZERO, [api]);
+  const delayEndBlock = useMemo(() => (initiatedRecovery?.createdBlock ?? 0) + (lostAccountRecoveryInfo ? lostAccountRecoveryInfo?.delayPeriod?.toNumber() : 0), [initiatedRecovery?.createdBlock, lostAccountRecoveryInfo]);
+  const isDelayPassed = useMemo(() => {
+    if (!initiatedRecovery || !lostAccountRecoveryInfo || !currentBlockNumber || delayEndBlock === 0) {
+      return undefined;
+    }
+
+    if (delayEndBlock < currentBlockNumber) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [currentBlockNumber, delayEndBlock, initiatedRecovery, lostAccountRecoveryInfo]);
+  const isVouchedCompleted = useMemo(() => {
+    if (!initiatedRecovery || !lostAccountRecoveryInfo) {
+      return undefined;
+    }
+
+    const isEnoughVouched = initiatedRecovery.vouchedFriends.length >= lostAccountRecoveryInfo.threshold.toNumber();
+
+    return isEnoughVouched;
+  }, [initiatedRecovery, lostAccountRecoveryInfo]);
 
   const checkAccountRecoverability = useCallback(() => {
     if (api && lostAccount) {
@@ -50,7 +72,6 @@ export default function InitiateRecovery ({ address, api, initiatedRecovery, mod
 
       api.query.recovery.recoverable(lostAccount.address).then((r) => {
         setLostAccountRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
-        console.log('is recoverable:', r.isSome ? JSON.parse(JSON.stringify(r.unwrap())) : 'nope');
       }).catch(console.error);
     }
   }, [api, lostAccount]);
@@ -108,7 +129,10 @@ export default function InitiateRecovery ({ address, api, initiatedRecovery, mod
           <InitiatedRecoveryStatus
             api={api}
             chain={chain}
+            delayRemainBlock={Math.max(0, delayEndBlock - (currentBlockNumber ?? 0))}
             initiatedRecovery={initiatedRecovery}
+            isDelayPassed={isDelayPassed}
+            isVouchedCompleted={isVouchedCompleted}
             lostAccountRecoveryInfo={lostAccountRecoveryInfo}
           />
           <Grid container item justifyContent='flex-end' pt='15px' sx={{ '> button': { width: '190px' }, '> div': { width: '190px' } }}>
