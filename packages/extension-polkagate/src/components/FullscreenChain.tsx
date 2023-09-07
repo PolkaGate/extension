@@ -27,9 +27,10 @@ interface Props {
   helperText?: string;
   options?: DropdownOption[];
   labelFontSize?: string;
+  pageIsLoading?: boolean;
 }
 
-function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
+function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style, pageIsLoading = false }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
 
@@ -191,13 +192,13 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
             input={<BootstrapInput />}
             onChange={_onChange}
             onClick={toggleMenu}
-            open={showMenu}
+            open={!pageIsLoading && showMenu}
             // eslint-disable-next-line react/jsx-no-bind
             renderValue={(value) => {
               const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
 
               return (
-                <Item height='50px' text={text} logoSize={29} />
+                <Item height='50px' logoSize={29} text={text} />
               );
             }}
             sx={{
