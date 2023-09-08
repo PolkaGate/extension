@@ -27,7 +27,6 @@ interface DisplayInfoProps {
 
 export default function Confirmation({ handleClose, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const decimal = useDecimal(txInfo.from.address);
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
@@ -102,7 +101,7 @@ export default function Confirmation({ handleClose, txInfo }: Props): React.Reac
         />
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: 'auto', width: '240px' }} />
         <DisplayInfo
-          caption={t<string>('Total transaction fee:')}
+          caption={chainName === txInfo.recipientChainName ? t<string>('Fee:') : t<string>('Total transaction fee:')}
           showDivider={false}
           value={fee?.toHuman() ?? '00.00'}
         />
