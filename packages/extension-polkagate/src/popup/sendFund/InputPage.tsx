@@ -90,8 +90,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
   const amountAsBN = useMemo(() => {
-    if (!isCrossChain && assetId !== undefined) {
-      return balances?.decimal && amountToMachine(amount, balances.decimal);
+    if (!isCrossChain && assetId !== undefined && balances) {
+      return amountToMachine(amount, balances.decimal);
     }
 
     return amountToMachine(amount, decimal);
@@ -360,7 +360,13 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             // eslint-disable-next-line react/jsx-no-bind
             _onClick={() => setStep(STEPS.REVIEW)}
             _width={32}
-            disabled={!address || !recipientChainGenesisHash || !(recipientAddress && inputs?.recipientAddress) || Number(amount) <= 0 || amountAsBN.gt(new BN(balances?.availableBalance || BN_ZERO))}
+            disabled={
+              !address ||
+              !recipientChainGenesisHash ||
+              !(recipientAddress && inputs?.recipientAddress) ||
+              Number(amount) <= 0 ||
+              amountAsBN.gt(new BN(balances?.availableBalance || BN_ZERO))
+            }
             text={t<string>('Next')}
           />
         </Grid>
