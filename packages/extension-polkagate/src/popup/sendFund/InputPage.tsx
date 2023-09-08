@@ -79,9 +79,10 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
-    const mayBeTeleportDestinations = assetId === undefined
-      ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info), value: genesisHash || paraId }))
-      : [];
+    const mayBeTeleportDestinations =
+      assetId === undefined
+        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info), value: String(genesisHash) || paraId }))
+        : [];
 
     return currentChainOption.concat(mayBeTeleportDestinations);
   }, [assetId, chain, teleportState?.destinations]);
@@ -108,9 +109,9 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     }
 
     if (isCrossChain) {
-      const m = XCM_LOC.filter((x) => api.tx[x] && isFunction(api.tx[x].limitedTeleportAssets))[0];
+      const m = XCM_LOC.filter((x) => api.tx[x] && isFunction(api.tx[x].limitedTeleportAssets))?.[0];
 
-      return api.tx[m].limitedTeleportAssets;
+      return m ? api.tx[m].limitedTeleportAssets : undefined;
     }
 
     return onChainCall;
