@@ -166,7 +166,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
               disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
               key={value}
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
-              value={value || text}
+              value={value !== undefined ? value : text}
             >
               <Grid container height={'30px'} justifyContent='flex-start'>
                 {showIcons && text !== 'Allow use on any chain' &&

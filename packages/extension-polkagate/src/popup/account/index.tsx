@@ -141,8 +141,12 @@ export default function AccountDetails(): React.ReactElement {
     address && tieAccount(address, availableGenesisHash).catch(console.error);
   }, [address]);
 
-  const _onChangeAsset = useCallback((assetId: number) => {
-    setAssetId(assetId);
+  const _onChangeAsset = useCallback((id: number) => {
+    if (id === -1) { // this is the id of native token
+      return setAssetId(undefined);
+    }
+
+    setAssetId(id);
   }, []);
 
   const OthersRow = () => (
@@ -198,7 +202,7 @@ export default function AccountDetails(): React.ReactElement {
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '9px' }} />
         {!showStakingOptions
           ? <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
-            {assetId
+            {assetId !== undefined
               ? <LabelBalancePrice address={address} balances={balanceToShow} label={'Balance'} />
               : < >
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />

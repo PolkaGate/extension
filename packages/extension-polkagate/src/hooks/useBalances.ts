@@ -230,13 +230,14 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   useEffect(() => {
-    api && assetId && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
+    api && assetId !== undefined && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
       console.log('assetAccount:', assetAccount.toHuman());
 
       // eslint-disable-next-line no-void
       void api.query.assets.metadata(assetId).then((metadata) => {
         const assetBalances = {
           availableBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
+          freeBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
           chainName,
           decimal: metadata.decimals.toNumber(),
           genesisHash: api.genesisHash.toHex(),
@@ -251,7 +252,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
     });
   }, [api, assetId, chainName, formatted]);
 
-  if (assetId) {
+  if (assetId !== undefined) {
     return assetBalance;
   }
 
