@@ -159,6 +159,7 @@ export interface TxInfo extends TransactionDetail {
   api: ApiPromise;
   chain: Chain;
   decimal?: number;
+  recipientChainName?: string;
   token?: string;
 }
 
