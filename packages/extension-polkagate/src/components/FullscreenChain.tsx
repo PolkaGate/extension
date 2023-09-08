@@ -192,7 +192,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
             input={<BootstrapInput />}
             onChange={_onChange}
             onClick={toggleMenu}
-            open={!pageIsLoading && showMenu}
+            open={!pageIsLoading && _options?.length !== 1 && showMenu}
             // eslint-disable-next-line react/jsx-no-bind
             renderValue={(value) => {
               const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];

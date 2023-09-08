@@ -201,7 +201,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
                   </Typography>
                 </Grid>
               </DisplayValue>
-              <DisplayValue dividerHeight='3px' title={t<string>('Total transaction fee')}>
+              <DisplayValue dividerHeight='3px' title={inputs?.recipientChainName === chain?.name ? t<string>('Fee') : t<string>('Total transaction fee')}>
                 <Grid alignItems='center' container item sx={{ height: '42px' }}>
                   <ShowBalance
                     api={api}

@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { FormatPrice, Infotip, ShowBalance, ShowValue } from '../../../components';
+import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
 import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -26,13 +26,14 @@ import Review from './Review';
 
 interface Props {
   address: string | undefined;
-  refresh: boolean | undefined
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>
+  refresh: boolean | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setPageLoading: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 const noop = () => null;
 
-export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address, refresh, setPageLoading, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -144,6 +145,16 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
   }, [delegatedBalance, lockedInRef, miscRefLock]);
 
+  useEffect(() => {
+    setPageLoading(
+      !(
+        (unlockableAmount && !unlockableAmount.isZero()) ||
+        (delegatedBalance && !delegatedBalance.isZero()) ||
+        timeToUnlock !== undefined
+      )
+    );
+  }, [delegatedBalance, lockedInRef, miscRefLock, setPageLoading, timeToUnlock, unlockableAmount]);
+
   const onUnlock = useCallback(() => {
     setShowReview(true);
   }, []);
@@ -176,7 +187,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
               style={{ height: '25px' }}
             />
           </Grid>
-          <Grid container justifyContent='flex-end' item pt='6px' sx={{ fontSize: '12px', lineHeight: '15px', mr: '33px' }}>
+          <Grid container item justifyContent='flex-end' pt='6px' sx={{ fontSize: '12px', lineHeight: '15px', mr: '33px' }}>
             <ShowValue
               height={15}
               value={api && unlockableAmount && !unlockableAmount.isZero()

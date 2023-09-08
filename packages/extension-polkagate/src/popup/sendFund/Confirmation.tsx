@@ -85,7 +85,7 @@ export default function Confirmation({ handleClose, txInfo }: Props): React.Reac
         <Divider sx={{ bgcolor: 'secondary.main', height: '1px', m: 'auto', width: '240px' }} />
         <DisplayInfo
           caption={t<string>('Amount:')}
-          value={txInfo.amount ? `${txInfo.amount} ${txInfo?.token}` : '00.00'}
+          value={txInfo.amount && txInfo.token ? `${parseFloat(txInfo.amount)} ${txInfo.token}` : '00.00'}
         />
         <DisplayInfo
           caption={t<string>('Chain:')}

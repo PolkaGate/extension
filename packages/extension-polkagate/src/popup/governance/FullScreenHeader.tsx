@@ -64,7 +64,10 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
               />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
-              <FullScreenChainSwitch address={address} chains={filteredChains} />
+              <FullScreenChainSwitch
+                address={address}
+                chains={filteredChains}
+              />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
               <FullScreenRemoteNode

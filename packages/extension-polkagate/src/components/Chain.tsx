@@ -19,9 +19,10 @@ interface Props {
   label: string;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
+  isPageLoading?: boolean | undefined
 }
 
-function Chain({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain({ address, defaultValue, disabledItems, label, onChange, style,isPageLoading }: Props) {
   let options = useGenesisHashOptions();
 
   options = options.filter(({ text }) => text !== 'Allow use on any chain');
@@ -87,6 +88,7 @@ function Chain({ address, defaultValue, disabledItems, label, onChange, style }:
         defaultValue={defaultValue}
         disabledItems={_disabledItems}
         isDisabled={!address}
+        isPageLoading={isPageLoading}
         label={label}
         onChange={onChangeNetwork}
         options={options}

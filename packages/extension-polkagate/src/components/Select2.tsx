@@ -10,17 +10,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import getLogo from '../util/getLogo';
+import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
-interface DropdownOption {
-  text: string;
-  value: string;
-}
-
 interface Props {
   defaultValue: string | number | undefined;
-  value: string | number | undefined;
+  value?: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;
@@ -30,9 +26,10 @@ interface Props {
   _mt?: string | number;
   helperText?: string;
   disabledItems?: string[] | number[];
+  isPageLoading?: boolean | undefined;
 }
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, isDisabled = false, isPageLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -116,7 +113,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
           input={<BootstrapInput />}
           onChange={_onChange}
           onClick={toggleMenu}
-          open={showMenu}
+          open={!isPageLoading && options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
           // eslint-disable-next-line react/jsx-no-bind
           renderValue={(value) => {
             const textToShow = options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
