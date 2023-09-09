@@ -15,7 +15,7 @@ export default function useAssets(address: AccountId | string | undefined): Drop
   const [assets, setAssets] = useState<DropdownOption[]>();
 
   useEffect(() => {
-    api && api.query.assets
+    api && api.query.assets && api.query.assets.asset
       ? api.query.assets.asset.keys().then((keys: StorageKey<[u32]>[]) => {
         const assetIds = keys.map(({ args: [id] }) => id);
 
