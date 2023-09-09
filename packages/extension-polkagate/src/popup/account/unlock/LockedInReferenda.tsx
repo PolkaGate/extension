@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { FormatPrice, Infotip, ShowBalance } from '../../../components';
+import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
 import { useAccountLocks, useApi, useChain, useCurrentBlockNumber, useDecimal, useFormatted, useHasDelegated, usePrice, useToken, useTranslation } from '../../../hooks';
 import { Lock } from '../../../hooks/useAccountLocks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
@@ -49,7 +49,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [lockedInRef, setLockedInReferenda] = useState<BN>();
   const [totalLocked, setTotalLocked] = useState<BN | null>();
-  const [timeToUnlock, setTimeToUnlock] = useState<string>();
+  const [timeToUnlock, setTimeToUnlock] = useState<string | null>();
   const [miscRefLock, setMiscRefLock] = useState<BN>();
   const [shake, setShake] = useState<boolean>();
 
@@ -80,6 +80,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
   useEffect(() => {
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
+      setTimeToUnlock(null);
 
       return;
     }
@@ -139,7 +140,7 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
     if (!lockedInRef && !delegatedBalance && !miscRefLock) {
       return setTotalLocked(undefined);
     }
-    
+
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
   }, [delegatedBalance, lockedInRef, miscRefLock]);
 
@@ -149,9 +150,9 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
   return (
     <>
-      <Grid item pt='3px' pb='2px'>
-        <Grid alignItems='center' container justifyContent='space-between'>
-          <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
+      <Grid item pb='2px' pt='3px'>
+        <Grid alignItems='flex-end' container justifyContent='space-between'>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5.2}>
             {t('Locked in Referenda')}
           </Grid>
           <Grid alignItems='flex-end' container direction='column' item xs>
@@ -167,21 +168,24 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
             </Grid>
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() && 'pointer', ml: '8px', width: '26px' }}>
-            <Infotip
-              text={api && unlockableAmount && !unlockableAmount.isZero()
+            <FontAwesomeIcon
+              color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
+              icon={faUnlockAlt}
+              onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
+              shake={shake}
+              style={{ height: '25px' }}
+            />
+          </Grid>
+          <Grid container item justifyContent='flex-end' pt='6px' sx={{ fontSize: '12px', lineHeight: '15px', mr: '33px' }}>
+            <ShowValue
+              height={15}
+              value={api && unlockableAmount && !unlockableAmount.isZero()
                 ? `${api.createType('Balance', unlockableAmount).toHuman()} can be unlocked`
                 : delegatedBalance && !delegatedBalance.isZero()
                   ? t('Locked as delegated')
-                  : timeToUnlock}
-            >
-              <FontAwesomeIcon
-                color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
-                icon={faUnlockAlt}
-                onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
-                shake={shake}
-                style={{ height: '25px' }}
-              />
-            </Infotip>
+                  : timeToUnlock === null ? '' : timeToUnlock}
+              width='50%'
+            />
           </Grid>
         </Grid>
       </Grid>
