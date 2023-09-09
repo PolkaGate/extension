@@ -194,7 +194,7 @@ export default function SetSubId({ api, mode, parentAddress, parentDisplay, rese
   return (
     <>
       <Grid container item sx={{ display: 'block', maxWidth: '840px', position: 'relative', px: '10%' }}>
-        <Typography fontSize='22px' fontWeight={700} pb={(subIdAccounts || subIdsLength > 0) ? '10px' : '45px'} pt='30px'>
+        <Typography fontSize='30px' fontWeight={700} pb={(subIdAccounts || subIdsLength > 0) ? '10px' : '45px'} pt='25px'>
           {t<string>('Set on-chain Sub-identity(ies)')}
         </Typography>
         {!subIdAccounts && subIdsLength === 0 &&
