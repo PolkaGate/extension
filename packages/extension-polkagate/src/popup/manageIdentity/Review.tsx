@@ -193,7 +193,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
   return (
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
       <>
-        <Grid container py='20px'>
+        <Grid container py='25px'>
           <Typography fontSize='30px' fontWeight={700}>
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
@@ -201,8 +201,8 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                 {mode === 'Clear' && t('Clear On-chain Identity')}
                 {mode === 'Modify' && t('Modify On-chain Identity')}
                 {mode === 'ManageSubId' && t('Review Sub-identity(ies)')}
-                {mode === 'RequestJudgement' && t('Review Request Judgment')}
-                {mode === 'CancelJudgement' && t('Review Cancel Judgement')}
+                {mode === 'RequestJudgement' && t('Review Judgment Request')}
+                {mode === 'CancelJudgement' && t('Review Judgment Cancellation')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
@@ -225,7 +225,11 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               txInfo?.success ? t('On-chain Identity Cleared') : t('On-Chain Identity Clearing Failed')
             )}
             {step === STEPS.CONFIRM && mode === 'ManageSubId' && (
-              txInfo?.success ? t('Sub-identity(ies) created') : t('Sub-identity(ies) creation failed')
+              txInfo?.success
+                ? subIdsToShow?.length === 0
+                  ? t('Sub-identity(ies) cleared')
+                  : t('Sub-identity(ies) created')
+                : t('Sub-identity(ies) creation failed')
             )}
             {step === STEPS.CONFIRM && mode === 'RequestJudgement' && (
               txInfo?.success ? t('Request Judgment Sent') : t('Request Judgment failed')
@@ -240,7 +244,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
+            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
