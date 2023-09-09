@@ -3,10 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { RegistrationJudgement } from '@polkadot/types/interfaces';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../../../components/translate';
@@ -20,6 +18,7 @@ interface Props {
 
 export default function SubIdsAccordion({ judgements, parentNameID, subIdAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Grid container item sx={{ display: 'block', pt: '15px' }}>
@@ -29,7 +28,7 @@ export default function SubIdsAccordion({ judgements, parentNameID, subIdAccount
             {t<string>('Sub Identities')}
           </Typography>
         </AccordionSummary>
-        <AccordionDetails sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)' }}>
+        <AccordionDetails sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', py: '15px' }}>
           <Grid container item rowGap='18px'>
             {subIdAccounts.map((id, index) => (
               <DisplaySubId
