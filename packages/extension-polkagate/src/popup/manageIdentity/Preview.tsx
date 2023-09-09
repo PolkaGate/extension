@@ -48,7 +48,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         {icon}
       </Grid>
       <Grid container item justifyContent='center' pt='8px'>
-        <Typography color={theme.palette.mode === 'dark' && 'secondary.main'} fontSize='18px' fontWeight={500}>
+        <Typography color={theme.palette.mode === 'dark' ? 'secondary.light' : undefined} fontSize='18px' fontWeight={500}>
           {title}
         </Typography>
       </Grid>
@@ -111,7 +111,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.primary.main}
+              color={theme.palette.secondary.light}
               fontSize='44px'
               icon={faEdit}
             />
@@ -122,7 +122,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
         <ManageButton
           icon={
             <FontAwesomeIcon
-              color={theme.palette.primary.main}
+              color={theme.palette.secondary.light}
               fontSize='44px'
               icon={faEraser}
             />
@@ -134,13 +134,13 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
           icon={judgement && judgement !== 'FeePaid'
             ? <CheckCircleRoundedIcon
               sx={{
-                color: 'primary.main',
                 borderRadius: '50%',
+                color: 'secondary.light',
                 fontSize: 44
               }}
             />
             : <FontAwesomeIcon
-              color={theme.palette.primary.main}
+              color={theme.palette.secondary.light}
               fontSize='44px'
               icon={faTasks}
             />

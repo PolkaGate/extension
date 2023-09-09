@@ -46,7 +46,7 @@ export default function DisplayIdentityInformation({ identity }: Props): React.R
   );
 
   return (
-    <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px #0000001A', display: 'block', height: 'fit-content', p: '8px 18px' }}>
+    <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', display: 'block', height: 'fit-content', p: '8px 18px' }}>
       <IdentityItems
         title={t<string>('Display Name')}
         value={identity.display ?? null}

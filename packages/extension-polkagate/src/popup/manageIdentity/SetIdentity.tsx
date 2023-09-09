@@ -109,7 +109,7 @@ export default function SetIdentity({ api, chainName, identity, identityToSet, m
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Typography fontSize='30px' fontWeight={700} pb='20px' pt='30px'>
+      <Typography fontSize='30px' fontWeight={700} pb='20px' pt='25px'>
         {mode === 'Set'
           ? t<string>('Set On-chain Identity')
           : t<string>('Modify On-chain Identity')

@@ -3,20 +3,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { PalletIdentityRegistrarInfo } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 
-import { Select, ShowBalance, TwoButtons } from '../../components';
+import { PButton, Select, ShowBalance, TwoButtons } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useChain, useChainName } from '../../hooks';
 import { REGISTRARS_LIST } from '../../util/constants';
 import { DropdownOption } from '../../util/types';
 import DisplayIdentity from './component/DisplayIdentity';
 import { IdJudgement, Mode, STEPS } from '.';
+import FailSuccessIcon from '../history/partials/FailSuccessIcon';
+import { toTitleCase } from '../governance/utils/util';
 
 interface Props {
   address: string;
@@ -33,6 +35,7 @@ interface Props {
 
 export default function RequestJudgement({ address, api, idJudgement, maxFeeValue, selectedRegistrar, setMaxFeeValue, setMode, setSelectedRegistrar, setSelectedRegistrarName, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const chainName = useChainName(address);
   const chain = useChain(address);
 
@@ -52,7 +55,6 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
       const registrar: DropdownOption[] = [];
       const registrarsFee: { text: string, fee: BN }[] = [];
 
-      console.log('registrarsInfo:',registrarsInfo)
       registrarsInfo.forEach((regInfo) => {
         const found = REGISTRARS_LIST.find((reg) => reg.addresses.includes(String(regInfo.account)));
 
@@ -113,54 +115,105 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Typography fontSize='22px' fontWeight={700} pb='25px' pt='40px'>
-        {t<string>('Request Judgment')}
+      <Typography fontSize='30px' fontWeight={700} pb='25px' pt='25px'>
+        {idJudgement
+          ? <>
+            {idJudgement === 'FeePaid'
+              ? t<string>('Judgment Requested')
+              : t<string>('Judgment Received')
+            }</>
+          : t<string>('Request Judgment')
+
+        }
       </Typography>
-      <Typography fontSize='14px' fontWeight={400}>
-        {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
-      </Typography>
-      <DisplayIdentity
-        address={address}
-        api={api}
-        chain={chain}
-      />
-      <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
-        <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>
-          <Select
-            defaultValue={selectedRegistrar ?? registrarsList?.at(0)?.value}
-            isDisabled={!registrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
-            label={t<string>('Registrar')}
-            onChange={selectRegistrar}
-            options={registrarsList || []}
-            value={selectedRegistrar ?? registrarsList?.at(0)?.value}
-          />
-        </Grid>
-        <Grid container item sx={{ pb: '4px', width: 'fit-content' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t<string>('Registration fee:')}
+      {(!idJudgement || idJudgement === 'FeePaid')
+        ? <>
+          <Typography fontSize='14px' fontWeight={400}>
+            {t<string>('{{chainName}} provides a naming system that allows participants to add personal information to their on-chain account and subsequently ask for verification of this information by registrars.', { replace: { chainName } })}
           </Typography>
-          <Grid item lineHeight='22px' pl='5px'>
-            <ShowBalance
-              api={api}
-              balance={maxFeeValue}
-              decimalPoint={4}
-              height={22}
+          <DisplayIdentity
+            address={address}
+            api={api}
+            chain={chain}
+          />
+          <Grid alignItems='flex-end' container item justifyContent='space-between' m='auto'>
+            <Grid alignContent='flex-start' container justifyContent='center' sx={{ '> div div div': { fontSize: '16px', fontWeight: 400 }, position: 'relative', width: '65%' }}>
+              <Select
+                defaultValue={selectedRegistrar ?? registrarsList?.at(0)?.value}
+                isDisabled={!registrarsList || idJudgement === 'FeePaid' || (idJudgement !== null && idJudgement !== 'FeePaid')}
+                label={t<string>('Registrar')}
+                onChange={selectRegistrar}
+                options={registrarsList || []}
+                value={selectedRegistrar ?? registrarsList?.at(0)?.value}
+              />
+            </Grid>
+            <Grid container item sx={{ pb: '4px', width: 'fit-content' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t<string>('Registration fee:')}
+              </Typography>
+              <Grid item lineHeight='22px' pl='5px'>
+                <ShowBalance
+                  api={api}
+                  balance={maxFeeValue}
+                  decimalPoint={4}
+                  height={22}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid container item justifyContent='flex-end' pt='50px' sx={{ '> div': { bottom: '10px', m: 0, width: '420px' } }}>
+            <TwoButtons
+              disabled={!registrarsList || selectedRegistrar === undefined || (idJudgement !== null && idJudgement !== 'FeePaid')}
+              mt={'1px'}
+              onPrimaryClick={goReview}
+              onSecondaryClick={goBack}
+              primaryBtnText={idJudgement !== 'FeePaid'
+                ? t<string>('Next')
+                : t<string>('Cancel request')}
+              secondaryBtnText={t<string>('Back')}
             />
           </Grid>
-        </Grid>
-      </Grid>
-      <Grid container item justifyContent='flex-end' pt='50px' sx={{ '> div': { bottom: '10px', m: 0, width: '420px' } }}>
-        <TwoButtons
-          disabled={!registrarsList || selectedRegistrar === undefined || (idJudgement !== null && idJudgement !== 'FeePaid')}
-          mt={'1px'}
-          onPrimaryClick={goReview}
-          onSecondaryClick={goBack}
-          primaryBtnText={idJudgement !== 'FeePaid'
-            ? t<string>('Next')
-            : t<string>('Cancel request')}
-          secondaryBtnText={t<string>('Back')}
-        />
-      </Grid>
+        </>
+        : <>
+          <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', py: '20px' }}>
+            <FailSuccessIcon
+              showLabel={false}
+              style={{ fontSize: '87px', m: '20px auto', textAlign: 'center', width: 'fit-content' }}
+              success={true}
+            />
+            <Grid container item justifyContent='center'>
+              <Typography fontSize='16px' fontWeight={400}>
+                {t<string>('Judgment Outcome')}:
+              </Typography>
+            </Grid>
+            <Grid container item justifyContent='center' pt='5px'>
+              <Typography fontSize='28px' fontWeight={400}>
+                {toTitleCase(idJudgement)}
+              </Typography>
+            </Grid>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', my: '15px', width: '180px' }} />
+            <Grid container item justifyContent='center'>
+              <Typography fontSize='16px' fontWeight={400}>
+                {t<string>('Registrar')}:
+              </Typography>
+            </Grid>
+            <Grid container item justifyContent='center' py='5px'>
+              <Typography fontSize='16px' fontWeight={400} >
+                {selectedRegistrar !== undefined && registrarsList?.at(selectedRegistrar)?.text}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container item justifyContent='flex-end' sx={{ '> div': { bottom: '10px', m: 0, width: '420px' } }}>
+            <PButton
+              _mt='20px'
+              _onClick={goBack}
+              _variant='contained'
+              _width={30}
+              text={t('IDs home')}
+            />
+          </Grid>
+        </>
+      }
     </Grid>
   );
 }
