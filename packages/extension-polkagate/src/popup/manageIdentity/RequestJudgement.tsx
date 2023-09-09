@@ -52,7 +52,6 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
       const registrar: DropdownOption[] = [];
       const registrarsFee: { text: string, fee: BN }[] = [];
 
-      console.log('registrarsInfo:',registrarsInfo)
       registrarsInfo.forEach((regInfo) => {
         const found = REGISTRARS_LIST.find((reg) => reg.addresses.includes(String(regInfo.account)));
 
