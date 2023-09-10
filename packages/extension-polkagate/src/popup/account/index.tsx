@@ -150,19 +150,17 @@ export default function AccountDetails(): React.ReactElement {
   }, []);
 
   const OthersRow = () => (
-    <Grid item py='3px'>
-      <Grid alignItems='center' container justifyContent='space-between'>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={3}>
-          {t('Others')}
-        </Grid>
-        <Grid item textAlign='right' xs={1.5}>
-          <IconButton
-            onClick={goToOthers}
-            sx={{ p: 0 }}
-          >
-            <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
-          </IconButton>
-        </Grid>
+    <Grid alignItems='center' container item justifyContent='space-between' pb='20px' pt='9px'>
+      <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={3}>
+        {t('Others')}
+      </Grid>
+      <Grid item textAlign='right' xs={1.5}>
+        <IconButton
+          onClick={goToOthers}
+          sx={{ p: 0 }}
+        >
+          <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
+        </IconButton>
       </Grid>
     </Grid>
   );
