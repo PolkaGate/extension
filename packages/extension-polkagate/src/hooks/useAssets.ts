@@ -31,7 +31,7 @@ export default function useAssets(address: AccountId | string | undefined): Drop
               return;
             }
 
-            return { text: `${assetIds[index]}: ${symbol.toHuman()} (${name.toHuman()})`, value: assetIds[index].toNumber() }
+            return { text: `${assetIds[index]}: ${symbol.toHuman()} (${name.toHuman()})`, value: assetIds[index].toString() };
           }).filter((item) => !!item);
 
           assetOptions.sort((a, b) => a.value - b.value);
