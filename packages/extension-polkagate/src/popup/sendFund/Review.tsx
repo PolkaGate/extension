@@ -260,7 +260,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
         }
         {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
-            handleClose={closeConfirmation}
+            handleDone={closeConfirmation}
             txInfo={txInfo}
           />
         }

@@ -6,7 +6,7 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress } from '../../components';
+import { Motion, PButton, ShortAddress, TwoButtons } from '../../components';
 import { useDecimal, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { NameAddress, TxInfo } from '../../util/types';
@@ -16,7 +16,7 @@ import FailSuccessIcon from '../history/partials/FailSuccessIcon';
 
 interface Props {
   txInfo: TxInfo;
-  handleClose: () => void;
+  handleDone: () => void;
 }
 
 interface DisplayInfoProps {
@@ -25,7 +25,7 @@ interface DisplayInfoProps {
   showDivider?: boolean;
 }
 
-export default function Confirmation({ handleClose, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -127,13 +127,15 @@ export default function Confirmation({ handleClose, txInfo }: Props): React.Reac
           </Grid>
         }
       </Grid>
-      <PButton
-        _ml={0}
-        _mt='30px'
-        _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
-      />
+      <Grid container sx={{ '> div': { mt: '15px', ml: '30%', width: '100%' } }}>
+        <TwoButtons
+          mt='15px'
+          onPrimaryClick={handleDone}
+          onSecondaryClick={() => { window.close() }}
+          primaryBtnText={t<string>('Done')}
+          secondaryBtnText={t<string>('Close Tab')}
+        />
+      </Grid>
     </Motion>
   );
 }
