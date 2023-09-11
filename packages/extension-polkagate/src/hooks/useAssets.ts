@@ -8,14 +8,23 @@ import { useEffect, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { DropdownOption } from '../util/types';
-import { useApi } from '.';
+import { useApi, useGenesisHash } from '.';
 
-export default function useAssets(address: AccountId | string | undefined): DropdownOption[] | undefined {
+export default function useAssets(address: AccountId | string | undefined): DropdownOption[] | undefined | null {
   const api = useApi(address);
-  const [assets, setAssets] = useState<DropdownOption[]>();
+  const accountGenesisHash = useGenesisHash(address);
+  const [assets, setAssets] = useState<DropdownOption[] | null>();
 
   useEffect(() => {
-    api && api.query.assets && api.query.assets.asset
+    if (!api) {
+      return setAssets(undefined);
+    }
+
+    if (api.genesisHash.toString() !== accountGenesisHash) {
+      return setAssets(undefined);
+    }
+
+    api.query.assets && api.query.assets.asset
       ? api.query.assets.asset.keys().then((keys: StorageKey<[u32]>[]) => {
         const assetIds = keys.map(({ args: [id] }) => id);
 
@@ -38,12 +47,12 @@ export default function useAssets(address: AccountId | string | undefined): Drop
           setAssets(assetOptions);
         });
       }).catch(console.error)
-      : setAssets(undefined);
+      : setAssets(null);
 
     // api &&  api.query.assetRegistry.assetMetadatas('stableassetid').then((assetRegistry) => { // erc20, stableassetid, foreignassetid, nativeassetid
     //   console.log('assets::::',JSON.parse(JSON.stringify(assetRegistry)))
     // })
-  }, [api]);
+  }, [accountGenesisHash, api]);
 
   return assets;
 }
