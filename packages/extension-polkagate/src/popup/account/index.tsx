@@ -191,9 +191,11 @@ export default function AccountDetails(): React.ReactElement {
           />
           <Assets
             address={address}
-            defaultValue={chain?.genesisHash ?? genesisOptions[0].text}
+            assetId={assetId}
+            defaultValue={-1}
             label={t<string>('Asset')}
             onChange={_onChangeAsset}
+            setAssetId={setAssetId}
             style={{ width: '35%' }}
           />
         </Grid>
