@@ -168,7 +168,14 @@ export default function LockedInReferenda({ address, refresh, setPageLoading, se
           </Grid>
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance
+                api={api}
+                balance={totalLocked}
+                decimal={decimal}
+                decimalPoint={2}
+                token={token}
+                withCurrency={false}
+              />
             </Grid>
             <Grid item pt='6px' sx={{ lineHeight: '15px' }}>
               <FormatPrice
