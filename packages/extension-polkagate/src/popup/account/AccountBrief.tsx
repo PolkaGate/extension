@@ -54,7 +54,7 @@ function AccountBrief({ address, identity, showName = true, showDivider = true }
           </Typography>
         </Grid>
       }
-      <Grid alignItems='center' container item justifyContent='space-between' px='10px'>
+      <Grid alignItems='center' container item justifyContent='space-between' pr='10px' pl='5px'>
         <Grid item sx={{ width: '84%' }}>
           <ShortAddress2 address={formatted} charsCount={19} showCopy style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
