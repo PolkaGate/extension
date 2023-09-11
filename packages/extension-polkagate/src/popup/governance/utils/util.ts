@@ -61,7 +61,7 @@ export function toPascalCase(input: string): string | undefined {
   return words.join('');
 }
 
-export function toTitleCase(input: string): string | undefined {
+export function toTitleCase(input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
