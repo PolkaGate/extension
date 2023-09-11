@@ -59,7 +59,6 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
-import { MILLISECONDS_TO_UPDATE } from '../../../extension-polkagate/src/util/constants';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
