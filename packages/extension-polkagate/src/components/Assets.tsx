@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, SxProps, Theme } from '@mui/material';
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAssets, useTokens } from '@polkadot/extension-polkagate/src/hooks';
 
@@ -26,6 +26,8 @@ function Assets({ address, assetId, label, onChange, setAssetId, style }: Props)
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
   const ref = useRef(options);
 
+  const [isLoading, setLoading] = useState<boolean>();
+
   useEffect(() => {
     if (!ref.current || !options || JSON.stringify(ref.current) !== JSON.stringify(options)) {
       ref.current = options;
@@ -33,15 +35,24 @@ function Assets({ address, assetId, label, onChange, setAssetId, style }: Props)
     }
   }, [options, setAssetId]);
 
+  useEffect(() => {
+    if (assets === undefined || (JSON.stringify(ref.current) !== JSON.stringify(options))) {
+      return setLoading(true);
+    }
+
+    setLoading(false);
+  }, [assets, options]);
+
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <Select2
         defaultValue={options?.[0]?.value}
+        isItemsLoading={isLoading}
         label={label}
         onChange={onChange}
         options={options}
         showIcons={false}
-        value={assetId }
+        value={assetId}
       />
     </Grid>
   );

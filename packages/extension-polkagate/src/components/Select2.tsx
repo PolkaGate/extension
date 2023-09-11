@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Avatar, CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -25,9 +25,10 @@ interface Props {
   _mt?: string | number;
   disabledItems?: string[] | number[];
   isPageLoading?: boolean | undefined;
+  isItemsLoading?: boolean | undefined;
 }
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isPageLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isPageLoading,isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -116,7 +117,11 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
         open={!isPageLoading && options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
         // eslint-disable-next-line react/jsx-no-bind
         renderValue={(v) => {
-          const textToShow = options.find((option) => v === option.value || v === option.text)?.text?.split(/\s*\(/)[0];
+          let textToShow = options.find((option) => v === option.value || v === option.text)?.text?.split(/\s*\(/)[0];
+
+          if (textToShow?.split(':')?.[1]) {
+            textToShow = textToShow?.split(':')[1]?.trim();
+          }
 
           return (
             <Grid container height={'30px'} justifyContent='flex-start'>
@@ -160,6 +165,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
           }
         }}
         value={selectedValue} // Assuming selectedValue is a state variable
+        endAdornment={isItemsLoading ? <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', left: '90px' }} /> : null}
       >
         {options.map(({ text, value }): React.ReactNode => (
           <MenuItem
@@ -174,7 +180,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
                   <Avatar src={getLogo(chainName(text))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 19.8, width: 19.8 }} variant='square' />
                 </Grid>
               }
-              <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
+              <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content' sx={{ overflowX: 'scroll' }}>
                 <Typography fontSize='14px' fontWeight={300}>
                   {text}
                 </Typography>
@@ -184,7 +190,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
           </MenuItem>
         ))}
       </Select>
-    </FormControl>
+    </FormControl >
   );
 }
 
