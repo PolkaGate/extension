@@ -80,7 +80,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
           <ToFrom item={<ShowNameAddress title={t('To')} nameAddress={info.to} />} toCopy={info?.to?.address} />
         }
         {info?.amount &&
-          <Amount amount={String(amountToMachine(info.amount, decimal))} decimal={decimal} label={t('Amount')} token={token} />
+          <Amount amount={String(amountToMachine(info.amount, decimal))} decimal={decimal} label={t('Amount')} token={info?.token || token} />
         }
         {info?.fee &&
           <Amount amount={info?.fee} decimal={decimal} label={t('Fee')} token={token} />
