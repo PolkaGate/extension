@@ -16,12 +16,12 @@ import { useParams } from 'react-router';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { checkRecovery, checkRecoveryDark, rescueRecovery, rescueRecoveryDark, socialRecoveryDark, socialRecoveryLight, vouchRecovery, vouchRecoveryDark } from '../../assets/icons';
 import { PButton, Warning } from '../../components';
-import { useActiveRecoveries, useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
+import { useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { FriendWithId } from './components/SelectTrustedFriend';
@@ -69,6 +69,7 @@ export type WithdrawInfo = {
   soloStaked: BN;
   poolStaked: BN;
   reserved: BN;
+  hasId: boolean;
 } | undefined;
 
 export default function SocialRecovery(): React.ReactElement {
@@ -79,7 +80,6 @@ export default function SocialRecovery(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
-  const chainName = useChainName(address);
   const formatted = useFormatted(address);
   const activeRecoveries = useActiveRecoveries(api, String(formatted));
 
