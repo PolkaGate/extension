@@ -53,11 +53,22 @@ interface RecoveryOptionButtonType {
   onClickFunction: () => void;
 }
 
-export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | 'VouchRecovery' | undefined;
+export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | 'VouchRecovery' | 'Withdraw' | undefined;
 export type RecoveryConfigType = {
   friends: { addresses: string[], infos?: (DeriveAccountInfo | undefined)[] | undefined };
   threshold: number;
   delayPeriod: number;
+} | undefined;
+export type WithdrawInfo = {
+  rescuer: string;
+  lost: string;
+  claimed: boolean;
+  isRecoverable: boolean;
+  availableBalance: BN;
+  redeemable: BN;
+  soloStaked: BN;
+  poolStaked: BN;
+  reserved: BN;
 } | undefined;
 
 export default function SocialRecovery(): React.ReactElement {
@@ -90,13 +101,29 @@ export default function SocialRecovery(): React.ReactElement {
   const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
   const [lostAccountAddress, setLostAccountAddress] = useState<FriendWithId | undefined>();
   const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>();
+  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo | undefined>();
   const [mode, setMode] = useState<SocialRecoveryModes>();
   const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [activeProxy, setActiveProxy] = useState<string | null>();
 
   useEffect(() => {
     chain?.genesisHash && !SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash) && setStep(STEPS.UNSUPPORTED);
   }, [chain?.genesisHash]);
+
+  useEffect(() => {
+    api && api.query.recovery.proxy(formatted).then((p) => {
+      if (p.isEmpty) {
+        setActiveProxy(null);
+
+        return;
+      }
+
+      setActiveProxy(p.toHuman() as string);
+    }).catch(console.error);
+  }, [api, formatted]);
+
+  console.log('activeProxy:', activeProxy);
 
   useEffect(() => {
     if (!api || !address) {
@@ -119,10 +146,10 @@ export default function SocialRecovery(): React.ReactElement {
       return;
     }
 
-    if (recoveryInfo !== undefined && activeRecoveries !== undefined && step === STEPS.CHECK_SCREEN) {
+    if (recoveryInfo !== undefined && activeRecoveries !== undefined && activeProxy !== undefined && step === STEPS.CHECK_SCREEN) {
       setStep(STEPS.INDEX);
     }
-  }, [address, api, activeRecoveries, recoveryInfo, step]);
+  }, [activeProxy, address, api, activeRecoveries, recoveryInfo, step]);
 
   useEffect(() => {
     if (recoveryInfo) {
@@ -282,7 +309,7 @@ export default function SocialRecovery(): React.ReactElement {
             />
           }
           onClickFunction={goToInitiateRecovery}
-          title={activeRescue
+          title={activeRescue || activeProxy
             ? t<string>('You Initiated a Recovery, Check Status.')
             : t<string>('Rescue a Lost Account')}
         />
@@ -356,12 +383,16 @@ export default function SocialRecovery(): React.ReactElement {
           <InitiateRecovery
             address={address}
             api={api}
+            activeProxy={activeProxy}
+            formatted={String(formatted)}
             initiatedRecovery={activeRescue}
             mode={mode}
             setLostAccountAddress={setLostAccountAddress}
             setMode={setMode}
             setStep={setStep}
             setTotalDeposit={setTotalDeposit}
+            setWithdrawInfo={setWithdrawInfo}
+            withdrawInfo={withdrawInfo}
           />
         }
         {step === STEPS.VOUCH &&
@@ -377,6 +408,7 @@ export default function SocialRecovery(): React.ReactElement {
           <Review
             activeLost={activeLost}
             address={address}
+            allActiveRecoveries={activeRecoveries}
             api={api}
             chain={chain}
             depositValue={totalDeposit}
@@ -388,6 +420,7 @@ export default function SocialRecovery(): React.ReactElement {
             setStep={setStep}
             step={step}
             vouchRecoveryInfo={vouchRecoveryInfo}
+            withdrawInfo={withdrawInfo}
           />
         }
       </Grid>
