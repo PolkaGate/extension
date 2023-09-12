@@ -11,17 +11,21 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
+import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
+import { useAccountDisplay, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
+import blockToDate from '../crowdloans/partials/blockToDate';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../governance/components/SelectProxyModal';
@@ -31,9 +35,7 @@ import { FriendWithId } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
-import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
-import blockToDate from '../crowdloans/partials/blockToDate';
+import { RecoveryConfigType, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
 
 interface Props {
   address: string;
@@ -48,10 +50,12 @@ interface Props {
   recoveryConfig: RecoveryConfigType | undefined;
   lostAccountAddress: FriendWithId | undefined;
   activeLost: ActiveRecoveryFor | null;
+  withdrawInfo: WithdrawInfo | undefined;
   vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
+  allActiveRecoveries: ActiveRecoveryFor[] | null | undefined
 }
 
-export default function Review({ activeLost, address, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step, vouchRecoveryInfo }: Props): React.ReactElement {
+export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -59,6 +63,7 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
   const theme = useTheme();
   const decimal = useDecimal(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
+  const chainName = useChainName(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -76,6 +81,34 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
   const initiateRecovery = api && api.tx.recovery.initiateRecovery;
   const closeRecovery = api && api.tx.recovery.closeRecovery;
   const vouchRecovery = api && api.tx.recovery.vouchRecovery;
+  const claimRecovery = api && api.tx.recovery.claimRecovery;
+  const asRecovered = api && api.tx.recovery.asRecovered;
+  const chill = api && api.tx.staking.chill;
+  const unbonded = api && api.tx.staking.unbond;
+  const redeem = api && api.tx.staking.withdrawUnbonded;
+  const transferAll = api && api.tx.balances.transferAll; // [rescuer.accountId, false]
+  const clearIdentity = api && api.tx.identity.clearIdentity;
+
+  const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
+    if (!api || !batchAll || !redeem || !clearIdentity || !claimRecovery || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
+      return;
+    }
+
+    const tx: SubmittableExtrinsic<'promise', ISubmittableResult>[] = [];
+    const withdrawCalls: SubmittableExtrinsic<'promise', ISubmittableResult>[] = [];
+
+    !withdrawInfo.claimed && tx.push(claimRecovery(withdrawInfo.lost));
+    allActiveRecoveries && allActiveRecoveries.filter((active) => active.lost === withdrawInfo.lost).forEach((activeRec) => withdrawCalls.push(closeRecovery(activeRec.rescuer)));
+    withdrawInfo.isRecoverable && withdrawCalls.push(removeRecovery());
+    !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
+    !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
+    withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
+    !(withdrawInfo?.availableBalance.isZero() || withdrawInfo.redeemable.isZero() || !withdrawInfo.isRecoverable || !withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
+
+    return tx.length > 0
+      ? batchAll([tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
+      : asRecovered(withdrawInfo.lost, batchAll(withdrawCalls));
+  }, [allActiveRecoveries, api, asRecovered, batchAll, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, transferAll, unbonded, withdrawInfo]);
 
   const tx = useMemo(() => {
     if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery || !vouchRecovery) {
@@ -106,8 +139,12 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
       return vouchRecovery(vouchRecoveryInfo.lost.address, vouchRecoveryInfo.rescuer.address);
     }
 
+    if (mode === 'Withdraw' && withdrawInfo) {
+      return withdrawTXs();
+    }
+
     return undefined;
-  }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery, vouchRecovery, vouchRecoveryInfo]);
+  }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery, vouchRecovery, vouchRecoveryInfo, withdrawInfo, withdrawTXs]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -172,7 +209,9 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
       ? STEPS.RECOVERYDETAIL
       : mode === 'SetRecovery'
         ? STEPS.MAKERECOVERABLE
-        : STEPS.INDEX);
+        : mode === 'Withdraw'
+          ? STEPS.INITIATERECOVERY
+          : STEPS.INDEX);
   }, [mode, setStep]);
 
   const closeSelectProxy = useCallback(() => {
@@ -183,6 +222,61 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
     setRefresh(true);
     setStep(STEPS.CHECK_SCREEN);
   }, [setRefresh, setStep]);
+
+  const WithdrawDetails = () => {
+    const toBeWithdrawn: { label: string; amount: BN | Balance }[] = [];
+    const toBeWithdrawnLater: { label: string; amount: BN | Balance }[] = [];
+
+    withdrawInfo?.availableBalance && !withdrawInfo?.availableBalance.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
+    withdrawInfo?.redeemable && !withdrawInfo?.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
+    withdrawInfo?.reserved && !withdrawInfo?.reserved.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
+    withdrawInfo?.soloStaked && !withdrawInfo?.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
+    withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
+
+    return (
+      <Grid container direction='column' item justifyContent='center' m='auto' width='70%'>
+        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+        <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
+          <Typography fontSize='16px' fontWeight={400}>
+            {t<string>('Funds available to be withdrawn now')}
+          </Typography>
+          {toBeWithdrawn.map((item, index) => (
+            <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
+              <Typography fontSize='16px' fontWeight={300}>
+                {t<string>(item.label)}
+              </Typography>
+              <ShowBalance
+                api={api}
+                balance={item.amount}
+                decimalPoint={4}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        {toBeWithdrawnLater.length > 0 &&
+          <>
+            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+            <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
+              <Typography fontSize='16px' fontWeight={400}>
+                {t<string>('Funds available to withdraw later')}
+              </Typography>
+              {toBeWithdrawnLater.map((item, index) => (
+                <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
+                  <Typography fontSize='16px' fontWeight={300}>
+                    {t<string>(item.label)}
+                  </Typography>
+                  <ShowBalance
+                    api={api}
+                    balance={item.amount}
+                    decimalPoint={4}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </>}
+      </Grid>
+    );
+  };
 
   return (
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
@@ -197,6 +291,7 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                 {mode === 'InitiateRecovery' && t('Step 2 of 2: Initiate Recovery review')}
                 {mode === 'CloseRecovery' && t('Close the recovery process and claim the deposit from possible malicious account')}
                 {mode === 'VouchRecovery' && t('Step 2 of 2: Vouch Recovery review')}
+                {mode === 'Withdraw' && t('Withdraw the fund of your lost account')}
               </>
             )}
             {step === STEPS.WAIT_SCREEN && (
@@ -207,6 +302,7 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                 {mode === 'InitiateRecovery' && t('Initiating Recovery')}
                 {mode === 'CloseRecovery' && t('Closing the recovery process')}
                 {mode === 'VouchRecovery' && t('Vouching')}
+                {mode === 'Withdraw' && t('Withdrawing the fund of your lost account')}
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
@@ -227,6 +323,9 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
             {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
               txInfo?.success ? t('Recovery vouched') : t('Vouching Recovery failed')
             )}
+            {step === STEPS.CONFIRM && mode === 'Withdraw' && (
+              txInfo?.success ? t('The fund of your lost account withdrawn') : t('Withdrawing the fund of your lost account failed')
+            )}
           </Typography>
         </Grid>
         {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
@@ -234,7 +333,7 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
+            <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'InitiateRecovery' || mode === 'VouchRecovery'
@@ -293,7 +392,7 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                   />
                 </>
               }
-              {(mode === 'InitiateRecovery' || mode === 'VouchRecovery') &&
+              {(mode === 'InitiateRecovery' || mode === 'VouchRecovery' || mode === 'Withdraw') &&
                 <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                   <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                     {t<string>('Lost account')}
@@ -301,13 +400,17 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                   <Identity
                     accountInfo={mode === 'InitiateRecovery'
                       ? lostAccountAddress?.accountIdentity
-                      : vouchRecoveryInfo?.lost.accountIdentity}
+                      : mode === 'VouchRecovery'
+                        ? vouchRecoveryInfo?.lost.accountIdentity
+                        : undefined}
                     api={api}
                     chain={chain}
                     direction='row'
                     formatted={mode === 'InitiateRecovery'
                       ? lostAccountAddress?.address
-                      : vouchRecoveryInfo?.lost.address}
+                      : mode === 'VouchRecovery'
+                        ? vouchRecoveryInfo?.lost.address
+                        : withdrawInfo?.lost}
                     identiconSize={31}
                     showSocial={false}
                     style={{ maxWidth: '100%', width: 'fit-content' }}
@@ -339,14 +442,19 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                   </DisplayValue>
                 </>
               }
-              {mode !== 'VouchRecovery' &&
+              {mode === 'Withdraw' && withdrawInfo &&
+                <WithdrawDetails />
+              }
+              {!(mode === 'VouchRecovery' || (mode === 'Withdraw' && withdrawInfo?.claimed === true)) &&
                 <DisplayValue title={mode === 'RemoveRecovery'
                   ? t<string>('Releasing deposit')
                   : mode === 'InitiateRecovery'
                     ? t<string>('Initiation Deposit')
                     : mode === 'CloseRecovery'
                       ? t<string>('Deposit they made')
-                      : t<string>('Total Deposit')}
+                      : mode === 'Withdraw'
+                        ? t<string>('Initiation Recovery Deposit to be released')
+                        : t<string>('Total Deposit')}
                 >
                   <ShowBalance
                     api={api}
@@ -365,6 +473,17 @@ export default function Review({ activeLost, address, api, chain, depositValue, 
                 </Grid>
               </DisplayValue>
             </Grid>
+            {mode === 'Withdraw' &&
+              <Grid container item sx={{ '> div.belowInput': { m: 0, pl: '5px' }, height: '40px', pb: '15px' }}>
+                <Warning
+                  fontSize={'13px'}
+                  fontWeight={400}
+                  isBelowInput
+                  theme={theme}
+                >
+                  {t<string>('For those funds that are available to withdraw later, you need to come back to this page to complete the process.')}
+                </Warning>
+              </Grid>}
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
