@@ -15,7 +15,7 @@ import { sanitizeChainName } from '../util/utils';
 
 interface Props {
   defaultValue: string | number | undefined;
-  value?: string | number | undefined;
+  value?: string | number;
   onChange?: (v: number | string) => void;
   options: DropdownOption[];
   label: string;
@@ -24,11 +24,11 @@ interface Props {
   showIcons?: boolean;
   _mt?: string | number;
   disabledItems?: string[] | number[];
-  isPageLoading?: boolean | undefined;
-  isItemsLoading?: boolean | undefined;
+  isPageLoading?: boolean;
+  isItemsLoading?: boolean;
 }
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isPageLoading,isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isItemsLoading, isPageLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);

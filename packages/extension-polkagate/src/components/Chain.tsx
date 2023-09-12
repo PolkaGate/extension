@@ -19,7 +19,7 @@ interface Props {
   label: string;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
-  isPageLoading?: boolean | undefined
+  isPageLoading?: boolean;
 }
 
 function Chain({ address, defaultValue, disabledItems, label, onChange, style,isPageLoading }: Props) {
