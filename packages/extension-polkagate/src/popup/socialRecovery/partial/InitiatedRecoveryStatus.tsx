@@ -46,9 +46,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
   return (
     <Grid container direction='column' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', mt: '20px', p: '20px', ...style }}>
       {!lostAccountRecoveryInfo
-        ? <>
-          <Progress pt='0px' size={100} title={t('Checking the recovery status...')} />
-        </>
+        ? <Progress pt='0px' size={100} title={t('Checking the recovery status...')} />
         : <>
           <Grid alignItems='center' container item pb='10px' width='fit-content'>
             <Box
@@ -151,6 +149,16 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
                 </Typography>
               </Grid>
               <RemainingTime delayInSecond={delayRemainBlock * 6} />
+            </Grid>
+          }
+          {isVouchedCompleted && isDelayPassed === true &&
+            <Grid alignItems='center' container item sx={{ borderTop: '2px solid', borderTopColor: '#D5CCD0', pt: '12px', mt: '15px' }}>
+              <Grid alignItems='center' container item>
+                <CheckIcon sx={{ color: theme.palette.success.main, fontSize: '35px', mr: '8px', width: 'fit-content' }} />
+                <Typography fontSize='20px' fontWeight={500}>
+                  {t<string>('Now you can proceed to withdraw.')}
+                </Typography>
+              </Grid>
             </Grid>
           }
         </>}
