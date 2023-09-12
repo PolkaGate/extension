@@ -48,46 +48,6 @@ export default function ActiveProxyStatus({ api, style, withdrawInfo }: Props): 
                 decimalPoint={4}
               />
             </Grid>))}
-          {/* <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', fontSize: '18px', fontWeight: 500, py: '7px' }}>
-            <Typography fontSize='16px' fontWeight={500}>
-              {t<string>('Reserved')}
-            </Typography>
-            <ShowBalance
-              api={api}
-              balance={withdrawInfo.reserved}
-              decimalPoint={4}
-            />
-          </Grid>
-          <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', fontSize: '18px', fontWeight: 500, py: '7px' }}>
-            <Typography fontSize='16px' fontWeight={500}>
-              {t<string>('Solo staked')}
-            </Typography>
-            <ShowBalance
-              api={api}
-              balance={withdrawInfo.soloStaked}
-              decimalPoint={4}
-            />
-          </Grid>
-          <Grid container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', fontSize: '18px', fontWeight: 500, py: '7px' }}>
-            <Typography fontSize='16px' fontWeight={500}>
-              {t<string>('Pool staked')}
-            </Typography>
-            <ShowBalance
-              api={api}
-              balance={withdrawInfo.poolStaked}
-              decimalPoint={4}
-            />
-          </Grid>
-          <Grid container item justifyContent='space-between' sx={{ fontSize: '18px', fontWeight: 500, py: '7px' }}>
-            <Typography fontSize='16px' fontWeight={500}>
-              {t<string>('Redeemable')}
-            </Typography>
-            <ShowBalance
-              api={api}
-              balance={withdrawInfo.redeemable}
-              decimalPoint={4}
-            />
-          </Grid> */}
         </Grid>
       }
     </Grid>
