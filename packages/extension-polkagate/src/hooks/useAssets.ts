@@ -28,12 +28,12 @@ export default function useAssets(address: AccountId | string | undefined): Drop
       ? api.query.assets.asset.keys().then((keys: StorageKey<[u32]>[]) => {
         const assetIds = keys.map(({ args: [id] }) => id);
 
-        assetIds && api && api.query.assets && api.query.assets.asset.multi(assetIds).then((details: Option<PalletAssetsAssetDetails>[]) => {
-          console.log('details:', JSON.parse(JSON.stringify(details)));
-        });
+        // assetIds && api && api.query.assets && api.query.assets.asset.multi(assetIds).then((details: Option<PalletAssetsAssetDetails>[]) => {
+        //   console.log('details:', JSON.parse(JSON.stringify(details)));
+        // });
 
         assetIds && api && api.query.assets && api.query.assets.metadata.multi(assetIds).then((metadata: Option<PalletAssetsAssetDetails>[]) => {
-          console.log('metadata:', metadata);
+          // console.log('metadata:', metadata);
 
           const assetOptions = metadata.map(({ name, symbol }, index) => {
             if (!symbol.toHuman()) {
