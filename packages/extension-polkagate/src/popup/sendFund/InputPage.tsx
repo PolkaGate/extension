@@ -81,7 +81,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
     const mayBeTeleportDestinations =
       assetId === undefined
-        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info), value: String(genesisHash) || paraId }))
+        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info), value: paraId || String(genesisHash) }))
         : [];
 
     return currentChainOption.concat(mayBeTeleportDestinations);
