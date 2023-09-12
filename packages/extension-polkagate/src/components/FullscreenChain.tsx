@@ -102,43 +102,45 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     onChange(defaultValue);
   }, [defaultValue, onChange]);
 
+  const updateRecentChains = useCallback((currentGenesisHash: string) => {
+    chrome.storage.local.get('RecentChains', (res) => {
+      const accountsAndChains = res?.RecentChains ?? {};
+      let myRecentChains = accountsAndChains[address] as string[];
+
+      if (!myRecentChains) {
+        if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
+          accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
+        } else {
+          INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
+          accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
+        }
+
+        // eslint-disable-next-line no-void
+        void chrome.storage.local.set({ RecentChains: accountsAndChains });
+      } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
+        myRecentChains.unshift(currentGenesisHash);
+        myRecentChains.pop();
+        accountsAndChains[address] = myRecentChains;
+
+        // eslint-disable-next-line no-void
+        void chrome.storage.local.set({ RecentChains: accountsAndChains });
+      }
+    });
+  }, [address]);
+
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
       onChange(newGenesisHash);
 
       const currentGenesisHash = newGenesisHash?.startsWith && newGenesisHash.startsWith('0x') ? newGenesisHash : undefined;
 
-      if (!address || !currentGenesisHash) {
-        return;
+      if (address && currentGenesisHash) {
+        updateRecentChains(currentGenesisHash);
       }
-
-      chrome.storage.local.get('RecentChains', (res) => {
-        const accountsAndChains = res?.RecentChains ?? {};
-        let myRecentChains = accountsAndChains[address] as string[];
-
-        if (!myRecentChains) {
-          if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
-            accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
-          } else {
-            INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
-            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
-          }
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-          myRecentChains.unshift(currentGenesisHash);
-          myRecentChains.pop();
-          accountsAndChains[address] = myRecentChains;
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        }
-      });
     } catch (error) {
       console.error(error);
     }
-  }, [address, onChange]);
+  }, [address, onChange, updateRecentChains]);
 
   useEffect(() => {
     setSelectedValue(defaultValue);
