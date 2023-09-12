@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
-import { BN, BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
@@ -32,10 +32,6 @@ interface Props {
 
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
-
-function isNumber(variable: any) {
-  return typeof variable === 'number';
-}
 
 export const Title = ({ padding = '30px 0px 20px', text }: { text: string, padding?: string }) => {
   const theme = useTheme();
