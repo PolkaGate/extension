@@ -51,6 +51,26 @@ const BootstrapInput = styled(InputBase)<{ address?: string | null }>(({ address
   }
 }));
 
+const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ height = '20px', logoSize = 19.8, text }) => {
+  const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
+  const logo = getLogo(chainName(text));
+
+  return (
+    <Grid container height={height} justifyContent='flex-start'>
+      {text !== 'Allow use on any chain' && logo &&
+        <Grid alignItems='center' container item pr='10px' width='fit-content'>
+          <ChainLogo chainName={text} size={logoSize} />
+        </Grid>
+      }
+      <Grid alignItems='center' container item justifyContent='flex-start' width='fit-content'>
+        <Typography fontSize='14px' fontWeight={400}>
+          {text}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
 function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
@@ -131,27 +151,6 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     setSelectedValue(event.target.value);
     toggleMenu();
   }, [onChangeNetwork, toggleMenu]);
-
-  const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
-
-  const Item = ({ height = '20px', logoSize = 19.8, text }: { height?: string, logoSize?: number, text: string }) => {
-    const logo = getLogo(chainName(text));
-
-    return (
-      <Grid container height={height} justifyContent='flex-start'>
-        {text !== 'Allow use on any chain' && logo &&
-          <Grid alignItems='center' container item pr='10px' width='fit-content'>
-            <ChainLogo chainName={text} size={logoSize} />
-          </Grid>
-        }
-        <Grid alignItems='center' container item justifyContent='flex-start' width='fit-content'>
-          <Typography fontSize='14px' fontWeight={400}>
-            {text}
-          </Typography>
-        </Grid>
-      </Grid>
-    );
-  };
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
@@ -248,6 +247,5 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     </Grid>
   );
 }
-
 
 export default React.memo(FullscreenChain);
