@@ -31,6 +31,7 @@ export default function ActiveProxyStatus({ api, style, withdrawInfo }: Props): 
   withdrawInfo?.soloStaked && !withdrawInfo?.soloStaked.isZero() && assets.push({ amount: withdrawInfo.soloStaked, label: 'Solo Stake' });
   withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.isZero() && assets.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
   withdrawInfo?.redeemable && !withdrawInfo?.redeemable.isZero() && assets.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
+  withdrawInfo?.soloUnlock && !withdrawInfo?.soloUnlock.amount.isZero() && assets.push({ amount: withdrawInfo.soloUnlock.amount, label: 'Solo Unstaking' });
 
   return (
     <Grid container direction='column' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', mt: '20px', p: '20px', ...style }}>
