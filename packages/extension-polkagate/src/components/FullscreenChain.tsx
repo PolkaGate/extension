@@ -85,17 +85,11 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
   const [selectedValue, setSelectedValue] = useState<string>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
-  const _disabledItems = useMemo((): (string | number)[] | undefined => {
-    if (disabledItems && !isTestnetEnabled) {
-      return disabledItems.concat(TEST_NETS) as (string | number)[];
-    }
-
-    if (!isTestnetEnabled) {
-      return TEST_NETS;
-    }
-
-    return disabledItems;
-  }, [disabledItems, isTestnetEnabled]);
+  const _disabledItems = useMemo((): (string | number)[] | undefined =>
+    !isTestnetEnabled
+      ? [...(disabledItems || []), ...TEST_NETS]
+      : disabledItems
+  , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
