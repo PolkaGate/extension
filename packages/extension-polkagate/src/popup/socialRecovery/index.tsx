@@ -70,6 +70,7 @@ export type WithdrawInfo = {
   poolStaked: BN;
   reserved: BN;
   hasId: boolean;
+  soloUnlock: { amount: BN, date: number };
 } | undefined;
 
 export default function SocialRecovery(): React.ReactElement {
