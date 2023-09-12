@@ -248,7 +248,11 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
         console.log('assetBalances:', assetBalances);
         setAssetBalance(assetBalances);
+      }).catch((error) => {
+        console.error(`Failed to fetch metadata for assetId ${assetId}:`, error);
       });
+    }).catch((error) => {
+      console.error(`Failed to fetch account for assetId ${assetId} and address ${formatted}:`, error);
     });
   }, [api, assetId, chainName, formatted]);
 
