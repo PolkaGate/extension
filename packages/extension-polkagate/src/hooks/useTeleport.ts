@@ -72,7 +72,11 @@ export default function useTeleport(address: string | undefined): Teleport {
   const [secondEndpoint, setSecondEndpoint] = useState<ExtLinkOption | undefined>(undefined);
 
   useEffect((): void => {
-    api && api.query.parachainInfo && api.query.parachainInfo.parachainId().then(setParaId);
+    api && api.query.parachainInfo && api.query.parachainInfo.parachainId()
+      .then(setParaId)
+      .catch((error) => {
+        console.error('Failed to fetch parachain ID:', error);
+      });
   }, [api]);
 
   useEffect((): void => {

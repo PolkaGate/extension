@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, SxProps, Theme } from '@mui/material';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { useAssets, useTokens } from '@polkadot/extension-polkagate/src/hooks';
 
