@@ -27,10 +27,31 @@ interface Props {
   helperText?: string;
   options?: DropdownOption[];
   labelFontSize?: string;
-  pageIsLoading?: boolean;
 }
 
-function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style, pageIsLoading = false }: Props) {
+const BootstrapInput = styled(InputBase)<{ address?: string | null }>(({ address, theme }) => ({
+  '& .MuiInputBase-input': {
+    '&:focus': {
+      borderColor: theme.palette.secondary.main,
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
+    },
+    backgroundColor: !address ? theme.palette.primary.contrastText : theme.palette.background.paper,
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: 0,
+    fontSize: '14px',
+    fontWeight: '400',
+    letterSpacing: '-0.015em',
+    padding: '5px 5px 0px',
+    transition: theme.transitions.create(['border-color', 'box-shadow'])
+  },
+  'label + &': {
+    fontSize: '10px',
+    fontWeight: '400',
+    letterSpacing: '-0.015em'
+  }
+}));
+
+function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
 
@@ -105,28 +126,6 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
 
   const toggleMenu = useCallback(() => !!address && setShowMenu(!showMenu), [address, showMenu]);
 
-  const BootstrapInput = styled(InputBase)(({ theme }) => ({
-    '& .MuiInputBase-input': {
-      '&:focus': {
-        borderColor: theme.palette.secondary.main,
-        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-      },
-      backgroundColor: !address ? theme.palette.primary.contrastText : theme.palette.background.paper,
-      border: `1px solid ${theme.palette.primary.main}`,
-      borderRadius: 0,
-      fontSize: '14px',
-      fontWeight: '400',
-      letterSpacing: '-0.015em',
-      padding: '5px 5px 0px',
-      transition: theme.transitions.create(['border-color', 'box-shadow'])
-    },
-    'label + &': {
-      fontSize: '10px',
-      fontWeight: '400',
-      letterSpacing: '-0.015em'
-    }
-  }));
-
   const _onChange = useCallback((event: SelectChangeEvent<string>) => {
     onChangeNetwork && onChangeNetwork(event.target.value);
     setSelectedValue(event.target.value);
@@ -158,90 +157,92 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <FormControl disabled={!address} sx={{ width: '100%' }} variant='standard'>
         <Label helperText={helperText} label={label} style={{ fontSize: labelFontSize }}>
-          <Select
-            MenuProps={{
-              MenuListProps: {
-                sx: {
-                  '> li.Mui-selected': {
-                    bgcolor: 'rgba(186, 40, 130, 0.25)'
-                  },
-                  '> li:hover': {
-                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                  },
-                  bgcolor: 'background.paper'
+          {selectedValue &&
+            <Select
+              MenuProps={{
+                MenuListProps: {
+                  sx: {
+                    '> li.Mui-selected': {
+                      bgcolor: 'rgba(186, 40, 130, 0.25)'
+                    },
+                    '> li:hover': {
+                      bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    },
+                    bgcolor: 'background.paper'
+                  }
+                },
+                PaperProps: {
+                  sx: {
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                      width: 0
+                    },
+                    border: '1px solid',
+                    borderColor: 'secondary.light',
+                    borderRadius: '7px',
+                    filter: 'drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.15))',
+                    mt: '10px',
+                    overflow: 'hidden',
+                    overflowY: 'scroll'
+                  }
                 }
-              },
-              PaperProps: {
-                sx: {
-                  '&::-webkit-scrollbar': {
-                    display: 'none',
-                    width: 0
-                  },
+              }}
+              defaultValue={defaultValue}
+              id='selectChain'
+              input={<BootstrapInput address={address} />}
+              onChange={_onChange}
+              onClick={toggleMenu}
+              open={_options?.length !== 1 && showMenu}
+              // eslint-disable-next-line react/jsx-no-bind
+              renderValue={(value) => {
+                const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
+
+                return (
+                  <Item height='50px' logoSize={29} text={text} />
+                );
+              }}
+              sx={{
+                '> #selectChain': {
                   border: '1px solid',
                   borderColor: 'secondary.light',
-                  borderRadius: '7px',
-                  filter: 'drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.15))',
-                  mt: '10px',
-                  overflow: 'hidden',
-                  overflowY: 'scroll'
+                  borderRadius: '5px',
+                  fontSize: '14px',
+                  height: '48px',
+                  lineHeight: '30px',
+                  p: 0,
+                  pl: '15px',
+                  textAlign: 'left'
+                },
+                '> .MuiSvgIcon-root': {
+                  color: 'secondary.light',
+                  fontSize: '30px'
+                },
+                '> .MuiSvgIcon-root.Mui-disabled': {
+                  color: 'action.disabledBackground',
+                  fontSize: '30px'
+                },
+                bgcolor: !address ? 'primary.contrastText' : 'transparent',
+                width: '100%',
+                '.MuiSelect-icon': {
+                  display: _options?.length && _options.length === 1 ? 'none' : 'block'
                 }
-              }
-            }}
-            defaultValue={defaultValue}
-            id='selectChain'
-            input={<BootstrapInput />}
-            onChange={_onChange}
-            onClick={toggleMenu}
-            open={!pageIsLoading && _options?.length !== 1 && showMenu}
-            // eslint-disable-next-line react/jsx-no-bind
-            renderValue={(value) => {
-              const text = _options.find((option) => value === option.value || value === option.text)?.text?.split(/\s*\(/)[0];
-
-              return (
-                <Item height='50px' logoSize={29} text={text} />
-              );
-            }}
-            sx={{
-              '> #selectChain': {
-                border: '1px solid',
-                borderColor: 'secondary.light',
-                borderRadius: '5px',
-                fontSize: '14px',
-                height: '48px',
-                lineHeight: '30px',
-                p: 0,
-                pl: '15px',
-                textAlign: 'left'
-              },
-              '> .MuiSvgIcon-root': {
-                color: 'secondary.light',
-                fontSize: '30px'
-              },
-              '> .MuiSvgIcon-root.Mui-disabled': {
-                color: 'action.disabledBackground',
-                fontSize: '30px'
-              },
-              bgcolor: !address ? 'primary.contrastText' : 'transparent',
-              width: '100%',
-              '.MuiSelect-icon': {
-                display: _options?.length && _options.length === 1 ? 'none' : 'block'
-              }
-            }}
-            value={selectedValue} // Assuming selectedValue is a state variable
-          >
-            {_options.map(({ text, value }): React.ReactNode => {
-              return (
-                <MenuItem
-                  disabled={_disabledItems?.includes(value) || _disabledItems?.includes(text)}
-                  key={value}
-                  sx={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.015em' }}
-                  value={value || text}
-                >
-                  <Item text={text} />
-                </MenuItem>
-              );
-            })}
-          </Select>
+              }}
+              value={selectedValue} // Assuming selectedValue is a state variable
+            >
+              {_options.map(({ text, value }): React.ReactNode => {
+                return (
+                  <MenuItem
+                    disabled={_disabledItems?.includes(value) || _disabledItems?.includes(text)}
+                    key={value}
+                    sx={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.015em' }}
+                    value={value || text}
+                  >
+                    <Item text={text} />
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          }
         </Label>
       </FormControl>
     </Grid>

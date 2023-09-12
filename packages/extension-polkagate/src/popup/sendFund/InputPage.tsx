@@ -332,7 +332,6 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             labelFontSize='16px'
             onChange={setRecipientChainGenesisHash}
             options={destinationGenesisHashes}
-            pageIsLoading={!estimatedFee}
             style={{ pt: '10px', width: '100%' }}
           />
           {isCrossChain && Number(amount) !== 0 &&

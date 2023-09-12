@@ -52,7 +52,6 @@ export default function AccountDetails(): React.ReactElement {
   const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
-  const [isPageLoading, setPageLoading] = useState<boolean>();
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -77,10 +76,6 @@ export default function AccountDetails(): React.ReactElement {
   useEffect(() => {
     chain && goToAccount();
   }, [chain, goToAccount]);
-
-  useEffect(() => {
-    setPageLoading(GOVERNANCE_CHAINS.includes(genesisHash));
-  }, [genesisHash]);
 
   const goToSend = useCallback(() => {
     address && windowOpen(`/send/${address}/${assetId}`).catch(console.error);
@@ -184,7 +179,6 @@ export default function AccountDetails(): React.ReactElement {
           <Chain
             address={address}
             defaultValue={chain?.genesisHash ?? genesisOptions[0].text}
-            isPageLoading={isPageLoading}
             label={t<string>('Chain')}
             onChange={_onChangeNetwork}
             style={{ width: '60%' }}
@@ -215,7 +209,7 @@ export default function AccountDetails(): React.ReactElement {
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Free'} />
                 }
                 {GOVERNANCE_CHAINS.includes(genesisHash)
-                  ? <LockedInReferenda address={address} refresh={refresh} setPageLoading={setPageLoading} setRefresh={setRefresh} />
+                  ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
                   : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} />
                 }
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} />

@@ -28,12 +28,11 @@ interface Props {
   address: string | undefined;
   refresh: boolean | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  setPageLoading: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 const noop = () => null;
 
-export default function LockedInReferenda({ address, refresh, setPageLoading, setRefresh }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -144,16 +143,6 @@ export default function LockedInReferenda({ address, refresh, setPageLoading, se
 
     setTotalLocked(miscRefLock || lockedInRef || delegatedBalance);
   }, [delegatedBalance, lockedInRef, miscRefLock]);
-
-  useEffect(() => {
-    setPageLoading(
-      !(
-        (unlockableAmount && !unlockableAmount.isZero()) ||
-        (delegatedBalance && !delegatedBalance.isZero()) ||
-        timeToUnlock !== undefined
-      )
-    );
-  }, [delegatedBalance, lockedInRef, miscRefLock, setPageLoading, timeToUnlock, unlockableAmount]);
 
   const onUnlock = useCallback(() => {
     setShowReview(true);
