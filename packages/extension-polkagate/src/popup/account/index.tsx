@@ -200,7 +200,7 @@ export default function AccountDetails(): React.ReactElement {
               ? <LabelBalancePrice address={address} balances={balanceToShow} label={'Balance'} />
               : < >
                 <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} />
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferrable'} onClick={goToSend} />
+                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} />
                 {STAKING_CHAINS.includes(genesisHash)
                   ? <>
                     <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} />
