@@ -98,6 +98,12 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
 
   const updateRecentChains = useCallback((currentGenesisHash: string) => {
     chrome.storage.local.get('RecentChains', (res) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
+
+        return;
+      }
+
       const accountsAndChains = res?.RecentChains ?? {};
       let myRecentChains = accountsAndChains[address] as string[];
 
@@ -109,15 +115,21 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
           accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
         }
 
-        // eslint-disable-next-line no-void
-        void chrome.storage.local.set({ RecentChains: accountsAndChains });
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          }
+        });
       } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
         myRecentChains.unshift(currentGenesisHash);
         myRecentChains.pop();
         accountsAndChains[address] = myRecentChains;
 
-        // eslint-disable-next-line no-void
-        void chrome.storage.local.set({ RecentChains: accountsAndChains });
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          }
+        });
       }
     });
   }, [address]);
