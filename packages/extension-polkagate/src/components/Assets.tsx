@@ -30,6 +30,8 @@ function Assets({ address, assetId, label, onChange, setAssetId, style }: Props)
 
   useEffect(() => {
     if (assets === undefined || (JSON.stringify(ref.current) !== JSON.stringify(options))) {
+      ref.current = options;
+
       return setLoading(true);
     }
 
