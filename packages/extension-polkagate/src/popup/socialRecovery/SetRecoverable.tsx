@@ -14,6 +14,7 @@ import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import TrustedFriendsList from './partial/TrustedFriendsList';
 import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
+import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 
 interface Props {
   address: string | undefined;
@@ -222,17 +223,26 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
           <Typography fontSize='14px' fontWeight={400} width='100%'>
             {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
           </Typography>
-          <SelectTrustedFriend
-            accountsInfo={accountsInfo}
-            api={api}
-            chain={chain}
-            disabled={false}
-            helperText='ToDo'
-            label={t<string>('Find trusted friends accounts')}
-            onSelectFriend={addNewFriend}
-            placeHolder={t<string>('Enter account ID or address')}
-            style={{ py: '15px', width: '50%' }}
-          />
+          <Grid container item justifyContent='space-between' py='15px'>
+            <SelectTrustedFriend
+              accountsInfo={accountsInfo}
+              api={api}
+              chain={chain}
+              disabled={false}
+              helperText='ToDo'
+              label={t<string>('Find trusted friends accounts')}
+              onSelectFriend={addNewFriend}
+              placeHolder={t<string>('Enter account ID or address')}
+              style={{ width: '48%' }}
+            />
+            <SelectTrustedFriendFromExtension
+              accountsInfo={accountsInfo}
+              api={api}
+              chain={chain}
+              onSelectFriend={addNewFriend}
+              style={{ width: '48%' }}
+            />
+          </Grid>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('Trusted friends accounts')}
           </Typography>
