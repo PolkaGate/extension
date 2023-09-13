@@ -265,7 +265,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               {t<string>('Transferable amount')}
             </Typography>
             <Grid alignItems='center' container item sx={{ border: 1, height: '48px', p: '0 5px', fontSize: '18px', borderColor: 'rgba(75, 75, 75, 0.3)' }}>
-              <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} token={balances?.token} skeletonWidth={120}/>
+              <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} skeletonWidth={120} token={balances?.token} />
             </Grid>
           </Grid>
           <Grid item md={4.8} xs={12}>
