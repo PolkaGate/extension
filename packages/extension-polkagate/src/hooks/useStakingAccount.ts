@@ -42,7 +42,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
     }
 
     if (!api.derive.staking) {
-      console.log('no staking on this chain');
+      // console.log('no staking on this chain');
 
       return setStakingInfo(null);
     }

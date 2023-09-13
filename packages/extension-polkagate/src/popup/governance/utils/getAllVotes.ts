@@ -5,16 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { LatestReferenda, Origins } from './types';
-
 export const LOCKS = [1, 10, 20, 30, 40, 50, 60];
-
-// export interface VoterData {
-//   voterAddress: string;
-//   voteType: string;
-//   conviction: number;
-//   voteAmount: number;
-// }
 
 export interface VoterData {
   account: string;

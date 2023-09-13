@@ -3,45 +3,40 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, Grid, SxProps, Theme, useTheme } from '@mui/material';
+import { Grid, SxProps, Theme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useChainName } from '@polkadot/extension-polkagate/src/hooks';
-import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { useGenesisHashOptions } from '@polkadot/extension-polkagate/src/hooks';
+import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
-import Select from './Select';
-
-interface DropdownOption {
-  text: string;
-  value: string;
-}
+import Select2 from './Select2';
 
 interface Props {
   address: string | null | undefined;
   defaultValue?: string | undefined;
   onChange: (value: string) => void;
-  options: DropdownOption[];
   label: string;
-  icon?: string;
   style: SxProps<Theme> | undefined;
   disabledItems?: string[] | number[];
 }
 
-function SelectChain({ address, defaultValue, disabledItems, icon = undefined, label, onChange, options, style }: Props) {
-  const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
-  const theme = useTheme();
+function Chain({ address, defaultValue, disabledItems, label, onChange, style }: Props) {
+  let options = useGenesisHashOptions();
+
+  options = options.filter(({ text }) => text !== 'Allow use on any chain');
+
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
   const _disabledItems = useMemo((): (string | number)[] | undefined =>
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   useEffect(() =>
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
-  , []);
+    , []);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -82,27 +77,18 @@ function SelectChain({ address, defaultValue, disabledItems, icon = undefined, l
   }, [address, onChange]);
 
   return (
-    <Grid alignItems='flex-end' container justifyContent='space-between' pt={1} sx={{ ...style }}>
-      <Grid item xs={10.5}>
-        <Select
-          defaultValue={defaultValue}
-          disabledItems={_disabledItems}
-          isDisabled={!address}
-          label={label}
-          onChange={onChangeNetwork}
-          options={options}
-          showLogo
-        />
-      </Grid>
-      <Grid item pl={1} xs={1.5}>
-        {icon
-          ? <Avatar src={icon} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 31, width: 31 }} variant='square' />
-          : <Grid sx={{ bgcolor: 'action.disabledBackground', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', height: '31px', width: '31px' }}>
-          </Grid>
-        }
-      </Grid>
+    <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
+      <Select2
+        defaultValue={defaultValue}
+        disabledItems={_disabledItems}
+        isDisabled={!address}
+        label={label}
+        onChange={onChangeNetwork}
+        options={options}
+        showLogo
+      />
     </Grid>
   );
 }
 
-export default React.memo(SelectChain);
+export default React.memo(Chain);

@@ -7,10 +7,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useEndpoint2, useFormatted, useStashId } from '.';
+import { useEndpoint, useFormatted, useStashId } from '.';
 
 export default function useNeedsRebag(address: string): RebagInfo | undefined {
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const formatted = useFormatted(address);
   const stashId = useStashId(formatted);
 

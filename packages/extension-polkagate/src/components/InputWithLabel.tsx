@@ -17,6 +17,7 @@ interface Props {
   isFocused?: boolean;
   isReadOnly?: boolean;
   label: string;
+  labelFontSize?: string;
   onChange?: (value: string) => void;
   onEnter?: () => void;
   placeholder?: string;
@@ -29,7 +30,7 @@ interface Props {
   type?: string;
 }
 
-function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
+function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', labelFontSize = '14px', onChange, onEnter, placeholder, type = 'text', value, withoutMargin }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
 
@@ -72,7 +73,7 @@ function InputWithLabel({ className, defaultValue, disabled, fontSize = 18, font
       className={`${className || ''} ${withoutMargin ? 'withoutMargin' : ''}`}
       helperText={helperText}
       label={label}
-      style={{ position: 'relative', letterSpacing: '-0.015em', width: '100%' }}
+      style={{ fontSize: labelFontSize, position: 'relative', letterSpacing: '-0.015em', width: '100%' }}
     >
       <Input
         autoCapitalize='off'

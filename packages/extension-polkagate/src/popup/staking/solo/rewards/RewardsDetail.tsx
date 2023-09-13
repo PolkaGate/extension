@@ -19,7 +19,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, Identity, PButton, Popup, Progress } from '../../../../components';
-import { useApi, useChain, useChainName, useDecimal, useEndpoint2, useFormatted, useStakingAccount, useStakingRewardDestinationAddress, useToken, useTranslation } from '../../../../hooks';
+import { useApi, useChain, useChainName, useDecimal, useEndpoint, useFormatted, useStakingAccount, useStakingRewardDestinationAddress, useToken, useTranslation } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';

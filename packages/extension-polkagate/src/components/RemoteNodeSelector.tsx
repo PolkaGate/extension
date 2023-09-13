@@ -3,7 +3,7 @@
 
 import React, { useCallback } from 'react';
 
-import { useAccount, useChainName, useEndpoint2, useEndpoints, useTranslation } from '../hooks';
+import { useAccount, useChainName, useEndpoint, useEndpoints, useTranslation } from '../hooks';
 import { Select } from '.';
 
 interface Props {
@@ -22,7 +22,7 @@ export default function RemoteNodeSelector({ address, genesisHash }: Props): Rea
   const chainName = useChainName(address);
   const account = useAccount(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
     chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {

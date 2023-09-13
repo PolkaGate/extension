@@ -26,8 +26,8 @@ import Review from './Review';
 
 interface Props {
   address: string | undefined;
-  refresh: boolean | undefined
-  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>
+  refresh: boolean | undefined;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 const noop = () => null;
@@ -150,14 +150,21 @@ export default function LockedInReferenda({ address, refresh, setRefresh }: Prop
 
   return (
     <>
-      <Grid item pb='2px' pt='3px'>
+      <Grid item pt='3px' pb='2px'>
         <Grid alignItems='flex-end' container justifyContent='space-between'>
           <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs={5.2}>
             {t('Locked in Referenda')}
           </Grid>
           <Grid alignItems='flex-end' container direction='column' item xs>
             <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
-              <ShowBalance api={api} balance={totalLocked} decimal={decimal} decimalPoint={2} token={token} />
+              <ShowBalance
+                api={api}
+                balance={totalLocked}
+                decimal={decimal}
+                decimalPoint={2}
+                token={token}
+                withCurrency={false}
+              />
             </Grid>
             <Grid item pt='6px' sx={{ lineHeight: '15px' }}>
               <FormatPrice

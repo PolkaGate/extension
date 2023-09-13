@@ -39,7 +39,7 @@ interface Props {
   backgroundDefault?: boolean;
 }
 
-function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onClose, backgroundDefault, onBackClick, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showMenu, text, withSteps = null }: Props): React.ReactElement<Props> {
   const [isMenuOpen, setOpenMenu] = useState(false);
   const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
   const setIconRef = useRef(null);
@@ -148,7 +148,7 @@ function HeaderBrand({ _centerItem, address, isRefreshing, noBorder = false, onC
           borderBottom: `${noBorder || shortBorder ? '' : '0.5px solid'}`,
           borderColor: 'secondary.light',
           lineHeight: 0,
-          p: showBrand ? '7px 30px 7px' : `18px 30px ${paddingBottom}px`
+          p: showBrand ? '7px 30px 7px' : `18px 20px ${paddingBottom}px 30px`
         }}
       >
         <Grid alignItems='center' container justifyContent='space-between'>

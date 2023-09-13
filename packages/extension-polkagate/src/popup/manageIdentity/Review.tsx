@@ -28,6 +28,7 @@ import PasswordWithTwoButtonsAndUseProxy from '../governance/components/Password
 import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
+import { toTitleCase } from '../governance/utils/util';
 import Confirmation from './partial/Confirmation';
 import DisplaySubId from './partial/DisplaySubId';
 import IdentityTable from './partial/IdentityTable';
@@ -156,7 +157,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
         failureText,
         fee: fee || String(estimatedFee || 0),
         from: { address: String(formatted), name },
-        subAction: `${mode} Identity`,
+        subAction: toTitleCase(mode),
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash: txHash || ''

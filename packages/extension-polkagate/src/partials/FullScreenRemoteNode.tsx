@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 
 import { ChromeStorageGetResponse } from '../components/RemoteNodeSelector';
-import { useAccount, useChainName, useEndpoint2, useEndpoints } from '../hooks';
+import { useAccount, useChainName, useEndpoint, useEndpoints } from '../hooks';
 import CalculateNodeDelay from '../util/calculateNodeDelay';
 
 interface Props {
@@ -25,7 +25,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const genesisHash = account?.genesisHash;
   const endpointOptions = useEndpoints(genesisHash);
 
-  const endpointUrl = useEndpoint2(address);
+  const endpointUrl = useEndpoint(address);
   const chainName = useChainName(address);
 
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();

@@ -64,7 +64,7 @@ export default function HistoryItem({ anotherDay, chainName, date, decimal, form
               <Grid item>
                 <Typography fontSize='20px' fontWeight={300}>
                   {info?.amount && decimal && token
-                    ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[token]} value={amountToMachine(info.amount, decimal)} />
+                    ? <FormatBalance2 decimalPoint={2} decimals={[decimal]} tokens={[info?.token || token]} value={amountToMachine(info.amount, decimal)} />
                     : 'N/A'
                   }
                 </Typography>

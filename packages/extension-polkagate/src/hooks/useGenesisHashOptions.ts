@@ -5,18 +5,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
+import { DropdownOption } from '../util/types';
 import { useTranslation } from '.';
-
-interface Option {
-  text: string;
-  value: string;
-}
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function (): Option[] {
+export default function (): DropdownOption[] {
   const { t } = useTranslation();
-  const [metadataChains, setMetadataChains] = useState<Option[]>([]);
+  const [metadataChains, setMetadataChains] = useState<DropdownOption[]>([]);
 
   useEffect(() => {
     getAllMetadata().then((metadataDefs) => {
