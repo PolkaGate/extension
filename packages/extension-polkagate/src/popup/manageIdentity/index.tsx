@@ -88,8 +88,8 @@ export default function ManageIdentity(): React.ReactElement {
   const [subIdAccountsToSubmit, setSubIdAccountsToSubmit] = useState<SubIdAccountsToSubmit>();
   const [resetSubId, setResetSubId] = useState<boolean>(false);
 
-  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
-  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.paper, theme.palette.mode]);
+  const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
+  const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
 
   const clear = useCallback(() => {
     setIdentity(undefined);
@@ -382,7 +382,6 @@ export default function ManageIdentity(): React.ReactElement {
             api={api}
             idJudgement={idJudgement}
             maxFeeValue={maxFeeValue}
-            mode={mode}
             selectedRegistrar={selectedRegistrar}
             setMaxFeeValue={setMaxFeeValue}
             setMode={setMode}

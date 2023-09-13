@@ -57,7 +57,7 @@ export default function Governance(): React.ReactElement {
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
   const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
 
-  const notSupported = useMemo(() => !(GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '')), [chain?.genesisHash]);
+  const notSupported = useMemo(() => chain?.genesisHash && !(GOVERNANCE_CHAINS.includes(chain.genesisHash ?? '')), [chain?.genesisHash]);
 
   const fetchJson = () => {
     fetch('./manifest.json')

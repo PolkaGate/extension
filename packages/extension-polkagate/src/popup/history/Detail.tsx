@@ -72,13 +72,6 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.light', height: '2px', m: '3px auto', width: '35%' }} />
         <FailSuccessIcon success={info.success} />
-        {/* <Typography
-          fontSize='16px'
-          fontWeight={400}
-          mt='15px'
-        >
-          Reason
-        </Typography> */}
         <Item item={info?.date && new Date(info.date).toLocaleDateString(undefined, options)} mt={15} />
         {info?.from &&
           <ToFrom item={<ShowNameAddress title={t('From')} nameAddress={info.from} />} toCopy={info?.from?.address} />
@@ -103,7 +96,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         <Item item={`${t('Block')}: #${info?.block}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.txHash, 6)}`} noDivider toCopy={info?.txHash} />
         <Grid container item justifyContent='center' sx={{ mt: '12px' }}>
-          <Explorer chainName={chainName} txHash={info?.txHash} />
+          <Explorer chainName={chainName} formatted={info?.from?.address} txHash={info?.txHash} />
         </Grid>
       </Grid>
       <PButton
