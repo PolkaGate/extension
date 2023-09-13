@@ -97,7 +97,7 @@ export default function SocialRecovery(): React.ReactElement {
         : 'rgba(241, 241, 241, 0.1)'
       : 'background.paper'), [activeLost, theme.palette.mode]);
 
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
   const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
   const [lostAccountAddress, setLostAccountAddress] = useState<FriendWithId | undefined>();
@@ -106,6 +106,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [mode, setMode] = useState<SocialRecoveryModes>();
   const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
   const [activeProxy, setActiveProxy] = useState<string | null>();
 
   useEffect(() => {
@@ -113,7 +114,50 @@ export default function SocialRecovery(): React.ReactElement {
   }, [chain?.genesisHash]);
 
   useEffect(() => {
-    api && api.query.recovery.proxy(formatted).then((p) => {
+    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
+  }, []);
+
+  const clearInformation = useCallback(() => {
+    setRecoveryInfo(undefined);
+    setRecoveryConfig(undefined);
+    setLostAccountAddress(undefined);
+    setVouchRecoveryInfo(undefined);
+    setWithdrawInfo(undefined);
+    setMode(undefined);
+    setActiveProxy(undefined);
+    setTotalDeposit(BN_ZERO);
+    setFetching(false);
+    setRefresh(false);
+    setStep(STEPS.CHECK_SCREEN);
+  }, []);
+
+  useEffect(() => {
+    clearInformation();
+  }, [address, chain, chain.genesisHash, clearInformation]);
+
+  useEffect(() => {
+    if (!api || !formatted) {
+      setStep(STEPS.CHECK_SCREEN);
+
+      return;
+    }
+
+    if (recoveryInfo !== undefined && activeProxy !== undefined && activeRecoveries !== undefined && refresh === false) {
+      return;
+    }
+
+    if (fetching) {
+      return;
+    }
+
+    setFetching(true);
+
+    api.query.recovery.recoverable(formatted).then((r) => {
+      setRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
+      console.log('is recoverable:', r.isSome ? JSON.parse(JSON.stringify(r.unwrap())) : 'nope');
+    }).catch(console.error);
+
+    api.query.recovery.proxy(formatted).then((p) => {
       if (p.isEmpty) {
         setActiveProxy(null);
 
@@ -122,45 +166,22 @@ export default function SocialRecovery(): React.ReactElement {
 
       setActiveProxy(p.toHuman() as string);
     }).catch(console.error);
-  }, [api, formatted]);
-
-  console.log('activeProxy:', activeProxy);
+  }, [formatted, api, chain?.genesisHash, refresh, recoveryInfo, activeProxy, activeRecoveries, fetching]);
 
   useEffect(() => {
-    if (!api || !address) {
+    if (recoveryInfo === undefined || activeProxy === undefined || activeRecoveries === undefined) {
       return;
     }
 
-    setStep(STEPS.CHECK_SCREEN);
-    setRecoveryInfo(undefined);
-
-    api.query.recovery.recoverable(address).then((r) => {
-      setRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
-      console.log('is recoverable:', r.isSome ? JSON.parse(JSON.stringify(r.unwrap())) : 'nope');
-    }).catch(console.error);
-  }, [address, api, chain?.genesisHash]);
-
-  useEffect(() => {
-    if (!api || !address) {
-      setStep(STEPS.CHECK_SCREEN);
-
-      return;
-    }
-
-    if (recoveryInfo !== undefined && activeRecoveries !== undefined && activeProxy !== undefined && step === STEPS.CHECK_SCREEN) {
-      setStep(STEPS.INDEX);
-    }
-  }, [activeProxy, address, api, activeRecoveries, recoveryInfo, step]);
+    setFetching(false);
+    setStep(STEPS.INDEX);
+  }, [activeProxy, activeRecoveries, recoveryInfo]);
 
   useEffect(() => {
     if (recoveryInfo) {
       setTotalDeposit(recoveryInfo.deposit);
     }
   }, [recoveryInfo]);
-
-  useEffect(() => {
-    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
-  }, []);
 
   const goToRecoveryDetail = useCallback(() => {
     setStep(STEPS.RECOVERYDETAIL);
