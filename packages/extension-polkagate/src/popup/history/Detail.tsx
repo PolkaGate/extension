@@ -96,7 +96,7 @@ export default function Detail({ chainName, decimal, info, setShowDetail, showDe
         <Item item={`${t('Block')}: #${info?.block}`} noDivider />
         <Item item={`${t('Hash')}: #${toShortAddress(info?.txHash, 6)}`} noDivider toCopy={info?.txHash} />
         <Grid container item justifyContent='center' sx={{ mt: '12px' }}>
-          <Explorer chainName={chainName} formatted={info?.from?.address} txHash={info?.txHash} />
+          <Explorer chainName={info.chain?.name || chainName} formatted={info?.from?.address} txHash={info?.txHash} />
         </Grid>
       </Grid>
       <PButton
