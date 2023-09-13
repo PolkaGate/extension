@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, SxProps, Theme } from '@mui/material';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { useAssets, useTokens } from '@polkadot/extension-polkagate/src/hooks';
 
@@ -24,26 +24,18 @@ function Assets({ address, assetId, label, onChange, setAssetId, style }: Props)
   const tokens = useTokens(address);
   const assets = useAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);
-  const ref = useRef(options);
 
   const [isLoading, setLoading] = useState<boolean>();
 
   useEffect(() => {
-    if (assets === undefined || (JSON.stringify(ref.current) !== JSON.stringify(options))) {
-      ref.current = options;
+    if (assets === undefined) {
+      setAssetId(undefined);
 
       return setLoading(true);
     }
 
     setLoading(false);
-  }, [assets, options]);
-
-  useEffect(() => {
-    if (!ref.current || !options || JSON.stringify(ref.current) !== JSON.stringify(options)) {
-      ref.current = options;
-      setAssetId(undefined);
-    }
-  }, [options, setAssetId]);
+  }, [assets, setAssetId]);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
