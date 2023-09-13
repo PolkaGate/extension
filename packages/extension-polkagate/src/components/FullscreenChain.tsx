@@ -76,9 +76,9 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
   const _allOptions = useGenesisHashOptions();
 
   const _options = useMemo(() => {
-    _allOptions.filter(({ text }) => text === 'Allow use on any chain');
+    const filteredOptions = _allOptions.filter(({ text }) => text === 'Allow use on any chain');
 
-    return options || _allOptions;
+    return options || filteredOptions;
   }, [_allOptions, options]);
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -89,7 +89,7 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
