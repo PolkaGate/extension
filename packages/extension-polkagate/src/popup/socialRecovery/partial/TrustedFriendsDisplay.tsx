@@ -19,7 +19,7 @@ interface Props {
   accountsInfo?: DeriveAccountInfo[] | undefined;
 }
 
-export default function TrustedFriendsDisplay ({ accountsInfo, api, chain, friends }: Props): React.ReactElement {
+export default function TrustedFriendsDisplay({ accountsInfo, api, chain, friends }: Props): React.ReactElement {
   return (
     <Grid alignItems='center' container direction='column' item sx={{ display: 'block', maxHeight: '150px', overflow: 'hidden', overflowY: 'scroll' }}>
       {friends.map((friend, index) => (
@@ -29,9 +29,10 @@ export default function TrustedFriendsDisplay ({ accountsInfo, api, chain, frien
           chain={chain}
           direction='row'
           formatted={friend}
+          identiconSize={25}
           key={index}
           showSocial={false}
-          style={{ m: '0 auto 15px' }}
+          style={{ m: '0 auto 15px', fontSize: '16px' }}
           withShortAddress
         />
       ))}
