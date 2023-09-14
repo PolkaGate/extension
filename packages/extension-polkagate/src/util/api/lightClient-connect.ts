@@ -24,16 +24,12 @@ const chainSpec = (networkName: string | undefined) => {
   switch (networkName) {
     case 'Polkadot':
       return Sc.WellKnownChain.polkadot;
-      break;
     case 'Kusama':
       return Sc.WellKnownChain.ksmcc3;
-      break;
     case 'Westend':
       return Sc.WellKnownChain.westend2;
-      break;
     default:
       return '';
-      break;
   }
 };
 
