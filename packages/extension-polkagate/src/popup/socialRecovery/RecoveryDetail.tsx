@@ -105,7 +105,7 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
           icon={faShieldHalved}
         />
         <Typography fontSize='30px' fontWeight={700} pl='8px'>
-          {t<string>('Your account is recoverable.')}
+          {t<string>('Your account is recoverable')}
         </Typography>
       </Grid>
       <TrustedFriendsList
@@ -122,7 +122,7 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
           isBelowInput
           theme={theme}
         >
-          {t<string>('If you lost your account you must contact your trusted friends and ...')}
+          {t<string>('If you\'ve lost access to this account, start the recovery process with a new account and contact trusted friends for account recovery.')}
         </Warning>
       </Grid>
       <Grid container item justifyContent='space-between' pt='80px'>
@@ -130,7 +130,7 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
           <PButton
             _mt='1px'
             _onClick={goBack}
-            _variant='outlined'
+            _variant='text'
             disabled={false}
             text={t<string>('Back')}
           />
