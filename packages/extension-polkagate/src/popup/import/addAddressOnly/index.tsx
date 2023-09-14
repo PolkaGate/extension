@@ -73,7 +73,7 @@ export default function AddProxy(): React.ReactElement {
       <HeaderBrand
         onBackClick={_goHome}
         showBackArrow
-        text={t<string>('Add Address Only')}
+        text={t<string>('Add Watch-Only')}
       />
       <Typography
         fontSize='14px'
@@ -81,7 +81,7 @@ export default function AddProxy(): React.ReactElement {
         m='18px auto 0'
         width='90%'
       >
-        {t('Enter just your account\'s public information (no private key), this can be used as e.g., watch only, and proxied account.')}
+        {t('Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.')}
       </Typography>
       <AddressInput
         addWithQr

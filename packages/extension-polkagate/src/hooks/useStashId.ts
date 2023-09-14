@@ -13,10 +13,14 @@ export default function useStashId(address?: AccountId | string): AccountId | st
   const [stashId, setStashId] = useState<AccountId | string>();
 
   useEffect(() => {
-    api && formatted && api.query.staking.ledger(formatted).then((res) => {
-      setStashId(res?.isSome ? res?.unwrap()?.stash?.toString() : formatted);
+    try {
+      api?.query?.staking?.ledger && formatted && api.query.staking.ledger(formatted).then((res) => {
+        setStashId(res?.isSome ? res?.unwrap()?.stash?.toString() : formatted);
+      });
+    } catch (e) {
+      setStashId(undefined);
+      console.error(e);
     }
-    );
   }, [api, formatted]);
 
   return stashId;

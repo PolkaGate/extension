@@ -18,6 +18,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
+import { Lock } from '../hooks/useAccountLocks';
+
 export interface TransactionStatus {
   blockNumber: string | null;
   success: boolean | null;
@@ -156,6 +158,8 @@ export interface TransactionDetail extends TxResult {
 export interface TxInfo extends TransactionDetail {
   api: ApiPromise;
   chain: Chain;
+  decimal?: number;
+  recipientChainName?: string;
   token?: string;
 }
 
@@ -322,6 +326,7 @@ export interface FormattedAddressState {
   genesisHash: string;
   address: string;
   formatted: string;
+  assetId: string;
 }
 
 export interface nameAddress {
@@ -358,11 +363,6 @@ export interface Tip {
   tipper_num: number;
   finder: AccountInfo;
   beneficiary: AccountInfo;
-}
-
-export interface Option {
-  text: string;
-  value: string;
 }
 
 export interface PoolStakingConsts {
@@ -516,7 +516,7 @@ export interface AlertType {
   severity: 'error' | 'warning' | 'info' | 'success'
 }
 
-export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society';
+export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;
@@ -614,6 +614,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   token: string;
   date: number;
   pooledBalance?: BN;
+  soloTotal?: BN;
   genesisHash: string;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
@@ -698,8 +699,8 @@ export interface APIs {
   [genesisHash: string]: ApiProps;
 }
 export interface APIsContext {
-  apis: APIs;
-  setIt: (apis: APIs) => void;
+  apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
+  setIt: (apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] }) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }
@@ -711,5 +712,7 @@ export interface SoloSettings {
 
 export interface DropdownOption {
   text: string;
-  value: string;
+  value: string | number;
 }
+
+export type TransferType = 'All' | 'Max' | 'Normal';

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { useChain, useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
+import { useChain, useChainName, useCurrentEraIndex, useEndpoint } from '.';
 
 /**
  * @description
@@ -17,7 +17,7 @@ import { useChain, useChainName, useCurrentEraIndex, useEndpoint2 } from '.';
 export default function useValidators(address: string, validators?: AllValidators): AllValidators | null | undefined {
   const [info, setValidatorsInfo] = useState<AllValidators | undefined | null>();
   const [newInfo, setNewValidatorsInfo] = useState<AllValidators | undefined | null>();
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const chain = useChain(address);
   const currentEraIndex = useCurrentEraIndex(address);
   const chainName = useChainName(address);

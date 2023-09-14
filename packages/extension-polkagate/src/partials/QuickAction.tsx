@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { faHistory, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, IconButton, Slide, useTheme } from '@mui/material';
@@ -16,8 +16,9 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { poolStakingBlack, poolStakingDisabledDark, poolStakingDisabledLight, poolStakingWhite } from '../assets/icons';
 import { HorizontalMenuItem } from '../components';
-import { useAccount, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
-import { CROWDLOANS_CHAINS, STAKING_CHAINS } from '../util/constants';
+import { useAccount, useApi, useFormatted, useTranslation } from '../hooks';
+import { windowOpen } from '../messaging';
+import { CROWDLOANS_CHAINS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../util/constants';
 
 interface Props {
   address: AccountId | string;
@@ -33,18 +34,13 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
 
   const account = useAccount(address);
   const api = useApi(address);
-  const availableProxiesForTransfer = useProxies(api, formatted, ['Any']);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
-  const sendDisabled = !account?.genesisHash || (!availableProxiesForTransfer?.length && account?.isExternal);
   const goToSend = useCallback(() => {
-    !sendDisabled && history.push({
-      pathname: `/send/${String(address)}`,
-      state: { api }
-    });
-  }, [sendDisabled, history, address, api]);
+    address && account?.genesisHash && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
+  }, [account?.genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
@@ -67,10 +63,10 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
       });
   }, [account?.genesisHash, address, formatted, history]);
 
-  const goToHistory = useCallback(() => {
-    account?.genesisHash && history.push({
-      pathname: `/history/${String(address)}`
-    });
+  const goToGovernanceOrHistory = useCallback(() => {
+    GOVERNANCE_CHAINS.includes(account?.genesisHash)
+      ? windowOpen(`/governance/${address}/referenda`).catch(console.error)
+      : account?.genesisHash && history.push({ pathname: `/history/${String(address)}` });
   }, [account?.genesisHash, address, history]);
 
   const movingParts = (
@@ -105,14 +101,16 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           exceptionWidth={40}
           icon={
             <FontAwesomeIcon
-              color={sendDisabled ? theme.palette.action.disabledBackground : theme.palette.text.primary}
+              color={
+                account?.genesisHash
+                  ? theme.palette.text.primary
+                  : theme.palette.action.disabledBackground
+              }
               icon={faPaperPlane}
               style={{ height: '20px' }}
             />
           }
-          isLoading={availableProxiesForTransfer === undefined && account?.isExternal}
           onClick={goToSend}
-          textDisabled={sendDisabled}
           title={t<string>('Send')}
           titleFontSize={10}
         />
@@ -181,17 +179,16 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
             <FontAwesomeIcon
               color={
                 account?.genesisHash
-                  ? `${theme.palette.text.primary}`
-                  : `${theme.palette.action.disabledBackground}`
+                  ? theme.palette.text.primary
+                  : theme.palette.action.disabledBackground
               }
-              icon={faHistory}
+              icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
               style={{ height: '20px' }}
             />}
-          onClick={goToHistory}
+          onClick={goToGovernanceOrHistory}
           textDisabled={!account?.genesisHash}
-          title={t<string>('History')}
+          title={t<string>(GOVERNANCE_CHAINS.includes(account?.genesisHash) ? 'Governance' : 'History')}
           titleFontSize={10}
-
         />
       </Grid>
     </Grid>

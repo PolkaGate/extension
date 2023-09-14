@@ -9,11 +9,11 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
-import { useDecimal, useEndpoint2, useFormatted, useToken } from '.';
+import { useDecimal, useEndpoint, useFormatted, useToken } from '.';
 
 export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const formatted = useFormatted(address);
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const isFetching = useContext(FetchingContext);
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>();
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>();
@@ -49,14 +49,6 @@ export default function usePool(address?: AccountId | string, id?: number, refre
 
           // eslint-disable-next-line no-void
           void chrome.storage.local.set({ MyPools: mySavedPools });
-
-          // if (mySavedPools) {
-          //   if (mySavedPools[k]) {
-          //     delete mySavedPools[k];
-          //     // eslint-disable-next-line no-void
-          //     void chrome.storage.local.set({ MyPools: mySavedPools });
-          //   }
-          // }
         });
 
         getPoolWorker.terminate();
@@ -80,9 +72,11 @@ export default function usePool(address?: AccountId | string, id?: number, refre
       currentToken === parsedInfo.token && setNewPool(parsedInfo);
 
       /** reset isFetching */
-      isFetching.fetching[String(stakerAddress)].getPool = false;
-      isFetching.set(isFetching.fetching);
-
+      if (isFetching.fetching[String(stakerAddress)]) {
+        isFetching.fetching[String(stakerAddress)].getPool = false;
+        isFetching.set(isFetching.fetching);
+      }
+      
       /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
       !id && chrome.storage.local.get('MyPools', (res) => {
         const k = `${stakerAddress}`;

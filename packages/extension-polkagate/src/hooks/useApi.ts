@@ -8,55 +8,102 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
-import { useChain, useEndpoint2 } from '.';
+import { useChain, useEndpoint } from '.';
 
 export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const apisContext = useContext(APIContext);
   const chain = useChain(address);
 
   const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
   useEffect(() => {
-    if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const api = apisContext?.apis[chain.genesisHash].api;
-
-      if (api?.isConnected) {
-        console.log(`♻ using the saved api for ${chain.name}`);
-
-        return setApi(api);
-      }
-    }
-
-    if (!endpoint) {
+    if (!chain?.genesisHash || (api && api.isConnected && api._options.provider.endpoint === endpoint)) {
       return;
     }
 
-    if (endpoint.startsWith('wss')) {
-      const wsProvider = new WsProvider(endpoint);
+      if (endpoint?.startsWith('wss')) {
+    const savedApi = apisContext?.apis[chain.genesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
-      ApiPromise.create({ provider: wsProvider }).then((api) => {
-        setApi(api);
+    if (savedApi && savedApi.api && savedApi.api.isConnected) {
+      console.log(`♻ Using the saved API for ${chain.name} through this endpoint ${savedApi.api._options.provider.endpoint as string ?? ''}`);
+      setApi(savedApi.api);
 
-        apisContext.apis[String(api.genesisHash.toHex())] = { api, apiEndpoint: endpoint };
+      return;
+    }
+
+    if (!endpoint || savedApi?.isRequested === true) {
+      // console.log('API is already requested, waiting...');
+
+      return;
+    }
+
+    // console.log('Initializing API connection...');
+
+  
+    const wsProvider = new WsProvider(endpoint);
+
+    ApiPromise.create({ provider: wsProvider })
+      .then((newApi) => {
+        console.log('API connection established successfully.');
+        setApi(newApi);
+
+        const toSaveApi = apisContext.apis[String(newApi.genesisHash.toHex())] ?? [];
+
+        const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
+
+        if (indexToDelete !== -1) {
+          toSaveApi.splice(indexToDelete, 1);
+        }
+
+        toSaveApi.push({
+          api: newApi,
+          endpoint,
+          isRequested: false
+        });
+
+        apisContext.apis[String(newApi.genesisHash.toHex())] = toSaveApi;
         apisContext.setIt(apisContext.apis);
-      }).catch(console.error);
+      })
+      .catch((error) => {
+        console.error('API connection failed:', error);
+      });
 
-      return;
+    const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
+
+    toSaveApi.push({ endpoint, isRequested: true });
+
+    apisContext.apis[chain.genesisHash] = toSaveApi;
+    apisContext.setIt(apisContext.apis);
+      
+       return;
     }
 
     LCConnector(endpoint).then((LCapi) => {
       setApi(LCapi);
       console.log('light client connected', String(LCapi.genesisHash.toHex()));
-      apisContext.apis[String(LCapi.genesisHash.toHex())] = { api: LCapi, apiEndpoint: endpoint };
-      apisContext.setIt(apisContext.apis);
+     // apisContext.apis[String(LCapi.genesisHash.toHex())] = { api: LCapi, apiEndpoint: endpoint };
+      //apisContext.setIt(apisContext.apis);
     }).catch((err) => {
       console.error(err);
       console.log('light client failed');
     });
+  }, [apisContext, endpoint, stateApi, chain, api?.isConnected, api]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apisContext?.apis?.length, endpoint, stateApi, chain]);
+  useEffect(() => {
+    const pollingInterval = setInterval(() => {
+      const savedApi = apisContext?.apis[chain?.genesisHash ?? '']?.find((sApi) => sApi.endpoint === endpoint);
+
+      if (savedApi?.api?.isConnected) {
+        // console.log('API connection is ready, updating state.');
+
+        setApi(savedApi.api);
+        clearInterval(pollingInterval);
+      }
+    }, 1000);
+
+    return () => clearInterval(pollingInterval);
+  }, [apisContext, chain, endpoint]);
 
   return api;
 }

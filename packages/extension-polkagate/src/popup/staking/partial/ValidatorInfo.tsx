@@ -74,7 +74,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
   const ValidatorInformation = () => (
     <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
-        <Grid item lineHeight={1} width='85%'>
+        <Grid item lineHeight={1} width='fit-content' maxWidth='85%'>
           <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
         <Grid item width='15%'>
@@ -190,7 +190,7 @@ export default function ValidatorInfo({ api, chain, setShowValidatorInfo, showVa
             </Grid>
             {sortedNominators?.map(({ value, who }, index) => (
               <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
-                <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
+                <Grid container item justifyContent='flex-start' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
                   <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px' }} />
                 </Grid>
                 <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>

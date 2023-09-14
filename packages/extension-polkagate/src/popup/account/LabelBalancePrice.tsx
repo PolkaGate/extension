@@ -8,60 +8,67 @@
  * this component shows an account information in detail
  * */
 
-import type { ApiPromise } from '@polkadot/api';
+import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
+import { Divider, Grid, IconButton, useTheme } from '@mui/material';
+import React from 'react';
 
-import { Divider, Grid, Skeleton } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
-
-import { FormatBalance2, ShowBalance } from '../../components';
-import { BalancesInfo, Price } from '../../util/types';
+import { FormatPrice, ShowBalance } from '../../components';
+import { useApi, usePrice } from '../../hooks';
+import { BalancesInfo } from '../../util/types';
 import { getValue } from './util';
 
 interface Props {
   label: string;
   balances: BalancesInfo | null | undefined;
-  price: Price | undefined;
-  api: ApiPromise | undefined;
+  address: string | undefined;
   showLabel?: boolean;
+  onClick?: () => void
 }
 
-export default function LabelBalancePrice({ api, balances, label, price, showLabel = true }: Props): React.ReactElement<Props> {
+export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
   const value = getValue(label, balances);
-  const decimal = useMemo(() => (balances?.chainName?.toLowerCase() === price?.chainName && balances?.decimal) || (api && api.registry.chainDecimals[0]), [api, balances?.chainName, balances?.decimal, price?.chainName]);
-
-  const [balanceInUSD, setBalanceInUSD] = useState<number>();
-
-  useEffect(() => {
-    if (price && value && decimal) {
-      setBalanceInUSD(Number(value) / (10 ** decimal) * price.amount);
-    } else {
-      setBalanceInUSD(undefined);
-    }
-  }, [decimal, price, value]);
+  const api = useApi(address);
+  const price = usePrice(address);
 
   return (
     <>
-      <Grid item py='5px'>
+      <Grid item py='3px'>
         <Grid alignItems='center' container justifyContent='space-between'>
           {showLabel &&
-            <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={3}>
+            <Grid item sx={{ fontSize: '16px', fontWeight: 300, lineHeight: '36px' }} xs={6}>
               {label}
             </Grid>
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
-            <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
-              {balances?.decimal && balances?.token
-                ? <FormatBalance2 decimals={[Number(balances?.decimal)]} tokens={[balances?.token]} value={value} />
-                : <ShowBalance api={api} balance={value} decimalPoint={2} />
-              }
+            <Grid item sx={{ fontSize: label === 'Total' ? '28px' : '20px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
+              <ShowBalance
+                api={api}
+                balance={value}
+                decimal={balances?.decimal}
+                decimalPoint={2}
+                token={balances?.token}
+                withCurrency={false}
+              />
             </Grid>
-            <Grid item pt='6px' sx={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
-              {balanceInUSD !== undefined
-                ? `$${Number(balanceInUSD)?.toLocaleString()}`
-                : <Skeleton height={15} sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '90px' }} />
-              }
+            <Grid item pt='6px' sx={{ fontSize: label === 'Total' ? '20px' : '16px', fontWeight: label === 'Total' ? 400 : 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
+              <FormatPrice
+                amount={value}
+                decimals={balances?.decimal}
+                price={price?.amount}
+              />
             </Grid>
           </Grid>
+          {onClick &&
+            <Grid item textAlign='right' sx={{ width: 'fit-content', ml: '8px' }}>
+              <IconButton
+                onClick={onClick}
+                sx={{ p: 0 }}
+              >
+                <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 0 }} />
+              </IconButton>
+            </Grid>
+          }
         </Grid>
       </Grid>
       {showLabel &&

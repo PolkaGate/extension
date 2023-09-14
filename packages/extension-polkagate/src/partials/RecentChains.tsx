@@ -28,6 +28,18 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
   const genesisHashes = useGenesisHashOptions();
   const [recentChains, setRecentChains] = useState<string[]>();
+  const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [currentSelectedChain, setCurrentSelectedChain] = useState<string | undefined>(currentChainName);
+
+  const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
+
+  useEffect(() => {
+    currentChainName && setCurrentSelectedChain(currentChainName);
+  }, [currentChainName]);
+
+  useEffect(() =>
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true')
+    , [showRecentChains]);
 
   useEffect(() => {
     if (!address || !account) {
@@ -74,51 +86,6 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
     to{
       transform: scale(1) translateY(-25px);
     }`
-  };
-
-  const twoItemSlide = {
-    down: [
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(-14px, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `,
-      keyframes`
-      from{
-        z-index: 2;
-        transform: scale(1) translate3d(14px, -30px, 0);
-      }
-      to{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-    `],
-    up: [keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(-14px, -30px, 0);
-      }
-    `,
-    keyframes`
-      from{
-        z-index: 0;
-        transform: scale(0) translate3d(0,0,0);
-      }
-      to{
-        z-index: 2;
-        transform: scale(1) translate3d(14px, -30px, 0);
-      }
-    `
-    ]
   };
 
   const threeItemSlide = {
@@ -190,11 +157,19 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
   const closeRecentChains = useCallback(() => setShowRecentChains(false), [setShowRecentChains]);
 
   const selectNetwork = useCallback((newChainName: string) => {
+    if (isTestnetDisabled(newChainName)) {
+      return;
+    }
+
     const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
 
+    setCurrentSelectedChain(newChainName);
     setFirstTime(false);
-    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch(console.error);
-  }, [address, genesisHashes]);
+    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((error) => {
+      setCurrentSelectedChain(currentChainName);
+      console.error(error);
+    });
+  }, [address, currentChainName, genesisHashes, isTestnetDisabled]);
 
   return (
     <>
@@ -218,8 +193,8 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
           </ClickAwayListener>
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
             <Avatar
-              src={getLogo(currentChainName)}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentChainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
+              src={getLogo(currentSelectedChain)}
+              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
             />
           </Grid>
         }
@@ -253,8 +228,9 @@ function RecentChains({ address, currentChainName }: Props): React.ReactElement<
               animationName: `${showRecentChains
                 ? threeItemSlide.up[index]
                 : threeItemSlide.down[index]}`,
-              cursor: 'pointer',
+              cursor: isTestnetDisabled(name) ? 'default' : 'pointer',
               left: 0,
+              opacity: isTestnetDisabled(name) ? '0.6' : 1,
               top: '-5px'
             }}
           >

@@ -7,10 +7,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { useCurrentEraIndex, useEndpoint2, useToken } from '.';
+import { useCurrentEraIndex, useEndpoint, useToken } from '.';
 
 export default function useMinToReceiveRewardsInSolo(address: string): MinToReceiveRewardsInSolo | undefined {
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const token = useToken(address);
   const currentEraIndex = useCurrentEraIndex(address);
 

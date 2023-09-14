@@ -11,23 +11,22 @@ Polkagate extension not only has all the abilities of the original Polkadot exte
 ## New functionalities
 
 Currently, the following features are available:
-  - Add address only account ( to be used as a watch only and proxied address) 
+  - Add watch-only account ( can be used as a proxied address) 
   - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
-  - Staking (Solo and Pool Staking)
+  - Governance 
+  - Identity management
   - Proxy management
+  - Staking (Solo and Pool Staking)
   - Support different endpoints
-  - Transfer funds
+  - Transfer funds (Cross chain transfer)
   - View balances (crypto/USD)
   - View transaction history
   - View an address as QR code
 
 The following features will be available in the next milestone:
 
-  - Identity management
-  - Light client integration 
-  - OPenGov (Governance 2)
+  - Light client integration   
   - Social recovery
-  - Cross chain transfer
   
 
 # ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)
@@ -48,25 +47,10 @@ The following features will be available in the next milestone:
 
 Steps to build the extension and view your changes in a browser:
 
-1. download the files via `git clone https://github.com/polkagate/polkagate-extension.git`
-2. got to downloaded folder via `cd polkagate-extension`
-3. install dependencies via `yarn` (yarn version: 3.2.0)
-4. append the following Westend network info to './node_modules/@substrate/ss58-registry/esm/index.js'):
-
-     `{
-		"prefix": 42,
-		"network": "westend",
-		"displayName": "Westend",
-		"symbols": [
-			"WND"
-		],
-		"decimals": [
-			12
-		],
-		"standardAccount": "*25519",
-		"website": "https://polkadot.network"
-	}`
-  
+1. Download the files via `git clone https://github.com/polkagate/polkagate-extension.git`
+2. Go to downloaded folder via `cd polkagate-extension`
+3. Install dependencies via `yarn` (yarn version: 3.2.0)
+4. Replace @polkadot/networks/interfaces.js with ./interfaces/interfaces.js 
 5. Build via `yarn build`
 6. Install the extension
   - Chrome:

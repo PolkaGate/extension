@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { Box, Divider, Grid, Tab, Tabs } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -166,8 +168,6 @@ export default function TransactionHistory(): React.ReactElement<''> {
     });
 
     const res = await getTxTransfers(chainName, String(formatted), pageNum, SINGLE_PAGE_SIZE);
-
-    console.log('Received raw data from subscan:', res);
 
     const { count, transfers } = res.data || {};
     const nextPageNum = pageNum + 1;

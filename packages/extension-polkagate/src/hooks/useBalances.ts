@@ -12,21 +12,25 @@ import { FetchingContext } from '../components';
 import { updateMeta } from '../messaging';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { BalancesInfo, SavedBalances } from '../util/types';
-import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useToken } from '.';
+import { useAccount, useApi, useChain, useChainName, useDecimal, useFormatted, useStakingAccount, useToken } from '.';
 
-export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): BalancesInfo | undefined {
+export default function useBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: number): BalancesInfo | undefined {
+  const stakingAccount = useStakingAccount(address);
   const account = useAccount(address);
-  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
-  const [balances, setBalances] = useState<BalancesInfo | undefined>();
-  const [overall, setOverall] = useState<BalancesInfo | undefined>();
-  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
   const api = useApi(address);
-  const formatted = useFormatted(address);
   const chain = useChain(address);
+  const formatted = useFormatted(address);
   const isFetching = useContext(FetchingContext);
   const chainName = useChainName(address);
   const currentToken = useToken(address);
   const currentDecimal = useDecimal(address);
+
+  const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();
+  const [balances, setBalances] = useState<BalancesInfo | undefined>();
+  const [overall, setOverall] = useState<BalancesInfo | undefined>();
+  const [newBalances, setNewBalances] = useState<BalancesInfo | undefined>();
+  const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
+
   const token = api && api.registry.chainTokens[0];
   const decimal = api && api.registry.chainDecimals[0];
 
@@ -39,8 +43,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
       const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
       if (!member) {
-        console.log(`useBalances: can not find member for ${formatted}`);
-
         isFetching.fetching[String(formatted)].pooledBalance = false;
         isFetching.set(isFetching.fetching);
 
@@ -101,12 +103,13 @@ export default function useBalances(address: string | undefined, refresh?: boole
     if (newBalances && pooledBalance && api?.genesisHash?.toString() === chain?.genesisHash && api?.genesisHash?.toString() === newBalances?.genesisHash && api?.genesisHash?.toString() === pooledBalance.genesisHash) {
       setOverall({
         ...newBalances,
-        pooledBalance: pooledBalance.balance
+        pooledBalance: pooledBalance.balance,
+        soloTotal: stakingAccount?.stakingLedger?.total
       });
     } else {
       setOverall(undefined);
     }
-  }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash]);
+  }, [pooledBalance, newBalances, api?.genesisHash, account?.genesisHash, chain?.genesisHash, stakingAccount]);
 
   useEffect(() => {
     if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== chain?.genesisHash) {
@@ -165,18 +168,16 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {
-    if (!address || !api || api.genesisHash.toString() !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
+    if (!address || !api || api.genesisHash.toString() !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash || account?.genesisHash !== overall.genesisHash) {
       return;
     }
 
-    /** to save fetched balance in local storage, first load saved balances of different chaines if any */
+    /** to SAVE fetched balance in local storage, first load saved balances of different chaines if any */
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     const balances = {
       availableBalance: overall.availableBalance.toString(),
       freeBalance: overall.freeBalance.toString(),
-      // frozenFee: overall.frozenFee.toString(),
-      // frozenMisc: overall.frozenMisc.toString(),
       lockedBalance: overall.lockedBalance.toString(),
       pooledBalance: overall.pooledBalance.toString(),
       reservedBalance: overall.reservedBalance.toString(),
@@ -198,6 +199,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
       return;
     }
 
+    // to LOAD saved balances
     const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
 
     if (savedBalances[chainName]) {
@@ -209,8 +211,6 @@ export default function useBalances(address: string | undefined, refresh?: boole
         date: savedBalances[chainName].date,
         decimal: savedBalances[chainName].decimal,
         freeBalance: new BN(sb.freeBalance),
-        // frozenFee: new BN(sb.frozenFee),
-        // frozenMisc: new BN(sb.frozenMisc),
         lockedBalance: new BN(sb.lockedBalance),
         pooledBalance: new BN(sb.pooledBalance),
         reservedBalance: new BN(sb.reservedBalance),
@@ -220,14 +220,49 @@ export default function useBalances(address: string | undefined, refresh?: boole
         votingBalance: new BN(sb.votingBalance)
       };
 
-      setBalances(lastBalances);
+      setBalances({ ...lastBalances, soloTotal: stakingAccount?.stakingLedger?.total });
 
       return;
     }
 
     setBalances(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, address, chainName]);
+  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
+
+  useEffect(() => {
+    api && assetId !== undefined && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
+      // console.log('assetAccount:', assetAccount.toHuman());
+
+      // eslint-disable-next-line no-void
+      void api.query.assets.metadata(assetId).then((metadata) => {
+        const assetBalances = {
+          availableBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
+          freeBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
+          chainName,
+          decimal: metadata.decimals.toNumber(),
+          genesisHash: api.genesisHash.toHex(),
+          isAsset: true,
+          reservedBalance: BN_ZERO,
+          token: metadata.symbol.toHuman()
+        };
+
+        // console.log('assetBalances:', assetBalances);
+        setAssetBalance(assetBalances);
+      }).catch((error) => {
+        console.error(`Failed to fetch metadata for assetId ${assetId}:`, error);
+      });
+    }).catch((error) => {
+      console.error(`Failed to fetch account for assetId ${assetId} and address ${formatted}:`, error);
+    });
+  }, [api, assetId, chainName, formatted]);
+
+  if (assetId !== undefined) {
+    return assetBalance;
+  }
+
+  if (onlyNew) {
+    return newBalances; //  returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance
+  }
 
   // return overall && overall.genesisHash === chain?.genesisHash ? overall : balances;
   return overall && overall.genesisHash === chain?.genesisHash && overall.token === currentToken && overall.decimal === currentDecimal

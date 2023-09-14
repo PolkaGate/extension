@@ -7,6 +7,22 @@ import { ThemeOptions } from '@mui/material';
 
 import { baseTheme } from './baseTheme';
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    aye: Palette['primary'];
+    nay: Palette['primary'];
+    label: Palette['primary'];
+    approval: Palette['primary'];
+    support: Palette['primary'];
+  }
+  interface PaletteOptions {
+    approval?: PaletteOptions['primary'];
+    aye?: PaletteOptions['primary'];
+    nay?: PaletteOptions['primary'];
+    label?: PaletteOptions['primary'];
+    support?: PaletteOptions['primary'];
+  }
+}
 export const darkTheme: ThemeOptions = {
   ...baseTheme,
 
@@ -14,6 +30,11 @@ export const darkTheme: ThemeOptions = {
     mode: 'dark',
     primary: { main: '#99004F', light: '#838383', contrastText: '#212121' },
     secondary: { main: '#BA2882', light: '#BA2682', contrastText: '#747474' },
+    support: { main: '#BCE2DB', contrastText: '#008080' },
+    approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
+    aye: { main: '#008080' },
+    nay: { main: '#FF5722' },
+    label: { main: '#63364D' },
     background: { default: '#171717', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },

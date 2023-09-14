@@ -3,35 +3,44 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { DeleteOutline as DeleteOutlineIcon, OpenInNewRounded as OpenInNewRoundedIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, ColorContext, MenuItem, Select, Switch } from '../components';
+import { AccountContext, ActionContext, Checkbox2, ColorContext, MenuItem, OnActionToolTip, Select, Switch } from '../components';
 import { useIsPopup, useTranslation } from '../hooks';
-import { setNotification, windowOpen } from '../messaging';
+import { setNotification, tieAccount, windowOpen } from '../messaging';
+import { TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
+import { DropdownOption } from '../util/types';
 
-export default function SettingSubMenu({ show }: { show: boolean }): React.ReactElement {
+interface Props {
+  isTestnetEnabled: boolean | undefined;
+  setIsTestnetEnabled: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  show: boolean;
+  onChange: () => void;
+}
+
+export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestnetEnabled, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isPopup = useIsPopup();
   const onAction = useContext(ActionContext);
   const colorMode = useContext(ColorContext);
+  const { accounts } = useContext(AccountContext);
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
   const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
+  const [firstTime, setFirstTime] = useState<boolean>(true);
+  const [cacheCleared, setCacheCleared] = useState<boolean>(false);
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() }));
-
-  const [firstTime, setFirstTime] = useState<boolean>(true);
 
   useEffect(() => {
     show === false && setFirstTime(false);
@@ -41,18 +50,31 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
 
-  interface Option {
-    text: string;
-    value: string;
-  }
+  useEffect(() => {
+    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
+
+    isTestnetDisabled && (
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      })
+    );
+  }, [accounts]);
 
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
-    .map(({ text, value }): Option => ({ text, value: `${value}` }));
+    .map(({ text, value }): DropdownOption => ({ text, value: `${value}` }));
 
   const _onWindowOpen = useCallback((): void => {
     windowOpen('/').catch(console.error);
   }, []);
+
+  // const _onClearCache = useCallback((): void => {
+  //   chrome.storage.local.clear(function () {
+  //     setCacheCleared(true); // TODO: use caution, this will clear the kyring as well
+  //   });
+  // }, []);
 
   const _onAuthManagement = useCallback(() => {
     onAction('/auth-list');
@@ -82,6 +104,10 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
     setCamera(!camera);
   }, [camera]);
 
+  useEffect(() => {
+    setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
+  }, [setIsTestnetEnabled]);
+
   const slideIn = keyframes`
   0% {
     display: none;
@@ -89,14 +115,14 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
   }
   100%{
     display: block;
-    height: 350px;
+    height: 370px;
   }
 `;
 
   const slideOut = keyframes`
   0% {
     display: block;
-    height: 350px;
+    height: 370px;
   }
   100%{
     display: none;
@@ -118,6 +144,31 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
               uncheckedLabel={t<string>('Light')}
             />
           </Grid>
+          {/* <Grid item>
+            <Divider
+              orientation='vertical'
+              sx={{
+                backgroundColor: 'text.primary',
+                height: '20px',
+                my: 'auto'
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <OnActionToolTip
+              actionHappened={cacheCleared}
+              helperText={t('Clear temporary saved data')}
+              setIsHappened={setCacheCleared}
+              title={t('Cache Cleared')}
+            >
+              <IconButton
+                onClick={_onClearCache}
+                sx={{ height: '35px', mr: '-5px', width: '35px' }}
+              >
+                <DeleteOutlineIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
+              </IconButton>
+            </OnActionToolTip>
+          </Grid> */}
           {isPopup &&
             <>
               <Grid item>
@@ -135,7 +186,7 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
                   onClick={_onWindowOpen}
                   sx={{ height: '35px', width: '35px', mr: '-5px' }}
                 >
-                  <vaadin-icon icon='vaadin:external-link' style={{ height: '20px', color: `${theme.palette.secondary.light}` }} />
+                  <OpenInNewRoundedIcon sx={{ fontSize: '25px', color: 'secondary.light' }} />
                 </IconButton>
               </Grid>
             </>
@@ -185,6 +236,15 @@ export default function SettingSubMenu({ show }: { show: boolean }): React.React
             onChange={_onChangePrefix}
             options={prefixOptions}
             value={prefix ?? prefixOptions[2].value}
+          />
+        </Grid>
+        <Grid item pt='15px' textAlign='left'>
+          <Checkbox2
+            checked={isTestnetEnabled}
+            iconStyle={{ transform: 'scale(1.13)' }}
+            label={t<string>('Enable testnet chain')}
+            labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
+            onChange={onChange}
           />
         </Grid>
       </Grid>

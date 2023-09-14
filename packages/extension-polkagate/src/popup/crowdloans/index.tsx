@@ -3,10 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import '@vaadin/icons';
+
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveOwnContributions } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import '@vaadin/icons';
 
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { Avatar, Box, Container, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
@@ -19,7 +20,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { SettingsStruct } from '@polkadot/ui-settings/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { activeCrowdloanBlack, activeCrowdloanRed, activeCrowdloanWhite, auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
+import { auctionBlack, auctionRed, auctionWhite, crowdloanHomeBlack, crowdloanHomeRed, crowdloanHomeWhite, pastCrowdloanBlack, pastCrowdloanRed, pastCrowdloanWhite } from '../../assets/icons';
 import { ActionContext, HorizontalMenuItem, Identicon, Identity, Progress, ShowBalance, Warning } from '../../components';
 import { SettingsContext } from '../../components/contexts';
 import { useAccount, useApi, useAuction, useChain, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useMyAccountIdentity, useToken, useTranslation } from '../../hooks';
@@ -69,6 +70,7 @@ export default function CrowdLoans(): React.ReactElement {
   const [myContributionsFromSubscan, setMyContributionsFromSubscan] = useState<Map<number, MCS>>();
   const [itemShow, setItemShow] = useState<number>(0);
 
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
   const sortingCrowdloans = (a: Crowdloan, b: Crowdloan) => Number(a.fund.paraId) - Number(b.fund.paraId);// oldest first
   const sortingCrowdloansReverse = (a: Crowdloan, b: Crowdloan) => Number(b.fund.paraId) - Number(a.fund.paraId);// newest first
   const activeCrowdloans = useMemo(() => {
@@ -229,7 +231,8 @@ export default function CrowdLoans(): React.ReactElement {
   const identicon = (
     <Identicon
       iconTheme={chain?.icon || 'polkadot'}
-      judgement={identity?.judgements}
+      isSubId={!!identity?.displayParent}
+      judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
       size={40}
       value={formatted}

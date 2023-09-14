@@ -24,7 +24,10 @@ export default function Metadata(): React.ReactElement {
 
   return (
     <>
-      <Header onClose={onReject} text={t<string>('Metadata')} />
+      <Header
+        onClose={onReject}
+        text={t<string>('Metadata')}
+      />
       {requests[0]
         ? (
           <Request

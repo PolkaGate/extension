@@ -155,13 +155,13 @@ export default class State {
     extractMetadata(this.#metaStore);
 
     // retrieve previously set authorizations
+
     // const authString = localStorage.getItem(AUTH_URLS_KEY) || '{}';
     // const previousAuth = JSON.parse(authString) as AuthUrls;
-
     // this.#authUrls = previousAuth;
 
-    chrome.storage.local.get(AUTH_URLS_KEY, (res) => {
-      const authString = res?.AUTH_URLS_KEY ?? '{}';
+    chrome.storage.local.get('AUTH_URLS_KEY', (res) => {
+      const authString = res?.AUTH_URLS_KEY || '{}';
       const previousAuth = JSON.parse(authString) as AuthUrls;
 
       this.#authUrls = previousAuth;
@@ -258,7 +258,6 @@ export default class State {
 
   private saveCurrentAuthList() {
     // localStorage.setItem(AUTH_URLS_KEY, JSON.stringify(this.#authUrls));
-    // eslint-disable-next-line no-void
     void chrome.storage.local.set({ AUTH_URLS_KEY: JSON.stringify(this.#authUrls) });
   }
 

@@ -10,17 +10,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import getLogo from '../util/getLogo';
+import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
-interface DropdownOption {
-  text: string;
-  value: string;
-}
-
 interface Props {
-  defaultValue: string | undefined;
-  value: string | undefined;
+  defaultValue: string | number | undefined;
+  value: string | number | undefined;
   onChange?: (value: number | string) => void;
   options: DropdownOption[];
   label: string;
@@ -35,7 +31,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, helperText, is
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<string>();
+  const [selectedValue, setSelectedValue] = useState<string | number>();
 
   useEffect(() => {
     setSelectedValue(value || defaultValue);

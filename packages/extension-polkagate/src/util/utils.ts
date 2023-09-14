@@ -9,7 +9,7 @@ import type { Compact, u128 } from '@polkadot/types-codec';
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import { BN, BN_ONE, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, hexToBn, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { BLOCK_RATE, FLOATING_POINT_DIGIT, SHORT_ADDRESS_CHARACTERS } from './constants';
@@ -86,28 +86,27 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(_amount: string | undefined, _decimals: number | undefined): BN {
-  if (!_amount || !Number(_amount) || !_decimals) {
+export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
+  if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }
 
-  const dotIndex = _amount.indexOf('.');
+  const dotIndex = amount.indexOf('.');
+  let newAmount = amount;
 
   if (dotIndex >= 0) {
-    const wholePart = _amount.slice(0, dotIndex);
-    const fractionalPart = _amount.slice(dotIndex + 1, _amount.length);
+    const wholePart = amount.slice(0, dotIndex);
+    const fractionalPart = amount.slice(dotIndex + 1);
 
-    _amount = wholePart + fractionalPart;
-    _decimals -= fractionalPart.length;
+    newAmount = wholePart + fractionalPart;
+    decimal -= fractionalPart.length;
 
-    if (_decimals < 0) {
-      throw new Error("_decimals should be more than amount's decimals digits");
+    if (decimal < 0) {
+      throw new Error("decimal should be more than amount's decimals digits");
     }
   }
 
-  const x = 10 ** _decimals;
-
-  return new BN(_amount).mul(new BN(x));
+  return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
 }
 
 export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
@@ -212,7 +211,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number): string {
+export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) { return ''; }
@@ -226,7 +225,7 @@ export function remainingTime(blocks: number): string {
 
   mins -= hrs * 60;
 
-  if (mins) { time += mins + ' mins '; }
+  if (!(noMinutes && days) && mins) { time += mins + ' mins '; }
 
   hrs -= days * 24;
 
@@ -303,15 +302,6 @@ export const isEqual = (a1: any[] | null, a2: any[] | null): boolean => {
   return JSON.stringify(a1Sorted) === JSON.stringify(a2Sorted);
 };
 
-// export function saveHistory(chain: Chain | null, hierarchy: AccountWithChildren[], address: string, currentTransactionDetail: TransactionDetail, _chainName?: string): [string, string] {
-//   const accountSubstrateAddress = getSubstrateAddress(address);
-//   const savedHistory: TransactionDetail[] = getTransactionHistoryFromLocalStorage(chain, hierarchy, accountSubstrateAddress, _chainName);
-
-//   savedHistory.push(currentTransactionDetail);
-
-//   return [accountSubstrateAddress, prepareMetaData(chain, 'history', savedHistory)];
-// }
-
 export function saveAsHistory(formatted: string, info: TransactionDetail) {
   chrome.storage.local.get('history', (res: { [key: string]: TransactionDetail[] }) => {
     const k = `${formatted}`;
@@ -341,4 +331,24 @@ export async function getHistoryFromStorage(formatted: string): Promise<Transact
 
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', ''));
+export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(/\s/g, ''));
+
+export const isEmail = (input: string | undefined) => {
+  if (!input) {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  return emailRegex.test(input);
+};
+
+export const isUrl = (input: string | undefined) => {
+  if (!input) {
+    return false;
+  }
+
+  const urlRegex = /^(https?:\/\/)?([\w\d]+\.)+[\w\d]{2,6}(\/[\w\d]+)*$/;
+
+  return urlRegex.test(input);
+};

@@ -299,7 +299,6 @@ export default function Index(): React.ReactElement {
         <Asset
           address={address}
           api={api}
-          address={address}
           balance={staked}
           balanceLabel={t('Staked')}
           fee={estimatedFee}

@@ -56,10 +56,10 @@ function AddAccount (): React.ReactElement {
         text={t<string>('Polkagate')}
       />
       <Typography component='p' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
-        {t('Welcome')}
+        {t('Welcome!')}
       </Typography>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, px: '24px' }}>
-        {t<string>('You currently don’t have any account. Create your first account or import an existing one to get started.')}
+      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
+        {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
       </Typography>
       <PButton
         _mt='30px'
@@ -86,7 +86,7 @@ function AddAccount (): React.ReactElement {
         _mt='10px'
         _onClick={_goToAddAddressOnly}
         _variant={'outlined'}
-        text={t<string>('Add address only')}
+        text={t<string>('Add watch-only account')}
       />
       <PButton
         _mt='10px'

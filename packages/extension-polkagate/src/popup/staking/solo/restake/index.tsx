@@ -41,7 +41,6 @@ export default function Index(): React.ReactElement {
   const formatted = useFormatted(address);
   const history = useHistory();
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
-  const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const token = useToken(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
@@ -83,10 +82,10 @@ export default function Index(): React.ReactElement {
     }
 
     setAlert(undefined);
-  }, [api, decimal, unlockingAmount, stakingConsts, t, restakeAllAmount, amountAsBN]);
+  }, [unlockingAmount, t, amountAsBN]);
 
   useEffect(() => {
-    if (!rebonded) {
+    if (!rebonded || !formatted) {
       return;
     }
 
@@ -95,7 +94,7 @@ export default function Index(): React.ReactElement {
     }
 
     rebonded(amountAsBN).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, api, decimal, formatted, rebonded]);
+  }, [amountAsBN, api, formatted, rebonded]);
 
   const onBackClick = useCallback(() => {
     history.push({
@@ -105,6 +104,10 @@ export default function Index(): React.ReactElement {
   }, [address, history, state]);
 
   const onChangeAmount = useCallback((value: string) => {
+    if (!decimal) {
+      return;
+    }
+
     setRestakeAllAmount(false);
 
     if (value.length > decimal - 1) {
@@ -186,10 +189,10 @@ export default function Index(): React.ReactElement {
         disabled={!amount || amount === '0' || unlockingAmount?.lt(amountAsBN)}
         text={t<string>('Next')}
       />
-      {showReview && amount && api && formatted && unlockingAmount && chain &&
+      {showReview && amount && api && formatted && unlockingAmount && chain && decimal &&
         <Review
           address={address}
-          amount={amount}
+          amount={restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal)}
           api={api}
           chain={chain}
           estimatedFee={estimatedFee}

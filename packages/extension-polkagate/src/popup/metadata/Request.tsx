@@ -87,7 +87,13 @@ export default function Request({ metaId, request, url }: Props): React.ReactEle
           {t<string>('This approval will add the metadata to your extension instance, allowing future requests to be decoded using this metadata.')}
         </Warning>
       </Grid>
-      <TwoButtons onPrimaryClick={_onApprove} onSecondaryClick={_onReject} primaryBtnText={t<string>('Approve')} secondaryBtnText={t<string>('Reject')} variant='text' />
+      <TwoButtons
+        onPrimaryClick={_onApprove}
+        onSecondaryClick={_onReject}
+        primaryBtnText={t<string>('Approve')}
+        secondaryBtnText={t<string>('Reject')}
+        variant='text'
+      />
     </>
   );
 }
