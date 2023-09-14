@@ -360,7 +360,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
                 <>
                   <Typography fontSize='16px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
-                    {t<string>('trusted friends')}
+                    {t<string>('Trusted friends')}
                   </Typography>
                   <TrustedFriendsDisplay
                     accountsInfo={recoveryConfig.friends.infos}
