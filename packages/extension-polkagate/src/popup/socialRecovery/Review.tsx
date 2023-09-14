@@ -286,7 +286,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
-                {mode === 'SetRecovery' && t('Step 3 of 3: Making account recoverable review')}
+                {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
                 {mode === 'ModifyRecovery' && t('Step 3 of 3: Modify account recoverability review')}
                 {mode === 'InitiateRecovery' && t('Step 2 of 2: Initiate Recovery review')}
                 {mode === 'CloseRecovery' && t('Close the recovery process and claim the deposit from possible malicious account')}
