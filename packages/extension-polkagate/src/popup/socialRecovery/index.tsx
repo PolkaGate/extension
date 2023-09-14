@@ -302,7 +302,11 @@ export default function SocialRecovery(): React.ReactElement {
       }
       <Grid container direction='column' gap='25px' item>
         <RecoveryOptionButton
-          description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
+          description={
+            recoveryInfo
+              ? t<string>('Click to view your selected trusted friend accounts and your account recovery settings.')
+              : t<string>('Select trusted friends\' accounts and configure details such as a recovery threshold and a delay to enable account recovery.')
+          }
           icon={
             <Box
               component='img'
