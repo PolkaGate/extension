@@ -260,7 +260,7 @@ export default function SocialRecovery(): React.ReactElement {
                 icon={faShieldHalved}
               />
               <Typography fontSize='14px' fontWeight={400} pl='8px'>
-                {t<string>('Your account is recoverable.')}
+                {t<string>('Your account is recoverable')}
               </Typography>
             </>
             : <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '240px' }}>

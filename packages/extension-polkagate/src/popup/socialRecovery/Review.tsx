@@ -306,19 +306,19 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
-              txInfo?.success ? t('Your account is not recoverable anymore.') : t('Making account unrecoverable failed')
+              txInfo?.success ? t('Your account is not recoverable anymore') : t('Making account unrecoverable failed')
             )}
             {step === STEPS.CONFIRM && mode === 'SetRecovery' && (
-              txInfo?.success ? t('Your account is recoverable.') : t('Making account recoverable failed')
+              txInfo?.success ? t('Your account is recoverable') : t('Making account recoverable failed')
             )}
             {step === STEPS.CONFIRM && mode === 'ModifyRecovery' && (
-              txInfo?.success ? t('Account recoverability modified.') : t('Modifying account recoverability failed')
+              txInfo?.success ? t('Account recoverability modified') : t('Modifying account recoverability failed')
             )}
             {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
               txInfo?.success ? t('Recovery Initiated') : t('Initiating Recovery failed')
             )}
             {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
-              txInfo?.success ? t('Initiated recovery has been closed.') : t('Closing Recovery failed')
+              txInfo?.success ? t('Initiated recovery has been closed') : t('Closing Recovery failed')
             )}
             {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
               txInfo?.success ? t('Recovery vouched') : t('Vouching Recovery failed')
@@ -369,12 +369,12 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     friends={recoveryConfig.friends.addresses}
                   />
                   <DisplayValue title={t<string>('Recovery Threshold')}>
-                    <Typography fontSize='28px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                    <Typography fontSize='24px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
                       {`${recoveryConfig.threshold} of ${recoveryConfig.friends.addresses.length}`}
                     </Typography>
                   </DisplayValue>
                   <DisplayValue title={t<string>('Recovery Delay')}>
-                    <Typography fontSize='28px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                    <Typography fontSize='24px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
                       {recoveryDelayPeriod(recoveryConfig.delayPeriod)}
                     </Typography>
                   </DisplayValue>
@@ -436,7 +436,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     />
                   </Grid>
                   <DisplayValue title={t<string>('Date of initiation')}>
-                    <Typography fontSize='28px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                    <Typography fontSize='24px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
                       {currentBlockNumber ? blockToDate(activeLost.createdBlock, currentBlockNumber) : '- - - -'}
                     </Typography>
                   </DisplayValue>
@@ -446,15 +446,17 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 <WithdrawDetails />
               }
               {!(mode === 'VouchRecovery' || (mode === 'Withdraw' && withdrawInfo?.claimed === true)) &&
-                <DisplayValue title={mode === 'RemoveRecovery'
-                  ? t<string>('Releasing deposit')
-                  : mode === 'InitiateRecovery'
-                    ? t<string>('Initiation Deposit')
-                    : mode === 'CloseRecovery'
-                      ? t<string>('Deposit they made')
-                      : mode === 'Withdraw'
-                        ? t<string>('Initiation Recovery Deposit to be released')
-                        : t<string>('Total Deposit')}
+                <DisplayValue
+                  childrenFontSize='24px'
+                  title={mode === 'RemoveRecovery'
+                    ? t<string>('Releasing deposit')
+                    : mode === 'InitiateRecovery'
+                      ? t<string>('Initiation Deposit')
+                      : mode === 'CloseRecovery'
+                        ? t<string>('Deposit they made')
+                        : mode === 'Withdraw'
+                          ? t<string>('Initiation Recovery Deposit to be released')
+                          : t<string>('Total Deposit')}
                 >
                   <ShowBalance
                     api={api}
@@ -464,7 +466,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   />
                 </DisplayValue>}
               <DisplayValue title={t<string>('Fee')}>
-                <Grid alignItems='center' container item sx={{ height: '42px' }}>
+                <Grid alignItems='center' container item sx={{ height: '42px', fontSize: '24px' }}>
                   <ShowBalance
                     api={api}
                     balance={estimatedFee}
@@ -508,7 +510,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
           <DraggableModal onClose={closeSelectProxy} open={step === STEPS.PROXY}>
             <Grid container item>
               <Grid alignItems='center' container item justifyContent='space-between'>
-                <Typography fontSize='22px' fontWeight={700}>
+                <Typography fontSize='24px' fontWeight={700}>
                   {t<string>('Select Proxy')}
                 </Typography>
                 <Grid item>
