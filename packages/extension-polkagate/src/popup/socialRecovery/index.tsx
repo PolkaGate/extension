@@ -324,7 +324,11 @@ export default function SocialRecovery(): React.ReactElement {
             : t<string>('Make Account Recoverable')}
         />
         <RecoveryOptionButton
-          description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
+          description={
+            activeRescue || activeProxy
+              ? t<string>('Since you\'ve already initiated the recovery process for a lost account, you can now review the recovery process details and decide on any further actions.')
+              : t<string>('If you\'ve lost a recoverable account, you can begin the process of rescuing it from here.')
+          }
           icon={
             <Box
               component='img'
@@ -336,7 +340,7 @@ export default function SocialRecovery(): React.ReactElement {
           }
           onClickFunction={goToInitiateRecovery}
           title={activeRescue || activeProxy
-            ? t<string>('You Initiated a Recovery, Check Status.')
+            ? t<string>('You Initiated a Recovery. Check Status')
             : t<string>('Rescue a Lost Account')}
         />
         <RecoveryOptionButton
