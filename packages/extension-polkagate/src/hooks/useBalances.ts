@@ -168,7 +168,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(isFetching?.fetching ?? {})?.length, api, chainName, decimal, formatted, getBalances, getPoolBalances, refresh, token]);
 
   useEffect(() => {
-    if (!address || !api || api.genesisHash.toString() !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash) {
+    if (!address || !api || api.genesisHash.toString() !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chain?.genesisHash || account?.genesisHash !== overall.genesisHash) {
       return;
     }
 
@@ -231,7 +231,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
 
   useEffect(() => {
     api && assetId !== undefined && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
-      console.log('assetAccount:', assetAccount.toHuman());
+      // console.log('assetAccount:', assetAccount.toHuman());
 
       // eslint-disable-next-line no-void
       void api.query.assets.metadata(assetId).then((metadata) => {
@@ -246,7 +246,7 @@ export default function useBalances(address: string | undefined, refresh?: boole
           token: metadata.symbol.toHuman()
         };
 
-        console.log('assetBalances:', assetBalances);
+        // console.log('assetBalances:', assetBalances);
         setAssetBalance(assetBalances);
       }).catch((error) => {
         console.error(`Failed to fetch metadata for assetId ${assetId}:`, error);
