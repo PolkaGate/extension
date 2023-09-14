@@ -335,7 +335,7 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
             {t<string>('Initiate Recovery')}
           </Typography>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
-            {t<string>('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.')}
+            {t<string>('The account recovery process for a lost account must be initiated by a rescuer through a token deposit.')}
           </Typography>
           <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
             {t<string>('Step 1/2: Confirm lost account ')}

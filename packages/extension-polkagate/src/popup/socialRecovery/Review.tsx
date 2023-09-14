@@ -31,12 +31,12 @@ import PasswordWithTwoButtonsAndUseProxy from '../governance/components/Password
 import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
+import { toTitleCase } from '../governance/utils/util';
 import { FriendWithId } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
-import { toTitleCase } from '../governance/utils/util';
 
 interface Props {
   address: string;
