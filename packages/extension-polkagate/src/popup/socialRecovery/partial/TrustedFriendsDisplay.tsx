@@ -32,7 +32,7 @@ export default function TrustedFriendsDisplay({ accountsInfo, api, chain, friend
           identiconSize={25}
           key={index}
           showSocial={false}
-          style={{ m: '0 auto 15px', fontSize: '16px' }}
+          style={{ m: '0 auto 10px', fontSize: '18px' }}
           withShortAddress
         />
       ))}
