@@ -22,7 +22,6 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-      if (endpoint?.startsWith('wss')) {
     const savedApi = apisContext?.apis[chain.genesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
     if (savedApi && savedApi.api && savedApi.api.isConnected) {
@@ -40,34 +39,69 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     // console.log('Initializing API connection...');
 
-  
-    const wsProvider = new WsProvider(endpoint);
+    if (endpoint?.startsWith('wss')) {
+      const wsProvider = new WsProvider(endpoint);
 
-    ApiPromise.create({ provider: wsProvider })
-      .then((newApi) => {
-        console.log('API connection established successfully.');
-        setApi(newApi);
+      ApiPromise.create({ provider: wsProvider })
+        .then((newApi) => {
+          console.log('API connection established successfully.');
+          setApi(newApi);
 
-        const toSaveApi = apisContext.apis[String(newApi.genesisHash.toHex())] ?? [];
+          const toSaveApi = apisContext.apis[String(newApi.genesisHash.toHex())] ?? [];
 
-        const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
+          const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
 
-        if (indexToDelete !== -1) {
-          toSaveApi.splice(indexToDelete, 1);
-        }
+          if (indexToDelete !== -1) {
+            toSaveApi.splice(indexToDelete, 1);
+          }
 
-        toSaveApi.push({
-          api: newApi,
-          endpoint,
-          isRequested: false
+          toSaveApi.push({
+            api: newApi,
+            endpoint,
+            isRequested: false
+          });
+
+          apisContext.apis[String(newApi.genesisHash.toHex())] = toSaveApi;
+          apisContext.setIt(apisContext.apis);
+        })
+        .catch((error) => {
+          console.error('API connection failed:', error);
         });
 
-        apisContext.apis[String(newApi.genesisHash.toHex())] = toSaveApi;
-        apisContext.setIt(apisContext.apis);
-      })
-      .catch((error) => {
-        console.error('API connection failed:', error);
+      const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
+
+      toSaveApi.push({ endpoint, isRequested: true });
+
+      apisContext.apis[chain.genesisHash] = toSaveApi;
+      apisContext.setIt(apisContext.apis);
+
+      return;
+    }
+
+    LCConnector(endpoint).then((LCapi) => {
+      setApi(LCapi);
+      console.log('🖌️ light client connected', String(LCapi.genesisHash.toHex()));
+
+      const toSaveApi = apisContext.apis[String(LCapi.genesisHash.toHex())] ?? [];
+
+      const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
+
+      if (indexToDelete !== -1) {
+        toSaveApi.splice(indexToDelete, 1);
+      }
+
+      toSaveApi.push({
+        api: LCapi,
+        endpoint,
+        isRequested: false
       });
+
+      apisContext.apis[String(LCapi.genesisHash.toHex())] = toSaveApi;
+      apisContext.setIt(apisContext.apis);
+    }).catch((err) => {
+      console.error(err);
+      console.log('📌 light client failed');
+    });
 
     const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
 
@@ -75,19 +109,6 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     apisContext.apis[chain.genesisHash] = toSaveApi;
     apisContext.setIt(apisContext.apis);
-      
-       return;
-    }
-
-    LCConnector(endpoint).then((LCapi) => {
-      setApi(LCapi);
-      console.log('light client connected', String(LCapi.genesisHash.toHex()));
-     // apisContext.apis[String(LCapi.genesisHash.toHex())] = { api: LCapi, apiEndpoint: endpoint };
-      //apisContext.setIt(apisContext.apis);
-    }).catch((err) => {
-      console.error(err);
-      console.log('light client failed');
-    });
   }, [apisContext, endpoint, stateApi, chain, api?.isConnected, api]);
 
   useEffect(() => {
