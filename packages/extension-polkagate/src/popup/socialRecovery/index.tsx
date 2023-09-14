@@ -133,7 +133,7 @@ export default function SocialRecovery(): React.ReactElement {
 
   useEffect(() => {
     clearInformation();
-  }, [address, chain, chain.genesisHash, clearInformation]);
+  }, [address, chain, chain?.genesisHash, clearInformation]);
 
   useEffect(() => {
     if (!api || !formatted) {
