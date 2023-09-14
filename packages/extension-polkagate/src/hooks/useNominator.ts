@@ -8,10 +8,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
-import { useEndpoint2, useFormatted, useStashId } from '.';
+import { useEndpoint, useFormatted, useStashId } from '.';
 
 export default function useNominator(address: string): NominatorInfo | undefined {
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const formatted = useFormatted(address);
   const stashId = useStashId(formatted);
 

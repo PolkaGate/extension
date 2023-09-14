@@ -9,11 +9,11 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { FetchingContext } from '../components';
 import { isHexToBn } from '../util/utils';
-import { useDecimal, useEndpoint2, useFormatted, useToken } from '.';
+import { useDecimal, useEndpoint, useFormatted, useToken } from '.';
 
 export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const formatted = useFormatted(address);
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const isFetching = useContext(FetchingContext);
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>();
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>();

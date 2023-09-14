@@ -39,8 +39,8 @@ import Metadata from '../../../extension-polkagate/src/popup/metadata';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
-import Send from '../../../extension-polkagate/src/popup/send';
-import Review from '../../../extension-polkagate/src/popup/send/Review';
+import Send from '../../../extension-polkagate/src/popup/sendFund';
+// import Review from '../../../extension-polkagate/src/popup/sendFund/Review';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import SocialRecovery from '../../../extension-polkagate/src/popup/socialRecovery';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
@@ -59,7 +59,6 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
-import { MILLISECONDS_TO_UPDATE } from '../../../extension-polkagate/src/util/constants';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
@@ -221,8 +220,9 @@ export default function Popup(): React.ReactElement {
                             <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                             <Route path='/socialRecovery/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
-                            <Route exact path='/send/:address/'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                            <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
+                            <Route exact path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            <Route exact path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            {/* <Route exact path='/send/review/:genesisHash/:address/:formatted/:assetId'>{wrapWithErrorBoundary(<Review />, 'review')}</Route> */}
                             <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                             <Route path='/import/add-address-only'>{wrapWithErrorBoundary(<AddAddressOnly />, 'import-add-address-only')}</Route>
                             <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>

@@ -158,6 +158,8 @@ export interface TransactionDetail extends TxResult {
 export interface TxInfo extends TransactionDetail {
   api: ApiPromise;
   chain: Chain;
+  decimal?: number;
+  recipientChainName?: string;
   token?: string;
 }
 
@@ -324,6 +326,7 @@ export interface FormattedAddressState {
   genesisHash: string;
   address: string;
   formatted: string;
+  assetId: string;
 }
 
 export interface nameAddress {
@@ -360,11 +363,6 @@ export interface Tip {
   tipper_num: number;
   finder: AccountInfo;
   beneficiary: AccountInfo;
-}
-
-export interface Option {
-  text: string;
-  value: string;
 }
 
 export interface PoolStakingConsts {
@@ -714,5 +712,7 @@ export interface SoloSettings {
 
 export interface DropdownOption {
   text: string;
-  value: string;
+  value: string | number;
 }
+
+export type TransferType = 'All' | 'Max' | 'Normal';

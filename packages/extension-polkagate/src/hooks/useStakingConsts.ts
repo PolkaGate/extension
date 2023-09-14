@@ -7,12 +7,12 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { useChainName, useCurrentEraIndex, useEndpoint2, useToken } from '.';
+import { useChainName, useCurrentEraIndex, useEndpoint, useToken } from '.';
 
 export default function useStakingConsts(address: string, stateConsts?: StakingConsts): StakingConsts | null | undefined {
   const [consts, setConsts] = useState<StakingConsts | undefined | null>();
   const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const chainName = useChainName(address);
   const eraIndex = useCurrentEraIndex(address);
   const token = useToken(address);

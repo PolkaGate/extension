@@ -25,12 +25,10 @@ import { AccountInputWithIdentity, AmountWithOptions, From, Motion, PButton } fr
 import { useAccountInfo, useAccountName, useApi, useChain, useDecimal, useFormatted, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { MAX_AMOUNT_LENGTH } from '../../util/constants';
-import { FormattedAddressState } from '../../util/types';
+import { FormattedAddressState, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine, isValidAddress } from '../../util/utils';
 import Asset from './partial/Asset';
 import Review from './Review';
-
-type TransferType = 'All' | 'Max' | 'Normal';
 
 export default function Send(): React.ReactElement {
   const { t } = useTranslation();

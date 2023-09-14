@@ -15,28 +15,43 @@ interface Props {
   formatted?: string;
 }
 
+function getLink(chainName: string, explorer: 'subscan' | 'polkaholic' | 'statscan', type: 'account' | 'extrinsic', data: string): string {
+  if (type === 'extrinsic') {
+    const mayBeTheFirstPartOfChain = chainName?.split(' ')?.[0];
+    const chainNameWithoutSpace = chainName?.replace(/\s/g, '');
+
+    switch (explorer) {
+      case 'subscan':
+        if (chainNameWithoutSpace?.includes('AssetHub')) {
+          return `https://assethub-${chainNameWithoutSpace.replace(/AssetHub/, '')}.subscan.io/extrinsic/${String(data)}`;
+        }
+
+        return 'https://' + mayBeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(data); // data here is txHash
+      case 'polkaholic':
+        return 'https://' + mayBeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(data);
+      case 'statscan':
+        return 'https://westmint.statescan.io/#/accounts/' + String(data); // NOTE, data here is formatted address
+    }
+  }
+}
+
 export default function Explorer({ chainName, formatted, txHash }: Props): React.ReactElement {
   const theme = useTheme();
   const [explorer, setExplorer] = useState<{ name: string, link: string }>();
 
-  const mayBeTheFirstPartOfChain = chainName?.split(' ')?.[0];
   const isWestmint = chainName?.replace(/\s/g, '') === 'WestendAssetHub';
-
-  const subscanLink = 'https://' + mayBeTheFirstPartOfChain + '.subscan.io/extrinsic/' + String(txHash);
-  const polkaholicLink = 'https://' + mayBeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(txHash);
-  const statescanLink = 'https://westmint.statescan.io/#/accounts/' + String(formatted);
 
   useEffect(() => {
     if (CHAINS_ON_POLKAHOLIC.includes(chainName)) {
-      return setExplorer({ link: polkaholicLink, name: 'polkaholic' });
+      return setExplorer({ link: getLink(chainName, 'polkaholic', 'extrinsic', String(txHash)), name: 'polkaholic' });
     }
 
     if (isWestmint) {
-      return setExplorer({ link: statescanLink, name: 'statescan' });
+      return setExplorer({ link: getLink(chainName, 'statscan', 'extrinsic', String(formatted)), name: 'statescan' });
     }
 
-    setExplorer({ link: subscanLink, name: 'subscan' });
-  }, [chainName, isWestmint, polkaholicLink, statescanLink, subscanLink]);
+    setExplorer({ link: getLink(chainName, 'subscan', 'extrinsic', String(txHash)), name: 'subscan' });
+  }, [chainName, formatted, isWestmint, txHash]);
 
   return (
     <Link href={`${explorer?.link}`} rel='noreferrer' target='_blank' underline='none'>

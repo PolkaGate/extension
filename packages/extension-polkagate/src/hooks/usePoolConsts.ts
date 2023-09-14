@@ -8,12 +8,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { sanitizeChainName } from '../util/utils';
-import { useChain, useCurrentEraIndex, useEndpoint2, useToken } from '.';
+import { useChain, useCurrentEraIndex, useEndpoint, useToken } from '.';
 
 export default function usePoolConsts(address: string, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();
   const [newConsts, setNewConsts] = useState<PoolStakingConsts | undefined | null>();
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
   const chain = useChain(address);
   const token = useToken(address);
   const eraIndex = useCurrentEraIndex(address);

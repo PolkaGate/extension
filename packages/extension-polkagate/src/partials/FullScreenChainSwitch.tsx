@@ -9,9 +9,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useChainName, useGenesisHashOptions } from '../hooks';
 import { tieAccount } from '../messaging';
-import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
+import { CHAINS_WITH_BLACK_LOGO, TEST_NETS } from '../util/constants';
 import getLogo from '../util/getLogo';
-import { sanitizeChainName, upperCaseFirstChar } from '../util/utils';
+import { DropdownOption } from '../util/types';
+import { sanitizeChainName } from '../util/utils';
 
 interface Props {
   address: string | undefined;
@@ -20,38 +21,39 @@ interface Props {
 
 function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const genesisHashes = useGenesisHashOptions();
+  const options = useGenesisHashOptions();
   const currentChainNameFromAccount = useChainName(address);
-  const [currentChainName, setCurrentChainName] = useState<string | undefined>(currentChainNameFromAccount);
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
+  const [currentSelectedChainName, setCurrentSelectedChainName] = useState<string>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
-  const isTestnetDisabled = useCallback((name: string | undefined) => !isTestnetEnabled && name?.toLowerCase() === 'westend', [isTestnetEnabled]);
-  const selectableNetworks = useMemo(() => genesisHashes.filter((genesisHash) => chains.includes(genesisHash.value)), [chains, genesisHashes]);
-
-  useEffect(() => {
-    !currentChainName && currentChainNameFromAccount && setCurrentChainName(currentChainNameFromAccount);
-  }, [currentChainName, currentChainNameFromAccount]);
+  const isTestnetDisabled = useCallback((genesisHash: string) => !isTestnetEnabled && TEST_NETS.includes(genesisHash), [isTestnetEnabled]);
+  const selectableNetworks = useMemo(() => !chains.length ? options.filter(({ text }) => text !== 'Allow use on any chain') : options.filter((o) => chains.includes(o.value)), [chains, options]);
 
   useEffect(() => {
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
   }, []);
 
-  const selectNetwork = useCallback((newChainName: string) => {
+  useEffect(() => {
+    if (!currentSelectedChainName && currentChainNameFromAccount) {
+      setCurrentSelectedChainName(currentChainNameFromAccount);
+    }
+  }, [currentChainNameFromAccount, currentSelectedChainName]);
+
+  const selectNetwork = useCallback((net: DropdownOption) => {
     setAnchorEl(null);
 
-    if (isTestnetDisabled(newChainName)) {
+    if (!address || !net?.value) {
       return;
     }
 
-    const selectedGenesisHash = genesisHashes.find((option) => sanitizeChainName(option.text) === newChainName)?.value;
+    if (isTestnetDisabled(net.value)) {
+      return;
+    }
 
-    setCurrentChainName(newChainName);
-    address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((err) => {
-      setCurrentChainName(currentChainNameFromAccount);
-      console.error(err);
-    });
-  }, [address, currentChainNameFromAccount, genesisHashes, isTestnetDisabled]);
+    tieAccount(address, net.value).catch(console.error);
+    setCurrentSelectedChainName(net.text);
+  }, [address, isTestnetDisabled]);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -66,23 +68,22 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
   const NetworkList = () => (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', width: '250px' }}>
       {selectableNetworks && selectableNetworks.length > 0 &&
-        selectableNetworks.map((genesisHash, index) => {
-          const selectedNetwork = chainName(genesisHash.text) === currentChainName?.toLocaleLowerCase();
-          const sanitizeChainName = upperCaseFirstChar(chainName(genesisHash.text) ?? '');
+        selectableNetworks.map((network, index) => {
+          const selectedNetwork = chainName(network.text) === currentSelectedChainName?.toLocaleLowerCase();
 
           return (
             // eslint-disable-next-line react/jsx-no-bind
-            <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(sanitizeChainName)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', px: '15px' }}>
+            <Grid container justifyContent='space-between' key={index} onClick={() => selectNetwork(network)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedNetwork ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', px: '15px' }}>
               <Grid alignItems='center' container item width='fit-content'>
                 <Typography fontSize='16px' fontWeight={selectedNetwork ? 500 : 400}>
-                  {genesisHash.text}
+                  {network.text}
                 </Typography>
               </Grid>
-              {genesisHash.text !== 'Allow use on any chain' &&
+              {network.text !== 'Allow use on any chain' &&
                 <Grid alignItems='center' container item pl='15px' width='fit-content'>
                   <Avatar
-                    src={getLogo(chainName(genesisHash.text))}
-                    sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(genesisHash.text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 29, width: 29 }}
+                    src={getLogo(chainName(network.text))}
+                    sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(network.text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 29, width: 29 }}
                     variant='square'
                   />
                 </Grid>
@@ -100,11 +101,11 @@ function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<P
     <Grid container item>
       <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
         <Avatar
-          src={getLogo(currentChainName)}
+          src={getLogo(currentSelectedChainName)}
           sx={{
             bgcolor: 'transparent',
             borderRadius: '50%',
-            filter: CHAINS_WITH_BLACK_LOGO.includes(currentChainName ?? '') ? 'invert(1)' : '',
+            filter: CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChainName ?? '') ? 'invert(1)' : '',
             height: '34px',
             m: 'auto',
             width: '34px'

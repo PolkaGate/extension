@@ -5,20 +5,17 @@
  * @description
  * find endpoints based on chainName and also omit light client which my be add later
  */
+import type { LinkOption } from '@polkadot/apps-config/endpoints/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { createWsEndpoints } from '@polkadot/apps-config';
-import { LinkOption } from '@polkadot/apps-config/settings/types';
 
+import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
 
-interface Option {
-  text: string;
-  value: string;
-}
-
-export function useEndpoints(genesisHash: string | null | undefined): Option[] {
+export function useEndpoints(genesisHash: string | null | undefined): DropdownOption[] {
   const { t } = useTranslation();
   const genesisOptions = useGenesisHashOptions();
   const [allEndpoints, setAllEndpoints] = useState<LinkOption[] | undefined>();
@@ -29,10 +26,11 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
     setAllEndpoints(wsEndpoints);
   }, [t]);
 
-  const endpoints: Option[] | undefined = useMemo(() => {
+  const endpoints: DropdownOption[] | undefined = useMemo(() => {
     if (!genesisHash) {
       return [];
-    };
+    }
+
     const option = genesisOptions?.find((o) => o.value === genesisHash);
     const chainName = sanitizeChainName(option?.text);
 
@@ -40,7 +38,7 @@ export function useEndpoints(genesisHash: string | null | undefined): Option[] {
       (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
     );
-
+    
     return endpoints?.filter((e) => String(e.value).startsWith('ws')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);
 

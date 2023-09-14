@@ -16,6 +16,7 @@ import { useIsPopup, useTranslation } from '../hooks';
 import { setNotification, tieAccount, windowOpen } from '../messaging';
 import { TEST_NETS } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
+import { DropdownOption } from '../util/types';
 
 interface Props {
   isTestnetEnabled: boolean | undefined;
@@ -61,14 +62,9 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
     );
   }, [accounts]);
 
-  interface Option {
-    text: string;
-    value: string;
-  }
-
   const prefixOptions = settings.availablePrefixes
     .filter(({ value }) => value !== -1)
-    .map(({ text, value }): Option => ({ text, value: `${value}` }));
+    .map(({ text, value }): DropdownOption => ({ text, value: `${value}` }));
 
   const _onWindowOpen = useCallback((): void => {
     windowOpen('/').catch(console.error);

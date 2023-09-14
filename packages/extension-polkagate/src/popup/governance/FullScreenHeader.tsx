@@ -16,7 +16,8 @@ import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
-export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentity' | 'socialRecovery' }): React.ReactElement {
+export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' }): React.ReactElement {
+
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
@@ -66,7 +67,10 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
               />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
-              <FullScreenChainSwitch address={address} chains={filteredChains} />
+              <FullScreenChainSwitch
+                address={address}
+                chains={filteredChains}
+              />
             </Grid>
             <Grid container item justifyContent='flex-end' width='50px'>
               <FullScreenRemoteNode

@@ -8,7 +8,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Grid, SxProps, Theme, Typography } from '@mui/material';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
