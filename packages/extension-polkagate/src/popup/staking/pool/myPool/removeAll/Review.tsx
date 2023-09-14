@@ -6,7 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -14,8 +14,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useProxies, useTranslation } from '../../../../../hooks';
+import { ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../../components';
+import { useAccountDisplay, useProxies, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
@@ -40,9 +40,8 @@ interface Props {
 export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -54,7 +53,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   const [membersToRemoveAll, setMembersToRemoveAll] = useState<MemberPoints[] | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [txCalls, setTxCalls] = useState<SubmittableExtrinsic<'promise'>[]>();
@@ -178,7 +177,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction,
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -216,10 +215,10 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           </Typography>)
           : (<>
             <Typography fontSize='14px' fontWeight={300} textAlign='center' sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Removing all mermbers from the pool')}
+              {t<string>('Removing all members from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('When you confirm you are able to unstake your tockens')}
+              {t<string>('When you confirm you are able to unstake your tokens')}
             </Typography>
           </>)
         }
@@ -253,12 +252,12 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={unstakeOrRemoveAll}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

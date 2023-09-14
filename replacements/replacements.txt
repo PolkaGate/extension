@@ -1,0 +1,1 @@
+replace:  @polkadot/networks/interfaces.js with ./interfaces/interfaces.js 

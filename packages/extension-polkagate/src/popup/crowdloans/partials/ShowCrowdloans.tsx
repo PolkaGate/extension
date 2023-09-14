@@ -85,7 +85,7 @@ export default function ShowCrowdloan({ selectedCrowdloan, api, chain, crowdloan
                 </Grid>
               }
             </Grid>
-            : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon returnIdentity={returnIdentity} style={{ fontSize: '16px', fontWeight: 500, lineHeight: '47px' }} />
+            : <Identity address={crowdloan.fund.depositor} api={api} chain={chain} formatted={crowdloan.fund.depositor} identiconSize={15} noIdenticon returnIdentity={returnIdentity} style={{ fontSize: '16px', fontWeight: 500, lineHeight: '46px', height: '46px' }} />
           }
         </Grid>
         {showStatus &&

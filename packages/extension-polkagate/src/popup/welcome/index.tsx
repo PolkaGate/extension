@@ -31,49 +31,58 @@ const Welcome = function (): React.ReactElement {
         text={t<string>('Polkagate')}
       />
       <Typography component='h2' sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '20px', pt: '25px', textAlign: 'center' }}>
-        {t<string>('Welcome')}
+        {t<string>('Welcome!')}
       </Typography>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, textAlign: 'center' }}>
-        {t<string>('Before we start, just a couple of notes regarding use:')}
+      <Typography sx={{ fontSize: '14px', fontWeight: 400, textAlign: 'center', px: '15px' }}>
+        {t<string>('Before we begin, here are a few important points to keep in mind:')}
       </Typography>
       <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
         <List sx={{ color: 'text.primary' }}>
-          <ListItem>
+        <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
               <FiberManualRecordIcon sx={{ width: '9px' }} />
             </ListItemIcon>
             <ListItemText
-              primary={t<string>('We do not send any clicks, pageviews or events to a central server.')}
+              primary={t<string>('We do not send any clicks, pageviews, or events to a central server.')}
               primaryTypographyProps={{ fontSize: '14px' }}
             />
           </ListItem>
-          <ListItem>
+          <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
               <FiberManualRecordIcon sx={{ width: '9px' }} />
             </ListItemIcon>
             <ListItemText
-              primary={t<string>('We do not use any trackers or analytics.')}
+              primary={t<string>('We do not utilize any trackers or analytics.')}
               primaryTypographyProps={{ fontSize: '14px' }}
             />
           </ListItem>
-          <ListItem>
+          <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
               <FiberManualRecordIcon sx={{ width: '9px' }} />
             </ListItemIcon>
             <ListItemText
-              primary={t<string>('We do not collect keys, addresses or any information. Your information never leaves this machine.')}
+              primary={t<string>('We do not collect keys, addresses, or any personal information. Your data always stays on this device.')}
+              primaryTypographyProps={{ fontSize: '14px' }}
+            />
+          </ListItem>
+          <ListItem sx={{ py: '2px' }}>
+            <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
+              <FiberManualRecordIcon sx={{ width: '9px' }} />
+            </ListItemIcon>
+            <ListItemText
+              primary={t<string>('We are committed to respecting your privacy and are not engaged in information collection – not even anonymized data.')}
               primaryTypographyProps={{ fontSize: '14px' }}
             />
           </ListItem>
         </List>
       </Box>
-      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 300, pl: '25px' }}>
-        {t<string>('... We are not in the information collection business (even anonymized).')}
+      <Typography component={'p'} sx={{ fontSize: '14px', fontWeight: 400, pl: '25px' }}>
+        {t<string>('Thank you for choosing Polkagate!')}
       </Typography>
       <PButton
         _onClick={_onClick}
         _variant={'contained'}
-        text={t<string>('Understood, let me continue')}
+        text={t<string>('Got it, Take Me In')}
       />
     </>
   );

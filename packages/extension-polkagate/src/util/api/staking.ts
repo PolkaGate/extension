@@ -150,43 +150,6 @@ export async function getStakingReward(_chain: Chain | null | undefined, _staker
   });
 }
 
-export async function bondOrBondExtra(
-  api: ApiPromise,
-  stashAccountId: string | null,
-  signer: KeyringPair,
-  value: bigint,
-  alreadyBondedAmount: bigint,
-  proxy: Proxy | undefined,
-  payee = 'Staked'
-): Promise<TxInfo> {
-  try {
-    console.log('bondOrBondExtra is called!');
-
-    if (!stashAccountId) {
-      console.log('bondOrBondExtra:  controller is empty!');
-
-      return { status: 'failed' };
-    }
-
-    /** Since this is Easy staking we are using payee = Staked, will be changed in the advanced version **/
-    /** payee:
-     * Staked - Pay into the stash account, increasing the amount at stake accordingly.
-     * Stash - Pay into the stash account, not increasing the amount at stake.
-     * Account - Pay into a custom account.
-     * Controller - Pay into the controller account.
-     */
-
-    const bonded = Number(alreadyBondedAmount) > 0 ? api.tx.staking.bondExtra(value) : api.tx.staking.bond(stashAccountId, value, payee);
-    const tx = proxy ? api.tx.proxy.proxy(stashAccountId, proxy.proxyType, bonded) : bonded;
-
-    return signAndSend(api, tx, signer, proxy?.delegate ?? stashAccountId);
-  } catch (error) {
-    console.log('Something went wrong while bond/nominate', error);
-
-    return { status: 'failed' };
-  }
-}
-
 //* *******************************POOL STAKING********************************************/
 
 export async function poolJoinOrBondExtra(
@@ -241,7 +204,7 @@ export async function createPool(
     }
 
     const created = api.tx.utility.batch([
-      api.tx.nominationPools.create(value, roles.root, roles.nominator, roles.stateToggler),
+      api.tx.nominationPools.create(value, roles.root, roles.nominator, roles.bouncer),
       api.tx.nominationPools.setMetadata(poolId, poolName)
     ]);
 
@@ -287,9 +250,9 @@ export async function editPool(
     const calls = [];
 
     basePool.metadata !== pool.metadata &&
-      calls.push(api.tx.nominationPools.setMetadata(pool.member.poolId, pool.metadata));
-    JSON.stringify(basePool.bondedPool.roles) !== JSON.stringify(pool.bondedPool.roles) &&
-      calls.push(api.tx.nominationPools.updateRoles(pool.member.poolId, getRole('root'), getRole('nominator'), getRole('stateToggler')))
+      calls.push(api.tx.nominationPools.setMetadata(pool.member?.poolId, pool.metadata));
+    JSON.stringify(basePool.bondedPool?.roles) !== JSON.stringify(pool.bondedPool?.roles) &&
+      calls.push(api.tx.nominationPools.updateRoles(pool.member?.poolId, getRole('root'), getRole('nominator'), getRole('bouncer')));
 
     const updated = api.tx.utility.batch(calls);
     const tx = proxy ? api.tx.proxy.proxy(depositor, proxy.proxyType, updated) : updated;

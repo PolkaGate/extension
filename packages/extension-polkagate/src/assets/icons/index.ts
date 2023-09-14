@@ -3,7 +3,7 @@
 
 export { default as checkBox } from './checkBox.svg';
 export { default as checkedBox } from './checkedBox.svg';
-export { default as riot } from './riot.png';
+export { default as riot } from './riot.svg';
 export { default as upload } from './upload.png';
 export { default as subscan } from './subscan.svg';
 export { default as twoItemCurveBackgroundBlack } from './twoItemCurveBackgroundBlack.svg';
@@ -14,6 +14,7 @@ export { default as auctionWhite } from './auctionWhite.svg';
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
 export { default as hide } from './hide.svg';
+export { default as subId } from './subId.svg';
 export { default as show } from './show.svg';
 export { default as pastCrowdloanWhite } from './pastCrowdloanWhite.svg';
 export { default as pastCrowdloanBlack } from './pastCrowdloanBlack.svg';
@@ -38,3 +39,6 @@ export { default as stars6Black } from './stars6Black.svg';
 export { default as stars6White } from './stars6White.svg';
 export { default as stars5White } from './stars5White.svg';
 export { default as stars5Black } from './stars5Black.svg';
+export { default as ms } from './ms.svg';
+export { default as msGreen } from './msGreen.svg';
+export { default as msWarning } from './msWarning.svg';

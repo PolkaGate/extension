@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkadot authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 /**
  * @description
  * this component opens join pool review page
@@ -9,14 +11,14 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountContext, AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
+import { AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
+import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
@@ -38,9 +40,8 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   const { t } = useTranslation();
   const chain = useChain(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const formatted = useFormatted(address);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const proxies = useProxies(api, address);
   const decimals = api.registry.chainDecimals[0];
 
@@ -55,7 +56,7 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const _onBackClick = useCallback(() => {
     setShowReview(!showReview);
@@ -172,12 +173,12 @@ export default function Review({ address, api, estimatedFee, joinAmount, poolToJ
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={joinPool}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', 'NominationPools']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

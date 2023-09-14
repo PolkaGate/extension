@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -10,9 +10,10 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../../components';
-import { useChainNames, usePrices, useTranslation } from '../../hooks';
+import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
+import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
-import getNetworkMap from '../../util/getNetworkMap';
+import { NEW_VERSION_ALERT, TEST_NETS } from '../../util/constants';
 import AddAccount from '../welcome/AddAccount';
 import AccountsTree from './AccountsTree';
 import Alert from './Alert';
@@ -20,28 +21,36 @@ import YouHave from './YouHave';
 
 export default function Home(): React.ReactElement {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState('');
-  const { hierarchy } = useContext(AccountContext);
+  const { accounts, hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
-  const [filteredAccount, setFilteredAccount] = useState<AccountWithChildren[]>([]);
+
+  usePrices(chainNames); // get balances for all chains available in accounts
+  useMerkleScience(undefined, undefined, true);  // to download the data file
+
   const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
-
-  usePrices(chainNames); // get balances for all chains available in accounts
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
-  const networkMap = useMemo(() => getNetworkMap(), []);
+  useEffect(() => {
+    const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
+
+    isTestnetDisabled && (
+      accounts?.forEach(({ address, genesisHash }) => {
+        if (genesisHash && TEST_NETS.includes(genesisHash)) {
+          tieAccount(address, null).catch(console.error);
+        }
+      })
+    );
+  }, [accounts]);
 
   useEffect(() => {
-    const dayInMs = 24 * 60 * 60 * 1000;
-    const value = window.localStorage.getItem('export_account_open');
+    const value = window.localStorage.getItem(NEW_VERSION_ALERT);
 
-    if (hierarchy?.length &&
-      (!value || (value && value !== 'ok' && Date.now() - Number(value) > dayInMs))) {
+    if (!value || (value && value !== 'ok')) {
       setShowAlert(true);
     }
-  }, [hierarchy]);
+  }, []);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
@@ -50,18 +59,7 @@ export default function Home(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    setFilteredAccount(
-      filter
-        ? hierarchy.filter((account) =>
-          account.name?.toLowerCase().includes(filter) ||
-          (account.genesisHash && networkMap.get(account.genesisHash)?.toLowerCase().includes(filter))
-        )
-        : hierarchy
-    );
-  }, [filter, hierarchy, networkMap]);
-
-  useEffect(() => {
-    setSortedAccount(filteredAccount.sort((a, b) => {
+    setSortedAccount(hierarchy.sort((a, b) => {
       const x = a.name.toLowerCase();
       const y = b.name.toLowerCase();
 
@@ -75,17 +73,14 @@ export default function Home(): React.ReactElement {
 
       return 0;
     }));
-  }, [filteredAccount]);
-
-  const _onFilter = useCallback((event: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>) => {
-    const filter = event.target.value;
-
-    setFilter(filter.toLowerCase());
-  }, []);
+  }, [hierarchy]);
 
   return (
     <>
-      <Alert show={show} setShowAlert={setShowAlert} />
+      <Alert
+        setShowAlert={setShowAlert}
+        show={show}
+      />
       {(hierarchy.length === 0)
         ? <AddAccount />
         : (
@@ -104,11 +99,6 @@ export default function Home(): React.ReactElement {
             <Container
               disableGutters
               sx={[{
-                // '> .tree:first-child': { border: 'none' },
-                // backgroundColor: 'background.paper',
-                // border: '0.5px solid',
-                // borderColor: 'secondary.light',
-                // borderRadius: '5px',
                 m: 'auto',
                 maxHeight: `${self.innerHeight - 165}px`,
                 mt: '10px',

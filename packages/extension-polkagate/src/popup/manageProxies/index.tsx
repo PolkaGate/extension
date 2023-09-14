@@ -100,9 +100,9 @@ export default function ManageProxies(): React.ReactElement {
   }, [account?.isExternal, checkForChanges, proxyItems]);
 
   useEffect(() => {
-    setHelperText(t<string>('Add new or select to remove proxies for this account, consider the deposit that will be reserved.'));
-    proxyItems !== undefined && disableAddProxyButton && setHelperText(t<string>('This is Address Only and cannot sign transaction and there is no proxy for this account.'));
-    !disableToConfirmButton && setHelperText(t<string>('You still can modify proxies you’re adding, add new proxies, or select existing proxies to remove them, and click on Next to confirm all transactions.'));
+    setHelperText(t<string>('Add new proxies or select existing ones to remove for this account, and please consider the deposit that will be reserved.'));
+    proxyItems !== undefined && disableAddProxyButton && setHelperText(t<string>('This is a watch-only account and cannot sign transactions, and there is no proxy associated with this account.'));
+    !disableToConfirmButton && setHelperText(t<string>("You can still modify the proxies you're adding, add new proxies, or select existing proxies to remove them. Once done, click 'Next' to confirm all transactions."));
   }, [disableAddProxyButton, disableToConfirmButton, proxyItems, t]);
 
   useEffect(() => {

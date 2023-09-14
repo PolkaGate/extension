@@ -43,3 +43,45 @@ cryptoWaitReady()
   });
 
 chrome.runtime.setUninstallURL('https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform');
+
+let creating: Promise<void> | undefined; // A global promise to avoid concurrency issues
+const path = 'offscreen.html';
+
+async function setupOffscreenDocument(): Promise<void> {
+  // Check all windows controlled by the service worker to see if one
+  // of them is the offscreen document with the given path
+  const offscreenUrl = chrome.runtime.getURL(path);
+  const matchedClients = await clients.matchAll();
+
+  for (const client of matchedClients) {
+    if (client.url === offscreenUrl) {
+      return;
+    }
+  }
+
+  // Create offscreen document if not already being created
+  if (!creating) {
+    creating = chrome.offscreen.createDocument({
+      url: path,
+      reasons: ['BLOBS'],
+      justification: 'keep service worker running'
+    });
+
+    try {
+      await creating;
+    } catch (error) {
+      console.error('Error creating offscreen document:', error);
+    } finally {
+      creating = undefined; // Reset the creating promise
+    }
+  }
+}
+
+chrome.runtime.onStartup.addListener(setupOffscreenDocument);
+
+self.onmessage = (e: MessageEvent) => {
+  console.log(e?.data);
+}; // keepAlive
+
+// eslint-disable-next-line no-void
+void setupOffscreenDocument();

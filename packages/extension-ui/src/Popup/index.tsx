@@ -12,7 +12,6 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
 
-// import Governance from '../../../extension-polkagate/src/Popup/Governance';// added for plus
 // import SocialRecovery from '../../../extension-polkagate/src/Popup/SocialRecovery';// added for plus
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
@@ -26,6 +25,8 @@ import Derive from '../../../extension-polkagate/src/popup/deriveAccount';
 import Export from '../../../extension-polkagate/src/popup/export/Export';
 import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
+import Governance from '../../../extension-polkagate/src/popup/governance';
+import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
@@ -33,13 +34,14 @@ import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
+import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
 import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDetected';
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
-import Send from '../../../extension-polkagate/src/popup/send';
-import Review from '../../../extension-polkagate/src/popup/send/Review';
+import Send from '../../../extension-polkagate/src/popup/sendFund';
+// import Review from '../../../extension-polkagate/src/popup/sendFund/Review';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/myPool';
@@ -57,7 +59,6 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
-import { MILLISECONDS_TO_UPDATE } from '../../../extension-polkagate/src/util/constants';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
 const startSettings = uiSettings.get();
@@ -197,10 +198,11 @@ export default function Popup(): React.ReactElement {
                           <Switch>
                             <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
                             <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
+                            <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
+                            <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
                             <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
                             <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
                             <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
-                            {/* <Route path='/governance/:genesisHash/:address'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route> */}
                             {/* <Route path='/socialRecovery/:genesisHash/:address'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route> */}
                             <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
                             <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
@@ -216,9 +218,11 @@ export default function Popup(): React.ReactElement {
                             <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
                             <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
                             <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
+                            <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
                             <Route exact path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<Account />, 'account')}</Route>
-                            <Route exact path='/send/:address/'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                            <Route exact path='/send/review/:genesisHash/:address/:formatted'>{wrapWithErrorBoundary(<Review />, 'review')}</Route>
+                            <Route exact path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            <Route exact path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                            {/* <Route exact path='/send/review/:genesisHash/:address/:formatted/:assetId'>{wrapWithErrorBoundary(<Review />, 'review')}</Route> */}
                             <Route path='/auth-list'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
                             <Route path='/import/add-address-only'>{wrapWithErrorBoundary(<AddAddressOnly />, 'import-add-address-only')}</Route>
                             <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>

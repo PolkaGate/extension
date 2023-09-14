@@ -78,9 +78,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
       <Grid container direction='column' display='block' item sx={{ p: '18px 0 15px 10px' }}>
         <MenuItem
           iconComponent={
-            <UploadJSONIcon
-              sx={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }}
-            />
+            <vaadin-icon icon='vaadin:file-text' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={_goToRestoreFromJson}
           py='4px'
@@ -88,7 +86,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         />
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:key' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <vaadin-icon icon='vaadin:book' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={_goToImportAcc}
           py='4px'
@@ -96,20 +94,16 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         />
         <MenuItem
           iconComponent={
-            <vaadin-icon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <vaadin-icon icon='vaadin:tag' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={_goToAddAddressOnly}
           py='4px'
-          text='Add address only'
+          text='Add watch-only account'
         />
         <MenuItem
           disabled={settings.camera !== 'on'}
           iconComponent={
-            <QrCodeIcon
-              sx={{
-                color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}`
-              }}
-            />
+            <vaadin-icon icon='vaadin:qrcode' style={{ height: '18px', color: `${settings.camera === 'on' ? 'theme.palette.text.primary' : 'theme.palette.text.disabled'}` }} />
           }
           onClick={_goToAttachQR}
           py='4px'
@@ -123,9 +117,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
         }
         <MenuItem
           iconComponent={
-            <UsbIcon
-              sx={{ color: 'text.primary' }}
-            />
+            <vaadin-icon icon='vaadin:wallet' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
           }
           onClick={_goToImportLedger}
           py='4px'

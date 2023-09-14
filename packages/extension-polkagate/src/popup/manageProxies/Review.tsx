@@ -14,8 +14,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountContext, ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccount, useAccountName } from '../../hooks';
+import { ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
+import { useAccount, useAccountDisplay } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -34,11 +34,10 @@ interface Props {
 
 export default function Review({ address, api, chain, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const account = useAccount(address);
   const onAction = useContext(ActionContext);
 
-  const { accounts } = useContext(AccountContext);
   const [helperText, setHelperText] = useState<string | undefined>();
   const [proxiesToChange, setProxiesToChange] = useState<ProxyItem[] | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
@@ -51,7 +50,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
 
   const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
   const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
   const batchAll = api.tx.utility.batchAll;
@@ -109,7 +108,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: 'Add/Remove Proxy',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -197,7 +196,7 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
         estimatedFee={estimatedFee}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}
-        label={`${t<string>('Password')} for ${selectedProxyName || account?.name}`}
+        label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
         onChange={setPassword}
         onConfirmClick={onNext}
         proxiedAddress={address}

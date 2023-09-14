@@ -33,7 +33,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
       }
 
       if (account?.isExternal) {
-        return t('Address only');
+        return t('Watch-only');
       }
 
       if (account?.parentAddress) {

@@ -14,7 +14,7 @@ import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
 import { useApi, useChain, useFormatted, useMyAccountIdentity, useProxies } from '../../hooks';
 import { showAccount } from '../../messaging';
-import { AccMenu } from '../../partials';
+import { AccountMenu } from '../../partials';
 import QuickAction from '../../partials/QuickAction';
 import AccountDetail from './AccountDetail';
 
@@ -36,15 +36,16 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview({ address, genesisHash, hideNumbers, isExternal, isHardware, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+export default function AccountPreview({ address, genesisHash, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const history = useHistory();
   const chain = useChain(address);
   const api = useApi(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
-  const [showActionsMenu, setShowActionsMenu] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [recoverable, setRecoverable] = useState<boolean | undefined>();
   const identity = useMyAccountIdentity(address);
+  const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
 
   useEffect((): void => {
     // eslint-disable-next-line no-void
@@ -52,7 +53,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
   }, [api, formatted]);
 
   useEffect((): void => {
-    setShowActionsMenu(false);
+    setShowAccountMenu(false);
   }, [toggleActions]);
 
   const identiconTheme = (
@@ -62,8 +63,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
   ) as IconTheme;
 
   const menuOnClick = useCallback(
-    () => setShowActionsMenu(!showActionsMenu),
-    [showActionsMenu]
+    () => setShowAccountMenu(!showAccountMenu),
+    [showAccountMenu]
   );
 
   const _toggleVisibility = useCallback((): void => {
@@ -83,7 +84,8 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
         chain={chain}
         formatted={formatted || address}
         identiconTheme={identiconTheme}
-        judgements={identity?.judgements} // TODO: to fix the type issue
+        isSubId={!!identity?.displayParent}
+        judgements={_judgement}
         prefix={chain?.ss58Format ?? 42}
         proxies={proxies}
         recoverable={recoverable}
@@ -92,6 +94,7 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
         address={address}
         chain={chain}
         formatted={formatted}
+        goToAccount={goToAccount}
         hideNumbers={hideNumbers}
         identity={identity}
         isHidden={isHidden}
@@ -101,15 +104,11 @@ export default function AccountPreview({ address, genesisHash, hideNumbers, isEx
       />
       <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
       {
-        showActionsMenu &&
-        <AccMenu
+        showAccountMenu &&
+        <AccountMenu
           address={address}
-          chain={chain}
-          formatted={formatted}
-          isExternal={isExternal}
-          isHardware={isHardware}
-          isMenuOpen={showActionsMenu}
-          setShowMenu={setShowActionsMenu}
+          isMenuOpen={showAccountMenu}
+          setShowMenu={setShowAccountMenu}
         />
       }
       <Grid item sx={{ bottom: '20px', left: 0, position: 'absolute', width: 'fit-content' }}>

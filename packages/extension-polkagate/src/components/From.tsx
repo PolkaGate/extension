@@ -13,9 +13,11 @@ import type { ApiPromise } from '@polkadot/api';
 import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
+import { Chain } from '@polkadot/extension-chains/types';
+
 import { useChain, useFormatted } from '../hooks';
-import { Identity, ShortAddress } from '.';
 import { getSubstrateAddress } from '../util/utils';
+import { Identity, ShortAddress } from '.';
 
 
 interface Props {
@@ -24,17 +26,18 @@ interface Props {
   formatted?: string;
   style?: SxProps<Theme> | undefined;
   title: string;
+  _chain?: Chain | null | undefined;
 }
 
-function From({ address, api, formatted, style, title }: Props): React.ReactElement<Props> {
+function From({ address, api, _chain, formatted, style, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const chain = useChain(formatted || address);
+  const chain = useChain(formatted || address, _chain);
   const _formatted = useFormatted(address);
   const _address = address || getSubstrateAddress(formatted);
 
   return (
     <Grid container item sx={style}>
-      <Typography style={{ fontSize: '16px', fontWeight: 300 }}>
+      <Typography sx={{ fontSize: '16px', fontWeight: 300 }}>
         {title}
       </Typography>
       <Grid alignItems='center' container justifyContent='flex-start' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, py: '5px', mt: '2px' }}>

@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
-import { Tooltip } from '@mui/material';
-import React, { MouseEventHandler, useCallback } from 'react';
+import React, { MouseEventHandler } from 'react';
 
 import { useTranslation } from '../hooks';
 import ActionText from './ActionText';
-import TextAreaWithLabel from './TextAreaWithLabel';
 import OnActionToolTip from './OnActionToolTip';
+import TextAreaWithLabel from './TextAreaWithLabel';
 
 interface Props {
   isCopied: boolean;

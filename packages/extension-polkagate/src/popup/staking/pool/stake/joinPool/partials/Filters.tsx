@@ -42,8 +42,8 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
     { text: t('Staked: Low to High'), value: 2 },
     { text: t('Members: High to Low'), value: 3 },
     { text: t('Members: Low to High'), value: 4 },
-    // { text: t('Commissions: High to Low'), value: 5 },
-    // { text: t('Commissions: Low to High'), value: 6 }
+    { text: t('Commissions: High to Low'), value: 5 },
+    { text: t('Commissions: Low to High'), value: 6 }
   ], [t]);
 
   useEffect(() => {

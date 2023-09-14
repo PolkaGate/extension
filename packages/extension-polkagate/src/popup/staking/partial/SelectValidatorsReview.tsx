@@ -18,8 +18,8 @@ import { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../components';
-import { useAccountName, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
+import { ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../components';
+import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import Confirmation from '../../../partials/Confirmation';
 import broadcast from '../../../util/api/broadcast';
@@ -47,9 +47,8 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
   const proxies = useProxies(api, formatted);
   const token = useToken(address);
   const decimal = useDecimal(address);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -67,7 +66,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
   }, [newSelectedValidators, poolId]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -119,7 +118,7 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: 'Select Validator',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -188,12 +187,12 @@ export default function Review({ address, allValidatorsIdentities, api, newSelec
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={nominate}
           proxiedAddress={formatted}
           proxies={proxyItems}
-          proxyTypeFilter={['Any', 'NonTransfer']}
+          proxyTypeFilter={['Any', 'NonTransfer', poolId ? 'NominationPools' : 'Staking']}
           selectedProxy={selectedProxy}
           setIsPasswordError={setIsPasswordError}
           setSelectedProxy={setSelectedProxy}

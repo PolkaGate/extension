@@ -3,30 +3,30 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Divider, Grid, Link, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { subscan } from '../assets/icons/';
 import { ActionContext, Motion, Popup, ShortAddress, TwoButtons } from '../components';
 import { useTranslation } from '../hooks';
+import Explorer from '../popup/history/Explorer';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import { TxInfo } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { HeaderBrand, SubTitle } from '.';
-import Explorer from '../popup/history/Explorer';
 
 interface Props {
-  showConfirmation: boolean;
-  headerTitle: string;
-  txInfo: TxInfo;
-  primaryBtnText: string;
-  onPrimaryBtnClick: () => void;
-  secondaryBtnText?: string;
-  onSecondaryBtnClick?: () => void;
   children: React.ReactNode;
+  headerTitle: string;
+  onPrimaryBtnClick: () => void;
+  onSecondaryBtnClick?: () => void;
+  primaryBtnText: string;
+  secondaryBtnText?: string;
+  showConfirmation: boolean;
+  subtitle?: string;
+  txInfo: TxInfo;
 }
 
-export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, headerTitle, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, subtitle, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
@@ -45,7 +45,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
           shortBorder
           text={headerTitle}
         />
-        <SubTitle label={txInfo.success ? t<string>('Completed') : t<string>('Failed')} />
+        <SubTitle label={txInfo.success ? subtitle || t<string>('Completed') : t<string>('Failed')} />
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
@@ -107,7 +107,7 @@ export default function Confirmation({ children, headerTitle, onPrimaryBtnClick,
         }
         {txInfo?.txHash &&
           <Grid container justifyContent='center' pt='5px'>
-            <Explorer chainName={chainName} txHash={txInfo?.txHash} />
+            <Explorer chainName={chainName} formatted={txInfo?.from?.address} txHash={txInfo?.txHash} />
           </Grid>
         }
         <TwoButtons

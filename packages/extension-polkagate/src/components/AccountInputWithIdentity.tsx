@@ -21,9 +21,11 @@ interface Props {
   setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   ignoreAddress?: string
   name?: string;
+  helperText?: string;
+  disabled?: boolean;
 }
 
-export default function AccountInputWithIdentity ({ address, chain, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
@@ -37,19 +39,22 @@ export default function AccountInputWithIdentity ({ address, chain, ignoreAddres
         address={address}
         allAddresses={allAddresses}
         chain={chain}
+        disabled={disabled}
+        helperText={helperText}
         label={label}
         placeHolder={t<string>('Paste the address here')}
         setAddress={setAddress}
         showIdenticon={false}
       />
       {address && chain &&
-        <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: theme.palette.secondary.light, borderTop: 0, fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em', mt: '-4px', pl: '7px', pt: '8px' }} xs={12}>
+        <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: theme.palette.secondary.light, borderTop: 0, fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em', maxWidth: '100%', mt: '-4px', pl: '7px', pt: '8px' }} xs={12}>
           <Identity
             api={api}
             chain={chain}
             formatted={address}
             identiconSize={31}
             name={name}
+            style={{ maxWidth: '100%', width: 'fit-content', height: '51px' }}
           />
         </Grid>
       }

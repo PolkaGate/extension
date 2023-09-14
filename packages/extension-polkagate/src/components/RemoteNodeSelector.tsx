@@ -3,9 +3,7 @@
 
 import React, { useCallback } from 'react';
 
-import { useAccount, useChainName, useEndpoint2, useEndpoints, useTranslation } from '../hooks';
-import { updateMeta } from '../messaging';
-import { prepareMetaData } from '../util/utils';
+import { useAccount, useChainName, useEndpoint, useEndpoints, useTranslation } from '../hooks';
 import { Select } from '.';
 
 interface Props {
@@ -13,16 +11,32 @@ interface Props {
   genesisHash: string | undefined;
 }
 
+export type ChromeStorageGetResponse = {
+  [key: string]: {
+    [key: string]: string | undefined;
+  } | undefined;
+};
+
 export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = useChainName(address);
   const account = useAccount(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);
-  const endpoint = useEndpoint2(address);
+  const endpoint = useEndpoint(address);
 
   const _onChangeEndpoint = useCallback((newEndpoint?: string | undefined): void => {
-    // eslint-disable-next-line no-void
-    chainName && address && void updateMeta(address, prepareMetaData(chainName, 'endpoint', newEndpoint));
+    chainName && address && chrome.storage.local.get('endpoints', (res: { endpoints?: ChromeStorageGetResponse }) => {
+      const i = `${address}`;
+      const j = `${chainName}`;
+      const savedEndpoints: ChromeStorageGetResponse = res?.endpoints || {};
+
+      savedEndpoints[i] = savedEndpoints[i] || {};
+
+      savedEndpoints[i][j] = newEndpoint;
+
+      // eslint-disable-next-line no-void
+      void chrome.storage.local.set({ endpoints: savedEndpoints });
+    });
   }, [address, chainName]);
 
   return (

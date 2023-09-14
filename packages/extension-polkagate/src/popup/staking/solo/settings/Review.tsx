@@ -20,8 +20,8 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../components';
-import { useAccountName, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
+import { ActionContext, Identity, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -74,11 +74,10 @@ function RewardsDestination({ chain, newSettings, settings }: { settings: SoloSe
 export default function Review({ address, api, newSettings, setRefresh, setShow, setShowSettings, settings, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
-  const name = useAccountName(address);
+  const name = useAccountDisplay(address);
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const onAction = useContext(ActionContext);
-  const { accounts } = useContext(AccountContext);
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -92,12 +91,13 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
   const setController = api && api.tx.staking.setController; // sign by stash
   const setPayee = api && api.tx.staking.setPayee; // sign by Controller
   const batchAll = api && api.tx.utility.batchAll;
+  const isControllerDeprecated = setController ? setController.meta.args.length === 0 : undefined;
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useMemo(() => accounts?.find((a) => a.address === getSubstrateAddress(selectedProxyAddress))?.name, [accounts, selectedProxyAddress]);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   useEffect(() => {
-    if (!setController || !setPayee || !api|| !batchAll || !formatted) {
+    if (!setController || !setPayee || !api || !batchAll || !formatted) {
       return;
     }
 
@@ -112,14 +112,18 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     }
 
     if (String(formatted) === String(settings.stashId) && newSettings?.controllerId && settings.controllerId !== newSettings?.controllerId) {
-      txs.push(setController(newSettings?.controllerId)); // Second, the order to execute
+      txs.push(setController(newSettings?.controllerId)); // Second, the order to execute, for non-deprecated case
+    }
+
+    if (String(formatted) === String(settings.stashId) && isControllerDeprecated && settings.controllerId !== formatted) {
+      txs.push(setController()); // Second, for deprecated case
     }
 
     const tx = txs.length === 2 ? batchAll(txs) : txs[0];
 
     setTx(tx);
     tx && tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
-  }, [api, batchAll, formatted, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
+  }, [api, batchAll, formatted, isControllerDeprecated, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -161,7 +165,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
         date: Date.now(),
         failureText,
         fee: fee || String(estimatedFee || 0),
-        from: { address: from, name: selectedProxyName || name },
+        from: { address: formatted, name },
         subAction: 'Settings',
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -183,16 +187,19 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     setShow(false);
   }, [setShow]);
 
-  const Controller = useCallback(() => (
-    <Grid alignItems='center' container direction='column' justifyContent='center' my='5px'>
+  const Controller = useCallback(() => {
+    const controllerId = isControllerDeprecated && formatted !== settings.controllerId ? formatted : newSettings.controllerId;
+
+    return (<Grid alignItems='center' container direction='column' justifyContent='center' my='5px'>
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t<string>('Controller account')}
       </Typography>
-      <Identity chain={chain} formatted={newSettings.controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
-      <ShortAddress address={newSettings.controllerId} />
+      <Identity chain={chain} formatted={controllerId} identiconSize={31} style={{ height: '40px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <ShortAddress address={controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
-  ), [chain, newSettings?.controllerId, t]);
+    );
+  }, [chain, formatted, isControllerDeprecated, newSettings.controllerId, settings.controllerId, t]);
 
   return (
     <Motion>
@@ -210,7 +217,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
         }
         <SubTitle label={t('Review')} />
         <Container disableGutters sx={{ px: '30px' }}>
-          {newSettings?.controllerId &&
+          {(newSettings?.controllerId || (isControllerDeprecated && formatted !== settings.controllerId)) &&
             <Controller />
           }
           {newSettings?.payee &&
@@ -230,7 +237,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name}`}
+          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
           onChange={setPassword}
           onConfirmClick={applySettings}
           proxiedAddress={settings.stashId}

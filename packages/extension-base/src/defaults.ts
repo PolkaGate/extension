@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json'] as const;
+// Added for Polkagate
+const START_WITH_PATH = ['/governance/', '/manageIdentity/', '/send/'] as const;
 const PHISHING_PAGE_REDIRECT = '/phishing-page-detected';
 // const EXTENSION_PREFIX = process.env.EXTENSION_PREFIX as string || '';
 const EXTENSION_PREFIX = 'POLKAGATE';
@@ -20,6 +22,7 @@ export {
   EXTENSION_PREFIX,
   PORT_CONTENT,
   PORT_EXTENSION,
+  START_WITH_PATH, // Added for Polkagate
   MESSAGE_ORIGIN_PAGE,
   MESSAGE_ORIGIN_CONTENT
 };

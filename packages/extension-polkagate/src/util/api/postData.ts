@@ -3,7 +3,7 @@
 /* eslint-disable header/header */
 
 export default async function postData(url: string, data = {}) {
-  console.log('calling post data, url:', url);
+  // console.log('calling post data, url:', url);
 
   // Default options are marked with *
   const response = await fetch(url, {
