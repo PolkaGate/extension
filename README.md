@@ -18,7 +18,7 @@ Currently, the following features are available:
   - Proxy management
   - Staking (Solo and Pool Staking)
   - Support different endpoints
-  - Transfer funds
+  - Transfer funds (Cross chain transfer)
   - View balances (crypto/USD)
   - View transaction history
   - View an address as QR code
@@ -27,7 +27,6 @@ The following features will be available in the next milestone:
 
   - Light client integration   
   - Social recovery
-  - Cross chain transfer
   
 
 # ![Polkagate extension intro](https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/new/intro.png)
