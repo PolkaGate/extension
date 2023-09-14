@@ -112,7 +112,7 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
         api={api}
         chain={chain}
         friendsList={recoveryInformation.friends.map((friend) => String(friend))}
-        style={{ maxHeight: '242px' }}
+        style={{ maxHeight: '255px' }}
         title={t<string>('Trusted friends')}
       />
       <RecoveryInformationDisplay />
@@ -125,7 +125,7 @@ export default function RecoveryDetail({ api, chain, recoveryInformation, setMod
           {t<string>('If you\'ve lost access to this account, start the recovery process with a new account and contact trusted friends for account recovery.')}
         </Warning>
       </Grid>
-      <Grid container item justifyContent='space-between' pt='80px'>
+      <Grid container item justifyContent='space-between' pt='60px'>
         <Grid container item xs={3}>
           <PButton
             _mt='1px'
