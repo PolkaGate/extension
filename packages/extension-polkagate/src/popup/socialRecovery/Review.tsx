@@ -36,6 +36,7 @@ import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
+import { toTitleCase } from '../governance/utils/util';
 
 interface Props {
   address: string;
@@ -189,7 +190,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
         failureText,
         fee: fee || String(estimatedFee || 0),
         from: { address: String(formatted), name },
-        subAction: `${mode}`,
+        subAction: toTitleCase(mode),
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         txHash: txHash || ''
