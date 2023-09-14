@@ -56,7 +56,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             />
             <Typography fontSize='22px' fontWeight={500} pl='15px'>
               {friendsCount !== 'zero'
-                ? t<string>(`You initiated a recovery and need ${friendsCount} vouches.`)
+                ? t<string>(`You initiated a recovery and need ${friendsCount} vouch${friendsCount !== 'one' ? 'es' : ''}.`)
                 : t<string>('You initiated a recovery and received all required vouches.')}
             </Typography>
           </Grid>
