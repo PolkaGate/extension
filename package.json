@@ -44,6 +44,8 @@
     "@mui/material": "^5.8.3",
     "@polkadot/api": "^10.9.1",
     "@polkadot/apps-config": "^0.132.1",
+    "@polkadot/rpc-provider": "^10.9.1",
+    "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
     "better-react-spinkit": "^2.0.4",

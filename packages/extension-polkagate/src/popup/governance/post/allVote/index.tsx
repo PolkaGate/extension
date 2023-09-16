@@ -83,7 +83,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           return setAllVotes(null);
         }
 
-        console.log('All votes from PA:', res);
+        // console.log('All votes from PA:', res);
 
         setAllVotes(res);
         setFilteredVotes({
