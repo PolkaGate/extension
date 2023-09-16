@@ -330,7 +330,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               txInfo?.success ? t('The fund of your lost account withdrawn') : t('Withdrawing the fund of your lost account failed')
             )}
           </Typography>
-          {(mode === 'InitiateRecovery' || mode === 'ModifyRecovery' || mode === 'VouchRecovery') &&
+          {(step === STEPS.REVIEW || step === STEPS.PROXY) && (mode === 'InitiateRecovery' || mode === 'ModifyRecovery' || mode === 'VouchRecovery') &&
             <Typography fontSize='22px' fontWeight={700}>
               {(mode === 'InitiateRecovery' || mode === 'VouchRecovery')
                 ? t('Step 2/2: Review')
