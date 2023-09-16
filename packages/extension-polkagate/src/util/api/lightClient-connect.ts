@@ -33,7 +33,7 @@ const chainSpec = (networkName: string | undefined) => {
   }
 };
 
-export default async function LCConnector(endpoint: string | undefined): Promise<ApiPromise> {
+export default async function LCConnector(endpoint: string): Promise<ApiPromise> {
   const chainName = extractChainName(endpoint);
   const currentChainSpec = chainSpec(chainName);
 
