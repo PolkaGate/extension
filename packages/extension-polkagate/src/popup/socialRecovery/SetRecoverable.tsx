@@ -10,7 +10,7 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Input, Select, ShowBalance, TwoButtons } from '../../components';
-import { useAccountsInfo, useChain, useFormatted, useFormatted2, useTranslation } from '../../hooks';
+import { useAccountsInfo, useChain, useFormatted, useTranslation } from '../../hooks';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 import TrustedFriendsList from './partial/TrustedFriendsList';

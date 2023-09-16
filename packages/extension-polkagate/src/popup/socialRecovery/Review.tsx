@@ -53,10 +53,11 @@ interface Props {
   activeLost: ActiveRecoveryFor | null;
   withdrawInfo: WithdrawInfo | undefined;
   vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
-  allActiveRecoveries: ActiveRecoveryFor[] | null | undefined
+  allActiveRecoveries: ActiveRecoveryFor[] | null | undefined;
+  setMode: (value: React.SetStateAction<SocialRecoveryModes>) => void;
 }
 
-export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setRefresh, setStep, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
+export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -221,8 +222,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
+    setMode(undefined);
     setStep(STEPS.CHECK_SCREEN);
-  }, [setRefresh, setStep]);
+  }, [setMode, setRefresh, setStep]);
 
   const WithdrawDetails = () => {
     const toBeWithdrawn: { label: string; amount: BN | Balance }[] = [];

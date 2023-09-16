@@ -171,9 +171,10 @@ export default function SocialRecovery(): React.ReactElement {
       return;
     }
 
+    clearInformation();
     setFetching(true);
     fetchRecoveryInformation();
-  }, [formatted, api, chain?.genesisHash, refresh, recoveryInfo, activeProxy, activeRecoveries, fetching, fetchRecoveryInformation]);
+  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRecoveries, fetching, fetchRecoveryInformation]);
 
   useEffect(() => {
     if (recoveryInfo === undefined || activeProxy === undefined || activeRecoveries === undefined) {
@@ -454,6 +455,7 @@ export default function SocialRecovery(): React.ReactElement {
             mode={mode}
             recoveryConfig={recoveryConfig}
             recoveryInfo={recoveryInfo}
+            setMode={setMode}
             setRefresh={setRefresh}
             setStep={setStep}
             step={step}
