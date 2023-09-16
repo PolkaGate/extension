@@ -51,7 +51,6 @@ export default async function LCConnector(endpoint: string | undefined): Promise
     return Promise.reject(Error);
   } catch (error) {
     console.error(error);
-    console.log('fail');
 
     return Promise.reject(error);
   }
