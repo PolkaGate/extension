@@ -51,36 +51,88 @@ const BootstrapInput = styled(InputBase)<{ address?: string | null }>(({ address
   }
 }));
 
+const Item: React.FC<{ height?: string, logoSize?: number, text: string }> = ({ height = '20px', logoSize = 19.8, text }) => {
+  const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
+  const logo = getLogo(chainName(text));
+
+  return (
+    <Grid container height={height} justifyContent='flex-start'>
+      {text !== 'Allow use on any chain' && logo &&
+        <Grid alignItems='center' container item pr='10px' width='fit-content'>
+          <ChainLogo chainName={text} size={logoSize} />
+        </Grid>
+      }
+      <Grid alignItems='center' container item justifyContent='flex-start' width='fit-content'>
+        <Typography fontSize='14px' fontWeight={400}>
+          {text}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
 function FullscreenChain({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useGenesisHashOptions();
 
   const _options = useMemo(() => {
-    _allOptions.filter(({ text }) => text === 'Allow use on any chain');
+    const filteredOptions = _allOptions.filter(({ text }) => text === 'Allow use on any chain');
 
-    return options || _allOptions;
+    return options || filteredOptions;
   }, [_allOptions, options]);
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
   const [isTestnetEnabled, setIsTestnetEnabled] = useState<boolean>();
 
-  const _disabledItems = useMemo((): (string | number)[] | undefined => {
-    if (disabledItems && !isTestnetEnabled) {
-      return disabledItems.concat(TEST_NETS) as (string | number)[];
-    }
-
-    if (!isTestnetEnabled) {
-      return TEST_NETS;
-    }
-
-    return disabledItems;
-  }, [disabledItems, isTestnetEnabled]);
+  const _disabledItems = useMemo((): (string | number)[] | undefined =>
+    !isTestnetEnabled
+      ? [...(disabledItems || []), ...TEST_NETS]
+      : disabledItems
+    , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
     setIsTestnetEnabled(window.localStorage.getItem('testnet_enabled') === 'true');
     onChange(defaultValue);
   }, [defaultValue, onChange]);
+
+  const updateRecentChains = useCallback((currentGenesisHash: string) => {
+    chrome.storage.local.get('RecentChains', (res) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
+
+        return;
+      }
+
+      const accountsAndChains = res?.RecentChains ?? {};
+      let myRecentChains = accountsAndChains[address] as string[];
+
+      if (!myRecentChains) {
+        if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
+          accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
+        } else {
+          INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
+          accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
+        }
+
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          }
+        });
+      } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
+        myRecentChains.unshift(currentGenesisHash);
+        myRecentChains.pop();
+        accountsAndChains[address] = myRecentChains;
+
+        chrome.storage.local.set({ RecentChains: accountsAndChains }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          }
+        });
+      }
+    });
+  }, [address]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {
@@ -88,37 +140,13 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
 
       const currentGenesisHash = newGenesisHash?.startsWith && newGenesisHash.startsWith('0x') ? newGenesisHash : undefined;
 
-      if (!address || !currentGenesisHash) {
-        return;
+      if (address && currentGenesisHash) {
+        updateRecentChains(currentGenesisHash);
       }
-
-      chrome.storage.local.get('RecentChains', (res) => {
-        const accountsAndChains = res?.RecentChains ?? {};
-        let myRecentChains = accountsAndChains[address] as string[];
-
-        if (!myRecentChains) {
-          if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(currentGenesisHash)) {
-            accountsAndChains[address] = INITIAL_RECENT_CHAINS_GENESISHASH;
-          } else {
-            INITIAL_RECENT_CHAINS_GENESISHASH.length = 3;
-            accountsAndChains[address] = [...INITIAL_RECENT_CHAINS_GENESISHASH, currentGenesisHash];
-          }
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        } else if (myRecentChains && !(myRecentChains.includes(currentGenesisHash))) {
-          myRecentChains.unshift(currentGenesisHash);
-          myRecentChains.pop();
-          accountsAndChains[address] = myRecentChains;
-
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ RecentChains: accountsAndChains });
-        }
-      });
     } catch (error) {
       console.error(error);
     }
-  }, [address, onChange]);
+  }, [address, onChange, updateRecentChains]);
 
   useEffect(() => {
     setSelectedValue(defaultValue);
@@ -131,27 +159,6 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     setSelectedValue(event.target.value);
     toggleMenu();
   }, [onChangeNetwork, toggleMenu]);
-
-  const chainName = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
-
-  const Item = ({ height = '20px', logoSize = 19.8, text }: { height?: string, logoSize?: number, text: string }) => {
-    const logo = getLogo(chainName(text));
-
-    return (
-      <Grid container height={height} justifyContent='flex-start'>
-        {text !== 'Allow use on any chain' && logo &&
-          <Grid alignItems='center' container item pr='10px' width='fit-content'>
-            <ChainLogo chainName={text} size={logoSize} />
-          </Grid>
-        }
-        <Grid alignItems='center' container item justifyContent='flex-start' width='fit-content'>
-          <Typography fontSize='14px' fontWeight={400}>
-            {text}
-          </Typography>
-        </Grid>
-      </Grid>
-    );
-  };
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
@@ -248,6 +255,5 @@ function FullscreenChain({ address, defaultValue, disabledItems, helperText, lab
     </Grid>
   );
 }
-
 
 export default React.memo(FullscreenChain);

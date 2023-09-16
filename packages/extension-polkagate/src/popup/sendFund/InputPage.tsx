@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { Balance } from '@polkadot/types/interfaces';
-import { BN, BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
@@ -32,10 +32,6 @@ interface Props {
 
 const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
-
-function isNumber(variable: any) {
-  return typeof variable === 'number';
-}
 
 export const Title = ({ padding = '30px 0px 20px', text }: { text: string, padding?: string }) => {
   const theme = useTheme();
@@ -269,7 +265,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               {t<string>('Transferable amount')}
             </Typography>
             <Grid alignItems='center' container item sx={{ border: 1, height: '48px', p: '0 5px', fontSize: '18px', borderColor: 'rgba(75, 75, 75, 0.3)' }}>
-              <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} token={balances?.token} />
+              <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} skeletonWidth={120} token={balances?.token} />
             </Grid>
           </Grid>
           <Grid item md={4.8} xs={12}>

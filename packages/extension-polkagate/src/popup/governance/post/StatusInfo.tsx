@@ -70,7 +70,7 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
   const decisionUnitPassed = useMemo(() => getUnitPassed(1, 'decisionPeriod'), [getUnitPassed]);
   const confirmUnitPassed = useMemo(() => getUnitPassed(2, 'confirmPeriod'), [getUnitPassed]);
 
-  if (!isOngoing) {
+  if (!isOngoing || confirmUnitPassed === null) {
     return (<></>);
   }
 
@@ -82,10 +82,10 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
         </Typography>
       </Grid>
       <Grid item>
-        <Infotip2 showQuestionMark text={remainingTime(remainingBlocks) || t('Fetching ...')}>
+        <Infotip2 showQuestionMark text={`${remainingTime(remainingBlocks)} remaining` || t('Fetching ...')}>
           <Grid item sx={{ pr: '5px' }}>
             <Typography sx={{ fontSize: '18px', fontWeight: 400 }}>
-              {_status === t('Preparing') &&
+              {_status === t('Preparing') && prepareUnitPassed !== null &&
                 <ShowValue value={prepareUnitPassed && track?.[1]?.preparePeriod ? `${blockToUnit(track?.[1]?.preparePeriod)} ${prepareUnitPassed} of ${blockToX(track?.[1]?.preparePeriod, true)}` : undefined} />
               }
               {_status === t('Deciding') &&

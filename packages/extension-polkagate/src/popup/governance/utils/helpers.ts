@@ -89,11 +89,11 @@ export async function getReferendumStatistics(chainName: string, type: 'referend
         })
         .then((data: { message: string; data }) => {
           if (data.message === 'Success') {
-            console.log('Referendum Statistics:', data.data);
+            // console.log('Referendum Statistics:', data.data);
 
             resolve(data.data);
           } else {
-            console.log(`Fetching message ${data.message}`);
+            // console.log(`Fetching message ${data.message}`);
             resolve(null);
           }
         });
@@ -138,7 +138,7 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
 }
 
 export async function getLatestReferendums(chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
-  console.log(`Getting Latest referendum on ${chainName} from PA ...`);
+  // console.log(`Getting Latest referendum on ${chainName} from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -149,7 +149,7 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
     .then((response) => response.json())
     .then((data) => {
       if (data.posts?.length) {
-        console.log(`Latest referendum on ${chainName} from PA:`, data.posts);
+        // console.log(`Latest referendum on ${chainName} from PA:`, data.posts);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data.posts;
@@ -167,7 +167,7 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
 }
 
 export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
-  console.log(`Getting All Votes on ${chainName} for refIndex: ${refIndex} from PA ...`);
+  // console.log(`Getting All Votes on ${chainName} for refIndex: ${refIndex} from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
@@ -178,7 +178,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        console.log(`All votes on ${chainName} from PA:`, data);
+        // console.log(`All votes on ${chainName} from PA:`, data);
 
         return data;
       } else {

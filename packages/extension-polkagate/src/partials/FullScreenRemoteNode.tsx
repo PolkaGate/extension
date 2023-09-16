@@ -104,6 +104,10 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   const calculateAndSetDelay = useCallback(() => {
     endpointUrl && CalculateNodeDelay(endpointUrl)
       .then((response) => {
+        if (!response) {
+          return;
+        }
+
         setFetchedApiAndDelay({ fetchedApi: response.api, fetchedDelay: response.delay });
         setEndpointsDelay((prevEndpoints) => {
           return prevEndpoints?.map((endpoint) => {
@@ -115,7 +119,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
           });
         });
 
-        response.api.disconnect().catch(console.error);
+        response.api && response.api.disconnect().catch(console.error);
       })
       .catch(console.error);
   }, [endpointUrl]);
@@ -195,7 +199,9 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
               <Typography fontSize='16px' fontWeight={selectedEndpoint ? 500 : 400} pr='10px'>
                 {endpoint.name}
               </Typography>
-              <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
+              {!endpoint.name.includes('light client') &&
+                <NodeStatusAndDelay endpointDelay={endpoint.delay} isSelected={selectedEndpoint} />
+              }
             </Grid>
           );
         })}

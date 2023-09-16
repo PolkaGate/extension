@@ -46,7 +46,16 @@ export default function Preview({ address, cantModify, setAlterType, setStep, vo
       ? getConviction(vote.standard.vote)
       : vote?.delegating
         ? getConviction(String(vote.delegating.conviction))
-        : 0;
+        : vote?.splitAbstain
+          ? 1
+          : undefined;
+
+    if (conviction === undefined) {
+      console.error('Conviction is undefined!');
+
+      return;
+    }
+
     const multipliedAmount = conviction !== 0.1 ? voteAmountBN.muln(conviction) : voteAmountBN.divn(10);
 
     return myDelegations ? new BN(myDelegations).add(multipliedAmount) : multipliedAmount;

@@ -65,11 +65,9 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-
-              'Introducing complete on-chain identity management support.',
-              'Experience enhanced background performance for smoother operation.',
-              'Stay informed by viewing RPC signal power directly during fullscreen mode.',
-              'Enjoy a seamless experience with the resolution of various known issues.',
+              'Now you can choose an asset and view its balance.',
+              'Experience full-screen transfer page with support for asset hubs cross-chain asset transfers.',
+              'Experience a smoother journey with the resolution of numerous known issues.'
             ]}
           />
         </Grid>

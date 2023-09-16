@@ -15,7 +15,7 @@ import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
 
 async function getPool(endpoint, stakerAddress, id = undefined) {
-  console.log(`getPool is called for ${stakerAddress} id:${id}`);
+  console.log(`getPool is called for ${stakerAddress} id:${id} endpoint:${endpoint}`);
   const api = await getApi(endpoint);
   const token = api.registry.chainTokens[0];
   const decimal = api.registry.chainDecimals[0];

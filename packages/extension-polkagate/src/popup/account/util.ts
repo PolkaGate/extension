@@ -29,7 +29,7 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
       return balances?.soloTotal ?? BN_ZERO;
     case ('balance'):
     case ('available'):
-    case ('transferrable'):
+    case ('transferable'):
     case ('available balance'):
       return balances.availableBalance;
     case ('reserved'):

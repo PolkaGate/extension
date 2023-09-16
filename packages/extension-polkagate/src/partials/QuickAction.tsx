@@ -39,8 +39,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
   const handleClose = useCallback(() => quickActionOpen === address && setQuickActionOpen(undefined), [address, quickActionOpen, setQuickActionOpen]);
 
   const goToSend = useCallback(() => {
-    address && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
-  }, [address]);
+    address && account?.genesisHash && windowOpen(`/send/${String(address)}/undefined`).catch(console.error);
+  }, [account?.genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
     address && STAKING_CHAINS.includes(account?.genesisHash) && history.push({
@@ -101,7 +101,11 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
           exceptionWidth={40}
           icon={
             <FontAwesomeIcon
-              color={theme.palette.text.primary}
+              color={
+                account?.genesisHash
+                  ? theme.palette.text.primary
+                  : theme.palette.action.disabledBackground
+              }
               icon={faPaperPlane}
               style={{ height: '20px' }}
             />
@@ -175,8 +179,8 @@ export default function QuickAction({ address, quickActionOpen, setQuickActionOp
             <FontAwesomeIcon
               color={
                 account?.genesisHash
-                  ? `${theme.palette.text.primary}`
-                  : `${theme.palette.action.disabledBackground}`
+                  ? theme.palette.text.primary
+                  : theme.palette.action.disabledBackground
               }
               icon={GOVERNANCE_CHAINS.includes(account?.genesisHash) ? faVoteYea : faHistory}
               style={{ height: '20px' }}
