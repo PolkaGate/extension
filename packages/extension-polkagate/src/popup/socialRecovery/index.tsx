@@ -117,6 +117,27 @@ export default function SocialRecovery(): React.ReactElement {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
 
+  const fetchRecoveryInformation = useCallback(() => {
+    if (!api || !formatted) {
+      return;
+    }
+
+    api.query.recovery.recoverable(formatted).then((r) => {
+      setRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
+      console.log('is recoverable:', r.isSome ? JSON.parse(JSON.stringify(r.unwrap())) : 'nope');
+    }).catch(console.error);
+
+    api.query.recovery.proxy(formatted).then((p) => {
+      if (p.isEmpty) {
+        setActiveProxy(null);
+
+        return;
+      }
+
+      setActiveProxy(p.toHuman() as string);
+    }).catch(console.error);
+  }, [api, formatted]);
+
   const clearInformation = useCallback(() => {
     setRecoveryInfo(undefined);
     setRecoveryConfig(undefined);
@@ -151,22 +172,8 @@ export default function SocialRecovery(): React.ReactElement {
     }
 
     setFetching(true);
-
-    api.query.recovery.recoverable(formatted).then((r) => {
-      setRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
-      console.log('is recoverable:', r.isSome ? JSON.parse(JSON.stringify(r.unwrap())) : 'nope');
-    }).catch(console.error);
-
-    api.query.recovery.proxy(formatted).then((p) => {
-      if (p.isEmpty) {
-        setActiveProxy(null);
-
-        return;
-      }
-
-      setActiveProxy(p.toHuman() as string);
-    }).catch(console.error);
-  }, [formatted, api, chain?.genesisHash, refresh, recoveryInfo, activeProxy, activeRecoveries, fetching]);
+    fetchRecoveryInformation();
+  }, [formatted, api, chain?.genesisHash, refresh, recoveryInfo, activeProxy, activeRecoveries, fetching, fetchRecoveryInformation]);
 
   useEffect(() => {
     if (recoveryInfo === undefined || activeProxy === undefined || activeRecoveries === undefined) {
@@ -174,6 +181,7 @@ export default function SocialRecovery(): React.ReactElement {
     }
 
     setFetching(false);
+    setRefresh(false);
     setStep(STEPS.INDEX);
   }, [activeProxy, activeRecoveries, recoveryInfo]);
 
