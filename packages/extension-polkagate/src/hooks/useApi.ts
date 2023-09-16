@@ -82,8 +82,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
         handleNewApi(LCapi, endpoint);
         console.log('🖌️ light client connected', String(LCapi.genesisHash.toHex()));
       }).catch((err) => {
-        console.error(err);
-        console.log('📌 light client failed.');
+        console.error('📌 light client failed:', err);
       });
     }
 
