@@ -48,8 +48,6 @@ export default async function LCConnector(endpoint: string): Promise<ApiPromise>
 
     return Promise.reject(new Error(`Unsupported network: ${chainName}`));
   } catch (error) {
-    console.error(error);
-
     return Promise.reject(error);
   }
 }
