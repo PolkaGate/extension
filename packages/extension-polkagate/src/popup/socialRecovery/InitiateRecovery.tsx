@@ -389,8 +389,8 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
             primaryBtnText={initiatedRecovery || activeProxy
               ? t<string>('Withdraw')
               : lostAccountRecoveryInfo === false
-                ? t<string>('Proceed')
-                : t<string>('Verify status')}
+                ? t<string>('Verify status')
+                : t<string>('Proceed')}
             secondaryBtnText={t<string>('Back')}
           />
         </Grid>
