@@ -38,7 +38,7 @@ interface Props {
   activeProxy: string | null;
 }
 
-interface SessionIfo {
+interface SessionInfo {
   eraLength: number;
   eraProgress: number;
   currentEra: number;
@@ -67,7 +67,7 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
   const [fetchingLostAccountInfos, setFetchingLostAccountInfos] = useState<boolean>(false);
   const [goReview, setGoReview] = useState<boolean>(false);
-  const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
+  const [sessionInfo, setSessionInfo] = useState<SessionInfo>();
 
   const recoveryDeposit = useMemo(() => api ? new BN(api.consts.recovery.recoveryDeposit.toString()) : BN_ZERO, [api]);
   const delayEndBlock = useMemo(() => (initiatedRecovery?.createdBlock ?? 0) + (lostAccountRecoveryInfo ? lostAccountRecoveryInfo?.delayPeriod?.toNumber() : 0), [initiatedRecovery?.createdBlock, lostAccountRecoveryInfo]);
