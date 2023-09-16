@@ -10,11 +10,11 @@ import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Input, Select, ShowBalance, TwoButtons } from '../../components';
-import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
+import { useAccountsInfo, useChain, useFormatted, useFormatted2, useTranslation } from '../../hooks';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
+import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 import TrustedFriendsList from './partial/TrustedFriendsList';
 import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
-import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 
 interface Props {
   address: string | undefined;
@@ -39,6 +39,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   const theme = useTheme();
   const chain = useChain(address);
   const accountsInfo = useAccountsInfo(api, chain);
+  const formatted = useFormatted(address);
 
   const recoveryDelayLengthOptions = useMemo(() => ([
     { text: 'Blocks', value: '0' },
@@ -125,19 +126,20 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   }, [recoveryDelayLength, recoveryDelayNumber]);
 
   const addNewFriend = useCallback((addr: FriendWithId | undefined) => {
-    if (!addr) {
+    if (!addr || !formatted) {
       return;
     }
 
     const alreadyAdded = selectedFriends.find((selectedFriend) => selectedFriend === addr.address);
+    const lostAsFriend = addr.address === formatted;
 
-    if (alreadyAdded || selectedFriends.length === maxFriends) {
+    if (alreadyAdded || lostAsFriend || selectedFriends.length === maxFriends) {
       return;
     }
 
     setSelectedFriends((pervFriends) => [...pervFriends, addr.address]);
     setSelectedFriendsToShow((pervFriendsToShow) => [...pervFriendsToShow, addr]);
-  }, [maxFriends, selectedFriends]);
+  }, [formatted, maxFriends, selectedFriends]);
 
   const removeNewFriend = useCallback((addr: FriendWithId) => {
     setSelectedFriends((prevFriends) => {
