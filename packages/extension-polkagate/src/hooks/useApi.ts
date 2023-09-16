@@ -78,37 +78,43 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    LCConnector(endpoint).then((LCapi) => {
-      setApi(LCapi);
-      console.log('🖌️ light client connected', String(LCapi.genesisHash.toHex()));
+    if (endpoint?.startsWith('light')) {
+      LCConnector(endpoint).then((LCapi) => {
+        setApi(LCapi);
+        console.log('🖌️ light client connected', String(LCapi.genesisHash.toHex()));
 
-      const toSaveApi = apisContext.apis[String(LCapi.genesisHash.toHex())] ?? [];
+        const toSaveApi = apisContext.apis[String(LCapi.genesisHash.toHex())] ?? [];
 
-      const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
+        const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
 
-      if (indexToDelete !== -1) {
-        toSaveApi.splice(indexToDelete, 1);
-      }
+        if (indexToDelete !== -1) {
+          toSaveApi.splice(indexToDelete, 1);
+        }
 
-      toSaveApi.push({
-        api: LCapi,
-        endpoint,
-        isRequested: false
+        toSaveApi.push({
+          api: LCapi,
+          endpoint,
+          isRequested: false
+        });
+
+        apisContext.apis[String(LCapi.genesisHash.toHex())] = toSaveApi;
+        apisContext.setIt(apisContext.apis);
+      }).catch((err) => {
+        console.error(err);
+        console.log('📌 light client failed.');
       });
 
-      apisContext.apis[String(LCapi.genesisHash.toHex())] = toSaveApi;
+      const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
+
+      toSaveApi.push({ endpoint, isRequested: true });
+
+      apisContext.apis[chain.genesisHash] = toSaveApi;
       apisContext.setIt(apisContext.apis);
-    }).catch((err) => {
-      console.error(err);
-      console.log('📌 light client failed');
-    });
 
-    const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
+      return;
+    }
 
-    toSaveApi.push({ endpoint, isRequested: true });
-
-    apisContext.apis[chain.genesisHash] = toSaveApi;
-    apisContext.setIt(apisContext.apis);
+    console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
   }, [apisContext, endpoint, stateApi, chain, api?.isConnected, api]);
 
   useEffect(() => {
