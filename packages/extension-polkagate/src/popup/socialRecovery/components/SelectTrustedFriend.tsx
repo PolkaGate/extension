@@ -109,8 +109,9 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
 
     if (iconType === 'none') {
       setEnteredAddress(addr?.address);
-      _hideDropdown();
     }
+
+    _hideDropdown();
   }, [_hideDropdown, iconType, onSelectFriend]);
 
   return (

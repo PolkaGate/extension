@@ -110,11 +110,11 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
         }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {mode !== 'InitiateRecovery' || mode !== 'ModifyRecovery'
-              ? mode === 'CloseRecovery'
-                ? t<string>('Account that initiated the recovery')
-                : t<string>('Rescuer account')
-              : t<string>('Account holder')}:
+            {mode === 'CloseRecovery'
+              ? t<string>('Account that initiated the recovery')
+              : mode === 'VouchRecovery'
+                ? t<string>('Rescuer account')
+                : t<string>('Account holder')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
             {txInfo.from.name}
