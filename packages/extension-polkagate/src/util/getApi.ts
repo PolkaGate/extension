@@ -14,9 +14,9 @@ async function getApi(endpoint: string): Promise<ApiPromise | undefined> {
     return await ApiPromise.create({ provider: wsProvider });
   } else if (endpoint.startsWith('light')) {
     return await LCConnector(endpoint);
+  } else {
+    throw new Error(`Invalid endpoint: ${endpoint}`);
   }
-
-  return undefined;
 }
 
 export default getApi;
