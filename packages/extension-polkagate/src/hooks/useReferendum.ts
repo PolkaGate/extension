@@ -20,7 +20,7 @@ type ReferendumData = {
 
 const isAlreadySaved = (list: Referendum[], referendum: Referendum) => list?.find((r) => r?.index === referendum?.index)
 
-export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh?: boolean, getOnChain?: boolean, hasEnded?: boolean): Referendum | undefined {
+export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh?: boolean, getOnChain?: boolean, hasEnded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
 
@@ -42,7 +42,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const naysCount = onchainVotes?.nays?.length || referendumSb?.nays_count;
 
   const trackId = referendum?.trackId || (onchainRefInfo?.isOngoing ? onchainRefInfo?.asOngoing?.track?.toNumber() : undefined);
-  const onChainStatus = (onchainRefInfo?.isOngoing
+  const onChainStatus = useMemo(() => (onchainRefInfo?.isOngoing
     ? (onchainRefInfo.asOngoing.deciding.isNone && 'Submitted') ||
     (onchainRefInfo.asOngoing.deciding.value.confirming.isNone && 'Deciding') ||
     (onchainRefInfo.asOngoing.deciding.value.confirming.isSome && 'ConfirmStarted')
@@ -51,9 +51,10 @@ export default function useReferendum(address: AccountId | string | undefined, t
     (onchainRefInfo?.isCancelled && 'Cancelled') ||
     (onchainRefInfo?.isRejected && 'Rejected') ||
     (onchainRefInfo?.isTimedOut && 'TimedOut') ||
-    (onchainRefInfo?.isKilled && 'Killed');
+    (onchainRefInfo?.isKilled && 'Killed')
+    , [onchainRefInfo]);
 
-  const proposerOC = onchainRefInfo?.isOngoing
+  const proposerOC = useMemo(() => onchainRefInfo?.isOngoing
     ? onchainRefInfo.asOngoing.submissionDeposit.who.toString()
     : onchainRefInfo?.isApproved
       ? onchainRefInfo.asApproved[1].isSome ? onchainRefInfo.asApproved[1].value.who.toString() : undefined
@@ -63,9 +64,10 @@ export default function useReferendum(address: AccountId | string | undefined, t
           ? onchainRefInfo.asCancelled[1].isSome ? onchainRefInfo.asCancelled[1].value.who.toString() : undefined
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.who.toString() : undefined
-            : undefined;
+            : undefined
+    , [onchainRefInfo]);
 
-  const submissionAmountOC = onchainRefInfo?.isOngoing
+  const submissionAmountOC = useMemo(() => onchainRefInfo?.isOngoing
     ? onchainRefInfo.asOngoing.submissionDeposit.amount.toString()
     : onchainRefInfo?.isApproved
       ? onchainRefInfo.asApproved[1].isSome ? onchainRefInfo.asApproved[1].value.amount.toString() : undefined
@@ -75,7 +77,8 @@ export default function useReferendum(address: AccountId | string | undefined, t
           ? onchainRefInfo.asCancelled[1].isSome ? onchainRefInfo.asCancelled[1].value.amount.toString() : undefined
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.amount.toString() : undefined
-            : undefined;
+            : undefined
+    , [onchainRefInfo]);
 
   const timeLineOC = useMemo(() => onchainRefInfo?.isOngoing
     ? [
@@ -148,18 +151,18 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
     };
 
-    makeStatus().catch(console.error);
+    timeLineOC?.length && makeStatus().catch(console.error);
   }, [convertBlockNumberToDate, timeLineOC]);
 
   useEffect(() => {
-    api && id !== undefined && trackId !== undefined &&
+    api && id !== undefined && trackId !== undefined && !withoutOnChainVoteCounts &&
       getReferendumVotes(api, trackId, id).then((votes) => {
         setOnchainVotes(votes);
       });
-  }, [api, id, trackId]);
+  }, [api, id, trackId, withoutOnChainVoteCounts]);
 
   useEffect(() => {
-    api && id !== undefined && api.query.referenda?.referendumInfoFor(id).then((res) => {
+    api && id !== undefined && api.query?.referenda?.referendumInfoFor && api.query.referenda.referendumInfoFor(id).then((res) => {
       const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
       const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing ? mayBeUnwrappedResult?.asOngoing : undefined;
       const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;

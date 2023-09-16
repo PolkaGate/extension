@@ -136,7 +136,7 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                   </>
                 }
               </Grid>
-              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], px: '5px', lineHeight: '24px' }} md={1.5}>
+              <Grid item sx={{ textAlign: 'center', mb: '5px', color: 'white', fontSize: '16px', fontWeight: 400, border: '0.01px solid primary.main', borderRadius: '30px', bgcolor: STATUS_COLOR[referendum?.status], px: '10px', lineHeight: '24px', width: 'fit-content' }}>
                 {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>

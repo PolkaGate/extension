@@ -25,7 +25,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     const savedApi = apisContext?.apis[chain.genesisHash]?.find((sApi) => sApi.endpoint === endpoint);
 
     if (savedApi && savedApi.api && savedApi.api.isConnected) {
-      console.log(`♻ Using the saved API for ${chain.name} through this endpoint ${savedApi.api._options.provider.endpoint as string ?? ''}`);
+      // console.log(`♻ Using the saved API for ${chain.name} through this endpoint ${savedApi.api._options.provider.endpoint as string ?? ''}`);
       setApi(savedApi.api);
 
       return;
