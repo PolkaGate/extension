@@ -11,11 +11,9 @@ const extractChainName = (networkEndpoint: string | undefined): string | undefin
     return;
   }
 
-  const firstSlash = networkEndpoint.indexOf('/');
-  const secondSlash = networkEndpoint.indexOf('/', firstSlash + 1);
-  const thirdSlash = networkEndpoint.indexOf('/', secondSlash + 1);
-  const chainName = networkEndpoint.substring(thirdSlash + 1);
-  const chainNameCapitalized = chainName.charAt(0).toUpperCase() + chainName.substring(1);
+  const parts = networkEndpoint.split('/');
+  const chainName = parts[3]; // Assuming the chain name is always at index 3
+  const chainNameCapitalized = chainName.charAt(0).toUpperCase() + chainName.slice(1);
 
   return chainNameCapitalized;
 };
@@ -38,7 +36,7 @@ export default async function LCConnector(endpoint: string): Promise<ApiPromise>
   const currentChainSpec = chainSpec(chainName);
 
   try {
-    console.log('connecting through light client');
+    console.log('connecting through light client, endpoint:', endpoint);
 
     if (currentChainSpec.length) {
       const provider = new ScProvider(Sc, currentChainSpec);
