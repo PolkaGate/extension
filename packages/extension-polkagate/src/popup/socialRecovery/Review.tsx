@@ -284,16 +284,16 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   return (
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
       <>
-        <Grid container py='20px'>
+        <Grid container direction='column' py='20px'>
           <Typography fontSize='30px' fontWeight={700}>
             {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
               <>
                 {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
                 {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
-                {mode === 'ModifyRecovery' && t('Step 3 of 3: Modify account recoverability review')}
-                {mode === 'InitiateRecovery' && t('Step 2 of 2: Initiate Recovery review')}
+                {mode === 'ModifyRecovery' && t('Modify account recoverability')}
+                {mode === 'InitiateRecovery' && t('Initiate Recovery')}
                 {mode === 'CloseRecovery' && t('Close the recovery process and claim the deposit from possible malicious account')}
-                {mode === 'VouchRecovery' && t('Step 2 of 2: Vouch Recovery review')}
+                {mode === 'VouchRecovery' && t('Vouch Recovery')}
                 {mode === 'Withdraw' && t('Withdraw the fund of your lost account')}
               </>
             )}
@@ -330,6 +330,12 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               txInfo?.success ? t('The fund of your lost account withdrawn') : t('Withdrawing the fund of your lost account failed')
             )}
           </Typography>
+          {(mode === 'InitiateRecovery' || mode === 'ModifyRecovery' || mode === 'VouchRecovery') &&
+            <Typography fontSize='22px' fontWeight={700}>
+              {(mode === 'InitiateRecovery' || mode === 'VouchRecovery')
+                ? t('Step 2/2: Review')
+                : t('Step 3/3: Review')}
+            </Typography>}
         </Grid>
         {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
           <>
