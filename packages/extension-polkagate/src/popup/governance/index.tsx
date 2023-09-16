@@ -230,6 +230,21 @@ export default function Governance(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
 
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => {
+      const fellowships = keys.map(([{ args: [id] }, option]) => {
+        return [id.toString(), option?.value?.rank?.toNumber()] as Fellowship;
+      });
+
+      fellowships.sort((a, b) => b[1] - a[1]);
+      setFellowships(fellowships);
+    }).catch(console.error);
+  }, [api]);
+
   const addFellowshipOriginsFromSb = useCallback(async (resPA: LatestReferenda[]): Promise<LatestReferenda[] | undefined> => {
     const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
@@ -252,21 +267,6 @@ export default function Governance(): React.ReactElement {
 
     return undefined;
   }, [chainName, fellowshipTracks, selectedSubMenu, topMenu]);
-
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-
-    api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => {
-      const fellowships = keys.map(([{ args: [id] }, option]) => {
-        return [id.toString(), option?.value?.rank?.toNumber()] as Fellowship;
-      });
-
-      fellowships.sort((a, b) => b[1] - a[1]);
-      setFellowships(fellowships);
-    }).catch(console.error);
-  }, [api]);
 
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
@@ -338,7 +338,6 @@ export default function Governance(): React.ReactElement {
                     ? <>
                       {filteredReferenda.map((r, index) => (
                         <ReferendumSummary
-                          address={address}
                           key={index}
                           myVotedReferendaIndexes={myVotedReferendaIndexes}
                           refSummary={r}
