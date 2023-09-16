@@ -60,6 +60,8 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     if (!endpoint?.startsWith('wss') && !endpoint?.startsWith('light')) {
       console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
+
+      return;
     }
 
     if (endpoint?.startsWith('wss')) {
