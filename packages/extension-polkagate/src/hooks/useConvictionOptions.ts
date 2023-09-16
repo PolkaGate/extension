@@ -69,9 +69,9 @@ export default function useConvictionOptions(address: string | AccountId | undef
       return;
     }
 
-    /** load pool from storage */
+    /** load Convictions from storage */
     chrome.storage.local.get('Convictions', (res) => {
-      console.log('ConvictionOptions in local storage:', res);
+      // console.log('ConvictionOptions in local storage:', res);
 
       if (res?.Convictions?.[genesisHash]) {
         setSavedConvictionOptions(res.Convictions[genesisHash]);

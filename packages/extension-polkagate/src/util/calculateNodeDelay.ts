@@ -37,6 +37,10 @@ const fetchApiTime = async (api: ApiPromise | undefined) => {
 async function CalculateNodeDelay(endpoint: string | undefined) {
   const TIMEOUT = 10000;
 
+  if (!endpoint?.startsWith('wss')) {
+    return;
+  }
+
   const wsProvider = new WsProvider(endpoint);
 
   const api = await ApiPromise.create({ provider: wsProvider });

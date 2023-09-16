@@ -1,12 +1,13 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { APIContext } from '../components';
+import LCConnector from '../util/api/lightClient-connect';
 import { useChain, useEndpoint } from '.';
 
 export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise): ApiPromise | undefined {
@@ -16,8 +17,29 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   const [api, setApi] = useState<ApiPromise | undefined>(stateApi);
 
+  const handleNewApi = useCallback((api: ApiPromise, endpoint: string) => {
+    setApi(api);
+    const genesisHash = String(api.genesisHash.toHex());
+    const toSaveApi = apisContext.apis[genesisHash] ?? [];
+
+    const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
+
+    if (indexToDelete !== -1) {
+      toSaveApi.splice(indexToDelete, 1);
+    }
+
+    toSaveApi.push({
+      api,
+      endpoint,
+      isRequested: false
+    });
+
+    apisContext.apis[genesisHash] = toSaveApi;
+    apisContext.setIt(apisContext.apis);
+  }, [apisContext]);
+
   useEffect(() => {
-    if (!chain?.genesisHash || (api && api.isConnected && api._options.provider.endpoint === endpoint)) {
+    if (!chain?.genesisHash || (api && api.isConnected && api._options.provider?.endpoint === endpoint)) {
       return;
     }
 
@@ -36,35 +58,33 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    // console.log('Initializing API connection...');
+    if (!endpoint?.startsWith('wss') && !endpoint?.startsWith('light')) {
+      console.log('📌 📌  Unsupported endpoint detected 📌 📌 ', endpoint);
 
-    const wsProvider = new WsProvider(endpoint);
+      return;
+    }
 
-    ApiPromise.create({ provider: wsProvider })
-      .then((newApi) => {
-        console.log('API connection established successfully.');
-        setApi(newApi);
+    if (endpoint?.startsWith('wss')) {
+      const wsProvider = new WsProvider(endpoint);
 
-        const toSaveApi = apisContext.apis[String(newApi.genesisHash.toHex())] ?? [];
-
-        const indexToDelete = toSaveApi.findIndex((sApi) => sApi.endpoint === endpoint);
-
-        if (indexToDelete !== -1) {
-          toSaveApi.splice(indexToDelete, 1);
-        }
-
-        toSaveApi.push({
-          api: newApi,
-          endpoint,
-          isRequested: false
+      ApiPromise.create({ provider: wsProvider })
+        .then((newApi) => {
+          handleNewApi(newApi, endpoint);
+          console.log('API connection established successfully.');
+        })
+        .catch((error) => {
+          console.error('API connection failed:', error);
         });
+    }
 
-        apisContext.apis[String(newApi.genesisHash.toHex())] = toSaveApi;
-        apisContext.setIt(apisContext.apis);
-      })
-      .catch((error) => {
-        console.error('API connection failed:', error);
+    if (endpoint?.startsWith('light')) {
+      LCConnector(endpoint).then((LCapi) => {
+        handleNewApi(LCapi, endpoint);
+        console.log('🖌️ light client connected', String(LCapi.genesisHash.toHex()));
+      }).catch((err) => {
+        console.error('📌 light client failed:', err);
       });
+    }
 
     const toSaveApi = apisContext.apis[chain.genesisHash] ?? [];
 
@@ -72,7 +92,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
     apisContext.apis[chain.genesisHash] = toSaveApi;
     apisContext.setIt(apisContext.apis);
-  }, [apisContext, endpoint, stateApi, chain, api?.isConnected, api]);
+  }, [apisContext, endpoint, stateApi, chain, api?.isConnected, api, handleNewApi]);
 
   useEffect(() => {
     const pollingInterval = setInterval(() => {

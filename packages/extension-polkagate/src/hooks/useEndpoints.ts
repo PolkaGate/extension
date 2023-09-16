@@ -15,6 +15,9 @@ import { DropdownOption } from '../util/types';
 import { sanitizeChainName } from '../util/utils';
 import { useGenesisHashOptions, useTranslation } from './';
 
+
+const supportedLC = ['Polkadot', 'Kusama', 'Westend'];
+
 export function useEndpoints(genesisHash: string | null | undefined): DropdownOption[] {
   const { t } = useTranslation();
   const genesisOptions = useGenesisHashOptions();
@@ -38,8 +41,13 @@ export function useEndpoints(genesisHash: string | null | undefined): DropdownOp
       (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
         String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
     );
-    
-    return endpoints?.filter((e) => String(e.value).startsWith('ws')).map((e) => ({ text: e.textBy, value: e.value }));
+
+    return chainName
+      ? supportedLC.includes(chainName)
+        ? endpoints?.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value as string }))
+        : endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value as string }))
+      : undefined;
+    // return endpoints?.filter((e) => String(e.value).startsWith('wss')).map((e) => ({ text: e.textBy, value: e.value }));
   }, [allEndpoints, genesisHash, genesisOptions]);
 
   return endpoints ?? [];

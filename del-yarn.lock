@@ -4403,7 +4403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/rpc-provider@npm:10.9.1, @polkadot/rpc-provider@npm:^10.7.3, @polkadot/rpc-provider@npm:^10.9.1":
+"@polkadot/rpc-provider@npm:10.9.1, @polkadot/rpc-provider@npm:^10.7.3":
   version: 10.9.1
   resolution: "@polkadot/rpc-provider@npm:10.9.1"
   dependencies:
@@ -4448,6 +4448,30 @@ __metadata:
     "@substrate/connect":
       optional: true
   checksum: 034044bcf32c257bf0f43a12a7eefad5551ffc21a330fa279d4231f884bb22411c2b181cd38420e65736fa313f9abc126cfc98eb9e285c73d51e95f0bd02c925
+  languageName: node
+  linkType: hard
+
+"@polkadot/rpc-provider@npm:^10.9.1":
+  version: 10.9.1
+  resolution: "@polkadot/rpc-provider@npm:10.9.1"
+  dependencies:
+    "@polkadot/keyring": ^12.3.1
+    "@polkadot/types": 10.9.1
+    "@polkadot/types-support": 10.9.1
+    "@polkadot/util": ^12.3.1
+    "@polkadot/util-crypto": ^12.3.1
+    "@polkadot/x-fetch": ^12.3.1
+    "@polkadot/x-global": ^12.3.1
+    "@polkadot/x-ws": ^12.3.1
+    "@substrate/connect": 0.7.26
+    eventemitter3: ^5.0.1
+    mock-socket: ^9.2.1
+    nock: ^13.3.1
+    tslib: ^2.5.3
+  dependenciesMeta:
+    "@substrate/connect":
+      optional: true
+  checksum: 4521ba64a1e69ed323910796a4598755e8101704aae3be33b6c363be4ebb9ea1a99ced17b8cd9fa3ab15abf5900e1055279f532f47b8472e8a143a299bfa046d
   languageName: node
   linkType: hard
 
@@ -4540,6 +4564,16 @@ __metadata:
     "@polkadot/util": ^12.3.1
     tslib: ^2.5.3
   checksum: 8a3dd0dead1759112b9011c5ff47bf9fa0f5a00d0d5cba841d724494a9434a2f565fad8ab654ae8cc3949a10c28f3966034bfc23e493b7cc373d3532de508953
+  languageName: node
+  linkType: hard
+
+"@polkadot/types-support@npm:10.9.1":
+  version: 10.9.1
+  resolution: "@polkadot/types-support@npm:10.9.1"
+  dependencies:
+    "@polkadot/util": ^12.3.1
+    tslib: ^2.5.3
+  checksum: f5df33f215f529c33d4fd7ad7d6877a4567954488971c2986da416b6578ccb6d5c6eeadab4602abe0e3ce17373cdd6de0ce6f09529852b6e2fd6bc28b9183f9b
   languageName: node
   linkType: hard
 
@@ -4831,12 +4865,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
+"@polkadot/x-global@npm:12.4.2, @polkadot/x-global@npm:^12.3.1":
+  version: 12.4.2
+  resolution: "@polkadot/x-global@npm:12.4.2"
+  dependencies:
+    tslib: ^2.6.2
+  checksum: 1489013e6ae3dce3c9f31f38f4ef8ca0956a18d35d12354c49cb7b256fef6dcbd3285a0c223509c8ed826b9d85fd8f59708312a010f1b69d5ee92963e38c48ac
+=======
 "@polkadot/x-global@npm:12.3.2, @polkadot/x-global@npm:^12.3.1":
   version: 12.3.2
   resolution: "@polkadot/x-global@npm:12.3.2"
   dependencies:
     tslib: ^2.5.3
   checksum: 85bd4a3e89bacdf8159fe505b875fad0ce8cfc5ba65377b14981166d973339a2fa3128582112af51dfecea4b68b0501a960056138110195b5bea69c3a8c88e11
+>>>>>>> 0607013c3c2dbd9c303c861876cfdc63c0f4bb2f
   languageName: node
   linkType: hard
 
@@ -4897,6 +4940,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
+"@polkadot/x-ws@npm:^12.3.1":
+  version: 12.4.2
+  resolution: "@polkadot/x-ws@npm:12.4.2"
+  dependencies:
+    "@polkadot/x-global": 12.4.2
+    tslib: ^2.6.2
+    ws: ^8.13.0
+  checksum: 28a415d84780cbf2912f7b94c93dc85a7fea75564995cbc97b9a03cc2e1c0c93222f1e99c6d5add78cb1d9971e4605b36e23ae526b22ce3357619de26d9b15a6
+  languageName: node
+  linkType: hard
+
+"@polymathnetwork/polymesh-types@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@polymathnetwork/polymesh-types@npm:0.0.2"
+  checksum: 4a1168de7547ad25d770eaca806f683f1789a649b3045dbd84e0e8da0e03bfc1f556628b70947ec80894f9aa4307648f6c344323840e43f2e306f0edd3ae21b6
+=======
 "@polkadot/x-ws@npm:^12.3.1, @polkadot/x-ws@npm:^12.3.2":
   version: 12.3.2
   resolution: "@polkadot/x-ws@npm:12.3.2"
@@ -4905,6 +4965,7 @@ __metadata:
     tslib: ^2.5.3
     ws: ^8.13.0
   checksum: 7bb18ada56bb7d441c1392ec459959ff7cfc27fd57953898cb19682ea2fd323b68946102e4fe1c5eb1eb89fa62eb2d8ea7be03382ef9a473cd8c74d039b875d1
+>>>>>>> 0607013c3c2dbd9c303c861876cfdc63c0f4bb2f
   languageName: node
   linkType: hard
 
@@ -5230,7 +5291,9 @@ __metadata:
     "@substrate/connect-extension-protocol": ^1.0.1
     "@substrate/smoldot-light": 0.7.9
     eventemitter3: ^4.0.7
-  checksum: 7ac4b6bb791e7941464c29a46a77ce87da7c36e43ffdf42dc3e1b747813653376dc56e4c21032cbf3c935fdafc98f5428feb10904406195a82d296065abb633d
+<<<<<<< HEAD
+    smoldot: 1.0.1
+  checksum: 74ee49494455149f20427fdc0d2cdc8af4bc572e5a581f21109e47bacfc7cebaf77694dd8d5d4ef2d8ef4756b198fe4edd08d9bc8b6e3b647b085cbcac5b9fa2
   languageName: node
   linkType: hard
 
@@ -5242,6 +5305,9 @@ __metadata:
     eventemitter3: ^4.0.7
     smoldot: 1.0.4
   checksum: 3179d241f073318d5973deb61c9c8d9b89ae28909a594b6b9fbcdfffd030a70ba58e8428eaa9d72484810bad10c93de1ad9c440b878d0fcfaaf4559d2e6f4502
+=======
+  checksum: 7ac4b6bb791e7941464c29a46a77ce87da7c36e43ffdf42dc3e1b747813653376dc56e4c21032cbf3c935fdafc98f5428feb10904406195a82d296065abb633d
+>>>>>>> 0607013c3c2dbd9c303c861876cfdc63c0f4bb2f
   languageName: node
   linkType: hard
 
@@ -5252,6 +5318,21 @@ __metadata:
     "@substrate/connect-extension-protocol": ^1.0.1
     smoldot: 2.0.1
   checksum: b2cab2519a53eb5a48efc406a93a737437ddc1b4f294226cdee6a3d8576dca25943e900fd6eeccb816031cfcfa05e4a6d365cfabc72eddacf31c428a3511a8d7
+  languageName: node
+  linkType: hard
+
+"@substrate/smoldot-light@npm:0.7.5":
+  version: 0.7.5
+  resolution: "@substrate/smoldot-light@npm:0.7.5"
+
+"@substrate/connect@npm:0.7.26":
+  version: 0.7.26
+  resolution: "@substrate/connect@npm:0.7.26"
+  dependencies:
+    "@substrate/connect-extension-protocol": ^1.0.1
+    eventemitter3: ^4.0.7
+    smoldot: 1.0.4
+  checksum: 3179d241f073318d5973deb61c9c8d9b89ae28909a594b6b9fbcdfffd030a70ba58e8428eaa9d72484810bad10c93de1ad9c440b878d0fcfaaf4559d2e6f4502
   languageName: node
   linkType: hard
 
@@ -11295,6 +11376,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eventemitter3@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "eventemitter3@npm:5.0.1"
+  checksum: 543d6c858ab699303c3c32e0f0f47fc64d360bf73c3daf0ac0b5079710e340d6fe9f15487f94e66c629f5f82cd1a8678d692f3dbb6f6fcd1190e1b97fcad36f8
+  languageName: node
+  linkType: hard
+
 "events@npm:^3.2.0, events@npm:^3.3.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
@@ -16484,6 +16572,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nock@npm:^13.3.1":
+  version: 13.3.3
+  resolution: "nock@npm:13.3.3"
+  dependencies:
+    debug: ^4.1.0
+    json-stringify-safe: ^5.0.1
+    lodash: ^4.17.21
+    propagate: ^2.0.0
+  checksum: e3e4f0fb777ac63d74f89bbb7aebe8e815b891b64ac71983d91686f725fdab856fe189cf2fe23d4add9f5dd5da53f3568106a61116a771ce0f4ed0f5ad7b035b
+  languageName: node
+  linkType: hard
+
 "node-abi@npm:^2.21.0":
   version: 2.30.1
   resolution: "node-abi@npm:2.30.1"
@@ -19796,6 +19896,26 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
+"smoldot@npm:1.0.1":
+  version: 1.0.1
+  resolution: "smoldot@npm:1.0.1"
+  dependencies:
+    pako: ^2.0.4
+    ws: ^8.8.1
+  checksum: 161066f2f2aabb98c31ef84aa21a1e7c9301d391cc99c429eb589a31e4d4f848d9c51fe521ce2d7f977a9cf81d8e48d101e437e751479063e92e0d6e8ff30f47
+=======
+"smoldot@npm:1.0.4":
+  version: 1.0.4
+  resolution: "smoldot@npm:1.0.4"
+  dependencies:
+    pako: ^2.0.4
+    ws: ^8.8.1
+  checksum: 81ecc38b98f7ac4dd093753e85956262608dca3c8a288c20a25fe1762a6afcdbe6f3622ea30a346df3f4145e0900ef0595e56e96e9e0de83c59f0649d1ab4786
+>>>>>>> 0607013c3c2dbd9c303c861876cfdc63c0f4bb2f
+  languageName: node
+  linkType: hard
+
 "smoldot@npm:1.0.4":
   version: 1.0.4
   resolution: "smoldot@npm:1.0.4"
@@ -20842,10 +20962,17 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
+"tslib@npm:^2.5.3, tslib@npm:^2.6.2":
+  version: 2.6.2
+  resolution: "tslib@npm:2.6.2"
+  checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
+=======
 "tslib@npm:^2.5.3":
   version: 2.5.3
   resolution: "tslib@npm:2.5.3"
   checksum: 88902b309afaf83259131c1e13da1dceb0ad1682a213143a1346a649143924d78cf3760c448b84d796938fd76127183894f8d85cbb3bf9c4fddbfcc140c0003c
+>>>>>>> 0607013c3c2dbd9c303c861876cfdc63c0f4bb2f
   languageName: node
   linkType: hard
 
