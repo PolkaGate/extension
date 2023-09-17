@@ -3,21 +3,23 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, LinearProgress, useTheme } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { logoBlack, logoWhite } from '../assets/logos';
+import { logoMotionDark, logoMotionLight } from '../assets/logos';
 import { useTranslation } from '../hooks';
 
 interface Props {
   children?: React.ReactNode;
 }
 
-const MAX_WAITING_TIME = 400; //ms
+const MAX_WAITING_TIME = 750; //ms
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
   const theme = useTheme();
+
+  const extensionViews = chrome.extension.getViews({ type: 'popup' });
+  const isPopupOpenedByExtension = extensionViews.includes(window);
 
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
@@ -41,34 +43,18 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     };
   }, [value]);
 
-  const glowingLogoStyle = {
-    opacity: value < 35 ? 0.5 : 1, // Adjust the opacity for the glowing effect
-    transition: 'opacity 1s ease-in-out', // Transition for the glowing effect
-  };
-
-  if (isLoading || !children) {
-    return (
-      <Grid alignItems='center' container direction='column' justifyContent='center'>
-        <Grid item sx={{ mt: '200px' }}>
+  return (
+    <>{
+      (isLoading || !children) && isPopupOpenedByExtension
+        ? <Grid alignContent='center' alignItems='center' container direction='column' justifyContent='center' position='relative' sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '190px', pb: '200px' }}>
           <Box
             component='img'
-            src={theme.palette.mode === 'dark' ? logoWhite as string : logoBlack as string}
-            sx={{ height: 75, width: 75, ...glowingLogoStyle }}
+            src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
+            sx={{ height: 200, width: 320 }}
           />
         </Grid>
-        <Grid sx={{ width: '80%' }}>
-          <LinearProgress
-            color='inherit'
-            sx={{ color: theme.palette.text.primary, mt: '40px', height: '6px', borderRadius: '7px' }}
-            value={value}
-            variant='determinate'
-          />
-        </Grid>
-      </Grid>
-    );
-  }
-
-  return (
-    <>{children}</>
+        : children
+    }
+    </>
   );
 }
