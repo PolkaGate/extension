@@ -275,7 +275,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       {configStep === CONFIGSTEPS.SET_DETAILS &&
         <>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
-            {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
+            {t<string>('Define the vouching amount needed for account recovery and set a safety delay. This delay adds a waiting period after acquiring the required vouches, allowing time for monitoring and alert response, particularly useful in countering potential malicious recovery attempts.')}
           </Typography>
           <Grid container item pt='20px'>
             <Typography fontSize='16px' fontWeight={400} width='100%'>

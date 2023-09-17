@@ -132,7 +132,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
               backgroundColor: disabled ? theme.palette.primary.contrastText : theme.palette.background.paper,
               borderColor: theme.palette.secondary.light,
               borderWidth: '1px',
-              fontSize: '14px',
+              fontSize: '20px',
               fontWeight: 300,
               height: '45px',
               padding: 0,

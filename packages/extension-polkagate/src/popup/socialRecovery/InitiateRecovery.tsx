@@ -404,6 +404,7 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
                 ? t<string>('Verify status')
                 : t<string>('Proceed')}
             secondaryBtnText={t<string>('Back')}
+            variant='text'
           />
         </Grid>
       </Grid>
