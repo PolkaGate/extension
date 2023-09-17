@@ -22,18 +22,19 @@ export type FriendWithId = { address: string, accountIdentity: DeriveAccountInfo
 
 interface Props {
   accountsInfo: DeriveAccountInfo[] | undefined;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   style?: SxProps<Theme>;
   onSelectFriend: (addr: FriendWithId | undefined) => void;
 }
 
-export default function SelectTrustedFriendFromExtension({ accountsInfo, api, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriendFromExtension({ accountsInfo, address, api, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
-  const allAccounts = useMemo(() => accounts.map((account) => getFormattedAddress(account.address, chain, chain?.ss58Format)), [accounts, chain]);
+  const allAccounts = useMemo(() => accounts.filter((acc) => acc.address !== address).map((account) => getFormattedAddress(account.address, chain, chain?.ss58Format)), [accounts, address, chain]);
 
   const friendsList = useMemo(() => accountsInfo && allAccounts.map((acc) => ({ accountIdentity: accountsInfo.find((info) => String(info.accountId) === acc), address: acc })), [accountsInfo, allAccounts]);
 
