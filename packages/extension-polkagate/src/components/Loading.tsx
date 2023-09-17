@@ -7,7 +7,6 @@ import { Box, Grid, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { logoMotionDark, logoMotionLight } from '../assets/logos';
-import { useTranslation } from '../hooks';
 
 interface Props {
   children?: React.ReactNode;
@@ -46,7 +45,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   return (
     <>{
       (isLoading && isPopupOpenedByExtension) || !children
-        ? <Grid alignContent='center' alignItems='center' container direction='column' justifyContent='center' position='relative' sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '190px', pb: '200px' }}>
+        ? <Grid alignContent='center' alignItems='center' container sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '190px', pb: '210px' }}>
           <Box
             component='img'
             src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
