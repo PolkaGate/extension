@@ -50,7 +50,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           <Box
             component='img'
             src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
-            sx={{ height: 200, width: 320 }}
+            sx={{ height: 'fit-content', width: '100%' }}
           />
         </Grid>
         : children
