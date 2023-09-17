@@ -86,16 +86,15 @@ export default function SocialRecovery(): React.ReactElement {
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
-  const darkModeButtonColor = useMemo(() => theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.secondary.light, [theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.light]);
 
-  const activeRescue = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.rescuer === String(formatted)).at(-1) ?? null : null, [activeRecoveries, formatted]);
-  const activeLost = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null : null, [activeRecoveries, formatted]);
-  const DisableButtonBgcolor = useMemo(() => (
+  const activeRescue = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.rescuer === String(formatted)).at(-1) ?? null : undefined, [activeRecoveries, formatted]);
+  const activeLost = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null : undefined, [activeRecoveries, formatted]);
+
+  const buttonColors = useMemo(() =>
     activeLost
-      ? theme.palette.mode === 'light'
-        ? 'rgba(23, 23, 23, 0.3)'
-        : 'rgba(241, 241, 241, 0.1)'
-      : 'background.paper'), [activeLost, theme.palette.mode]);
+      ? theme.palette.secondary.contrastText
+      : theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.secondary.light
+    , [activeLost, theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.contrastText, theme.palette.secondary.light]);
 
   const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
@@ -163,7 +162,7 @@ export default function SocialRecovery(): React.ReactElement {
       return;
     }
 
-    if (recoveryInfo !== undefined && activeProxy !== undefined && activeRecoveries !== undefined && refresh === false) {
+    if (recoveryInfo !== undefined && activeProxy !== undefined && activeRescue !== undefined && activeLost !== undefined && refresh === false) {
       return;
     }
 
@@ -174,17 +173,17 @@ export default function SocialRecovery(): React.ReactElement {
     clearInformation();
     setFetching(true);
     fetchRecoveryInformation();
-  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRecoveries, fetching, fetchRecoveryInformation]);
+  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRescue, activeLost, fetching, fetchRecoveryInformation]);
 
   useEffect(() => {
-    if (recoveryInfo === undefined || activeProxy === undefined || activeRecoveries === undefined) {
+    if (recoveryInfo === undefined || activeProxy === undefined || activeLost === undefined || activeRescue === undefined) {
       return;
     }
 
     setFetching(false);
     setRefresh(false);
     setStep(STEPS.INDEX);
-  }, [activeProxy, activeRecoveries, recoveryInfo]);
+  }, [activeProxy, activeRescue, activeLost, recoveryInfo]);
 
   useEffect(() => {
     if (recoveryInfo) {
@@ -225,12 +224,16 @@ export default function SocialRecovery(): React.ReactElement {
   };
 
   const RecoveryOptionButton = ({ description, icon, onClickFunction, title }: RecoveryOptionButtonType) => (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onClickFunction} sx={{ bgcolor: DisableButtonBgcolor, border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: activeLost ? 'default' : 'pointer', p: '25px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={activeLost ? undefined : onClickFunction} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: activeLost ? 'default' : 'pointer', height: '125px', p: '25px', position: 'relative' }}>
+      {activeLost &&
+        <Grid sx={{ bgcolor: 'rgba(116, 116, 116, 0.2)', borderRadius: '5px', height: '123px', position: 'absolute', right: 0, top: 0, width: '670px', zIndex: 10 }}>
+        </Grid>
+      }
       <Grid alignItems='center' container item width='75px'>
         {icon}
       </Grid>
       <Grid alignItems='flex-start' container direction='column' gap='10px' item xs={9}>
-        <Typography color={darkModeButtonColor} fontSize='18px' fontWeight={500}>
+        <Typography color={buttonColors} fontSize='18px' fontWeight={500}>
           {t<string>(title)}
         </Typography>
         <Typography fontSize='12px' fontWeight={400}>
@@ -239,7 +242,7 @@ export default function SocialRecovery(): React.ReactElement {
       </Grid>
       <Grid alignItems='center' container item width='50px'>
         <ArrowForwardIosIcon
-          sx={{ color: darkModeButtonColor, fontSize: '40px', m: 'auto', stroke: darkModeButtonColor, strokeWidth: '2px' }}
+          sx={{ color: buttonColors, fontSize: '40px', m: 'auto', stroke: buttonColors, strokeWidth: '2px' }}
         />
       </Grid>
     </Grid>
