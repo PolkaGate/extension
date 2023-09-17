@@ -87,8 +87,20 @@ export default function SocialRecovery(): React.ReactElement {
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
 
-  const activeRescue = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.rescuer === String(formatted)).at(-1) ?? null : undefined, [activeRecoveries, formatted]);
-  const activeLost = useMemo(() => activeRecoveries && formatted ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null : undefined, [activeRecoveries, formatted]);
+  const activeRescue = useMemo(() =>
+    activeRecoveries && formatted
+      ? activeRecoveries.filter((active) => active.rescuer === String(formatted)).at(-1) ?? null
+      : activeRecoveries === null
+        ? null
+        : undefined
+    , [activeRecoveries, formatted]);
+  const activeLost = useMemo(() =>
+    activeRecoveries && formatted
+      ? activeRecoveries.filter((active) => active.lost === String(formatted)).at(-1) ?? null
+      : activeRecoveries === null
+        ? null
+        : undefined
+    , [activeRecoveries, formatted]);
 
   const buttonColors = useMemo(() =>
     activeLost
@@ -176,14 +188,14 @@ export default function SocialRecovery(): React.ReactElement {
   }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRescue, activeLost, fetching, fetchRecoveryInformation]);
 
   useEffect(() => {
-    if (recoveryInfo === undefined || activeProxy === undefined || activeLost === undefined || activeRescue === undefined) {
+    if (recoveryInfo === undefined || activeProxy === undefined || activeLost === undefined || activeRescue === undefined || step !== STEPS.CHECK_SCREEN) {
       return;
     }
 
     setFetching(false);
     setRefresh(false);
     setStep(STEPS.INDEX);
-  }, [activeProxy, activeRescue, activeLost, recoveryInfo]);
+  }, [activeProxy, activeRescue, activeLost, recoveryInfo, step]);
 
   useEffect(() => {
     if (recoveryInfo) {

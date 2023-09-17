@@ -108,7 +108,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     !(withdrawInfo?.availableBalance.isZero() || withdrawInfo.redeemable.isZero() || !withdrawInfo.isRecoverable || !withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
-      ? batchAll([tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
+      ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
       : asRecovered(withdrawInfo.lost, batchAll(withdrawCalls));
   }, [allActiveRecoveries, api, asRecovered, batchAll, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, transferAll, unbonded, withdrawInfo]);
 
@@ -213,7 +213,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
         ? STEPS.MAKERECOVERABLE
         : mode === 'Withdraw'
           ? STEPS.INITIATERECOVERY
-          : STEPS.INDEX);
+          : mode === 'InitiateRecovery'
+            ? STEPS.INITIATERECOVERY
+            : STEPS.INDEX);
   }, [mode, setStep]);
 
   const closeSelectProxy = useCallback(() => {
@@ -221,9 +223,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   }, [setStep]);
 
   const closeConfirmation = useCallback(() => {
-    setRefresh(true);
     setMode(undefined);
-    setStep(STEPS.CHECK_SCREEN);
+    setRefresh(true);
+    // setStep(STEPS.CHECK_SCREEN);
   }, [setMode, setRefresh, setStep]);
 
   const WithdrawDetails = () => {

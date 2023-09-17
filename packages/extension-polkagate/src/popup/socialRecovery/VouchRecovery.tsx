@@ -74,6 +74,13 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
       const activeRecoveryForLostAddr = activeRecovery.find((active) => active.lost === lostAccount?.address);
 
       if (activeRecoveryForLostAddr) {
+        if (rescuerAccount?.address && activeRecoveryForLostAddr.rescuer !== rescuerAccount.address) {
+          setWhyNotStatus('noActive');
+          setActiveRecoveryInfo(null);
+
+          return;
+        }
+
         if (address && activeRecoveryForLostAddr.vouchedFriends.includes(address)) {
           setWhyNotStatus('AlreadyVouched');
           setActiveRecoveryInfo(null);
@@ -108,7 +115,7 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
       setWhyNotStatus('noActive');
       setActiveRecoveryInfo(null);
     }
-  }, [activeRecovery, address, api, checkActive, lostAccount?.address]);
+  }, [activeRecovery, address, api, checkActive, lostAccount?.address, rescuerAccount?.address]);
 
   useEffect(() => {
     if (!lostAccount || !rescuerAccount) {
@@ -218,7 +225,7 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
       <Grid container item justifyContent='flex-end' pt='15px'>
         <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
           <TwoButtons
-            disabled={activeRecoveryInfo === null || activeRecoveryInfo === undefined}
+            disabled={activeRecoveryInfo === null || activeRecoveryInfo === undefined || !lostAccount?.address || !rescuerAccount?.address}
             isBusy={false}
             mt={'1px'}
             onPrimaryClick={activeRecoveryInfo === false

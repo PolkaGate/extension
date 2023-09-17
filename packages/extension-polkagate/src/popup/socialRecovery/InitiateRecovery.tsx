@@ -92,7 +92,19 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
     return isEnoughVouched;
   }, [initiatedRecovery, lostAccountRecoveryInfo]);
 
-  const nextBtnDisable = useMemo(() => lostAccountRecoveryInfo === undefined || lostAccountRecoveryInfo === null || !lostAccount?.address || (isVouchedCompleted && isDelayPassed === false), [isDelayPassed, isVouchedCompleted, lostAccount?.address, lostAccountRecoveryInfo]);
+  const nextBtnDisable = useMemo(() => {
+    if (activeProxy || initiatedRecovery) {
+      return (lostAccountRecoveryInfo === undefined || lostAccountRecoveryInfo === null || !isVouchedCompleted || !lostAccount?.address || (isVouchedCompleted && isDelayPassed === false));
+    } else if (!lostAccount?.address) {
+      return true;
+    } else if (lostAccount.address && lostAccountRecoveryInfo) {
+      return false;
+    } else if (lostAccount.address && lostAccountRecoveryInfo === false) {
+      return false;
+    } else {
+      return true;
+    }
+  }, [activeProxy, initiatedRecovery, isDelayPassed, isVouchedCompleted, lostAccount?.address, lostAccountRecoveryInfo]);
 
   useEffect(() => {
     api && api.derive.session?.progress().then((sessionInfo) => {
