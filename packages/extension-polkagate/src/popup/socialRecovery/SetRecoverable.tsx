@@ -207,14 +207,12 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   const thresholdFocus = useCallback(() => setFocus(1), []);
   const delayFocus = useCallback(() => setFocus(2), []);
 
-  console.log('mode:', mode);
-
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-        {mode === 'SetRecovery'
-          ? t<string>('Make your account recoverable')
-          : t<string>('Modify your account recoverability')}
+        {recoveryConfig
+          ? t<string>('Modify your account recoverability')
+          : t<string>('Make your account recoverable')}
       </Typography>
       <Typography fontSize='14px' fontWeight={400} width='100%'>
         {t<string>('Select trusted friends\' accounts and configure details such as a recovery threshold and a delay to enable account recovery.')}
@@ -241,6 +239,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
             />
             <SelectTrustedFriendFromExtension
               accountsInfo={accountsInfo}
+              address={address}
               api={api}
               chain={chain}
               onSelectFriend={addNewFriend}
