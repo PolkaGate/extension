@@ -25,7 +25,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    // Simulate a 2-second loading delay
+    // Simulate a loading delay
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
     }, MAX_WAITING_TIME);
@@ -45,7 +45,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
 
   return (
     <>{
-      (isLoading || !children) && isPopupOpenedByExtension
+      (isLoading && isPopupOpenedByExtension) || !children
         ? <Grid alignContent='center' alignItems='center' container direction='column' justifyContent='center' position='relative' sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '190px', pb: '200px' }}>
           <Box
             component='img'
