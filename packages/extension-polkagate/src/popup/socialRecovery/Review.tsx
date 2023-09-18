@@ -105,7 +105,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
     !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
-    !(withdrawInfo?.availableBalance.isZero() || withdrawInfo.redeemable.isZero() || !withdrawInfo.isRecoverable || !withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
+    !(withdrawInfo?.availableBalance.isZero() || withdrawInfo.claimed || withdrawInfo.redeemable.isZero() || !withdrawInfo.isRecoverable || !withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
       ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
@@ -225,7 +225,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   const closeConfirmation = useCallback(() => {
     setMode(undefined);
     setRefresh(true);
-    // setStep(STEPS.CHECK_SCREEN);
+    setStep(STEPS.CHECK_SCREEN);
   }, [setMode, setRefresh, setStep]);
 
   const WithdrawDetails = () => {
