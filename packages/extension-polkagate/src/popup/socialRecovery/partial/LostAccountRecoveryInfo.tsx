@@ -24,7 +24,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function LostAccountRecoveryInfo ({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
+export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -71,6 +71,11 @@ export default function LostAccountRecoveryInfo ({ accountsInfo, decimal, lostAc
           <Grid alignItems='center' container item justifyContent='center' pt='8px'>
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
           </Grid>
+          <DisplayInfo
+            caption={t<string>('Threshold:')}
+            fontSize='20px'
+            value={`${lostAccountRecoveryInfo.threshold.toNumber()} of ${lostAccountRecoveryInfo.friends.length}`}
+          />
           <DisplayInfo
             caption={t<string>('Delay:')}
             fontSize='20px'
