@@ -92,10 +92,23 @@ export default function SocialRecovery(): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(address);
   const formatted = useFormatted(address);
-  const activeRecoveries = useActiveRecoveries(api, String(formatted));
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
+
+  const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
+  const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
+  const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
+  const [lostAccountAddress, setLostAccountAddress] = useState<InitiateRecoveryConfig | undefined>();
+  const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>();
+  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo | undefined>();
+  const [mode, setMode] = useState<SocialRecoveryModes>();
+  const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [activeProxy, setActiveProxy] = useState<string | null>();
+
+  const activeRecoveries = useActiveRecoveries(refresh ? undefined : api, String(formatted));
 
   const activeRescue = useMemo(() =>
     activeRecoveries && formatted
@@ -117,18 +130,6 @@ export default function SocialRecovery(): React.ReactElement {
       ? theme.palette.secondary.contrastText
       : theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.secondary.light
     , [activeLost, theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.contrastText, theme.palette.secondary.light]);
-
-  const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
-  const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
-  const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
-  const [lostAccountAddress, setLostAccountAddress] = useState<InitiateRecoveryConfig | undefined>();
-  const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>();
-  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo | undefined>();
-  const [mode, setMode] = useState<SocialRecoveryModes>();
-  const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);
-  const [refresh, setRefresh] = useState<boolean>(false);
-  const [fetching, setFetching] = useState<boolean>(false);
-  const [activeProxy, setActiveProxy] = useState<string | null>();
 
   useEffect(() => {
     chain?.genesisHash && !SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash) && setStep(STEPS.UNSUPPORTED);
