@@ -379,7 +379,7 @@ export default function SocialRecovery(): React.ReactElement {
             : t<string>('Rescue a Lost Account')}
         />
         <RecoveryOptionButton
-          description={t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase.')}
+          description={t<string>('You can assist your friends in recovering their lost accounts by having them share their rescuer and lost account address with you.')}
           icon={
             <Box
               component='img'
