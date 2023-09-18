@@ -6,7 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { Close as CloseIcon } from '@mui/icons-material';
+import { Close as CloseIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -17,7 +17,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
+import { Identity, Infotip2, Motion, ShortAddress, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
@@ -36,7 +36,7 @@ import { FriendWithId } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { RecoveryConfigType, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
+import { InitiateRecoveryConfig, RecoveryConfigType, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
 
 interface Props {
   address: string;
@@ -49,7 +49,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   recoveryInfo: PalletRecoveryRecoveryConfig | null;
   recoveryConfig: RecoveryConfigType | undefined;
-  lostAccountAddress: FriendWithId | undefined;
+  lostAccountAddress: InitiateRecoveryConfig | undefined;
   activeLost: ActiveRecoveryFor | null;
   withdrawInfo: WithdrawInfo | undefined;
   vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
@@ -283,6 +283,47 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     );
   };
 
+  const RecoveryInfo = () => (
+    <>
+      <Typography sx={{ maxHeight: '300px', maxWidth: '300px', overflowY: 'scroll' }} variant='body2'>
+        <Grid container spacing={1}>
+          {lostAccountAddress?.friends && lostAccountAddress.friends.addresses.map((friend, index) =>
+            <React.Fragment key={index}>
+              <Grid alignItems='center' container item>
+                <Typography fontSize='14px' fontWeight={400} pr='8px'>
+                  {`Trusted friend ${index + 1}`}:
+                </Typography>
+                {lostAccountAddress.friends?.infos &&
+                  <Typography fontSize='16px' fontWeight={400} maxWidth='100px' textOverflow='ellipsis'>
+                    {lostAccountAddress.friends.infos[index]?.identity.display}
+                  </Typography>
+                }
+                <ShortAddress
+                  address={friend}
+                  charsCount={3}
+                  inParentheses
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    width: 'fit-content'
+                  }}
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+          <Grid alignItems='center' container item sx={{ borderTop: '1px solid', borderTopColor: 'background.paper' }}>
+            <Typography fontSize='14px' fontWeight={400} sx={{ borderRight: '1px solid', borderRightColor: 'background.paper' }} textAlign='left' width='50%'>
+              {`Delay: ${lostAccountAddress?.delayPeriod ?? ''}`}
+            </Typography>
+            <Typography fontSize='14px' fontWeight={400} textAlign='right' width='50%'>
+              {`Threshold: ${lostAccountAddress?.threshold ?? 1} of ${lostAccountAddress?.friends?.addresses.length ?? 1}`}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Typography>
+    </>
+  );
+
   return (
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
       <>
@@ -408,25 +449,32 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                     {t<string>('Lost account')}
                   </Typography>
-                  <Identity
-                    accountInfo={mode === 'InitiateRecovery'
-                      ? lostAccountAddress?.accountIdentity
-                      : mode === 'VouchRecovery'
-                        ? vouchRecoveryInfo?.lost.accountIdentity
-                        : undefined}
-                    api={api}
-                    chain={chain}
-                    direction='row'
-                    formatted={mode === 'InitiateRecovery'
-                      ? lostAccountAddress?.address
-                      : mode === 'VouchRecovery'
-                        ? vouchRecoveryInfo?.lost.address
-                        : withdrawInfo?.lost}
-                    identiconSize={31}
-                    showSocial={false}
-                    style={{ maxWidth: '100%', width: 'fit-content' }}
-                    withShortAddress
-                  />
+                  <Grid container item justifyContent='center'>
+                    <Identity
+                      accountInfo={mode === 'InitiateRecovery'
+                        ? lostAccountAddress?.accountIdentity
+                        : mode === 'VouchRecovery'
+                          ? vouchRecoveryInfo?.lost.accountIdentity
+                          : undefined}
+                      api={api}
+                      chain={chain}
+                      direction='row'
+                      formatted={mode === 'InitiateRecovery'
+                        ? lostAccountAddress?.address
+                        : mode === 'VouchRecovery'
+                          ? vouchRecoveryInfo?.lost.address
+                          : withdrawInfo?.lost}
+                      identiconSize={31}
+                      showSocial={false}
+                      style={{ maxWidth: '100%', width: 'fit-content' }}
+                      withShortAddress
+                    />
+                    {mode === 'InitiateRecovery' &&
+                      <Infotip2 text={<RecoveryInfo />}>
+                        <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+                      </Infotip2>
+                    }
+                  </Grid>
                 </Grid>
               }
               {mode === 'CloseRecovery' && activeLost &&

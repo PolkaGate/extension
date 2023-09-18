@@ -21,7 +21,8 @@ import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFri
 import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
-import { SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
+import recoveryDelayPeriod from './util/recoveryDelayPeriod';
+import { InitiateRecoveryConfig, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
 
 interface Props {
   address: string | undefined;
@@ -31,7 +32,7 @@ interface Props {
   mode: SocialRecoveryModes;
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>;
   setTotalDeposit: React.Dispatch<React.SetStateAction<BN>>;
-  setLostAccountAddress: React.Dispatch<React.SetStateAction<FriendWithId | undefined>>;
+  setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>;
   initiatedRecovery: ActiveRecoveryFor | null;
   setWithdrawInfo: React.Dispatch<React.SetStateAction<WithdrawInfo>>;
   withdrawInfo: WithdrawInfo;
@@ -52,8 +53,6 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
   const decimal = useDecimal(address);
   const token = useToken(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
-
-  console.log('withdrawInfo:', withdrawInfo);
 
   const [lostAccount, setLostAccount] = useState<FriendWithId>();
   const [lostAccountBalance, setLostAccountBalance] = useState<Balance | undefined>();
@@ -298,14 +297,26 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
   }, [setMode, setStep]);
 
   const rescueLostAccount = useCallback(() => {
-    setLostAccountAddress(lostAccount);
+    setLostAccountAddress({
+      accountIdentity: lostAccount?.accountIdentity,
+      address: lostAccount?.address ?? '',
+      delayPeriod: lostAccountRecoveryInfo ? recoveryDelayPeriod(lostAccountRecoveryInfo.delayPeriod.toNumber(), 1) : '0',
+      friends: {
+        addresses: lostAccountRecoveryInfo ? lostAccountRecoveryInfo.friends.map((friend) => String(friend)) : [],
+        infos: lostAccountRecoveryInfo ? lostAccountRecoveryInfo.friends.map((friend) => accountsInfo?.find((accInfo) => String(accInfo.accountId) === String(friend))) : []
+      },
+      threshold: lostAccountRecoveryInfo ? lostAccountRecoveryInfo.threshold.toNumber() : 0
+    });
     setTotalDeposit(recoveryDeposit);
     setMode('InitiateRecovery');
     setStep(STEPS.REVIEW);
-  }, [lostAccount, recoveryDeposit, setLostAccountAddress, setMode, setStep, setTotalDeposit]);
+  }, [accountsInfo, lostAccount?.accountIdentity, lostAccount?.address, lostAccountRecoveryInfo, recoveryDeposit, setLostAccountAddress, setMode, setStep, setTotalDeposit]);
 
   const goWithdraw = useCallback(() => {
-    setLostAccountAddress(lostAccount);
+    setLostAccountAddress({
+      accountIdentity: lostAccount?.accountIdentity,
+      address: lostAccount?.address ?? ''
+    });
     setMode('Withdraw');
     setGoReview(true);
   }, [lostAccount, setLostAccountAddress, setMode]);

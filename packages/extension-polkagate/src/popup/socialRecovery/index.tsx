@@ -72,6 +72,16 @@ export type WithdrawInfo = {
   hasId: boolean;
   soloUnlock: { amount: BN, date: number };
 } | undefined;
+export type InitiateRecoveryConfig = {
+  address: string;
+  accountIdentity: DeriveAccountInfo | undefined;
+  friends?: {
+    addresses: string[];
+    infos?: (DeriveAccountInfo | undefined)[] | undefined;
+  };
+  threshold?: number;
+  delayPeriod?: string;
+}
 
 export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
@@ -111,7 +121,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [step, setStep] = useState<number>(STEPS.CHECK_SCREEN);
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
   const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
-  const [lostAccountAddress, setLostAccountAddress] = useState<FriendWithId | undefined>();
+  const [lostAccountAddress, setLostAccountAddress] = useState<InitiateRecoveryConfig | undefined>();
   const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>();
   const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo | undefined>();
   const [mode, setMode] = useState<SocialRecoveryModes>();
