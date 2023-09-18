@@ -121,10 +121,9 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
 
       api.query.recovery.recoverable(lostAccount.address).then((r) => {
         setLostAccountRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
-        mode === 'Withdraw' && setTotalDeposit(r.isSome ? r.unwrap().deposit as BN : BN_ZERO);
       }).catch(console.error);
     }
-  }, [api, lostAccount, mode, setTotalDeposit]);
+  }, [api, lostAccount]);
 
   const checkLostAccountBalance = useCallback(() => {
     if (api && lostAccount) {
@@ -317,9 +316,10 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
       accountIdentity: lostAccount?.accountIdentity,
       address: lostAccount?.address ?? ''
     });
+    setTotalDeposit(lostAccountRecoveryInfo ? lostAccountRecoveryInfo.deposit : BN_ZERO);
     setMode('Withdraw');
     setGoReview(true);
-  }, [lostAccount, setLostAccountAddress, setMode]);
+  }, [lostAccount?.accountIdentity, lostAccount?.address, lostAccountRecoveryInfo, setLostAccountAddress, setMode, setTotalDeposit]);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
