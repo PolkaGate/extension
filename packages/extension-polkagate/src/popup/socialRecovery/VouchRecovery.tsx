@@ -165,7 +165,7 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
         api={api}
         chain={chain}
         disabled={false}
-        helperText='ToDo'
+        helperText={t<string>('Find the lost account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
         iconType='none'
         label={t<string>('Lost accounts')}
         onSelectFriend={selectLostAccount}
@@ -177,7 +177,7 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
         api={api}
         chain={chain}
         disabled={false}
-        helperText='ToDo'
+        helperText={t<string>('Find the rescuer account by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
         iconType='none'
         label={t<string>('Rescuer accounts')}
         onSelectFriend={selectRescuerAccount}
