@@ -13,7 +13,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
+import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
 import { useApi, useChain, useDecimal, useFormatted, useTeleport } from '../../hooks';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
@@ -57,6 +57,7 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
 
 export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
@@ -72,6 +73,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   const [recipientChainName, setRecipientChainName] = useState<string>();
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
+
+  const noSufficientBalanceWarningCondition = balances?.availableBalance?.isZero() || (amount && balances?.availableBalance && balances.decimal && balances.availableBalance.lt(amountToMachine(amount, balances.decimal)));
 
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
@@ -252,6 +255,22 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
     setAmount(type === 'All' ? allAmount : maxAmount);
   }, [api, balances?.availableBalance, decimal, maxFee]);
 
+  const _onChangeAmount = useCallback((value: string) => {
+    if (!decimal) {
+      return;
+    }
+
+    if (value.length > decimal - 1) {
+      console.log(`The amount digits is more than decimal:${decimal}`);
+
+      return;
+    }
+
+    setTransferType('Normal');
+
+    setAmount(value);
+  }, [decimal]);
+
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Title text={t<string>('Send Fund')} />
@@ -284,7 +303,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
           inputWidth={8.4}
           label={t<string>('Amount')}
           labelFontSize='16px'
-          onChangeAmount={setAmount}
+          onChangeAmount={_onChangeAmount}
           // eslint-disable-next-line react/jsx-no-bind
           onPrimary={() => setWholeAmount('All')}
           // eslint-disable-next-line react/jsx-no-bind
@@ -349,7 +368,17 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             }}
           />
         </Grid>
-        <Grid container justifyContent='flex-end'>
+        <Grid alignItems='end' container justifyContent={noSufficientBalanceWarningCondition ? 'space-between' : 'flex-end'}>
+          {noSufficientBalanceWarningCondition &&
+            <Warning
+              fontWeight={400}
+              isDanger
+              marginTop={0}
+              theme={theme}
+            >
+              {t<string>('There is no sufficient transferable balance')}
+            </Warning>
+          }
           <PButton
             _mt='15px'
             // eslint-disable-next-line react/jsx-no-bind
