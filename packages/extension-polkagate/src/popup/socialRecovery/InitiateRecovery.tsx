@@ -75,8 +75,10 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
   }, [initiatedRecovery, lostAccountRecoveryInfo]);
 
   const nextBtnDisable = useMemo(() => {
-    if (activeProxy || initiatedRecovery) {
-      return !!(lostAccountRecoveryInfo === undefined || (lostAccountRecoveryInfo && isVouchedCompleted) || !lostAccount?.address || (lostAccountRecoveryInfo && isVouchedCompleted && isDelayPassed === false));
+    if (initiatedRecovery) {
+      return !(lostAccountRecoveryInfo && isVouchedCompleted) || !(lostAccountRecoveryInfo && isVouchedCompleted && isDelayPassed);
+    } else if (activeProxy) {
+      return false;
     } else if (!lostAccount?.address) {
       return true;
     } else if (lostAccount.address && lostAccountRecoveryInfo) {
@@ -200,7 +202,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
             api={api}
             chain={chain}
             disabled={false}
-            helperText='ToDo'
+            helperText={t<string>('Find the account you want to rescue by entering their address or any associated identity details, such as their name, email, Twitter, etc.')}
             iconType='none'
             label={t<string>('Lost accounts')}
             onSelectFriend={selectLostAccount}
