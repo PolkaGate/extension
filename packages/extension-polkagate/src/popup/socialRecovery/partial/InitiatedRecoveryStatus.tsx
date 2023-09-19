@@ -175,7 +175,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             />}
         </Grid>
       </Grid>
-      {isVouchedCompleted && isDelayPassed === false &&
+      {isDelayPassed === false &&
         <Grid alignItems='center' container item sx={{ borderTop: '2px solid', borderTopColor: '#D5CCD0', pt: '12px', mt: '15px' }}>
           <Grid alignItems='center' container item>
             <AccessTimeIcon sx={{ color: theme.palette.success.main, fontSize: '24px', mr: '8px', width: 'fit-content' }} />
@@ -192,6 +192,16 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             <CheckIcon sx={{ color: theme.palette.success.main, fontSize: '35px', mr: '8px', width: 'fit-content' }} />
             <Typography fontSize='20px' fontWeight={500}>
               {t<string>('Now you can proceed to withdraw.')}
+            </Typography>
+          </Grid>
+        </Grid>
+      }
+      {!isVouchedCompleted && isDelayPassed === true &&
+        <Grid alignItems='center' container item sx={{ borderTop: '2px solid', borderTopColor: '#D5CCD0', pt: '12px', mt: '15px' }}>
+          <Grid alignItems='center' container item>
+            <AccessTimeIcon sx={{ color: theme.palette.success.main, fontSize: '24px', mr: '8px', width: 'fit-content' }} />
+            <Typography fontSize='20px' fontWeight={500} width='92%'>
+              {t<string>('The recovery delay time has already elapsed.')}
             </Typography>
           </Grid>
         </Grid>
