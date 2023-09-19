@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { Close as CloseIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
@@ -50,7 +50,7 @@ interface Props {
   recoveryInfo: PalletRecoveryRecoveryConfig | null;
   recoveryConfig: RecoveryConfigType | undefined;
   lostAccountAddress: InitiateRecoveryConfig | undefined;
-  activeLost: ActiveRecoveryFor | null;
+  activeLost: ActiveRecoveryFor | null | undefined;
   withdrawInfo: WithdrawInfo | undefined;
   vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
   allActiveRecoveries: ActiveRecoveryFor[] | null | undefined;
@@ -105,7 +105,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
     !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
-    !(withdrawInfo?.availableBalance.isZero() || withdrawInfo.claimed || withdrawInfo.redeemable.isZero() || !withdrawInfo.isRecoverable || !withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
+    (!withdrawInfo?.availableBalance.isZero() || !withdrawInfo.claimed || !withdrawInfo.redeemable.isZero() || withdrawInfo.isRecoverable || withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
       ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
@@ -211,12 +211,14 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
       ? STEPS.RECOVERYDETAIL
       : mode === 'SetRecovery'
         ? STEPS.MAKERECOVERABLE
-        : mode === 'Withdraw'
+        : mode === 'Withdraw' && withdrawInfo?.claimed === false
           ? STEPS.INITIATERECOVERY
-          : mode === 'InitiateRecovery'
-            ? STEPS.INITIATERECOVERY
-            : STEPS.INDEX);
-  }, [mode, setStep]);
+          : mode === 'Withdraw' && withdrawInfo?.claimed === true
+            ? STEPS.INDEX
+            : mode === 'InitiateRecovery'
+              ? STEPS.INITIATERECOVERY
+              : STEPS.INDEX);
+  }, [mode, setStep, withdrawInfo?.claimed]);
 
   const closeSelectProxy = useCallback(() => {
     setStep(STEPS.REVIEW);
@@ -239,33 +241,15 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
 
     return (
-      <Grid container direction='column' item justifyContent='center' m='auto' width='70%'>
+      <Grid alignItems='center' container direction='column' item justifyContent='center' m='auto' width='70%'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
-        <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
-          <Typography fontSize='16px' fontWeight={400}>
-            {t<string>('Funds available to be withdrawn now')}
-          </Typography>
-          {toBeWithdrawn.map((item, index) => (
-            <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
-              <Typography fontSize='16px' fontWeight={300}>
-                {t<string>(item.label)}
-              </Typography>
-              <ShowBalance
-                api={api}
-                balance={item.amount}
-                decimalPoint={4}
-              />
-            </Grid>
-          ))}
-        </Grid>
-        {toBeWithdrawnLater.length > 0 &&
-          <>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+        {withdrawInfo
+          ? <>
             <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
               <Typography fontSize='16px' fontWeight={400}>
-                {t<string>('Funds available to withdraw later')}
+                {t<string>('Funds available to be withdrawn now')}
               </Typography>
-              {toBeWithdrawnLater.map((item, index) => (
+              {toBeWithdrawn.map((item, index) => (
                 <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
                   <Typography fontSize='16px' fontWeight={300}>
                     {t<string>(item.label)}
@@ -278,7 +262,35 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 </Grid>
               ))}
             </Grid>
-          </>}
+            {toBeWithdrawnLater.length > 0 &&
+              <>
+                <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+                <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
+                  <Typography fontSize='16px' fontWeight={400}>
+                    {t<string>('Funds available to withdraw later')}
+                  </Typography>
+                  {toBeWithdrawnLater.map((item, index) => (
+                    <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
+                      <Typography fontSize='16px' fontWeight={300}>
+                        {t<string>(item.label)}
+                      </Typography>
+                      <ShowBalance
+                        api={api}
+                        balance={item.amount}
+                        decimalPoint={4}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </>}
+          </>
+          : [0, 1, 2, 3, 4].map((item) => (
+            <Skeleton
+              height='25px'
+              key={item}
+              sx={{ mb: '5px', transform: 'none', width: '410px' }}
+            />
+          ))}
       </Grid>
     );
   };
@@ -459,11 +471,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                       api={api}
                       chain={chain}
                       direction='row'
-                      formatted={mode === 'InitiateRecovery'
+                      formatted={mode === 'InitiateRecovery' || mode === 'Withdraw'
                         ? lostAccountAddress?.address
-                        : mode === 'VouchRecovery'
-                          ? vouchRecoveryInfo?.lost.address
-                          : withdrawInfo?.lost}
+                        : vouchRecoveryInfo?.lost.address}
                       identiconSize={31}
                       showSocial={false}
                       style={{ maxWidth: '100%', width: 'fit-content' }}
@@ -501,7 +511,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   </DisplayValue>
                 </>
               }
-              {mode === 'Withdraw' && withdrawInfo &&
+              {mode === 'Withdraw' &&
                 <WithdrawDetails />
               }
               {!(mode === 'VouchRecovery' || (mode === 'Withdraw' && withdrawInfo?.claimed === true)) &&

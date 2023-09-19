@@ -2,21 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
 import { PButton, TwoButtons } from '../../components';
-import { useAccountsInfo, useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
+import { useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
-import getPoolAccounts from '../../util/getPoolAccounts';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
@@ -33,40 +31,25 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>;
   setTotalDeposit: React.Dispatch<React.SetStateAction<BN>>;
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>;
-  initiatedRecovery: ActiveRecoveryFor | null;
+  initiatedRecovery: ActiveRecoveryFor | null | undefined;
   setWithdrawInfo: React.Dispatch<React.SetStateAction<WithdrawInfo>>;
   withdrawInfo: WithdrawInfo;
-  activeProxy: string | null;
+  activeProxy: string | null | undefined;
+  accountsInfo: DeriveAccountInfo[] | undefined;
+  lostAccountRecoveryInfo: false | PalletRecoveryRecoveryConfig | null | undefined;
+  setLostAccountRecoveryInfo: React.Dispatch<React.SetStateAction<false | PalletRecoveryRecoveryConfig | null | undefined>>;
 }
 
-interface SessionInfo {
-  eraLength: number;
-  eraProgress: number;
-  currentEra: number;
-}
-
-export default function InitiateRecovery({ activeProxy, address, api, formatted, initiatedRecovery, mode, setLostAccountAddress, setMode, setStep, setTotalDeposit, setWithdrawInfo, withdrawInfo }: Props): React.ReactElement {
+export default function InitiateRecovery({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, setWithdrawInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
-  const accountsInfo = useAccountsInfo(api, chain);
   const decimal = useDecimal(address);
   const token = useToken(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
 
   const [lostAccount, setLostAccount] = useState<FriendWithId>();
-  const [lostAccountBalance, setLostAccountBalance] = useState<Balance | undefined>();
-  const [lostAccountRedeemable, setLostAccountRedeemable] = useState<Balance | undefined>();
-  const [lostAccountSoloStakingBalance, setLostAccountSoloStakingBalance] = useState<BN | undefined>();
-  const [lostAccountPoolStakingBalance, setLostAccountPoolStakingBalance] = useState<BN | undefined>();
-  const [lostAccountReserved, setLostAccountReserved] = useState<BN | undefined>();
-  const [lostAccountSoloUnlock, setLostAccountSoloUnlock] = useState<{ amount: BN, date: number } | undefined>();
-  const [alreadyClaimed, setAlreadyClaimed] = useState<boolean | undefined>();
-  const [lostAccountIdentity, setLostAccountIdentity] = useState<boolean | undefined>();
-  const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
-  const [fetchingLostAccountInfos, setFetchingLostAccountInfos] = useState<boolean>(false);
   const [goReview, setGoReview] = useState<boolean>(false);
-  const [sessionInfo, setSessionInfo] = useState<SessionInfo>();
 
   const recoveryDeposit = useMemo(() => api ? new BN(api.consts.recovery.recoveryDeposit.toString()) : BN_ZERO, [api]);
   const delayEndBlock = useMemo(() => (initiatedRecovery?.createdBlock ?? 0) + (lostAccountRecoveryInfo ? lostAccountRecoveryInfo?.delayPeriod?.toNumber() : 0), [initiatedRecovery?.createdBlock, lostAccountRecoveryInfo]);
@@ -93,7 +76,7 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
 
   const nextBtnDisable = useMemo(() => {
     if (activeProxy || initiatedRecovery) {
-      return (lostAccountRecoveryInfo === undefined || (lostAccountRecoveryInfo && isVouchedCompleted) || !lostAccount?.address || (lostAccountRecoveryInfo && isVouchedCompleted && isDelayPassed === false));
+      return !!(lostAccountRecoveryInfo === undefined || (lostAccountRecoveryInfo && isVouchedCompleted) || !lostAccount?.address || (lostAccountRecoveryInfo && isVouchedCompleted && isDelayPassed === false));
     } else if (!lostAccount?.address) {
       return true;
     } else if (lostAccount.address && lostAccountRecoveryInfo) {
@@ -105,16 +88,6 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
     }
   }, [activeProxy, initiatedRecovery, isDelayPassed, isVouchedCompleted, lostAccount?.address, lostAccountRecoveryInfo]);
 
-  useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
-      setSessionInfo({
-        currentEra: Number(sessionInfo.currentEra),
-        eraLength: Number(sessionInfo.eraLength),
-        eraProgress: Number(sessionInfo.eraProgress)
-      });
-    });
-  }, [api]);
-
   const checkLostAccountRecoverability = useCallback(() => {
     if (api && lostAccount) {
       setLostAccountRecoveryInfo(undefined);
@@ -123,162 +96,25 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
         setLostAccountRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
       }).catch(console.error);
     }
-  }, [api, lostAccount]);
-
-  const checkLostAccountBalance = useCallback(() => {
-    if (api && lostAccount) {
-      api.derive.balances.all(lostAccount.address).then((b) => {
-        setLostAccountBalance(b.availableBalance);
-        setLostAccountReserved(b.reservedBalance);
-      }).catch(console.error);
-    }
-  }, [api, lostAccount]);
-
-  const checkLostAccountSoloStakedBalance = useCallback(() => {
-    if (api && lostAccount && sessionInfo) {
-      api.derive.staking.account(lostAccount.address).then((s) => {
-        setLostAccountSoloStakingBalance(new BN(s.stakingLedger.active.toString()));
-
-        let unlockingValue = BN_ZERO;
-        const toBeReleased: { amount: BN, date: number }[] = [];
-
-        if (s?.unlocking) {
-          for (const [_, { remainingEras, value }] of Object.entries(s.unlocking)) {
-            if (remainingEras.gtn(0)) {
-              const amount = new BN(value as unknown as string);
-
-              unlockingValue = unlockingValue.add(amount);
-
-              const secToBeReleased = (Number(remainingEras) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
-
-              toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
-            }
-          }
-        }
-
-        setLostAccountSoloUnlock({ amount: unlockingValue, date: toBeReleased.at(-1)?.date ?? 0 });
-        setLostAccountRedeemable(s.redeemable);
-      }).catch(console.error);
-    }
-  }, [api, lostAccount, sessionInfo]);
-
-  const checkLostAccountClaimedStatus = useCallback(() => {
-    if (api && lostAccount) {
-      api.query.recovery.proxy(formatted).then((p) => {
-        if (p.isEmpty) {
-          setAlreadyClaimed(false);
-
-          return;
-        }
-
-        const proxies: string = p.toHuman() as string;
-
-        setAlreadyClaimed(proxies === lostAccount.address);
-      }).catch(console.error);
-    }
-  }, [api, formatted, lostAccount]);
-
-  const checkLostAccountIdentity = useCallback(() => {
-    if (accountsInfo && lostAccount) {
-      const hasId = !!accountsInfo.find((accountInfo) => accountInfo.accountId?.toString() === lostAccount.address);
-
-      setLostAccountIdentity(hasId);
-    }
-  }, [accountsInfo, lostAccount]);
-
-  const checkLostAccountPoolStakedBalance = useCallback(() => {
-    if (api && lostAccount) {
-      api.query.nominationPools.poolMembers(lostAccount.address).then(async (res) => {
-        const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
-
-        if (!member) {
-          setLostAccountPoolStakingBalance(BN_ZERO);
-
-          return;
-        }
-
-        const poolId = member.poolId;
-        const accounts = poolId && getPoolAccounts(api, poolId);
-
-        if (!accounts) {
-          setLostAccountPoolStakingBalance(BN_ZERO);
-
-          return;
-        }
-
-        const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
-          api.query.nominationPools.bondedPools(poolId),
-          api.derive.staking.account(accounts.stashId),
-          api.call.nominationPoolsApi.pendingRewards(formatted)
-        ]);
-
-        const active = member.points.isZero()
-          ? BN_ZERO
-          : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
-        const rewards = myClaimable as Balance;
-        let unlockingValue = BN_ZERO;
-
-        member?.unbondingEras?.forEach((value) => {
-          unlockingValue = unlockingValue.add(value);
-        });
-
-        setLostAccountPoolStakingBalance(active.add(rewards).add(unlockingValue));
-      }).catch(console.error);
-    }
-  }, [api, formatted, lostAccount]);
+  }, [api, lostAccount, setLostAccountRecoveryInfo]);
 
   useEffect(() => {
     if ((initiatedRecovery || activeProxy) && !lostAccount) {
       setLostAccount({ accountIdentity: undefined, address: activeProxy ?? initiatedRecovery?.lost ?? '' });
     }
-  }, [activeProxy, checkLostAccountRecoverability, initiatedRecovery, lostAccount]);
+  }, [activeProxy, initiatedRecovery, lostAccount]);
 
   useEffect(() => {
-    if (initiatedRecovery && lostAccount && lostAccountRecoveryInfo === false) {
+    if (initiatedRecovery && !activeProxy && lostAccount && lostAccountRecoveryInfo === false) {
       checkLostAccountRecoverability();
     }
-  }, [checkLostAccountRecoverability, initiatedRecovery, lostAccount, lostAccountRecoveryInfo]);
+  }, [activeProxy, checkLostAccountRecoverability, initiatedRecovery, lostAccount, lostAccountRecoveryInfo]);
 
   useEffect(() => {
     if (!lostAccount && lostAccountRecoveryInfo !== false) {
       setLostAccountRecoveryInfo(false);
     }
-  }, [lostAccount, lostAccount?.address, lostAccountRecoveryInfo]);
-
-  useEffect(() => {
-    if (fetchingLostAccountInfos || !api || !formatted || (!lostAccountRecoveryInfo && !activeProxy) || withdrawInfo || !lostAccount?.address || !accountsInfo || !sessionInfo) {
-      return;
-    }
-
-    setFetchingLostAccountInfos(true);
-    checkLostAccountBalance();
-    checkLostAccountSoloStakedBalance();
-    checkLostAccountClaimedStatus();
-    checkLostAccountPoolStakedBalance();
-    checkLostAccountIdentity();
-  }, [activeProxy, sessionInfo, lostAccountRecoveryInfo, api, checkLostAccountBalance, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, accountsInfo, checkLostAccountClaimedStatus, checkLostAccountSoloStakedBalance, fetchingLostAccountInfos, formatted, isDelayPassed, mode, setWithdrawInfo, withdrawInfo, lostAccount?.address]);
-
-  useEffect(() => {
-    if (!lostAccount?.address || !formatted || lostAccountPoolStakingBalance === undefined || lostAccountSoloUnlock === undefined || lostAccountIdentity === undefined || lostAccountBalance === undefined || lostAccountReserved === undefined || lostAccountRedeemable === undefined || lostAccountSoloStakingBalance === undefined || alreadyClaimed === undefined) {
-      return;
-    }
-
-    setFetchingLostAccountInfos(false);
-
-    setWithdrawInfo({
-      availableBalance: lostAccountBalance,
-      claimed: alreadyClaimed,
-      hasId: lostAccountIdentity,
-      isRecoverable: !!lostAccountRecoveryInfo,
-      lost: lostAccount.address,
-      poolStaked: lostAccountPoolStakingBalance,
-      redeemable: lostAccountRedeemable,
-      rescuer: formatted,
-      reserved: lostAccountReserved,
-      soloStaked: lostAccountSoloStakingBalance,
-      soloUnlock: lostAccountSoloUnlock
-    });
-  }, [alreadyClaimed, formatted, lostAccount?.address, lostAccountSoloUnlock, lostAccountIdentity, lostAccountPoolStakingBalance, lostAccountReserved, lostAccountBalance, lostAccountRecoveryInfo, lostAccountRedeemable, lostAccountSoloStakingBalance, setWithdrawInfo]);
+  }, [lostAccount, lostAccount?.address, lostAccountRecoveryInfo, setLostAccountRecoveryInfo]);
 
   useEffect(() => {
     if (withdrawInfo && goReview) {
@@ -312,14 +148,10 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
   }, [accountsInfo, lostAccount?.accountIdentity, lostAccount?.address, lostAccountRecoveryInfo, recoveryDeposit, setLostAccountAddress, setMode, setStep, setTotalDeposit]);
 
   const goWithdraw = useCallback(() => {
-    setLostAccountAddress({
-      accountIdentity: lostAccount?.accountIdentity,
-      address: lostAccount?.address ?? ''
-    });
     setTotalDeposit(lostAccountRecoveryInfo ? lostAccountRecoveryInfo.deposit : BN_ZERO);
     setMode('Withdraw');
     setGoReview(true);
-  }, [lostAccount?.accountIdentity, lostAccount?.address, lostAccountRecoveryInfo, setLostAccountAddress, setMode, setTotalDeposit]);
+  }, [lostAccountRecoveryInfo, setMode, setTotalDeposit]);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
