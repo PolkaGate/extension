@@ -4,17 +4,20 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, PButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
+import Privacy from './Privacy';
 
-function AddAccount (): React.ReactElement {
+function AddAccount(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
+
+  const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
 
   const _goToRestoreFromJson = useCallback(
     (): void => {
@@ -62,12 +65,12 @@ function AddAccount (): React.ReactElement {
         {t<string>('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
       </Typography>
       <PButton
-        _mt='30px'
+        _mt='20px'
         _onClick={_goToCreate}
         _variant={'contained'}
         text={t<string>('Create a new account')}
       />
-      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '20px', textAlign: 'center' }}>
+      <Typography component={'p'} sx={{ fontSize: '18px', fontWeight: 300, py: '10px', textAlign: 'center' }}>
         {t<string>('Or')}
       </Typography>
       <PButton
@@ -100,6 +103,15 @@ function AddAccount (): React.ReactElement {
         _variant={'outlined'}
         text={t<string>('Attach ledger device')}
       />
+      <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', mt: '18px', textAlign: 'center', textDecoration: 'underline' }}>
+        {t('Privacy and Security')}
+      </Typography>
+      {showPrivacyAndSecurity &&
+        <Privacy
+          setShow={setShowPrivacyAndSecurity}
+          show={showPrivacyAndSecurity}
+        />
+      }
     </>
   );
 }

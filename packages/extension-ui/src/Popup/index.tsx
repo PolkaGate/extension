@@ -57,7 +57,6 @@ import SoloRestake from '../../../extension-polkagate/src/popup/staking/solo/res
 import SoloStake from '../../../extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
-import Welcome from '../../../extension-polkagate/src/popup/welcome';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching } from '../../../extension-polkagate/src/util/types';
 
@@ -99,7 +98,7 @@ export default function Popup(): React.ReactElement {
   const [mediaAllowed, setMediaAllowed] = useState(false);
   const [metaRequests, setMetaRequests] = useState<null | MetadataRequest[]>(null);
   const [signRequests, setSignRequests] = useState<null | SigningRequest[]>(null);
-  const [isWelcomeDone, setWelcomeDone] = useState(false);
+  // const [isWelcomeDone, setWelcomeDone] = useState(false);
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
@@ -133,7 +132,7 @@ export default function Popup(): React.ReactElement {
 
   const _onAction = useCallback(
     (to?: string): void => {
-      setWelcomeDone(window.localStorage.getItem('welcome_read') === 'ok');
+      // setWelcomeDone(window.localStorage.getItem('welcome_read') === 'ok');
 
       if (to) {
         window.location.hash = to;
@@ -173,15 +172,13 @@ export default function Popup(): React.ReactElement {
     return <ErrorBoundary trigger={trigger}>{component}</ErrorBoundary>;
   }
 
-  const Root = isWelcomeDone
-    ? authRequests && authRequests.length
-      ? wrapWithErrorBoundary(<Authorize />, 'authorize')
-      : metaRequests && metaRequests.length
-        ? wrapWithErrorBoundary(<Metadata />, 'metadata')
-        : signRequests && signRequests.length
-          ? wrapWithErrorBoundary(<Signing />, 'signing')
-          : wrapWithErrorBoundary(<Accounts />, 'accounts')
-    : wrapWithErrorBoundary(<Welcome />, 'welcome');
+  const Root = authRequests && authRequests.length
+    ? wrapWithErrorBoundary(<Authorize />, 'authorize')
+    : metaRequests && metaRequests.length
+      ? wrapWithErrorBoundary(<Metadata />, 'metadata')
+      : signRequests && signRequests.length
+        ? wrapWithErrorBoundary(<Signing />, 'signing')
+        : wrapWithErrorBoundary(<Accounts />, 'accounts');
 
   return (
     <AnimatePresence exitBeforeEnter>
