@@ -32,12 +32,11 @@ export default function Support({ address, referendum, track }: Props): React.Re
 
   const isFellowship = referendum?.type === 'FellowshipReferendum';
   const threshold = useCurrentSupportThreshold(track?.[1], (currentBlock && referendum && referendum?.timelineSb?.[1]?.block) && currentBlock - referendum.timelineSb[1].block);
-  const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlockOC;
+  const blockSubmitted = referendum?.submissionBlockOC || referendum?.timelineSb?.find(({ status }) => status === 'Submitted')?.block;
 
   const currentSupportThreshold = useMemo(() => {
     if (track?.[1]?.preparePeriod && currentBlock && blockSubmitted) {
       if (currentBlock - blockSubmitted < track[1].preparePeriod.toNumber()) {
-
         return 50; // in prepare period
       }
 

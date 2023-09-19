@@ -32,7 +32,7 @@ export default function Voting({ address, referendum, track }: Props): React.Rea
   const [VoteCountsPA, setVoteCountsPA] = useState<{ ayes: number | undefined, nays: number | undefined }>();
 
   const isFellowship = referendum?.type ? referendum.type === 'FellowshipReferendum' : undefined;
-  const blockSubmitted = referendum?.timelineSb?.[0]?.block || referendum?.submissionBlockOC;
+  const blockSubmitted = referendum?.submissionBlockOC || referendum?.timelineSb?.find(({ status }) => status === 'Submitted')?.block;
   const threshold = useCurrentApprovalThreshold(track?.[1], currentBlock && blockSubmitted && (currentBlock - blockSubmitted));
 
   const currentApprovalThreshold = useMemo((): number | undefined => {
