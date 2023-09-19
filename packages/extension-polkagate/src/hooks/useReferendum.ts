@@ -226,9 +226,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       submissionAmount: referendumPA?.submitted_amount || referendumSb?.pre_image?.amount || submissionAmountOC,
       submissionBlockOC: onchainRefInfo?.isOngoing
         ? onchainRefInfo.asOngoing.submitted.toNumber()
-        : onchainRefInfo?.isApproved
-          ? onchainRefInfo.asApproved[0].toNumber()
-          : undefined,
+        : undefined,
       supportAmount: referendumSb?.support_amount || (onchainRefInfo?.isOngoing ? onchainRefInfo.asOngoing.tally?.support : undefined),
       timelinePA: referendumPA?.timeline,
       timelineSb: referendumSb?.timeline || statusOC,
