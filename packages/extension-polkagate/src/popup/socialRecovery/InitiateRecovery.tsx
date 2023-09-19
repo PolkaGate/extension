@@ -93,7 +93,7 @@ export default function InitiateRecovery({ activeProxy, address, api, formatted,
 
   const nextBtnDisable = useMemo(() => {
     if (activeProxy || initiatedRecovery) {
-      return (lostAccountRecoveryInfo === undefined || lostAccountRecoveryInfo === null || !isVouchedCompleted || !lostAccount?.address || (isVouchedCompleted && isDelayPassed === false));
+      return (lostAccountRecoveryInfo === undefined || (lostAccountRecoveryInfo && isVouchedCompleted) || !lostAccount?.address || (lostAccountRecoveryInfo && isVouchedCompleted && isDelayPassed === false));
     } else if (!lostAccount?.address) {
       return true;
     } else if (lostAccount.address && lostAccountRecoveryInfo) {
