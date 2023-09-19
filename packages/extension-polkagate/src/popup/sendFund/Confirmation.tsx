@@ -6,11 +6,10 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress, TwoButtons } from '../../components';
-import { useDecimal, useTranslation } from '../../hooks';
+import { Motion, ShortAddress, TwoButtons } from '../../components';
+import { useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { NameAddress, TxInfo } from '../../util/types';
-import { amountToMachine } from '../../util/utils';
 import Explorer from '../history/Explorer';
 import FailSuccessIcon from '../history/partials/FailSuccessIcon';
 
