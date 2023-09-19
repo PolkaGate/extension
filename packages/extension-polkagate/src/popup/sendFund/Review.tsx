@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { PalletIdentityIdentityInfo } from '@polkadot/types/lookup';
-
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
