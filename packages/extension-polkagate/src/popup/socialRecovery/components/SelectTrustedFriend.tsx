@@ -72,6 +72,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
         accountId.identity.web?.includes(value))
         .map((accountWithId) => ({ accountIdentity: accountWithId, address: String(accountWithId.accountId) }));
 
+      onSelectFriend(undefined);
       setFriendsList(possibleFriends);
     }
   }, [accountsInfo, onSelectFriend]);
@@ -81,13 +82,14 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
       setEnteredAddress(undefined);
       setFriendsList(undefined);
       addressSelected && setAddressSelected(false);
+      onSelectFriend(undefined);
 
       return;
     }
 
     setEnteredAddress(value);
     findFriend(value);
-  }, [addressSelected, findFriend]);
+  }, [addressSelected, findFriend, onSelectFriend]);
 
   const pasteAddress = useCallback(() => {
     if (enteredAddress) {
@@ -109,6 +111,11 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
 
     if (iconType === 'none') {
       setEnteredAddress(addr?.address);
+    }
+
+    if (iconType === 'plus') {
+      setEnteredAddress(undefined);
+      setFriendsList(undefined);
     }
 
     _hideDropdown();
