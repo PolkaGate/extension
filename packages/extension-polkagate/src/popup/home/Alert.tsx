@@ -65,8 +65,8 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Use Light Client as a \'Remote node\' for seamless connections',
-              'Known issues resolved'
+              'Introducing Light Client as a \'Remote node\' for seamless connections',
+              'Resolving known issues for a smoother experience'
             ]}
           />
         </Grid>
