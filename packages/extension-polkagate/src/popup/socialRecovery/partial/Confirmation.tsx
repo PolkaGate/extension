@@ -15,9 +15,9 @@ import { TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
+import { FriendWithId } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from '..';
-import { FriendWithId } from '../components/SelectTrustedFriend';
 
 interface Props {
   txInfo: TxInfo;
@@ -27,6 +27,7 @@ interface Props {
   depositValue: BN;
   decimal: number | undefined;
   lostAccountAddress: FriendWithId | undefined;
+  vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
 }
 
 interface DisplayInfoProps {
@@ -54,7 +55,7 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
   );
 };
 
-export default function Confirmation({ decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
@@ -131,6 +132,19 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
         <Grid alignItems='center' container item justifyContent='center' pt='8px'>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
+        {mode === 'VouchRecovery' && vouchRecoveryInfo &&
+          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+              {t<string>('Lost account')}:
+            </Typography>
+            {vouchRecoveryInfo.lost.accountIdentity?.identity.display &&
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                {vouchRecoveryInfo.lost.accountIdentity?.identity.display}
+              </Typography>}
+            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+              <ShortAddress address={vouchRecoveryInfo.lost.address} inParentheses style={{ fontSize: '16px' }} />
+            </Grid>
+          </Grid>}
         {mode === 'InitiateRecovery' &&
           <>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
