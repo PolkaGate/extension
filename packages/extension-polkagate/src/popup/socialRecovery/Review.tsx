@@ -73,6 +73,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
+  const [nothingToWithdrawNow, setNothingToWithdrawNow] = useState<boolean>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
@@ -240,31 +241,34 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     withdrawInfo?.soloStaked && !withdrawInfo?.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
     withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
 
+    setNothingToWithdrawNow(toBeWithdrawn.length === 0);
+
     return (
       <Grid alignItems='center' container direction='column' item justifyContent='center' m='auto' width='70%'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
         {withdrawInfo
           ? <>
-            <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
-              <Typography fontSize='16px' fontWeight={400}>
-                {t<string>('Funds available to be withdrawn now')}
-              </Typography>
-              {toBeWithdrawn.map((item, index) => (
-                <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
-                  <Typography fontSize='16px' fontWeight={300}>
-                    {t<string>(item.label)}
-                  </Typography>
-                  <ShowBalance
-                    api={api}
-                    balance={item.amount}
-                    decimalPoint={4}
-                  />
-                </Grid>
-              ))}
-            </Grid>
+            {toBeWithdrawn.length > 0 &&
+              <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
+                <Typography fontSize='16px' fontWeight={400}>
+                  {t<string>('Funds available to be withdrawn now')}
+                </Typography>
+                {toBeWithdrawn.map((item, index) => (
+                  <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
+                    <Typography fontSize='16px' fontWeight={300}>
+                      {t<string>(item.label)}
+                    </Typography>
+                    <ShowBalance
+                      api={api}
+                      balance={item.amount}
+                      decimalPoint={4}
+                    />
+                  </Grid>
+                ))}
+              </Grid>}
             {toBeWithdrawnLater.length > 0 &&
               <>
-                <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
+                {toBeWithdrawn.length > 0 && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />}
                 <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
                   <Typography fontSize='16px' fontWeight={400}>
                     {t<string>('Funds available to withdraw later')}
@@ -555,9 +559,21 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   {t<string>('For those funds that are available to withdraw later, you need to come back to this page to complete the process.')}
                 </Warning>
               </Grid>}
+            {mode === 'Withdraw' && nothingToWithdrawNow &&
+              <Grid container item sx={{ '> div.belowInput': { m: 0, pl: '5px' }, height: '40px', pb: '15px' }}>
+                <Warning
+                  fontSize={'15px'}
+                  fontWeight={500}
+                  isBelowInput
+                  theme={theme}
+                >
+                  {t<string>('There is no available fund to withdraw now!')}
+                </Warning>
+              </Grid>}
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
+                disabled={nothingToWithdrawNow}
                 isPasswordError={isPasswordError}
                 label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
                 onChange={setPassword}
@@ -611,6 +627,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             mode={mode}
             recoveryConfig={recoveryConfig}
             txInfo={txInfo}
+            vouchRecoveryInfo={vouchRecoveryInfo}
           />
         }
       </>
