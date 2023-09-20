@@ -17,7 +17,7 @@ import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 import { FriendWithId } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
-import { RecoveryConfigType, SocialRecoveryModes } from '..';
+import { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
 
 interface Props {
   txInfo: TxInfo;

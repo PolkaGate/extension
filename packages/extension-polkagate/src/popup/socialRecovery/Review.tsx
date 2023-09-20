@@ -36,7 +36,8 @@ import { FriendWithId } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { InitiateRecoveryConfig, RecoveryConfigType, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
+import { InitiateRecoveryConfig, RecoveryConfigType, SocialRecoveryModes, WithdrawInfo } from './util/types';
+import { STEPS } from '.';
 
 interface Props {
   address: string;
@@ -58,7 +59,7 @@ interface Props {
   specific: boolean;
 }
 
-export default function Review({ activeLost, address, allActiveRecoveries, api, chain, specific, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
+export default function Review ({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);

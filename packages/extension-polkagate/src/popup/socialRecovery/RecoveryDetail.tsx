@@ -7,26 +7,18 @@ import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, Typography, useTheme } from '@mui/material';
-import { CubeGrid } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
-import { AccountsStore } from '@polkadot/extension-base/stores';
 import { Chain } from '@polkadot/extension-chains/types';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { ChainLogo, PButton, ShowBalance2, TwoButtons, Warning } from '../../components';
-import { useApi, useChain, useChainName, useFormatted, useFullscreen, useTranslation } from '../../hooks';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
-import TrustedFriendAccount from './components/TrustedFriendAccount';
+import { useTranslation } from '../../hooks';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-
+import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
+import { STEPS } from '.';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -37,7 +29,7 @@ interface Props {
   setRecoveryConfig: React.Dispatch<React.SetStateAction<RecoveryConfigType>>;
 }
 
-export default function RecoveryDetail({ api, chain, recoveryInformation, setMode, setStep, setRecoveryConfig }: Props): React.ReactElement {
+export default function RecoveryDetail ({ api, chain, recoveryInformation, setMode, setRecoveryConfig, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -20,7 +20,8 @@ import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
-import { InitiateRecoveryConfig, SocialRecoveryModes, STEPS, WithdrawInfo } from '.';
+import { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
+import { STEPS } from '.';
 
 interface Props {
   address: string | undefined;

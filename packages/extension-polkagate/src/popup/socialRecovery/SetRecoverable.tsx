@@ -14,7 +14,8 @@ import { useAccountsInfo, useChain, useFormatted, useTranslation } from '../../h
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
 import TrustedFriendsList from './partial/TrustedFriendsList';
-import { RecoveryConfigType, SocialRecoveryModes, STEPS } from '.';
+import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
+import { STEPS } from '.';
 
 interface Props {
   address: string | undefined;
@@ -34,7 +35,7 @@ const CONFIGSTEPS = {
 
 const blocksInHour = 600;
 
-export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function RecoveryConfig ({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);

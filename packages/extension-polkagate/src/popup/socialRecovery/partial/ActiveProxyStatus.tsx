@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 
 import { Progress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { WithdrawInfo } from '..';
+import { WithdrawInfo } from '../util/types';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -21,7 +21,7 @@ interface Props {
   withdrawInfo: WithdrawInfo | undefined;
 }
 
-export default function ActiveProxyStatus({ api, style, withdrawInfo }: Props): React.ReactElement {
+export default function ActiveProxyStatus ({ api, style, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const assets: { label: string; amount: BN | Balance }[] = [];

@@ -14,7 +14,8 @@ import { PButton, Progress, TwoButtons, Warning } from '../../components';
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
-import { SocialRecoveryModes, STEPS } from '.';
+import { SocialRecoveryModes } from './util/types';
+import { STEPS } from '.';
 
 interface Props {
   address: string | undefined;
@@ -27,7 +28,7 @@ interface Props {
 
 type WhyNotStatus = 'noActive' | 'NotAFriend' | 'AlreadyVouched' | 'notRecoverable';
 
-export default function Vouch({ activeRecoveries, address, api, setMode, setStep, setVouchRecoveryInfo }: Props): React.ReactElement {
+export default function Vouch ({ activeRecoveries, address, api, setMode, setStep, setVouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
