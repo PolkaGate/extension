@@ -133,18 +133,24 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
         {mode === 'VouchRecovery' && vouchRecoveryInfo &&
-          <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>('Lost account')}:
-            </Typography>
-            {vouchRecoveryInfo.lost.accountIdentity?.identity.display &&
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                {vouchRecoveryInfo.lost.accountIdentity?.identity.display}
-              </Typography>}
-            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-              <ShortAddress address={vouchRecoveryInfo.lost.address} inParentheses style={{ fontSize: '16px' }} />
+          <>
+            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                {t<string>('Lost account')}:
+              </Typography>
+              {vouchRecoveryInfo.lost.accountIdentity?.identity.display &&
+                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+                  {vouchRecoveryInfo.lost.accountIdentity?.identity.display}
+                </Typography>}
+              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
+                <ShortAddress address={vouchRecoveryInfo.lost.address} inParentheses style={{ fontSize: '16px' }} />
+              </Grid>
             </Grid>
-          </Grid>}
+            <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+            </Grid>
+          </>
+        }
         {mode === 'InitiateRecovery' &&
           <>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
