@@ -65,9 +65,8 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Now you can choose an asset and view its balance.',
-              'Experience full-screen transfer page with support for asset hubs cross-chain asset transfers.',
-              'Experience a smoother journey with the resolution of numerous known issues.'
+              'Introducing Light Client as a \'Remote node\' for seamless connections',
+              'Resolving known issues for a smoother experience'
             ]}
           />
         </Grid>

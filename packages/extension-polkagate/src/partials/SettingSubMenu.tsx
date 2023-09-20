@@ -184,13 +184,44 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
               <Grid item>
                 <IconButton
                   onClick={_onWindowOpen}
-                  sx={{ height: '35px', width: '35px', mr: '-5px' }}
+                  sx={{ height: '35px', mr: '-5px', width: '35px' }}
                 >
-                  <OpenInNewRoundedIcon sx={{ fontSize: '25px', color: 'secondary.light' }} />
+                  <OpenInNewRoundedIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
                 </IconButton>
               </Grid>
             </>
           }
+        </Grid>
+        <Grid item pt='15px' textAlign='left'>
+          <Checkbox2
+            checked={isTestnetEnabled}
+            iconStyle={{ transform: 'scale(1.13)' }}
+            label={t<string>('Enable testnet chains')}
+            labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+            onChange={onChange}
+          />
+        </Grid>
+        <Grid item pt='15px' textAlign='left'>
+          <Checkbox2
+            checked={camera}
+            iconStyle={{ transform: 'scale(1.13)' }}
+            label={t<string>('Allow QR camera access')}
+            labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+            onChange={toggleCamera}
+          />
+        </Grid>
+        <Grid container item >
+          <MenuItem
+            iconComponent={
+              <FontAwesomeIcon
+                color={`${theme.palette.text.primary}`}
+                fontSize='18px'
+                icon={faListCheck}
+              />
+            }
+            onClick={_onAuthManagement}
+            text={t<string>('Manage website access')}
+          />
         </Grid>
         <Grid item pt='12px'>
           <Select
@@ -208,43 +239,12 @@ export default function SettingSubMenu({ isTestnetEnabled, onChange, setIsTestne
             value={notification ?? notificationOptions[1].value}
           />
         </Grid>
-        <Grid item pt='15px' textAlign='left'>
-          <Checkbox2
-            checked={camera}
-            iconStyle={{ transform: 'scale(1.13)' }}
-            label={t<string>('Allow QR camera access')}
-            labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
-            onChange={toggleCamera}
-          />
-        </Grid>
-        <Grid container item >
-          <MenuItem
-            iconComponent={
-              <FontAwesomeIcon
-                color={`${theme.palette.text.primary}`}
-                fontSize='18px'
-                icon={faListCheck}
-              />
-            }
-            onClick={_onAuthManagement}
-            text={t<string>('Manage website access')}
-          />
-        </Grid>
         <Grid item pt='7px'>
           <Select
             label={t<string>('Default display address format')}
             onChange={_onChangePrefix}
             options={prefixOptions}
             value={prefix ?? prefixOptions[2].value}
-          />
-        </Grid>
-        <Grid item pt='15px' textAlign='left'>
-          <Checkbox2
-            checked={isTestnetEnabled}
-            iconStyle={{ transform: 'scale(1.13)' }}
-            label={t<string>('Enable testnet chain')}
-            labelStyle={{ fontWeight: '300', fontSize: '18px', marginLeft: '7px' }}
-            onChange={onChange}
           />
         </Grid>
       </Grid>

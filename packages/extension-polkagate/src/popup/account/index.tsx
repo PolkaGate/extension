@@ -164,7 +164,7 @@ export default function AccountDetails(): React.ReactElement {
     <Motion>
       <HeaderBrand
         _centerItem={
-          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '75%' }} />
+          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '75%' }} subIdOnly />
         }
         address={address}
         noBorder

@@ -78,26 +78,26 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
   const mayBeExecutionBlock = sortedHistory?.find((h) => h.status === 'Executed')?.block;
   const mayBeBeneficiary = hexAddressToFormatted(referendum?.proposed_call?.args?.beneficiary, chain);
   const mayBeAwardedDate = useMemo(() =>
-    currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod) ||
-    referendum?.timeline?.[1]?.statuses?.[1]?.timestamp
+    (currentBlockNumber && spendPeriod && mayBeExecutionBlock && getAwardedDate(currentBlockNumber, mayBeExecutionBlock, spendPeriod)) ||
+    referendum?.timelinePA?.[1]?.statuses?.[1]?.timestamp
     , [currentBlockNumber, mayBeExecutionBlock, spendPeriod, referendum]);
 
   /** in rare case as ref 160 the proposers are not the same! needs more research */
   // const isInTreasuryQueue = isExecuted && !!currentTreasuryApprovalList?.find((item) => item.proposer === referendum.proposer && String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary);
   const isInTreasuryQueue = useMemo(() => isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === mayBeBeneficiary), [currentTreasuryApprovalList, isExecuted, mayBeBeneficiary, referendum]);
-  const isAwardedBasedOnPA = useMemo(() => referendum?.timeline?.[1]?.type === 'TreasuryProposal' && referendum?.timeline?.[1]?.statuses?.[1]?.status === 'Awarded', [referendum]);
-  const isApprovedBasedOnPA = useMemo(() => referendum?.timeline?.[1]?.type === 'TreasuryProposal' && referendum?.timeline?.[1]?.statuses?.[0]?.status === 'Approved', [referendum]);
-  const isTreasuryProposalBasedOnPA = useMemo(() => referendum?.timeline?.[1]?.type === 'TreasuryProposal', [referendum]);
+  const isAwardedBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal' && referendum?.timelinePA?.[1]?.statuses?.[1]?.status === 'Awarded', [referendum]);
+  const isApprovedBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal' && referendum?.timelinePA?.[1]?.statuses?.[0]?.status === 'Approved', [referendum]);
+  const isTreasuryProposalBasedOnPA = useMemo(() => referendum?.timelinePA?.[1]?.type === 'TreasuryProposal', [referendum]);
 
   const treasuryLabel = useMemo(() => {
     if (isTreasuryProposalBasedOnPA) {
-      setTreasuryAwardedBlock(referendum?.timeline?.[1]?.statuses?.[1]?.block);
+      setTreasuryAwardedBlock(referendum?.timelinePA?.[1]?.statuses?.[1]?.block);
 
       return isAwardedBasedOnPA ? 'Awarded' : 'To be Awarded';
     }
 
     if (currentTreasuryApprovalList) {
-      return isInTreasuryQueue ? 'Awarded' : 'To be Awarded';
+      return isInTreasuryQueue ? 'To be Awarded' : 'Awarded';
     }
   }, [currentTreasuryApprovalList, isAwardedBasedOnPA, isInTreasuryQueue, isTreasuryProposalBasedOnPA, referendum]);
 
@@ -220,6 +220,6 @@ export default function Chronology({ address, currentTreasuryApprovalList, refer
           }
         </Grid>
       </AccordionDetails>
-    </Accordion >
+    </Accordion>
   );
 }

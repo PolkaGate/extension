@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
+import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as SignalCellularAltIcon, SignalCellularAlt1Bar as SignalCellularAlt1BarIcon, SignalCellularAlt2Bar as SignalCellularAlt2BarIcon } from '@mui/icons-material';
 import { Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -27,6 +27,7 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
 
   const endpointUrl = useEndpoint(address);
   const chainName = useChainName(address);
+  const isLightClient = endpointUrl?.startsWith('light');
 
   const [currentDelay, setCurrentDelay] = useState<number | undefined>();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -223,10 +224,15 @@ function FullScreenRemoteNode({ address }: Props): React.ReactElement {
   return (
     <>
       <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', height: '42px', position: 'relative', width: '42px', zIndex: 10 }}>
-        <SignalCellularAltIcon
-          sx={{ bottom: '2px', color: colors.gray, fontSize: '35px', left: '2px', position: 'absolute' }}
-        />
-        <NodeStatusIcon ms={currentDelay} />
+        {isLightClient
+          ? <LightClientEndpointIcon sx={{ bottom: '2px', color: colors.orange, fontSize: '35px', left: '2px', position: 'absolute' }} />
+          : <>
+            <SignalCellularAltIcon
+              sx={{ bottom: '2px', color: colors.gray, fontSize: '35px', left: '2px', position: 'absolute' }}
+            />
+            <NodeStatusIcon ms={currentDelay} />
+          </>
+        }
       </Grid>
       <Popover
         PaperProps={{

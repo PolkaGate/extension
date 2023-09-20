@@ -13,9 +13,9 @@ import { Balance } from '@polkadot/types/interfaces';
 import { BN, BN_ONE, BN_ZERO, isFunction, isNumber } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance } from '../../components';
+import { AmountWithOptions, ChainLogo, FullscreenChain, InputAccount, PButton, ShowBalance, Warning } from '../../components';
 import { useTranslation } from '../../components/translate';
-import { useApi, useChain, useDecimal, useFormatted, useTeleport } from '../../hooks';
+import { useApi, useChain, useFormatted, useTeleport } from '../../hooks';
 import { BalancesInfo, DropdownOption, TransferType } from '../../util/types';
 import { amountToHuman, amountToMachine } from '../../util/utils';
 import { toTitleCase } from '../governance/utils/util';
@@ -57,8 +57,8 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
 
 export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const api = useApi(address);
-  const decimal = useDecimal(address);
   const formatted = useFormatted(address);
   const chain = useChain(address);
   const teleportState = useTeleport(address);
@@ -73,6 +73,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   const [transferType, setTransferType] = useState<TransferType>('Normal');
   const [maxFee, setMaxFee] = useState<Balance>();
 
+  const noSufficientBalanceWarningCondition = balances?.availableBalance?.isZero() || (amount && balances?.availableBalance && balances.decimal && balances.availableBalance.lt(amountToMachine(amount, balances.decimal)));
+
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash }] : [];
     const mayBeTeleportDestinations =
@@ -86,17 +88,25 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   const isCrossChain = useMemo(() => recipientChainGenesisHash !== chain?.genesisHash, [chain?.genesisHash, recipientChainGenesisHash]);
 
   const amountAsBN = useMemo(() => {
-    if (!isCrossChain && assetId !== undefined && balances) {
+    if (!balances) {
+      return;
+    }
+
+    if (!isCrossChain && assetId !== undefined) {
       return amountToMachine(amount, balances.decimal);
     }
 
-    return amountToMachine(amount, decimal);
-  }, [amount, assetId, balances, decimal, isCrossChain]);
+    return amountToMachine(amount, balances.decimal);
+  }, [amount, assetId, balances, isCrossChain]);
 
   const onChainCall = useMemo(() => {
     const module = assetId !== undefined ? 'assets' : 'balances';
 
-    return api && api.tx?.[module] && (['Normal', 'Max'].includes(transferType) ? api.tx[module].transferKeepAlive : api.tx[module].transferAll);
+    return api && api.tx?.[module] && (['Normal', 'Max'].includes(transferType)
+      ? api.tx[module].transferKeepAlive
+      : assetId !== undefined
+        ? api.tx[module].transfer
+        : api.tx[module].transferAll);
   }, [api, assetId, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
@@ -131,7 +141,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [api, formatted, balances, onChainCall, assetId]);
 
   const crossChainParams = useMemo(() => {
-    if (!api || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || Number(amount) === 0) {
+    if (!api || !balances || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || Number(amount) === 0) {
       return;
     }
 
@@ -156,7 +166,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       },
       {
         V3: [{
-          fun: { Fungible: amountToMachine(amount, decimal) },
+          fun: { Fungible: amountToMachine(amount, balances.decimal) },
           id: {
             Concrete: {
               interior: 'Here',
@@ -168,7 +178,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       0,
       { Unlimited: null }
     ];
-  }, [api, teleportState, isCrossChain, recipientParaId, recipientAddress, amount, decimal]);
+  }, [api, teleportState, isCrossChain, recipientParaId, recipientAddress, amount, balances]);
 
   useEffect(() => {
     if (isNumber(recipientChainGenesisHash) && isCrossChain) {
@@ -179,7 +189,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [destinationGenesisHashes, isCrossChain, recipientChainGenesisHash]);
 
   useEffect(() => {
-    if (!recipientChainGenesisHash || recipientAddress === undefined || !recipientChainName) {
+    if (!recipientChainGenesisHash || recipientAddress === undefined || !recipientChainName || !amountAsBN) {
       return;
     }
 
@@ -196,7 +206,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
       totalFee: (estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO)
     });
-  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, decimal, recipientChainName, recipientChainGenesisHash]);
+  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash]);
 
   useEffect(() => {
     if (!api || !balances) {
@@ -207,14 +217,14 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [api, balances, calculateFee]);
 
   useEffect(() => {
-    if (!api || amount === undefined) {
+    if (!api || amount === undefined || !balances) {
       return;
     }
 
-    const value = amount ? amountToMachine(amount, decimal) : BN_ZERO;
+    const value = amount ? amountToMachine(amount, balances.decimal) : BN_ZERO;
 
     calculateFee(value, setEstimatedFee);
-  }, [amount, api, calculateFee, decimal]);
+  }, [amount, api, balances, calculateFee]);
 
   const reformatRecipientAddress = useCallback(() => {
     if (!recipientAddress || chain?.ss58Format === undefined) {
@@ -240,17 +250,35 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
   }, [call, formatted, isCrossChain, crossChainParams]);
 
   const setWholeAmount = useCallback((type: TransferType) => {
-    if (!api || !balances?.availableBalance || !maxFee || !decimal) {
+    if (!api || !balances?.availableBalance || !maxFee || !balances) {
       return;
     }
 
     setTransferType(type);
-    const ED = api.consts.balances.existentialDeposit as unknown as BN;
-    const allAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).toString(), decimal);
-    const maxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(maxFee).sub(ED).toString(), decimal);
+
+    const ED = assetId === undefined ? api.consts.balances.existentialDeposit as unknown as BN : balances.ED;
+    const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
+    const allAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
+    const maxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
 
     setAmount(type === 'All' ? allAmount : maxAmount);
-  }, [api, balances?.availableBalance, decimal, maxFee]);
+  }, [api, assetId, balances, maxFee]);
+
+  const _onChangeAmount = useCallback((value: string) => {
+    if (!balances) {
+      return;
+    }
+
+    if (value.length > balances.decimal - 1) {
+      console.log(`The amount digits is more than decimal:${balances.decimal}`);
+
+      return;
+    }
+
+    setTransferType('Normal');
+
+    setAmount(value);
+  }, [balances]);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
@@ -264,7 +292,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             <Typography fontSize='16px'>
               {t<string>('Transferable amount')}
             </Typography>
-            <Grid alignItems='center' container item sx={{ border: 1, height: '48px', p: '0 5px', fontSize: '18px', borderColor: 'rgba(75, 75, 75, 0.3)' }}>
+            <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 5px' }}>
               <ShowBalance balance={balances?.availableBalance} decimal={balances?.decimal} skeletonWidth={120} token={balances?.token} />
             </Grid>
           </Grid>
@@ -272,7 +300,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             <Typography fontSize='16px'>
               {t<string>('Chain')}
             </Typography>
-            <Grid alignItems='center' container item sx={{ border: 1, height: '48px', p: '0 15px', fontSize: '18px', borderColor: 'rgba(75, 75, 75, 0.3)' }}>
+            <Grid alignItems='center' container item sx={{ border: 1, borderColor: 'rgba(75, 75, 75, 0.3)', fontSize: '18px', height: '48px', p: '0 15px' }}>
               <ChainLogo genesisHash={chain?.genesisHash} size={29} />
               <Typography fontSize='14px' pl='10px'>
                 {chain?.name}
@@ -284,7 +312,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
           inputWidth={8.4}
           label={t<string>('Amount')}
           labelFontSize='16px'
-          onChangeAmount={setAmount}
+          onChangeAmount={_onChangeAmount}
           // eslint-disable-next-line react/jsx-no-bind
           onPrimary={() => setWholeAmount('All')}
           // eslint-disable-next-line react/jsx-no-bind
@@ -299,7 +327,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
           textSpace='15px'
           value={amount || inputs?.amount}
         />
-        <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: '57.5%', height: '38px' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '38px', width: '57.5%' }}>
           <Typography fontSize='16px' fontWeight={400}>
             {t<string>('Network fee')}
           </Typography>
@@ -349,7 +377,17 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
             }}
           />
         </Grid>
-        <Grid container justifyContent='flex-end'>
+        <Grid alignItems='end' container justifyContent={noSufficientBalanceWarningCondition ? 'space-between' : 'flex-end'}>
+          {noSufficientBalanceWarningCondition &&
+            <Warning
+              fontWeight={400}
+              isDanger
+              marginTop={0}
+              theme={theme}
+            >
+              {t<string>('There is no sufficient transferable balance')}
+            </Warning>
+          }
           <PButton
             _mt='15px'
             // eslint-disable-next-line react/jsx-no-bind
@@ -360,7 +398,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               !recipientChainGenesisHash ||
               !(recipientAddress && inputs?.recipientAddress) ||
               Number(amount) <= 0 ||
-              amountAsBN.gt(new BN(balances?.availableBalance || BN_ZERO))
+              amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO))
             }
             text={t<string>('Next')}
           />

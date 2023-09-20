@@ -16,7 +16,7 @@ import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { Proxy, ProxyItem } from '../../../util/types';
 
-export default function AddProxy(): React.ReactElement {
+export default function AddAddressOnly(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

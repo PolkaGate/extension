@@ -230,30 +230,44 @@ export default function useBalances(address: string | undefined, refresh?: boole
   }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   useEffect(() => {
-    api && assetId !== undefined && api.query.assets && api.query.assets.account(assetId, formatted).then((assetAccount) => {
-      // console.log('assetAccount:', assetAccount.toHuman());
+    if (!api || assetId === undefined || !api?.query?.assets) {
+      return;
+    }
 
-      // eslint-disable-next-line no-void
-      void api.query.assets.metadata(assetId).then((metadata) => {
+    // eslint-disable-next-line no-void
+    void fetchAssetData();
+
+    async function fetchAssetData() {
+      if (!api) {
+        return;
+      }
+
+      try {
+        const [assetAccount, asset, metadata] = await Promise.all([
+          api.query.assets.account(assetId, formatted),
+          api.query.assets.asset(assetId),
+          api.query.assets.metadata(assetId)
+        ]);
+
+        const ED = asset.isSome ? asset.unwrap()?.minBalance as BN : BN_ZERO;
+
         const assetBalances = {
-          availableBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
-          freeBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance,
+          ED,
+          availableBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance as BN,
           chainName,
-          decimal: metadata.decimals.toNumber(),
+          decimal: metadata.decimals.toNumber() as number,
+          freeBalance: assetAccount.isNone ? BN_ZERO : assetAccount.unwrap().balance as BN,
           genesisHash: api.genesisHash.toHex(),
           isAsset: true,
           reservedBalance: BN_ZERO,
-          token: metadata.symbol.toHuman()
+          token: metadata.symbol.toHuman() as string
         };
 
-        // console.log('assetBalances:', assetBalances);
         setAssetBalance(assetBalances);
-      }).catch((error) => {
-        console.error(`Failed to fetch metadata for assetId ${assetId}:`, error);
-      });
-    }).catch((error) => {
-      console.error(`Failed to fetch account for assetId ${assetId} and address ${formatted}:`, error);
-    });
+      } catch (error) {
+        console.error(`Failed to fetch info for assetId ${assetId}:`, error);
+      }
+    }
   }, [api, assetId, chainName, formatted]);
 
   if (assetId !== undefined) {

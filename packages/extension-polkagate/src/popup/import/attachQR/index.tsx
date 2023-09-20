@@ -12,10 +12,6 @@ import { createAccountExternal, createAccountSuri, createSeed } from '../../../m
 import HeaderBrand from '../../../partials/HeaderBrand';
 import Name from '../../../partials/Name';
 
-interface Props {
-  className?: string;
-}
-
 interface QrAccount {
   content: string;
   genesisHash: string;
@@ -23,7 +19,7 @@ interface QrAccount {
   name?: string;
 }
 
-export default function AttachQR({ className }: Props): React.ReactElement {
+export default function AttachQR(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
