@@ -499,7 +499,7 @@ export default function SocialRecovery(): React.ReactElement {
               _ml={0}
               _mt='0'
               _onClick={goCloseRecovery}
-              text={t<string>('Close Recovery')}
+              text={t<string>('End Recovery')}
             />
           </Grid>
         </Grid>

@@ -353,7 +353,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
                 {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
                 {mode === 'ModifyRecovery' && t('Modify account recoverability')}
                 {mode === 'InitiateRecovery' && t('Initiate Recovery')}
-                {mode === 'CloseRecovery' && t('Close the recovery process and claim the deposit from possible malicious account')}
+                {mode === 'CloseRecovery' && t('End the recovery process and retrieve the deposit from a potentially malicious account')}
                 {mode === 'VouchRecovery' && t('Vouch Recovery')}
                 {mode === 'Withdraw' && t('Withdraw the fund of your lost account')}
               </>

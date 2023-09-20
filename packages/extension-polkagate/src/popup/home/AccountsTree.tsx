@@ -90,7 +90,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
             <PButton
               _mt='1px'
               _onClick={goCloseRecovery}
-              text={t<string>('Close Recovery')}
+              text={t<string>('End Recovery')}
             />
           </Grid>}
       </Container>
