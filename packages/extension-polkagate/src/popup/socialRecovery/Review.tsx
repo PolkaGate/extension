@@ -301,31 +301,29 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const RecoveryInfo = () => (
     <>
-      <Typography sx={{ maxHeight: '300px', maxWidth: '300px', overflowY: 'scroll' }} variant='body2'>
-        <Grid container spacing={1}>
+      <Typography sx={{ maxHeight: '300px', maxWidth: '500px', overflowY: 'scroll' }} variant='body2'>
+        <Grid container spacing={1} sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'background.paper' } }}>
           {lostAccountAddress?.friends && lostAccountAddress.friends.addresses.map((friend, index) =>
-            <React.Fragment key={index}>
-              <Grid alignItems='center' container item>
-                <Typography fontSize='14px' fontWeight={400} pr='8px'>
-                  {`Trusted friend ${index + 1}`}:
+            <Grid alignItems='center' container item key={index} pb='3px'>
+              <Typography fontSize='14px' fontWeight={400} pr='8px'>
+                {`Trusted friend ${index + 1}`}:
+              </Typography>
+              {lostAccountAddress.friends?.infos &&
+                <Typography fontSize='16px' fontWeight={400} sx={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
+                  {lostAccountAddress.friends.infos[index]?.identity.display}
                 </Typography>
-                {lostAccountAddress.friends?.infos &&
-                  <Typography fontSize='16px' fontWeight={400} maxWidth='100px' textOverflow='ellipsis'>
-                    {lostAccountAddress.friends.infos[index]?.identity.display}
-                  </Typography>
-                }
-                <ShortAddress
-                  address={friend}
-                  charsCount={3}
-                  inParentheses
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 400,
-                    width: 'fit-content'
-                  }}
-                />
-              </Grid>
-            </React.Fragment>
+              }
+              <ShortAddress
+                address={friend}
+                charsCount={3}
+                inParentheses
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 400,
+                  width: 'fit-content'
+                }}
+              />
+            </Grid>
           )}
           <Grid alignItems='center' container item sx={{ borderTop: '1px solid', borderTopColor: 'background.paper' }}>
             <Typography fontSize='14px' fontWeight={400} sx={{ borderRight: '1px solid', borderRightColor: 'background.paper' }} textAlign='left' width='50%'>
