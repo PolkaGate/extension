@@ -12,7 +12,7 @@ import { ApiPromise } from '@polkadot/api';
 
 import { PButton, Progress, TwoButtons, Warning } from '../../components';
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
-import useActiveRecoveries, { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
+import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import { SocialRecoveryModes, STEPS } from '.';
 
@@ -22,11 +22,12 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>;
   setVouchRecoveryInfo: React.Dispatch<React.SetStateAction<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>>;
+  activeRecoveries: ActiveRecoveryFor[] | null | undefined;
 }
 
 type WhyNotStatus = 'noActive' | 'NotAFriend' | 'AlreadyVouched' | 'notRecoverable';
 
-export default function Vouch({ address, api, setMode, setStep, setVouchRecoveryInfo }: Props): React.ReactElement {
+export default function Vouch({ activeRecoveries, address, api, setMode, setStep, setVouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -37,8 +38,6 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
   const [activeRecoveryInfo, setActiveRecoveryInfo] = useState<ActiveRecoveryFor | null | undefined | false>(false);
   const [whyNotStatus, setWhyNotStatus] = useState<WhyNotStatus>();
   const [checkActive, setCheckActive] = useState<boolean>(false);
-
-  const activeRecovery = useActiveRecoveries(checkActive ? api : undefined, rescuerAccount?.address);
 
   const whyNotMessage = useMemo(() => {
     if (!whyNotStatus) {
@@ -59,36 +58,37 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
       return;
     }
 
+    setCheckActive(false);
     setActiveRecoveryInfo(undefined);
     setCheckActive(true);
   }, [lostAccount?.address, rescuerAccount?.address]);
 
   useEffect(() => {
-    if (activeRecovery === undefined || !checkActive) {
+    if (activeRecoveries === undefined || !checkActive || !lostAccount?.address || !rescuerAccount?.address || !address) {
       return;
     }
 
-    setCheckActive(false);
+    if (activeRecoveries) {
+      const activeRecoveriesForLostAddr = activeRecoveries.filter((active) => active.lost === lostAccount.address);
 
-    if (activeRecovery) {
-      const activeRecoveryForLostAddr = activeRecovery.find((active) => active.lost === lostAccount?.address);
+      if (activeRecoveriesForLostAddr.length > 0) {
+        const initiatedRecovery = activeRecoveriesForLostAddr.find((activeRec) => activeRec.rescuer === rescuerAccount.address);
 
-      if (activeRecoveryForLostAddr) {
-        if (rescuerAccount?.address && activeRecoveryForLostAddr.rescuer !== rescuerAccount.address) {
+        if (!initiatedRecovery) {
           setWhyNotStatus('noActive');
           setActiveRecoveryInfo(null);
 
           return;
         }
 
-        if (address && activeRecoveryForLostAddr.vouchedFriends.includes(address)) {
+        if (initiatedRecovery.vouchedFriends.includes(address)) {
           setWhyNotStatus('AlreadyVouched');
           setActiveRecoveryInfo(null);
 
           return;
         }
 
-        api && api.query.recovery.recoverable(lostAccount?.address).then((r) => {
+        api && api.query.recovery.recoverable(lostAccount.address).then((r) => {
           if (r.isEmpty) {
             setWhyNotStatus('notRecoverable');
             setActiveRecoveryInfo(null);
@@ -96,7 +96,7 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
 
           const lostAccountDetail = r.unwrap() as unknown as PalletRecoveryRecoveryConfig;
 
-          if (address && !lostAccountDetail.friends.some((friend) => String(friend) === address)) {
+          if (!lostAccountDetail.friends.some((friend) => String(friend) === address)) {
             setWhyNotStatus('NotAFriend');
             setActiveRecoveryInfo(null);
 
@@ -105,17 +105,17 @@ export default function Vouch({ address, api, setMode, setStep, setVouchRecovery
 
           const isFriend = lostAccountDetail.friends.find((friend) => address === String(friend));
 
-          isFriend && setActiveRecoveryInfo(activeRecoveryForLostAddr);
+          isFriend && setActiveRecoveryInfo(initiatedRecovery);
         }).catch(console.error);
       } else {
-        setWhyNotStatus('notRecoverable');
+        setWhyNotStatus('noActive');
         setActiveRecoveryInfo(null);
       }
     } else {
       setWhyNotStatus('noActive');
       setActiveRecoveryInfo(null);
     }
-  }, [activeRecovery, address, api, checkActive, lostAccount?.address, rescuerAccount?.address]);
+  }, [activeRecoveries, address, api, checkActive, lostAccount?.address, rescuerAccount?.address]);
 
   useEffect(() => {
     if (!lostAccount || !rescuerAccount) {
