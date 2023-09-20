@@ -79,7 +79,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   }, [address]);
 
   const _onSocialRecovery = useCallback(() => {
-    address && windowOpen(`/socialRecovery/${address}`).catch(console.error);
+    address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
 
   const movingParts = (

@@ -41,7 +41,7 @@ export default function AccountIcons({ chain, formatted, identiconTheme, isSubId
   }, [address, chain, onAction]);
 
   const openSocialRecovery = useCallback(() => {
-    address && windowOpen(`/socialRecovery/${address}`);
+    address && windowOpen(`/socialRecovery/${address}/false`);
   }, [address]);
 
   return (

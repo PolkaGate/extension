@@ -38,7 +38,7 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
   }, [page]);
 
   const onAccountChange = useCallback((address: string) =>
-    onAction(`/${page}/${address}${topMenu ? `/${topMenu}` : ''}${postId ? `/${postId}` : ''}`)
+    onAction(`/${page}/${address}${topMenu ? `/${topMenu}` : page === 'socialRecovery' ? '/false' : ''}${postId ? `/${postId}` : ''}`)
     , [onAction, page, postId, topMenu]);
 
   return (
