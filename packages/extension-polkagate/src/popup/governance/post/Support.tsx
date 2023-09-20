@@ -11,6 +11,7 @@ import { BN } from '@polkadot/util';
 import { Infotip2, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useCurrentBlockNumber, useCurrentSupportThreshold, useDecimal, useToken, useTranslation } from '../../../hooks';
 import { Referendum, Track } from '../utils/types';
+import { submittedBlock } from './Voting';
 
 interface Props {
   address: string | undefined;
@@ -31,8 +32,8 @@ export default function Support({ address, referendum, track }: Props): React.Re
   const [fellowshipCount, setFellowshipCount] = useState<number>();
 
   const isFellowship = referendum?.type === 'FellowshipReferendum';
-  const threshold = useCurrentSupportThreshold(track?.[1], (currentBlock && referendum && referendum?.timelineSb?.[1]?.block) && currentBlock - referendum.timelineSb[1].block);
-  const blockSubmitted = referendum?.submissionBlockOC || referendum?.timelineSb?.find(({ status }) => status === 'Submitted')?.block;
+  const blockSubmitted = submittedBlock(referendum);
+  const threshold = useCurrentSupportThreshold(track?.[1], (currentBlock && blockSubmitted) && currentBlock - blockSubmitted);
 
   const currentSupportThreshold = useMemo(() => {
     if (track?.[1]?.preparePeriod && currentBlock && blockSubmitted) {
