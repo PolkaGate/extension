@@ -12,20 +12,27 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { subscan } from '../../../assets/icons';
-import { Identity, ShowBalance } from '../../../components';
+import { Identity, ShowBalance, ShowValue } from '../../../components';
 import { useApi, useChain, useChainName, useDecimal, useToken, useTranslation } from '../../../hooks';
+import { isValidAddress } from '../../../util/utils';
 import { LabelValue } from '../TrackStats';
 import { Referendum } from '../utils/types';
 import { pascalCaseToTitleCase } from '../utils/util';
 
 export function hexAddressToFormatted(hexString: string, chain: Chain | undefined): string | undefined {
-  if (!chain || !hexString) {
+  try {
+    if (!chain || !hexString) {
+      return undefined;
+    }
+
+    const decodedBytes = decodeAddress(hexString);
+
+    return encodeAddress(decodedBytes, chain.ss58Format);
+  } catch (error) {
+    console.error('Error while changing a hex to address:', error);
+
     return undefined;
   }
-
-  const decodedBytes = decodeAddress(hexString);
-
-  return encodeAddress(decodedBytes, chain.ss58Format);
 }
 
 interface Props {
@@ -34,7 +41,7 @@ interface Props {
   referendum: Referendum | undefined;
 }
 
-export default function Metadata ({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
+export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -47,7 +54,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
   const [showJson, setShowJson] = React.useState(false);
 
   const referendumLinkOnsSubscan = () => 'https://' + chainName + '.subscan.io/referenda_v2/' + String(referendum?.index);
-  const mayBeBeneficiary = hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain);
+  const mayBeBeneficiary = hexAddressToFormatted(referendum?.call?.args?.beneficiary, chain) || referendum?.call?.args?.beneficiary?.toString();
 
   const handleChange = (event, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -147,23 +154,27 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
                 />}
                 valueStyle={{ fontSize: 16, fontWeight: 500 }}
               />
-              <LabelValue
-                label={t('Beneficiary')}
-                labelStyle={{ minWidth: '20%' }}
-                style={{ justifyContent: 'flex-start' }}
-                value={
-                  <Identity
-                    api={api}
-                    chain={chain}
-                    formatted={mayBeBeneficiary}
-                    identiconSize={25}
-                    showShortAddress
-                    showSocial
-                    style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%' }}
-                  />
-                }
-                valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
-              />
+              {mayBeBeneficiary &&
+                <LabelValue
+                  label={t('Beneficiary')}
+                  labelStyle={{ minWidth: '20%' }}
+                  style={{ justifyContent: 'flex-start' }}
+                  value={
+                    isValidAddress(mayBeBeneficiary)
+                      ? <Identity
+                        api={api}
+                        chain={chain}
+                        formatted={mayBeBeneficiary}
+                        identiconSize={25}
+                        showShortAddress
+                        showSocial
+                        style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%' }}
+                      />
+                      : <ShowValue value={mayBeBeneficiary} />
+                  }
+                  valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
+                />
+              }
             </>
           }
           {referendum?.enactAfter &&
