@@ -258,7 +258,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
   }, [chainName, getOnChain, hasEnded, id, notInLocalStorage, type]);
 
   useEffect(() => {
-    if (!referendum?.timelinePA || !chainName || referendum.chainName !== chainName) {
+    if (!referendumPA || !referendumSb || !referendum?.timelinePA || !chainName || referendum.chainName !== chainName) {
       return;
     }
 
@@ -267,9 +267,9 @@ export default function useReferendum(address: AccountId | string | undefined, t
     }
 
     /** to save the finished referendum in the local storage*/
-    chrome.storage.local.get('latestFinishedReferendums8', (res) => {
+    chrome.storage.local.get('latestFinishedReferenda', (res) => {
       const k = `${chainName}`;
-      const last = (res?.latestFinishedReferendums8 as ReferendumData) ?? {};
+      const last = (res?.latestFinishedReferenda as ReferendumData) ?? {};
 
       if (!last[k]) {
         last[k] = [referendum];
@@ -288,15 +288,15 @@ export default function useReferendum(address: AccountId | string | undefined, t
       }
 
       // eslint-disable-next-line no-void
-      void chrome.storage.local.set({ latestFinishedReferendums8: last });
+      void chrome.storage.local.set({ latestFinishedReferenda: last });
     });
-  }, [chainName, referendum]);
+  }, [chainName, referendum, referendumPA, referendumSb]);
 
   useEffect(() => {
     /** look if the referendum id is already saved in local */
-    chainName && chrome.storage.local.get('latestFinishedReferendums8', (res) => {
+    chainName && chrome.storage.local.get('latestFinishedReferenda', (res) => {
       const k = `${chainName}`;
-      const last = (res?.latestFinishedReferendums8 as ReferendumData) ?? {};
+      const last = (res?.latestFinishedReferenda as ReferendumData) ?? {};
 
       // console.log('last[k]:', last[k]);
 
