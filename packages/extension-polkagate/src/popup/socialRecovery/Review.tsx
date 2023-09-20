@@ -59,7 +59,7 @@ interface Props {
   specific: boolean;
 }
 
-export default function Review ({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
+export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -353,7 +353,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
                 {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
                 {mode === 'ModifyRecovery' && t('Modify account recoverability')}
                 {mode === 'InitiateRecovery' && t('Initiate Recovery')}
-                {mode === 'CloseRecovery' && t('End the recovery process and retrieve the deposit from a potentially malicious account')}
+                {mode === 'CloseRecovery' && t('End Recovery')}
                 {mode === 'VouchRecovery' && t('Vouch Recovery')}
                 {mode === 'Withdraw' && t('Withdraw the fund of your lost account')}
               </>
@@ -364,7 +364,7 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
                 {mode === 'SetRecovery' && t('Making account recoverable')}
                 {mode === 'ModifyRecovery' && t('Modifying account recoverability configuration')}
                 {mode === 'InitiateRecovery' && t('Initiating Recovery')}
-                {mode === 'CloseRecovery' && t('Closing the recovery process')}
+                {mode === 'CloseRecovery' && t('Ending the recovery process')}
                 {mode === 'VouchRecovery' && t('Vouching')}
                 {mode === 'Withdraw' && t('Withdrawing the fund of your lost account')}
               </>
@@ -379,24 +379,31 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
               txInfo?.success ? t('Account recoverability modified') : t('Modifying account recoverability failed')
             )}
             {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
-              txInfo?.success ? t('Recovery Initiated') : t('Initiating Recovery failed')
+              txInfo?.success ? t('Recovery Initiated') : t('Initiating recovery failed')
             )}
             {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
-              txInfo?.success ? t('Initiated recovery has been closed') : t('Closing Recovery failed')
+              txInfo?.success ? t('Initiated recovery has been ended') : t('Ending recovery failed')
             )}
             {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
-              txInfo?.success ? t('Recovery vouched') : t('Vouching Recovery failed')
+              txInfo?.success ? t('Recovery Vouched') : t('Vouching recovery failed')
             )}
             {step === STEPS.CONFIRM && mode === 'Withdraw' && (
               txInfo?.success ? t('The fund of your lost account withdrawn') : t('Withdrawing the fund of your lost account failed')
             )}
           </Typography>
-          {(step === STEPS.REVIEW || step === STEPS.PROXY) && (mode === 'InitiateRecovery' || mode === 'ModifyRecovery' || mode === 'VouchRecovery') &&
+          {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
             <Typography fontSize='22px' fontWeight={700}>
-              {(mode === 'InitiateRecovery' || mode === 'VouchRecovery')
+              {['InitiateRecovery', 'VouchRecovery'].includes(mode)
                 ? t('Step 2 of 2: Review')
-                : t('Step 3 of 3: Review')}
-            </Typography>}
+                : t('Step 3 of 3: Review')
+              }
+            </Typography>
+          }
+          {(step === STEPS.REVIEW || step === STEPS.PROXY) && mode === 'CloseRecovery' &&
+            <Typography fontSize='14px' fontWeight={400}>
+              {t('By terminating the recovery process, you will receive the tokens deposited by the suspected malicious account')}
+            </Typography>
+          }
         </Grid>
         {(step === STEPS.REVIEW || step === STEPS.PROXY) &&
           <>
