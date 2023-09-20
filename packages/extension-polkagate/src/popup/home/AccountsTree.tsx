@@ -8,7 +8,10 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { useTranslation } from '../../hooks';
+import { PButton } from '../../components';
+import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
+import { windowOpen } from '../../messaging';
+import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
 import AccountPreview from './AccountPreview';
 
@@ -22,9 +25,11 @@ interface Props extends AccountWithChildren {
 export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
+  const activeRecovery = useActiveRecoveries(api, account.address);
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
-  const handleClose = useCallback(() => setQuickActionOpen(undefined), []);
+  const handleClose = useCallback(() => setQuickActionOpen(undefined), [setQuickActionOpen]);
 
   const label = useMemo(
     (): string | undefined => {
@@ -45,6 +50,10 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
     [account, parentNameSuri, t]
   );
 
+  const goCloseRecovery = useCallback(() => {
+    account.address && windowOpen(`/socialRecovery/${account.address}/true`).catch(console.error);
+  }, [account.address]);
+
   return (
     <>
       <Container
@@ -52,10 +61,10 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
         disableGutters
         sx={{
           backgroundColor: 'background.paper',
-          borderColor: 'secondary.main',
+          borderColor: activeRecovery ? 'warning.main' : 'secondary.main',
           borderRadius: '5px',
           borderStyle: account?.parentAddress ? 'dashed' : 'solid',
-          borderWidth: '0.5px',
+          borderWidth: activeRecovery ? '2px' : '0.5px',
           mb: '6px',
           position: 'relative'
         }}
@@ -76,6 +85,14 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           open={quickActionOpen !== undefined}
           sx={{ bgcolor: quickActionOpen === account.address ? 'transparent' : theme.palette.mode === 'dark' ? 'rgba(23, 23, 23, 0.8)' : 'rgba(241, 241, 241, 0.7)', borderRadius: '5px', bottom: '-1px', left: '-1px', position: 'absolute', right: '-1px', top: '-1px' }}
         />
+        {activeRecovery &&
+          <Grid container item pb='10px'>
+            <PButton
+              _mt='1px'
+              _onClick={goCloseRecovery}
+              text={t<string>('Close Recovery')}
+            />
+          </Grid>}
       </Container>
       {account?.children?.map((child, index) => (
         <AccountsTree

@@ -94,13 +94,15 @@ interface SessionInfo {
 export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
 
-  const { address } = useParams<{ address: string }>();
+  const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
   const api = useApi(address);
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const accountsInfo = useAccountsInfo(api, chain);
+
+  console.log('closeRecovery:', closeRecovery);
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette.background.paper, theme.palette.mode]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette.background.default, theme.palette.mode]);
@@ -195,6 +197,16 @@ export default function SocialRecovery(): React.ReactElement {
   }, []);
 
   useEffect(() => {
+    if (closeRecovery === 'false' || !api || !formatted) {
+      return;
+    }
+
+    fetchRecoveryInformation();
+    setMode('CloseRecovery');
+    setStep(STEPS.REVIEW);
+  }, [api, closeRecovery, fetchRecoveryInformation, formatted]);
+
+  useEffect(() => {
     clearInformation();
   }, [address, chain, chain?.genesisHash, clearInformation]);
 
@@ -202,6 +214,10 @@ export default function SocialRecovery(): React.ReactElement {
     if (!api || !formatted) {
       setStep(STEPS.CHECK_SCREEN);
 
+      return;
+    }
+
+    if (closeRecovery === 'true') {
       return;
     }
 
@@ -216,7 +232,7 @@ export default function SocialRecovery(): React.ReactElement {
     clearInformation();
     setFetching(true);
     fetchRecoveryInformation();
-  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRescue, activeLost, fetching, fetchRecoveryInformation]);
+  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRescue, activeLost, fetching, fetchRecoveryInformation, closeRecovery]);
 
   useEffect(() => {
     if (recoveryInfo === undefined || activeProxy === undefined || activeLost === undefined || activeRescue === undefined || step !== STEPS.CHECK_SCREEN) {
@@ -674,6 +690,7 @@ export default function SocialRecovery(): React.ReactElement {
             mode={mode}
             recoveryConfig={recoveryConfig}
             recoveryInfo={recoveryInfo}
+            specific={closeRecovery === 'true'}
             setMode={setMode}
             setRefresh={setRefresh}
             setStep={setStep}

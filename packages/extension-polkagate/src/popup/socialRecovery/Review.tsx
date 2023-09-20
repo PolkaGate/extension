@@ -55,9 +55,10 @@ interface Props {
   vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
   allActiveRecoveries: ActiveRecoveryFor[] | null | undefined;
   setMode: (value: React.SetStateAction<SocialRecoveryModes>) => void;
+  specific: boolean;
 }
 
-export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
+export default function Review({ activeLost, address, allActiveRecoveries, api, chain, specific, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
@@ -230,6 +231,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     setRefresh(true);
     setStep(STEPS.CHECK_SCREEN);
   }, [setMode, setRefresh, setStep]);
+
+  const closeWindow = useCallback(() => window.close(), []);
 
   const WithdrawDetails = () => {
     const toBeWithdrawn: { label: string; amount: BN | Balance }[] = [];
@@ -489,28 +492,38 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   </Grid>
                 </Grid>
               }
-              {mode === 'CloseRecovery' && activeLost &&
+              {mode === 'CloseRecovery' &&
                 <>
-                  <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
-                    <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                      {t<string>('Account that initiated the recovery')}
-                    </Typography>
-                    <Identity
-                      api={api}
-                      chain={chain}
-                      direction='row'
-                      formatted={activeLost.rescuer}
-                      identiconSize={31}
-                      showSocial={false}
-                      style={{ maxWidth: '100%', width: 'fit-content' }}
-                      withShortAddress
-                    />
-                  </Grid>
-                  <DisplayValue title={t<string>('Date of initiation')}>
-                    <Typography fontSize='24px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
-                      {currentBlockNumber ? blockToDate(activeLost.createdBlock, currentBlockNumber) : '- - - -'}
-                    </Typography>
-                  </DisplayValue>
+                  {activeLost
+                    ? <>
+                      <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
+                        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+                          {t<string>('Account that initiated the recovery')}
+                        </Typography>
+                        <Identity
+                          api={api}
+                          chain={chain}
+                          direction='row'
+                          formatted={activeLost.rescuer}
+                          identiconSize={31}
+                          showSocial={false}
+                          style={{ maxWidth: '100%', width: 'fit-content' }}
+                          withShortAddress
+                        />
+                      </Grid>
+                      <DisplayValue title={t<string>('Date of initiation')}>
+                        <Typography fontSize='24px' fontWeight={400} sx={{ m: '6px auto', textAlign: 'center', width: '100%' }}>
+                          {currentBlockNumber ? blockToDate(activeLost.createdBlock, currentBlockNumber) : '- - - -'}
+                        </Typography>
+                      </DisplayValue>
+                    </>
+                    : [0, 1, 2].map((item) => (
+                      <Skeleton
+                        height='25px'
+                        key={item}
+                        sx={{ mb: '5px', mx: 'auto', transform: 'none', width: '410px' }}
+                      />
+                    ))}
                 </>
               }
               {mode === 'Withdraw' &&
@@ -576,7 +589,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
                 onChange={setPassword}
                 onPrimaryClick={onNext}
-                onSecondaryClick={handleClose}
+                onSecondaryClick={specific
+                  ? closeWindow
+                  : handleClose}
                 primaryBtnText={t<string>('Confirm')}
                 proxiedAddress={formatted}
                 proxies={proxyItems}
@@ -620,7 +635,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
           <Confirmation
             decimal={decimal}
             depositValue={depositValue}
-            handleClose={closeConfirmation}
+            handleClose={specific
+              ? closeWindow
+              : closeConfirmation}
             lostAccountAddress={lostAccountAddress}
             mode={mode}
             recoveryConfig={recoveryConfig}
