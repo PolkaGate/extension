@@ -77,7 +77,7 @@ function AddAccount(): React.ReactElement {
         _mt='0'
         _onClick={_goToRestoreFromJson}
         _variant={'outlined'}
-        text={t<string>('Restore from JSON file')}
+        text={t<string>('Restore from file')}
       />
       <PButton
         _mt='10px'
