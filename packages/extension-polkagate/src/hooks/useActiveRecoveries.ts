@@ -61,7 +61,7 @@ export default function useActiveRecoveries(api: ApiPromise | undefined, searchF
         };
 
         if (searchFor) {
-          (searchFor === rescuerAddress || searchFor === lostAddress) &&
+          searchFor === lostAddress &&
             myActiveRecovery.push(gathered);
         } else {
           setActiveRecoveries((pervActives) => [...(pervActives ?? []), gathered]);
