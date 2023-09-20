@@ -388,7 +388,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               txInfo?.success ? t('Recovery Vouched') : t('Vouching recovery failed')
             )}
             {step === STEPS.CONFIRM && mode === 'Withdraw' && (
-              txInfo?.success ? t('The fund of your lost account withdrawn') : t('Withdrawing the fund of your lost account failed')
+              txInfo?.success ? t('The funds from your lost account have been withdrawn') : t('Failed to withdraw the funds from your lost account')
             )}
           </Typography>
           {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
