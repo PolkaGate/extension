@@ -128,7 +128,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
   const [fetchingLostAccountInfos, setFetchingLostAccountInfos] = useState<boolean>(false);
 
-  const activeRecoveries = useActiveRecoveries(refresh ? undefined : api, String(formatted));
+  const activeRecoveries = useActiveRecoveries(refresh ? undefined : api);
 
   const activeRescue = useMemo(() =>
     activeRecoveries && formatted
@@ -654,6 +654,7 @@ export default function SocialRecovery(): React.ReactElement {
         }
         {step === STEPS.VOUCH &&
           <Vouch
+            activeRecoveries={activeRecoveries}
             address={address}
             api={api}
             setMode={setMode}
