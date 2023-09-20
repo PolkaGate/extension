@@ -394,8 +394,8 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
           {(step === STEPS.REVIEW || step === STEPS.PROXY) && (mode === 'InitiateRecovery' || mode === 'ModifyRecovery' || mode === 'VouchRecovery') &&
             <Typography fontSize='22px' fontWeight={700}>
               {(mode === 'InitiateRecovery' || mode === 'VouchRecovery')
-                ? t('Step 2/2: Review')
-                : t('Step 3/3: Review')}
+                ? t('Step 2 of 2: Review')
+                : t('Step 3 of 3: Review')}
             </Typography>}
         </Grid>
         {(step === STEPS.REVIEW || step === STEPS.PROXY) &&

@@ -196,7 +196,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
             {t<string>('The account recovery process for a lost account must be initiated by a rescuer through a token deposit.')}
           </Typography>
           <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
-            {t<string>('Step 1/2: Confirm lost account ')}
+            {t<string>('Step 1 of 2: Confirm lost account ')}
           </Typography>
           <SelectTrustedFriend
             accountsInfo={accountsInfo}

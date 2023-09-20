@@ -59,7 +59,7 @@ export default function RecoveryConfig ({ address, api, mode, recoveryConfig, se
   const [recoveryDelayTotal, setRecoveryDelayTotal] = useState<number>();
   const [focusInputs, setFocus] = useState<number>(1);
 
-  const stepTitle = useMemo(() => configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS ? 'Step 1/3: Choose trusted friends' : 'Step 2/3: Set details', [configStep]);
+  const stepTitle = useMemo(() => configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS ? 'Step 1 of 3: Choose trusted friends' : 'Step 2 of 3: Set details', [configStep]);
   const configDepositBase = useMemo(() => api ? api.consts.recovery.configDepositBase as unknown as BN : BN_ZERO, [api]);
   const friendDepositFactor = useMemo(() => api ? api.consts.recovery.friendDepositFactor as unknown as BN : BN_ZERO, [api]);
   const totalDeposit = useMemo(() => configDepositBase.add(friendDepositFactor.muln(selectedFriends.length)), [configDepositBase, friendDepositFactor, selectedFriends.length]);

@@ -159,7 +159,7 @@ export default function Vouch ({ activeRecoveries, address, api, setMode, setSte
         {t<string>('Enter both the lost account and the rescuer account, which initiated the recovery process for the lost account. This will allow you to proceed with vouching for them.')}
       </Typography>
       <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
-        {t<string>('Step 1/2: Verify accounts')}
+        {t<string>('Step 1 of 2: Verify accounts')}
       </Typography>
       <SelectTrustedFriend
         accountsInfo={accountsInfo}
