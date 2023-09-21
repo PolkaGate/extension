@@ -63,7 +63,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
   const [allVotes, setAllVotes] = useState<AllVotesType | null>();
   const [showDelegatorsOf, setShowDelegators] = useState<VoteType | AbstainVoteType | null>();
   const [filteredVotes, setFilteredVotes] = useState<FilteredVotes | null>();
-  const [numberOfFetchedDelagatees, setNumberOfFetchedDelagatees] = useState<number>(0);
+  // const [numberOfFetchedDelagatees, setNumberOfFetchedDelagatees] = useState<number>(0);
   const [standardPage, setStandardPage] = useState<number>(1);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
     }
 
     getAllVotesFromPA(chainName, refIndex, 100, isFellowship).then((res: AllVotesType | null) => {
-      if (!res) {
+      if (!res?.yes && !res?.abstain && !res?.no) {
         return setAllVotes(null);
       }
 
@@ -85,40 +85,44 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
 
         // console.log('All votes from PA:', res);
 
-        setAllVotes(res);
+        setAllVotes(res); // TODO: need to work on onchain case as well to make this robust
         setFilteredVotes({
           abstain: res.abstain.votes.filter((v) => !v.isDelegated),
-          yes: res.yes.votes.filter((v) => !v.isDelegated),
-          no: res.no.votes.filter((v) => !v.isDelegated)
+          no: res.no.votes.filter((v) => !v.isDelegated),
+          yes: res.yes.votes.filter((v) => !v.isDelegated)
         });
         setVoteCountsPA({ ayes: res?.yes?.count, nays: res?.no?.count });
       }).catch(console.error);
     }).catch(console.error);
   }, [chainName, isFellowship, refIndex, setVoteCountsPA]);
 
-  useEffect(() => {
-    if (!allVotes || !api || !trackId || !refIndex) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!allVotes || !api || !trackId || !refIndex) {
+  //     return;
+  //   }
 
-    const keys = Object.keys(allVotes);
+  //   const keys = Object.keys(allVotes);
 
-    keys.map((key) =>
-      allVotes[key as keyof AllVotesType].votes.map((v) => {
-        if (v.isDelegated) {
-          getAddressVote(String(v.voter), api, Number(refIndex), Number(trackId)).then((delegatedVoteInfo) => {
-            if (delegatedVoteInfo) {
-              v.delegatee = delegatedVoteInfo.delegating?.target;
-              setAllVotes({ ...allVotes });
-              setNumberOfFetchedDelagatees((prev) => prev + 1);
-            }
-          }).catch(console.error);
-        }
+  //   console.log('allVotesallVotesallVotes:', allVotes);
 
-        return v;
-      })
-    );
-  }, [allVotes?.yes?.votes?.length, allVotes?.abstain?.votes?.length, allVotes?.no?.votes?.length, api, refIndex, trackId]);
+  //   keys.map((key) =>
+  //     allVotes[key as keyof AllVotesType].votes.map((v) => {
+  //       // if (v.delegatedVotingPower !== '0') {
+  //         getAddressVote(String(v.voter), api, Number(refIndex), Number(trackId)).then((delegatedVoteInfo) => {
+  //           if (delegatedVoteInfo) {
+  //             v.delegatee = delegatedVoteInfo.delegating?.target;
+  //             console.log('delegatedVoteInfo.delegating:', delegatedVoteInfo);
+
+  //             setAllVotes({ ...allVotes });
+  //             setNumberOfFetchedDelagatees((prev) => prev + 1);
+  //           }
+  //         }).catch(console.error);
+  //       // }
+
+  //       return v;
+  //     })
+  //   );
+  // }, [allVotes?.yes?.votes?.length, allVotes?.abstain?.votes?.length, allVotes?.no?.votes?.length, api, refIndex, trackId]);
 
   const handleClose = useCallback(() => {
     allVotes && setFilteredVotes({
@@ -138,19 +142,16 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
             allVotes={allVotes}
             filteredVotes={filteredVotes}
             handleClose={handleClose}
-            numberOfFetchedDelagatees={numberOfFetchedDelagatees}
             open={open}
             page={standardPage}
             setFilteredVotes={setFilteredVotes}
             setPage={setStandardPage}
-            setShowDelegators={setShowDelegators}
           />
           : <Standards
             address={address}
             allVotes={allVotes}
             filteredVotes={filteredVotes}
             handleClose={handleClose}
-            numberOfFetchedDelagatees={numberOfFetchedDelagatees}
             open={open}
             page={standardPage}
             setFilteredVotes={setFilteredVotes}
@@ -159,7 +160,6 @@ export default function AllVotes({ address, isFellowship, open, refIndex, setOpe
           />
         : <Delegators
           address={address}
-          allVotes={allVotes}
           closeDelegators={() => setShowDelegators(null)}
           handleCloseStandards={handleClose}
           open={!!showDelegatorsOf}

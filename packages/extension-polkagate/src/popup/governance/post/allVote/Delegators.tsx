@@ -14,12 +14,11 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Identity, ShowBalance } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
-import { AbstainVoteType, AllVotesType, VoteType } from '../../utils/helpers';
+import { AbstainVoteType, VoteType } from '../../utils/helpers';
 import { getVoteCapital, getVoteValue } from '.';
 
 interface Props {
   address: string | undefined;
-  allVotes: AllVotesType | null | undefined;
   standard: VoteType | AbstainVoteType;
   open: boolean;
   closeDelegators: () => void;
@@ -38,7 +37,7 @@ const sanitizeVote = (vote: string) => {
   return voteMappings[vote.toLowerCase()];
 };
 
-export default function Delegators({ address, allVotes, closeDelegators, handleCloseStandards, open, standard }: Props): React.ReactElement {
+export default function Delegators({ address, closeDelegators, handleCloseStandards, open, standard }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -52,8 +51,6 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   const [amountSortType, setAmountSortType] = useState<'ASC' | 'DESC'>();
   const [delegatorList, setDelegatorList] = useState<VoteType[] | AbstainVoteType[]>();
 
-  const totalDelegatedValue = standard.votePower && standard.votePower.sub(getVoteValue(standard));
-
   const capitalDelegated = useMemo(() => {
     let sum = BN_ZERO;
 
@@ -65,17 +62,15 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
   }, [delegatorList]);
 
   useEffect(() => {
-    if (!allVotes) {
+    if (!standard?.delegatedVotes?.length) {
       return;
     }
 
-    const list = allVotes[standard.decision].votes.filter((v) => v.isDelegated && v.delegatee?.toString() === standard.voter);
-
-    setDelegatorList(list);
-  }, [allVotes, standard.decision, standard.voter]);
+    setDelegatorList(standard?.delegatedVotes);
+  }, [standard?.delegatedVotes?.length]);
 
   useEffect(() => {
-    if (delegatorList) {
+    if (delegatorList?.length) {
       setVotesToShow(delegatorList.slice((page - 1) * DELEGATORS_PER_PAGE, page * DELEGATORS_PER_PAGE));
       setPaginationCount(Math.ceil(delegatorList.length / DELEGATORS_PER_PAGE));
     }
@@ -160,7 +155,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
       <Grid container item sx={{ pl: '30px' }} textAlign='left' xs={10}>
         <AmountVal
           label={t('Vote')}
-          value={totalDelegatedValue}
+          value={standard.delegatedVotingPower}
         />
         <AmountVal
           label={t('Amount')}
@@ -228,7 +223,7 @@ export default function Delegators({ address, allVotes, closeDelegators, handleC
             <Grid item width='40%'>
               <AmountVal
                 label={t('Total Vote')}
-                value={totalDelegatedValue?.add(getVoteValue(standard))}
+                value={new BN(standard.totalVotingPower)}
                 valueStyle={{ fontSize: '26px', fontWeight: 500 }}
                 width='100%'
               />

@@ -20,7 +20,7 @@ type ReferendumData = {
 
 const isAlreadySaved = (list: Referendum[], referendum: Referendum) => list?.find((r) => r?.index === referendum?.index)
 
-export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh?: boolean, getOnChain?: boolean, hasEnded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
+export default function useReferendum(address: AccountId | string | undefined, type: 'referenda' | 'fellowship', id: number, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
 
@@ -242,7 +242,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       return;
     }
 
-    if (getOnChain && !hasEnded) {
+    if (getOnChain && !isConcluded) {
       return;
     }
 
@@ -255,7 +255,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
         setReferendumSb(res);
       }).catch(console.error);
     }
-  }, [chainName, getOnChain, hasEnded, id, notInLocalStorage, type]);
+  }, [chainName, getOnChain, isConcluded, id, notInLocalStorage, type]);
 
   useEffect(() => {
     if (!referendumPA || !referendumSb || !referendum?.timelinePA || !chainName || referendum.chainName !== chainName) {
