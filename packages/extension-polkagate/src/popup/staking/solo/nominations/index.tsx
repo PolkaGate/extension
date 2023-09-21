@@ -89,11 +89,11 @@ export default function Index(): React.ReactElement {
   }, [formatted, stakingAccount?.controllerId]);
 
   const OnTuneUp = useCallback(() => {
-    history.push({
+    activeValidators?.length && history.push({
       pathname: `/tuneup/${address}`,
       state: { ...state }
     });
-  }, [address, history, state]);
+  }, [activeValidators?.length, address, history, state]);
 
   const onChangeValidators = useCallback(() => {
     stakingAccount?.controllerId === formatted && goToSelectValidator();
@@ -132,7 +132,7 @@ export default function Index(): React.ReactElement {
       </Grid>
       <Grid item>
         <Infotip text={t<string>('If Tune UP is available, it will correct your account\'s position in voters\' list to be eligible for receiving rewards.')}>
-          <Typography onClick={OnTuneUp} sx={{ cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
+          <Typography onClick={OnTuneUp} sx={{ color: activeValidators?.length ? 'text.primary' : 'text.disabled', cursor: 'pointer', fontSize: '14px', fontWeight: 400, textDecorationLine: 'underline' }}>
             {t('Tune Up')}
           </Typography>
         </Infotip>
