@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 
-import { PButton, Progress, TwoButtons, Warning } from '../../components';
+import { PButton, Progress, TwoButtons, VouchRecoveryIcon, Warning } from '../../components';
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
@@ -28,7 +28,7 @@ interface Props {
 
 type WhyNotStatus = 'noActive' | 'NotAFriend' | 'AlreadyVouched' | 'notRecoverable';
 
-export default function Vouch ({ activeRecoveries, address, api, setMode, setStep, setVouchRecoveryInfo }: Props): React.ReactElement {
+export default function Vouch({ activeRecoveries, address, api, setMode, setStep, setVouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -152,9 +152,20 @@ export default function Vouch ({ activeRecoveries, address, api, setMode, setSte
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-        {t<string>('Vouch Recovery')}
-      </Typography>
+      <Grid alignContent='center' alignItems='center' container item>
+        <Grid item sx={{ mr: '20px' }}>
+          <VouchRecoveryIcon
+            fillColor={theme.palette.text.primary}
+            height={43}
+            width={43}
+          />
+        </Grid>
+        <Grid item>
+          <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
+            {t<string>('Vouch Recovery')}
+          </Typography>
+        </Grid>
+      </Grid>
       <Typography fontSize='14px' fontWeight={400} width='100%'>
         {t<string>('Enter both the lost account and the rescuer account, which initiated the recovery process for the lost account. This will allow you to proceed with vouching for them.')}
       </Typography>

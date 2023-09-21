@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Input, Select, ShowBalance, TwoButtons } from '../../components';
+import { Input, MakeRecoverableIcon, Select, ShowBalance, TwoButtons } from '../../components';
 import { useAccountsInfo, useChain, useFormatted, useTranslation } from '../../hooks';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
 import SelectTrustedFriendFromExtension from './components/SelectTrustedFriendFromExtension';
@@ -210,11 +210,23 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-        {mode === 'ModifyRecovery'
-          ? t<string>('Modify your account recoverability')
-          : t<string>('Make your account recoverable')}
-      </Typography>
+      <Grid alignContent='center' alignItems='center' container item>
+        <Grid item sx={{ mr: '20px' }}>
+          <MakeRecoverableIcon
+            fillColor={theme.palette.text.primary}
+            height={43}
+            width={43}
+          />
+        </Grid>
+        <Grid item>
+          <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
+            {recoveryConfig
+              ? t<string>('Modify your account recoverability')
+              : t<string>('Make your account recoverable')
+            }
+          </Typography>
+        </Grid>
+      </Grid>
       <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
         {t<string>(stepTitle)}
       </Typography>

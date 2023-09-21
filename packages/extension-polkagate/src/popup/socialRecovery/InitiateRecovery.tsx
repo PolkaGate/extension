@@ -12,7 +12,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
-import { PButton, TwoButtons } from '../../components';
+import { PButton, RescueRecoveryIcon, TwoButtons } from '../../components';
 import { useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
@@ -189,9 +189,20 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
             />}
         </>
         : <>
-          <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-            {t<string>('Initiate Recovery')}
-          </Typography>
+          <Grid alignContent='center' alignItems='center' container item>
+            <Grid item sx={{ mr: '20px' }}>
+              <RescueRecoveryIcon
+                fillColor={theme.palette.text.primary}
+                height={43}
+                width={43}
+              />
+            </Grid>
+            <Grid item>
+              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
+                {t<string>('Initiate Recovery')}
+              </Typography>
+            </Grid>
+          </Grid>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
             {t<string>('The account recovery process for a lost account must be initiated by a rescuer through a token deposit.')}
           </Typography>

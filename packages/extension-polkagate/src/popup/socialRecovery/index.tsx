@@ -19,8 +19,8 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { checkRecovery, checkRecoveryDark, rescueRecovery, rescueRecoveryDark, socialRecoveryDark, socialRecoveryLight, vouchRecovery, vouchRecoveryDark } from '../../assets/icons';
-import { PButton, Warning } from '../../components';
+import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
+import { MakeRecoverableIcon, PButton, RescueRecoveryIcon, VouchRecoveryIcon, Warning } from '../../components';
 import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getPoolAccounts from '../../util/getPoolAccounts';
@@ -512,12 +512,10 @@ export default function SocialRecovery(): React.ReactElement {
               : t<string>('Select trusted friends\' accounts and configure details such as a recovery threshold and a delay to enable account recovery.')
           }
           icon={
-            <Box
-              component='img'
-              src={theme.palette.mode === 'light'
-                ? checkRecovery as string
-                : checkRecoveryDark as string}
-              sx={{ height: '60px', width: '66px' }}
+            <MakeRecoverableIcon
+              fillColor={theme.palette.secondary.main}
+              height={60}
+              width={66}
             />
           }
           onClickFunction={recoveryInfo
@@ -534,12 +532,10 @@ export default function SocialRecovery(): React.ReactElement {
               : t<string>('If you\'ve lost a recoverable account, you can begin the process of rescuing it from here.')
           }
           icon={
-            <Box
-              component='img'
-              src={theme.palette.mode === 'light'
-                ? rescueRecovery as string
-                : rescueRecoveryDark as string}
-              sx={{ height: '60px', width: '66px' }}
+            <RescueRecoveryIcon
+              fillColor={theme.palette.secondary.main}
+              height={60}
+              width={66}
             />
           }
           onClickFunction={activeRescue
@@ -554,12 +550,10 @@ export default function SocialRecovery(): React.ReactElement {
         <RecoveryOptionButton
           description={t<string>('You can assist your friends in recovering their lost accounts by having them share their rescuer and lost account address with you.')}
           icon={
-            <Box
-              component='img'
-              src={theme.palette.mode === 'light'
-                ? vouchRecovery as string
-                : vouchRecoveryDark as string}
-              sx={{ height: '60px', width: '66px' }}
+            <VouchRecoveryIcon
+              fillColor={theme.palette.secondary.main}
+              height={60}
+              width={66}
             />
           }
           onClickFunction={goToVouchRecovery}

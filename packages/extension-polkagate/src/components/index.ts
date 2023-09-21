@@ -74,5 +74,8 @@ export { default as TwoButtons } from './TwoButtons';
 export { default as ValidatedInput } from './ValidatedInput';
 export { default as WrongPasswordAlert } from './WrongPasswordAlert';
 export { default as Warning } from './Warning';
+export { default as MakeRecoverableIcon } from './SVG/MakeRecoverableIcon';
+export { default as RescueRecoveryIcon } from './SVG/RescueRecoveryIcon';
+export { default as VouchRecoveryIcon } from './SVG/VouchRecoveryIcon';
 
 export * from './contexts';
