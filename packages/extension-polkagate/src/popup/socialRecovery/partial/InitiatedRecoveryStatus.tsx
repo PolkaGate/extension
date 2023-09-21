@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { rescueRecoveryGreen } from '../../../assets/icons';
-import { Identity, Progress, ShowBalance2 } from '../../../components';
+import { Identity, Progress, RescueRecoveryIcon, ShowBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
@@ -48,10 +48,10 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
       <Grid alignItems='center' container item pb='10px' width='fit-content'>
         {lostAccountRecoveryInfo
           ? <>
-            <Box
-              component='img'
-              src={rescueRecoveryGreen as string}
-              sx={{ height: '26px', width: '26px' }}
+            <RescueRecoveryIcon
+              fillColor='green'
+              height={26}
+              width={26}
             />
             <Typography fontSize='22px' fontWeight={500} pl='15px'>
               {friendsCount !== 'zero'
