@@ -7,12 +7,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useEndpoint, useFormatted, useStashId } from '.';
+import { useEndpoint, useStashId } from '.';
 
 export default function useNeedsPutInFrontOf(address: string): PutInFrontInfo | undefined {
   const endpoint = useEndpoint(address);
-  const formatted = useFormatted(address);
-  const stashId = useStashId(formatted);
+  const stashId = useStashId(address);
 
   const [info, setPutInFrontOfInfo] = useState<PutInFrontInfo | undefined>();
 
