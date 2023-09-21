@@ -77,5 +77,6 @@ export { default as Warning } from './Warning';
 export { default as MakeRecoverableIcon } from './SVG/MakeRecoverableIcon';
 export { default as RescueRecoveryIcon } from './SVG/RescueRecoveryIcon';
 export { default as VouchRecoveryIcon } from './SVG/VouchRecoveryIcon';
+export { default as SocialRecoveryIcon } from './SVG/SocialRecoveryIcon';
 
 export * from './contexts';
