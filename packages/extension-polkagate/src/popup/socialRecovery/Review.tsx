@@ -555,7 +555,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                       : mode === 'CloseRecovery'
                         ? t<string>('Deposit they made')
                         : mode === 'Withdraw'
-                          ? t<string>('Initiation Recovery Deposit to be released')
+                          ? t<string>('Initiation recovery deposit to be released')
                           : t<string>('Total Deposit')}
                 >
                   <ShowBalance

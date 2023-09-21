@@ -215,9 +215,6 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
           ? t<string>('Modify your account recoverability')
           : t<string>('Make your account recoverable')}
       </Typography>
-      <Typography fontSize='14px' fontWeight={400} width='100%'>
-        {t<string>('Select trusted friends\' accounts and configure details such as a recovery threshold and a delay to enable account recovery.')}
-      </Typography>
       <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
         {t<string>(stepTitle)}
       </Typography>
