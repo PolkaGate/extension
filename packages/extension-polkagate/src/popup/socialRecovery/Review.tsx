@@ -245,7 +245,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     withdrawInfo?.soloStaked && !withdrawInfo.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
     withdrawInfo?.soloUnlock && !withdrawInfo.soloUnlock.amount.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloUnlock.amount, label: `Solo unstaking (${new Date(withdrawInfo.soloUnlock.date).toLocaleDateString('en-US', { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' })})` });
     withdrawInfo?.poolStaked && !withdrawInfo.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
-    console.log('withdrawInfo.soloUnlock:', withdrawInfo?.soloUnlock)
+
     setNothingToWithdrawNow(toBeWithdrawn.length === 0);
 
     return (
