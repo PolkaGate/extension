@@ -35,7 +35,7 @@ const CONFIGSTEPS = {
 
 const blocksInHour = 600;
 
-export default function RecoveryConfig ({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
+export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -211,7 +211,7 @@ export default function RecoveryConfig ({ address, api, mode, recoveryConfig, se
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-        {recoveryConfig
+        {mode === 'ModifyRecovery'
           ? t<string>('Modify your account recoverability')
           : t<string>('Make your account recoverable')}
       </Typography>

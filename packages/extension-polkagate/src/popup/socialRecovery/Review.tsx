@@ -210,9 +210,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   }, [api, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, tx]);
 
   const handleClose = useCallback(() => {
-    setStep(mode === 'RemoveRecovery' || mode === 'ModifyRecovery'
+    setStep(mode === 'RemoveRecovery'
       ? STEPS.RECOVERYDETAIL
-      : mode === 'SetRecovery'
+      : mode === 'SetRecovery' || mode === 'ModifyRecovery'
         ? STEPS.MAKERECOVERABLE
         : mode === 'Withdraw' && withdrawInfo?.claimed === false
           ? STEPS.INITIATERECOVERY
@@ -235,16 +235,17 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const closeWindow = useCallback(() => window.close(), []);
 
-  const WithdrawDetails = () => {
+  const WithdrawDetails = ({ step }: { step: number }) => {
     const toBeWithdrawn: { label: string; amount: BN | Balance }[] = [];
     const toBeWithdrawnLater: { label: string; amount: BN | Balance }[] = [];
 
-    withdrawInfo?.availableBalance && !withdrawInfo?.availableBalance.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
-    withdrawInfo?.redeemable && !withdrawInfo?.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
-    withdrawInfo?.reserved && !withdrawInfo?.reserved.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
-    withdrawInfo?.soloStaked && !withdrawInfo?.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
-    withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
-
+    withdrawInfo?.availableBalance && !withdrawInfo.availableBalance.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
+    withdrawInfo?.redeemable && !withdrawInfo.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
+    withdrawInfo?.reserved && !withdrawInfo.reserved.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
+    withdrawInfo?.soloStaked && !withdrawInfo.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
+    withdrawInfo?.soloUnlock && !withdrawInfo.soloUnlock.amount.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloUnlock.amount, label: `Solo unstaking (${new Date(withdrawInfo.soloUnlock.date).toLocaleDateString('en-US', { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' })})` });
+    withdrawInfo?.poolStaked && !withdrawInfo.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
+    console.log('withdrawInfo.soloUnlock:', withdrawInfo?.soloUnlock)
     setNothingToWithdrawNow(toBeWithdrawn.length === 0);
 
     return (
@@ -255,7 +256,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             {toBeWithdrawn.length > 0 &&
               <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
                 <Typography fontSize='16px' fontWeight={400}>
-                  {t<string>('Funds available to be withdrawn now')}
+                  {step === STEPS.REVIEW
+                    ? t<string>('Funds available to be withdrawn now')
+                    : t<string>('Withdrawn Funds')}
                 </Typography>
                 {toBeWithdrawn.map((item, index) => (
                   <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
@@ -275,7 +278,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 {toBeWithdrawn.length > 0 && <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />}
                 <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
                   <Typography fontSize='16px' fontWeight={400}>
-                    {t<string>('Funds available to withdraw later')}
+                    {step === STEPS.REVIEW
+                      ? t<string>('Funds available to withdraw later')
+                      : t<string>('Funds will be withdrawn later')}
                   </Typography>
                   {toBeWithdrawnLater.map((item, index) => (
                     <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
@@ -418,7 +423,10 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     : t<string>('Account holder')}
                 </Typography>
                 <Identity
-                  address={address}
+                  accountInfo={mode === 'VouchRecovery' ? vouchRecoveryInfo?.rescuer.accountIdentity : undefined}
+                  address={mode !== 'VouchRecovery'
+                    ? address
+                    : vouchRecoveryInfo?.rescuer.address}
                   api={api}
                   chain={chain}
                   direction='row'
@@ -535,7 +543,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 </>
               }
               {mode === 'Withdraw' &&
-                <WithdrawDetails />
+                <WithdrawDetails step={STEPS.REVIEW} />
               }
               {!(mode === 'VouchRecovery' || (mode === 'Withdraw' && withdrawInfo?.claimed === true)) &&
                 <DisplayValue
@@ -558,7 +566,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   />
                 </DisplayValue>}
               <DisplayValue title={t<string>('Fee')}>
-                <Grid alignItems='center' container item sx={{ height: '42px', fontSize: '24px' }}>
+                <Grid alignItems='center' container item sx={{ fontSize: '24px', height: '42px' }}>
                   <ShowBalance
                     api={api}
                     balance={estimatedFee}
@@ -567,7 +575,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 </Grid>
               </DisplayValue>
             </Grid>
-            {mode === 'Withdraw' &&
+            {mode === 'Withdraw' && !(withdrawInfo?.soloStaked.isZero() && withdrawInfo?.poolStaked.isZero() && withdrawInfo?.soloUnlock.amount.isZero()) &&
               <Grid container item sx={{ '> div.belowInput': { m: 0, pl: '5px' }, height: '40px', pb: '15px' }}>
                 <Warning
                   fontSize={'13px'}
@@ -641,6 +649,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
         }
         {txInfo && step === STEPS.CONFIRM &&
           <Confirmation
+            // eslint-disable-next-line react/jsx-no-bind
+            WithdrawDetails={WithdrawDetails}
             decimal={decimal}
             depositValue={depositValue}
             handleClose={specific

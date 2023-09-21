@@ -9,7 +9,7 @@ import React from 'react';
 import { BN } from '@polkadot/util';
 
 import { Motion, PButton, ShortAddress } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useToken, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
@@ -18,6 +18,7 @@ import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 import { FriendWithId } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
+import { STEPS } from '..';
 
 interface Props {
   txInfo: TxInfo;
@@ -28,6 +29,9 @@ interface Props {
   decimal: number | undefined;
   lostAccountAddress: FriendWithId | undefined;
   vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
+  WithdrawDetails: ({ step }: {
+    step: number;
+  }) => JSX.Element;
 }
 
 interface DisplayInfoProps {
@@ -55,8 +59,9 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
   );
 };
 
-export default function Confirmation({ decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
+export default function Confirmation({ decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const token = useToken(txInfo.from.address);
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
@@ -118,10 +123,18 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
                 : t<string>('Account holder')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {txInfo.from.name}
+            {mode !== 'VouchRecovery'
+              ? txInfo.from.name
+              : vouchRecoveryInfo?.rescuer.accountIdentity?.identity.display}
           </Typography>
           <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-            <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
+            <ShortAddress
+              address={mode !== 'VouchRecovery'
+                ? txInfo.from.address
+                : vouchRecoveryInfo?.rescuer.address}
+              inParentheses
+              style={{ fontSize: '16px' }}
+            />
           </Grid>
         </Grid>
         {txInfo.throughProxy &&
@@ -151,7 +164,7 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
             </Grid>
           </>
         }
-        {mode === 'InitiateRecovery' &&
+        {(mode === 'InitiateRecovery' || mode === 'Withdraw') &&
           <>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
@@ -165,13 +178,26 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
                 <ShortAddress address={lostAccountAddress?.address} inParentheses style={{ fontSize: '16px' }} />
               </Grid>
             </Grid>
+            {mode !== 'Withdraw' &&
+              <>
+                <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+                  <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+                </Grid>
+                <DisplayInfo
+                  caption={t<string>('Initiation Deposit:')}
+                  value={`${amountToHuman(depositValue, decimal, 3)} ${token ?? ''}`}
+                // value={amountToHuman(depositValue, decimal, 3) ?? '00.00'}
+                />
+              </>
+            }
+          </>
+        }
+        {mode === 'Withdraw' &&
+          <>
+            <WithdrawDetails step={STEPS.CONFIRM} />
             <Grid alignItems='center' container item justifyContent='center' pt='8px'>
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
             </Grid>
-            <DisplayInfo
-              caption={t<string>('Initiation Deposit:')}
-              value={amountToHuman(depositValue, decimal) ?? '00.00'}
-            />
           </>
         }
         {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
@@ -180,7 +206,7 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
         {(mode === 'RemoveRecovery' || mode === 'CloseRecovery') &&
           <DisplayInfo
             caption={mode === 'CloseRecovery' ? t<string>('Deposit they made:') : t<string>('Released deposit:')}
-            value={amountToHuman(depositValue, decimal) ?? '00.00'}
+            value={`${amountToHuman(depositValue, decimal, 3)} ${token ?? ''}`}
           />
         }
         <DisplayInfo
