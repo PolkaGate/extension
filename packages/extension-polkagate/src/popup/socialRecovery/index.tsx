@@ -370,6 +370,7 @@ export default function SocialRecovery(): React.ReactElement {
   }, []);
 
   const goToMakeRecoverable = useCallback(() => {
+    setMode(undefined);
     setStep(STEPS.MAKERECOVERABLE);
   }, []);
 

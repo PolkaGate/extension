@@ -651,6 +651,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
           <Confirmation
             // eslint-disable-next-line react/jsx-no-bind
             WithdrawDetails={WithdrawDetails}
+            activeLost={activeLost}
             decimal={decimal}
             depositValue={depositValue}
             handleClose={specific

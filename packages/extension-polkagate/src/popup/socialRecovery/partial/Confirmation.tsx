@@ -10,6 +10,7 @@ import { BN } from '@polkadot/util';
 
 import { Motion, PButton, ShortAddress } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
+import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
@@ -32,6 +33,7 @@ interface Props {
   WithdrawDetails: ({ step }: {
     step: number;
   }) => JSX.Element;
+  activeLost: ActiveRecoveryFor | null | undefined;
 }
 
 interface DisplayInfoProps {
@@ -59,7 +61,7 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
   );
 };
 
-export default function Confirmation({ decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
+export default function Confirmation({ activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(txInfo.from.address);
 
@@ -116,11 +118,9 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
         }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {mode === 'CloseRecovery'
-              ? t<string>('Account that initiated the recovery')
-              : mode === 'VouchRecovery'
-                ? t<string>('Rescuer account')
-                : t<string>('Account holder')}:
+            {mode === 'VouchRecovery'
+              ? t<string>('Rescuer account')
+              : t<string>('Account holder')}:
           </Typography>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
             {mode !== 'VouchRecovery'
@@ -145,18 +145,21 @@ export default function Confirmation({ decimal, depositValue, handleClose, lostA
         <Grid alignItems='center' container item justifyContent='center' pt='8px'>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
-        {mode === 'VouchRecovery' && vouchRecoveryInfo &&
+        {((mode === 'VouchRecovery' && vouchRecoveryInfo) || mode === 'CloseRecovery') &&
           <>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {t<string>('Lost account')}:
+                {mode === 'VouchRecovery'
+                  ? t<string>('Lost account')
+                  : t<string>('Account that initiated the recovery')}:
               </Typography>
-              {vouchRecoveryInfo.lost.accountIdentity?.identity.display &&
+              {vouchRecoveryInfo?.lost.accountIdentity?.identity.display &&
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {vouchRecoveryInfo.lost.accountIdentity?.identity.display}
-                </Typography>}
+                  {vouchRecoveryInfo?.lost.accountIdentity?.identity.display}
+                </Typography>
+              }
               <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                <ShortAddress address={vouchRecoveryInfo.lost.address} inParentheses style={{ fontSize: '16px' }} />
+                <ShortAddress address={vouchRecoveryInfo?.lost?.address ?? activeLost?.rescuer} inParentheses style={{ fontSize: '16px' }} />
               </Grid>
             </Grid>
             <Grid alignItems='center' container item justifyContent='center' pt='8px'>
