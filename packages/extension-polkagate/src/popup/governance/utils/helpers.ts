@@ -173,8 +173,9 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
   };
 
+  // return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}&sortBy=time`, requestOptions)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}&sortBy=time`, requestOptions)
+  return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}`, requestOptions)
     .then((response) => response.json())
     .then((data) => {
       if (data) {
