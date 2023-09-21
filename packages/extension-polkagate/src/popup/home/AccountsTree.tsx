@@ -6,7 +6,7 @@
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
 import { Backdrop, Container, Grid, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { PButton } from '../../components';
 import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
@@ -20,13 +20,18 @@ interface Props extends AccountWithChildren {
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
   hideNumbers: boolean | undefined;
+  setHasActiveRecovery: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setQuickActionOpen, setHasActiveRecovery, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
   const activeRecovery = useActiveRecoveries(api, account.address);
+
+  useEffect(() => {
+    setHasActiveRecovery(!!activeRecovery);
+  }, [activeRecovery, setHasActiveRecovery]);
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
   const handleClose = useCallback(() => setQuickActionOpen(undefined), [setQuickActionOpen]);
