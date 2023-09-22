@@ -44,7 +44,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
 
   return (
     <>{
-      (isLoading && isPopupOpenedByExtension) || !children
+      (isLoading || !children) && isPopupOpenedByExtension
         ? <Grid alignContent='center' alignItems='center' container sx={{ bgcolor: theme.palette.mode === 'dark' ? 'black' : 'white', height: '100%', pt: '190px', pb: '210px' }}>
           <Box
             component='img'
