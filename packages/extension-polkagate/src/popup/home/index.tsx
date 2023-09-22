@@ -97,14 +97,15 @@ export default function Home(): React.ReactElement {
               />
             </Grid>
             {hasActiveRecovery &&
-              <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '20px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px' }}>
+              <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
                 <Warning
+                  fontSize='16px'
                   fontWeight={400}
                   isBelowInput
                   isDanger
                   theme={theme}
                 >
-                  {t<string>('Suspicious recovery detected on one or more of your account.')}
+                  {t<string>('Suspicious recovery detected on one or more of your accounts.')}
                 </Warning>
               </Grid>
             }
