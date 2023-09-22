@@ -193,7 +193,7 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
         <RecoveryOptionButton
           activeLost={activeLost}
           buttonColors={buttonColors}
-          description={t<string>('You can assist your friends in recovering their lost accounts by having them share their rescuer and lost account address with you.')}
+          description={t<string>('You can assist others in recovering their lost accounts if they\'ve designated your account as a trusted friend during the account recovery setup.')}
           icon={
             <VouchRecoveryIcon
               fillColor={theme.palette.secondary.main}
