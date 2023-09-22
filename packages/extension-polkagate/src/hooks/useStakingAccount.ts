@@ -14,7 +14,7 @@ import { BN } from '@polkadot/util';
 import { updateMeta } from '../messaging';
 import { AccountStakingInfo } from '../util/types';
 import { isHexToBn } from '../util/utils';
-import { useAccount, useApi, useChainName, useStashId, useToken } from '.';
+import { useAccount, useApi, useStashId, useToken } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();

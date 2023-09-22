@@ -2,7 +2,7 @@
   "author": "Kami Ekbatanifard <ekbatanifard@gmail.com>",
   "bugs": "https://github.com/polkagate/extension/issues",
   "contributors": [],
-  "description": "A user-friendly wallet to interact with the Polkadot/Substrate based blockchains through a browser.",
+  "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
   "homepage": "https://github.com/polkagate/extension/tree/master/packages/extension-polkagate#readme",
   "license": "Apache-2.0",
   "maintainers": [],

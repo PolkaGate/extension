@@ -5,27 +5,24 @@
 
 import '@vaadin/icons';
 
-import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Divider, Grid, LinearProgress, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { Identity, InputFilter, Progress, ShowBalance, ShowValue } from '../../../../components';
+import { Identity, InputFilter, Progress, ShowValue } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
-import { getVoteCapital, getVoteValue, VOTE_PER_PAGE } from '.';
+import { getVoteValue, VOTE_PER_PAGE } from '.';
 
 interface Props {
   address: string | undefined;
   allVotes: AllVotesType | null | undefined;
   filteredVotes: FilteredVotes | null | undefined;
   open: boolean;
-  setShowDelegators: React.Dispatch<React.SetStateAction<VoteType | AbstainVoteType | null | undefined>>;
   setFilteredVotes: React.Dispatch<React.SetStateAction<FilteredVotes | null | undefined>>;
   handleClose: () => void;
-  numberOfFetchedDelagatees: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
 }

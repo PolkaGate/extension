@@ -8,8 +8,10 @@ import '@vaadin/icons';
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Divider, Grid, LinearProgress, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Grid, Pagination, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { BN } from '@polkadot/util';
 
 import { Identity, InputFilter, Progress, ShowBalance } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
@@ -25,7 +27,6 @@ interface Props {
   setShowDelegators: React.Dispatch<React.SetStateAction<VoteType | AbstainVoteType | null | undefined>>;
   setFilteredVotes: React.Dispatch<React.SetStateAction<FilteredVotes | null | undefined>>;
   handleClose: () => void;
-  numberOfFetchedDelagatees: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
 }
@@ -41,7 +42,7 @@ function noop() {
   // This function does nothing.
 }
 
-export default function Standards({ address, allVotes, filteredVotes, handleClose, numberOfFetchedDelagatees, open, page, setFilteredVotes, setPage, setShowDelegators }: Props): React.ReactElement {
+export default function Standards({ address, allVotes, filteredVotes, handleClose, open, page, setFilteredVotes, setPage, setShowDelegators }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -132,8 +133,8 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
     allVotes && setFilteredVotes(
       {
         abstain: allVotes.abstain.votes.filter((a) => a.voter.includes(filter) && !a.isDelegated),
-        yes: allVotes.yes.votes.filter((y) => y.voter.includes(filter) && !y.isDelegated),
-        no: allVotes.no.votes.filter((n) => n.voter.includes(filter) && !n.isDelegated)
+        no: allVotes.no.votes.filter((n) => n.voter.includes(filter) && !n.isDelegated),
+        yes: allVotes.yes.votes.filter((y) => y.voter.includes(filter) && !y.isDelegated)
       }
     );
   }, [allVotes, setFilteredVotes]);
@@ -251,17 +252,19 @@ export default function Standards({ address, allVotes, filteredVotes, handleClos
               {t('Delegated Vote')}
             </Grid>
           </Grid>
-          {allVotes &&
+          {/* {allVotes &&
             <LinearProgress
               color='success'
               sx={{ height: '3px', mt: '0px', width: '100%' }}
               value={totalNumberOfDelegators ? numberOfFetchedDelagatees * 100 / totalNumberOfDelegators : 0}
               variant={numberOfFetchedDelagatees ? 'determinate' : 'indeterminate'}
             />
-          }
+          } */}
           {votesToShow?.map((vote, index) => {
-            const totalDelegatedValue = vote.votePower && vote.votePower.sub(getVoteValue(vote));
-            const hasDelegators = totalDelegatedValue && !totalDelegatedValue.isZero();
+            // const totalDelegatedValue = vote.votePower && vote.votePower.sub(getVoteValue(vote));
+            // const hasDelegators = totalDelegatedValue && !totalDelegatedValue.isZero();
+            const totalDelegatedValue = new BN(vote.delegatedVotingPower);
+            const hasDelegators = vote.delegatedVotes.length;
 
             return (
               <Grid alignItems='center' container justifyContent='space-around' key={index} sx={{ borderBottom: 0.5, borderColor: 'secondary.contrastText', fontSize: '16px', fontWeight: 400 }}>

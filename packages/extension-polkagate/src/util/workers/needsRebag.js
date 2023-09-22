@@ -21,8 +21,8 @@ async function needsRebag(endpoint, currentAccount) {
   const renameConsistentApi = apiAt.query?.bagsList || apiAt.query?.voterList;
 
   const currentWeight = api.createType('Balance', (await apiAt.query.staking.ledger(currentCtrl)).unwrapOrDefault().active);
-  const unwrapedCurrentNode = await renameConsistentApi.listNodes(currentCtrl);
-  const currentNode = unwrapedCurrentNode.isSome ? unwrapedCurrentNode.unwrap() : undefined;
+  const unwrappedCurrentNode = await renameConsistentApi.listNodes(currentCtrl);
+  const currentNode = unwrappedCurrentNode.isSome ? unwrappedCurrentNode.unwrap() : undefined;
 
   if (!currentNode) {
     // account probably has done stopNominated
