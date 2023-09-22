@@ -59,7 +59,6 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
       return;
     }
 
-    setCheckActive(false);
     setActiveRecoveryInfo(undefined);
     setCheckActive(true);
   }, [lostAccount?.address, rescuerAccount?.address]);
@@ -76,6 +75,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
         const initiatedRecovery = activeRecoveriesForLostAddr.find((activeRec) => activeRec.rescuer === rescuerAccount.address);
 
         if (!initiatedRecovery) {
+          setCheckActive(false);
           setWhyNotStatus('noActive');
           setActiveRecoveryInfo(null);
 
@@ -83,6 +83,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
         }
 
         if (initiatedRecovery.vouchedFriends.includes(address)) {
+          setCheckActive(false);
           setWhyNotStatus('AlreadyVouched');
           setActiveRecoveryInfo(null);
 
@@ -91,6 +92,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
 
         api && api.query.recovery.recoverable(lostAccount.address).then((r) => {
           if (r.isEmpty) {
+            setCheckActive(false);
             setWhyNotStatus('notRecoverable');
             setActiveRecoveryInfo(null);
           }
@@ -98,6 +100,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
           const lostAccountDetail = r.unwrap() as unknown as PalletRecoveryRecoveryConfig;
 
           if (!lostAccountDetail.friends.some((friend) => String(friend) === address)) {
+            setCheckActive(false);
             setWhyNotStatus('NotAFriend');
             setActiveRecoveryInfo(null);
 
@@ -107,22 +110,25 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
           const isFriend = lostAccountDetail.friends.find((friend) => address === String(friend));
 
           isFriend && setActiveRecoveryInfo(initiatedRecovery);
+          setCheckActive(false);
         }).catch(console.error);
       } else {
+        setCheckActive(false);
         setWhyNotStatus('noActive');
         setActiveRecoveryInfo(null);
       }
     } else {
+      setCheckActive(false);
       setWhyNotStatus('noActive');
       setActiveRecoveryInfo(null);
     }
   }, [activeRecoveries, address, api, checkActive, lostAccount?.address, rescuerAccount?.address]);
 
   useEffect(() => {
-    if (!lostAccount || !rescuerAccount) {
+    if (!lostAccount || !rescuerAccount || rescuerAccount.address !== activeRecoveryInfo?.rescuer || lostAccount.address !== activeRecoveryInfo?.lost) {
       setActiveRecoveryInfo(false);
     }
-  }, [lostAccount, rescuerAccount]);
+  }, [activeRecoveryInfo?.lost, activeRecoveryInfo?.rescuer, lostAccount, rescuerAccount]);
 
   const selectLostAccount = useCallback((addr: FriendWithId | undefined) => {
     setLostAccount(addr);
