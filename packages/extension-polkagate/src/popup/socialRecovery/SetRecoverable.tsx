@@ -184,7 +184,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
 
   const goBack = useCallback(() => {
     if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
-      setStep(STEPS.RECOVERYDETAIL);
+      setStep(STEPS.RECOVERY_DETAIL);
     } else if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
       setStep(STEPS.INDEX);
       setMode(undefined);

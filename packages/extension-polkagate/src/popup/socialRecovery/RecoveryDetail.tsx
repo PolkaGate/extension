@@ -49,13 +49,13 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
       threshold: recoveryInformation.threshold.toNumber()
     });
     setMode('ModifyRecovery');
-    setStep(STEPS.MAKERECOVERABLE);
+    setStep(STEPS.MAKE_RECOVERABLE);
   }, [recoveryInformation.delayPeriod, recoveryInformation.friends, recoveryInformation.threshold, setMode, setRecoveryConfig, setStep]);
 
   const RecoveryInformationDisplay = () => (
     <Grid container direction='column' gap='10px' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px' }}>
       <Grid container item justifyContent='space-between'>
-        <Typography fontSize='20px' fontWeight={400}>
+        <Typography fontSize='19px' fontWeight={400}>
           {t<string>('Recovery Threshold')}
         </Typography>
         <Typography fontSize='20px' fontWeight={700}>
@@ -64,7 +64,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
       </Grid>
       <Divider sx={{ bgcolor: '#D5CCD0', height: '2px', width: '100% ' }} />
       <Grid container item justifyContent='space-between'>
-        <Typography fontSize='20px' fontWeight={400}>
+        <Typography fontSize='19px' fontWeight={400}>
           {t<string>('Recovery Delay')}
         </Typography>
         <Typography fontSize='20px' fontWeight={700}>
@@ -73,7 +73,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
       </Grid>
       <Divider sx={{ bgcolor: '#D5CCD0', height: '2px', width: '100% ' }} />
       <Grid container item justifyContent='space-between'>
-        <Typography fontSize='20px' fontWeight={400}>
+        <Typography fontSize='19px' fontWeight={400}>
           {t<string>('Deposit')}
         </Typography>
         <Grid alignItems='center' container fontSize='20px' fontWeight={700} gap='10px' item width='fit-content'>
@@ -93,7 +93,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
       <Grid alignItems='center' container item pt='25px'>
         <FontAwesomeIcon
           color={theme.palette.success.main}
-          fontSize='45px'
+          fontSize='40px'
           icon={faShieldHalved}
         />
         <Typography fontSize='30px' fontWeight={700} pl='8px'>
@@ -114,7 +114,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
           isBelowInput
           theme={theme}
         >
-          {t<string>('If you\'ve lost access to this account, start the recovery process with a new account and contact trusted friends for account recovery.')}
+          {t<string>('If you\'ve lost access to this account, start the recovery process with a new account and contact the trusted friends for account recovery.')}
         </Warning>
       </Grid>
       <Grid container item justifyContent='space-between' pt='60px'>

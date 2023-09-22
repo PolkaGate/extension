@@ -211,15 +211,15 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const handleClose = useCallback(() => {
     setStep(mode === 'RemoveRecovery'
-      ? STEPS.RECOVERYDETAIL
+      ? STEPS.RECOVERY_DETAIL
       : mode === 'SetRecovery' || mode === 'ModifyRecovery'
-        ? STEPS.MAKERECOVERABLE
+        ? STEPS.MAKE_RECOVERABLE
         : mode === 'Withdraw' && withdrawInfo?.claimed === false
-          ? STEPS.INITIATERECOVERY
+          ? STEPS.INITIATE_RECOVERY
           : mode === 'Withdraw' && withdrawInfo?.claimed === true
             ? STEPS.INDEX
             : mode === 'InitiateRecovery'
-              ? STEPS.INITIATERECOVERY
+              ? STEPS.INITIATE_RECOVERY
               : STEPS.INDEX);
   }, [mode, setStep, withdrawInfo?.claimed]);
 
