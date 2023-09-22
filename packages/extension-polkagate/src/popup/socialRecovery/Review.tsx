@@ -220,7 +220,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             ? STEPS.INDEX
             : mode === 'InitiateRecovery'
               ? STEPS.INITIATE_RECOVERY
-              : STEPS.INDEX);
+              : mode === 'VouchRecovery'
+                ? STEPS.VOUCH
+                : STEPS.INDEX);
   }, [mode, setStep, withdrawInfo?.claimed]);
 
   const closeSelectProxy = useCallback(() => {
