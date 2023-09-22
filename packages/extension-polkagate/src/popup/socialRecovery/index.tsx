@@ -9,7 +9,7 @@ import type { PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } fr
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -19,8 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
-import { MakeRecoverableIcon, PButton, RescueRecoveryIcon, VouchRecoveryIcon, Warning } from '../../components';
+import { MakeRecoverableIcon, PButton, RescueRecoveryIcon, SocialRecoveryIcon, VouchRecoveryIcon, Warning } from '../../components';
 import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getPoolAccounts from '../../util/getPoolAccounts';
@@ -445,12 +444,13 @@ export default function SocialRecovery(): React.ReactElement {
     <Grid container item sx={{ display: 'block', px: '10%' }}>
       <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
         <Grid alignItems='center' container item width='fit-content'>
-          <Box
-            component='img'
-            src={theme.palette.mode === 'dark'
-              ? socialRecoveryDark as string
-              : socialRecoveryLight as string}
-            sx={{ height: '66px', width: '66px' }}
+          <SocialRecoveryIcon
+            fillColor={
+              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+                ? theme.palette.text.disabled
+                : theme.palette.text.primary}
+            height={66}
+            width={66}
           />
           <Typography fontSize='30px' fontWeight={700} pl='15px'>
             {t<string>('Social Recovery')}

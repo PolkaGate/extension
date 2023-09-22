@@ -4,15 +4,14 @@
 /* eslint-disable react/jsx-max-props-per-line */
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { socialRecoveryDark, socialRecoveryLight } from '../../assets/icons';
-import { PButton, RescueRecoveryIcon, TwoButtons } from '../../components';
+import { PButton, RescueRecoveryIcon, SocialRecoveryIcon, TwoButtons } from '../../components';
 import { useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
@@ -161,12 +160,10 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
       {initiatedRecovery || activeProxy
         ? <>
           <Grid alignItems='center' container item pt='20px' width='fit-content'>
-            <Box
-              component='img'
-              src={theme.palette.mode === 'dark'
-                ? socialRecoveryDark as string
-                : socialRecoveryLight as string}
-              sx={{ height: '66px', width: '66px' }}
+            <SocialRecoveryIcon
+              fillColor={theme.palette.text.primary}
+              height={66}
+              width={66}
             />
             <Typography fontSize='30px' fontWeight={700} pl='15px'>
               {t<string>('Social Recovery')}
