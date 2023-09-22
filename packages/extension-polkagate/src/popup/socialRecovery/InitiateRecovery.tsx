@@ -94,7 +94,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
     if (api && lostAccount) {
       setLostAccountRecoveryInfo(undefined);
 
-      api.query.recovery.recoverable(lostAccount.address).then((r) => {
+      api.query.recovery && api.query.recovery.recoverable(lostAccount.address).then((r) => {
         setLostAccountRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
       }).catch(console.error);
     }

@@ -120,7 +120,7 @@ export default function SocialRecovery(): React.ReactElement {
   }, []);
 
   const fetchRecoveryInformation = useCallback(() => {
-    if (!api || !formatted) {
+    if (!api?.query?.recovery || !formatted) {
       return;
     }
 

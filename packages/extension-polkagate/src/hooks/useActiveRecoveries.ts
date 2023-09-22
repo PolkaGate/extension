@@ -36,7 +36,7 @@ export default function useActiveRecoveries(api: ApiPromise | undefined, searchF
 
     setFetching(true);
 
-    api.query.recovery.activeRecoveries.entries().then((actives) => {
+    api.query.recovery && api.query.recovery.activeRecoveries.entries().then((actives) => {
       const myActiveRecovery: ActiveRecoveryFor[] = [];
 
       if (actives.length === 0) {
