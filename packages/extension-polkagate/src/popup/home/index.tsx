@@ -116,7 +116,7 @@ export default function Home(): React.ReactElement {
               disableGutters
               sx={[{
                 m: 'auto',
-                maxHeight: `${self.innerHeight - 165}px`,
+                maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
                 mt: '10px',
                 overflowY: 'scroll',
                 p: 0,
