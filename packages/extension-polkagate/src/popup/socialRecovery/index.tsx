@@ -6,11 +6,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
-import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -19,13 +15,15 @@ import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { MakeRecoverableIcon, PButton, RescueRecoveryIcon, SocialRecoveryIcon, VouchRecoveryIcon, Warning } from '../../components';
+import { Warning } from '../../components';
 import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, useFullscreen, useTranslation } from '../../hooks';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getPoolAccounts from '../../util/getPoolAccounts';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { FriendWithId } from './components/SelectTrustedFriend';
+import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
 import { InitiateRecoveryConfig, RecoveryConfigType, SocialRecoveryModes, WithdrawInfo } from './util/types';
+import Home from './Home';
 import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';
 import Review from './Review';
@@ -35,10 +33,10 @@ import Vouch from './VouchRecovery';
 export const STEPS = {
   CHECK_SCREEN: 0,
   INDEX: 1,
-  MAKERECOVERABLE: 2,
+  MAKE_RECOVERABLE: 2,
   MODIFY: 3,
-  RECOVERYDETAIL: 4,
-  INITIATERECOVERY: 5,
+  RECOVERY_DETAIL: 4,
+  INITIATE_RECOVERY: 5,
   VOUCH: 6,
   REVIEW: 7,
   WAIT_SCREEN: 8,
@@ -46,13 +44,6 @@ export const STEPS = {
   UNSUPPORTED: 10,
   PROXY: 100
 };
-
-interface RecoveryOptionButtonType {
-  icon: unknown;
-  title: string;
-  description: string;
-  onClickFunction: () => void;
-}
 
 interface SessionInfo {
   eraLength: number;
@@ -62,10 +53,10 @@ interface SessionInfo {
 
 export default function SocialRecovery(): React.ReactElement {
   useFullscreen();
+  const { t } = useTranslation();
 
   const { address, closeRecovery } = useParams<{ address: string, closeRecovery: string }>();
   const api = useApi(address);
-  const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
   const formatted = useFormatted(address);
@@ -364,206 +355,6 @@ export default function SocialRecovery(): React.ReactElement {
     });
   }, [alreadyClaimed, mode, formatted, lostAccountAddress?.address, lostAccountSoloUnlock, lostAccountIdentity, lostAccountPoolStakingBalance, lostAccountReserved, lostAccountBalance, lostAccountRecoveryInfo, lostAccountRedeemable, lostAccountSoloStakingBalance, setWithdrawInfo]);
 
-  const goToRecoveryDetail = useCallback(() => {
-    setStep(STEPS.RECOVERYDETAIL);
-  }, []);
-
-  const goToMakeRecoverable = useCallback(() => {
-    setMode(undefined);
-    setStep(STEPS.MAKERECOVERABLE);
-  }, []);
-
-  const goToInitiateRecovery = useCallback(() => {
-    setStep(STEPS.INITIATERECOVERY);
-  }, []);
-
-  const goToCheckInitiatedRecovery = useCallback(() => {
-    setLostAccountAddress({
-      accountIdentity: accountsInfo?.find((accInfo) => String(accInfo.accountId) === activeProxy ?? activeRescue?.lost),
-      address: activeProxy ?? activeRescue?.lost ?? ''
-    });
-    setMode('Withdraw');
-    setStep(STEPS.INITIATERECOVERY);
-  }, [accountsInfo, activeProxy, activeRescue?.lost]);
-
-  const goNextTimeWithdraw = useCallback(() => {
-    setLostAccountAddress({
-      accountIdentity: accountsInfo?.find((accInfo) => String(accInfo.accountId) === activeProxy ?? activeRescue?.lost),
-      address: activeProxy ?? activeRescue?.lost ?? ''
-    });
-    setMode('Withdraw');
-    setStep(STEPS.REVIEW);
-  }, [accountsInfo, activeProxy, activeRescue?.lost]);
-
-  const goToVouchRecovery = useCallback(() => {
-    setStep(STEPS.VOUCH);
-  }, []);
-
-  const goCloseRecovery = useCallback(() => {
-    setMode('CloseRecovery');
-    setStep(STEPS.REVIEW);
-  }, []);
-
-  const RecoveryCheckProgress = () => {
-    return (
-      <Grid alignItems='center' container direction='column' height='100%' item justifyContent='center'>
-        <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={200} style={{ opacity: '0.4' }} />
-        <Typography pt='15px'>
-          {t<string>('Checking the account recovery status, please wait...')}
-        </Typography>
-      </Grid>
-    );
-  };
-
-  const RecoveryOptionButton = ({ description, icon, onClickFunction, title }: RecoveryOptionButtonType) => (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={activeLost ? undefined : onClickFunction} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '7px', cursor: activeLost ? 'default' : 'pointer', height: '125px', p: '25px', position: 'relative' }}>
-      {activeLost &&
-        <Grid sx={{ bgcolor: 'rgba(116, 116, 116, 0.2)', borderRadius: '5px', height: '123px', position: 'absolute', right: 0, top: 0, width: '670px', zIndex: 10 }}>
-        </Grid>
-      }
-      <Grid alignItems='center' container item width='75px'>
-        {icon}
-      </Grid>
-      <Grid alignItems='flex-start' container direction='column' gap='10px' item xs={9}>
-        <Typography color={buttonColors} fontSize='18px' fontWeight={500}>
-          {t<string>(title)}
-        </Typography>
-        <Typography fontSize='12px' fontWeight={400}>
-          {t<string>(description)}
-        </Typography>
-      </Grid>
-      <Grid alignItems='center' container item width='50px'>
-        <ArrowForwardIosIcon
-          sx={{ color: buttonColors, fontSize: '40px', m: 'auto', stroke: buttonColors, strokeWidth: '2px' }}
-        />
-      </Grid>
-    </Grid>
-  );
-
-  const RecoveryHomePage = () => (
-    <Grid container item sx={{ display: 'block', px: '10%' }}>
-      <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
-        <Grid alignItems='center' container item width='fit-content'>
-          <SocialRecoveryIcon
-            fillColor={
-              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
-                ? theme.palette.text.disabled
-                : theme.palette.text.primary}
-            height={66}
-            width={66}
-          />
-          <Typography fontSize='30px' fontWeight={700} pl='15px'>
-            {t<string>('Social Recovery')}
-          </Typography>
-        </Grid>
-        <Grid alignItems='center' container item width='fit-content'>
-          {recoveryInfo
-            ? <>
-              <FontAwesomeIcon
-                color={theme.palette.success.main}
-                fontSize='30px'
-                icon={faShieldHalved}
-              />
-              <Typography fontSize='14px' fontWeight={400} pl='8px'>
-                {t<string>('Your account is recoverable')}
-              </Typography>
-            </>
-            : <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '240px' }}>
-              <Warning
-                fontWeight={400}
-                isBelowInput
-                theme={theme}
-              >
-                {t<string>('Your account is not recoverable.')}
-              </Warning>
-            </Grid>
-          }
-        </Grid>
-      </Grid>
-      <Typography fontSize='12px' fontWeight={400} py={activeLost ? '10px' : '25px'}>
-        {t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase. Social recovery means relying on friends and family to access your crypto.')}
-      </Typography>
-      {activeLost &&
-        <Grid alignItems='center' container item justifyContent='space-between' pb='15px' pt='10px'>
-          <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', width: '330px' }}>
-            <Warning
-              fontWeight={500}
-              isBelowInput
-              isDanger
-              theme={theme}
-            >
-              {t<string>('Suspicious recovery detected on your account.')}
-            </Warning>
-          </Grid>
-          <Grid container item justifyContent='flex-end' sx={{ '> button': { width: '280px' }, '> div': { width: '280px' }, width: 'fit-content' }}>
-            <PButton
-              _ml={0}
-              _mt='0'
-              _onClick={goCloseRecovery}
-              text={t<string>('End Recovery')}
-            />
-          </Grid>
-        </Grid>
-      }
-      <Grid container direction='column' gap='25px' item>
-        <RecoveryOptionButton
-          description={
-            recoveryInfo
-              ? t<string>('Click to view your selected trusted friend accounts and your account recovery settings.')
-              : t<string>('Select trusted friends\' accounts and configure details such as a recovery threshold and a delay to enable account recovery.')
-          }
-          icon={
-            <MakeRecoverableIcon
-              fillColor={theme.palette.secondary.main}
-              height={60}
-              width={66}
-            />
-          }
-          onClickFunction={recoveryInfo
-            ? goToRecoveryDetail
-            : goToMakeRecoverable}
-          title={recoveryInfo
-            ? t<string>('Check Recoverability Details')
-            : t<string>('Make Account Recoverable')}
-        />
-        <RecoveryOptionButton
-          description={
-            activeRescue || activeProxy
-              ? t<string>('Since you\'ve already initiated the recovery process for a lost account, you can now review the recovery process details and decide on any further actions.')
-              : t<string>('If you\'ve lost a recoverable account, you can begin the process of rescuing it from here.')
-          }
-          icon={
-            <RescueRecoveryIcon
-              fillColor={theme.palette.secondary.main}
-              height={60}
-              width={66}
-            />
-          }
-          onClickFunction={activeRescue
-            ? goToCheckInitiatedRecovery
-            : activeProxy
-              ? goNextTimeWithdraw
-              : goToInitiateRecovery}
-          title={activeRescue || activeProxy
-            ? t<string>('You Initiated a Recovery. Check Status')
-            : t<string>('Rescue a Lost Account')}
-        />
-        <RecoveryOptionButton
-          description={t<string>('You can assist your friends in recovering their lost accounts by having them share their rescuer and lost account address with you.')}
-          icon={
-            <VouchRecoveryIcon
-              fillColor={theme.palette.secondary.main}
-              height={60}
-              width={66}
-            />
-          }
-          onClickFunction={goToVouchRecovery}
-          title={t<string>('Vouch Recovery for a Friend')}
-        />
-      </Grid>
-    </Grid>
-  );
-
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>
       <FullScreenHeader page='socialRecovery' />
@@ -588,9 +379,20 @@ export default function SocialRecovery(): React.ReactElement {
           <RecoveryCheckProgress />
         }
         {step === STEPS.INDEX &&
-          <RecoveryHomePage />
+          <Home
+            accountsInfo={accountsInfo}
+            activeLost={activeLost}
+            activeProxy={activeProxy}
+            activeRescue={activeRescue}
+            buttonColors={buttonColors}
+            chain={chain}
+            recoveryInfo={recoveryInfo}
+            setLostAccountAddress={setLostAccountAddress}
+            setMode={setMode}
+            setStep={setStep}
+          />
         }
-        {step === STEPS.RECOVERYDETAIL && recoveryInfo &&
+        {step === STEPS.RECOVERY_DETAIL && recoveryInfo &&
           <RecoveryDetail
             api={api}
             chain={chain}
@@ -600,7 +402,7 @@ export default function SocialRecovery(): React.ReactElement {
             setStep={setStep}
           />
         }
-        {step === STEPS.MAKERECOVERABLE &&
+        {step === STEPS.MAKE_RECOVERABLE &&
           <RecoveryConfig
             address={address}
             api={api}
@@ -612,7 +414,7 @@ export default function SocialRecovery(): React.ReactElement {
             setTotalDeposit={setTotalDeposit}
           />
         }
-        {step === STEPS.INITIATERECOVERY &&
+        {step === STEPS.INITIATE_RECOVERY &&
           <InitiateRecovery
             accountsInfo={accountsInfo}
             activeProxy={activeProxy}
