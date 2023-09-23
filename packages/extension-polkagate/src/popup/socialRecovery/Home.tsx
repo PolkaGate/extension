@@ -52,14 +52,18 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
     setStep(STEPS.MAKE_RECOVERABLE);
   }, [setMode, setStep]);
 
-  const goToCheckInitiatedRecovery = useCallback(() => {
+  const setLostAccount = useCallback(() => {
     setLostAccountAddress({
       accountIdentity: accountsInfo?.find((accInfo) => String(accInfo.accountId) === activeProxy ?? activeRescue?.lost),
       address: activeProxy ?? activeRescue?.lost ?? ''
     });
+  }, [accountsInfo, activeProxy, activeRescue?.lost, setLostAccountAddress]);
+
+  const goToCheckInitiatedRecovery = useCallback(() => {
+    setLostAccount();
     setMode('Withdraw');
     setStep(STEPS.INITIATE_RECOVERY);
-  }, [accountsInfo, activeProxy, activeRescue?.lost, setLostAccountAddress, setMode, setStep]);
+  }, [setLostAccount, setMode, setStep]);
 
   const goToVouchRecovery = useCallback(() => {
     setStep(STEPS.VOUCH);
@@ -70,13 +74,10 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
   }, [setStep]);
 
   const goNextTimeWithdraw = useCallback(() => {
-    setLostAccountAddress({
-      accountIdentity: accountsInfo?.find((accInfo) => String(accInfo.accountId) === activeProxy ?? activeRescue?.lost),
-      address: activeProxy ?? activeRescue?.lost ?? ''
-    });
+    setLostAccount();
     setMode('Withdraw');
     setStep(STEPS.REVIEW);
-  }, [accountsInfo, activeProxy, activeRescue?.lost, setLostAccountAddress, setMode, setStep]);
+  }, [setLostAccount, setMode, setStep]);
 
   return (
     <Grid container item sx={{ display: 'block', px: '10%' }}>
