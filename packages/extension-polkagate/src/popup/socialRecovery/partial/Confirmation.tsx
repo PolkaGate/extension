@@ -5,10 +5,11 @@
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
+import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { BN } from '@polkadot/util';
 
-import { Motion, PButton, ShortAddress } from '../../../components';
+import { Identity, Motion, PButton, ShortAddress } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
@@ -44,6 +45,12 @@ interface DisplayInfoProps {
   fontWeight?: number;
 }
 
+interface AccountWithTitleProps {
+  title: string;
+  address: string | undefined;
+  accountInformation: DeriveAccountInfo | undefined;
+}
+
 export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true, value, lostAccountAddress }: DisplayInfoProps): React.ReactElement => {
   return (
     <>{value &&
@@ -64,25 +71,39 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
 export default function Confirmation({ activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(txInfo.from.address);
-
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
+
+  const AccountWithTitle = ({ accountInformation, address, title }: AccountWithTitleProps) => (
+    <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+      <Typography fontSize='16px' fontWeight={400} lineHeight='23px' pr='5px'>
+        {title}:
+      </Typography>
+      <Identity
+        accountInfo={accountInformation}
+        api={txInfo.api}
+        chain={txInfo.chain}
+        direction='row'
+        formatted={address}
+        noIdenticon
+        showSocial={false}
+        style={{ fontSize: '16px', maxWidth: '60%', width: 'fit-content' }}
+        subIdOnly
+        withShortAddress
+      />
+    </Grid>
+  );
 
   const MakeRecoverableDetail = () => (
     <>
       {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
         recoveryConfig.friends.addresses.map((friend, index) => (
           <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-            <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t<string>(`Trusted friend ${index + 1}`)}:
-            </Typography>
-            {recoveryConfig.friends.infos && recoveryConfig.friends.infos[index]?.identity?.display &&
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                {recoveryConfig.friends.infos[index].identity.display}
-              </Typography>}
-            <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-              <ShortAddress address={friend} inParentheses style={{ fontSize: '16px' }} />
-            </Grid>
+            <AccountWithTitle
+              accountInformation={recoveryConfig.friends.infos?.at(index)}
+              address={friend}
+              title={t<string>(`Trusted friend ${index + 1}`)}
+            />
           </Grid>
         ))}
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
@@ -117,25 +138,15 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
           </Typography>
         }
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {mode === 'VouchRecovery'
+          <AccountWithTitle
+            accountInformation={mode === 'VouchRecovery' ? vouchRecoveryInfo?.rescuer?.accountIdentity : undefined}
+            address={mode !== 'VouchRecovery'
+              ? txInfo.from.address
+              : vouchRecoveryInfo?.rescuer.address}
+            title={mode === 'VouchRecovery'
               ? t<string>('Rescuer account')
-              : t<string>('Account holder')}:
-          </Typography>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {mode !== 'VouchRecovery'
-              ? txInfo.from.name
-              : vouchRecoveryInfo?.rescuer.accountIdentity?.identity.display}
-          </Typography>
-          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-            <ShortAddress
-              address={mode !== 'VouchRecovery'
-                ? txInfo.from.address
-                : vouchRecoveryInfo?.rescuer.address}
-              inParentheses
-              style={{ fontSize: '16px' }}
-            />
-          </Grid>
+              : t<string>('Account holder')}
+          />
         </Grid>
         {txInfo.throughProxy &&
           <Grid container m='auto' maxWidth='92%'>
@@ -148,19 +159,13 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
         {((mode === 'VouchRecovery' && vouchRecoveryInfo) || mode === 'CloseRecovery') &&
           <>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {mode === 'VouchRecovery'
+              <AccountWithTitle
+                accountInformation={mode === 'VouchRecovery' ? vouchRecoveryInfo?.lost?.accountIdentity : undefined}
+                address={vouchRecoveryInfo?.lost?.address ?? activeLost?.rescuer}
+                title={mode === 'VouchRecovery'
                   ? t<string>('Lost account')
-                  : t<string>('Account that initiated the recovery')}:
-              </Typography>
-              {vouchRecoveryInfo?.lost.accountIdentity?.identity.display &&
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {vouchRecoveryInfo?.lost.accountIdentity?.identity.display}
-                </Typography>
-              }
-              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                <ShortAddress address={vouchRecoveryInfo?.lost?.address ?? activeLost?.rescuer} inParentheses style={{ fontSize: '16px' }} />
-              </Grid>
+                  : t<string>('Account that initiated the recovery')}
+              />
             </Grid>
             <Grid alignItems='center' container item justifyContent='center' pt='8px'>
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
@@ -170,16 +175,11 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
         {(mode === 'InitiateRecovery' || mode === 'Withdraw') &&
           <>
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {t<string>('Lost account')}:
-              </Typography>
-              {lostAccountAddress?.accountIdentity?.identity.display &&
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {lostAccountAddress?.accountIdentity?.identity.display}
-                </Typography>}
-              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                <ShortAddress address={lostAccountAddress?.address} inParentheses style={{ fontSize: '16px' }} />
-              </Grid>
+              <AccountWithTitle
+                accountInformation={lostAccountAddress?.accountIdentity}
+                address={lostAccountAddress?.address}
+                title={t<string>('Lost account')}
+              />
             </Grid>
             {mode !== 'Withdraw' &&
               <>
@@ -189,7 +189,6 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
                 <DisplayInfo
                   caption={t<string>('Initiation Deposit:')}
                   value={`${amountToHuman(depositValue, decimal, 3)} ${token ?? ''}`}
-                // value={amountToHuman(depositValue, decimal, 3) ?? '00.00'}
                 />
               </>
             }
