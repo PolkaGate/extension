@@ -169,7 +169,7 @@ export default function SocialRecovery(): React.ReactElement {
   }, [address, chain, chain?.genesisHash, clearInformation]);
 
   useEffect(() => {
-    if (!api || !formatted) {
+    if (!api || !formatted || chain?.genesisHash !== api.genesisHash.toHex()) {
       setStep(STEPS.CHECK_SCREEN);
 
       return;
