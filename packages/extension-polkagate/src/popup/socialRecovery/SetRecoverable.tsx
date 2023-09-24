@@ -28,12 +28,20 @@ interface Props {
   setTotalDeposit: React.Dispatch<React.SetStateAction<BN>>;
 }
 
-const CONFIGSTEPS = {
+const CONFIG_STEPS = {
   SELECT_TRUSTED_FRIENDS: 1,
   SET_DETAILS: 2
 };
 
-const blocksInHour = 600;
+const UNITS = {
+  BLOCK: 1,
+  HOUR: 2,
+  DAY: 3,
+  WEEK: 4,
+  MONTH: 5
+};
+
+const BLOCKS_PER_HOUR = 600;
 
 export default function RecoveryConfig({ address, api, mode, recoveryConfig, setMode, setRecoveryConfig, setStep, setTotalDeposit }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -43,23 +51,23 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
   const formatted = useFormatted(address);
 
   const recoveryDelayLengthOptions = useMemo(() => ([
-    { text: 'Blocks', value: '0' },
-    { text: 'Hours', value: '1' },
-    { text: 'Days', value: '2' },
-    { text: 'Weeks', value: '3' },
-    { text: 'Months', value: '4' }
+    { text: 'Blocks', value: UNITS.BLOCK },
+    { text: 'Hours', value: UNITS.HOUR },
+    { text: 'Days', value: UNITS.DAY },
+    { text: 'Weeks', value: UNITS.WEEK },
+    { text: 'Months', value: UNITS.MONTH }
   ]), []);
 
-  const [configStep, setConfigStep] = useState<number>((!mode || mode === 'ModifyRecovery') ? CONFIGSTEPS.SELECT_TRUSTED_FRIENDS : CONFIGSTEPS.SET_DETAILS);
+  const [configStep, setConfigStep] = useState<number>((!mode || mode === 'ModifyRecovery') ? CONFIG_STEPS.SELECT_TRUSTED_FRIENDS : CONFIG_STEPS.SET_DETAILS);
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [selectedFriendsToShow, setSelectedFriendsToShow] = useState<AddressWithIdentity[]>([]);
   const [recoveryThreshold, setRecoveryThreshold] = useState<number>();
-  const [recoveryDelayNumber, setRecoveryDelayNumber] = useState<number>();
-  const [recoveryDelayLength, setRecoveryDelayLength] = useState<string>(recoveryDelayLengthOptions[2].value);
-  const [recoveryDelayTotal, setRecoveryDelayTotal] = useState<number>();
+  const [delayNumber, setDelayNumber] = useState<number>();
+  const [delayUnit, setDelayUnit] = useState<number>(recoveryDelayLengthOptions[2].value);
+  const [totalDelay, setTotalDelay] = useState<number>();
   const [focusInputs, setFocus] = useState<number>(1);
 
-  const stepTitle = useMemo(() => configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS ? 'Step 1 of 3: Choose trusted friends' : 'Step 2 of 3: Set details', [configStep]);
+  const stepTitle = useMemo(() => configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS ? 'Step 1 of 3: Choose trusted friends' : 'Step 2 of 3: Set details', [configStep]);
   const configDepositBase = useMemo(() => api ? api.consts.recovery.configDepositBase as unknown as BN : BN_ZERO, [api]);
   const friendDepositFactor = useMemo(() => api ? api.consts.recovery.friendDepositFactor as unknown as BN : BN_ZERO, [api]);
   const totalDeposit = useMemo(() => configDepositBase.add(friendDepositFactor.muln(selectedFriends.length)), [configDepositBase, friendDepositFactor, selectedFriends.length]);
@@ -67,11 +75,11 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
 
   const nextBtnDisable = useMemo(() => (configStep === 1
     ? selectedFriends.length === 0
-    : (recoveryDelayNumber === undefined || recoveryDelayTotal === undefined || recoveryThreshold === undefined || !recoveryConfig)
-  ), [configStep, recoveryConfig, recoveryDelayNumber, recoveryDelayTotal, recoveryThreshold, selectedFriends.length]);
+    : (delayNumber === undefined || totalDelay === undefined || recoveryThreshold === undefined || !recoveryConfig)
+  ), [configStep, recoveryConfig, delayNumber, totalDelay, recoveryThreshold, selectedFriends.length]);
 
   useEffect(() => {
-    if (recoveryConfig && selectedFriends.length === 0 && selectedFriendsToShow.length === 0 && recoveryDelayTotal === undefined && recoveryThreshold === undefined) {
+    if (recoveryConfig && selectedFriends.length === 0 && selectedFriendsToShow.length === 0 && totalDelay === undefined && recoveryThreshold === undefined) {
       setSelectedFriends(recoveryConfig.friends.addresses);
       setSelectedFriendsToShow(recoveryConfig.friends.addresses.map((friend, index) => ({
         accountIdentity: recoveryConfig.friends.infos ? recoveryConfig.friends.infos[index] : undefined,
@@ -79,52 +87,52 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       })));
       setRecoveryThreshold(recoveryConfig.threshold);
     }
-  }, [recoveryConfig, recoveryDelayTotal, recoveryThreshold, selectedFriends, selectedFriendsToShow]);
+  }, [recoveryConfig, totalDelay, recoveryThreshold, selectedFriends, selectedFriendsToShow]);
 
   useEffect(() => {
-    if (!selectedFriends || selectedFriends.length === 0 || recoveryThreshold === undefined || recoveryDelayTotal === undefined || totalDeposit.isZero()) {
+    if (!selectedFriends || selectedFriends.length === 0 || recoveryThreshold === undefined || totalDelay === undefined || totalDeposit.isZero()) {
       return;
     }
 
     setTotalDeposit(totalDeposit);
 
     setRecoveryConfig({
-      delayPeriod: recoveryDelayTotal,
+      delayPeriod: totalDelay,
       friends: {
         addresses: selectedFriendsToShow.map((friend) => friend.address),
         infos: selectedFriendsToShow.map((friend) => friend.accountIdentity)
       },
       threshold: recoveryThreshold
     });
-  }, [recoveryDelayTotal, recoveryThreshold, selectedFriends, selectedFriendsToShow, setRecoveryConfig, setTotalDeposit, totalDeposit]);
+  }, [totalDelay, recoveryThreshold, selectedFriends, selectedFriendsToShow, setRecoveryConfig, setTotalDeposit, totalDeposit]);
 
   useEffect(() => {
-    if (recoveryDelayLength === undefined || recoveryDelayNumber === undefined) {
+    if (delayUnit === undefined || delayNumber === undefined) {
       return;
     }
 
-    switch (recoveryDelayLength) {
-      case '0':
-        setRecoveryDelayTotal(recoveryDelayNumber);
+    switch (delayUnit) {
+      case UNITS.BLOCK:
+        setTotalDelay(delayNumber);
         break;
-      case '1':
-        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour);
+      case UNITS.HOUR:
+        setTotalDelay(delayNumber * BLOCKS_PER_HOUR);
         break;
-      case '2':
-        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour * 24);
+      case UNITS.DAY:
+        setTotalDelay(delayNumber * BLOCKS_PER_HOUR * 24);
         break;
-      case '3':
-        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour * 24 * 7);
+      case UNITS.WEEK:
+        setTotalDelay(delayNumber * BLOCKS_PER_HOUR * 24 * 7);
         break;
-      case '4':
-        setRecoveryDelayTotal(recoveryDelayNumber * blocksInHour * 24 * 7 * 30);
+      case UNITS.MONTH:
+        setTotalDelay(delayNumber * BLOCKS_PER_HOUR * 24 * 30);
         break;
 
       default:
-        setRecoveryDelayTotal(0);
+        setTotalDelay(0);
         break;
     }
-  }, [recoveryDelayLength, recoveryDelayNumber]);
+  }, [delayUnit, delayNumber]);
 
   const addNewFriend = useCallback((addr: AddressWithIdentity | undefined) => {
     if (!addr || !formatted) {
@@ -172,35 +180,35 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
     const integerValue = parseInt(enteredValue, 10);
 
     if (!isNaN(integerValue)) {
-      setRecoveryDelayNumber(integerValue);
+      setDelayNumber(integerValue);
     } else {
-      setRecoveryDelayNumber(undefined);
+      setDelayNumber(undefined);
     }
   }, []);
 
   const onChangeDelayLength = useCallback((type: string | number): void => {
-    setRecoveryDelayLength(type as string);
+    setDelayUnit(type as number);
   }, []);
 
   const goBack = useCallback(() => {
-    if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
+    if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
       setStep(STEPS.RECOVERY_DETAIL);
-    } else if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS) {
+    } else if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS) {
       setStep(STEPS.INDEX);
       setMode(undefined);
-    } else if (configStep === CONFIGSTEPS.SET_DETAILS) {
-      setConfigStep(CONFIGSTEPS.SELECT_TRUSTED_FRIENDS);
+    } else if (configStep === CONFIG_STEPS.SET_DETAILS) {
+      setConfigStep(CONFIG_STEPS.SELECT_TRUSTED_FRIENDS);
       setMode(undefined);
     }
   }, [configStep, mode, setMode, setStep]);
 
   const goNext = useCallback(() => {
-    if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && !mode) {
-      setConfigStep(CONFIGSTEPS.SET_DETAILS);
+    if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS && !mode) {
+      setConfigStep(CONFIG_STEPS.SET_DETAILS);
       setMode('SetRecovery');
-    } else if (configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
-      setConfigStep(CONFIGSTEPS.SET_DETAILS);
-    } else if (configStep === CONFIGSTEPS.SET_DETAILS) {
+    } else if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
+      setConfigStep(CONFIG_STEPS.SET_DETAILS);
+    } else if (configStep === CONFIG_STEPS.SET_DETAILS) {
       setStep(STEPS.REVIEW);
     }
   }, [configStep, mode, setMode, setStep]);
@@ -230,7 +238,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       <Typography fontSize='22px' fontWeight={700} pt='10px' width='100%'>
         {t<string>(stepTitle)}
       </Typography>
-      {configStep === CONFIGSTEPS.SELECT_TRUSTED_FRIENDS &&
+      {configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS &&
         <>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
             {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
@@ -281,7 +289,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
           </Grid>
         </>
       }
-      {configStep === CONFIGSTEPS.SET_DETAILS &&
+      {configStep === CONFIG_STEPS.SET_DETAILS &&
         <>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
             {t<string>('Define the vouching amount needed for account recovery and set a safety delay. This delay adds a waiting period after acquiring the required vouches, allowing time for monitoring and alert response, particularly useful in countering potential malicious recovery attempts.')}
@@ -339,15 +347,16 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
                   }}
                   theme={theme}
                   type='number'
-                  value={recoveryDelayNumber}
+                  value={delayNumber}
                 />
               </Grid>
               <Grid container item ml='10px' width='125px'>
                 <Select
                   defaultValue={recoveryDelayLengthOptions[2].value}
+                  label=''
                   onChange={onChangeDelayLength}
                   options={recoveryDelayLengthOptions}
-                  value={recoveryDelayLength || recoveryDelayLengthOptions[2].value}
+                  value={delayUnit || recoveryDelayLengthOptions[2].value}
                 />
               </Grid>
             </Grid>
