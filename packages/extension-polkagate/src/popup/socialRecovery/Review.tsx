@@ -377,25 +377,25 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               </>
             )}
             {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
-              txInfo?.success ? t('Your account is not recoverable anymore') : t('Making account unrecoverable failed')
+              txInfo?.success ? t('Your account is not recoverable anymore') : t('Failed to make account unrecoverable')
             )}
             {step === STEPS.CONFIRM && mode === 'SetRecovery' && (
-              txInfo?.success ? t('Your account is recoverable') : t('Making account recoverable failed')
+              txInfo?.success ? t('Your account is recoverable') : t('Failed to make account recoverable')
             )}
             {step === STEPS.CONFIRM && mode === 'ModifyRecovery' && (
-              txInfo?.success ? t('Account recoverability modified') : t('Modifying account recoverability failed')
+              txInfo?.success ? t('Account recoverability modified') : t('Failed to modify account recoverability')
             )}
             {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
-              txInfo?.success ? t('Recovery Initiated') : t('Initiating recovery failed')
+              txInfo?.success ? t('Recovery Initiated') : t('Failed to initiate recovery')
             )}
             {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
-              txInfo?.success ? t('Initiated recovery has been ended') : t('Ending recovery failed')
+              txInfo?.success ? t('Initiated recovery has been ended') : t('Failed to end recovery')
             )}
             {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
-              txInfo?.success ? t('Recovery Vouched') : t('Vouching recovery failed')
+              txInfo?.success ? t('Recovery Vouched') : t('Failed to vouch recovery')
             )}
             {step === STEPS.CONFIRM && mode === 'Withdraw' && (
-              txInfo?.success ? t('The funds from your lost account have been withdrawn') : t('Failed to withdraw the funds from your lost account')
+              txInfo?.success ? t('The funds have been withdrawn') : t('Failed to withdraw the funds')
             )}
           </Typography>
           {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
