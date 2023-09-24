@@ -18,7 +18,7 @@ import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { riot } from '../../../assets/icons';
 import { Identicon, ShortAddress } from '../../../components';
 import { useAccountInfo, useAccountName } from '../../../hooks';
-import { FriendWithId } from './SelectTrustedFriend';
+import { AddressWithIdentity } from './SelectTrustedFriend';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -26,7 +26,7 @@ interface Props {
   chain: Chain | null | undefined;
   accountInfo?: DeriveAccountInfo | undefined;
   style?: SxProps<Theme> | undefined;
-  onSelect?: (addr: FriendWithId | undefined) => void;
+  onSelect?: (addr: AddressWithIdentity | undefined) => void;
   iconType?: 'plus' | 'minus' | 'none';
 }
 

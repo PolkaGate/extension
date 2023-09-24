@@ -13,7 +13,7 @@ import { ApiPromise } from '@polkadot/api';
 import { PButton, Progress, TwoButtons, VouchRecoveryIcon, Warning } from '../../components';
 import { useAccountsInfo, useChain, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
-import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
+import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import { SocialRecoveryModes } from './util/types';
 import { STEPS } from '.';
 
@@ -22,7 +22,7 @@ interface Props {
   api: ApiPromise | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>;
-  setVouchRecoveryInfo: React.Dispatch<React.SetStateAction<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>>;
+  setVouchRecoveryInfo: React.Dispatch<React.SetStateAction<{ lost: AddressWithIdentity, rescuer: AddressWithIdentity } | undefined>>;
   activeRecoveries: ActiveRecoveryFor[] | null | undefined;
 }
 
@@ -34,8 +34,8 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
   const chain = useChain(address);
   const accountsInfo = useAccountsInfo(api, chain);
 
-  const [lostAccount, setLostAccount] = useState<FriendWithId>();
-  const [rescuerAccount, setRescuerAccount] = useState<FriendWithId>();
+  const [lostAccount, setLostAccount] = useState<AddressWithIdentity>();
+  const [rescuerAccount, setRescuerAccount] = useState<AddressWithIdentity>();
   const [activeRecoveryInfo, setActiveRecoveryInfo] = useState<ActiveRecoveryFor | null | undefined | false>(false);
   const [whyNotStatus, setWhyNotStatus] = useState<WhyNotStatus>();
   const [checkActive, setCheckActive] = useState<boolean>(false);
@@ -130,11 +130,11 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
     }
   }, [activeRecoveryInfo?.lost, activeRecoveryInfo?.rescuer, lostAccount, rescuerAccount]);
 
-  const selectLostAccount = useCallback((addr: FriendWithId | undefined) => {
+  const selectLostAccount = useCallback((addr: AddressWithIdentity | undefined) => {
     setLostAccount(addr);
   }, []);
 
-  const selectRescuerAccount = useCallback((addr: FriendWithId | undefined) => {
+  const selectRescuerAccount = useCallback((addr: AddressWithIdentity | undefined) => {
     setRescuerAccount(addr);
   }, []);
 

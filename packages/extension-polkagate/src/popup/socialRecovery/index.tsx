@@ -20,7 +20,7 @@ import { useAccountsInfo, useActiveRecoveries, useApi, useChain, useFormatted, u
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getPoolAccounts from '../../util/getPoolAccounts';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
-import { FriendWithId } from './components/SelectTrustedFriend';
+import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
 import { InitiateRecoveryConfig, RecoveryConfigType, SocialRecoveryModes, WithdrawInfo } from './util/types';
 import Home from './Home';
@@ -69,7 +69,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [recoveryInfo, setRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined>();
   const [recoveryConfig, setRecoveryConfig] = useState<RecoveryConfigType | undefined>();
   const [lostAccountAddress, setLostAccountAddress] = useState<InitiateRecoveryConfig | undefined>();
-  const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: FriendWithId, rescuer: FriendWithId } | undefined>();
+  const [vouchRecoveryInfo, setVouchRecoveryInfo] = useState<{ lost: AddressWithIdentity, rescuer: AddressWithIdentity } | undefined>();
   const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo | undefined>();
   const [mode, setMode] = useState<SocialRecoveryModes>();
   const [totalDeposit, setTotalDeposit] = useState<BN>(BN_ZERO);

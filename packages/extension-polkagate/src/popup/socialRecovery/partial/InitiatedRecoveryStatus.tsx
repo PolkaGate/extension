@@ -6,14 +6,13 @@
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { AccessTime as AccessTimeIcon, Check as CheckIcon } from '@mui/icons-material';
-import { Box, Divider, Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Skeleton, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { rescueRecoveryGreen } from '../../../assets/icons';
-import { Identity, Progress, RescueRecoveryIcon, ShowBalance2 } from '../../../components';
+import { Identity, RescueRecoveryIcon, ShowBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
@@ -30,6 +29,8 @@ interface Props {
   isVouchedCompleted: boolean | undefined;
 }
 
+const FRIENDS_COUNT = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+
 export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, initiatedRecovery, isDelayPassed, isVouchedCompleted, lostAccountRecoveryInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -38,9 +39,8 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
     const threshold = lostAccountRecoveryInfo?.threshold?.toNumber() ?? 0;
     const vouchedFriends = initiatedRecovery?.vouchedFriends?.length ?? 0;
     const index = Math.max(0, threshold - vouchedFriends);
-    const friendsArray = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
-    return friendsArray[index] ?? 'zero';
+    return FRIENDS_COUNT[index] ?? 'zero';
   }, [initiatedRecovery?.vouchedFriends?.length, lostAccountRecoveryInfo?.threshold]);
 
   return (
@@ -64,6 +64,28 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
             sx={{ transform: 'none', width: '450px' }}
           />}
       </Grid>
+      {lostAccountRecoveryInfo?.lostAccount &&
+        <Grid container item pb='15px' pt='10px'>
+          <Grid container item justifyContent='space-between'>
+            <Typography fontSize='18px' fontWeight={500} width='80%'>
+              {t<string>('Lost Account')}
+            </Typography>
+          </Grid>
+          <Grid container item sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', borderTop: '2px solid', borderTopColor: '#D5CCD0' }}>
+            <Grid alignItems='center' container item py='5px' width='100%'>
+              <Identity
+                api={api}
+                chain={chain}
+                direction='row'
+                formatted={String(lostAccountRecoveryInfo.lostAccount)}
+                identiconSize={25}
+                style={{ fontSize: '20px' }}
+                withShortAddress
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      }
       <Grid container item py='15px'>
         <Grid container item justifyContent='space-between'>
           <Typography fontSize='18px' fontWeight={500} width='80%'>

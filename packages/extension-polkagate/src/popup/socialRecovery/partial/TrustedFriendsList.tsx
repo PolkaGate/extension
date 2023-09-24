@@ -10,16 +10,16 @@ import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../../../hooks';
-import { FriendWithId } from '../components/SelectTrustedFriend';
+import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import TrustedFriendAccount from '../components/TrustedFriendAccount';
 
 interface Props {
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
-  friendsList: string[] | FriendWithId[];
+  friendsList: string[] | AddressWithIdentity[];
   title?: string;
   style?: SxProps<Theme> | undefined;
-  onRemoveFriend?: (addr: FriendWithId) => void;
+  onRemoveFriend?: (addr: AddressWithIdentity) => void;
 }
 
 export default function TrustedFriendsList({ api, chain, friendsList, onRemoveFriend, style, title }: Props): React.ReactElement {

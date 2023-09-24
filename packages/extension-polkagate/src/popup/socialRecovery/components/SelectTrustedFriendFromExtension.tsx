@@ -18,7 +18,7 @@ import { useTranslation } from '../../../hooks';
 import { getFormattedAddress } from '../../../util/utils';
 import TrustedFriendAccount from './TrustedFriendAccount';
 
-export type FriendWithId = { address: string, accountIdentity: DeriveAccountInfo | undefined };
+export type AddressWithIdentity = { address: string, accountIdentity: DeriveAccountInfo | undefined };
 
 interface Props {
   accountsInfo: DeriveAccountInfo[] | undefined;
@@ -26,7 +26,7 @@ interface Props {
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   style?: SxProps<Theme>;
-  onSelectFriend: (addr: FriendWithId | undefined) => void;
+  onSelectFriend: (addr: AddressWithIdentity | undefined) => void;
 }
 
 export default function SelectTrustedFriendFromExtension({ accountsInfo, address, api, chain, onSelectFriend, style }: Props): React.ReactElement<Props> {
@@ -51,7 +51,7 @@ export default function SelectTrustedFriendFromExtension({ accountsInfo, address
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
-  const selectFriend = useCallback((addr: FriendWithId | undefined) => {
+  const selectFriend = useCallback((addr: AddressWithIdentity | undefined) => {
     onSelectFriend(addr);
     handleClose();
   }, [handleClose, onSelectFriend]);

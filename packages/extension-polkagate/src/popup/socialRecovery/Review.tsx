@@ -32,7 +32,7 @@ import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { toTitleCase } from '../governance/utils/util';
-import { FriendWithId } from './components/SelectTrustedFriend';
+import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
@@ -53,7 +53,7 @@ interface Props {
   lostAccountAddress: InitiateRecoveryConfig | undefined;
   activeLost: ActiveRecoveryFor | null | undefined;
   withdrawInfo: WithdrawInfo | undefined;
-  vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
+  vouchRecoveryInfo: { lost: AddressWithIdentity; rescuer: AddressWithIdentity; } | undefined;
   allActiveRecoveries: ActiveRecoveryFor[] | null | undefined;
   setMode: (value: React.SetStateAction<SocialRecoveryModes>) => void;
   specific: boolean;

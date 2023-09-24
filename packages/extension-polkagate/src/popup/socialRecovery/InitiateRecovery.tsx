@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { PButton, RescueRecoveryIcon, SocialRecoveryIcon, TwoButtons } from '../../components';
 import { useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
-import SelectTrustedFriend, { FriendWithId } from './components/SelectTrustedFriend';
+import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import ActiveProxyStatus from './partial/ActiveProxyStatus';
 import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
@@ -48,7 +48,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
   const token = useToken(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
 
-  const [lostAccount, setLostAccount] = useState<FriendWithId>();
+  const [lostAccount, setLostAccount] = useState<AddressWithIdentity>();
   const [goReview, setGoReview] = useState<boolean>(false);
 
   const recoveryDeposit = useMemo(() => api ? new BN(api.consts.recovery.recoveryDeposit.toString()) : BN_ZERO, [api]);
@@ -95,10 +95,27 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
       setLostAccountRecoveryInfo(undefined);
 
       api.query.recovery && api.query.recovery.recoverable(lostAccount.address).then((r) => {
-        setLostAccountRecoveryInfo(r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null);
+        if (r.isSome) {
+          const unwrappedResult = r.unwrap();
+          const modifiedResult = {
+            lostAccount: lostAccount.address,
+            delayPeriod: unwrappedResult.delayPeriod,
+            threshold: unwrappedResult.threshold,
+            deposit: unwrappedResult.deposit,
+            friends: unwrappedResult.friends
+          };
+
+          setLostAccountRecoveryInfo(modifiedResult);
+
+          return;
+        }
+
+        setLostAccountRecoveryInfo(null);
       }).catch(console.error);
     }
   }, [api, lostAccount, setLostAccountRecoveryInfo]);
+
+
 
   useEffect(() => {
     if ((initiatedRecovery || activeProxy) && !lostAccount) {
@@ -124,7 +141,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
     }
   }, [goReview, setStep, withdrawInfo]);
 
-  const selectLostAccount = useCallback((addr: FriendWithId | undefined) => {
+  const selectLostAccount = useCallback((addr: AddressWithIdentity | undefined) => {
     setLostAccount(addr);
   }, []);
 

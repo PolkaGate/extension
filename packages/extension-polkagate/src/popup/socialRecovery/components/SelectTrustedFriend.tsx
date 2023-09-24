@@ -21,7 +21,7 @@ import { useOutsideClick } from '../../../hooks';
 import isValidAddress from '../../../util/validateAddress';
 import TrustedFriendAccount from './TrustedFriendAccount';
 
-export type FriendWithId = { address: string, accountIdentity: DeriveAccountInfo | undefined };
+export type AddressWithIdentity = { address: string, accountIdentity: DeriveAccountInfo | undefined };
 
 interface Props {
   api: ApiPromise | undefined;
@@ -29,7 +29,7 @@ interface Props {
   accountsInfo?: DeriveAccountInfo[];
   label: string;
   style?: SxProps<Theme>;
-  onSelectFriend: (addr: FriendWithId | undefined) => void;
+  onSelectFriend: (addr: AddressWithIdentity | undefined) => void;
   helperText?: string;
   placeHolder?: string;
   disabled?: boolean;
@@ -41,7 +41,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
-  const [friendsList, setFriendsList] = useState<FriendWithId[] | undefined>();
+  const [friendsList, setFriendsList] = useState<AddressWithIdentity[] | undefined>();
   const [addressSelected, setAddressSelected] = useState<boolean>(false);
 
   const _hideDropdown = useCallback(() => setDropdownVisible(false), []);
@@ -105,7 +105,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
     }
   }, [addressSelected, enteredAddress, findFriend, onSelectFriend]);
 
-  const selectFriend = useCallback((addr: FriendWithId | undefined) => {
+  const selectFriend = useCallback((addr: AddressWithIdentity | undefined) => {
     onSelectFriend(addr);
     setAddressSelected(true);
 

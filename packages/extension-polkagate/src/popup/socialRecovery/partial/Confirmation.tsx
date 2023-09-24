@@ -17,7 +17,7 @@ import { TxInfo } from '../../../util/types';
 import { amountToHuman } from '../../../util/utils';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
-import { FriendWithId } from '../components/SelectTrustedFriend';
+import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
 import { STEPS } from '..';
@@ -29,8 +29,8 @@ interface Props {
   recoveryConfig: RecoveryConfigType | undefined;
   depositValue: BN;
   decimal: number | undefined;
-  lostAccountAddress: FriendWithId | undefined;
-  vouchRecoveryInfo: { lost: FriendWithId; rescuer: FriendWithId; } | undefined;
+  lostAccountAddress: AddressWithIdentity | undefined;
+  vouchRecoveryInfo: { lost: AddressWithIdentity; rescuer: AddressWithIdentity; } | undefined;
   WithdrawDetails: ({ step }: {
     step: number;
   }) => JSX.Element;
