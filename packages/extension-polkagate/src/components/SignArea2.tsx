@@ -12,10 +12,9 @@ import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
-import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 
-import { useAccount, useAccountDisplay, useApi, useFormatted, useProxies, useTranslation } from '../hooks';
+import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies, useTranslation } from '../hooks';
 import { DraggableModal } from '../popup/governance/components/DraggableModal';
 import SelectProxyModal2 from '../popup/governance/components/SelectProxyModal2';
 import LedgerSign from '../popup/signing/LedgerSign';
@@ -26,11 +25,9 @@ import { Identity, Password, PButton, TwoButtons, Warning } from '.';
 
 interface Props {
   address: string;
-  chain: Chain | null | undefined;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined
   disabled?: boolean;
   isPasswordError?: boolean;
-  onChange: React.Dispatch<React.SetStateAction<string | undefined>>
   onSecondaryClick: () => void;
   params: unknown[] | (() => unknown[]) | undefined;
   primaryBtn?: boolean;
@@ -46,14 +43,15 @@ interface Props {
   showBackButtonWithUseProxy?: boolean;
   to?: string;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
-  extraInfo: Record<string, string | number | undefined>;
+  extraInfo: Record<string, unknown>;
   steps: Record<string, number>;
 }
 
 /** This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger */
-export default function SignAre({ address, call, chain, disabled, extraInfo, isPasswordError, onChange, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
+export default function SignAre({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const chain = useChain(address);
   const senderName = useAccountDisplay(address);
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate));
 
@@ -144,10 +142,6 @@ export default function SignAre({ address, call, chain, disabled, extraInfo, isP
   const closeSelectProxy = useCallback(() => {
     setShowProxy(false);
   }, []);
-
-  useEffect(() => {
-    onChange(password);
-  }, [password, onChange]);
 
   const handleTxResult = useCallback((txResult) => {
     try {

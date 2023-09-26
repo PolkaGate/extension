@@ -3,26 +3,20 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Divider, Grid, Typography } from '@mui/material';
+import React, { useCallback, useMemo,useState } from 'react';
 
 import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
-import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies } from '../../hooks';
+import { useApi, useChain } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { signAndSend } from '../../util/api';
-import { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { amountToMachine, getSubstrateAddress, saveAsHistory } from '../../util/utils';
-import { DraggableModal } from '../governance/components/DraggableModal';
-import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../governance/components/SelectProxyModal';
+import { BalancesInfo, Proxy, TxInfo } from '../../util/types';
+import { amountToMachine } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
 import { Title } from './InputPage';
 import { Inputs, STEPS } from './';
-import LedgerSign from '../signing/LedgerSign';
 
 interface Props {
   address: string;
@@ -35,17 +29,21 @@ interface Props {
 
 export default function Review({ address, balances, inputs, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const account = useAccount(address);
-  const formatted = useFormatted(address);
   const api = useApi(address);
   const chain = useChain(address);
-  const theme = useTheme();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
+  const extraInfo = useMemo(() => ({
+    action: 'Transfer',
+    amount: inputs?.amount,
+    fee: String(inputs?.totalFee || 0),
+    recipientChainName: inputs?.recipientChainName,
+    subAction: 'send',
+    to: { address: String(inputs?.recipientAddress), name: inputs?.recipientChainName }
+  }), [inputs?.amount, inputs?.recipientAddress, inputs?.recipientChainName, inputs?.totalFee]);
 
   const handleClose = useCallback(() => {
     setStep(STEPS.INDEX);
@@ -152,19 +150,8 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               <SignArea2
                 address={address}
                 call={inputs?.call}
-                chain={chain}
-                extraInfo={
-                  {
-                    action: 'Transfer',
-                    amount: inputs?.amount,
-                    fee: String(inputs?.totalFee || 0),
-                    recipientChainName: inputs?.recipientChainName,
-                    subAction: 'send',
-                    to: { address: String(inputs?.recipientAddress), name: inputs?.recipientChainName }
-                  }
-                }
+                extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
-                onChange={setPassword}
                 onSecondaryClick={handleClose}
                 params={inputs?.params}
                 primaryBtnText={t<string>('Confirm')}
