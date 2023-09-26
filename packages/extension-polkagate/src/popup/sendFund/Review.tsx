@@ -7,10 +7,8 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import keyring from '@polkadot/ui-keyring';
-
-import { ChainLogo, Identity, Motion, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useApi, useChain, useFormatted, useProxies } from '../../hooks';
+import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
+import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
@@ -24,6 +22,7 @@ import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
 import { Title } from './InputPage';
 import { Inputs, STEPS } from './';
+import LedgerSign from '../signing/LedgerSign';
 
 interface Props {
   address: string;
@@ -36,80 +35,20 @@ interface Props {
 
 export default function Review({ address, balances, inputs, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const senderName = useAccountDisplay(address);
+  const account = useAccount(address);
   const formatted = useFormatted(address);
   const api = useApi(address);
   const chain = useChain(address);
-  const proxies = useProxies(api, formatted);
   const theme = useTheme();
-  const recipientName = useAccountDisplay(inputs?.recipientAddress);
-
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-
-  useEffect((): void => {
-    const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
-
-    setProxyItems(fetchedProxyItems);
-  }, [proxies]);
-
-  const onConfirm = useCallback(async (): Promise<void> => {
-    try {
-      if (!formatted || !inputs?.call || !api || !inputs?.params) {
-        return;
-      }
-
-      const from = selectedProxy?.delegate ?? formatted;
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-      setStep(STEPS.WAIT_SCREEN);
-
-      const tx = inputs.call(...inputs.params);
-      const ptx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
-
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, formatted);
-
-      const info = {
-        action: 'Transfer',
-        amount: inputs.amount,
-        block: block || 0,
-        chain,
-        date: Date.now(),
-        decimal: balances?.decimal,
-        failureText,
-        fee: fee || String(inputs?.totalFee || 0),
-        from: { address: String(formatted), name: senderName },
-        recipientChainName: inputs?.recipientChainName,
-        subAction: 'send',
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        to: { address: String(inputs.recipientAddress), name: recipientName },
-        token: balances?.token,
-        txHash: txHash || ''
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(String(from), info);
-      setStep(STEPS.CONFIRM);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
-    }
-  }, [formatted, inputs, api, selectedProxy, password, setStep, chain, balances, senderName, recipientName, selectedProxyAddress, selectedProxyName]);
 
   const handleClose = useCallback(() => {
     setStep(STEPS.INDEX);
-  }, [setStep]);
-
-  const closeSelectProxy = useCallback(() => {
-    setStep(STEPS.REVIEW);
   }, [setStep]);
 
   const closeConfirmation = useCallback(() => {
@@ -210,48 +149,38 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
               </DisplayValue>
             </Grid>
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
-              <PasswordWithTwoButtonsAndUseProxy
+              <SignArea2
+                address={address}
+                call={inputs?.call}
                 chain={chain}
+                extraInfo={
+                  {
+                    action: 'Transfer',
+                    amount: inputs?.amount,
+                    fee: String(inputs?.totalFee || 0),
+                    recipientChainName: inputs?.recipientChainName,
+                    subAction: 'send',
+                    to: { address: String(inputs?.recipientAddress), name: inputs?.recipientChainName }
+                  }
+                }
                 isPasswordError={isPasswordError}
-                label={`${t<string>('Password')} for ${selectedProxyName || senderName || ''}`}
                 onChange={setPassword}
-                onPrimaryClick={onConfirm}
                 onSecondaryClick={handleClose}
+                params={inputs?.params}
                 primaryBtnText={t<string>('Confirm')}
-                proxiedAddress={formatted}
-                proxies={proxyItems}
                 proxyTypeFilter={['Any', 'NonTransfer']}
                 secondaryBtnText={t<string>('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
+                setSelectedProxy={setSelectedProxy}
                 setStep={setStep}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
+                to={inputs?.recipientAddress}
               />
             </Grid>
           </>
-        }
-        {step === STEPS.PROXY &&
-          <DraggableModal onClose={closeSelectProxy} open={step === STEPS.PROXY}>
-            <Grid container item>
-              <Grid alignItems='center' container item justifyContent='space-between'>
-                <Typography fontSize='22px' fontWeight={700}>
-                  {t<string>('Select Proxy')}
-                </Typography>
-                <Grid item>
-                  <CloseIcon onClick={closeSelectProxy} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-                </Grid>
-              </Grid>
-              <SelectProxyModal
-                address={address}
-                height={500}
-                nextStep={STEPS.REVIEW}
-                proxies={proxyItems}
-                proxyTypeFilter={['Any']}
-                selectedProxy={selectedProxy}
-                setSelectedProxy={setSelectedProxy}
-                setStep={setStep}
-              />
-            </Grid>
-          </DraggableModal>
         }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />
