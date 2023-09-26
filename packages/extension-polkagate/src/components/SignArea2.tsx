@@ -11,7 +11,8 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
+import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 
 import { useAccount, useAccountDisplay, useApi, useChain, useFormatted, useProxies, useTranslation } from '../hooks';
@@ -25,18 +26,18 @@ import { Identity, Password, PButton, TwoButtons, Warning } from '.';
 
 interface Props {
   address: string;
-  call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined
+  call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined | SubmittableExtrinsic<'promise', ISubmittableResult>;
   disabled?: boolean;
   isPasswordError?: boolean;
   onSecondaryClick: () => void;
-  params: unknown[] | (() => unknown[]) | undefined;
+  params?: unknown[] | (() => unknown[]) | undefined;
   primaryBtn?: boolean;
-  primaryBtnText?: string
+  primaryBtnText?: string;
   prevState?: Record<string, any>;
   proxyTypeFilter: ProxyTypes[] | string[];
-  secondaryBtnText?: string
+  secondaryBtnText?: string;
   selectedProxy: Proxy | undefined;
-  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
+  setSelectedProxy?: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   setIsPasswordError: React.Dispatch<React.SetStateAction<boolean>>;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -45,10 +46,11 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   extraInfo: Record<string, unknown>;
   steps: Record<string, number>;
+  setRefresh?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 /** This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger */
-export default function SignAre({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
+export default function SignArea({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, setRefresh, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -71,11 +73,11 @@ export default function SignAre({ address, call, disabled, extraInfo, isPassword
   const from = selectedProxy?.delegate ?? formatted;
 
   const ptx = useMemo(() => {
-    if (!call || !params || !api) {
+    if (!call || !api) {
       return;
     }
 
-    const tx = call(...params);
+    const tx = params ? call(...params) : call;
 
     return selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
   }, [api, call, formatted, params, selectedProxy]);
@@ -137,7 +139,8 @@ export default function SignAre({ address, call, disabled, extraInfo, isPassword
 
   const goToSelectProxy = useCallback(() => {
     setShowProxy(true);
-  }, []);
+    setStep(steps.PROXY);
+  }, [setStep, steps]);
 
   const closeSelectProxy = useCallback(() => {
     setShowProxy(false);
@@ -148,6 +151,8 @@ export default function SignAre({ address, call, disabled, extraInfo, isPassword
       if (!txResult || !api || !chain) {
         return;
       }
+
+      setRefresh && setRefresh(true);
 
       const token = api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
@@ -172,7 +177,7 @@ export default function SignAre({ address, call, disabled, extraInfo, isPassword
     } catch (e) {
       console.log('error:', e);
     }
-  }, [api, chain, extraInfo, formatted, from, selectedProxyAddress, selectedProxyName, senderName, setStep, setTxInfo, steps]);
+  }, [api, chain, extraInfo, formatted, from, selectedProxyAddress, selectedProxyName, senderName, setRefresh, setStep, setTxInfo, steps]);
 
   const onConfirm = useCallback(async () => {
     try {
@@ -348,8 +353,7 @@ export default function SignAre({ address, call, disabled, extraInfo, isPassword
           }
         </>
       }
-      {
-        showProxy &&
+      {showProxy && setSelectedProxy &&
         <DraggableModal onClose={closeSelectProxy} open={showProxy}>
           <Grid container item>
             <Grid alignItems='center' container item justifyContent='space-between'>
@@ -372,6 +376,6 @@ export default function SignAre({ address, call, disabled, extraInfo, isPassword
           </Grid>
         </DraggableModal>
       }
-    </Grid >
+    </Grid>
   );
 }
