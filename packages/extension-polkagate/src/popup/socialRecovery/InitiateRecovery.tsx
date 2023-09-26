@@ -12,7 +12,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PButton, RescueRecoveryIcon, SocialRecoveryIcon, TwoButtons } from '../../components';
-import { useChain, useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../hooks';
+import { useChain, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import SelectTrustedFriend, { AddressWithIdentity } from './components/SelectTrustedFriend';
 import ActiveProxyStatus from './partial/ActiveProxyStatus';
@@ -47,6 +47,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
   const decimal = useDecimal(address);
   const token = useToken(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
+  const formatted = useFormatted(address);
 
   const [lostAccount, setLostAccount] = useState<AddressWithIdentity>();
   const [goReview, setGoReview] = useState<boolean>(false);
@@ -81,6 +82,8 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
       return false;
     } else if (!lostAccount?.address) {
       return true;
+    } else if (lostAccount.address === formatted) {
+      return true;
     } else if (lostAccount.address && lostAccountRecoveryInfo) {
       return false;
     } else if (lostAccount.address && lostAccountRecoveryInfo === false) {
@@ -88,7 +91,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
     } else {
       return true;
     }
-  }, [activeProxy, initiatedRecovery, isDelayPassed, isVouchedCompleted, lostAccount?.address, lostAccountRecoveryInfo]);
+  }, [activeProxy, formatted, initiatedRecovery, isDelayPassed, isVouchedCompleted, lostAccount?.address, lostAccountRecoveryInfo]);
 
   const checkLostAccountRecoverability = useCallback(() => {
     if (api && lostAccount) {
@@ -114,8 +117,6 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
       }).catch(console.error);
     }
   }, [api, lostAccount, setLostAccountRecoveryInfo]);
-
-
 
   useEffect(() => {
     if ((initiatedRecovery || activeProxy) && !lostAccount) {
