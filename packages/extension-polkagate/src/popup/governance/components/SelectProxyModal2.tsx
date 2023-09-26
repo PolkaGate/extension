@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -20,24 +20,16 @@ interface Props {
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>
   proxyTypeFilter: string[]
   proxies: ProxyItem[] | undefined;
-  // setStep: React.Dispatch<React.SetStateAction<number>>;
   height: number | undefined;
-  // nextStep: number;
-   closeSelectProxy: () => void
-
+  closeSelectProxy: () => void
 }
 
-export default function SelectProxyModal({ address, height,closeSelectProxy, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
+export default function SelectProxyModal({ address, closeSelectProxy, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
-  const [proxiesToSelect, setProxiesToSelect] = useState<ProxyItem[] | undefined>();
   const [change, setChange] = useState<boolean>(true);
 
-  useEffect(() => {
-    const toSelect = proxies?.filter((item) => item.status !== 'new');
-
-    setProxiesToSelect(toSelect);
-  }, [proxies]);
+  const proxiesToSelect = useMemo(() => proxies?.filter((item) => item.status !== 'new'), [proxies]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -45,7 +37,6 @@ export default function SelectProxyModal({ address, height,closeSelectProxy, pro
 
   const handleNext = useCallback(() => {
     setChange(true);
-    // setStep(nextStep);
     closeSelectProxy();
   }, [closeSelectProxy]);
 
