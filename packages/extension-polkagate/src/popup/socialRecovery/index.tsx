@@ -89,6 +89,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [fetchingLostAccountInfos, setFetchingLostAccountInfos] = useState<boolean>(false);
 
   const activeRecoveries = useActiveRecoveries(refresh ? undefined : api);
+  const unsupportedChain = useMemo(() => !(SOCIAL_RECOVERY_CHAINS.includes(chain?.genesisHash)), [chain?.genesisHash]);
 
   const activeRescue = useMemo(() =>
     activeRecoveries && formatted
@@ -112,8 +113,8 @@ export default function SocialRecovery(): React.ReactElement {
     , [activeLost, theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.contrastText, theme.palette.secondary.light]);
 
   useEffect(() => {
-    chain?.genesisHash && !SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash) && setStep(STEPS.UNSUPPORTED);
-  }, [chain?.genesisHash]);
+    unsupportedChain ? setStep(STEPS.UNSUPPORTED) : setStep(STEPS.CHECK_SCREEN);
+  }, [unsupportedChain]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -155,20 +156,28 @@ export default function SocialRecovery(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (closeRecovery === 'false' || !api || !formatted) {
+    if (closeRecovery === 'false' || !api || !formatted || unsupportedChain) {
       return;
     }
 
     fetchRecoveryInformation();
     setMode('CloseRecovery');
     setStep(STEPS.REVIEW);
-  }, [api, closeRecovery, fetchRecoveryInformation, formatted]);
+  }, [api, closeRecovery, fetchRecoveryInformation, formatted, unsupportedChain]);
 
   useEffect(() => {
+    if (unsupportedChain) {
+      return;
+    }
+
     clearInformation();
-  }, [address, chain, chain?.genesisHash, clearInformation]);
+  }, [address, chain, chain?.genesisHash, clearInformation, unsupportedChain]);
 
   useEffect(() => {
+    if (unsupportedChain) {
+      return;
+    }
+
     if (!api || !formatted || chain?.genesisHash !== api.genesisHash.toHex()) {
       setStep(STEPS.CHECK_SCREEN);
 
@@ -190,17 +199,17 @@ export default function SocialRecovery(): React.ReactElement {
     clearInformation();
     setFetching(true);
     fetchRecoveryInformation();
-  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRescue, activeLost, fetching, fetchRecoveryInformation, closeRecovery]);
+  }, [formatted, api, chain?.genesisHash, clearInformation, refresh, recoveryInfo, activeProxy, activeRescue, activeLost, fetching, fetchRecoveryInformation, closeRecovery, unsupportedChain]);
 
   useEffect(() => {
-    if (recoveryInfo === undefined || activeProxy === undefined || activeLost === undefined || activeRescue === undefined || step !== STEPS.CHECK_SCREEN) {
+    if (recoveryInfo === undefined || activeProxy === undefined || activeLost === undefined || activeRescue === undefined || step !== STEPS.CHECK_SCREEN || unsupportedChain) {
       return;
     }
 
     setFetching(false);
     setRefresh(false);
     setStep(STEPS.INDEX);
-  }, [activeProxy, activeRescue, activeLost, recoveryInfo, step]);
+  }, [activeProxy, activeRescue, activeLost, recoveryInfo, step, unsupportedChain]);
 
   useEffect(() => {
     if (recoveryInfo) {
