@@ -51,7 +51,7 @@ interface Props {
 }
 
 /** This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger */
-export default function SignAre({ address, call, steps, chain, disabled, extraInfo, isPasswordError, onChange, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, to }: Props): React.ReactElement<Props> {
+export default function SignAre({ address, call, chain, disabled, extraInfo, isPasswordError, onChange, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const senderName = useAccountDisplay(address);
@@ -62,7 +62,6 @@ export default function SignAre({ address, call, steps, chain, disabled, extraIn
   const api = useApi(address);
   const proxies = useProxies(api, formatted);
 
-  console.log('account:',account)
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [password, setPassword] = useState<string>();
   const mustSelectProxy = useMemo(() => !account?.isHardware && account?.isExternal && !selectedProxy, [account, selectedProxy]);
@@ -217,26 +216,37 @@ export default function SignAre({ address, call, steps, chain, disabled, extraIn
     <Grid container>
       {isLedger
         ? <>
-          {!error &&
-            <Grid alignItems='center' container height='50px' item justifyContent='center' sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
-              <Warning
-                fontWeight={300}
-                theme={theme}
-              >
-                {t('This is a ledger account. To complete this transaction, use your ledger.')}
-              </Warning>
+
+          <Grid alignItems='center' container height='50px' item justifyContent='center' sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
+            <Warning
+              fontWeight={300}
+              isDanger={!!error}
+              theme={theme}
+            >
+              {error || t('This is a ledger account. To complete this transaction, use your ledger.')}
+            </Warning>
+          </Grid>
+          <Grid container item justifyContent='space-between'>
+            <Grid item sx={{ mt: '18px' }} xs={3}>
+              <PButton
+                _mt='1px'
+                _onClick={() => setStep(0)}
+                _variant='outlined'
+                text={t('Cancel')}
+              />
             </Grid>
-          }
-          <Grid container item justifyContent='center' sx={{ position: 'relative', mt: '50px', '> div': { justifyContent: 'center' }, ' button': { m: 0 } }}>
-            <LedgerSign
-              accountIndex={account?.accountIndex as number || 0}
-              addressOffset={account?.addressOffset as number || 0}
-              error={error}
-              genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
-              onSignature={onSignature}
-              payload={payload}
-              setError={setError}
-            />
+            <Grid item xs={8} sx={{ ' button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }}>
+              <LedgerSign
+                accountIndex={account?.accountIndex as number || 0}
+                addressOffset={account?.addressOffset as number || 0}
+                error={error}
+                genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+                onSignature={onSignature}
+                payload={payload}
+                setError={setError}
+                showError={false}
+              />
+            </Grid>
           </Grid>
         </>
         : <>
@@ -344,7 +354,8 @@ export default function SignAre({ address, call, steps, chain, disabled, extraIn
           }
         </>
       }
-      {showProxy &&
+      {
+        showProxy &&
         <DraggableModal onClose={closeSelectProxy} open={showProxy}>
           <Grid container item>
             <Grid alignItems='center' container item justifyContent='space-between'>
@@ -358,16 +369,15 @@ export default function SignAre({ address, call, steps, chain, disabled, extraIn
             <SelectProxyModal2
               address={address}
               closeSelectProxy={closeSelectProxy}
+              height={500}
+              proxies={proxyItems}
               proxyTypeFilter={['Any']}
               selectedProxy={selectedProxy}
               setSelectedProxy={setSelectedProxy}
-              height={500}
-              // nextStep={STEPS.REVIEW}
-              proxies={proxyItems}
             />
           </Grid>
         </DraggableModal>
       }
-    </Grid>
+    </Grid >
   );
 }
