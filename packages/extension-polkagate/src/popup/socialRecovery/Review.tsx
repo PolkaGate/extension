@@ -93,9 +93,10 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   const redeem = api && api.tx.staking.withdrawUnbonded;
   const transferAll = api && api.tx.balances.transferAll; // [rescuer.accountId, false]
   const clearIdentity = api && api.tx.identity.clearIdentity;
+  const removeProxies = api && api.tx.proxy.removeProxies;
 
   const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
-    if (!api || !batchAll || !redeem || !clearIdentity || !claimRecovery || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
+    if (!api || !batchAll || !redeem || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
       return;
     }
 
@@ -108,12 +109,13 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
     !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
-    (!withdrawInfo?.availableBalance.isZero() || !withdrawInfo.claimed || !withdrawInfo.redeemable.isZero() || withdrawInfo.isRecoverable || withdrawInfo.hasId) && withdrawCalls.push(transferAll(formatted, false));
+    withdrawInfo.hasProxy && withdrawCalls.push(removeProxies());
+    (!withdrawInfo?.availableBalance.isZero() || !withdrawInfo.claimed || !withdrawInfo.redeemable.isZero() || withdrawInfo.isRecoverable || withdrawInfo.hasId || withdrawInfo.hasProxy) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
       ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
       : asRecovered(withdrawInfo.lost, batchAll(withdrawCalls));
-  }, [allActiveRecoveries, api, asRecovered, batchAll, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, transferAll, unbonded, withdrawInfo]);
+  }, [allActiveRecoveries, api, asRecovered, batchAll, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, removeProxies, transferAll, unbonded, withdrawInfo]);
 
   const tx = useMemo(() => {
     if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery || !vouchRecovery) {

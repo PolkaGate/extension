@@ -84,12 +84,13 @@ export default function SocialRecovery(): React.ReactElement {
   const [lostAccountReserved, setLostAccountReserved] = useState<BN | undefined>();
   const [lostAccountSoloUnlock, setLostAccountSoloUnlock] = useState<{ amount: BN, date: number } | undefined>();
   const [lostAccountIdentity, setLostAccountIdentity] = useState<boolean | undefined>();
+  const [lostAccountProxy, setLostAccountProxy] = useState<boolean | undefined>();
   const [alreadyClaimed, setAlreadyClaimed] = useState<boolean | undefined>();
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
   const [fetchingLostAccountInfos, setFetchingLostAccountInfos] = useState<boolean>(false);
 
   const activeRecoveries = useActiveRecoveries(refresh ? undefined : api);
-  const unsupportedChain = useMemo(() => !(SOCIAL_RECOVERY_CHAINS.includes(chain?.genesisHash)), [chain?.genesisHash]);
+  const unsupportedChain = useMemo(() => chain?.genesisHash && !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash)), [chain?.genesisHash]);
 
   const activeRescue = useMemo(() =>
     activeRecoveries && formatted
@@ -288,6 +289,14 @@ export default function SocialRecovery(): React.ReactElement {
     }
   }, [accountsInfo, lostAccountAddress]);
 
+  const checkLostAccountProxy = useCallback(() => {
+    if (api && lostAccountAddress) {
+      api.query.proxy.proxies(lostAccountAddress.address).then((p) => {
+        setLostAccountProxy(!p.isEmpty);
+      }).catch(console.error);
+    }
+  }, [api, lostAccountAddress]);
+
   const checkLostAccountPoolStakedBalance = useCallback(() => {
     if (api && lostAccountAddress) {
       api.query.nominationPools.poolMembers(lostAccountAddress.address).then(async (res) => {
@@ -340,10 +349,11 @@ export default function SocialRecovery(): React.ReactElement {
     checkLostAccountClaimedStatus();
     checkLostAccountPoolStakedBalance();
     checkLostAccountIdentity();
-  }, [activeProxy, sessionInfo, lostAccountRecoveryInfo, api, checkLostAccountBalance, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, accountsInfo, checkLostAccountClaimedStatus, checkLostAccountSoloStakedBalance, fetchingLostAccountInfos, formatted, mode, setWithdrawInfo, withdrawInfo, lostAccountAddress?.address]);
+    checkLostAccountProxy();
+  }, [activeProxy, sessionInfo, lostAccountRecoveryInfo, api, checkLostAccountBalance, checkLostAccountIdentity, checkLostAccountProxy, checkLostAccountPoolStakedBalance, accountsInfo, checkLostAccountClaimedStatus, checkLostAccountSoloStakedBalance, fetchingLostAccountInfos, formatted, mode, setWithdrawInfo, withdrawInfo, lostAccountAddress?.address]);
 
   useEffect(() => {
-    if (!lostAccountAddress?.address || !formatted || lostAccountPoolStakingBalance === undefined || lostAccountSoloUnlock === undefined || lostAccountIdentity === undefined || lostAccountBalance === undefined || lostAccountReserved === undefined || lostAccountRedeemable === undefined || lostAccountSoloStakingBalance === undefined || alreadyClaimed === undefined || mode !== 'Withdraw') {
+    if (!lostAccountAddress?.address || !formatted || lostAccountPoolStakingBalance === undefined || lostAccountSoloUnlock === undefined || lostAccountIdentity === undefined || lostAccountProxy === undefined || lostAccountBalance === undefined || lostAccountReserved === undefined || lostAccountRedeemable === undefined || lostAccountSoloStakingBalance === undefined || alreadyClaimed === undefined || mode !== 'Withdraw') {
       return;
     }
 
@@ -353,6 +363,7 @@ export default function SocialRecovery(): React.ReactElement {
       availableBalance: lostAccountBalance,
       claimed: alreadyClaimed,
       hasId: lostAccountIdentity,
+      hasProxy: lostAccountProxy,
       isRecoverable: !!lostAccountRecoveryInfo,
       lost: lostAccountAddress.address,
       poolStaked: lostAccountPoolStakingBalance,
@@ -362,7 +373,7 @@ export default function SocialRecovery(): React.ReactElement {
       soloStaked: lostAccountSoloStakingBalance,
       soloUnlock: lostAccountSoloUnlock
     });
-  }, [alreadyClaimed, mode, formatted, lostAccountAddress?.address, lostAccountSoloUnlock, lostAccountIdentity, lostAccountPoolStakingBalance, lostAccountReserved, lostAccountBalance, lostAccountRecoveryInfo, lostAccountRedeemable, lostAccountSoloStakingBalance, setWithdrawInfo]);
+  }, [alreadyClaimed, mode, formatted, lostAccountAddress?.address, lostAccountSoloUnlock, lostAccountProxy, lostAccountIdentity, lostAccountPoolStakingBalance, lostAccountReserved, lostAccountBalance, lostAccountRecoveryInfo, lostAccountRedeemable, lostAccountSoloStakingBalance, setWithdrawInfo]);
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>

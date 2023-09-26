@@ -194,7 +194,7 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
             }
           </>
         }
-        {mode === 'Withdraw' &&
+        {mode === 'Withdraw' && txInfo.success &&
           <>
             <WithdrawDetails step={STEPS.CONFIRM} />
             <Grid alignItems='center' container item justifyContent='center' pt='8px'>

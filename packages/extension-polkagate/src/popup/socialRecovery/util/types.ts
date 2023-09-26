@@ -24,6 +24,7 @@ export type WithdrawInfo = {
   poolStaked: BN;
   reserved: BN;
   hasId: boolean;
+  hasProxy: boolean;
   soloUnlock: { amount: BN, date: number };
 } | undefined;
 
