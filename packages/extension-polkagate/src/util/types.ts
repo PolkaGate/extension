@@ -19,6 +19,7 @@ import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Lock } from '../hooks/useAccountLocks';
+import { LatestReferenda } from '../popup/governance/utils/types';
 
 export interface TransactionStatus {
   blockNumber: string | null;
@@ -638,7 +639,7 @@ export interface IsFetching {
   [item: string]: boolean;
 }
 
-export interface FetchingsContext {
+export interface FetchingRequests {
   fetching: Fetching;
   set: (change: Fetching) => void;
 }
@@ -663,8 +664,6 @@ export interface PoolFilter {
   membersMoreThan: Limit;
   sortBy: string;
 }
-
-
 export interface ValidatorInfoWithIdentity extends ValidatorInfo {
   identity?: DeriveAccountRegistration;
 }
@@ -701,7 +700,22 @@ export interface APIs {
 }
 export interface APIsContext {
   apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] };
-  setIt: (apis: { [key: string]: { api?: ApiPromise; endpoint?: string; isRequested: boolean; }[] }) => void;
+  setIt: (apis: {
+    [key: string]:
+    {
+      api?: ApiPromise;
+      endpoint?: string;
+      isRequested: boolean;
+    }[]
+  }) => void;
+}
+
+export interface LatestRefs {
+  [key: string]: LatestReferenda[]
+}
+export interface ReferendaContextType {
+  refs: LatestRefs;
+  setRefs: (refs: LatestRefs) => void;
 }
 
 export type Payee = 'Staked' | 'Controller' | 'Stash' | { Account: string }

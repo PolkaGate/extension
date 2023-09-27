@@ -7,11 +7,11 @@ import '@vaadin/icons';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, useContext } from 'react';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
-import { Warning } from '../../components';
+import { ReferendaContext, Warning } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
 import HorizontalWaiting from './components/HorizontalWaiting';
@@ -41,6 +41,7 @@ export default function Governance(): React.ReactElement {
   const chainName = useChainName(address);
   const decidingCounts = useDecidingCount(address);
   const chainChangeRef = useRef('');
+  const refsContext = useContext(ReferendaContext);
 
   const { fellowshipTracks, tracks } = useTracks(address);
 
@@ -56,6 +57,7 @@ export default function Governance(): React.ReactElement {
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
   const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const notSupported = useMemo(() => chain?.genesisHash && !(GOVERNANCE_CHAINS.includes(chain.genesisHash ?? '')), [chain?.genesisHash]);
 
@@ -152,11 +154,62 @@ export default function Governance(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chainName]);
 
-  useEffect(() => {
-    chainName && selectedSubMenu && fetchRef().catch(console.error);
+  const addFellowshipOriginsFromSb = useCallback(async (resPA: LatestReferenda[]): Promise<LatestReferenda[] | undefined> => {
+    const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
-    async function fetchRef() {
+    if (resSb) {
+      const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
+
+      pageTrackRef.current.subMenu = selectedSubMenu;
+
+      return resPA.map((r) => {
+        const found = resSb.list.find((f) => f.referendum_index === r.post_id);
+
+        if (found) {
+          r.fellowship_origins = found.origins;
+          r.fellowship_origins_id = found.origins_id;
+        }
+
+        return r;
+      }).filter((r) => selectedSubMenu === 'All' || r.fellowship_origins_id === fellowshipTrackId);
+    }
+
+    return undefined;
+  }, [chainName, fellowshipTracks, selectedSubMenu, topMenu]);
+
+  const handleSettingReferenda = useCallback((key: string, referenda: LatestReferenda[]) => {
+    let maybeNewRefs;
+    let updatedContext;
+
+    if (refsContext.refs[key]) {
+      // eslint-disable-next-line camelcase
+      maybeNewRefs = referenda.filter(({ post_id }) => !refsContext.refs[key].find((item) => item.post_id === post_id));
+      updatedContext = refsContext.refs[key].map((contextItem) => {
+        const found = referenda.find((item) => item.post_id === contextItem.post_id);
+
+        return found || contextItem;
+      });
+    }
+
+    refsContext.refs[key] = updatedContext ? updatedContext.concat(maybeNewRefs || []) : referenda;
+    refsContext.setRefs(refsContext.refs);
+    setReferenda([...refsContext.refs[key]]);
+  }, [refsContext]);
+
+  useEffect(() => {
+    if (!chainName || !selectedSubMenu || isFetching) {
+      return;
+    }
+
+    const _key = `${chainName}${topMenu}${selectedSubMenu}`;
+
+    fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
+    setReferenda(refsContext.refs?.[_key]);
+
+    async function fetchRef(key: string) {
       let list = referenda;
+
+      setIsFetching(true);
 
       // Reset referenda list on menu change
       if (isSubMenuChanged || isTopMenuChanged) {
@@ -194,7 +247,7 @@ export default function Governance(): React.ReactElement {
         // filter discussions if any
         const onlyReferenda = allReferenda.filter((r) => r.type !== 'Discussions');
 
-        setReferenda(onlyReferenda);
+        handleSettingReferenda(key, onlyReferenda);
 
         return;
       }
@@ -225,10 +278,10 @@ export default function Governance(): React.ReactElement {
 
       const concatenated = (list || []).concat(resPA);
 
-      setReferenda([...concatenated]);
+      handleSettingReferenda(key, concatenated);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
+  }, [addFellowshipOriginsFromSb, chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
 
   useEffect(() => {
     if (!api) {
@@ -244,29 +297,6 @@ export default function Governance(): React.ReactElement {
       setFellowships(fellowships);
     }).catch(console.error);
   }, [api]);
-
-  const addFellowshipOriginsFromSb = useCallback(async (resPA: LatestReferenda[]): Promise<LatestReferenda[] | undefined> => {
-    const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
-
-    if (resSb) {
-      const fellowshipTrackId = fellowshipTracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase())?.[0]?.toNumber();
-
-      pageTrackRef.current.subMenu = selectedSubMenu;
-
-      return resPA.map((r) => {
-        const found = resSb.list.find((f) => f.referendum_index === r.post_id);
-
-        if (found) {
-          r.fellowship_origins = found.origins;
-          r.fellowship_origins_id = found.origins_id;
-        }
-
-        return r;
-      }).filter((r) => selectedSubMenu === 'All' || r.fellowship_origins_id === fellowshipTrackId);
-    }
-
-    return undefined;
-  }, [chainName, fellowshipTracks, selectedSubMenu, topMenu]);
 
   const getMoreReferenda = useCallback(() => {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
@@ -362,7 +392,8 @@ export default function Governance(): React.ReactElement {
                                     </Typography>
                                 }
                               </Grid>
-                              : isLoadingMore && <Grid container justifyContent='center'>
+                              : isLoadingMore &&
+                              <Grid container justifyContent='center'>
                                 <HorizontalWaiting color={theme.palette.primary.main} />
                               </Grid>
                           }
