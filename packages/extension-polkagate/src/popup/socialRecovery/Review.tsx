@@ -59,6 +59,8 @@ interface Props {
   specific: boolean;
 }
 
+const dateTimeFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' } as Intl.DateTimeFormatOptions;
+
 export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
@@ -91,12 +93,14 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   const chill = api && api.tx.staking.chill;
   const unbonded = api && api.tx.staking.unbond;
   const redeem = api && api.tx.staking.withdrawUnbonded;
+  const poolRedeem = api && api.tx.nominationPools.withdrawUnbonded;
   const transferAll = api && api.tx.balances.transferAll; // [rescuer.accountId, false]
   const clearIdentity = api && api.tx.identity.clearIdentity;
   const removeProxies = api && api.tx.proxy.removeProxies;
+  const unbond = api && api.tx.nominationPools.unbond;
 
   const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
-    if (!api || !batchAll || !redeem || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
+    if (!api || !batchAll || !redeem || !poolRedeem || !unbond || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
       return;
     }
 
@@ -108,14 +112,16 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     withdrawInfo.isRecoverable && withdrawCalls.push(removeRecovery());
     !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
     !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
+    !(withdrawInfo.poolStaked.amount.isZero() || withdrawInfo.poolStaked.hasRule) && withdrawCalls.push(unbond(withdrawInfo.lost, withdrawInfo.poolStaked.amount));
+    !(withdrawInfo.poolRedeemable.amount.isZero()) && withdrawCalls.push(poolRedeem(withdrawInfo.lost, withdrawInfo.poolRedeemable.count));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
     withdrawInfo.hasProxy && withdrawCalls.push(removeProxies());
-    (!withdrawInfo?.availableBalance.isZero() || !withdrawInfo.claimed || !withdrawInfo.redeemable.isZero() || withdrawInfo.isRecoverable || withdrawInfo.hasId || withdrawInfo.hasProxy) && withdrawCalls.push(transferAll(formatted, false));
+    (!withdrawInfo?.availableBalance.isZero() || !withdrawInfo.claimed || !withdrawInfo.redeemable.isZero() || !withdrawInfo.poolRedeemable.amount.isZero() || withdrawInfo.isRecoverable || withdrawInfo.hasId || withdrawInfo.hasProxy) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
       ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
       : asRecovered(withdrawInfo.lost, batchAll(withdrawCalls));
-  }, [allActiveRecoveries, api, asRecovered, batchAll, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, removeProxies, transferAll, unbonded, withdrawInfo]);
+  }, [allActiveRecoveries, api, asRecovered, batchAll, poolRedeem, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, removeProxies, transferAll, unbonded, unbond, withdrawInfo]);
 
   const tx = useMemo(() => {
     if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery || !vouchRecovery) {
@@ -245,10 +251,12 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
     withdrawInfo?.availableBalance && !withdrawInfo.availableBalance.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
     withdrawInfo?.redeemable && !withdrawInfo.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
+    withdrawInfo?.poolRedeemable && !withdrawInfo.poolRedeemable.amount.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.poolRedeemable.amount, label: 'Pool Redeemable' });
     withdrawInfo?.reserved && !withdrawInfo.reserved.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
     withdrawInfo?.soloStaked && !withdrawInfo.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
-    withdrawInfo?.soloUnlock && !withdrawInfo.soloUnlock.amount.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloUnlock.amount, label: `Solo unstaking (${new Date(withdrawInfo.soloUnlock.date).toLocaleDateString('en-US', { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' })})` });
-    withdrawInfo?.poolStaked && !withdrawInfo.poolStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
+    withdrawInfo?.soloUnlock && !withdrawInfo.soloUnlock.amount.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloUnlock.amount, label: `Solo unstaking (${new Date(withdrawInfo.soloUnlock.date).toLocaleDateString('en-US', dateTimeFormat)})` });
+    withdrawInfo?.poolUnlock && !withdrawInfo.poolUnlock.amount.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolUnlock.amount, label: `Pool unstaking (${new Date(withdrawInfo.poolUnlock.date).toLocaleDateString('en-US', dateTimeFormat)})` });
+    withdrawInfo?.poolStaked && !withdrawInfo.poolStaked.amount.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.poolStaked.amount, label: `Pool Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
 
     setNothingToWithdrawNow(toBeWithdrawn.length === 0);
 
@@ -300,6 +308,18 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   ))}
                 </Grid>
               </>}
+            {toBeWithdrawnLater.length === 0 && toBeWithdrawn.length === 0 &&
+              <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0, pl: '5px' }, height: '55px', py: '15px' }}>
+                <Warning
+                  fontSize={'15px'}
+                  fontWeight={500}
+                  isBelowInput
+                  theme={theme}
+                >
+                  {t<string>('There is no available fund to withdraw now!')}
+                </Warning>
+              </Grid>
+            }
           </>
           : [0, 1, 2, 3, 4].map((item) => (
             <Skeleton
@@ -579,7 +599,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 </Grid>
               </DisplayValue>
             </Grid>
-            {mode === 'Withdraw' && !(withdrawInfo?.soloStaked.isZero() && withdrawInfo?.poolStaked.isZero() && withdrawInfo?.soloUnlock.amount.isZero()) &&
+            {mode === 'Withdraw' && !(withdrawInfo?.soloStaked.isZero() && withdrawInfo?.poolStaked.amount.isZero() && withdrawInfo?.soloUnlock.amount.isZero()) &&
               <Grid container item sx={{ '> div.belowInput': { m: 0, pl: '5px' }, height: '40px', pb: '15px' }}>
                 <Warning
                   fontSize={'13px'}

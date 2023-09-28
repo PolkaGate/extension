@@ -21,7 +21,7 @@ interface Props {
   withdrawInfo: WithdrawInfo | undefined;
 }
 
-export default function ActiveProxyStatus ({ api, style, withdrawInfo }: Props): React.ReactElement {
+export default function ActiveProxyStatus({ api, style, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const assets: { label: string; amount: BN | Balance }[] = [];
@@ -29,9 +29,11 @@ export default function ActiveProxyStatus ({ api, style, withdrawInfo }: Props):
   withdrawInfo?.availableBalance && !withdrawInfo?.availableBalance.isZero() && assets.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
   withdrawInfo?.reserved && !withdrawInfo?.reserved.isZero() && assets.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
   withdrawInfo?.soloStaked && !withdrawInfo?.soloStaked.isZero() && assets.push({ amount: withdrawInfo.soloStaked, label: 'Solo Stake' });
-  withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.isZero() && assets.push({ amount: withdrawInfo.poolStaked, label: 'Pool Stake' });
-  withdrawInfo?.redeemable && !withdrawInfo?.redeemable.isZero() && assets.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
+  withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.amount.isZero() && assets.push({ amount: withdrawInfo.poolStaked.amount, label: 'Pool Stake' });
+  withdrawInfo?.redeemable && !withdrawInfo?.redeemable.isZero() && assets.push({ amount: withdrawInfo.redeemable, label: 'Staking Redeemable' });
+  withdrawInfo?.poolRedeemable && !withdrawInfo?.poolRedeemable.amount.isZero() && assets.push({ amount: withdrawInfo.poolRedeemable.amount, label: 'Pool Redeemable' });
   withdrawInfo?.soloUnlock && !withdrawInfo?.soloUnlock.amount.isZero() && assets.push({ amount: withdrawInfo.soloUnlock.amount, label: 'Solo Unstaking' });
+  withdrawInfo?.poolUnlock && !withdrawInfo?.poolUnlock.amount.isZero() && assets.push({ amount: withdrawInfo.poolUnlock.amount, label: 'Pool Unstaking' });
 
   return (
     <Grid container direction='column' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', mt: '20px', p: '20px', ...style }}>
