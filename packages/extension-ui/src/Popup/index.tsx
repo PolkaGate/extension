@@ -99,7 +99,7 @@ export default function Popup(): React.ReactElement {
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
-  const [refs, setLatestRefs] = useState<LatestRefs>({});
+  const [refs, setRefs] = useState<LatestRefs>({});
 
   /** To save current page url */
   // if (window.location.hash !== '#/') {
@@ -122,10 +122,6 @@ export default function Popup(): React.ReactElement {
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);
-  }, []);
-
-  const setRefs = useCallback((change: LatestRefs) => {
-    setLatestRefs(change);
   }, []);
 
   const setIt = useCallback((change: APIs) => {
