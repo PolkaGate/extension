@@ -12,7 +12,6 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
 
-// import SocialRecovery from '../../../extension-polkagate/src/Popup/SocialRecovery';// added for plus
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
 import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
@@ -27,7 +26,6 @@ import ExportAll from '../../../extension-polkagate/src/popup/export/ExportAll';
 import ForgetAccount from '../../../extension-polkagate/src/popup/forgetAccount';
 import Governance from '../../../extension-polkagate/src/popup/governance';
 import ReferendumPost from '../../../extension-polkagate/src/popup/governance/post';
-import { LatestReferenda } from '../../../extension-polkagate/src/popup/governance/utils/types';
 import History from '../../../extension-polkagate/src/popup/history';
 import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
@@ -42,7 +40,6 @@ import PhishingDetected from '../../../extension-polkagate/src/popup/PhishingDet
 import Receive from '../../../extension-polkagate/src/popup/receive';
 import Rename from '../../../extension-polkagate/src/popup/rename';
 import Send from '../../../extension-polkagate/src/popup/sendFund';
-// import Review from '../../../extension-polkagate/src/popup/sendFund/Review';
 import Signing from '../../../extension-polkagate/src/popup/signing';
 import Pool from '../../../extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '../../../extension-polkagate/src/popup/staking/pool/myPool';
@@ -99,7 +96,6 @@ export default function Popup(): React.ReactElement {
   const [mediaAllowed, setMediaAllowed] = useState(false);
   const [metaRequests, setMetaRequests] = useState<null | MetadataRequest[]>(null);
   const [signRequests, setSignRequests] = useState<null | SigningRequest[]>(null);
-  // const [isWelcomeDone, setWelcomeDone] = useState(false);
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(startSettings);
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
@@ -138,8 +134,6 @@ export default function Popup(): React.ReactElement {
 
   const _onAction = useCallback(
     (to?: string): void => {
-      // setWelcomeDone(window.localStorage.getItem('welcome_read') === 'ok');
-
       if (to) {
         window.location.hash = to;
       }
