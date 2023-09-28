@@ -44,7 +44,7 @@ export default function useTracks(address: string | undefined): { fellowshipTrac
   //   if (chainName && !newTracks?.tracks) {
   //     chrome.storage.local.get('tracks', (res) => {
 
-  //       console.log('resresresres:', res)
+  //       console.log('res:', res)
   //       setSavedTracks(res?.tracks?.[chainName]);
   //     });
   //   }

@@ -285,7 +285,6 @@ export default function DelegationDetails({ accountLocks, address, balances, fil
           setDelegateInformation={setDelegateInformation}
           setModalHeight={setModalHeight}
           setMode={setMode}
-          setSelectedTracksLength={setSelectedTracksLength}
           setStep={setStep}
           setTxInfo={setTxInfo}
           step={step}

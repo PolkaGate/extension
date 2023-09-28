@@ -9,9 +9,9 @@ import React from 'react';
 import { Motion, PButton, ShortAddress } from '../../../../components';
 import { useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
+import { TxInfo } from '../../../../util/types';
 import Explorer from '../../../history/Explorer';
 import FailSuccessIcon from '../../../history/partials/FailSuccessIcon';
-import { TxInfo } from '../../../../util/types';
 import { DelegateInformation } from '..';
 
 interface Props {

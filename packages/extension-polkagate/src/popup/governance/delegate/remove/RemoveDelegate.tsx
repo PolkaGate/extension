@@ -16,7 +16,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../../components';
+import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
 import { useAccountDisplay, useAccountInfo, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { signAndSend } from '../../../../util/api';
@@ -100,6 +100,8 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
       return;
     }
 
+    setSelectedTracksLength(params.length);
+
     if (!api?.call?.transactionPaymentApi) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return setEstimatedFee(api?.createType('Balance', BN_ONE));
@@ -108,55 +110,27 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
     params.length === 1
       ? undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error)
       : batch(params.map((param) => undelegate(param))).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, batch, formatted, params, undelegate]);
+  }, [api, batch, formatted, params, setSelectedTracksLength, undelegate]);
 
-  const removeDelegate = useCallback(async () => {
-    try {
-      if (!formatted || !undelegate || !api || !decimal || !params || !batch) {
-        return;
-      }
+  const extraInfo = useMemo(() => ({
+    action: 'Governance',
+    amount: '0',
+    fee: String(estimatedFee || 0),
+    subAction: 'Remove Delegate',
+    to: { address: delegateeAddress, name: delegateeName },
+  }), [delegateeAddress, delegateeName, estimatedFee]);
 
-      const from = selectedProxyAddress ?? formatted;
-
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-
-      const txList = params.map((param) => undelegate(param));
-
-      setStep(STEPS.WAIT_SCREEN);
-      setSelectedTracksLength(params.length);
-
-      const calls = txList.length > 1 ? batch(txList) : txList[0];
-      const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, mayBeProxiedTx, signer, formatted);
-
-      const info = {
-        action: 'Governance',
-        amount: '0',
-        block: block || 0,
-        date: Date.now(),
-        failureText,
-        fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        subAction: 'Remove Delegate',
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        to: { address: delegateeAddress, name: delegateeName },
-        txHash: txHash || ''
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(from, info);
-
-      setStep(STEPS.CONFIRM);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
+  const tx = useMemo(() => {
+    if (!formatted || !undelegate || !params || !batch) {
+      return;
     }
-  }, [api, batch, chain, decimal, delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setSelectedTracksLength, setStep, setTxInfo, undelegate]);
 
-  const backToPreview = useCallback(() => setStep(STEPS.PREVIEW), [setStep]);
+    const txList = params.map((param) => undelegate(param));
+
+    return txList.length > 1 ? batch(txList) : txList[0];
+  }, [batch, formatted, params, undelegate]);
+
+  const onBackClick = useCallback(() => setStep(STEPS.PREVIEW), [setStep]);
 
   return (
     <Motion>
@@ -241,21 +215,22 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
             <ShowValue height={20} value={estimatedFee?.toHuman()} />
           </DisplayValue>
           <Grid container item pt='10px'>
-            <PasswordWithTwoButtonsAndUseProxy
-              chain={chain}
+            <SignArea2
+              address={address}
+              call={tx}
               disabled={!delegatedTracks || delegatedTracks.length === 0}
+              extraInfo={extraInfo}
               isPasswordError={isPasswordError}
-              label={`${t<string>('Password')} for ${selectedProxyName || name}`}
-              onChange={setPassword}
-              onPrimaryClick={removeDelegate}
-              onSecondaryClick={backToPreview}
+              onSecondaryClick={onBackClick}
               primaryBtnText={t<string>('Confirm')}
-              proxiedAddress={formatted}
-              proxies={proxyItems}
               proxyTypeFilter={GOVERNANCE_PROXY}
+              secondaryBtnText={t<string>('Back')}
               selectedProxy={selectedProxy}
               setIsPasswordError={setIsPasswordError}
               setStep={setStep}
+              setTxInfo={setTxInfo}
+              step={step}
+              steps={STEPS}
             />
           </Grid>
         </Grid>

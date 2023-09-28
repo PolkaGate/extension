@@ -13,15 +13,10 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import keyring from '@polkadot/ui-keyring';
-
-import { Identity, Motion, ShowValue, WrongPasswordAlert } from '../../../components';
-import { useAccountDisplay, useAccountInfo, useApi, useChain, useDecimal, useToken, useTracks, useTranslation } from '../../../hooks';
+import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../components';
+import { useAccountInfo, useApi, useChain, useToken, useTracks, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
-import { signAndSend } from '../../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../../util/utils';
-import PasswordWithTwoButtonsAndUseProxy from '../components/PasswordWithTwoButtonsAndUseProxy';
+import { Proxy, TxInfo } from '../../../util/types';
 import DisplayValue from '../post/castVote/partial/DisplayValue';
 import { GOVERNANCE_PROXY } from '../utils/consts';
 import TracksList from './partial/TracksList';
@@ -38,25 +33,20 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>;
   selectedProxy: Proxy | undefined;
-  proxyItems: ProxyItem[] | undefined;
 }
 
-export default function Review({ address, delegateInformation, estimatedFee, formatted, proxyItems, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const decimal = useDecimal(address);
   const token = useToken(address);
-  const name = useAccountDisplay(address);
   const api = useApi(address);
   const chain = useChain(address);
   const ref = useRef(null);
   const { tracks } = useTracks(address);
   const delegateeName = useAccountInfo(api, delegateInformation.delegateeAddress)?.identity.display;
 
-  const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const delegate = api && api.tx.convictionVoting.delegate;
   const batch = api && api.tx.utility.batchAll;
@@ -72,52 +62,26 @@ export default function Review({ address, delegateInformation, estimatedFee, for
       [track, delegateInformation.delegateeAddress, delegateInformation.delegateConviction, delegateInformation.delegateAmountBN]
     ), [delegateInformation]);
 
-  const confirmDelegate = useCallback(async () => {
-    try {
-      if (!formatted || !delegate || !api || !decimal || !params || !batch) {
-        return;
-      }
-
-      const from = selectedProxyAddress ?? formatted;
-
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-
-      const txList = params.map((param) => delegate(...param));
-
-      setStep(STEPS.WAIT_SCREEN);
-
-      const calls = txList.length > 1 ? batch(txList) : txList[0];
-      const mayBeProxiedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, calls) : calls;
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, mayBeProxiedTx, signer, formatted);
-
-      const info = {
-        action: 'Governance',
-        amount: delegateInformation.delegateAmount,
-        block: block || 0,
-        date: Date.now(),
-        failureText,
-        fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        subAction: 'Delegate',
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        to: { address: delegateInformation.delegateeAddress, name: delegateeName },
-        txHash: txHash || ''
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(from, info);
-
-      setStep(STEPS.CONFIRM);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
+  const tx = useMemo(() => {
+    if (!delegate || !params || !batch) {
+      return;
     }
-  }, [api, batch, chain, decimal, delegate, delegateInformation.delegateAmount, delegateInformation.delegateeAddress, delegateeName, estimatedFee, formatted, name, params, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, setTxInfo]);
 
-  const backToChooseDelegatee = useCallback(() => setStep(STEPS.CHOOSE_DELEGATOR), [setStep]);
+    const txList = params.map((param) => delegate(...param));
+    const calls = txList.length > 1 ? batch(txList) : txList[0];
+
+    return calls;
+  }, [batch, delegate, params]);
+
+  const extraInfo = useMemo(() => ({
+    action: 'Governance',
+    amount: delegateInformation.delegateAmount,
+    fee: String(estimatedFee || 0),
+    subAction: 'Delegate',
+    to: { address: delegateInformation.delegateeAddress, name: delegateeName },
+  }), [delegateInformation, delegateeName, estimatedFee]);
+
+  const onBackClick = useCallback(() => setStep(STEPS.CHOOSE_DELEGATOR), [setStep]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -183,20 +147,21 @@ export default function Review({ address, delegateInformation, estimatedFee, for
           <DisplayValue title={t<string>('Fee')}>
             <ShowValue height={20} value={estimatedFee?.toHuman()} />
           </DisplayValue>
-          <PasswordWithTwoButtonsAndUseProxy
-            chain={chain}
+          <SignArea2
+            address={address}
+            call={tx}
+            extraInfo={extraInfo}
             isPasswordError={isPasswordError}
-            label={`${t<string>('Password')} for ${selectedProxyName || name}`}
-            onChange={setPassword}
-            onPrimaryClick={confirmDelegate}
-            onSecondaryClick={backToChooseDelegatee}
+            onSecondaryClick={onBackClick}
             primaryBtnText={t<string>('Confirm')}
-            proxiedAddress={formatted}
-            proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
+            secondaryBtnText={t<string>('Back')}
             selectedProxy={selectedProxy}
             setIsPasswordError={setIsPasswordError}
             setStep={setStep}
+            setTxInfo={setTxInfo}
+            step={step}
+            steps={STEPS}
           />
         </Grid>
       }

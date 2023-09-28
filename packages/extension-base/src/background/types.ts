@@ -43,10 +43,10 @@ export interface AccountJson extends KeyringPair$Meta {
   whenCreated?: number;
 
   // added for polkagate
-  txHistory?: string;
-  nominatedValidators?: string;
-  poolNominatedValidators?: string;
-  endpoint?: string;
+  // txHistory?: string;
+  // nominatedValidators?: string; // can be removed
+  // poolNominatedValidators?: string; // can be removed
+  // endpoint?: string; // can be removed
   balances?: string;
   stakingAccount?: string;
   identities?: string;
