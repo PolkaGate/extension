@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
-import type { RegistrationJudgement } from '@polkadot/types/interfaces';
-import type { ThemeProps } from '../types';
 
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
 import React from 'react';
 import styled from 'styled-components';
 
+import { ThemeProps } from '@polkadot/extension-ui/types';
 import Icon from '@polkadot/react-identicon';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
@@ -70,7 +69,7 @@ function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, s
   );
 }
 
-export default styled(Identicon)(({ theme }: ThemeProps) => `
+export default React.memo(styled(Identicon)(({ theme }: ThemeProps) => `
   background: rgba(192, 192, 292, 0.25);
   border-radius: 50%;
   display: flex;
@@ -85,4 +84,4 @@ export default styled(Identicon)(({ theme }: ThemeProps) => `
       display: none;
     }
   }
-`);
+`));
