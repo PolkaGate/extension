@@ -5,7 +5,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { BN } from '@polkadot/util';
 

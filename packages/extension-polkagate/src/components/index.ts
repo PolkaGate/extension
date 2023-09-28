@@ -74,5 +74,6 @@ export { default as TwoButtons } from './TwoButtons';
 export { default as ValidatedInput } from './ValidatedInput';
 export { default as WrongPasswordAlert } from './WrongPasswordAlert';
 export { default as Warning } from './Warning';
+export { default as SignArea2 } from './SignArea2';
 
 export * from './contexts';

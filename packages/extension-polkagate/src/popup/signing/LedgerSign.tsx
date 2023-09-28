@@ -1,6 +1,8 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
@@ -21,9 +23,10 @@ interface Props {
   onSignature?: ({ signature }: { signature: HexString }) => void;
   payload?: ExtrinsicPayload;
   setError: (value: string | null) => void;
+  showError?: boolean;
 }
 
-function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignature, payload, setError }: Props): React.ReactElement<Props> {
+function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const [isBusy, setIsBusy] = useState(false);
   const { t } = useTranslation();
   const theme = useTheme();
@@ -61,31 +64,27 @@ function LedgerSign({ accountIndex, addressOffset, error, genesisHash, onSignatu
 
   return (
     <Grid container>
-      {!!ledgerWarning && (
+      {!!ledgerWarning &&
         <Warning marginTop={0} theme={theme}>
           {ledgerWarning}
         </Warning>
-      )}
-      {error && (
-        <Warning marginTop={0} isDanger theme={theme}>
+      }
+      {error && showError &&
+        <Warning isDanger marginTop={0} theme={theme}>
           {error}
         </Warning>
-      )}
-      {(ledgerLocked || error)
-        ? (
-          <PButton
-            _isBusy={isBusy || ledgerLoading}
-            _onClick={_onRefresh}
-            text={t<string>('Refresh')}
-          />
-        )
-        : (
-          <PButton
-            _isBusy={isBusy || ledgerLoading}
-            _onClick={_onSignLedger}
-            text={t<string>('Sign on Ledger')}
-          />
-        )
+      }
+      {ledgerLocked || error
+        ? <PButton
+          _isBusy={isBusy || ledgerLoading}
+          _onClick={_onRefresh}
+          text={t<string>('Refresh')}
+        />
+        : <PButton
+          _isBusy={isBusy || ledgerLoading}
+          _onClick={_onSignLedger}
+          text={t<string>('Sign on Ledger')}
+        />
       }
     </Grid>
   );
