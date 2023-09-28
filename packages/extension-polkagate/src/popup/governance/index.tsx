@@ -7,7 +7,7 @@ import '@vaadin/icons';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CubeGrid } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useMemo, useRef, useState, useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
@@ -200,34 +200,76 @@ export default function Governance(): React.ReactElement {
     setReferenda([...maybeMerged]);
   }, [refsContext]);
 
-  const fetchRef = useCallback(async (key: string) => {
-    let list = referenda;
+  const _key = useMemo(() => chainName && topMenu && `${chainName}${topMenu}${selectedSubMenu.replace(/\s/g, '')}`, [chainName, selectedSubMenu, topMenu]);
 
-    setIsFetching(true);
-
-    // Reset referenda list on menu change
-    if (isSubMenuChanged || isTopMenuChanged) {
-      setReferenda(undefined);
-      setFilteredReferenda(undefined);
-      list = [];
-      pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
-      pageTrackRef.current.page = 1;
-      pageTrackRef.current.listFinished = false;
+  useEffect(() => {
+    if (!chainName || !selectedSubMenu || isFetching || !_key) {
+      return;
     }
 
-    if (pageTrackRef.current.page > 1) {
-      setIsLoadingMore(true);
-    }
+    fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
+    setReferenda(refsContext.refs?.[_key]);
 
-    pageTrackRef.current.topMenu = topMenu;
+    async function fetchRef(key: string) {
+      if (!chainName) {
+        return;
+      }
 
-    if (topMenu === 'referenda' && selectedSubMenu === 'All') {
-      const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
+      let list = referenda;
+
+      setIsFetching(true);
+
+      // Reset referenda list on menu change
+      if (isSubMenuChanged || isTopMenuChanged) {
+        // setReferenda(undefined);
+        // setFilteredReferenda(undefined);
+        list = [];
+        pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
+        pageTrackRef.current.page = 1;
+        pageTrackRef.current.listFinished = false;
+      }
+
+      if (pageTrackRef.current.page > 1) {
+        setIsLoadingMore(true);
+      }
+
+      pageTrackRef.current.topMenu = topMenu;
+
+      if (topMenu === 'referenda' && selectedSubMenu === 'All') {
+        const allReferenda = await getLatestReferendums(chainName, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
+
+        setIsLoadingMore(false);
+
+        if (allReferenda === null) {
+          if (pageTrackRef.current.page === 1) { // there is no referendum or PA is down ... ⚠️ !!
+            setReferenda(null);
+
+            return;
+          }
+
+          pageTrackRef.current.listFinished = true;
+
+          return;
+        }
+
+        // filter discussions if any
+        const onlyReferenda = allReferenda.filter((r) => r.type !== 'Discussions');
+
+        handleSettingReferenda(key, onlyReferenda);
+
+        return;
+      }
+
+      if (referendaTrackId === undefined && topMenu === 'referenda') {
+        return;
+      }
+
+      let resPA = await getTrackOrFellowshipReferendumsPA(chainName, pageTrackRef.current.page, referendaTrackId);
 
       setIsLoadingMore(false);
 
-      if (allReferenda === null) {
-        if (pageTrackRef.current.page === 1) { // there is no referendum or PA is down ... ⚠️ !!
+      if (resPA === null) {
+        if (pageTrackRef.current.page === 1) { // there is no referendum for this track
           setReferenda(null);
 
           return;
@@ -238,54 +280,16 @@ export default function Governance(): React.ReactElement {
         return;
       }
 
-      // filter discussions if any
-      const onlyReferenda = allReferenda.filter((r) => r.type !== 'Discussions');
-
-      handleSettingReferenda(key, onlyReferenda);
-
-      return;
-    }
-
-    if (referendaTrackId === undefined && topMenu === 'referenda') {
-      return;
-    }
-
-    let resPA = await getTrackOrFellowshipReferendumsPA(chainName, pageTrackRef.current.page, referendaTrackId);
-
-    setIsLoadingMore(false);
-
-    if (resPA === null) {
-      if (pageTrackRef.current.page === 1) { // there is no referendum for this track
-        setReferenda(null);
-
-        return;
+      if (topMenu === 'fellowship' && !['Whitelisted Caller', 'Fellowship Admin'].includes(selectedSubMenu)) {
+        resPA = await addFellowshipOriginsFromSb(resPA) || resPA;
       }
 
-      pageTrackRef.current.listFinished = true;
+      const concatenated = (list || []).concat(resPA);
 
-      return;
+      handleSettingReferenda(key, concatenated);
     }
-
-    if (topMenu === 'fellowship' && !['Whitelisted Caller', 'Fellowship Admin'].includes(selectedSubMenu)) {
-      resPA = await addFellowshipOriginsFromSb(resPA) || resPA;
-    }
-
-    const concatenated = (list || []).concat(resPA);
-
-    handleSettingReferenda(key, concatenated);
-  }, [addFellowshipOriginsFromSb, chainName, handleSettingReferenda, isSubMenuChanged, isTopMenuChanged, referenda, referendaTrackId, selectedSubMenu, topMenu]);
-
-  useEffect(() => {
-    if (!chainName || !selectedSubMenu || isFetching) {
-      return;
-    }
-
-    const _key = `${chainName}${topMenu}${selectedSubMenu}`;
-
-    setReferenda(refsContext.refs?.[_key]); // To initiate referenda if saved any
-    fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addFellowshipOriginsFromSb, chainName, fellowshipTracks, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
+  }, [addFellowshipOriginsFromSb, chainName, fellowshipTracks, _key, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
 
   useEffect(() => {
     if (!api) {
