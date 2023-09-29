@@ -20,18 +20,18 @@ interface Props extends AccountWithChildren {
   quickActionOpen?: string | boolean;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
   hideNumbers: boolean | undefined;
-  setHasActiveRecovery: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setQuickActionOpen, setHasActiveRecovery, suri, ...account }: Props): React.ReactElement<Props> {
+export default function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(SOCIAL_RECOVERY_CHAINS.includes(account?.genesisHash ?? '') ? account.address : undefined);
   const activeRecovery = useActiveRecoveries(api, account.address);
 
   useEffect(() => {
-    setHasActiveRecovery(!!activeRecovery);
-  }, [activeRecovery, setHasActiveRecovery]);
+    setHasActiveRecovery(activeRecovery ? account?.address : null);
+  }, [account?.address, activeRecovery, setHasActiveRecovery]);
 
   const parentNameSuri = getParentNameSuri(parentName, suri);
   const handleClose = useCallback(() => setQuickActionOpen(undefined), [setQuickActionOpen]);
@@ -100,7 +100,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           </Grid>}
       </Container>
       {account?.children?.map((child, index) => (
-        <AccountsTree
+        <AccountsTree  // TODO, apply Social recovery alert for child accounts!
           key={`${index}:${child.address}`}
           {...child}
           hideNumbers={hideNumbers}

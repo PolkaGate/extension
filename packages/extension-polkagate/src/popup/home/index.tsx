@@ -4,9 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid, useTheme } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -28,13 +27,12 @@ export default function Home(): React.ReactElement {
   const theme = useTheme();
 
   usePrices(chainNames); // get balances for all chains available in accounts
-  useMerkleScience(undefined, undefined, true);  // to download the data file
+  useMerkleScience(undefined, undefined, true); // to download the data file
 
-  const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
-  const [hasActiveRecovery, setHasActiveRecovery] = useState<boolean>(false);
+  const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
 
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
@@ -62,8 +60,8 @@ export default function Home(): React.ReactElement {
     }).catch(() => null);
   }, []);
 
-  useEffect(() => {
-    setSortedAccount(hierarchy.sort((a, b) => {
+  const sortedAccount = useMemo(() =>
+    hierarchy.sort((a, b) => {
       const x = a.name.toLowerCase();
       const y = b.name.toLowerCase();
 
@@ -76,8 +74,8 @@ export default function Home(): React.ReactElement {
       }
 
       return 0;
-    }));
-  }, [hierarchy]);
+    })
+    , [hierarchy]);
 
   return (
     <>
