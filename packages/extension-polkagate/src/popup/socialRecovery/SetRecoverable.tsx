@@ -292,7 +292,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       {configStep === CONFIG_STEPS.SET_DETAILS &&
         <>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
-            {t<string>('Define the vouching amount needed for account recovery and set a safety delay. This delay adds a waiting period after acquiring the required vouches, allowing time for monitoring and alert response, particularly useful in countering potential malicious recovery attempts.')}
+            {t<string>('Define the recovery threshold as the required number of vouching from friends for account recovery. Set a recovery delay to introduce a waiting period after a rescuer initiats the recovery process, allowing time for monitoring and alerts. This delay is particularly useful in preventing potential malicious recovery attempts.')}
           </Typography>
           <Grid container item pt='20px'>
             <Typography fontSize='16px' fontWeight={400} width='100%'>
