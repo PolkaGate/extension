@@ -37,7 +37,7 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
   const { t } = useTranslation();
   const theme = useTheme();
   const isDisabled = !!activeLost;
-  const iconColors = isDisabled ? theme.palette.secondary.contrastText : theme.palette.success.main;
+  const iconColors = isDisabled ? theme.palette.secondary.contrastText : theme.palette.secondary.main;
 
   const goCloseRecovery = useCallback(() => {
     setMode('CloseRecovery');
@@ -85,7 +85,7 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
       <Grid container item justifyContent='space-between' pb='20px' pt='35px'>
         <Grid alignItems='center' container item width='fit-content'>
           <SocialRecoveryIcon
-            fillColor={
+            color={
               !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}
