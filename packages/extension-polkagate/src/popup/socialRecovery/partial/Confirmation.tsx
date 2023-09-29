@@ -180,6 +180,11 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
                 address={lostAccountAddress?.address}
                 title={t<string>('Lost account')}
               />
+              {mode === 'Withdraw' && !txInfo.success &&
+                <Grid alignItems='center' container item justifyContent='center' pt='8px'>
+                  <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
+                </Grid>
+              }
             </Grid>
             {mode !== 'Withdraw' &&
               <>

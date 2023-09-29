@@ -20,12 +20,14 @@ export type WithdrawInfo = {
   isRecoverable: boolean;
   availableBalance: BN;
   redeemable: BN;
+  poolRedeemable: { amount: BN, count: number };
   soloStaked: BN;
-  poolStaked: BN;
+  poolStaked: { amount: BN, hasRule: boolean };
   reserved: BN;
   hasId: boolean;
   hasProxy: boolean;
   soloUnlock: { amount: BN, date: number };
+  poolUnlock: { amount: BN, date: number };
 } | undefined;
 
 export type InitiateRecoveryConfig = {

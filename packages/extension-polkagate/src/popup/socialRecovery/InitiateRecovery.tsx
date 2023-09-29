@@ -32,7 +32,6 @@ interface Props {
   setTotalDeposit: React.Dispatch<React.SetStateAction<BN>>;
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>;
   initiatedRecovery: ActiveRecoveryFor | null | undefined;
-  setWithdrawInfo: React.Dispatch<React.SetStateAction<WithdrawInfo>>;
   withdrawInfo: WithdrawInfo;
   activeProxy: string | null | undefined;
   accountsInfo: DeriveAccountInfo[] | undefined;
@@ -40,7 +39,7 @@ interface Props {
   setLostAccountRecoveryInfo: React.Dispatch<React.SetStateAction<false | PalletRecoveryRecoveryConfig | null | undefined>>;
 }
 
-export default function InitiateRecovery({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, setWithdrawInfo, withdrawInfo }: Props): React.ReactElement {
+export default function InitiateRecovery({ accountsInfo, activeProxy, address, api, initiatedRecovery, lostAccountRecoveryInfo, mode, setLostAccountAddress, setLostAccountRecoveryInfo, setMode, setStep, setTotalDeposit, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
