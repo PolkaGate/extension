@@ -109,12 +109,6 @@ export default function SocialRecovery(): React.ReactElement {
         : undefined
     , [activeRecoveries, formatted]);
 
-  const buttonColors = useMemo(() =>
-    activeLost
-      ? theme.palette.secondary.contrastText
-      : theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.secondary.light
-    , [activeLost, theme.palette.mode, theme.palette.primary.main, theme.palette.secondary.contrastText, theme.palette.secondary.light]);
-
   useEffect(() => {
     unsupportedChain ? setStep(STEPS.UNSUPPORTED) : setStep(STEPS.CHECK_SCREEN);
   }, [unsupportedChain]);
@@ -440,7 +434,6 @@ export default function SocialRecovery(): React.ReactElement {
             activeLost={activeLost}
             activeProxy={activeProxy}
             activeRescue={activeRescue}
-            buttonColors={buttonColors}
             chain={chain}
             recoveryInfo={recoveryInfo}
             setLostAccountAddress={setLostAccountAddress}

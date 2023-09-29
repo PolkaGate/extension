@@ -26,7 +26,6 @@ interface Props {
   activeLost: ActiveRecoveryFor | null | undefined;
   activeRescue: ActiveRecoveryFor | null | undefined;
   activeProxy: string | null | undefined;
-  buttonColors: string;
   chain: Chain | null | undefined;
   recoveryInfo: PalletRecoveryRecoveryConfig | null | undefined;
   setMode: React.Dispatch<React.SetStateAction<SocialRecoveryModes>>
@@ -34,9 +33,11 @@ interface Props {
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>
 }
 
-export default function Home({ accountsInfo, activeLost, activeProxy, activeRescue, buttonColors, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
+export default function Home({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDisabled = !!activeLost;
+  const iconColors = isDisabled ? theme.palette.secondary.contrastText : theme.palette.success.main;
 
   const goCloseRecovery = useCallback(() => {
     setMode('CloseRecovery');
@@ -119,8 +120,8 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
           }
         </Grid>
       </Grid>
-      <Typography fontSize='12px' fontWeight={400} py={activeLost ? '10px' : '25px'}>
-        {t<string>('Social recovery is emerging as a user-friendly solution to keep crypto users\' holdings safe should they lose their precious seed phrase. Social recovery means relying on friends and family to access your crypto.')}
+      <Typography fontSize='14px' fontWeight={400} py={activeLost ? '10px' : '25px'}>
+        {t<string>('Social recovery provides a user-friendly solution for safeguarding crypto assets in case of a lost seed phrase. It involves relying on trusted friends and family to regain access to your account.')}
       </Typography>
       {activeLost &&
         <Grid alignItems='center' container item justifyContent='space-between' pb='15px' pt='10px'>
@@ -147,7 +148,6 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
       <Grid container direction='column' gap='25px' item>
         <RecoveryOptionButton
           activeLost={activeLost}
-          buttonColors={buttonColors}
           description={
             recoveryInfo
               ? t<string>('Click to view your selected trusted friend accounts and your account recovery settings.')
@@ -155,7 +155,7 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
           }
           icon={
             <MakeRecoverableIcon
-              fillColor={theme.palette.secondary.main}
+              color={iconColors}
               height={60}
               width={66}
             />
@@ -169,7 +169,6 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
         />
         <RecoveryOptionButton
           activeLost={activeLost}
-          buttonColors={buttonColors}
           description={
             activeRescue || activeProxy
               ? t<string>('Since you\'ve already initiated the recovery process for a lost account, you can now review the recovery process details and decide on any further actions.')
@@ -177,7 +176,7 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
           }
           icon={
             <RescueRecoveryIcon
-              fillColor={theme.palette.secondary.main}
+              color={iconColors}
               height={60}
               width={66}
             />
@@ -193,11 +192,10 @@ export default function Home({ accountsInfo, activeLost, activeProxy, activeResc
         />
         <RecoveryOptionButton
           activeLost={activeLost}
-          buttonColors={buttonColors}
           description={t<string>('You can assist others in recovering their lost accounts if they\'ve designated your account as a trusted friend during the account recovery setup.')}
           icon={
             <VouchRecoveryIcon
-              fillColor={theme.palette.secondary.main}
+              color={iconColors}
               height={60}
               width={66}
             />
