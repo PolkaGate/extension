@@ -48,7 +48,7 @@ export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAcc
       {lostAccountRecoveryInfo &&
         <Grid container item justifyContent='center'>
           <Typography fontSize='18px' fontWeight={500} pb='25px'>
-            {t<string>('This account is recoverable with following details.')}
+            {t<string>('This account is recoverable with the following details.')}
           </Typography>
           {lostAccountRecoveryInfo.friends.map((friend, index) => {
             const friendID = accountsInfo?.find((info) => String(info.accountId) === String(friend))?.identity.display;
