@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletProxyProxyDefinition, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
