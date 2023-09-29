@@ -241,12 +241,12 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
           </Grid>
         }
       </Grid>
-      <Grid container width='30%' ml='70%'>
+      <Grid container justifyContent='flex-end'>
         <PButton
           _ml={0}
-          _mt='30px'
+          _mt='25px'
           _onClick={handleClose}
-          _width={100}
+          _width={30}
           text={t<string>('Done')}
         />
       </Grid>
