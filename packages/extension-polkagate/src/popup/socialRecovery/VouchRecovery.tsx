@@ -161,7 +161,7 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
       <Grid alignContent='center' alignItems='center' container item>
         <Grid item sx={{ mr: '20px' }}>
           <VouchRecoveryIcon
-            fillColor={theme.palette.text.primary}
+            color={theme.palette.text.primary}
             height={43}
             width={43}
           />

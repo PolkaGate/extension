@@ -178,7 +178,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
         ? <>
           <Grid alignItems='center' container item pt='20px' width='fit-content'>
             <SocialRecoveryIcon
-              fillColor={theme.palette.text.primary}
+              color={theme.palette.text.primary}
               height={66}
               width={66}
             />
@@ -206,7 +206,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
               <RescueRecoveryIcon
-                fillColor={theme.palette.text.primary}
+                color={theme.palette.text.primary}
                 height={43}
                 width={43}
               />

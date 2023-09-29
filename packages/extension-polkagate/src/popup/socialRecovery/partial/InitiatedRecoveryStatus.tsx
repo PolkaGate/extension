@@ -49,7 +49,7 @@ export default function InitiatedRecoveryStatus({ api, chain, delayRemainBlock, 
         {lostAccountRecoveryInfo
           ? <>
             <RescueRecoveryIcon
-              fillColor='green'
+              color='green'
               height={26}
               width={26}
             />

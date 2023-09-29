@@ -111,7 +111,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
         iconComponent={
           <SocialRecoveryIcon
-            fillColor={
+            color={
               !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
                 ? theme.palette.text.disabled
                 : theme.palette.text.primary}

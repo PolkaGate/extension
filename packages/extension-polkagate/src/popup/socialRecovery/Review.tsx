@@ -381,7 +381,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             <Grid container item pr='10px' width='fit-content'>
               {((mode === 'SetRecovery' && step === STEPS.REVIEW) || ['RemoveRecovery', 'ModifyRecovery'].includes(mode ?? '')) &&
                 <MakeRecoverableIcon
-                  fillColor={theme.palette.text.primary}
+                  color={theme.palette.text.primary}
                   height={45}
                   width={45}
                 />
@@ -395,14 +395,14 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               }
               {mode === 'InitiateRecovery' &&
                 <RescueRecoveryIcon
-                  fillColor={theme.palette.text.primary}
+                  color={theme.palette.text.primary}
                   height={45}
                   width={45}
                 />
               }
               {mode === 'VouchRecovery' &&
                 <VouchRecoveryIcon
-                  fillColor={theme.palette.text.primary}
+                  color={theme.palette.text.primary}
                   height={45}
                   width={45}
                 />

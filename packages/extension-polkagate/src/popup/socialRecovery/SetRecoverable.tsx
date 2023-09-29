@@ -221,7 +221,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       <Grid alignContent='center' alignItems='center' container item>
         <Grid item sx={{ mr: '20px' }}>
           <MakeRecoverableIcon
-            fillColor={theme.palette.text.primary}
+            color={theme.palette.text.primary}
             height={43}
             width={43}
           />
