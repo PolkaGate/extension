@@ -198,7 +198,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       setMode(undefined);
     } else if (configStep === CONFIG_STEPS.SET_DETAILS) {
       setConfigStep(CONFIG_STEPS.SELECT_TRUSTED_FRIENDS);
-      setMode(undefined);
+      // setMode(undefined);
     }
   }, [configStep, mode, setMode, setStep]);
 
@@ -228,7 +228,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
         </Grid>
         <Grid item>
           <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-            {recoveryConfig
+            {mode === 'ModifyRecovery'
               ? t<string>('Modify your account recoverability')
               : t<string>('Make your account recoverable')
             }
