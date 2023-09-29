@@ -395,14 +395,14 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               }
               {mode === 'InitiateRecovery' &&
                 <RescueRecoveryIcon
-                  fillColor={theme.palette.secondary.main}
+                  fillColor={theme.palette.text.primary}
                   height={45}
                   width={45}
                 />
               }
               {mode === 'VouchRecovery' &&
                 <VouchRecoveryIcon
-                  fillColor={theme.palette.secondary.main}
+                  fillColor={theme.palette.text.primary}
                   height={45}
                   width={45}
                 />
