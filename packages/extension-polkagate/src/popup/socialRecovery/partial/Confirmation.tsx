@@ -5,8 +5,8 @@
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 
 import { Identity, Motion, PButton, ShortAddress } from '../../../components';
@@ -241,13 +241,15 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
           </Grid>
         }
       </Grid>
-      <PButton
-        _ml={0}
-        _mt='30px'
-        _onClick={handleClose}
-        _width={100}
-        text={t<string>('Close')}
-      />
+      <Grid container width='30%' ml='70%'>
+        <PButton
+          _ml={0}
+          _mt='30px'
+          _onClick={handleClose}
+          _width={100}
+          text={t<string>('Done')}
+        />
+      </Grid>
     </Motion>
   );
 }
