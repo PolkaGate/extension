@@ -241,7 +241,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
       {configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS &&
         <>
           <Typography fontSize='14px' fontWeight={400} width='100%'>
-            {t<string>('You can find trusted friends accounts to add to the list or/and add from those ones that are available on your extension.')}
+            {t<string>('You can add trusted friends\' accounts to the list, either by manually entering their information or by selecting from those available in your extension. (Recommended: 3, maximum: 9)')}
           </Typography>
           <Grid container item justifyContent='space-between' py='15px'>
             <SelectTrustedFriend
