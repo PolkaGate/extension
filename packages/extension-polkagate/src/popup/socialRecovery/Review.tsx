@@ -6,6 +6,8 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
+import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,7 +19,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Infotip2, Motion, ShortAddress, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
+import { Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
@@ -375,52 +377,84 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
       <>
         <Grid container direction='column' py='20px'>
-          <Typography fontSize='30px' fontWeight={700}>
-            {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
-              <>
-                {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
-                {mode === 'SetRecovery' && t('Step 3 of 3: Review')}
-                {mode === 'ModifyRecovery' && t('Modify account recoverability')}
-                {mode === 'InitiateRecovery' && t('Initiate Recovery')}
-                {mode === 'CloseRecovery' && t('End Recovery')}
-                {mode === 'VouchRecovery' && t('Vouch Recovery')}
-                {mode === 'Withdraw' && t('Withdraw the fund of your lost account')}
-              </>
-            )}
-            {step === STEPS.WAIT_SCREEN && (
-              <>
-                {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
-                {mode === 'SetRecovery' && t('Making account recoverable')}
-                {mode === 'ModifyRecovery' && t('Modifying account recoverability configuration')}
-                {mode === 'InitiateRecovery' && t('Initiating Recovery')}
-                {mode === 'CloseRecovery' && t('Ending the recovery process')}
-                {mode === 'VouchRecovery' && t('Vouching')}
-                {mode === 'Withdraw' && t('Withdrawing the fund of your lost account')}
-              </>
-            )}
-            {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
-              txInfo?.success ? t('Your account is not recoverable anymore') : t('Failed to make account unrecoverable')
-            )}
-            {step === STEPS.CONFIRM && mode === 'SetRecovery' && (
-              txInfo?.success ? t('Your account is recoverable') : t('Failed to make account recoverable')
-            )}
-            {step === STEPS.CONFIRM && mode === 'ModifyRecovery' && (
-              txInfo?.success ? t('Account recoverability modified') : t('Failed to modify account recoverability')
-            )}
-            {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
-              txInfo?.success ? t('Recovery Initiated') : t('Failed to initiate recovery')
-            )}
-            {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
-              txInfo?.success ? t('Initiated recovery has been ended') : t('Failed to end recovery')
-            )}
-            {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
-              txInfo?.success ? t('Recovery Vouched') : t('Failed to vouch recovery')
-            )}
-            {step === STEPS.CONFIRM && mode === 'Withdraw' && (
-              txInfo?.success ? t('The funds have been withdrawn') : t('Failed to withdraw the funds')
-            )}
-          </Typography>
-          {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
+          <Grid alignItems='center' container item>
+            <Grid container item pr='10px' width='fit-content'>
+              {((mode === 'SetRecovery' && step === STEPS.REVIEW) || ['RemoveRecovery', 'ModifyRecovery'].includes(mode ?? '')) &&
+                <MakeRecoverableIcon
+                  fillColor={theme.palette.text.primary}
+                  height={45}
+                  width={45}
+                />
+              }
+              {mode === 'SetRecovery' && step === STEPS.CONFIRM &&
+                <FontAwesomeIcon
+                  color={txInfo?.success ? theme.palette.success.main : theme.palette.warning.main}
+                  fontSize='45px'
+                  icon={faShieldHalved}
+                />
+              }
+              {mode === 'InitiateRecovery' &&
+                <RescueRecoveryIcon
+                  fillColor={theme.palette.text.primary}
+                  height={45}
+                  width={45}
+                />
+              }
+              {mode === 'VouchRecovery' &&
+                <VouchRecoveryIcon
+                  fillColor={theme.palette.text.primary}
+                  height={45}
+                  width={45}
+                />
+              }
+            </Grid>
+            <Typography fontSize='30px' fontWeight={700}>
+              {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
+                <>
+                  {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
+                  {mode === 'SetRecovery' && t('Make your account recoverable')}
+                  {mode === 'ModifyRecovery' && t('Modify account recoverability')}
+                  {mode === 'InitiateRecovery' && t('Initiate Recovery')}
+                  {mode === 'CloseRecovery' && t('End Recovery')}
+                  {mode === 'VouchRecovery' && t('Vouch Recovery')}
+                  {mode === 'Withdraw' && t('Withdraw the fund of your lost account')}
+                </>
+              )}
+              {step === STEPS.WAIT_SCREEN && (
+                <>
+                  {mode === 'RemoveRecovery' && t('Making account unrecoverable')}
+                  {mode === 'SetRecovery' && t('Making account recoverable')}
+                  {mode === 'ModifyRecovery' && t('Modifying account recoverability configuration')}
+                  {mode === 'InitiateRecovery' && t('Initiating Recovery')}
+                  {mode === 'CloseRecovery' && t('Ending the recovery process')}
+                  {mode === 'VouchRecovery' && t('Vouching')}
+                  {mode === 'Withdraw' && t('Withdrawing the fund of your lost account')}
+                </>
+              )}
+              {step === STEPS.CONFIRM && mode === 'RemoveRecovery' && (
+                txInfo?.success ? t('Your account is not recoverable anymore') : t('Failed to make account unrecoverable')
+              )}
+              {step === STEPS.CONFIRM && mode === 'SetRecovery' && (
+                txInfo?.success ? t('Your account is recoverable') : t('Failed to make account recoverable')
+              )}
+              {step === STEPS.CONFIRM && mode === 'ModifyRecovery' && (
+                txInfo?.success ? t('Account recoverability modified') : t('Failed to modify account recoverability')
+              )}
+              {step === STEPS.CONFIRM && mode === 'InitiateRecovery' && (
+                txInfo?.success ? t('Recovery Initiated') : t('Failed to initiate recovery')
+              )}
+              {step === STEPS.CONFIRM && mode === 'CloseRecovery' && (
+                txInfo?.success ? t('Initiated recovery has been ended') : t('Failed to end recovery')
+              )}
+              {step === STEPS.CONFIRM && mode === 'VouchRecovery' && (
+                txInfo?.success ? t('Recovery Vouched') : t('Failed to vouch recovery')
+              )}
+              {step === STEPS.CONFIRM && mode === 'Withdraw' && (
+                txInfo?.success ? t('The funds have been withdrawn') : t('Failed to withdraw the funds')
+              )}
+            </Typography>
+          </Grid>
+          {(step === STEPS.REVIEW || step === STEPS.PROXY) && ['SetRecovery', 'InitiateRecovery', 'ModifyRecovery', 'VouchRecovery'].includes(mode) &&
             <Typography fontSize='22px' fontWeight={700}>
               {['InitiateRecovery', 'VouchRecovery'].includes(mode)
                 ? t('Step 2 of 2: Review')

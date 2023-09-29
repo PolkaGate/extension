@@ -29,7 +29,7 @@ export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAcc
   const theme = useTheme();
 
   return (
-    <Grid container direction='column' item sx={{ '> :not(:last-child)': { borderBottom: '1px solid', borderBottomColor: '#D5CCD0' }, bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', maxHeight: '270px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px', ...style }}>
+    <Grid container direction='column' item sx={{ '> :not(:last-child)': { borderBottom: '1px solid', borderBottomColor: '#D5CCD0' }, bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', maxHeight: '290px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px', ...style }}>
       {lostAccountRecoveryInfo === undefined &&
         <Progress pt='30px' size={100} title={t('Checking the lost account recovery status...')} />
       }
