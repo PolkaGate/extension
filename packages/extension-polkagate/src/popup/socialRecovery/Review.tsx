@@ -377,7 +377,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     <Motion style={{ height: '100%', paddingInline: '10%', width: '100%' }}>
       <>
         <Grid container direction='column' py='20px'>
-          <Grid alignItems='center' container item>
+          <Grid alignItems='center' container item mb='15px'>
             <Grid container item pr='10px' width='fit-content'>
               {((mode === 'SetRecovery' && step === STEPS.REVIEW) || ['RemoveRecovery', 'ModifyRecovery'].includes(mode ?? '')) &&
                 <MakeRecoverableIcon
