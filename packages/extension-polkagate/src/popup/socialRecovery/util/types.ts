@@ -3,6 +3,7 @@
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
+import { Balance } from '@polkadot/types/interfaces';
 import { BN } from '@polkadot/util';
 
 export type SocialRecoveryModes = 'RemoveRecovery' | 'SetRecovery' | 'ModifyRecovery' | 'InitiateRecovery' | 'CloseRecovery' | 'VouchRecovery' | 'Withdraw' | undefined;
@@ -19,7 +20,7 @@ export type WithdrawInfo = {
   claimed: boolean;
   isRecoverable: boolean;
   availableBalance: BN;
-  redeemable: BN;
+  redeemable: { amount: Balance, count: number };
   poolRedeemable: { amount: BN, count: number };
   soloStaked: BN;
   poolStaked: { amount: BN, hasRole: boolean };

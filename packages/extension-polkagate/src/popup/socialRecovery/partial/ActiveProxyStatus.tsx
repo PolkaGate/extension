@@ -30,7 +30,7 @@ export default function ActiveProxyStatus({ api, style, withdrawInfo }: Props): 
   withdrawInfo?.reserved && !withdrawInfo?.reserved.isZero() && assets.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
   withdrawInfo?.soloStaked && !withdrawInfo?.soloStaked.isZero() && assets.push({ amount: withdrawInfo.soloStaked, label: 'Solo Stake' });
   withdrawInfo?.poolStaked && !withdrawInfo?.poolStaked.amount.isZero() && assets.push({ amount: withdrawInfo.poolStaked.amount, label: 'Pool Stake' });
-  withdrawInfo?.redeemable && !withdrawInfo?.redeemable.isZero() && assets.push({ amount: withdrawInfo.redeemable, label: 'Staking Redeemable' });
+  withdrawInfo?.redeemable && !withdrawInfo?.redeemable.amount.isZero() && assets.push({ amount: withdrawInfo.redeemable.amount, label: 'Staking Redeemable' });
   withdrawInfo?.poolRedeemable && !withdrawInfo?.poolRedeemable.amount.isZero() && assets.push({ amount: withdrawInfo.poolRedeemable.amount, label: 'Pool Redeemable' });
   withdrawInfo?.soloUnlock && !withdrawInfo?.soloUnlock.amount.isZero() && assets.push({ amount: withdrawInfo.soloUnlock.amount, label: 'Solo Unstaking' });
   withdrawInfo?.poolUnlock && !withdrawInfo?.poolUnlock.amount.isZero() && assets.push({ amount: withdrawInfo.poolUnlock.amount, label: 'Pool Unstaking' });

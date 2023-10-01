@@ -29,7 +29,7 @@ export const checkLostAccountSoloStakedBalance = (
   sessionInfo: SessionInfo,
   setLostAccountSoloStakingBalance: React.Dispatch<React.SetStateAction<BN | undefined>>,
   setLostAccountSoloUnlock: React.Dispatch<React.SetStateAction<{ amount: BN; date: number; } | undefined>>,
-  setLostAccountRedeemable: React.Dispatch<React.SetStateAction<Balance | undefined>>
+  setLostAccountRedeemable: React.Dispatch<React.SetStateAction<{ amount: Balance; count: number; } | undefined>>
 ) => {
   api.derive.staking.account(lostAccountAddress).then((s) => {
     setLostAccountSoloStakingBalance(new BN(s.stakingLedger.active.toString()));
@@ -51,8 +51,14 @@ export const checkLostAccountSoloStakedBalance = (
       }
     }
 
+    api.query.staking.slashingSpans(lostAccountAddress).then((span) => {
+      const spanCount = span.isNone ? 0 : span.unwrap().prior.length as number + 1;
+      const BZ = api.createType('Balance', BN_ZERO);
+
+      setLostAccountRedeemable({ amount: s.redeemable ?? BZ, count: spanCount });
+    }).catch(console.error);
+
     setLostAccountSoloUnlock({ amount: unlockingValue, date: toBeReleased.at(-1)?.date ?? 0 });
-    setLostAccountRedeemable(s.redeemable);
   }).catch(console.error);
 };
 

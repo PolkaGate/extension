@@ -113,7 +113,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     allActiveRecoveries && allActiveRecoveries.filter((active) => active.lost === withdrawInfo.lost).forEach((activeRec) => withdrawCalls.push(closeRecovery(activeRec.rescuer)));
     withdrawInfo.isRecoverable && withdrawCalls.push(removeRecovery());
     !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
-    !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
+    !(withdrawInfo.redeemable.amount.isZero()) && withdrawCalls.push(redeem(withdrawInfo.redeemable.count));
     !(withdrawInfo.poolStaked.amount.isZero() || withdrawInfo.poolStaked.hasRole) && withdrawCalls.push(unbond(withdrawInfo.lost, withdrawInfo.poolStaked.amount));
     !(withdrawInfo.poolRedeemable.amount.isZero()) && withdrawCalls.push(poolRedeem(withdrawInfo.lost, withdrawInfo.poolRedeemable.count));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
@@ -254,7 +254,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     const toBeWithdrawnLater: { label: string; amount: BN | Balance }[] = [];
 
     withdrawInfo?.availableBalance && !withdrawInfo.availableBalance.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
-    withdrawInfo?.redeemable && !withdrawInfo.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Staking Redeemable' });
+    withdrawInfo?.redeemable && !withdrawInfo.redeemable.amount.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable.amount, label: 'Staking Redeemable' });
     withdrawInfo?.poolRedeemable && !withdrawInfo.poolRedeemable.amount.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.poolRedeemable.amount, label: 'Pool Redeemable' });
     withdrawInfo?.reserved && !withdrawInfo.reserved.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
     withdrawInfo?.soloStaked && !withdrawInfo.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });

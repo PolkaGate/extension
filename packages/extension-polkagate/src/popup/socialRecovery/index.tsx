@@ -72,7 +72,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [activeProxy, setActiveProxy] = useState<string | null>();
   const [sessionInfo, setSessionInfo] = useState<SessionInfo>();
   const [lostAccountBalance, setLostAccountBalance] = useState<Balance | undefined>();
-  const [lostAccountRedeemable, setLostAccountRedeemable] = useState<Balance | undefined>();
+  const [lostAccountRedeemable, setLostAccountRedeemable] = useState<{ amount: Balance, count: number } | undefined>();
   const [lostAccountPoolRedeemable, setLostAccountPoolRedeemable] = useState<{ amount: BN, count: number } | undefined>();
   const [lostAccountSoloStakingBalance, setLostAccountSoloStakingBalance] = useState<BN | undefined>();
   const [lostAccountPoolStakingBalance, setLostAccountPoolStakingBalance] = useState<{ amount: BN, hasRole: boolean } | undefined>();
