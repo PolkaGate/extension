@@ -72,3 +72,4 @@ export { default as useValidators } from './useValidators';
 export { default as useValidatorsIdentities } from './useValidatorsIdentities';
 export { default as useAccountsInfo } from './useAccountsInfo';
 export { default as useActiveRecoveries } from './useActiveRecoveries';
+export { default as useLostAccountInformation } from './useLostAccountInformation';
