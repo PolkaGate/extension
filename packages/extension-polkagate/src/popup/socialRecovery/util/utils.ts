@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { ApiPromise } from '@polkadot/api';
 import { Balance } from '@polkadot/types/interfaces';
@@ -170,5 +170,33 @@ export const checkLostAccountProxy = (
     const proxies = p.toHuman() as [][];
 
     setLostAccountProxy(proxies[0].length > 0);
+  }).catch(console.error);
+};
+
+export const checkLostAccountRecoverability = (
+  api: ApiPromise,
+  lostAccountAddress: string,
+  setLostAccountRecoveryInfo: React.Dispatch<React.SetStateAction<false | PalletRecoveryRecoveryConfig | null | undefined>>
+) => {
+  setLostAccountRecoveryInfo(undefined);
+
+  api.query.recovery && api.query.recovery.recoverable(lostAccountAddress).then((r) => {
+    if (r.isSome) {
+      const unwrappedResult = r.unwrap();
+
+      const modifiedResult = {
+        lostAccount: lostAccountAddress,
+        delayPeriod: unwrappedResult.delayPeriod,
+        threshold: unwrappedResult.threshold,
+        deposit: unwrappedResult.deposit,
+        friends: unwrappedResult.friends
+      } as unknown as PalletRecoveryRecoveryConfig;
+
+      setLostAccountRecoveryInfo(modifiedResult);
+
+      return;
+    }
+
+    setLostAccountRecoveryInfo(null);
   }).catch(console.error);
 };

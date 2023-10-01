@@ -22,7 +22,7 @@ import { FullScreenHeader } from '../governance/FullScreenHeader';
 import { AddressWithIdentity } from './components/SelectTrustedFriend';
 import RecoveryCheckProgress from './partial/RecoveryCheckProgress';
 import { InitiateRecoveryConfig, RecoveryConfigType, SessionInfo, SocialRecoveryModes, WithdrawInfo } from './util/types';
-import { checkLostAccountBalance, checkLostAccountClaimedStatus, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, checkLostAccountProxy, checkLostAccountSoloStakedBalance } from './util/utils';
+import { checkLostAccountBalance, checkLostAccountClaimedStatus, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, checkLostAccountProxy, checkLostAccountRecoverability, checkLostAccountSoloStakedBalance } from './util/utils';
 import Home from './Home';
 import InitiateRecovery from './InitiateRecovery';
 import RecoveryDetail from './RecoveryDetail';
@@ -246,6 +246,7 @@ export default function SocialRecovery(): React.ReactElement {
     checkLostAccountPoolStakedBalance(api, lostAccountAddress.address, sessionInfo, setLostAccountPoolStakingBalance, setLostAccountPoolUnlock, setLostAccountPoolRedeemable);
     checkLostAccountIdentity(accountsInfo, lostAccountAddress.address, setLostAccountIdentity);
     checkLostAccountProxy(api, lostAccountAddress.address, setLostAccountProxy);
+    activeProxy && checkLostAccountRecoverability(api, lostAccountAddress.address, setLostAccountRecoveryInfo);
   }, [activeProxy, sessionInfo, lostAccountRecoveryInfo, api, accountsInfo, fetchingLostAccountInfos, formatted, mode, setWithdrawInfo, withdrawInfo, lostAccountAddress?.address]);
 
   useEffect(() => {

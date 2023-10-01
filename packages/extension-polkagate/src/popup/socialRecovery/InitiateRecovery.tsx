@@ -20,6 +20,7 @@ import InitiatedRecoveryStatus from './partial/InitiatedRecoveryStatus';
 import LostAccountRecoveryInfo from './partial/LostAccountRecoveryInfo';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
+import { checkLostAccountRecoverability } from './util/utils';
 import { STEPS } from '.';
 
 interface Props {
@@ -92,31 +93,6 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
     }
   }, [activeProxy, formatted, initiatedRecovery, isDelayPassed, isVouchedCompleted, lostAccount?.address, lostAccountRecoveryInfo]);
 
-  const checkLostAccountRecoverability = useCallback(() => {
-    if (api && lostAccount) {
-      setLostAccountRecoveryInfo(undefined);
-
-      api.query.recovery && api.query.recovery.recoverable(lostAccount.address).then((r) => {
-        if (r.isSome) {
-          const unwrappedResult = r.unwrap();
-          const modifiedResult = {
-            lostAccount: lostAccount.address,
-            delayPeriod: unwrappedResult.delayPeriod,
-            threshold: unwrappedResult.threshold,
-            deposit: unwrappedResult.deposit,
-            friends: unwrappedResult.friends
-          };
-
-          setLostAccountRecoveryInfo(modifiedResult);
-
-          return;
-        }
-
-        setLostAccountRecoveryInfo(null);
-      }).catch(console.error);
-    }
-  }, [api, lostAccount, setLostAccountRecoveryInfo]);
-
   useEffect(() => {
     if ((initiatedRecovery || activeProxy) && !lostAccount) {
       setLostAccount({ accountIdentity: undefined, address: activeProxy ?? initiatedRecovery?.lost ?? '' });
@@ -124,10 +100,10 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
   }, [activeProxy, initiatedRecovery, lostAccount]);
 
   useEffect(() => {
-    if (initiatedRecovery && !activeProxy && lostAccount && lostAccountRecoveryInfo === false) {
-      checkLostAccountRecoverability();
+    if (api && initiatedRecovery && !activeProxy && lostAccount && lostAccountRecoveryInfo === false) {
+      checkLostAccountRecoverability(api, lostAccount.address, setLostAccountRecoveryInfo);
     }
-  }, [activeProxy, checkLostAccountRecoverability, initiatedRecovery, lostAccount, lostAccountRecoveryInfo]);
+  }, [api, activeProxy, initiatedRecovery, lostAccount, lostAccountRecoveryInfo, setLostAccountRecoveryInfo]);
 
   useEffect(() => {
     if (!lostAccount && lostAccountRecoveryInfo !== false) {
@@ -149,6 +125,12 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
     setStep(STEPS.INDEX);
     setMode(undefined);
   }, [setMode, setStep]);
+
+  const checkLostAccount = useCallback(() => {
+    if (api && lostAccount?.address) {
+      checkLostAccountRecoverability(api, lostAccount.address, setLostAccountRecoveryInfo);
+    }
+  }, [api, lostAccount?.address, setLostAccountRecoveryInfo]);
 
   const rescueLostAccount = useCallback(() => {
     setLostAccountAddress({
@@ -241,8 +223,8 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
                 _isBusy={lostAccountRecoveryInfo === undefined}
                 _ml={0}
                 _mt='0'
-                _onClick={checkLostAccountRecoverability}
-                disabled={!lostAccount}
+                _onClick={checkLostAccount}
+                disabled={!lostAccount || !api}
                 text={t<string>('Verify status')}
               />
             </Grid>
@@ -266,7 +248,7 @@ export default function InitiateRecovery({ accountsInfo, activeProxy, address, a
             onPrimaryClick={initiatedRecovery || activeProxy
               ? goWithdraw
               : lostAccountRecoveryInfo === false
-                ? checkLostAccountRecoverability
+                ? checkLostAccount
                 : rescueLostAccount}
             onSecondaryClick={goBack}
             primaryBtnText={initiatedRecovery || activeProxy
