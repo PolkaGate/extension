@@ -86,6 +86,12 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
         address: friend
       })));
       setRecoveryThreshold(recoveryConfig.threshold);
+      setDelayNumber(recoveryConfig.delayPeriod);
+      setDelayUnit(UNITS.BLOCK);
+    }
+
+    if (recoveryConfig && recoveryThreshold !== undefined && recoveryThreshold > recoveryConfig.friends.addresses.length) {
+      setRecoveryThreshold(recoveryConfig.friends.addresses.length);
     }
   }, [recoveryConfig, totalDelay, recoveryThreshold, selectedFriends, selectedFriendsToShow]);
 
@@ -331,7 +337,7 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
               {t<string>('Recovery Delay')}
             </Typography>
             <Grid alignItems='center' container item>
-              <Grid container item width='55px'>
+              <Grid container item width={delayUnit === UNITS.BLOCK ? 'fit-content' : '55px'}>
                 <Input
                   autoCapitalize='off'
                   autoCorrect='off'
@@ -343,7 +349,8 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
                     fontSize: '18px',
                     fontWeight: 300,
                     padding: 0,
-                    paddingLeft: '10px'
+                    paddingLeft: '10px',
+                    width: delayNumber && delayNumber?.toString().length > 3 && delayUnit === UNITS.BLOCK ? `${delayNumber.toString().length * 15}px` : '55px'
                   }}
                   theme={theme}
                   type='number'
