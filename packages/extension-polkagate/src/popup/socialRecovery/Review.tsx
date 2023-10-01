@@ -114,7 +114,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     withdrawInfo.isRecoverable && withdrawCalls.push(removeRecovery());
     !(withdrawInfo.soloStaked.isZero()) && withdrawCalls.push(chill(), unbonded(withdrawInfo.soloStaked));
     !(withdrawInfo.redeemable.isZero()) && withdrawCalls.push(redeem(100));
-    !(withdrawInfo.poolStaked.amount.isZero() || withdrawInfo.poolStaked.hasRule) && withdrawCalls.push(unbond(withdrawInfo.lost, withdrawInfo.poolStaked.amount));
+    !(withdrawInfo.poolStaked.amount.isZero() || withdrawInfo.poolStaked.hasRole) && withdrawCalls.push(unbond(withdrawInfo.lost, withdrawInfo.poolStaked.amount));
     !(withdrawInfo.poolRedeemable.amount.isZero()) && withdrawCalls.push(poolRedeem(withdrawInfo.lost, withdrawInfo.poolRedeemable.count));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
     withdrawInfo.hasProxy && withdrawCalls.push(removeProxies());

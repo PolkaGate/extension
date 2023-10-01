@@ -22,7 +22,7 @@ export type WithdrawInfo = {
   redeemable: BN;
   poolRedeemable: { amount: BN, count: number };
   soloStaked: BN;
-  poolStaked: { amount: BN, hasRule: boolean };
+  poolStaked: { amount: BN, hasRole: boolean };
   reserved: BN;
   hasId: boolean;
   hasProxy: boolean;

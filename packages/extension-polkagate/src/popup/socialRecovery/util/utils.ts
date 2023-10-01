@@ -79,7 +79,7 @@ export const checkLostAccountPoolStakedBalance = (
   api: ApiPromise,
   lostAccountAddress: string,
   sessionInfo: SessionInfo,
-  setLostAccountPoolStakingBalance: React.Dispatch<React.SetStateAction<{ amount: BN; hasRule: boolean; } | undefined>>,
+  setLostAccountPoolStakingBalance: React.Dispatch<React.SetStateAction<{ amount: BN; hasRole: boolean; } | undefined>>,
   setLostAccountPoolUnlock: React.Dispatch<React.SetStateAction<{ amount: BN; date: number; } | undefined>>,
   setLostAccountPoolRedeemable: React.Dispatch<React.SetStateAction<{ amount: BN; count: number; } | undefined>>
 ) => {
@@ -87,7 +87,7 @@ export const checkLostAccountPoolStakedBalance = (
     const member = res?.unwrapOr(undefined) as PalletNominationPoolsPoolMember | undefined;
 
     if (!member) {
-      setLostAccountPoolStakingBalance({ amount: BN_ZERO, hasRule: false });
+      setLostAccountPoolStakingBalance({ amount: BN_ZERO, hasRole: false });
       setLostAccountPoolUnlock({ amount: BN_ZERO, date: 0 });
       setLostAccountPoolRedeemable({ amount: BN_ZERO, count: 0 });
 
@@ -98,7 +98,7 @@ export const checkLostAccountPoolStakedBalance = (
     const accounts = poolId && getPoolAccounts(api, poolId);
 
     if (!accounts) {
-      setLostAccountPoolStakingBalance({ amount: BN_ZERO, hasRule: false });
+      setLostAccountPoolStakingBalance({ amount: BN_ZERO, hasRole: false });
       setLostAccountPoolUnlock({ amount: BN_ZERO, date: 0 });
       setLostAccountPoolRedeemable({ amount: BN_ZERO, count: 0 });
 
@@ -144,10 +144,10 @@ export const checkLostAccountPoolStakedBalance = (
       setLostAccountPoolRedeemable({ amount: redeemValue, count: spanCount });
     }).catch(console.error);
 
-    const hasRule = [bondedPoolInfo.roles.depositor.toString(), bondedPoolInfo.roles.root.toString(), bondedPoolInfo.roles.nominator.toString(), bondedPoolInfo.roles.nominator.toString()].includes(String(lostAccountAddress));
+    const hasRole = [bondedPoolInfo.roles.depositor.toString(), bondedPoolInfo.roles.root.toString(), bondedPoolInfo.roles.nominator.toString(), bondedPoolInfo.roles.nominator.toString()].includes(String(lostAccountAddress));
 
     setLostAccountPoolUnlock({ amount: unlockingValue, date: toBeReleased.at(-1)?.date ?? 0 });
-    setLostAccountPoolStakingBalance({ amount: active, hasRule });
+    setLostAccountPoolStakingBalance({ amount: active, hasRole });
   }).catch(console.error);
 };
 

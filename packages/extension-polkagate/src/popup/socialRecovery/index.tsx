@@ -75,7 +75,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [lostAccountRedeemable, setLostAccountRedeemable] = useState<Balance | undefined>();
   const [lostAccountPoolRedeemable, setLostAccountPoolRedeemable] = useState<{ amount: BN, count: number } | undefined>();
   const [lostAccountSoloStakingBalance, setLostAccountSoloStakingBalance] = useState<BN | undefined>();
-  const [lostAccountPoolStakingBalance, setLostAccountPoolStakingBalance] = useState<{ amount: BN, hasRule: boolean } | undefined>();
+  const [lostAccountPoolStakingBalance, setLostAccountPoolStakingBalance] = useState<{ amount: BN, hasRole: boolean } | undefined>();
   const [lostAccountReserved, setLostAccountReserved] = useState<BN | undefined>();
   const [lostAccountSoloUnlock, setLostAccountSoloUnlock] = useState<{ amount: BN, date: number } | undefined>();
   const [lostAccountPoolUnlock, setLostAccountPoolUnlock] = useState<{ amount: BN, date: number } | undefined>();
