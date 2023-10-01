@@ -65,7 +65,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Introducing Light Client as a \'Remote node\' for seamless connections',
+              'Signing with Ledger when conducting fund transfers or participating in governance.',
               'Resolving known issues for a smoother experience'
             ]}
           />
