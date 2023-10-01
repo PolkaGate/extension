@@ -33,7 +33,7 @@ interface Props {
   setLostAccountAddress: React.Dispatch<React.SetStateAction<InitiateRecoveryConfig | undefined>>
 }
 
-export default function Home({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
+export default function Home ({ accountsInfo, activeLost, activeProxy, activeRescue, chain, recoveryInfo, setLostAccountAddress, setMode, setStep }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDisabled = !!activeLost;
