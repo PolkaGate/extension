@@ -117,7 +117,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
           {t<string>('If you\'ve lost access to this account, start the recovery process with a new account and contact the trusted friends for account recovery.')}
         </Warning>
       </Grid>
-      <Grid container item justifyContent='space-between' pt='60px'>
+      <Grid container item justifyContent='space-between' pt='35px'>
         <Grid container item xs={3}>
           <PButton
             _mt='1px'
