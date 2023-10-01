@@ -40,3 +40,9 @@ export type InitiateRecoveryConfig = {
   threshold?: number;
   delayPeriod?: string;
 };
+
+export interface SessionInfo {
+  eraLength: number;
+  eraProgress: number;
+  currentEra: number;
+};

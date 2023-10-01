@@ -118,7 +118,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     !(withdrawInfo.poolRedeemable.amount.isZero()) && withdrawCalls.push(poolRedeem(withdrawInfo.lost, withdrawInfo.poolRedeemable.count));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
     withdrawInfo.hasProxy && withdrawCalls.push(removeProxies());
-    (!withdrawInfo?.availableBalance.isZero() || !withdrawInfo.claimed || !withdrawInfo.redeemable.isZero() || !withdrawInfo.poolRedeemable.amount.isZero() || withdrawInfo.isRecoverable || withdrawInfo.hasId || withdrawInfo.hasProxy) && withdrawCalls.push(transferAll(formatted, false));
+    (!withdrawInfo.claimed || withdrawCalls.length > 0) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
       ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
@@ -139,7 +139,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     }
 
     if (mode === 'ModifyRecovery' && recoveryConfig) {
-      return batchAll([removeRecovery(), createRecovery(recoveryConfig.friends.addresses.sort(), recoveryConfig.threshold, recoveryConfig.delayPeriod)]);
+      const sortedFriends = recoveryConfig.friends.addresses.sort();
+
+      return batchAll([removeRecovery(), createRecovery(sortedFriends, recoveryConfig.threshold, recoveryConfig.delayPeriod)]);
     }
 
     if (mode === 'InitiateRecovery' && lostAccountAddress) {
@@ -252,7 +254,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     const toBeWithdrawnLater: { label: string; amount: BN | Balance }[] = [];
 
     withdrawInfo?.availableBalance && !withdrawInfo.availableBalance.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.availableBalance, label: 'Transferable' });
-    withdrawInfo?.redeemable && !withdrawInfo.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Redeemable' });
+    withdrawInfo?.redeemable && !withdrawInfo.redeemable.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.redeemable, label: 'Staking Redeemable' });
     withdrawInfo?.poolRedeemable && !withdrawInfo.poolRedeemable.amount.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.poolRedeemable.amount, label: 'Pool Redeemable' });
     withdrawInfo?.reserved && !withdrawInfo.reserved.isZero() && toBeWithdrawn.push({ amount: withdrawInfo.reserved, label: 'Reserved' });
     withdrawInfo?.soloStaked && !withdrawInfo.soloStaked.isZero() && toBeWithdrawnLater.push({ amount: withdrawInfo.soloStaked, label: `Solo Stake (after ${chainName === 'polkadot' ? '28 days' : chainName === 'kusama' ? '7 days' : '0.5 day'})` });
