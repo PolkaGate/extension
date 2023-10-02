@@ -178,7 +178,7 @@ export default function Popup(): React.ReactElement {
         : wrapWithErrorBoundary(<Accounts />, 'accounts');
 
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence mode='wait'>
       <Loading>{accounts && authRequests && metaRequests && signRequests &&
         <ActionContext.Provider value={_onAction}>
           <SettingsContext.Provider value={settingsCtx}>
