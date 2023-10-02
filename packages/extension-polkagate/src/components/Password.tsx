@@ -67,7 +67,11 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
         readOnly={isReadOnly}
         spellCheck={false}
         style={{
-          borderColor: isError ? theme.palette.warning.main : theme.palette.secondary.light,
+          borderColor: isError
+            ? theme.palette.warning.main
+            : disabled
+              ? theme.palette.secondary.contrastText
+              : theme.palette.secondary.light,
           borderWidth: isError ? '3px' : '1px',
           fontSize: '18px',
           fontWeight: 300,
