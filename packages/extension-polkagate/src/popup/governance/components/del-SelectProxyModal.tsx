@@ -25,7 +25,7 @@ interface Props {
   nextStep: number;
 }
 
-export default function SelectProxyModal({ address, height, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setStep, nextStep }: Props): React.ReactElement<Props> {
+export default function SelectProxyModal({ address, height, nextStep, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setStep }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const [proxiesToSelect, setProxiesToSelect] = useState<ProxyItem[] | undefined>();
