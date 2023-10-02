@@ -18,8 +18,9 @@ import { useApi, useDecimal, useFormatted, useProxies, useTranslation } from '..
 import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
-import SelectProxyModal from '../../components/SelectProxyModal';
+import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
+import { GOVERNANCE_PROXY } from '../../utils/consts';
 import { getVoteType } from '../../utils/util';
 import { getConviction, Vote } from '../myVote/util';
 import About from './About';
@@ -27,7 +28,6 @@ import Cast from './Cast';
 import Confirmation from './Confirmation';
 import Preview from './Preview';
 import Review from './Review';
-import { GOVERNANCE_PROXY } from '../../utils/consts';
 
 interface Props {
   address: string | undefined;
@@ -83,6 +83,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
   const vote = api && api.tx.convictionVoting.vote;
   const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
+  const [reviewModalHeight, setReviewModalHeight] = useState<number | undefined>();
 
   const voteTx = api && api.tx.convictionVoting.vote;
   const removeTx = api && api.tx.convictionVoting.removeVote;
@@ -246,6 +247,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             formatted={String(formatted)}
             proxyItems={proxyItems}
             selectedProxy={selectedProxy}
+            setModalHeight={setReviewModalHeight}
             setRefresh={setRefresh}
             setStep={setStep}
             setTxInfo={setTxInfo}
@@ -265,15 +267,14 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
           />
         }
         {step === STEPS.PROXY &&
-          <SelectProxyModal
+          <SelectProxyModal2
             address={address}
-            nextStep={alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW}
+            height={reviewModalHeight}
+            closeSelectProxy={() => setStep(alterType === 'remove' ? STEPS.REMOVE : STEPS.REVIEW)}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
-            setStep={setStep}
-          // height={modalHeight}
           />
         }
         {step === STEPS.WAIT_SCREEN &&

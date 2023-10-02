@@ -16,7 +16,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, Warning, WrongPasswordAlert } from '../../components';
+import { Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
@@ -25,7 +25,7 @@ import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../governance/components/SelectProxyModal';
+import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { toTitleCase } from '../governance/utils/util';
@@ -133,44 +133,11 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
   }, [api, formatted, tx]);
 
-  const onNext = useCallback(async (): Promise<void> => {
-    try {
-      if (!formatted || !tx || !api) {
-        return;
-      }
-
-      const from = selectedProxy?.delegate ?? formatted;
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-      setStep(STEPS.WAIT_SCREEN);
-
-      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
-
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
-
-      const info = {
-        action: 'Manage Identity',
-        block: block || 0,
-        chain,
-        date: Date.now(),
-        failureText,
-        fee: fee || String(estimatedFee || 0),
-        from: { address: String(formatted), name },
-        subAction: toTitleCase(mode),
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        txHash: txHash || ''
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(String(from), info);
-      setStep(STEPS.CONFIRM);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
-    }
-  }, [api, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, tx]);
+  const extraInfo = useMemo(() => ({
+    action: 'Manage Identity',
+    fee: String(estimatedFee || 0),
+    subAction: toTitleCase(mode)
+  }), [estimatedFee, mode]);
 
   const handleClose = useCallback(() => {
     setStep(mode === 'Set' || mode === 'Modify'
@@ -360,21 +327,21 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               </DisplayValue>
             </Grid>
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
-              <PasswordWithTwoButtonsAndUseProxy
-                chain={chain}
+              <SignArea2
+                address={address}
+                call={tx}
+                extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
-                label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
-                onChange={setPassword}
-                onPrimaryClick={onNext}
                 onSecondaryClick={handleClose}
                 primaryBtnText={t<string>('Confirm')}
-                proxiedAddress={formatted}
-                proxies={proxyItems}
                 proxyTypeFilter={['Any', 'NonTransfer']}
                 secondaryBtnText={t<string>('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
               />
             </Grid>
           </>
@@ -390,15 +357,14 @@ export default function Review({ address, api, chain, depositValue, identityToSe
                   <CloseIcon onClick={closeSelectProxy} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
                 </Grid>
               </Grid>
-              <SelectProxyModal
+              <SelectProxyModal2
                 address={address}
                 height={500}
-                nextStep={STEPS.REVIEW}
+                closeSelectProxy={() => setStep(STEPS.REVIEW)}
                 proxies={proxyItems}
                 proxyTypeFilter={['Any', 'NonTransfer']}
                 selectedProxy={selectedProxy}
                 setSelectedProxy={setSelectedProxy}
-                setStep={setStep}
               />
             </Grid>
           </DraggableModal>

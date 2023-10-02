@@ -8,7 +8,7 @@ import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Close as CloseIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -25,8 +25,6 @@ import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import blockToDate from '../crowdloans/partials/blockToDate';
-import { DraggableModal } from '../governance/components/DraggableModal';
-import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { toTitleCase } from '../governance/utils/util';
@@ -210,10 +208,6 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 ? STEPS.VOUCH
                 : STEPS.INDEX);
   }, [mode, setStep, withdrawInfo?.claimed]);
-
-  const closeSelectProxy = useCallback(() => {
-    setStep(STEPS.REVIEW);
-  }, [setStep]);
 
   const closeConfirmation = useCallback(() => {
     setMode(undefined);
@@ -657,30 +651,6 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               />
             </Grid>
           </>
-        }
-        {step === STEPS.PROXY &&
-          <DraggableModal onClose={closeSelectProxy} open={step === STEPS.PROXY}>
-            <Grid container item>
-              <Grid alignItems='center' container item justifyContent='space-between'>
-                <Typography fontSize='24px' fontWeight={700}>
-                  {t<string>('Select Proxy')}
-                </Typography>
-                <Grid item>
-                  <CloseIcon onClick={closeSelectProxy} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-                </Grid>
-              </Grid>
-              <SelectProxyModal
-                address={address}
-                height={500}
-                nextStep={STEPS.REVIEW}
-                proxies={proxyItems}
-                proxyTypeFilter={['Any', 'NonTransfer']}
-                selectedProxy={selectedProxy}
-                setSelectedProxy={setSelectedProxy}
-                setStep={setStep}
-              />
-            </Grid>
-          </DraggableModal>
         }
         {step === STEPS.WAIT_SCREEN &&
           <WaitScreen />

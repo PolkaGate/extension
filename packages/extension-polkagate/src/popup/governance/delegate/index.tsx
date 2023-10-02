@@ -18,7 +18,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { useAccountLocks, useApi, useBalances, useFormatted, useProxies, useTracks, useTranslation } from '../../../hooks';
 import { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { DraggableModal } from '../components/DraggableModal';
-import SelectProxyModal from '../components/SelectProxyModal';
+import SelectProxyModal2 from '../components/SelectProxyModal2';
 import WaitScreen from '../partials/WaitScreen';
 import { GOVERNANCE_PROXY } from '../utils/consts';
 import { DelegationInfo } from '../utils/types';
@@ -350,15 +350,14 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
           />
         }
         {step === STEPS.PROXY &&
-          <SelectProxyModal
+          <SelectProxyModal2
             address={address}
             height={modalHeight}
-            nextStep={proxyStep}
+            closeSelectProxy={()=>setStep(proxyStep)}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
-            setStep={setStep}
           />
         }
         {step === STEPS.WAIT_SCREEN &&

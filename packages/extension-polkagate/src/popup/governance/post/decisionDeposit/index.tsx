@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { Identity, ShowBalance, Warning } from '../../../../components';
+import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
 import { useAccountDisplay, useApi, useBalances, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { broadcast } from '../../../../util/api';
@@ -22,7 +22,7 @@ import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { DraggableModal } from '../../components/DraggableModal';
 import PasswordWithTwoButtonsAndUseProxy from '../../components/PasswordWithTwoButtonsAndUseProxy';
-import SelectProxyModal from '../../components/SelectProxyModal';
+import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { GOVERNANCE_PROXY } from '../../utils/consts';
 import { Track } from '../../utils/types';
@@ -102,43 +102,13 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
     setOpen(false);
   }, [setOpen, step]);
 
-  const confirm = useCallback(async () => {
-    try {
-      if (!formatted || !tx || !api || !decimal || !refIndex) {
-        return;
-      }
-
-      const from = selectedProxyAddress ?? formatted;
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-      setStep(STEPS.WAIT_SCREEN);
-
-      const { block, failureText, fee, success, txHash } = await broadcast(api, tx, [refIndex], signer, formatted, selectedProxy);
-
-      const info = {
-        action: 'Governance',
-        amount,
-        block: block || 0,
-        date: Date.now(),
-        failureText,
-        fee: fee || String(estimatedFee || 0),
-        from: { address: formatted, name },
-        subAction: 'Pay Decision Deposit',
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        txHash: txHash || ''
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(from, info);
-
-      setStep(STEPS.CONFIRM);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
-    }
-  }, [amount, api, chain, decimal, estimatedFee, formatted, name, password, refIndex, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
+  const extraInfo = useMemo(() => ({
+    action: 'Governance',
+    amount,
+    fee: String(estimatedFee || 0),
+    from: { address: formatted, name },
+    subAction: 'Pay Decision Deposit',
+  }), [amount, estimatedFee, formatted, name]);
 
   const title = useMemo(() => {
     if (step === STEPS.REVIEW) {
@@ -226,38 +196,38 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 </Grid>
               </DisplayValue>
             </Grid>
-            <Grid container item sx={{ pt: '40px' }}>
-              <PasswordWithTwoButtonsAndUseProxy
-                chain={chain}
+            <Grid alignItems='center' container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
+              <SignArea2
+                address={address}
+                call={tx}
                 disabled={notEnoughBalance}
+                extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
-                label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
-                onChange={setPassword}
-                onPrimaryClick={confirm}
                 onSecondaryClick={() => setOpen(false)}
+                params={[refIndex]}
                 primaryBtnText={t<string>('Confirm')}
-                proxiedAddress={formatted}
-                proxies={proxyItems}
                 proxyTypeFilter={GOVERNANCE_PROXY}
                 secondaryBtnText={t<string>('Reject')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
                 setStep={setStep}
-                showBackButtonWithUseProxy={false}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
+              // showBackButtonWithUs÷eProxy={false}
               />
             </Grid>
           </Grid>
         }
         {step === STEPS.PROXY &&
-          <SelectProxyModal
+          <SelectProxyModal2
             address={address}
             height={HEIGHT}
-            nextStep={STEPS.REVIEW}
+            closeSelectProxy={() => setStep(STEPS.REVIEW)}
             proxies={proxyItems}
             proxyTypeFilter={GOVERNANCE_PROXY}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}
-            setStep={setStep}
           />
         }
         {step === STEPS.WAIT_SCREEN &&
