@@ -16,20 +16,16 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { ISubmittableResult } from '@polkadot/types/types';
-import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
+import { useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { signAndSend } from '../../util/api';
-import { CanPayFee, Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
+import { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import blockToDate from '../crowdloans/partials/blockToDate';
 import { DraggableModal } from '../governance/components/DraggableModal';
-import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal from '../governance/components/SelectProxyModal';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -65,7 +61,6 @@ const dateTimeFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minu
 
 export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
@@ -75,14 +70,12 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [nothingToWithdrawNow, setNothingToWithdrawNow] = useState<boolean>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
   const batchAll = api && api.tx.utility.batchAll;
   const removeRecovery = api && api.tx.recovery.removeRecovery;
@@ -139,7 +132,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
       : asRecovered(withdrawInfo.lost, batchAll(withdrawCalls));
   }, [allActiveRecoveries, api, asRecovered, batchAll, poolRedeem, chill, clearIdentity, claimRecovery, closeRecovery, formatted, redeem, removeRecovery, removeProxies, transferAll, unbonded, unbond, withdrawInfo]);
 
-  const tx = useMemo(() => {
+  const call = useMemo(() => {
     if (!removeRecovery || !createRecovery || !initiateRecovery || !batchAll || !closeRecovery || !vouchRecovery) {
       return undefined;
     }
@@ -184,7 +177,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   }, [proxies]);
 
   useEffect(() => {
-    if (!formatted || !tx) {
+    if (!formatted || !call) {
       return;
     }
 
@@ -193,47 +186,14 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     }
 
     // eslint-disable-next-line no-void
-    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, tx]);
+    void call.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
+  }, [api, formatted, call]);
 
-  const onNext = useCallback(async (): Promise<void> => {
-    try {
-      if (!formatted || !tx || !api) {
-        return;
-      }
-
-      const from = selectedProxy?.delegate ?? formatted;
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
-      setStep(STEPS.WAIT_SCREEN);
-
-      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
-
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
-
-      const info = {
-        action: 'Social Recovery',
-        block: block || 0,
-        chain,
-        date: Date.now(),
-        failureText,
-        fee: fee || String(estimatedFee || 0),
-        from: { address: String(formatted), name },
-        subAction: toTitleCase(mode),
-        success,
-        throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
-        txHash: txHash || ''
-      };
-
-      setTxInfo({ ...info, api, chain });
-      saveAsHistory(String(from), info);
-      setStep(STEPS.CONFIRM);
-    } catch (e) {
-      console.log('error:', e);
-      setIsPasswordError(true);
-    }
-  }, [api, chain, estimatedFee, formatted, mode, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, setStep, tx]);
+  const extraInfo = useMemo(() => ({
+    action: 'Social Recovery',
+    fee: String(estimatedFee || 0),
+    subAction: toTitleCase(mode)
+  }), [estimatedFee, mode]);
 
   const handleClose = useCallback(() => {
     setStep(mode === 'RemoveRecovery'
@@ -675,24 +635,25 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 </Warning>
               </Grid>}
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
-              <PasswordWithTwoButtonsAndUseProxy
-                chain={chain}
+              <SignArea2
+                address={address}
+                call={call}
                 disabled={nothingToWithdrawNow || canPayFeeAndDeposit.isAbleToPay !== true}
+                extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
-                label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
-                onChange={setPassword}
-                onPrimaryClick={onNext}
                 onSecondaryClick={specific
                   ? closeWindow
                   : handleClose}
                 primaryBtnText={t<string>('Confirm')}
-                proxiedAddress={formatted}
-                proxies={proxyItems}
                 proxyTypeFilter={['Any', 'NonTransfer']}
                 secondaryBtnText={t<string>('Cancel')}
                 selectedProxy={selectedProxy}
                 setIsPasswordError={setIsPasswordError}
+                setSelectedProxy={setSelectedProxy}
                 setStep={setStep}
+                setTxInfo={setTxInfo}
+                step={step}
+                steps={STEPS}
               />
             </Grid>
           </>
