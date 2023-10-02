@@ -202,14 +202,14 @@ export default function RecoveryConfig({ address, api, mode, recoveryConfig, set
     } else if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS) {
       setStep(STEPS.INDEX);
       setMode(undefined);
+      mode === 'SetRecovery' && setRecoveryConfig(undefined);
     } else if (configStep === CONFIG_STEPS.SET_DETAILS) {
       setConfigStep(CONFIG_STEPS.SELECT_TRUSTED_FRIENDS);
-      // setMode(undefined);
     }
-  }, [configStep, mode, setMode, setStep]);
+  }, [configStep, mode, setMode, setRecoveryConfig, setStep]);
 
   const goNext = useCallback(() => {
-    if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS && !mode) {
+    if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS && mode !== 'ModifyRecovery') {
       setConfigStep(CONFIG_STEPS.SET_DETAILS);
       setMode('SetRecovery');
     } else if (configStep === CONFIG_STEPS.SELECT_TRUSTED_FRIENDS && mode === 'ModifyRecovery') {
