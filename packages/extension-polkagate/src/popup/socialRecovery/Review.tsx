@@ -17,15 +17,15 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
+import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
+import { useAccountDisplay, useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { signAndSend } from '../../util/api';
-import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { CanPayFee, Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import blockToDate from '../crowdloans/partials/blockToDate';
 import { DraggableModal } from '../governance/components/DraggableModal';
@@ -100,6 +100,20 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
   const clearIdentity = api && api.tx.identity.clearIdentity;
   const removeProxies = api && api.tx.proxy.removeProxies;
   const unbond = api && api.tx.nominationPools.unbond;
+
+  const depositToPay = useMemo(() => {
+    if (['CloseRecovery', 'RemoveRecovery', 'VouchRecovery', 'Withdraw'].includes(mode ?? '')) {
+      return BN_ZERO;
+    } else if (mode === 'ModifyRecovery') {
+      const partial = depositValue.gt(recoveryInfo?.deposit ?? BN_ZERO) ? depositValue.sub(recoveryInfo?.deposit ?? BN_ZERO) : BN_ZERO;
+
+      return partial;
+    } else {
+      return depositValue;
+    }
+  }, [depositValue, mode, recoveryInfo]);
+
+  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!api || !batchAll || !redeem || !poolRedeem || !unbond || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
@@ -475,6 +489,9 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             {isPasswordError &&
               <WrongPasswordAlert />
             }
+            {canPayFeeAndDeposit.isAbleToPay === false &&
+              <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
+            }
             <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
@@ -660,7 +677,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             <Grid container item sx={{ '> div #TwoButtons': { '> div': { justifyContent: 'space-between', width: '450px' }, justifyContent: 'flex-end' }, pb: '20px' }}>
               <PasswordWithTwoButtonsAndUseProxy
                 chain={chain}
-                disabled={nothingToWithdrawNow}
+                disabled={nothingToWithdrawNow || canPayFeeAndDeposit.isAbleToPay !== true}
                 isPasswordError={isPasswordError}
                 label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
                 onChange={setPassword}

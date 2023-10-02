@@ -79,5 +79,6 @@ export { default as RescueRecoveryIcon } from './SVG/RescueRecoveryIcon';
 export { default as VouchRecoveryIcon } from './SVG/VouchRecoveryIcon';
 export { default as SocialRecoveryIcon } from './SVG/SocialRecoveryIcon';
 export { default as SignArea2 } from './SignArea2';
+export { default as CanPayErrorAlert } from './CanPayErrorAlert';
 
 export * from './contexts';
