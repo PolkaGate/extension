@@ -203,7 +203,7 @@ export default function DecisionDeposit({ address, open, refIndex, setOpen, trac
                 disabled={notEnoughBalance}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
-                onSecondaryClick={() => setOpen(false)}
+                onSecondaryClick={handleClose}
                 params={[refIndex]}
                 primaryBtnText={t<string>('Confirm')}
                 proxyTypeFilter={GOVERNANCE_PROXY}
