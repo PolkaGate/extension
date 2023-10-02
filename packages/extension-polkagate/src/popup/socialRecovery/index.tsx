@@ -72,7 +72,7 @@ export default function SocialRecovery(): React.ReactElement {
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
   const [fetchingLostAccountInfos, setFetchingLostAccountInfos] = useState<boolean>(false);
 
-  const lostAccountInformation = useLostAccountInformation(accountsInfo, fetchingLostAccountInfos ? api : undefined, lostAccountAddress?.address, String(formatted), sessionInfo);
+  const lostAccountInformation = useLostAccountInformation(accountsInfo, fetchingLostAccountInfos ? api : undefined, lostAccountAddress?.address, String(formatted), sessionInfo, refresh);
 
   const activeRecoveries = useActiveRecoveries(refresh ? undefined : api);
   const unsupportedChain = useMemo(() => !!(chain?.genesisHash && !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash))), [chain?.genesisHash]);

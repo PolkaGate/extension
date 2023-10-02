@@ -4,7 +4,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -13,7 +13,7 @@ import { BN } from '@polkadot/util';
 import { SessionInfo, WithdrawInfo } from '../popup/socialRecovery/util/types';
 import { checkLostAccountBalance, checkLostAccountClaimedStatus, checkLostAccountIdentity, checkLostAccountPoolStakedBalance, checkLostAccountProxy, checkLostAccountRecoverability, checkLostAccountSoloStakedBalance } from '../popup/socialRecovery/util/utils';
 
-export default function useLostAccountInformation(accountsInfo: DeriveAccountInfo[] | undefined, api: ApiPromise | undefined, lostAccountAddress: string | undefined, rescuerAccountAddress: string | undefined, sessionInfo: SessionInfo | undefined): WithdrawInfo | undefined {
+export default function useLostAccountInformation(accountsInfo: DeriveAccountInfo[] | undefined, api: ApiPromise | undefined, lostAccountAddress: string | undefined, rescuerAccountAddress: string | undefined, sessionInfo: SessionInfo | undefined, refresh: boolean): WithdrawInfo | undefined {
   const [lostAccountInformation, setLostAccountInformation] = useState<WithdrawInfo>();
   const [fetching, setFetching] = useState<boolean>(false);
   const [lostAccountBalance, setLostAccountBalance] = useState<Balance | undefined>();
@@ -29,7 +29,28 @@ export default function useLostAccountInformation(accountsInfo: DeriveAccountInf
   const [alreadyClaimed, setAlreadyClaimed] = useState<boolean | undefined>();
   const [lostAccountRecoveryInfo, setLostAccountRecoveryInfo] = useState<PalletRecoveryRecoveryConfig | null | undefined | false>(false);
 
+  const clearInformation = useCallback(() => {
+    setLostAccountInformation(undefined);
+    setFetching(false);
+    setLostAccountBalance(undefined);
+    setLostAccountRedeemable(undefined);
+    setLostAccountPoolRedeemable(undefined);
+    setLostAccountSoloStakingBalance(undefined);
+    setLostAccountPoolStakingBalance(undefined);
+    setLostAccountReserved(undefined);
+    setLostAccountSoloUnlock(undefined);
+    setLostAccountPoolUnlock(undefined);
+    setLostAccountIdentity(undefined);
+    setLostAccountProxy(undefined);
+    setAlreadyClaimed(undefined);
+    setLostAccountRecoveryInfo(undefined);
+  }, []);
+
   useEffect(() => {
+    if (refresh) {
+      clearInformation();
+    }
+
     if (!api || !lostAccountAddress || !rescuerAccountAddress || !sessionInfo || !accountsInfo || accountsInfo.length === 0 || fetching) {
       return;
     }
@@ -43,7 +64,7 @@ export default function useLostAccountInformation(accountsInfo: DeriveAccountInf
     checkLostAccountIdentity(accountsInfo, lostAccountAddress, setLostAccountIdentity);
     checkLostAccountProxy(api, lostAccountAddress, setLostAccountProxy);
     checkLostAccountRecoverability(api, lostAccountAddress, setLostAccountRecoveryInfo);
-  }, [accountsInfo, api, fetching, lostAccountAddress, rescuerAccountAddress, sessionInfo]);
+  }, [accountsInfo, api, clearInformation, fetching, lostAccountAddress, refresh, rescuerAccountAddress, sessionInfo]);
 
   useEffect(() => {
     if ([lostAccountBalance, lostAccountRedeemable, lostAccountPoolRedeemable, lostAccountSoloStakingBalance, lostAccountPoolStakingBalance, lostAccountReserved, lostAccountSoloUnlock, lostAccountPoolUnlock, lostAccountIdentity, lostAccountProxy, alreadyClaimed].includes(undefined) || fetching === false) {
