@@ -15,18 +15,17 @@ export default function CanPayErrorAlert ({ canPayStatements }: { canPayStatemen
   const { t } = useTranslation();
 
   return (
-    <Grid container height='35px'>
+    <Grid alignItems='center' container height='35px'>
       <Warning
         fontWeight={400}
         isDanger
         marginTop={0}
         theme={theme}
       >
-        {canPayStatements === CanPayStatements.CANNOTPAYFEE && t<string>('You do not have enough balance to pay fee for this transaction!')}
-        {canPayStatements === CanPayStatements.PROXYCANPAYFEE && t<string>('Selected proxy account doesn\'t have enough balance to pay fee for this transaction!')}
-        {(canPayStatements === CanPayStatements.CANNOTPAY || canPayStatements === CanPayStatements.CANNOTPAYDEPOSIT) &&
-          t<string>('You do not have enough balance to pay the deposit amount for this transaction!')
-        }
+        {canPayStatements === CanPayStatements.CANNOTPAYFEE && t<string>('Insufficient balance to cover transaction fee.')}
+        {canPayStatements === CanPayStatements.PROXYCANPAYFEE && t<string>('Selected proxy account lacks funds for the fee.')}
+        {canPayStatements === CanPayStatements.CANNOTPAY && t<string>('Your account balance is too low to complete the transaction.')}
+        {canPayStatements === CanPayStatements.CANNOTPAYDEPOSIT && t<string>('Insufficient balance for transaction deposit.')}
       </Warning>
     </Grid>
   );

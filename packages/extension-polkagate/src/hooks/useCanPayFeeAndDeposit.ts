@@ -1,9 +1,13 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable curly */
+
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
@@ -18,6 +22,34 @@ export default function useCanPayFeeAndDeposit(formatted: AccountId | string | u
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
   const [canPayStatement, setCanPayStatement] = useState<number>();
 
+  const getStatement = useCallback((canPayFee, canPayDeposit, canPayWholeAmount, useProxy, hasDeposit) => {
+    if (useProxy) {
+      if (hasDeposit) {
+        if (canPayFee && canPayDeposit) return CanPayStatements.CANPAY;
+        if (canPayFee && !canPayDeposit) return CanPayStatements.CANNOTPAYDEPOSIT;
+        if (!canPayFee && canPayDeposit) return CanPayStatements.PROXYCANPAYFEE;
+
+        return CanPayStatements.CANNOTPAY;
+      } else {
+        if (canPayFee) return CanPayStatements.CANPAY;
+
+        return CanPayStatements.PROXYCANPAYFEE;
+      }
+    } else {
+      if (hasDeposit) {
+        if (canPayWholeAmount) return CanPayStatements.CANPAY;
+        if (canPayDeposit) return CanPayStatements.CANNOTPAYFEE;
+        if (!canPayDeposit && canPayFee) return CanPayStatements.CANNOTPAYDEPOSIT;
+
+        return CanPayStatements.CANNOTPAY;
+      } else {
+        if (canPayFee) return CanPayStatements.CANPAY;
+
+        return CanPayStatements.CANNOTPAYFEE;
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (!balances || !estimatedFee) {
       return;
@@ -27,32 +59,36 @@ export default function useCanPayFeeAndDeposit(formatted: AccountId | string | u
       const canPayFee = getValue('available', proxyAddressBalances)?.gt(estimatedFee);
 
       if (deposit && !deposit.isZero()) {
-        const canPayDeposit = getValue('available', balances)?.gt(deposit);
+        const canPayDeposit = getValue('available', balances)?.gte(deposit);
 
-        const statement = canPayFee && canPayDeposit
-          ? CanPayStatements.CANPAY
-          : !canPayFee && canPayDeposit
-            ? CanPayStatements.PROXYCANPAYFEE
-            : canPayFee && !canPayDeposit
-              ? CanPayStatements.CANNOTPAYDEPOSIT
-              : CanPayStatements.CANNOTPAY;
+        const statement = getStatement(canPayFee, canPayDeposit, false, true, true);
 
-        setCanPayFeeAndDeposit(canPayFee && canPayDeposit);
+        setCanPayFeeAndDeposit(statement === 1);
         setCanPayStatement(statement);
 
         return;
       }
 
-      setCanPayFeeAndDeposit(canPayFee);
-      setCanPayStatement(canPayFee ? CanPayStatements.CANPAY : CanPayStatements.PROXYCANPAYFEE);
-    } else if (!proxyAddress) {
-      const amountToPay = estimatedFee?.add(deposit ?? BN_ZERO);
-      const canPay = getValue('available', balances)?.gt(amountToPay);
+      const statement = getStatement(canPayFee, true, false, true, false);
 
-      setCanPayFeeAndDeposit(canPay);
-      setCanPayStatement(canPay ? CanPayStatements.CANPAY : deposit?.isZero() ? CanPayStatements.CANNOTPAYFEE : CanPayStatements.CANNOTPAY);
+      setCanPayFeeAndDeposit(statement === 1);
+      setCanPayStatement(statement);
     }
-  }, [balances, deposit, estimatedFee, proxyAddress, proxyAddressBalances]);
+
+    if (!proxyAddress) {
+      const wholeAmount = estimatedFee.add(deposit ?? BN_ZERO);
+      const canPayFee = !!getValue('available', balances)?.gt(estimatedFee);
+      const canPayDeposit = !!getValue('available', balances)?.gte(deposit ?? BN_ZERO);
+      const canPayWholeAmount = !!getValue('available', balances)?.gt(wholeAmount);
+
+      const statement = getStatement(canPayFee, canPayDeposit, canPayWholeAmount, false, deposit && !deposit.isZero());
+
+      setCanPayStatement(statement);
+      setCanPayFeeAndDeposit(statement === 1);
+    }
+  }, [balances, deposit, estimatedFee, proxyAddress, proxyAddressBalances, getStatement]);
+
+  console.log('noooope:', canPayStatement)
 
   return { isAbleToPay: canPayFeeAndDeposit, statement: canPayStatement ?? 0 };
 }
