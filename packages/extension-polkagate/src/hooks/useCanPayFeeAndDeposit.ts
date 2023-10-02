@@ -16,7 +16,7 @@ import { getValue } from '../popup/account/util';
 import { CanPayFee, CanPayStatements } from '../util/types';
 import { useBalances } from '.';
 
-export default function useCanPayFeeAndDeposit(formatted: AccountId | string | undefined, proxyAddress: AccountId | string | undefined, estimatedFee: Balance | undefined, deposit: BN | Balance | undefined): CanPayFee {
+export default function useCanPayFeeAndDeposit (formatted: AccountId | string | undefined, proxyAddress: AccountId | string | undefined, estimatedFee: Balance | undefined, deposit: BN | Balance | undefined): CanPayFee {
   const balances = useBalances(formatted?.toString());
   const proxyAddressBalances = useBalances(proxyAddress?.toString());
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
@@ -87,8 +87,6 @@ export default function useCanPayFeeAndDeposit(formatted: AccountId | string | u
       setCanPayFeeAndDeposit(statement === 1);
     }
   }, [balances, deposit, estimatedFee, proxyAddress, proxyAddressBalances, getStatement]);
-
-  console.log('noooope:', canPayStatement)
 
   return { isAbleToPay: canPayFeeAndDeposit, statement: canPayStatement ?? 0 };
 }
