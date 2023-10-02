@@ -118,7 +118,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     !(withdrawInfo.poolRedeemable.amount.isZero()) && withdrawCalls.push(poolRedeem(withdrawInfo.lost, withdrawInfo.poolRedeemable.count));
     withdrawInfo.hasId && withdrawCalls.push(clearIdentity());
     withdrawInfo.hasProxy && withdrawCalls.push(removeProxies());
-    withdrawCalls.length > 0 && withdrawCalls.push(transferAll(formatted, false));
+    (withdrawCalls.length > 0 || !withdrawInfo.availableBalance.isZero()) && withdrawCalls.push(transferAll(formatted, false));
 
     return tx.length > 0
       ? batchAll([...tx, asRecovered(withdrawInfo.lost, batchAll(withdrawCalls))])
