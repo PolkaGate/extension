@@ -230,7 +230,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
             <Grid item sx={{ mt: '18px' }} xs={3}>
               <PButton
                 _mt='1px'
-                _onClick={() => setStep(0)}
+                _onClick={onSecondaryClick}
                 _variant='outlined'
                 text={t('Cancel')}
               />
