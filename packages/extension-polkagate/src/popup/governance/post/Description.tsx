@@ -131,7 +131,6 @@ export default function ReferendumDescription({ address, currentTreasuryApproval
                       <Grid item sx={{ color: theme.palette.mode === 'light' && 'text.disabled', opacity: theme.palette.mode === 'dark' && 0.6 }}>
                         {`$${requestedInUSD ? nFormatter(requestedInUSD, 2) : '0'}`}
                       </Grid>
-
                     </Grid>
                   </>
                 }

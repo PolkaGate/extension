@@ -183,6 +183,7 @@ export default function ReferendumPost(): React.ReactElement {
               />
               <StatusInfo
                 address={address}
+                isDecisionDepositPlaced={!!referendum?.decisionDepositPayer}
                 isOngoing={isOngoing}
                 refIndex={referendum?.index}
                 status={referendum?.status}
