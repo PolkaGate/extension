@@ -72,7 +72,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
   const from = selectedProxy?.delegate ?? formatted;
 
-  const ptx = useMemo(() => {
+  const ptx = useMemo((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!call || !api) {
       return;
     }
