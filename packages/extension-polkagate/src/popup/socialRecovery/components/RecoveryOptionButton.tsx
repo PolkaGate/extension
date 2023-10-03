@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 
 import { useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
-import { boxShadow } from '../../../util/utils';
+import { pgBoxShadow } from '../../../util/utils';
 
 interface RecoveryOptionButtonType {
   activeLost: ActiveRecoveryFor | null | undefined;
@@ -31,7 +31,7 @@ export default function RecoveryOptionButton({ activeLost, description, icon, on
     , [isDisabled, theme]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={activeLost ? undefined : onClickFunction} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: isDisabled ? theme.palette.secondary.contrastText : 'secondary.light', borderRadius: '7px', boxShadow: boxShadow(theme), cursor: activeLost ? 'default' : 'pointer', height: '125px', p: '25px', position: 'relative' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={activeLost ? undefined : onClickFunction} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: isDisabled ? theme.palette.secondary.contrastText : 'secondary.light', borderRadius: '7px', boxShadow: pgBoxShadow(theme), cursor: activeLost ? 'default' : 'pointer', height: '125px', p: '25px', position: 'relative' }}>
       {activeLost &&
         <Grid sx={{ bgcolor: 'rgba(116, 116, 116, 0.2)', borderRadius: '5px', height: '123px', position: 'absolute', right: 0, top: 0, width: '670px', zIndex: 10 }}>
         </Grid>

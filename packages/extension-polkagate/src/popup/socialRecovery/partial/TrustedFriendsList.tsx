@@ -3,13 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { ApiPromise } from '@polkadot/api';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../../../hooks';
+import { pgBoxShadow } from '../../../util/utils';
 import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import TrustedFriendAccount from '../components/TrustedFriendAccount';
 
@@ -24,9 +25,10 @@ interface Props {
 
 export default function TrustedFriendsList({ api, chain, friendsList, onRemoveFriend, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
-    <Grid container direction='column' item sx={{ '> :not(:last-child)': { borderBottom: '1px solid', borderBottomColor: '#D5CCD0' }, bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', display: 'block', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px', ...style }}>
+    <Grid container direction='column' item sx={{ '> :not(:last-child)': { borderBottom: '1px solid', borderBottomColor: '#D5CCD0' }, bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px', ...style }}>
       {title &&
         <Typography fontSize='20px' fontWeight={500} sx={{ borderBottom: '2px solid', borderBottomColor: '#D5CCD0', p: '3px', width: '100%' }}>
           {title}

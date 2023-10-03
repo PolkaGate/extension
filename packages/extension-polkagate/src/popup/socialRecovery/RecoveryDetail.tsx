@@ -15,6 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { ChainLogo, PButton, ShowBalance2, TwoButtons, Warning } from '../../components';
 import { useTranslation } from '../../hooks';
+import { pgBoxShadow } from '../../util/utils';
 import TrustedFriendsList from './partial/TrustedFriendsList';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { RecoveryConfigType, SocialRecoveryModes } from './util/types';
@@ -53,7 +54,7 @@ export default function RecoveryDetail ({ api, chain, recoveryInformation, setMo
   }, [recoveryInformation.delayPeriod, recoveryInformation.friends, recoveryInformation.threshold, setMode, setRecoveryConfig, setStep]);
 
   const RecoveryInformationDisplay = () => (
-    <Grid container direction='column' gap='10px' item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px' }}>
+    <Grid container direction='column' gap='10px' item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), maxHeight: '230px', mt: '20px', overflow: 'hidden', overflowY: 'scroll', p: '20px' }}>
       <Grid container item justifyContent='space-between'>
         <Typography fontSize='19px' fontWeight={400}>
           {t<string>('Recovery Threshold')}

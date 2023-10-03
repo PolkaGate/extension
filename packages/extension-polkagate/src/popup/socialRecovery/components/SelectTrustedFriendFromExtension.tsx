@@ -15,7 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { AccountContext, Label } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { getFormattedAddress } from '../../../util/utils';
+import { getFormattedAddress, pgBoxShadow } from '../../../util/utils';
 import TrustedFriendAccount from './TrustedFriendAccount';
 
 export type AddressWithIdentity = { address: string, accountIdentity: DeriveAccountInfo | undefined };
@@ -89,7 +89,7 @@ export default function SelectTrustedFriendFromExtension({ accountsInfo, address
         </Grid>
         <Popover
           PaperProps={{
-            sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.main', borderRadius: '7px', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)', py: '5px' }
+            sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.main', borderRadius: '7px', boxShadow: pgBoxShadow(theme), py: '5px' }
           }}
           anchorEl={anchorEl}
           anchorOrigin={{

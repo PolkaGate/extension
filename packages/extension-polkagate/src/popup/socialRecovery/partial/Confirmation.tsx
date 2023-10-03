@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -14,7 +14,7 @@ import { useToken, useTranslation } from '../../../hooks';
 import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
 import { TxInfo } from '../../../util/types';
-import { amountToHuman } from '../../../util/utils';
+import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 import Explorer from '../../history/Explorer';
 import FailSuccessIcon from '../../history/partials/FailSuccessIcon';
 import { AddressWithIdentity } from '../components/SelectTrustedFriend';
@@ -51,7 +51,7 @@ interface AccountWithTitleProps {
   accountInformation: DeriveAccountInfo | undefined;
 }
 
-export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true, value, lostAccountAddress }: DisplayInfoProps): React.ReactElement => {
+export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true, value }: DisplayInfoProps): React.ReactElement => {
   return (
     <>{value &&
       <Grid alignItems='center' container direction='column' justifyContent='center'>
@@ -70,6 +70,7 @@ export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true,
 
 export default function Confirmation({ activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo, WithdrawDetails }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const token = useToken(txInfo.from.address);
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
@@ -126,7 +127,7 @@ export default function Confirmation({ activeLost, decimal, depositValue, handle
 
   return (
     <Motion>
-      <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', pb: '8px' }}>
+      <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), pb: '8px' }}>
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}

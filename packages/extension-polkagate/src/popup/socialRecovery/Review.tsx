@@ -24,6 +24,7 @@ import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import { pgBoxShadow } from '../../util/utils';
 import blockToDate from '../crowdloans/partials/blockToDate';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -446,7 +447,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             {canPayFeeAndDeposit.isAbleToPay === false &&
               <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
             }
-            <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
+            <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'InitiateRecovery' || mode === 'VouchRecovery'

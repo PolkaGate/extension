@@ -13,18 +13,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
-import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
 import { Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
 import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
-import { signAndSend } from '../../util/api';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getSubstrateAddress, saveAsHistory } from '../../util/utils';
+import { getSubstrateAddress, pgBoxShadow } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
-import PasswordWithTwoButtonsAndUseProxy from '../governance/components/PasswordWithTwoButtonsAndUseProxy';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -212,7 +209,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', mb: '20px', p: '1% 3%' }}>
+            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
