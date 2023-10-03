@@ -5,7 +5,7 @@
 
 import '@vaadin/icons';
 
-import { Grid, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
+import { Grid, IconButton, SxProps, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -15,9 +15,10 @@ interface Props {
   value: string;
   copyText?: string | null | undefined;
   iconSize?: number;
+  style?: SxProps<Theme>;
 }
 
-function CopySeedButton({ copyText, iconSize = 20, value }: Props): React.ReactElement<Props> {
+function CopySeedButton ({ copyText, iconSize = 20, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -34,7 +35,7 @@ function CopySeedButton({ copyText, iconSize = 20, value }: Props): React.ReactE
   }, []);
 
   return (
-    <Grid item>
+    <Grid container item sx={style}>
       <Tooltip
         arrow={!copied}
         componentsProps={{

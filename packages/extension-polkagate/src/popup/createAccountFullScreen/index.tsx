@@ -14,6 +14,7 @@ import { createAccountSuri, createSeed } from '../../messaging';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import Passwords2 from './components/Passwords2';
+import DownloadSeedButton from './components/DownloadSeedButton';
 
 export default function CreateAccount(): React.ReactElement {
   useFullscreen();
@@ -79,9 +80,16 @@ export default function CreateAccount(): React.ReactElement {
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '18px', fontWeight: 400, p: '8px 12px' }}>
         {seed}
       </Grid>
-      <CopySeedButton
-        value={seed ?? ''}
-      />
+      <Grid container item>
+        <CopySeedButton
+          style={{ width: 'fit-content' }}
+          value={seed ?? ''}
+        />
+        <DownloadSeedButton
+          style={{ width: 'fit-content' }}
+          value={seed ?? ''}
+        />
+      </Grid>
     </Grid>
   );
 
@@ -106,7 +114,7 @@ export default function CreateAccount(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
           </Typography>
-          <MnemonicSeedDisplay style={{ my: '15px' }} />
+          <MnemonicSeedDisplay />
           <InputWithLabel
             isError={name === null || name?.length === 0}
             isFocused
