@@ -32,8 +32,9 @@ function AddAccount(): React.ReactElement {
   );
 
   const _goToCreate = useCallback(
-    () => onAction('/account/create'),
-    [onAction]
+    (): void => {
+      windowOpen('/account/create').catch(console.error);
+    }, []
   );
 
   const _goToAddAddressOnly = useCallback(
