@@ -13,8 +13,8 @@ import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountSuri, createSeed } from '../../messaging';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
-import Passwords2 from './components/Passwords2';
 import DownloadSeedButton from './components/DownloadSeedButton';
+import Passwords2 from './components/Passwords2';
 
 export default function CreateAccount(): React.ReactElement {
   useFullscreen();
@@ -103,7 +103,7 @@ export default function CreateAccount(): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '10%' }}>
           <Grid alignContent='center' alignItems='center' container item>
             <Grid item sx={{ mr: '20px' }}>
-              <vaadin-icon icon='vaadin:plus-circle-o' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
+              <vaadin-icon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
