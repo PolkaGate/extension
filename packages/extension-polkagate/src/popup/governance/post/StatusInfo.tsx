@@ -16,14 +16,15 @@ import DecisionDeposit from './decisionDeposit';
 
 interface Props {
   address: string | undefined;
-  timeline: Timeline[] | undefined;
-  status: string | undefined;
-  track: Track | undefined;
+  isDecisionDepositPlaced: boolean
   isOngoing: boolean;
+  status: string | undefined;
+  timeline: Timeline[] | undefined;
+  track: Track | undefined;
   refIndex: number | undefined;
 }
 
-export default function StatusInfo({ address, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
+export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();
@@ -39,6 +40,7 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
       case 'Confirm':
         return t('Confirming');
       case 'Submitted':
+      case 'DecisionDepositPlaced':
         return t('Preparing');
       case 'Executed':
         return null;
@@ -101,7 +103,7 @@ export default function StatusInfo({ address, isOngoing, refIndex, status, timel
           </Grid>
         </Infotip2>
       </Grid>
-      {_status === t('Preparing') &&
+      {!isDecisionDepositPlaced &&
         <PayDecisionDeposit
           setOpenDecisionDeposit={setOpenDecisionDeposit}
         />
