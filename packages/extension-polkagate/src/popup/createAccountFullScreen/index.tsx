@@ -114,7 +114,7 @@ export default function CreateAccount(): React.ReactElement {
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
           </Typography>
-          <MnemonicSeedDisplay />
+          <MnemonicSeedDisplay style={{ marginBlock: '20px' }} />
           <InputWithLabel
             isError={name === null || name?.length === 0}
             isFocused
