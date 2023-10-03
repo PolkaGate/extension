@@ -349,7 +349,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
         <Grid container direction='column' py='20px'>
           <Grid alignItems='center' container item mb='15px'>
             <Grid container item pr='10px' width='fit-content'>
-              {((mode === 'SetRecovery' && step === STEPS.REVIEW) || ['RemoveRecovery', 'ModifyRecovery'].includes(mode ?? '')) &&
+              {((mode === 'SetRecovery' && [STEPS.REVIEW, STEPS.WAIT_SCREEN].includes(step)) || ['RemoveRecovery', 'ModifyRecovery'].includes(mode ?? '')) &&
                 <MakeRecoverableIcon
                   color={theme.palette.text.primary}
                   height={45}
