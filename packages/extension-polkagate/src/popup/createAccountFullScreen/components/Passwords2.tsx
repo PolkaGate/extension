@@ -51,7 +51,6 @@ export default function Passwords2 ({ firstPassStyle, secondPassStyle, isFocusse
       <ValidatedInput2
         component={Password}
         dataInputRepeatPassword
-        // data-input-repeat-password
         label={t<string>('Repeat the password')}
         onEnter={onEnter}
         onValidatedChange={setPass2}

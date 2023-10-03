@@ -39,19 +39,6 @@ export default function CreateAccount(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect((): void => {
-  //   if (seed) {
-  //     const type = chain && chain.definition.chainType === 'ethereum'
-  //       ? 'ethereum'
-  //       : DEFAULT_TYPE;
-
-  //     setType(type);
-  //     validateSeed(seed, type)
-  //       .then(({ address }) => setAddress(address))
-  //       .catch(console.error);
-  //   }
-  // }, [seed, chain]);
-
   const onNameChange = useCallback((enteredName: string) => {
     // Remove leading white spaces
     const trimmedName = enteredName.replace(/^\s+/, '');
@@ -97,8 +84,6 @@ export default function CreateAccount(): React.ReactElement {
       />
     </Grid>
   );
-
-  console.log('name:', name)
 
   return (
     <Grid bgcolor={indexBgColor} container item justifyContent='center'>

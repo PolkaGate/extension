@@ -28,7 +28,9 @@ function CopySeedButton({ copyText, iconSize = 20, value }: Props): React.ReactE
   }, []);
 
   const handelCloseToolTip = useCallback(() => {
-    setTimeout(() => setCopy(false), 200);
+    const timer = setTimeout(() => setCopy(false), 200);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
