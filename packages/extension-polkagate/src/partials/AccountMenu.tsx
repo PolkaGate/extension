@@ -11,10 +11,10 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain } from '../components';
+import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon } from '../components';
 import { useAccount, useApi, useChain, useFormatted, useGenesisHashOptions, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
-import { IDENTITY_CHAINS } from '../util/constants';
+import { IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
 
 interface Props {
@@ -77,6 +77,10 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
   }, [address]);
 
+  const _onSocialRecovery = useCallback(() => {
+    address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
+  }, [address]);
+
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container item justifyContent='center' my='20px' pl='8px'>
@@ -102,6 +106,21 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         }
         onClick={_onManageId}
         text={t('Manage identity')}
+      />
+      <MenuItem
+        disabled={!chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))}
+        iconComponent={
+          <SocialRecoveryIcon
+            color={
+              !chain || !(SOCIAL_RECOVERY_CHAINS.includes(chain.genesisHash ?? ''))
+                ? theme.palette.text.disabled
+                : theme.palette.text.primary}
+            height={22}
+            width={22}
+          />
+        }
+        onClick={_onSocialRecovery}
+        text={t('Social Recovery')}
       />
       <Divider sx={{ bgcolor: 'secondary.light', height: '1px', my: '7px' }} />
       <MenuItem

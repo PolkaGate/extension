@@ -3,15 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useMemo,useState } from 'react';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
 import { useApi, useChain } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { BalancesInfo, Proxy, TxInfo } from '../../util/types';
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import Confirmation from './Confirmation';
@@ -31,6 +31,8 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);
+  const theme = useTheme();
+
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -74,7 +76,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', mb: '20px', p: '1% 3%' }}>
+            <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {t<string>('From')}

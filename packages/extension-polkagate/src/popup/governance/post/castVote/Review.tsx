@@ -37,9 +37,10 @@ interface Props {
   tx: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
   status: string | undefined;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalHeight: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function Review({ address, estimatedFee, selectedProxy, setRefresh, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const decimal = useDecimal(address);
   const token = useToken(address);
@@ -49,7 +50,6 @@ export default function Review({ address, estimatedFee, selectedProxy, setRefres
   const ref = useRef(null);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [modalHeight, setModalHeight] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const isOngoing = !ENDED_STATUSES.includes(status);
@@ -110,7 +110,7 @@ export default function Review({ address, estimatedFee, selectedProxy, setRefres
     if (ref) {
       setModalHeight(ref.current?.offsetHeight as number);
     }
-  }, []);
+  }, [setModalHeight]);
 
   const onBackClick = useCallback(() =>
     setStep(step === STEPS.REVIEW ? STEPS.INDEX : STEPS.PREVIEW)

@@ -731,3 +731,13 @@ export interface DropdownOption {
 }
 
 export type TransferType = 'All' | 'Max' | 'Normal';
+
+export type CanPayFee = { isAbleToPay: boolean | undefined, statement: number };
+
+export enum CanPayStatements {
+  CANNOTPAY,
+  CANPAY,
+  CANNOTPAYFEE,
+  CANNOTPAYDEPOSIT,
+  PROXYCANPAYFEE,
+};

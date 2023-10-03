@@ -38,7 +38,7 @@ export const darkTheme: ThemeOptions = {
     background: { default: '#171717', paper: '#000000' },
     text: { primary: '#FFFFFF', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
-    success: { main: '#1F7720' }, //'#46890C'
+    success: { main: '#1F7720' }, // '#46890C'
     warning: { main: '#FF002B' }
   },
   components: {

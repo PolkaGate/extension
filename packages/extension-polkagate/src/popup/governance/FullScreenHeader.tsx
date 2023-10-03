@@ -11,12 +11,13 @@ import { logoBlack } from '../../assets/logos';
 import { ActionContext } from '../../components';
 import { useApi, useChain } from '../../hooks';
 import { FullScreenChainSwitch, FullScreenRemoteNode } from '../../partials';
-import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS } from '../../util/constants';
+import { EXTENSION_NAME, GOVERNANCE_CHAINS, IDENTITY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
-export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentity' | 'send' }): React.ReactElement {
+export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' }): React.ReactElement {
+
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
@@ -29,13 +30,15 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
         return GOVERNANCE_CHAINS;
       case 'manageIdentity':
         return IDENTITY_CHAINS;
+      case 'socialRecovery':
+        return SOCIAL_RECOVERY_CHAINS;
       default:
         return [];
     }
   }, [page]);
 
   const onAccountChange = useCallback((address: string) =>
-    onAction(`/${page}/${address}${topMenu ? `/${topMenu}` : ''}${postId ? `/${postId}` : ''}`)
+    onAction(`/${page}/${address}${topMenu ? `/${topMenu}` : page === 'socialRecovery' ? '/false' : ''}${postId ? `/${postId}` : ''}`)
     , [onAction, page, postId, topMenu]);
 
   return (

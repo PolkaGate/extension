@@ -8,6 +8,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, useThe
 import React from 'react';
 
 import { useTranslation } from '../../../components/translate';
+import { pgBoxShadow } from '../../../util/utils';
 import DisplaySubId from './DisplaySubId';
 
 interface Props {
@@ -28,7 +29,7 @@ export default function SubIdsAccordion({ judgements, parentNameID, subIdAccount
             {t<string>('Sub Identities')}
           </Typography>
         </AccordionSummary>
-        <AccordionDetails sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', py: '15px' }}>
+        <AccordionDetails sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), py: '15px' }}>
           <Grid container item rowGap='18px'>
             {subIdAccounts.map((id, index) => (
               <DisplaySubId

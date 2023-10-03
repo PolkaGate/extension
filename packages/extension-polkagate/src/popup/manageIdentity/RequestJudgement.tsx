@@ -15,10 +15,11 @@ import { useTranslation } from '../../components/translate';
 import { useChain, useChainName } from '../../hooks';
 import { REGISTRARS_LIST } from '../../util/constants';
 import { DropdownOption } from '../../util/types';
+import { pgBoxShadow } from '../../util/utils';
+import { toTitleCase } from '../governance/utils/util';
+import FailSuccessIcon from '../history/partials/FailSuccessIcon';
 import DisplayIdentity from './component/DisplayIdentity';
 import { IdJudgement, Mode, STEPS } from '.';
-import FailSuccessIcon from '../history/partials/FailSuccessIcon';
-import { toTitleCase } from '../governance/utils/util';
 
 interface Props {
   address: string;
@@ -175,7 +176,7 @@ export default function RequestJudgement({ address, api, idJudgement, maxFeeValu
           </Grid>
         </>
         : <>
-          <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', py: '20px' }}>
+          <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), py: '20px' }}>
             <FailSuccessIcon
               showLabel={false}
               style={{ fontSize: '87px', m: '20px auto', textAlign: 'center', width: 'fit-content' }}

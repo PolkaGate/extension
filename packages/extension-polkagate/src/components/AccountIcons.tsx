@@ -11,6 +11,7 @@ import React, { useCallback, useContext } from 'react';
 import { Chain } from '@polkadot/extension-chains/types';
 
 import { useTranslation } from '../hooks';
+import { windowOpen } from '../messaging';
 import { Proxy } from '../util/types';
 import { getSubstrateAddress } from '../util/utils';
 import { ActionContext } from './contexts';
@@ -39,6 +40,10 @@ export default function AccountIcons({ chain, formatted, identiconTheme, isSubId
     address && chain && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
+  const openSocialRecovery = useCallback(() => {
+    address && windowOpen(`/socialRecovery/${address}/false`);
+  }, [address]);
+
   return (
     <Grid container direction='column' sx={{ width: '17%', ml: '8px' }}>
       <Grid item m='auto' width='fit-content'>
@@ -55,7 +60,7 @@ export default function AccountIcons({ chain, formatted, identiconTheme, isSubId
         <Grid item>
           <Infotip placement='bottom-start' text={t('Is recoverable')}>
             <IconButton
-              // disabled={!recoverable}
+              onClick={openSocialRecovery}
               sx={{ height: '15px', width: '15px' }}>
               <FontAwesomeIcon
                 color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}

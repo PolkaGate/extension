@@ -33,6 +33,7 @@ interface Props {
   params?: unknown[] | (() => unknown[]) | undefined;
   primaryBtn?: boolean;
   primaryBtnText?: string;
+  proxyModalHeight?: number | undefined
   prevState?: Record<string, any>;
   proxyTypeFilter: ProxyTypes[] | string[];
   secondaryBtnText?: string;
@@ -50,7 +51,7 @@ interface Props {
 }
 
 /** This puts usually at the end of review page where user can do enter password, choose proxy or use other alternatives like signing using ledger */
-export default function SignArea({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, setRefresh, secondaryBtnText, selectedProxy, setIsPasswordError, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
+export default function SignArea({ address, call, disabled, extraInfo, isPasswordError, onSecondaryClick, params, prevState, primaryBtn, primaryBtnText, proxyModalHeight, proxyTypeFilter, secondaryBtnText, selectedProxy, setIsPasswordError, setRefresh, setSelectedProxy, setStep, setTxInfo, showBackButtonWithUseProxy = true, steps, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const chain = useChain(address);
@@ -72,7 +73,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
   const from = selectedProxy?.delegate ?? formatted;
 
-  const ptx = useMemo(() => {
+  const ptx = useMemo((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!call || !api) {
       return;
     }
@@ -139,6 +140,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
 
   const goToSelectProxy = useCallback(() => {
     setShowProxy(true);
+
     setStep(steps.PROXY);
   }, [setStep, steps]);
 
@@ -215,7 +217,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     <Grid container>
       {isLedger
         ? <>
-
           <Grid alignItems='center' container height='50px' item justifyContent='center' sx={{ '> div': { m: 0, p: 0 }, pt: '5px' }}>
             <Warning
               fontWeight={300}
@@ -229,7 +230,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
             <Grid item sx={{ mt: '18px' }} xs={3}>
               <PButton
                 _mt='1px'
-                _onClick={() => setStep(0)}
+                _onClick={onSecondaryClick}
                 _variant='outlined'
                 text={t('Cancel')}
               />
@@ -367,9 +368,9 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
             <SelectProxyModal2
               address={address}
               closeSelectProxy={closeSelectProxy}
-              height={500}
+              height={proxyModalHeight || 500}
               proxies={proxyItems}
-              proxyTypeFilter={['Any']}
+              proxyTypeFilter={proxyTypeFilter || ['Any']}
               selectedProxy={selectedProxy}
               setSelectedProxy={setSelectedProxy}
             />

@@ -11,9 +11,10 @@ interface Props {
   dividerHeight?: string;
   topDivider?: boolean;
   title: string;
+  childrenFontSize?: string;
 }
 
-export default function DisplayValue({ children, dividerHeight = '2px', title, topDivider = true }: Props): React.ReactElement<Props> {
+export default function DisplayValue({ children, childrenFontSize = '28px', dividerHeight = '2px', title, topDivider = true }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center'>
       <Grid item>
@@ -26,7 +27,7 @@ export default function DisplayValue({ children, dividerHeight = '2px', title, t
           {title}
         </Typography>
       </Grid>
-      <Grid fontSize='28px' fontWeight={400} item>
+      <Grid fontSize={childrenFontSize} fontWeight={400} item>
         {children}
       </Grid>
     </Grid>

@@ -3,13 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { Motion, ShortAddress, TwoButtons } from '../../components';
 import { useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { NameAddress, TxInfo } from '../../util/types';
+import { pgBoxShadow } from '../../util/utils';
 import Explorer from '../history/Explorer';
 import FailSuccessIcon from '../history/partials/FailSuccessIcon';
 
@@ -26,6 +27,7 @@ interface DisplayInfoProps {
 
 export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
@@ -63,7 +65,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
 
   return (
     <Motion>
-      <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', pb: '15px' }}>
+      <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), pb: '15px' }}>
         <FailSuccessIcon
           showLabel={false}
           style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}

@@ -1,15 +1,16 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+/* eslint-disable react/jsx-max-props-per-line */
 
-import { AccountWithChildren } from '@polkadot/extension-base/background/types';
+import { Container, Grid, useTheme } from '@mui/material';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../../components';
+import { AccountContext, Warning } from '../../components';
 import { useChainNames, useMerkleScience, usePrices, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
@@ -23,14 +24,15 @@ export default function Home(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts, hierarchy } = useContext(AccountContext);
   const chainNames = useChainNames();
+  const theme = useTheme();
 
   usePrices(chainNames); // get balances for all chains available in accounts
-  useMerkleScience(undefined, undefined, true);  // to download the data file
+  useMerkleScience(undefined, undefined, true); // to download the data file
 
-  const [sortedAccount, setSortedAccount] = useState<AccountWithChildren[]>([]);
   const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
+  const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
 
   useEffect(() => {
     const isTestnetDisabled = window.localStorage.getItem('testnet_enabled') !== 'true';
@@ -58,8 +60,8 @@ export default function Home(): React.ReactElement {
     }).catch(() => null);
   }, []);
 
-  useEffect(() => {
-    setSortedAccount(hierarchy.sort((a, b) => {
+  const sortedAccount = useMemo(() =>
+    hierarchy.sort((a, b) => {
       const x = a.name.toLowerCase();
       const y = b.name.toLowerCase();
 
@@ -72,8 +74,8 @@ export default function Home(): React.ReactElement {
       }
 
       return 0;
-    }));
-  }, [hierarchy]);
+    })
+    , [hierarchy]);
 
   return (
     <>
@@ -92,6 +94,19 @@ export default function Home(): React.ReactElement {
                 text={t<string>('Polkagate')}
               />
             </Grid>
+            {hasActiveRecovery &&
+              <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
+                <Warning
+                  fontSize='16px'
+                  fontWeight={400}
+                  isBelowInput
+                  isDanger
+                  theme={theme}
+                >
+                  {t<string>('Suspicious recovery detected on one or more of your accounts.')}
+                </Warning>
+              </Grid>
+            }
             <YouHave
               hideNumbers={hideNumbers}
               setHideNumbers={setHideNumbers}
@@ -100,7 +115,7 @@ export default function Home(): React.ReactElement {
               disableGutters
               sx={[{
                 m: 'auto',
-                maxHeight: `${self.innerHeight - 165}px`,
+                maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`,
                 mt: '10px',
                 overflowY: 'scroll',
                 p: 0,
@@ -113,6 +128,7 @@ export default function Home(): React.ReactElement {
                   hideNumbers={hideNumbers}
                   key={`${index}:${json.address}`}
                   quickActionOpen={quickActionOpen}
+                  setHasActiveRecovery={setHasActiveRecovery}
                   setQuickActionOpen={setQuickActionOpen}
                 />
               ))}

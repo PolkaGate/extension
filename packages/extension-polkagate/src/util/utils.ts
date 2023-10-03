@@ -6,6 +6,8 @@ import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 
+import { Theme } from '@mui/material';
+
 import { ApiPromise } from '@polkadot/api';
 import { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import { Chain } from '@polkadot/extension-chains/types';
@@ -352,3 +354,5 @@ export const isUrl = (input: string | undefined) => {
 
   return urlRegex.test(input);
 };
+
+export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';

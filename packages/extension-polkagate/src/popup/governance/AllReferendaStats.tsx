@@ -10,6 +10,7 @@ import { BN, BN_MILLION, BN_ZERO, u8aConcat } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../components';
 import { useApi, useChain, useChainName, useDecidingCount, useDecimal, usePrice, useToken, useTranslation } from '../../hooks';
+import { pgBoxShadow } from '../../util/utils';
 import blockToDate from '../crowdloans/partials/blockToDate';
 import useStyles from './styles/styles';
 import { getReferendumStatistics, Statistics } from './utils/helpers';
@@ -184,7 +185,7 @@ export function AllReferendaStats({ address, topMenu }: Props): React.ReactEleme
   const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);
 
   return (
-    <Container disableGutters sx={{  boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)' }}>
+    <Container disableGutters sx={{ boxShadow: pgBoxShadow(theme) }}>
       <Grid container sx={styles.allReferendaStatsContainer}>
         <Grid container item sx={styles.referendaStats}>
           <Grid container item sx={{ borderBottom: '2px solid gray', mb: '10px' }}>
