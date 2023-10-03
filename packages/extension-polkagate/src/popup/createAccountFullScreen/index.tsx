@@ -74,7 +74,7 @@ export default function CreateAccount(): React.ReactElement {
   const MnemonicSeedDisplay = ({ style }: { style?: SxProps<Theme> }) => (
     <Grid container display='block' item sx={style}>
       <Typography fontSize='16px' fontWeight={400}>
-        {t<string>('Generated 12-word Mnemonic seed')}
+        {t<string>('Generated 12-word recovery phrase')}
       </Typography>
       <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '18px', fontWeight: 400, p: '8px 12px' }}>
         {seed}
@@ -104,7 +104,7 @@ export default function CreateAccount(): React.ReactElement {
             </Grid>
           </Grid>
           <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('In order to create a new account you are given a 12-word Mnemonic seed which needs to be recorded and saved in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.')}
+            {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
           </Typography>
           <MnemonicSeedDisplay style={{ my: '15px' }} />
           <InputWithLabel
@@ -127,7 +127,7 @@ export default function CreateAccount(): React.ReactElement {
               <Checkbox2
                 checked={isMnemonicSaved}
                 iconStyle={{ transform: 'scale(1.13)' }}
-                label={t<string>('I have saved my mnemonic seed safely.')}
+                label={t<string>('I have saved my recovery phrase safely.')}
                 labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
                 onChange={onCheck}
               />

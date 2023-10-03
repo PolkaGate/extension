@@ -84,7 +84,7 @@ function AddAccount(): React.ReactElement {
         _mt='10px'
         _onClick={_goToImport}
         _variant={'outlined'}
-        text={t<string>('Import from mnemonic')}
+        text={t<string>('Import from recovery phrase')}
       />
       <PButton
         _mt='10px'
