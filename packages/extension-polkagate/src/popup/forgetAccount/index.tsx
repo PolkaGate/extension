@@ -93,7 +93,7 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
           marginTop={0}
           theme={theme}
         >
-          {t('Removing this account means losing access via this extension. To recover it later, use the mnemonic seed.')}
+          {t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
         </Warning>
       </Grid>
       <Grid m='40px auto 0' width='92%'>
