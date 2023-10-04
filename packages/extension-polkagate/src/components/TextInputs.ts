@@ -39,6 +39,9 @@ const TextBox = css(({ disabled = false, fontSize, height, margin, max, padding,
     -webkit-appearance: none;
     margin: 0;
   }
+  &&::-ms-reveal {
+    display: none;
+  };
   -moz-appearance: textfield;
   resize: none;
   width: ${width || '100%'};
