@@ -1,9 +1,11 @@
 // Copyright 2019-2023 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
@@ -34,8 +36,30 @@ export default function ManageProxies(): React.ReactElement {
   const chain = useMetadata(account?.genesisHash, true);
   const api = useApi(account?.address);
 
-  const proxyDepositBase = api?.consts?.proxy?.proxyDepositBase || BN_ZERO;
-  const proxyDepositFactor = api?.consts.proxy?.proxyDepositFactor || BN_ZERO;
+  const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
+  const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;
+
+  const depositToPay = useMemo(() => {
+    if (!proxyItems || proxyItems.length === 0) {
+      return BN_ZERO;
+    }
+
+    const alreadyHasProxy = proxyItems.filter((proxyItem) => proxyItem.status === 'current');
+    const newProxiesLength = proxyItems.filter((proxyItem) => proxyItem.status === 'new').length;
+    const removeProxiesLength = proxyItems.filter((proxyItem) => proxyItem.status === 'remove').length;
+
+    if (alreadyHasProxy.length === 0 && removeProxiesLength === 0) {
+      return depositValue;
+    }
+
+    const alreadyHasProxyDeposit = (proxyDepositFactor.muln((alreadyHasProxy.length + removeProxiesLength))).add(proxyDepositBase);
+
+    if (newProxiesLength > removeProxiesLength) {
+      return alreadyHasProxyDeposit.add(proxyDepositFactor.muln(newProxiesLength - removeProxiesLength));
+    } else {
+      return BN_ZERO;
+    }
+  }, [depositValue, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
   const _onBackClick = useCallback(() => {
     showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');
@@ -195,6 +219,7 @@ export default function ManageProxies(): React.ReactElement {
           address={formatted}
           api={api}
           chain={chain}
+          depositToPay={depositToPay}
           depositValue={depositValue}
           proxies={proxyItems}
         />

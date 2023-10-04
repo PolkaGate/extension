@@ -14,8 +14,8 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { ActionContext, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccount, useAccountDisplay } from '../../hooks';
+import { ActionContext, CanPayErrorAlert, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
+import { useAccount, useAccountDisplay, useCanPayFeeAndDeposit } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
@@ -30,9 +30,10 @@ interface Props {
   chain: Chain;
   depositValue: BN;
   proxies: ProxyItem[];
+  depositToPay: BN | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, proxies }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const account = useAccount(address);
@@ -51,6 +52,10 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
   const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
+
+  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
+  console.log('depositToPay:', depositToPay?.toString())
+
   const removeProxy = api.tx.proxy.removeProxy; /** (delegate, proxyType, delay) **/
   const addProxy = api.tx.proxy.addProxy; /** (delegate, proxyType, delay) **/
   const batchAll = api.tx.utility.batchAll;
@@ -145,6 +150,9 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       {isPasswordError &&
         <WrongPasswordAlert />
       }
+      {canPayFeeAndDeposit.isAbleToPay === false &&
+        <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
+      }
       <Grid container my='20px'>
         <SubTitle label={t<string>('Review')} />
       </Grid>
@@ -193,7 +201,8 @@ export default function Review({ address, api, chain, depositValue, proxies }: P
       </Grid>
       <PasswordUseProxyConfirm
         api={api}
-        estimatedFee={estimatedFee}
+        // estimatedFee={estimatedFee}
+        disabled={canPayFeeAndDeposit.isAbleToPay !== true}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}
         label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
