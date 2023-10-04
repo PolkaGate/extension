@@ -204,7 +204,7 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       recipientAddress,
       recipientChainName,
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
-      totalFee: (estimatedFee || BN_ZERO).add(estimatedCrossChainFee || BN_ZERO)
+      totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined
     });
   }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash]);
 
@@ -398,7 +398,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
               !recipientChainGenesisHash ||
               !(recipientAddress && inputs?.recipientAddress) ||
               Number(amount) <= 0 ||
-              amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO))
+              amountAsBN?.gt(new BN(balances?.availableBalance || BN_ZERO)) ||
+              !inputs?.totalFee
             }
             text={t<string>('Next')}
           />
