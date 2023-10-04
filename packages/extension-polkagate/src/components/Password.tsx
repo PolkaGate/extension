@@ -20,10 +20,9 @@ interface Props {
   onEnter?: () => void;
   placeholder?: string;
   value?: string;
-  withoutMargin?: boolean;
 }
 
-export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, withoutMargin }: Props): React.ReactElement<Props> {
+export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const theme = useTheme();

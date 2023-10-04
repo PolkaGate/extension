@@ -39,7 +39,6 @@ function Unlock ({ error, isBusy, onSign, password, setError, setPassword }: Pro
         label={t<string>('Password for this account')}
         onChange={_onChangePassword}
         onEnter={onSign}
-        withoutMargin
       />
     </Grid>
   );
