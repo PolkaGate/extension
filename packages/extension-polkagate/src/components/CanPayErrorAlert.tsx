@@ -24,7 +24,7 @@ export default function CanPayErrorAlert ({ canPayStatements }: { canPayStatemen
       >
         {canPayStatements === CanPayStatements.CANNOTPAYFEE && t<string>('Insufficient balance to cover transaction fee.')}
         {canPayStatements === CanPayStatements.PROXYCANPAYFEE && t<string>('Selected proxy account lacks funds for the fee.')}
-        {canPayStatements === CanPayStatements.CANNOTPAY && t<string>('Your account balance is too low to complete the transaction.')}
+        {canPayStatements === CanPayStatements.CANNOTPAY && t<string>('Insufficient balance to complete the transaction.')}
         {canPayStatements === CanPayStatements.CANNOTPAYDEPOSIT && t<string>('Insufficient balance for transaction deposit.')}
       </Warning>
     </Grid>
