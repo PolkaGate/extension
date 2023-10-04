@@ -140,7 +140,7 @@ function CreateAccount(): React.ReactElement {
                 checked={isMnemonicSaved}
                 iconStyle={{ transform: 'scale(1.13)' }}
                 label={t<string>('I have saved my recovery phrase safely.')}
-                labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px' }}
+                labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px', userSelect: 'none' }}
                 onChange={onCheck}
               />
             </Grid>
