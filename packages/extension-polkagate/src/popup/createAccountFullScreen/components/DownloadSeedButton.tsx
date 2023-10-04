@@ -59,4 +59,4 @@ function DownloadSeedButton({ bouncingTimeInSec = 3, iconSize = 23, style, text,
   );
 }
 
-export default (DownloadSeedButton);
+export default React.memo(DownloadSeedButton);

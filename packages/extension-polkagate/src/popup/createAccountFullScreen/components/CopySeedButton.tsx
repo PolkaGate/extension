@@ -92,4 +92,4 @@ function CopySeedButton({ copyText, iconSize = 20, style, value }: Props): React
   );
 }
 
-export default (CopySeedButton);
+export default React.memo(CopySeedButton);
