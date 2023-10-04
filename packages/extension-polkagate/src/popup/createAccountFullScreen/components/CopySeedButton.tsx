@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import '@vaadin/icons';
-
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, SxProps, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -18,7 +18,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function CopySeedButton ({ copyText, iconSize = 20, style, value }: Props): React.ReactElement<Props> {
+function CopySeedButton({ copyText, iconSize = 20, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -76,7 +76,11 @@ function CopySeedButton ({ copyText, iconSize = 20, style, value }: Props): Reac
         >
           <CopyToClipboard text={value}>
             <Grid alignItems='center' container item width='fit-content'>
-              <vaadin-icon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${iconSize}px` }} />
+              <FontAwesomeIcon
+                color={theme.palette.secondary.light}
+                fontSize={iconSize}
+                icon={faCopy}
+              />
               <Typography fontSize='16px' fontWeight={400} sx={{ pl: '8px', textDecoration: 'underline' }}>
                 {copyText ?? 'Copy to clipboard'}
               </Typography>

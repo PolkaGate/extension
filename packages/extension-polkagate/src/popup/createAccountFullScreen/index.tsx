@@ -81,11 +81,11 @@ export default function CreateAccount(): React.ReactElement {
         {seed}
       </Grid>
       <Grid container item>
-        <CopySeedButton
+        <DownloadSeedButton
           style={{ width: 'fit-content' }}
           value={seed ?? ''}
         />
-        <DownloadSeedButton
+        <CopySeedButton
           style={{ width: 'fit-content' }}
           value={seed ?? ''}
         />
