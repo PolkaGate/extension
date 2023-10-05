@@ -124,7 +124,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
 
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-between' ref={ref} sx={{ position: 'relative', ...style }}>
-      <Grid container item >
+      <Grid container item onClick={_showDropdown} >
         <Label
           helperText={helperText}
           label={label}
