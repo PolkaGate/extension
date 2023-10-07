@@ -32,7 +32,7 @@ import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAdd
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
 import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
-import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSON';
+import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
 import Metadata from '../../../extension-polkagate/src/popup/metadata';
