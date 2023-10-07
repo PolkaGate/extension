@@ -19,13 +19,15 @@ import { useFullscreen, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
+import { pgBoxShadow } from '../../../util/utils';
 import { FullScreenHeader } from '../../governance/FullScreenHeader';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
@@ -34,10 +36,10 @@ export default function RestoreJson (): React.ReactElement {
   const [isFileError, setFileError] = useState(false);
   const [requirePassword, setRequirePassword] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
+
   // don't use the info from the file directly
   // rather use what comes from the background from jsonGetAccountInfo
   const [file, setFile] = useState<KeyringPair$Json | KeyringPairs$Json | undefined>(undefined);
-  const theme = useTheme();
 
   const indexBgColor = useMemo(() => theme.palette.mode === 'light' ? '#DFDFDF' : theme.palette.background.paper, [theme.palette]);
   const contentBgColor = useMemo(() => theme.palette.mode === 'light' ? '#F1F1F1' : theme.palette.background.default, [theme.palette]);
@@ -148,7 +150,7 @@ export default function RestoreJson (): React.ReactElement {
               label={t<string>('Accounts')}
               style={{ margin: '20px auto 0' }}
             >
-              <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
+              <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
                 {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => (
                   <Address
                     address={address}
@@ -173,7 +175,7 @@ export default function RestoreJson (): React.ReactElement {
           <InputFileWithLabel
             accept={acceptedFormats}
             isError={isFileError}
-            label={stepOne ? t<string>('Upload your file') : t<string>('Backup JSON file')}
+            label={stepOne ? t<string>('Upload your file') : t<string>('File name')}
             labelStyle={{ marginBlock: '20px', width: '100%' }}
             onChange={onChangeFile}
             reset={stepOne}

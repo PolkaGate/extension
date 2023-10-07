@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, SxProps, Theme } from '@mui/material';
+import { Box, Grid, SxProps, Theme, useTheme } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 
@@ -11,6 +11,7 @@ import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
 import { upload } from '../assets/icons';
 import useTranslation from '../hooks/useTranslation';
+import { pgBoxShadow } from '../util/utils';
 import Label from './Label';
 import PButton from './PButton';
 
@@ -63,6 +64,7 @@ function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
 
 function InputFile({ accept, className = '', clearContent, convertHex, isDisabled, isError = false, label, labelStyle, onChange, placeholder, reset, style }: InputFileProps): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const dropRef = createRef<DropzoneRef>();
   const [file, setFile] = useState<FileState | undefined>();
 
@@ -116,7 +118,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
           sx={{ backgroundColor: 'background.paper', cursor: 'pointer', ...style }}
         >
           <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
-            <Grid alignItems='center' container direction='column' justifyContent='center'>
+            <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ boxShadow: pgBoxShadow(theme) }}>
               {(reset) &&
                 <Grid item sx={{ width: '60%' }}>
                   <PButton
@@ -146,7 +148,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
               <Grid item m={file ? 0 : '0px 0 20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
                 {
                   clearContent || reset
-                    ? placeholder || t<string>('drag and drop the file here')
+                    ? placeholder || t<string>('Drag and drop the file here')
                     : placeholder || t<string>('{{name}} ({{size}} bytes)', {
                       replace: {
                         name: file?.name,
