@@ -113,7 +113,7 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
           boxSizing='border-box'
           fontSize='16px'
           m='10px 15px'
-          maxHeight='200px'
+          maxHeight='255px'
           sx={{ backgroundColor: 'background.paper', cursor: 'pointer', ...style }}
         >
           <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '', className) })}>
@@ -130,21 +130,21 @@ function InputFile({ accept, className = '', clearContent, convertHex, isDisable
                 </Grid>
               }
               {(reset) &&
-                <Grid item mt='20px'>
+                <Grid item my='30px'>
                   {t('Or')}
                 </Grid>
               }
               {(reset) &&
-                <Grid item mt='13px'>
+                <Grid item>
                   <Box
                     component='img'
                     src={upload as string}
-                    sx={{ height: '35.5px', width: '51px' }}
+                    sx={{ height: '43px' }}
                   />
                 </Grid>
               }
               <input {...getInputProps()} />
-              <Grid item m={file ? 0 : '-7px 0 20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
+              <Grid item m={file ? 0 : '0px 0 20px'} p={file ? '10px 15px' : 0} sx={{ fontSize: file ? 16 : 18, fontWeight: file ? 400 : 300 }}>
                 {
                   clearContent || reset
                     ? placeholder || t<string>('drag and drop the file here')
