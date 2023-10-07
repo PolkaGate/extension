@@ -3,17 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Grid, SxProps, Theme } from '@mui/material';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
-import styled from 'styled-components';
 
 import { formatNumber, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 
 import { upload } from '../assets/icons';
 import useTranslation from '../hooks/useTranslation';
-import PButton from './PButton';
 import Label from './Label';
+import PButton from './PButton';
 
 function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
