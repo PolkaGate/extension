@@ -148,7 +148,7 @@ export default function RestoreJson (): React.ReactElement {
               label={t<string>('Accounts')}
               style={{ margin: '20px auto 0' }}
             >
-              <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: parent.innerHeight * 1 / 3, overflowY: 'scroll' }}>
+              <Grid container direction='column' sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}>
                 {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => (
                   <Address
                     address={address}
