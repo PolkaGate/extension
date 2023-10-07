@@ -128,7 +128,7 @@ export default function RestoreJson(): React.ReactElement {
       <HeaderBrand
         onBackClick={_onBackClick}
         showBackArrow
-        text={t<string>('Restore From File')}
+        text={t<string>('Restore from file')}
         withSteps={{
           current: `${stepOne ? 1 : 2}`,
           total: 2

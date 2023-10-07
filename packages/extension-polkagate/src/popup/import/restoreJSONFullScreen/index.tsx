@@ -133,7 +133,7 @@ export default function RestoreJson(): React.ReactElement {
             </Grid>
             <Grid item>
               <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Restore From File')}
+                {t<string>('Restore from file')}
               </Typography>
             </Grid>
           </Grid>
