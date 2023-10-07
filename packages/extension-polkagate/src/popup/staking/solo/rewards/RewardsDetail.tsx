@@ -165,11 +165,13 @@ export default function RewardsDetail({ api, chain, chainName, decimal, rewardDe
       }
 
       if (i === 0 && new Date(aggregatedRewards[i].timestamp * 1000).getDay() !== 0) {
-        aWeekRewards.push(aggregatedRewards.slice(0, counter > 0 ? counter : aggregatedRewards.length - 1));
+        const cutIndex = counter > 0 ? counter : aggregatedRewards.length - 1;
+
+        aWeekRewards.push(aggregatedRewards.slice(0, cutIndex || 1));
       }
     }
 
-    aWeekRewards.length && aWeekRewards.forEach((week, index) => {
+    aWeekRewards.length > 0 && aWeekRewards.forEach((week, index) => {
       const aWeekRewardsAmount: string[] = [];
       const aWeekRewardsLabel: string[] = [];
 
