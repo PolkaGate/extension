@@ -64,7 +64,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay);
 
   const setIdentity = api && api.tx.identity.setIdentity;
   const clearIdentity = api && api.tx.identity.clearIdentity;
@@ -140,7 +140,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
     setStep(mode === 'Set' || mode === 'Modify'
       ? STEPS.INDEX
       : mode === 'ManageSubId'
-        ? STEPS.MANAGESUBID
+        ? STEPS.MANAGE_SUBID
         : mode === 'RequestJudgement' || mode === 'CancelJudgement'
           ? STEPS.JUDGEMENT
           : STEPS.PREVIEW);
@@ -209,8 +209,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            {canPayFeeAndDeposit.isAbleToPay === false &&
-              <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
+            {feeAndDeposit.isAbleToPay === false &&
+              <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
@@ -330,7 +330,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
               <SignArea2
                 address={address}
                 call={tx}
-                disabled={canPayFeeAndDeposit.isAbleToPay !== true}
+                disabled={feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}

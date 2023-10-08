@@ -33,7 +33,7 @@ export const STEPS = {
   PREVIEW: 2,
   MODIFY: 3,
   REMOVE: 4,
-  MANAGESUBID: 5,
+  MANAGE_SUBID: 5,
   JUDGEMENT: 6,
   REVIEW: 7,
   WAIT_SCREEN: 8,
@@ -130,7 +130,7 @@ export default function ManageIdentity(): React.ReactElement {
       return basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
     }
 
-    if (mode === 'ManageSubId' || step === STEPS.MANAGESUBID) {
+    if (mode === 'ManageSubId' || step === STEPS.MANAGE_SUBID) {
       const remainSubIds = subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove');
 
       return subAccountDeposit.muln(remainSubIds?.length ?? 0);
@@ -162,9 +162,8 @@ export default function ManageIdentity(): React.ReactElement {
       if (subIdAccounts && subIdAccounts.length > 0) {
         const newSubs = (subIdAccountsToSubmit || []).filter((subId) => subId.status === 'new').length;
         const removeSubs = (subIdAccountsToSubmit || []).filter((subId) => subId.status === 'remove').length;
-        const toPay = subAccountDeposit.muln(newSubs - removeSubs);
 
-        return newSubs > removeSubs ? toPay : BN_ZERO;
+        return newSubs > removeSubs ? subAccountDeposit.muln(newSubs - removeSubs) : BN_ZERO;
       }
 
       return totalDeposit;
@@ -393,7 +392,7 @@ export default function ManageIdentity(): React.ReactElement {
             totalDeposit={totalDeposit}
           />
         }
-        {step === STEPS.MANAGESUBID && identity?.display && formatted &&
+        {step === STEPS.MANAGE_SUBID && identity?.display && formatted &&
           <SetSubId
             api={api}
             mode={mode}
