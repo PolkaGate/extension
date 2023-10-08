@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import { Check as CheckIcon } from '@mui/icons-material';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -230,6 +231,9 @@ export default function Vouch({ activeRecoveries, address, api, setMode, setStep
                 </Warning>
               </Grid>
               : <>
+                <Grid container item justifyContent='center' py='10px'>
+                  <CheckIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: 'white', fontSize: '40px', p: '3px' }} />
+                </Grid>
                 <Typography fontSize='18px' fontWeight={500}>
                   {'The lost account is recoverable and the recovery process has been initiated.'}
                 </Typography>

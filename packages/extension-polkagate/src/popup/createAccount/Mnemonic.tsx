@@ -43,13 +43,13 @@ function Mnemonic({ onNextStep, seed }: Props): React.ReactElement<Props> {
         setIsCopied={setIsCopied}
       />
       <Warning iconDanger marginTop={43} theme={theme}>
-        {t<string>('Please write down your wallet’s mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.')}
+        {t<string>('Please write down your wallet’s recovery phrase and keep it in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
       </Warning>
       <Grid item sx={{ mt: '55px', ml: '5px' }}>
         <Checkbox
           checked={isMnemonicSaved}
           iconStyle={{ transform: 'scale:(1.13)' }}
-          label={t<string>('I have saved my mnemonic seed safely.')}
+          label={t<string>('I have saved my recovery phrase safely.')}
           labelStyle={{ fontSize: '16px', marginLeft: '7px' }}
           onChange={() => setIsMnemonicSaved(!isMnemonicSaved)}
           style={{ ml: '15px', width: '92%' }}

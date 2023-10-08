@@ -59,8 +59,8 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
         setAddress('');
         onAccountChange(null);
         setError(path
-          ? t<string>('Invalid mnemonic seed or derivation path')
-          : t<string>('Invalid mnemonic seed')
+          ? t<string>('Invalid recovery phrase or derivation path')
+          : t<string>('Invalid recovery phrase')
         );
       });
   }, [t, genesis, seed, path, onAccountChange, type]);
@@ -88,7 +88,7 @@ export default function SeedAndPath({ className, onAccountChange, onNextStep, ty
           fontSize='18px'
           isError={!!error}
           isFocused
-          label={t<string>('Existing 12 or 24-word mnemonic seed')}
+          label={t<string>('Existing 12 or 24-word recovery phrase')}
           onChange={setSeed}
           rowsCount={2}
           value={seed || ''}

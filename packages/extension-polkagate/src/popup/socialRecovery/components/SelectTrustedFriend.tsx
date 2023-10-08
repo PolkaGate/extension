@@ -87,6 +87,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
       return;
     }
 
+    setAddressSelected(false)
     setEnteredAddress(value);
     findFriend(value);
   }, [addressSelected, findFriend, onSelectFriend]);
@@ -123,7 +124,7 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
 
   return (
     <Grid alignItems='flex-end' container item justifyContent='space-between' ref={ref} sx={{ position: 'relative', ...style }}>
-      <Grid container item onClick={_showDropdown}>
+      <Grid container item onClick={_showDropdown} >
         <Label
           helperText={helperText}
           label={label}
@@ -173,14 +174,14 @@ export default function SelectTrustedFriend({ accountsInfo = [], api, chain, dis
         </Label>
       </Grid>
       {friendsList && friendsList.length > 0 &&
-        <Grid container sx={{
+        <Grid alignContent='flex-start' alignItems='flex-start' container sx={{
           '> div:not(:last-child)': { borderBottom: '1px solid', borderColor: 'secondary.light' },
           bgcolor: 'background.paper',
           border: '2px solid',
           borderColor: 'secondary.light',
           borderRadius: '5px',
           boxShadow: '-2px 4px 4px 0px #000000B2',
-          maxHeight: '300px',
+          height: '300px',
           overflow: 'hidden',
           overflowY: 'scroll',
           position: 'absolute',

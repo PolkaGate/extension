@@ -24,7 +24,7 @@ export default function MnemonicSeed({ isCopied, onCopy, seed, setIsCopied }: Pr
       <TextAreaWithLabel
         className='mnemonicDisplay'
         isReadOnly
-        label={t<string>('Generated 12-word mnemonic seed:')}
+        label={t<string>('Generated 12-word recovery phrase:')}
         style={{ margin: 'auto', width: '92%' }}
         value={seed}
       />

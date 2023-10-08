@@ -284,7 +284,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
                     disabled={disabled}
                     isError={isPasswordError}
                     isFocused={true}
-                    label={`${t<string>('Password')} for ${selectedProxyName || senderName || ''}`}
+                    label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || senderName || '' } })}
                     onChange={_onChange}
                     onEnter={onConfirm}
                   />

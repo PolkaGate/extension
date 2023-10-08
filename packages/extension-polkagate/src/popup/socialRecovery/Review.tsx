@@ -18,7 +18,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
+import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, EndRecoveryIcon, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
@@ -373,6 +373,13 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               }
               {mode === 'VouchRecovery' &&
                 <VouchRecoveryIcon
+                  color={theme.palette.text.primary}
+                  height={45}
+                  width={45}
+                />
+              }
+              {mode === 'CloseRecovery' &&
+                <EndRecoveryIcon
                   color={theme.palette.text.primary}
                   height={45}
                   width={45}
