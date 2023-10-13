@@ -33,7 +33,7 @@ export const STEPS = {
   PREVIEW: 2,
   MODIFY: 3,
   REMOVE: 4,
-  MANAGESUBID: 5,
+  MANAGE_SUBID: 5,
   JUDGEMENT: 6,
   REVIEW: 7,
   WAIT_SCREEN: 8,
@@ -130,7 +130,7 @@ export default function ManageIdentity(): React.ReactElement {
       return basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO).add(subIdAccounts ? subAccountDeposit.muln(subIdAccounts.length) : BN_ZERO);
     }
 
-    if (mode === 'ManageSubId' || step === STEPS.MANAGESUBID) {
+    if (mode === 'ManageSubId' || step === STEPS.MANAGE_SUBID) {
       const remainSubIds = subIdAccountsToSubmit?.filter((subs) => subs.status !== 'remove');
 
       return subAccountDeposit.muln(remainSubIds?.length ?? 0);
@@ -138,6 +138,39 @@ export default function ManageIdentity(): React.ReactElement {
 
     return BN_ZERO;
   }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, identityToSet?.other?.discord, mode, step, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit]);
+
+  const depositToPay = useMemo(() => {
+    if (!mode || ['Clear', 'CancelJudgement'].includes(mode)) {
+      return BN_ZERO;
+    }
+
+    if (mode === 'Set') {
+      return totalDeposit;
+    }
+
+    if (mode === 'RequestJudgement') {
+      return maxFeeValue;
+    }
+
+    if (mode === 'Modify') {
+      const alreadyIdDeposit = basicDepositValue.add(identity?.other?.discord ? fieldDepositValue : BN_ZERO);
+
+      return totalDeposit.gt(alreadyIdDeposit) ? totalDeposit.sub(alreadyIdDeposit) : BN_ZERO;
+    }
+
+    if (mode === 'ManageSubId') {
+      if (subIdAccounts && subIdAccounts.length > 0) {
+        const newSubs = (subIdAccountsToSubmit || []).filter((subId) => subId.status === 'new').length;
+        const removeSubs = (subIdAccountsToSubmit || []).filter((subId) => subId.status === 'remove').length;
+
+        return newSubs > removeSubs ? subAccountDeposit.muln(newSubs - removeSubs) : BN_ZERO;
+      }
+
+      return totalDeposit;
+    }
+
+    return BN_ZERO;
+  }, [basicDepositValue, fieldDepositValue, identity?.other?.discord, maxFeeValue, mode, subAccountDeposit, subIdAccounts, subIdAccountsToSubmit, totalDeposit]);
 
   const fetchIdentity = useCallback(() => {
     setStep(STEPS.CHECK_SCREEN);
@@ -359,7 +392,7 @@ export default function ManageIdentity(): React.ReactElement {
             totalDeposit={totalDeposit}
           />
         }
-        {step === STEPS.MANAGESUBID && identity?.display && formatted &&
+        {step === STEPS.MANAGE_SUBID && identity?.display && formatted &&
           <SetSubId
             api={api}
             mode={mode}
@@ -396,6 +429,7 @@ export default function ManageIdentity(): React.ReactElement {
             api={api}
             chain={chain}
             depositValue={totalDeposit}
+            depositToPay={depositToPay}
             identityToSet={identityToSet}
             infoParams={infoParams}
             maxFeeAmount={maxFeeValue}

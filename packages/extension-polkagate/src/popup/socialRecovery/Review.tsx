@@ -105,7 +105,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     }
   }, [depositValue, mode, recoveryInfo]);
 
-  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!api || !batchAll || !redeem || !poolRedeem || !unbond || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
@@ -451,8 +451,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            {canPayFeeAndDeposit.isAbleToPay === false &&
-              <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
+            {feeAndDeposit.isAbleToPay === false &&
+              <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
             }
             <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
@@ -640,7 +640,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               <SignArea2
                 address={address}
                 call={call}
-                disabled={nothingToWithdrawNow || canPayFeeAndDeposit.isAbleToPay !== true}
+                disabled={nothingToWithdrawNow || feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={specific
