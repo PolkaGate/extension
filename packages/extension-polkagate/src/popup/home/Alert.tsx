@@ -22,7 +22,7 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
   const onAction = useContext(ActionContext);
 
   const onClose = useCallback(() => {
-    window.localStorage.setItem('In-Use Version', NEW_VERSION_ALERT);
+    window.localStorage.setItem('inUse_version', NEW_VERSION_ALERT);
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
