@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId, ExtrinsicPayload } from '@polkadot/types/interfaces';
-import type { AnyTuple } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { ApiPromise } from '@polkadot/api';
