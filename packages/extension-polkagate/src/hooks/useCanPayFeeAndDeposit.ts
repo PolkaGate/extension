@@ -55,6 +55,8 @@ export default function useCanPayFeeAndDeposit (formatted: AccountId | string | 
       return;
     }
 
+    setCanPayFeeAndDeposit(undefined);
+
     if (proxyAddress && proxyAddressBalances) {
       const canPayFee = getValue('available', proxyAddressBalances)?.gt(estimatedFee);
 

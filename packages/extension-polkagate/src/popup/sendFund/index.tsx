@@ -35,7 +35,7 @@ export interface Inputs {
   params: unknown[] | (() => unknown[]);
   recipientAddress: string | undefined;
   recipientGenesisHashOrParaId: string | undefined;
-  totalFee: BN;
+  totalFee?: BN;
   recipientChainName: string | undefined;
 }
 type StepsType = typeof STEPS[keyof typeof STEPS];

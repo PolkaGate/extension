@@ -15,12 +15,12 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { Chain } from '@polkadot/extension-chains/types';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
-import { useAccountDisplay, useFormatted, useProxies } from '../../hooks';
+import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
+import { useCanPayFeeAndDeposit, useFormatted, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { Proxy, ProxyItem, TxInfo } from '../../util/types';
-import { getSubstrateAddress, pgBoxShadow } from '../../util/utils';
+import { pgBoxShadow } from '../../util/utils';
 import { DraggableModal } from '../governance/components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
 import WaitScreen from '../governance/partials/WaitScreen';
@@ -35,6 +35,7 @@ interface Props {
   address: string;
   api: ApiPromise | undefined;
   chain: Chain;
+  depositToPay: BN | undefined;
   depositValue: BN;
   identityToSet: DeriveAccountRegistration | null | undefined;
   infoParams: PalletIdentityIdentityInfo | null | undefined;
@@ -49,22 +50,21 @@ interface Props {
   selectedRegistrarName: string | undefined;
 }
 
-export default function Review({ address, api, chain, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const name = useAccountDisplay(address);
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);
   const theme = useTheme();
 
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
+
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay);
 
   const setIdentity = api && api.tx.identity.setIdentity;
   const clearIdentity = api && api.tx.identity.clearIdentity;
@@ -140,7 +140,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
     setStep(mode === 'Set' || mode === 'Modify'
       ? STEPS.INDEX
       : mode === 'ManageSubId'
-        ? STEPS.MANAGESUBID
+        ? STEPS.MANAGE_SUBID
         : mode === 'RequestJudgement' || mode === 'CancelJudgement'
           ? STEPS.JUDGEMENT
           : STEPS.PREVIEW);
@@ -208,6 +208,9 @@ export default function Review({ address, api, chain, depositValue, identityToSe
           <>
             {isPasswordError &&
               <WrongPasswordAlert />
+            }
+            {feeAndDeposit.isAbleToPay === false &&
+              <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
             }
             <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
@@ -327,6 +330,7 @@ export default function Review({ address, api, chain, depositValue, identityToSe
               <SignArea2
                 address={address}
                 call={tx}
+                disabled={feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={handleClose}

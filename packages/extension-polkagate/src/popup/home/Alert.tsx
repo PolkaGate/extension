@@ -22,12 +22,12 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
   const onAction = useContext(ActionContext);
 
   const onClose = useCallback(() => {
-    window.localStorage.setItem(NEW_VERSION_ALERT, 'ok');
+    window.localStorage.setItem('inUse_version', NEW_VERSION_ALERT);
     setShowAlert(false);
     onAction('/');
   }, [onAction, setShowAlert]);
 
-  const UL = ({ notes }: { notes: string[] }) => {
+  const UL = ({ notes }: { notes: React.ReactNode[] }) => {
     return (
       <Grid container direction='column' py='15px'>
         <Grid container item>
@@ -65,8 +65,11 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              'Signing with Ledger when conducting fund transfers or participating in governance.',
-              'Resolving known issues for a smoother experience'
+              <span key='video-note'>
+                Your funds are safer than ever with the introduction of social account recovery! (<a href='https://youtu.be/H1IBRCBo7KI' rel='noopener noreferrer' target='_blank'>Watch video</a>) 🛡️✨
+              </span>,
+              'Experience seamless account creation with our new full-screen mode! 📈🖥️',
+              'We\'ve resolved known issues for a smoother and hassle-free experience! 🛠️🚀'
             ]}
           />
         </Grid>

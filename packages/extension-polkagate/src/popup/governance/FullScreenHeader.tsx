@@ -16,8 +16,13 @@ import AddressDropdown from './components/AddressDropdown';
 import ThemeChanger from './partials/ThemeChanger';
 import { MAX_WIDTH } from './utils/consts';
 
-export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery' }): React.ReactElement {
+interface Props {
+  page?: 'governance' | 'manageIdentity' | 'send' | 'socialRecovery';
+  noChainSwitch?: boolean;
+  noAccountDropDown?: boolean;
+}
 
+export function FullScreenHeader({ noAccountDropDown = false, noChainSwitch = false, page }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
 
   const api = useApi(address);
@@ -57,26 +62,31 @@ export function FullScreenHeader({ page }: { page: 'governance' | 'manageIdentit
             <Grid container item justifyContent='flex-end' width='fit-content'>
               <ThemeChanger />
             </Grid>
-            <Grid container item justifyContent='flex-end' sx={{ color: 'text.primary', maxWidth: 'calc(100% - 130px)', px: '15px', width: 'fit-content' }}>
-              <AddressDropdown
-                api={api}
-                chainGenesis={chain?.genesisHash}
-                height='40px'
-                onSelect={onAccountChange}
-                selectedAddress={address}
-              />
-            </Grid>
-            <Grid container item justifyContent='flex-end' width='50px'>
-              <FullScreenChainSwitch
-                address={address}
-                chains={filteredChains}
-              />
-            </Grid>
-            <Grid container item justifyContent='flex-end' width='50px'>
-              <FullScreenRemoteNode
-                address={address}
-              />
-            </Grid>
+            {!noAccountDropDown &&
+              <Grid container item justifyContent='flex-end' sx={{ color: 'text.primary', maxWidth: 'calc(100% - 130px)', px: '15px', width: 'fit-content' }}>
+                <AddressDropdown
+                  api={api}
+                  chainGenesis={chain?.genesisHash}
+                  height='40px'
+                  onSelect={onAccountChange}
+                  selectedAddress={address}
+                />
+              </Grid>}
+            {!noChainSwitch &&
+              <>
+                <Grid container item justifyContent='flex-end' width='50px'>
+                  <FullScreenChainSwitch
+                    address={address}
+                    chains={filteredChains}
+                  />
+                </Grid>
+                <Grid container item justifyContent='flex-end' width='50px'>
+                  <FullScreenRemoteNode
+                    address={address}
+                  />
+                </Grid>
+              </>
+            }
           </Grid>
         </Grid>
       </Container>

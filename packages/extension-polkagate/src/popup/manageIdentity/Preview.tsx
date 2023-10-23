@@ -71,7 +71,7 @@ export default function PreviewIdentity({ api, identity, judgement, setIdentityT
   }, [setStep]);
 
   const manageSubId = useCallback(() => {
-    setStep(STEPS.MANAGESUBID);
+    setStep(STEPS.MANAGE_SUBID);
   }, [setStep]);
 
   return (

@@ -20,10 +20,10 @@ interface Props {
   onEnter?: () => void;
   placeholder?: string;
   value?: string;
-  withoutMargin?: boolean;
+  style?: React.CSSProperties;
 }
 
-export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, withoutMargin }: Props): React.ReactElement<Props> {
+export default function Password({ defaultValue, disabled, isError, isFocused, isReadOnly, label = '', onChange, onEnter, placeholder, style }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const theme = useTheme();
@@ -52,7 +52,7 @@ export default function Password({ defaultValue, disabled, isError, isFocused, i
   return (
     <Label
       label={label}
-      style={{ letterSpacing: '-0.015em', position: 'relative' }}
+      style={{ letterSpacing: '-0.015em', position: 'relative', ...style }}
     >
       <Input
         autoCapitalize='off'

@@ -18,7 +18,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
+import { CanPayErrorAlert, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, EndRecoveryIcon, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useChainName, useCurrentBlockNumber, useDecimal, useFormatted, useProxies } from '../../hooks';
 import { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
@@ -105,7 +105,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     }
   }, [depositValue, mode, recoveryInfo]);
 
-  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!api || !batchAll || !redeem || !poolRedeem || !unbond || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
@@ -378,6 +378,13 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   width={45}
                 />
               }
+              {mode === 'CloseRecovery' &&
+                <EndRecoveryIcon
+                  color={theme.palette.text.primary}
+                  height={45}
+                  width={45}
+                />
+              }
             </Grid>
             <Typography fontSize='30px' fontWeight={700}>
               {(step === STEPS.REVIEW || step === STEPS.PROXY) && (
@@ -444,8 +451,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
             {isPasswordError &&
               <WrongPasswordAlert />
             }
-            {canPayFeeAndDeposit.isAbleToPay === false &&
-              <CanPayErrorAlert canPayStatements={canPayFeeAndDeposit.statement} />
+            {feeAndDeposit.isAbleToPay === false &&
+              <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
             }
             <Grid container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
@@ -633,7 +640,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               <SignArea2
                 address={address}
                 call={call}
-                disabled={nothingToWithdrawNow || canPayFeeAndDeposit.isAbleToPay !== true}
+                disabled={nothingToWithdrawNow || feeAndDeposit.isAbleToPay !== true}
                 extraInfo={extraInfo}
                 isPasswordError={isPasswordError}
                 onSecondaryClick={specific

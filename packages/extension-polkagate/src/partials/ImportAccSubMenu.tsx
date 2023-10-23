@@ -90,7 +90,7 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
           }
           onClick={_goToImportAcc}
           py='4px'
-          text={t('Import from mnemonic')}
+          text={t('Import from recovery phrase')}
         />
         <MenuItem
           iconComponent={

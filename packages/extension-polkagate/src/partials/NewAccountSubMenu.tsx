@@ -10,6 +10,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ActionContext, MenuItem } from '../components';
 import { useTranslation } from '../hooks';
+import { windowOpen } from '../messaging';
 
 interface Props {
   show: boolean;
@@ -35,8 +36,8 @@ function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
 
   const _goToCreateAcc = useCallback(
     () => {
-      onAction('/account/create');
-    }, [onAction]
+      windowOpen('/account/create').catch(console.error);
+    }, []
   );
 
   const slideIn = keyframes`
