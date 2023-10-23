@@ -47,9 +47,11 @@ export default function Home(): React.ReactElement {
   }, [accounts]);
 
   useEffect(() => {
-    const value = window.localStorage.getItem(NEW_VERSION_ALERT);
+    const value = window.localStorage.getItem('inUse_version');
 
-    if (!value || (value && value !== 'ok')) {
+    if (!value) {
+      window.localStorage.setItem('inUse_version', NEW_VERSION_ALERT);
+    } else if (value !== NEW_VERSION_ALERT) {
       setShowAlert(true);
     }
   }, []);
