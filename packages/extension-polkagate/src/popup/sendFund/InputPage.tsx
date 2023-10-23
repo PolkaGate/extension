@@ -47,7 +47,7 @@ export const Title = ({ padding = '30px 0px 20px', text }: { text: string, paddi
         />
       </Grid>
       <Grid item>
-        <Typography fontSize='30px' fontWeight={700} >
+        <Typography fontSize='30px' fontWeight={700}>
           {text}
         </Typography>
       </Grid>
@@ -200,13 +200,15 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
         ? crossChainParams
         : assetId !== undefined
           ? [assetId, recipientAddress, amountAsBN]
-          : [recipientAddress, amountAsBN],
+          : transferType === 'All'
+            ? [recipientAddress, false] // transferAll with keepalive = false
+            : [recipientAddress, amountAsBN],
       recipientAddress,
       recipientChainName,
       recipientGenesisHashOrParaId: recipientChainGenesisHash,
       totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined
     });
-  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash]);
+  }, [amountAsBN, estimatedFee, estimatedCrossChainFee, setInputs, call, recipientAddress, isCrossChain, crossChainParams, assetId, formatted, amount, recipientChainName, recipientChainGenesisHash, transferType]);
 
   useEffect(() => {
     if (!api || !balances) {
@@ -258,8 +260,14 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
     const ED = assetId === undefined ? api.consts.balances.existentialDeposit as unknown as BN : balances.ED;
     const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
-    const allAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
-    const maxAmount = balances.availableBalance.isZero() ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
+    const allAmount =
+      balances.availableBalance.isZero()
+        ? '0'
+        : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
+    const maxAmount =
+      balances.availableBalance.isZero() || _maxFee.gte(balances.availableBalance)
+        ? '0'
+        : amountToHuman(balances.availableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
 
     setAmount(type === 'All' ? allAmount : maxAmount);
   }, [api, assetId, balances, maxFee]);
@@ -337,8 +345,8 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
       <Typography fontSize='20px' fontWeight={500} pt='15px'>
         {t<string>('To')}
       </Typography>
-      <Grid container item justifyContent='space-between' >
-        <Grid item md={6.9} xs={12} sx={{ pt: '10px' }} >
+      <Grid container item justifyContent='space-between'>
+        <Grid item md={6.9} xs={12} sx={{ pt: '10px' }}>
           <InputAccount
             address={recipientAddress || inputs?.recipientAddress}
             chain={chain}
