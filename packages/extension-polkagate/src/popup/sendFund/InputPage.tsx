@@ -258,16 +258,14 @@ export default function InputPage({ address, assetId, balances, inputs, setInput
 
     setTransferType(type);
 
+    const _isAvailableZero = balances.availableBalance.isZero();
+
     const ED = assetId === undefined ? api.consts.balances.existentialDeposit as unknown as BN : balances.ED;
     const _maxFee = assetId === undefined ? maxFee : BN_ZERO;
-    const allAmount =
-      balances.availableBalance.isZero()
-        ? '0'
-        : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
-    const maxAmount =
-      balances.availableBalance.isZero() || _maxFee.gte(balances.availableBalance)
-        ? '0'
-        : amountToHuman(balances.availableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
+
+    const _canNotTransfer = _isAvailableZero || _maxFee.gte(balances.availableBalance);
+    const allAmount = _canNotTransfer ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).toString(), balances.decimal);
+    const maxAmount = _canNotTransfer ? '0' : amountToHuman(balances.availableBalance.sub(_maxFee).sub(ED).toString(), balances.decimal);
 
     setAmount(type === 'All' ? allAmount : maxAmount);
   }, [api, assetId, balances, maxFee]);
