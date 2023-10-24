@@ -229,7 +229,7 @@ export default function ImportSeed(): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onEnter={password && name && !error && !!seed ? onCreate : () => null}
           />
-          <Grid container item alignItems='flex-end' justifyContent='flex-start' onClick={() => setShowAdvanced(!showAdvanced)}>
+          <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={() => setShowAdvanced(!showAdvanced)}>
             <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }} >
               {t('Advanced')}
             </Typography>
