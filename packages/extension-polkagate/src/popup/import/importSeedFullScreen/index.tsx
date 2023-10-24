@@ -8,6 +8,7 @@ import '@vaadin/icons';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Grid, IconButton, keyframes, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 
 import { Chain } from '@polkadot/extension-chains/types';
 import { objectSpread } from '@polkadot/util';
@@ -26,7 +27,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed (): React.ReactElement {
+export default function ImportSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -43,6 +44,7 @@ export default function ImportSeed (): React.ReactElement {
   const [type, setType] = useState(DEFAULT_TYPE);
   const [path, setPath] = useState<string | null>(null);
   const [notFirstTime, setFirstTime] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
   const chain = useMetadata(account?.genesis, true);
   const [name, setName] = useState<string | null | undefined>();
@@ -203,6 +205,7 @@ export default function ImportSeed (): React.ReactElement {
           <Grid container display={notFirstTime ? 'inherit' : 'none'} item overflow='hidden' sx={{ animationDuration: showAddress ? '300ms' : '150ms', animationFillMode: 'forwards', animationName: `${showAddress ? showAddressAnimation : hideAddressAnimation}`, animationTimingFunction: 'linear', mt: '15px' }}>
             <Address
               address={account?.address}
+              backgroundColor='background.main'
               className='addr'
               genesisHash={account?.genesis}
               margin='0px'
@@ -211,31 +214,14 @@ export default function ImportSeed (): React.ReactElement {
               style={{ width: '100%' }}
             />
           </Grid>
-          <Grid container item justifyContent='space-between' my='15px'>
-            <Grid container item width='49%'>
-              <InputWithLabel
-                isError={!!path && !!error}
-                label={t<string>('Derived path (ignore if the account is not derived)')}
-                onChange={setPath}
-                value={path || ''}
-              />
-            </Grid>
-            <SelectChain
-              address={address}
-              defaultValue={newChain?.genesisHash || genesisOptions[0].text}
-              icon={getLogo(newChain ?? undefined)}
-              label={t<string>('Select the chain')}
-              onChange={onChangeNetwork}
-              options={genesisOptions}
-              style={{ p: 0, width: '49%' }}
+          <Grid container sx={{ mt: '15px' }}>
+            <InputWithLabel
+              isError={name === null || name?.length === 0}
+              label={t<string>('Choose a name for this account')}
+              onChange={onNameChange}
+              value={name ?? ''}
             />
           </Grid>
-          <InputWithLabel
-            isError={name === null || name?.length === 0}
-            label={t<string>('Choose a name for this account')}
-            onChange={onNameChange}
-            value={name ?? ''}
-          />
           <Passwords2
             firstPassStyle={{ marginBlock: '10px' }}
             label={t<string>('Password for this account (more than 5 characters)')}
@@ -243,6 +229,32 @@ export default function ImportSeed (): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onEnter={password && name && !error && !!seed ? onCreate : () => null}
           />
+          <Grid container item alignItems='flex-end' justifyContent='flex-start' onClick={() => setShowAdvanced(!showAdvanced)}>
+            <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }} >
+              {t('Advanced')}
+            </Typography>
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+          </Grid>
+          {showAdvanced &&
+            <Grid container item justifyContent='space-between' mt='10px' mb='25px'>
+              <Grid container item width='49%'>
+                <InputWithLabel
+                  isError={!!path && !!error}
+                  label={t<string>('Derived path (ignore if the account is not derived)')}
+                  onChange={setPath}
+                  value={path || ''}
+                />
+              </Grid>
+              <SelectChain
+                address={address}
+                defaultValue={newChain?.genesisHash || genesisOptions[0].text}
+                icon={getLogo(newChain ?? undefined)}
+                label={t<string>('Select the chain')}
+                onChange={onChangeNetwork}
+                options={genesisOptions}
+                style={{ p: 0, width: '49%' }}
+              />
+            </Grid>}
           <Grid container item justifyContent='flex-end' pt='10px'>
             <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
               <TwoButtons
