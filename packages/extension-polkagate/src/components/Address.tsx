@@ -34,6 +34,7 @@ export interface Props {
   showCopy?: boolean;
   width?: string;
   margin?: string;
+  backgroundColor?: string;
 }
 
 interface Recoded {
@@ -83,7 +84,7 @@ function recodeAddress(address: string, accounts: AccountWithChildren[], chain: 
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address({ address, className, genesisHash, isHardware, margin = '20px auto', name, width = '92%', showCopy = true, style, type: givenType }: Props): React.ReactElement<Props> {
+function Address({ address, backgroundColor, className, genesisHash, isHardware, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const accountName = useAccountName(address);
@@ -116,85 +117,83 @@ function Address({ address, className, genesisHash, isHardware, margin = '20px a
   ) as IconTheme;
 
   return (
-    <>
+    <Grid
+      className={className}
+      container
+      direction={'row'}
+      justifyContent={'space-between'}
+      sx={{
+        backgroundColor: backgroundColor || 'background.paper',
+        border: '0.5px solid',
+        borderColor: 'secondary.light',
+        borderRadius: '5px',
+        height: '70px',
+        m: { margin },
+        p: '14px 8px',
+        width: { width },
+        ...style
+      }}
+    >
       <Grid
-        className={className}
-        container
-        direction={'row'}
-        justifyContent={'space-between'}
-        sx={{
-          backgroundColor: 'background.paper',
-          border: '0.5px solid',
-          borderColor: 'secondary.light',
-          borderRadius: '5px',
-          height: '70px',
-          m: { margin },
-          p: '14px 8px',
-          width: { width },
-          ...style
-        }}
+        item
+        width='40px'
       >
-        <Grid
-          item
-          width='40px'
+        <Identicon
+          className='identityIcon'
+          iconTheme={theme}
+          prefix={prefix}
+          size={40}
+          value={formatted || address}
+        />
+      </Grid>
+      <Grid
+        container
+        direction={'column'}
+        item
+        width='calc(95% - 40px)'
+      >
+        <Typography
+          fontSize={'16px'}
+          fontWeight={400}
+          maxWidth='95%'
+          overflow='hidden'
+          variant='h3'
+          whiteSpace='nowrap'
         >
-          <Identicon
-            className='identityIcon'
-            iconTheme={theme}
-            prefix={prefix}
-            size={40}
-            value={formatted || address}
-          />
-        </Grid>
+          {name || accountName || t('<unknown>')}
+        </Typography>
         <Grid
           container
-          direction={'column'}
+          direction={'row'}
           item
-          width='calc(95% - 40px)'
+          justifyContent={'space-between'}
         >
-          <Typography
-            fontSize={'16px'}
-            fontWeight={400}
-            maxWidth='95%'
-            overflow='hidden'
-            variant='h3'
-            whiteSpace='nowrap'
-          >
-            {name || accountName || t('<unknown>')}
-          </Typography>
-          <Grid
-            container
-            direction={'row'}
-            item
-            justifyContent={'space-between'}
-          >
-            {(formatted || address)
-              ? (
-                <ShortAddress
-                  address={formatted || address}
-                  style={{
-                    fontSize: '10px',
-                    fontWeight: 300,
-                    justifyContent: 'space-between',
-                    lineHeight: '23px'
-                  }}
-                  clipped
-                  showCopy={showCopy}
-                />)
-              : (
-                <Typography
-                  fontSize={'10px'}
-                  fontWeight={300}
-                  variant='h3'
-                  whiteSpace='nowrap'
-                >
-                  {t('<unknown>')}
-                </Typography>)
-            }
-          </Grid>
+          {(formatted || address)
+            ? (
+              <ShortAddress
+                address={formatted || address}
+                clipped
+                showCopy={showCopy}
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 300,
+                  justifyContent: 'space-between',
+                  lineHeight: '23px'
+                }}
+              />)
+            : (
+              <Typography
+                fontSize={'10px'}
+                fontWeight={300}
+                variant='h3'
+                whiteSpace='nowrap'
+              >
+                {t('<unknown>')}
+              </Typography>)
+          }
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 }
 
