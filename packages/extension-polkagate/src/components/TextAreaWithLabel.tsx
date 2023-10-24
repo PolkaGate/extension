@@ -18,9 +18,10 @@ interface Props {
   onChange?: (value: string) => void;
   value?: string;
   style?: React.CSSProperties | undefined;
+  height?: string;
 }
 
-export default function TextAreaWithLabel({ className, fontSize, isError, isFocused, isReadOnly, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
+export default function TextAreaWithLabel({ fontSize, height = '88px', isError, isFocused, isReadOnly, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(
@@ -32,7 +33,6 @@ export default function TextAreaWithLabel({ className, fontSize, isError, isFocu
 
   return (
     <Label
-      className={className}
       label={label}
       style={style}
     >
@@ -45,7 +45,7 @@ export default function TextAreaWithLabel({ className, fontSize, isError, isFocu
         readOnly={isReadOnly}
         rows={rowsCount || 2}
         spellCheck={false}
-        style={{ color: '#FF46A0', height: '88px', margin: 'auto' }}
+        style={{ color: '#FF46A0', height, margin: 'auto' }}
         theme={theme}
         value={value}
         withError={isError}

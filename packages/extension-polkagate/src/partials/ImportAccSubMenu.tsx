@@ -35,8 +35,8 @@ function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactEle
   }, []);
 
   const _goToImportAcc = useCallback(() => {
-    onAction('/account/import-seed');
-  }, [onAction]);
+    windowOpen('/account/import-seed').catch(console.error);
+  }, []);
 
   const _goToAddAddressOnly = useCallback(() => {
     onAction('/import/add-address-only');
