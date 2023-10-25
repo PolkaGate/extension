@@ -31,7 +31,7 @@ import Accounts from '../../../extension-polkagate/src/popup/home';
 import AddAddressOnly from '../../../extension-polkagate/src/popup/import/addAddressOnly';
 import AttachQR from '../../../extension-polkagate/src/popup/import/attachQR';
 import ImportLedger from '../../../extension-polkagate/src/popup/import/importLedger';
-import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeed';
+import ImportSeed from '../../../extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '../../../extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import ManageIdentity from '../../../extension-polkagate/src/popup/manageIdentity';
 import ManageProxies from '../../../extension-polkagate/src/popup/manageProxies';
