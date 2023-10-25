@@ -231,7 +231,7 @@ export default function ImportSeed(): React.ReactElement {
           />
           <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={() => setShowAdvanced(!showAdvanced)}>
             <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }} >
-              {t('Advanced')}
+              {t('More ...')}
             </Typography>
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
