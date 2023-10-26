@@ -124,7 +124,7 @@ export default function AccountDetails(): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-    , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+  , [genesisHash, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);

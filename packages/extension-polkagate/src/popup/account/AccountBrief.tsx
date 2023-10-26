@@ -14,7 +14,7 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { QrCode2 } from '@mui/icons-material';
 import { Box, Divider, Grid, Link, Typography } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
@@ -28,7 +28,7 @@ interface Props {
   showDivider?: boolean;
 }
 
-function AccountBrief({ address, identity, showName = true, showDivider = true }: Props): React.ReactElement<Props> {
+function AccountBrief({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const account = useAccount(address);
@@ -45,14 +45,14 @@ function AccountBrief({ address, identity, showName = true, showDivider = true }
 
   const subscanLink = useCallback((address: string) => {
     if (chainName === 'WestendAssetHub') {
-      return `https://westmint.statescan.io/#/accounts/${String(address)}`
+      return `https://westmint.statescan.io/#/accounts/${String(address)}`;
     }
 
     if (chainName?.includes('AssetHub')) {
-      return `https://assethub-${chainName.replace(/AssetHub/, '')}.subscan.io/account/${String(address)}`
+      return `https://assethub-${chainName.replace(/AssetHub/, '')}.subscan.io/account/${String(address)}`;
     }
 
-    return `https://${chainName}.subscan.io/account/${String(address)}`
+    return `https://${chainName}.subscan.io/account/${String(address)}`;
   }, [chainName]);
 
   return (
