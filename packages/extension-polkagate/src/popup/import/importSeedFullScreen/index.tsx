@@ -76,6 +76,10 @@ export default function ImportSeed(): React.ReactElement {
   }, [showAddress]);
 
   useEffect((): void => {
+    setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain
+  }, [genesisOptions]);
+
+  useEffect((): void => {
     setType(
       chain && chain.definition.chainType === 'ethereum'
         ? 'ethereum'
