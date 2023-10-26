@@ -6,17 +6,17 @@
 import type { Balance } from '@polkadot/types/interfaces';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation } from '../../../../../hooks';
+import { ActionContext, AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
+import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../../util/constants';
+import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../../util/constants';
 import { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Review from './Review';
@@ -28,7 +28,7 @@ interface State {
   poolStakingConsts: PoolStakingConsts;
 }
 
-export default function CreatePool(): React.ReactElement {
+export default function CreatePool (): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { state } = useLocation<State>();
@@ -37,6 +37,10 @@ export default function CreatePool(): React.ReactElement {
   const history = useHistory();
   const token = useToken(address);
   const decimal = useDecimal(address);
+  const onAction = useContext(ActionContext);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
   const chain = useChain(address);
 

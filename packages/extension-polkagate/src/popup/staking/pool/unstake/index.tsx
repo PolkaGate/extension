@@ -12,16 +12,16 @@ import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Button, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { ActionContext, AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
+import { useApi, useChain, useDecimal, useFormatted, usePool, usePoolConsts, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, FLOATING_POINT_DIGIT, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { DATE_OPTIONS, DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import ShowPool from '../../partial/ShowPool';
@@ -40,9 +40,9 @@ interface State {
 const CONDITION_MAP = {
   DESTROY: 1,
   REMOVE_ALL: 2
-}
+};
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -50,6 +50,10 @@ export default function Index(): React.ReactElement {
   const history = useHistory();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
+  const onAction = useContext(ActionContext);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+
   const [refresh, setRefresh] = useState<boolean>(false);
   const myPool = usePool(address, undefined, refresh);
   const formatted = useFormatted(address);
@@ -380,7 +384,6 @@ export default function Index(): React.ReactElement {
       {goChange && helperButton === 2 && myPool && formatted &&
         <RemoveAll
           address={address}
-          api={api}
           pool={myPool}
           setRefresh={setRefresh}
           setShowRemoveAll={setGoChange}
