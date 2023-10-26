@@ -106,6 +106,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           hideNumbers={hideNumbers}
           parentName={account.name}
           quickActionOpen={quickActionOpen}
+          setHasActiveRecovery={setHasActiveRecovery}
           setQuickActionOpen={setQuickActionOpen}
         />
       ))}
