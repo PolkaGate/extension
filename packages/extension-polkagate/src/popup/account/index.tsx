@@ -131,6 +131,7 @@ export default function AccountDetails(): React.ReactElement {
   }, []);
 
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
+    setShowStakingOptions(false);
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
     address && tieAccount(address, availableGenesisHash).catch(console.error);
