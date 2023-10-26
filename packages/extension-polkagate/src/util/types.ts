@@ -143,7 +143,7 @@ export interface TxResult {
   block: number;
   txHash: string;
   fee?: string;
-  success: boolean,
+  success: boolean;
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
