@@ -10,15 +10,16 @@ import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import { Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { Motion, PButton, Warning } from '../../../../components';
-import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { ActionContext, Motion, PButton, Warning } from '../../../../components';
+import { useApi, useBalances, useChain, useDecimal, useFormatted, useIsExposed, useStakingAccount, useStakingConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
+import { STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman } from '../../../../util/utils';
 import { getValue } from '../../../account/util';
 import FastUnstakeReview from './Review';
@@ -30,7 +31,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -40,6 +41,10 @@ export default function Index(): React.ReactElement {
   const chain = useChain(address);
   const formatted = useFormatted(address);
   const token = useToken(address);
+  const onAction = useContext(ActionContext);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
+
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const myBalances = useBalances(address);
   const mayBeMyStashBalances = useBalances(stakingAccount?.stashId);

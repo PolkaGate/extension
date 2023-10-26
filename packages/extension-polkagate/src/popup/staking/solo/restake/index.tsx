@@ -8,16 +8,16 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useStakingConsts, useToken, useTranslation } from '../../../../hooks';
+import { ActionContext, AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
+import { useApi, useChain, useDecimal, useFormatted, useStakingAccount, useToken, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import { DEFAULT_TOKEN_DECIMALS, MAX_AMOUNT_LENGTH } from '../../../../util/constants';
+import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Asset from '../../../send/partial/Asset';
 import Review from './Review';
@@ -30,7 +30,7 @@ interface State {
   unlockingAmount: BN | undefined;
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -40,6 +40,9 @@ export default function Index(): React.ReactElement {
   const decimal = useDecimal(address);
   const formatted = useFormatted(address);
   const history = useHistory();
+  const onAction = useContext(ActionContext);
+
+  useUnSupportedNetwork(address, STAKING_CHAINS, () => onAction('/'));
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const token = useToken(address);
 
