@@ -100,7 +100,7 @@ export default function AccountsTree({ hideNumbers, parentName, quickActionOpen,
           </Grid>}
       </Container>
       {account?.children?.map((child, index) => (
-        <AccountsTree  // TODO, apply Social recovery alert for child accounts!
+        <AccountsTree
           key={`${index}:${child.address}`}
           {...child}
           hideNumbers={hideNumbers}
