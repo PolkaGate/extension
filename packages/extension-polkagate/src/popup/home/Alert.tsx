@@ -59,17 +59,14 @@ export default function Alert({ setShowAlert, show }: Props): React.ReactElement
       <Grid container direction='column' px='15px'>
         <Grid container item justifyContent='center' pb='20px' pt='50px'>
           <Typography fontSize='22px' fontWeight={400}>
-            {t<string>('Important Updates')}
+            {t<string>('Important Updates 🚀')}
           </Typography>
         </Grid>
         <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', p: '10px' }}>
           <UL
             notes={[
-              <span key='video-note'>
-                Your funds are safer than ever with the introduction of social account recovery! (<a href='https://youtu.be/H1IBRCBo7KI' rel='noopener noreferrer' target='_blank'>Watch video</a>) 🛡️✨
-              </span>,
-              'Experience seamless account creation with our new full-screen mode! 📈🖥️',
-              'We\'ve resolved known issues for a smoother and hassle-free experience! 🛠️🚀'
+              'Experience full-screen imports whether from a file or a recovery phrase! 🖥️',
+              'We\'ve resolved known issues for a smoother and hassle-free experience! 🛠️'
             ]}
           />
         </Grid>
