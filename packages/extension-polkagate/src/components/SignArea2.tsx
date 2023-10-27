@@ -20,7 +20,7 @@ import { DraggableModal } from '../popup/governance/components/DraggableModal';
 import SelectProxyModal2 from '../popup/governance/components/SelectProxyModal2';
 import LedgerSign from '../popup/signing/LedgerSign';
 import { send, signAndSend } from '../util/api';
-import { Proxy, ProxyItem, ProxyTypes, TxInfo } from '../util/types';
+import { Proxy, ProxyItem, ProxyTypes, TxInfo, TxResult } from '../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import { Identity, Password, PButton, TwoButtons, Warning } from '.';
 
@@ -148,7 +148,7 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
     setShowProxy(false);
   }, []);
 
-  const handleTxResult = useCallback((txResult) => {
+  const handleTxResult = useCallback((txResult: TxResult) => {
     try {
       if (!txResult || !api || !chain) {
         return;
