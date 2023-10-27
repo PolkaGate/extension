@@ -44,7 +44,7 @@ export default function Review({ address, balances, inputs, setRefresh, setStep,
     fee: String(inputs?.totalFee || 0),
     recipientChainName: inputs?.recipientChainName,
     subAction: 'send',
-    to: { address: String(inputs?.recipientAddress), name: inputs?.recipientChainName }
+    to: { address: String(inputs?.recipientAddress) }
   }), [inputs?.amount, inputs?.recipientAddress, inputs?.recipientChainName, inputs?.totalFee]);
 
   const handleClose = useCallback(() => {

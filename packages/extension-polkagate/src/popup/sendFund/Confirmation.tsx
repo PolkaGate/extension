@@ -7,7 +7,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { Motion, ShortAddress, TwoButtons } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useAccountDisplay, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { NameAddress, TxInfo } from '../../util/types';
 import { pgBoxShadow } from '../../util/utils';
@@ -24,6 +24,24 @@ interface DisplayInfoProps {
   value: string | undefined;
   showDivider?: boolean;
 }
+
+const Account = ({ info, label }: { label: string, info: NameAddress }) => {
+  const accountName = useAccountDisplay(info.address);
+
+  return (
+    <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+      <Typography fontSize='16px' fontWeight={400} lineHeight='40px'>
+        {label}:
+      </Typography>
+      <Typography fontSize='16px' fontWeight={400} lineHeight='40px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
+        {info?.name || accountName}
+      </Typography>
+      <Grid fontSize='16px' fontWeight={400} item lineHeight='40px' pl='5px'>
+        <ShortAddress address={info.address} inParentheses style={{ fontSize: '16px' }} />
+      </Grid>
+    </Grid>
+  );
+};
 
 export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -48,20 +66,6 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
       }</>
     );
   };
-
-  const Account = ({ info, label }: { label: string, info: NameAddress }) => (
-    <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-      <Typography fontSize='16px' fontWeight={400} lineHeight='40px'>
-        {label}:
-      </Typography>
-      <Typography fontSize='16px' fontWeight={400} lineHeight='40px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-        {info.name}
-      </Typography>
-      <Grid fontSize='16px' fontWeight={400} item lineHeight='40px' pl='5px'>
-        <ShortAddress address={info.address} inParentheses style={{ fontSize: '16px' }} />
-      </Grid>
-    </Grid>
-  );
 
   return (
     <Motion>
@@ -128,7 +132,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
           </Grid>
         }
       </Grid>
-      <Grid container sx={{ '> div': { mt: '15px', ml: '30%', width: '100%' } }}>
+      <Grid container sx={{ '> div': { ml: '30%', mt: '15px', width: '100%' } }}>
         <TwoButtons
           mt='15px'
           onPrimaryClick={handleDone}
