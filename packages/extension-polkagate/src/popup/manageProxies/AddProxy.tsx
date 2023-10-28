@@ -6,13 +6,13 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
-import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { Chain } from '@polkadot/extension-chains/types';
 
-import { AccountContext, AddressInput, InputWithLabel, PButton, Select } from '../../components';
-import { useTranslation } from '../../hooks';
+import { AccountContext, AddressInput, InputWithLabel, PButton, Select, Warning } from '../../components';
+import { useFormatted, useTranslation } from '../../hooks';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
@@ -40,13 +40,20 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
 };
 
 export default function AddProxy({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const { hierarchy } = useContext(AccountContext);
+  const formatted = useFormatted(address);
+  const theme = useTheme();
+
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined | null>();
   const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
-  const { t } = useTranslation();
-  const { hierarchy } = useContext(AccountContext);
+
+  const myselfAsProxy = useMemo(() => formatted === realAddress, [formatted, realAddress]);
+  const possibleProxy = useMemo(() => ({ delay, delegate: realAddress, proxyType: selectedProxyType }) as Proxy, [delay, realAddress, selectedProxyType]);
+  const alreadyExisting = useMemo(() => !!(proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy))), [possibleProxy, proxyItems]);
 
   const PROXY_TYPE = CHAIN_PROXY_TYPES[sanitizeChainName(chain.name) as string] as string[];
 
@@ -76,15 +83,12 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
   }, []);
 
   useEffect(() => {
-    if (!realAddress || !selectedProxyType) {
+    if (!realAddress || !selectedProxyType || myselfAsProxy) {
       setAddButtonDisabled(true);
       setAccountInfo(undefined);
 
       return;
     }
-
-    const possibleProxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;
-    const alreadyExisting = proxyItems?.find((item) => isEqualProxy(item.proxy, possibleProxy));
 
     if (alreadyExisting) {
       setAddButtonDisabled(true);
@@ -93,7 +97,7 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
     }
 
     setAddButtonDisabled(false);
-  }, [delay, proxyItems, realAddress, selectedProxyType]);
+  }, [alreadyExisting, myselfAsProxy, realAddress, selectedProxyType]);
 
   useEffect(() => {
     realAddress && api && api.derive.accounts.info(realAddress).then((info) => {
@@ -146,11 +150,26 @@ export default function AddProxy({ address, api, chain, onChange, proxyItems, se
           {t<string>('Block(s)')}
         </Typography>
       </Grid>
-      {realAddress &&
+      {realAddress && !(myselfAsProxy || alreadyExisting) &&
         <ShowIdentity
           accountIdentity={accountInfo}
           style={{ m: 'auto', width: '92%' }}
         />
+      }
+      {realAddress && (myselfAsProxy || alreadyExisting) &&
+        <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0, pl: '5px' }, '> div.belowInput .warningImage': { fontSize: '20px' }, height: '45px', pt: '20px' }}>
+          <Warning
+            fontSize={'15px'}
+            fontWeight={400}
+            isBelowInput
+            isDanger
+            theme={theme}
+          >
+            {myselfAsProxy
+              ? t<string>('Cannot set your account as a proxy for itself.')
+              : t<string>('You\'ve already included this proxy.')}
+          </Warning>
+        </Grid>
       }
       <PButton
         _onClick={_addProxy}
