@@ -52,15 +52,15 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, []);
 
   useEffect(() => {
-    chrome.storage.local.get('savedPassword', (res) => {
-      if (!res?.savedPassword || res?.savedPassword === 'mayBeLater') {
+    chrome.storage.local.get('savedPassword6', (res) => {
+      if (!res?.savedPassword6 || res?.savedPassword6 === 'mayBeLater') {
         setStep(STEPS.ASK_TO_SET_PASSWORD);
-      } else if (res.savedPassword === 'no') {
+      } else if (res.savedPassword6 === 'no') {
         setStep(STEPS.NO_LOGIN);
         setPermitted(true);
       } else {
         setStep(STEPS.SHOW_LOGIN);
-        setSavedHashedPassword(res.savedPassword as string);
+        setSavedHashedPassword(res.savedPassword6 as string);
       }
     });
   }, []);
@@ -68,12 +68,12 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   const onMayBeLater = useCallback(() => {
     setPermitted(true);
 
-    chrome.storage.local.set({ savedPassword: 'mayBeLater' }).catch(console.error);
+    chrome.storage.local.set({ savedPassword6: 'mayBeLater' }).catch(console.error);
   }, []);
 
   const onNoPassword = useCallback(() => {
     setPermitted(true);
-    chrome.storage.local.set({ savedPassword: 'no' }).catch(console.error);
+    chrome.storage.local.set({ savedPassword6: 'no' }).catch(console.error);
   }, []);
 
   const onYesToSetPassword = useCallback(() => {
@@ -83,7 +83,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   const onSetPassword = useCallback(() => {
     const hashedPassword = blake2AsHex(password, 256); // Hash the string with a 256-bit output
 
-    chrome.storage.local.set({ savedPassword: hashedPassword }).catch(console.error);
+    chrome.storage.local.set({ savedPassword6: hashedPassword }).catch(console.error);
   }, [password]);
 
   const onPassChange = useCallback((pass: string | null): void => {
