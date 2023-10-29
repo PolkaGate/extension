@@ -95,12 +95,16 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
   }, []);
 
   const onCheckPassword = useCallback((): void => {
-    const hashedPassword = blake2AsHex(password || '', 256);
+    try {
+      const hashedPassword = blake2AsHex(password || '', 256);
 
-    if (savedHashPassword === hashedPassword) {
-      setPermitted(true);
-    } else {
-      setIsPasswordError(true);
+      if (savedHashPassword === hashedPassword) {
+        setPermitted(true);
+      } else {
+        setIsPasswordError(true);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }, [password, savedHashPassword]);
 
@@ -128,8 +132,8 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
             }
             {!isFlying && step === STEPS.ASK_TO_SET_PASSWORD &&
               <Grid container justifyContent='center'>
-                <Typography fontSize={16}>
-                  {t('Would you like to create a password?')}
+                <Typography fontSize={16} pb='25px'>
+                  {t('Would you like to create a password now?')}
                 </Typography>
                 <PButton
                   _ml={0}
@@ -142,7 +146,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                   _mt='10px'
                   _onClick={onMayBeLater}
                   _variant='outlined'
-                  text={t('May be later')}
+                  text={t('Maybe later')}
                 />
                 <PButton
                   _ml={0}
@@ -159,8 +163,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
                   firstPassStyle={{ marginBlock: '8px' }}
                   label={t<string>('Password')}
                   onChange={onPassChange}
-                  // eslint-disable-next-line react/jsx-no-bind
-                  onEnter={() => null}
+                  onEnter={onSetPassword}
                 />
                 <PButton
                   _ml={0}
@@ -182,20 +185,20 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
             {step === STEPS.SHOW_LOGIN &&
               <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
                 <Typography fontSize={16}>
-                  {t('Please enter your password to log in')}
+                  {t('Please enter your password to proceed.')}
                 </Typography>
                 <Password
                   isFocused={true}
                   onChange={onPassChange}
                   onEnter={onCheckPassword}
-                  style={{ marginTop: '15px' }}
+                  style={{ marginBottom: '5px', marginTop: '5px' }}
                 />
                 <PButton
                   _ml={0}
                   _mt='20px'
                   _onClick={onCheckPassword}
                   _width={100}
-                  text={t('Enter')}
+                  text={t('Unlock')}
                 />
               </Grid>
             }
