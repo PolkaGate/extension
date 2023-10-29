@@ -3,18 +3,18 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Theme, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../hooks';
 import { Warning } from '.';
 
-export default function WrongPasswordAlert({ bgcolor }: { bgcolor?: SystemStyleObject<Theme> }): React.ReactElement {
+export default function WrongPasswordAlert (): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Grid container height='35px' sx={{ bgcolor }}>
+    <Grid container height='35px'>
       <Warning
         fontWeight={400}
         isDanger
