@@ -18,7 +18,6 @@ import { Chain } from '@polkadot/extension-chains/types';
 import { Balance } from '@polkadot/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { Lock } from '../hooks/useAccountLocks';
 import { LatestReferenda } from '../popup/governance/utils/types';
 
 export interface TransactionStatus {

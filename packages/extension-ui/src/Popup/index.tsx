@@ -13,7 +13,7 @@ import { canDerive } from '@polkadot/extension-base/utils';
 import uiSettings from '@polkadot/ui-settings';
 
 import { ErrorBoundary, Loading } from '../../../extension-polkagate/src/components';
-import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
+import { AccountContext, ActionContext, APIContext, AuthorizeReqContext, FetchingContext, ForgotPasswordContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext } from '../../../extension-polkagate/src/components/contexts';
 import { subscribeAccounts, subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '../../../extension-polkagate/src/messaging';
 import Account from '../../../extension-polkagate/src/popup/account';
 import AuthList from '../../../extension-polkagate/src/popup/authManagement';
@@ -58,6 +58,7 @@ import TuneUp from '../../../extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '../../../extension-polkagate/src/popup/staking/solo/unstake';
 import { buildHierarchy } from '../../../extension-polkagate/src/util/buildHierarchy';
 import { APIs, Fetching, LatestRefs } from '../../../extension-polkagate/src/util/types';
+import { LoginInfo, getStorage, updateStorage } from '../../../extension-polkagate/src/components/Loading';
 
 const startSettings = uiSettings.get();
 
@@ -101,6 +102,7 @@ export default function Popup(): React.ReactElement {
   const [apis, setApis] = useState<APIs>({});
   const [fetching, setFetching] = useState<Fetching>({});
   const [refs, setRefs] = useState<LatestRefs>({});
+  const [loginInfo, setLoginInfo] = useState<LoginInfo>();
 
   /** To save current page url */
   // if (window.location.hash !== '#/') {
@@ -155,9 +157,34 @@ export default function Popup(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
+      if (areaName === 'local' && 'loginInfo' in changes) {
+        const newValue = changes.loginInfo.newValue as LoginInfo;
+
+        setLoginInfo(newValue);
+      }
+    });
+    const info = await getStorage('loginInfo') as LoginInfo;
+
+    setLoginInfo(info);
+  }, []);
+
   useEffect((): void => {
-    setAccountCtx(initAccountContext(accounts || []));
-  }, [accounts]);
+    if (!loginInfo) {
+      return;
+    }
+
+    if (loginInfo.status !== 'forgot') {
+      setAccountCtx(initAccountContext(accounts || []));
+    } else if (loginInfo.status === 'forgot') {
+      setAccountCtx(initAccountContext([]));
+      const addresses = accounts?.map((account) => account.address);
+
+      updateStorage('loginInfo', { addressesToForget: addresses }).catch(console.error);
+    }
+  }, [accounts, loginInfo]);
 
   useEffect((): void => {
     requestMediaAccess(cameraOn)

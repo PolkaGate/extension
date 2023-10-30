@@ -38,7 +38,7 @@ const Welcome = function (): React.ReactElement {
       </Typography>
       <Box sx={{ backgroundColor: 'background.paper', border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '14px', m: '24px 15px 17px', p: '0' }}>
         <List sx={{ color: 'text.primary' }}>
-        <ListItem sx={{ py: '2px' }}>
+          <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>
               <FiberManualRecordIcon sx={{ width: '9px' }} />
             </ListItemIcon>

@@ -9,12 +9,14 @@ import { Grid, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ActionContext, Checkbox2, InputWithLabel, PButton } from '../../components';
+import { getStorage,LoginInfo } from '../../components/Loading';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountSuri, createSeed } from '../../messaging';
 import { FullScreenHeader } from '../governance/FullScreenHeader';
 import CopySeedButton from './components/CopySeedButton';
 import DownloadSeedButton from './components/DownloadSeedButton';
 import Passwords2 from './components/Passwords2';
+import { resetAccounts } from './resetAccounts';
 
 const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
   const { t } = useTranslation();
@@ -83,7 +85,14 @@ function CreateAccount(): React.ReactElement {
     setIsMnemonicSaved(!isMnemonicSaved);
   }, [isMnemonicSaved]);
 
-  const onCreate = useCallback((): void => {
+  const onCreate = useCallback(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    const info = await getStorage('loginInfo') as LoginInfo; // TODO: should do that on all new account creations/imports when status is 'forgot' password
+
+    if (info?.status === 'forgot') {
+      await resetAccounts();
+    }
+
     // this should always be the case
     if (name && password && seed) {
       setIsBusy(true);
