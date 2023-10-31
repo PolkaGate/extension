@@ -342,7 +342,7 @@ export default function Pool(): React.ReactElement {
                   defaultValue={POOL_ROLES[0].value}
                   disabledItems={disabledItems}
                   isDisabled={allMyPools?.length === 1}
-                  label={'Select role'}
+                  label={t('Select role')}
                   onChange={onSelectionMethodChange}
                   options={POOL_ROLES}
                 />
@@ -396,7 +396,7 @@ export default function Pool(): React.ReactElement {
         <SetState
           address={address}
           formatted={formatted}
-          headerText={changeState === 'Blocked' ? 'Block Pool' : changeState === 'Open' ? 'Unblock Pool' : 'Destroy Pool'}
+          headerText={changeState === 'Blocked' ? t('Block Pool') : changeState === 'Open' ? t('Unblock Pool') : t('Destroy Pool')}
           helperText={changeState === 'Blocked' ? blockHelperText : changeState === 'Open' ? unblockHelperText : destroyHelperText}
           pool={poolsToShow[poolIndex]}
           setRefresh={setRefresh}

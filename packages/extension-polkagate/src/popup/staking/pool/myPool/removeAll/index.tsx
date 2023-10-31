@@ -257,7 +257,12 @@ export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll,
       <Grid bottom='25px' container direction='column' position='absolute'>
         {(step === 1) &&
           <Grid container item position='relative'>
-            <PButton _mt='0' _onClick={goUnstakeAll} disabled={!needsUnboundAll} text={t<string>(`Unstake All (${(poolMembers && poolMembers.length - 1) ?? '...'})`)} />
+            <PButton
+              _mt='0'
+              _onClick={goUnstakeAll}
+              disabled={!needsUnboundAll}
+              text={t<string>('Unstake All ({{members}})', { replace: { members: (poolMembers && poolMembers.length - 1) ?? '...' } })}
+            />
           </Grid>}
         {(step !== 4) &&
           <Grid container item position='relative'>

@@ -187,7 +187,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={goContribute}
           proxiedAddress={formatted}

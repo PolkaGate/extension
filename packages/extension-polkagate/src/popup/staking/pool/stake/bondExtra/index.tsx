@@ -161,7 +161,7 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
         }}
       />
       <AmountWithOptions
-        label={t<string>(`Amount (${token ?? '...'})`)}
+        label={t<string>('Amount ({{token}})', { replace: { token: token || '...' } })}
         onChangeAmount={bondAmountChange}
         onPrimary={onMaxAmount}
         primaryBtnText={t<string>('Max amount')}

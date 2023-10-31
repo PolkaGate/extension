@@ -218,7 +218,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
               {t<string>('Removing all members from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('When you confirm you are able to unstake your tokens')}
+              {t<string>('When you confirm, you will be able to unstake your tokens')}
             </Typography>
           </>)
         }
@@ -252,7 +252,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={`${t<string>('Password')} for ${selectedProxyName || name || ''}`}
+          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstakeOrRemoveAll}
           proxiedAddress={formatted}
